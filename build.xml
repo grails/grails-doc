@@ -2,13 +2,23 @@
 
 	<property name="base.dir" value="." />
 	
+	<target name="init">
+		<condition property="grails.home.was.set">
+			<isset property="grails.home"/>
+		</condition>
+		
+		<!-- grails.home may be set interactively, which would take precedence over this... -->
+		<property name="grails.home" value="checkout/grails-src"/>
+	</target>
+	
     <target name="grails-javadoc" 
-            description="Generate most current javadoc for Grails">
-        <ant dir="../grails" target="javadoc" />
+            description="Generate most current javadoc for Grails"
+            depends="init">
+        <ant dir="${grails.home}" target="javadoc" />
 
         <mkdir dir="${base.dir}/output" />
         <copy todir="${base.dir}/output" failonerror="false">
-            <fileset dir="../grails/doc" />
+            <fileset dir="${grails.home}/doc" />
         </copy>
     </target>
 
@@ -16,6 +26,7 @@
 
     <target name="clean" description="Delete output">
         <delete dir="output" />
+        <delete dir="checkout" />
     </target>
 
     <target name="distclean" depends="clean"
@@ -25,10 +36,11 @@
     </target>
 
     <target name="docs"
-            description="Generate the Grails Guide and Reference docs">
+            description="Generate the Grails Guide and Reference docs"
+            depends="init, get-grails">
         <taskdef name="groovyc"  classname="org.codehaus.groovy.ant.Groovyc">
             <classpath>
-                <fileset dir="../grails/lib" includes="*.jar"  />
+                <fileset dir="${grails.home}/lib" includes="*.jar"  />
                 <fileset dir="${base.dir}/lib" />
                 <pathelement location="${base.dir}/bin" />
             </classpath>
@@ -39,7 +51,7 @@
         <copy todir="${base.dir}/bin" file="resources/log4j.properties"/>
         <groovyc srcdir="${base.dir}/src/groovy" destdir="bin">
             <classpath>
-                <fileset dir="../grails/lib" includes="*.jar"  />
+                <fileset dir="${grails.home}/lib" includes="*.jar"  />
                 <fileset dir="${base.dir}/lib" />
                 <pathelement location="${base.dir}/bin" />
             </classpath>
@@ -50,16 +62,17 @@
         <java classname="groovy.ui.GroovyMain" failonerror="true">
             <arg value="${base.dir}/Generate.groovy" />
 			<sysproperty key="base.dir" value="${base.dir}"/>
+			<sysproperty key="grails.home" value="${grails.home}"/>
             <classpath>
-                <fileset dir="../grails/lib" includes="*.jar"  />
+                <fileset dir="${grails.home}/lib" includes="*.jar"  />
                 <fileset dir="${base.dir}/lib" />
                 <pathelement location="${base.dir}/bin" />
             </classpath>
         </java>
     </target>
 
-	<target name="dist-nojavadoc" depends="docs">
-        <property file="../grails/build.properties"/>
+	<target name="dist-nojavadoc" depends="init, docs">
+        <property file="${grails.home}/build.properties"/>
 
         <mkdir dir="${base.dir}/dist" />
         <delete failonerror="false">
@@ -68,8 +81,15 @@
         <zip destfile="${base.dir}/dist/grails-docs-${grails.version}.zip" basedir="output"/>		
 	</target>
 
-    <target name="dist" depends="grails-javadoc,docs"
+    <target name="dist" depends="init, grails-javadoc,docs"
             description="Build documentation and create a zip for distibution">
     </target>
 
+	<target name="get-grails" unless="grails.home.was.set" depends="init">
+		<mkdir dir="checkout"/>
+		<get src="http://github.com/grails/grails-core/zipball/master" dest="checkout/grails-src.zip" verbose="true"/>
+		<unzip src="checkout/grails-src.zip" dest="checkout">
+			<mapper type="regexp" from="(grails-grails-core-[\w]*/)(.*)" to="grails-src/\2"/>
+		</unzip>
+	</target>
 </project>

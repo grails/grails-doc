@@ -6,7 +6,7 @@ import org.grails.doc.DocEngine;
 def ant = new AntBuilder()
 
 BASEDIR = System.getProperty("base.dir") ?: '.'
-GRAILS_HOME = "../grails"
+GRAILS_HOME = System.getProperty('grails.home')
 CONTEXT_PATH = DocEngine.CONTEXT_PATH
 SOURCE_FILE = DocEngine.SOURCE_FILE
 
