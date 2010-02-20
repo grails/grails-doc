@@ -1,17 +1,18 @@
 <project name="grails-docs" default="dist">
 
-	<property name="base.dir" value="." />
-	
-	<target name="init">
-		<condition property="grails.home.was.set">
-			<isset property="grails.home"/>
-		</condition>
-		
-		<!-- grails.home may be set interactively, which would take precedence over this... -->
-		<property name="grails.home" value="checkout/grails-src"/>
-	</target>
-	
-    <target name="grails-javadoc" 
+    <property file="local.properties" />
+    <property name="base.dir" value="." />
+
+    <target name="init">
+        <condition property="grails.home.was.set">
+            <isset property="grails.home"/>
+        </condition>
+
+        <!-- grails.home may be set interactively, which would take precedence over this... -->
+        <property name="grails.home" value="checkout/grails-src"/>
+    </target>
+
+    <target name="grails-javadoc"
             description="Generate most current javadoc for Grails"
             depends="init">
         <ant dir="${grails.home}" target="javadoc" />
@@ -61,8 +62,8 @@
 
         <java classname="groovy.ui.GroovyMain" failonerror="true">
             <arg value="${base.dir}/Generate.groovy" />
-			<sysproperty key="base.dir" value="${base.dir}"/>
-			<sysproperty key="grails.home" value="${grails.home}"/>
+            <sysproperty key="base.dir" value="${base.dir}"/>
+            <sysproperty key="grails.home" value="${grails.home}"/>
             <classpath>
                 <fileset dir="${grails.home}/lib" includes="*.jar"  />
                 <fileset dir="${base.dir}/lib" />
@@ -71,27 +72,27 @@
         </java>
     </target>
 
-	<target name="dist-nojavadoc" depends="init, docs">
+    <target name="dist-nojavadoc" depends="init, docs">
         <property file="${grails.home}/build.properties"/>
 
         <mkdir dir="${base.dir}/dist" />
         <delete failonerror="false">
             <fileset dir="${base.dir}/dist" includes="*.zip" />
         </delete>
-        <zip destfile="${base.dir}/dist/grails-docs-${grails.version}.zip" basedir="output"/>		
-	</target>
+        <zip destfile="${base.dir}/dist/grails-docs-${grails.version}.zip" basedir="output"/>
+    </target>
 
     <target name="dist" depends="init, grails-javadoc,docs"
             description="Build documentation and create a zip for distibution">
     </target>
 
-	<target name="get-grails" unless="grails.home.was.set" depends="init">
-		<mkdir dir="checkout"/>
-		<echo message="Downloading Grails source code. If you already have a copy of the Grails source code checked out you can avoid this download by setting the grails.home system property to point to your local copy of the source. See README.txt for more information."/>
-		<get src="http://github.com/grails/grails-core/zipball/master" dest="checkout/grails-src.zip" verbose="true"/>
-		<unzip src="checkout/grails-src.zip" dest="checkout">
-			<mapper type="regexp" from="(grails-grails-core-[\w]*/)(.*)" to="grails-src/\2"/>
-		</unzip>
-		<echo message="Grails source code has been downloaded to checkout/grails-src/"/>
-	</target>
+    <target name="get-grails" unless="grails.home.was.set" depends="init">
+        <mkdir dir="checkout"/>
+        <echo message="Downloading Grails source code. If you already have a copy of the Grails source code checked out you can avoid this download by setting the grails.home system property to point to your local copy of the source. See README.txt for more information."/>
+        <get src="http://github.com/grails/grails-core/zipball/master" dest="checkout/grails-src.zip" verbose="true"/>
+        <unzip src="checkout/grails-src.zip" dest="checkout">
+            <mapper type="regexp" from="(grails-grails-core-[\w]*/)(.*)" to="grails-src/\2"/>
+        </unzip>
+        <echo message="Grails source code has been downloaded to checkout/grails-src/"/>
+    </target>
 </project>

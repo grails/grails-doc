@@ -30,6 +30,15 @@ def p = Person.read(1)
 In this case the underlying Hibernate engine will not do any dirty checking and the object will not be persisted. Note that
 if you explicitly call the [save|domainClasses] method then the object is placed back into a read-write state.
 
+In addition, you can also load an proxy for an instance by using the [load|domainClasses] method:
+
+{code:java}
+def p = Person.load(1)
+{code}
+
+This incurs no database access until a method other than getId() is called. Hibernate then initializes the proxied instance, or
+throws an exception if no record is found for the specified id.
+
 h4. Update
 
 To update an instance, set some properties and then simply call [save|domainClasses] again:

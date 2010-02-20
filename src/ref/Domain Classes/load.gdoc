@@ -1,0 +1,26 @@
+h1. load
+
+h2. Purpose
+
+Returns a persistent instance of the domain class for the given identifier.
+
+Usually returns a proxy for the instance that is initialized on-demand, when a method other than getId() is invoked. load() only returns null if the provided id is null, so you cannot use it to test for existence. If you provide an id for an instance that doesn't exist, a proxy will be returned and an exception will be thrown only when you call any instance method other than getId().
+
+If there is an existing instance with the same id in the Hibernate session or 2nd-level cache, load() will return that instance instead of a proxy.
+
+h2. Examples
+
+{code:java}
+// load a single instance
+def b = Book.load(1)
+
+// delete an instance without retrieving it
+Book.load(1).delete()
+{code}
+
+h2. Description
+
+Parameters:
+
+* @id@ - The id of the object to retrieve
+
