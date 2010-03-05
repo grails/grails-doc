@@ -16,25 +16,18 @@ In this can the @hibernate-core@ dependency will be available only to the plugin
 
 h4. Overriding Plugin JAR Dependencies in Your Application
 
-If a plugin is using a JAR which conflicts with another plugin, or an application dependency then you can override how a plugin resolves its dependencies inside an application using the @plugin@ method:
+If a plugin is using a JAR which conflicts with another plugin, or an application dependency then you can override how a plugin resolves its dependencies inside an application using exclusions. For example:
 
 {code}
-plugin("hibernate") {
-    compile( 'org.hibernate:hibernate-core:3.3.1.GA') {
-		excludes 'ehcache', 'xml-apis', 'commons-logging'
+plugins {
+	runtime( ":hibernate:1.3.0" ) {
+		excludes "javassist"
 	}
-    compile 'org.hibernate:hibernate-annotations:3.4.0.GA',
-			'org.hibernate:hibernate-commons-annotations:3.3.0.ga'
-			
+}
+
+dependencies {			
 	runtime 'javassist:javassist:3.4.GA'	
 }
 {code}
 
-In this case the application is controlling how the @hibernate@ plugin resolves dependencies and not the @hibernate@ plugin. If you wish to simply exclude a single dependency resolved by a plugin then you can do so:
-
-{code}
-plugin("hibernate") {
-    runtime "cglib:cglib-nodep:2.1_3"
-	excludes 'javassist:javassist:3.4.GA'	
-}
-{code}
+In this case the application explicitly declares a dependency on the "hibernate" plugin and specifies an exclusion using the @excludes@ method, effectively excluding the javassist library as a dependency. 
