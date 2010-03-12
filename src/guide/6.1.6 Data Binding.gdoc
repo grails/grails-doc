@@ -1,6 +1,6 @@
 Data binding is the act of "binding" incoming request parameters onto the properties of an object or an entire graph of objects. Data binding should deal with all necessary type conversion since request parameters, which are typically delivered via a form submission, are always strings whilst the properties of a Groovy or Java object may well not be.
 
-Grails uses [Spring's|http://www.springframework.org] underlying data binding capability to perform data binding. 
+Grails uses [Spring's|http://www.springframework.org] underlying data binding capability to perform data binding.
 
 h4. Binding Request Data to the Model
 
@@ -45,6 +45,12 @@ Grails will automatically detect the @.id@ suffix on the request parameter and l
 def b = new Book(params)
 {code}
 
+An association property can be set to @null@ by passing the literal @String@ "null". For example:
+
+{code:java}
+/book/save?author.id=null
+{code}
+
 h4. Data Binding and Many-ended Associations
 
 If you have a one-to-many or many-to-many association there are different techniques for data binding depending of the association type.
@@ -58,7 +64,7 @@ If you have a @Set@ based association (default for a @hasMany@) then the simples
           value="${author?.books}" />
 {code}
 
-This produces a select box that allows you to select multiple values. In this case if you submit the form Grails will automatically use the identifiers from the select box to populate the @books@ association. 
+This produces a select box that allows you to select multiple values. In this case if you submit the form Grails will automatically use the identifiers from the select box to populate the @books@ association.
 
 However, if you have a scenario where you want to update the properties of the associated objects the this technique won't work. Instead you have to use the subscript operator:
 
@@ -89,9 +95,35 @@ Then Grails will automatically create a new instance for you at the defined posi
 
 Then Grails will automatically create instances in between. For example in the above case Grails will create 4 additional instances if the association being bound had a size of 2.
 
+You can bind existing instances of the associated type to a @List@ using the same @.id@ syntax as you would use with a single-ended association. For example:
+
+{code:xml}
+<g:select name="books[0].id" from="${Book.list()}" value="${author?.books[0]?.id}" />
+<g:select name="books[1].id" from="${Book.list()}" value="${author?.books[1]?.id}" />
+<g:select name="books[2].id" from="${Book.list()}" value="${author?.books[2]?.id}" />
+{code}
+
+Would allow individual entries in the @books List@ to be selected separately.
+
+Entries at particular indexes can be removed in the same way too. For example:
+
+{code:xml}
+<g:select name="books[0].id" from="${Book.list()}" value="${author?.books[0]?.id}" noSelection="['null': '']"/>
+{code}
+
+Will render a select box that will remove the association at @books[0]@ if the empty option is chosen.
+
+Binding to a @Map@ property works in exactly the same way except that the list index in the parameter name is replaced by the map key:
+
+{code:xml}
+<g:select name="images[cover].id" from="${Image.list()}" value="${book?.images[cover]?.id}" noSelection="['null': '']"/>
+{code}
+
+This would bind the selected image into the @Map@ property @images@ under a key of @"cover"@.
+
 h4. Data binding with Multiple domain classes
 
-It is possible to bind data to multiple domain objects from the [params|controllers] object. 
+It is possible to bind data to multiple domain objects from the [params|controllers] object.
 
 For example so you have an incoming request to:
 
