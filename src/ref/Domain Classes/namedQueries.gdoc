@@ -87,3 +87,14 @@ def numberOfBooks = Publication.recentPublications.count {
     }
 }
 {code}
+
+Named criteria may be chained together.  When criteria are chained together, the query will be generated
+as if all of the chained criteria had been combined in a single criteria closure.
+
+{code:java}
+// recent publications with 'Book' in the title
+def books = Publication.recentPublications.publicationsWithBookInTitle.list()
+
+// old publications with more than 500 pages and with 'Book' in the title
+def books = Publication.oldPublicationsLargerThan(500).publicationsWithBookInTitle.list()
+{code}
