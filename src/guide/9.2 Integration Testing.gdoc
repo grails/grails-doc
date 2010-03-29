@@ -2,20 +2,20 @@ Integration tests differ from unit tests in that you have full access to the Gra
 
 h4. Testing Controllers
 
-To test controllers you first have to understand the Spring Mock Library
+To test controllers you first have to understand the Spring Mock Library.
 
 Essentially Grails automatically configures each test with a [MockHttpServletRequest|api:org.springframework.mock.web.MockHttpServletRequest], [MockHttpServletResponse|api:org.springframework.mock.web.MockHttpServletResponse], and [MockHttpSession|api:org.springframework.mock.web.MockHttpSession] which you can then use to perform your tests. For example consider the following controller:
 
 {code:java}
 class FooController {
 
-	def text = {
-	    render "bar"
-	}
+    def text = {
+        render "bar"
+    }
 
-	def someRedirect = {
-		redirect(action:"bar")
-	}
+    def someRedirect = {
+        redirect(action:"bar")
+    }
 }{code}
 
 The tests for this would be:
@@ -23,34 +23,34 @@ The tests for this would be:
 {code:java}
 class FooControllerTests extends GroovyTestCase {
 
-  void testText() {
-		def fc = new FooController()
-		fc.text()
-		assertEquals "bar", fc.response.contentAsString
-	}
+    void testText() {
+        def fc = new FooController()
+        fc.text()
+        assertEquals "bar", fc.response.contentAsString
+    }
 
-	void testSomeRedirect() {
+    void testSomeRedirect() {
 
-		def fc = new FooController()
-		fc.someRedirect()
-		assertEquals "/foo/bar", fc.response.redirectedUrl
-	}
+        def fc = new FooController()
+        fc.someRedirect()
+        assertEquals "/foo/bar", fc.response.redirectedUrl
+    }
 }{code}
 
 In the above case the response is an instance of @MockHttpServletResponse@ which we can use to obtain the @contentAsString@ (when writing to the response) or the URL redirected to for example. These mocked versions of the Servlet API are, unlike the real versions, all completely mutable and hence you can set properties on the request such as the @contextPath@ and so on.
 
-Grails *does not* invoke [interceptors|guide:interceptors] automatically when calling actions during integration testing. You should test interceptors in isolation, and via [functional testing|guide:functionalTesting] if necessary.
+Grails *does not* invoke [interceptors|guide:interceptors] or servlet filters automatically when calling actions during integration testing. You should test interceptors and filters in isolation, and via [functional testing|guide:functionalTesting] if necessary.
 
 h4. Testing Controllers with Services
 
-If your controller references a service, you have to explicitly initialise the service from your test.
+If your controller references a service (or other Spring beans), you have to explicitly initialise the service from your test.
 
 Given a controller using a service:
 
 {code:java}
 class FilmStarsController {
     def popularityService
-    
+
     def update = {
         // do something with popularityService
     }
@@ -62,7 +62,7 @@ The test for this would be:
 class FilmStarsTests extends GroovyTestCase {
     def popularityService
 
-    public void testInjectedServiceInController () {
+    void testInjectedServiceInController () {
         def fsc = new FilmStarsController()
         fsc.popularityService = popularityService
         fsc.update()
@@ -100,13 +100,13 @@ The [render|controllers] method allows you to render a custom view at any point 
 
 {code:java}
 def save = {
-	def book = Book(params)
-	if(book.save()) {
-		// handle
-	}
-	else {
-		render(view:"create", model:[book:book])
-	}
+    def book = Book(params)
+    if(book.save()) {
+        // handle
+    }
+    else {
+        render(view:"create", model:[book:book])
+    }
 }
 {code}
 
@@ -116,7 +116,7 @@ In the above example the result of the model of the action is not available as t
 def bookController = new BookController()
 bookController.save()
 def model = bookController.modelAndView.model.book
-{code} 
+{code}
 
 h4. Simulating Request Data
 
@@ -124,7 +124,7 @@ If you're testing an action that requires request data such as a REST web servic
 
 {code:java}
 def create = {
-	[book: new Book(params['book']) ]	
+    [book: new Book(params['book']) ]
 }
 {code}
 
@@ -132,18 +132,18 @@ If you wish the simulate the 'book' parameter as an XML request you could do som
 
 {code:java}
 void testCreateWithXML() {
-	def controller = new BookController()
-	controller.request.contentType = 'text/xml'
-	controller.request.content = '''<?xml version="1.0" encoding="ISO-8859-1"?>
-	<book>
-		<title>The Stand</title>
-		...
-	</book>	
-	'''.getBytes() // note we need the bytes
-	
-	def model = controller.create()
-	assert model.book
-	assertEquals "The Stand", model.book.title
+    def controller = new BookController()
+    controller.request.contentType = 'text/xml'
+    controller.request.content = '''<?xml version="1.0" encoding="ISO-8859-1"?>
+    <book>
+        <title>The Stand</title>
+        ...
+    </book>
+    '''.getBytes() // note we need the bytes
+
+    def model = controller.create()
+    assert model.book
+    assertEquals "The Stand", model.book.title
 }
 {code}
 
@@ -151,14 +151,13 @@ The same can be achieved with a JSON request:
 
 {code:java}
 void testCreateWithJSON() {
-	def controller = new BookController()	
- 	controller.request.contentType = "text/json"
- 	controller.request.content = '{"id":1,"class":"Book","title":"The Stand"}'.getBytes()	
+    def controller = new BookController()
+    controller.request.contentType = "text/json"
+    controller.request.content = '{"id":1,"class":"Book","title":"The Stand"}'.getBytes()
 
-	def model = controller.create()
-	assert model.book
-	assertEquals "The Stand", model.book.title
-	
+    def model = controller.create()
+    assert model.book
+    assertEquals "The Stand", model.book.title
 }
 {code}
 
@@ -180,18 +179,18 @@ For example given this trivial flow:
 
 {code}
 class ExampleController {
-	def exampleFlow = {
-		start {
-			on("go") {
-				flow.hello = "world"
-			}.to "next"
-		}
-		next {
-			on("back").to "start"
-			on("go").to "end"
-		}
-		end()
-	}	
+    def exampleFlow = {
+        start {
+            on("go") {
+                flow.hello = "world"
+            }.to "next"
+        }
+        next {
+            on("back").to "start"
+            on("go").to "end"
+        }
+        end()
+    }
 }
 {code}
 
@@ -200,16 +199,16 @@ You need to tell the test harness what to use for the "flow definition". This is
 
 {code}
 class ExampleFlowTests extends grails.test.WebFlowTestCase {
-	def getFlow() { new ExampleController().exampleFlow }
-	...
+    def getFlow() { new ExampleController().exampleFlow }
+    ...
 }
 {code}
 
 If you need to specify the flow id you can do so by overriding the getFlowId method otherwise the default is @test@:
 {code}
 class ExampleFlowTests extends grails.test.WebFlowTestCase {
-	String getFlowId() { "example" }
-	...
+    String getFlowId() { "example" }
+    ...
 }
 {code}
 
@@ -217,10 +216,10 @@ Once this is done in your test you need to kick off the flow with the @startFlow
 
 {code}
 void testExampleFlow() {
-	def viewSelection = startFlow()
-	
-	assertEquals "start", viewSelection.viewName
-	...
+    def viewSelection = startFlow()
+
+    assertEquals "start", viewSelection.viewName
+    ...
 }
 {code}
 
@@ -228,12 +227,12 @@ As demonstrated above you can check you're on the right state using the @viewNam
 
 {code}
 void testExampleFlow() {
-	...
-	viewSelection = signalEvent("go")
-	assertEquals "next", viewSelection.viewName
-	assertEquals "world", viewSelection.model.hello
+    ...
+    viewSelection = signalEvent("go")
+    assertEquals "next", viewSelection.viewName
+    assertEquals "world", viewSelection.model.hello
 }
-{code} 
+{code}
 
 Here we have signaled to the flow to execute the event "go" this causes a transition to the "next" state. In the example a transition action placed a @hello@ variable into the flow scope. We can test the value of this variable by inspecting the @model@ property of the @ViewSelection@ as above.
 
@@ -245,13 +244,13 @@ Testing tag libraries is actually pretty trivial because when a tag is invoked a
 {code:java}
 class FooTagLib {
    def bar =  { attrs, body ->
-   	   out << "<p>Hello World!</p>"
-   }          
+          out << "<p>Hello World!</p>"
+   }
 
    def bodyTag =  { attrs, body ->
       out << "<${attrs.name}>"
            out << body()
-      out << "</${attrs.name}>"   	
+      out << "</${attrs.name}>"
    }
 }{code}
 
@@ -260,22 +259,23 @@ The tests would look like:
 {code:java}
 class FooTagLibTests extends GroovyTestCase {
 
-  void testBarTag() {
-	   assertEquals "<p>Hello World!</p>", new FooTagLib().bar(null,null)
-   }
-	    
-   void testBodyTag() {
-	   assertEquals "<p>Hello World!</p>", new FooTagLib().bodyTag(name:"p") {
-	       "Hello World!" 
-       }
+    void testBarTag() {
+        assertEquals "<p>Hello World!</p>", new FooTagLib().bar(null,null)
     }
-}{code}
+
+    void testBodyTag() {
+        assertEquals "<p>Hello World!</p>", new FooTagLib().bodyTag(name:"p") {
+            "Hello World!"
+        }
+    }
+}
+{code}
 
 Notice that for the second example, @testBodyTag@, we pass a block that returns the body of the tag. This is handy for representing the body as a String.
 
 h4. Testing Tag Libraries with GroovyPagesTestCase
 
-In addition to doing simply testing of tag libraries like the above you can also use the @grails.test.GroovyPagesTestCase@ class to test tag libraries. 
+In addition to doing simply testing of tag libraries like the above you can also use the @grails.test.GroovyPagesTestCase@ class to test tag libraries.
 
 The @GroovyPagesTestCase@ class is a sub class of the regular @GroovyTestCase@ class and provides utility methods for testing the output of a GSP rendering.
 
@@ -287,9 +287,9 @@ As an example given a date formatting tag library such as the one below:
 
 {code}
 class FormatTagLib {
-	def dateFormat = { attrs, body -> 
-		out << new java.text.SimpleDateFormat(attrs.format) << attrs.date
-	}
+    def dateFormat = { attrs, body ->
+        out << new java.text.SimpleDateFormat(attrs.format) << attrs.date
+    }
 }
 {code}
 
@@ -297,12 +297,12 @@ This can be easily tested as follows:
 
 {code}
 class FormatTagLibTests extends GroovyPagesTestCase {
-	void testDateFormat() {
-		def template = '<g:dateFormat format="dd-MM-yyyy" date="${myDate}" />'
-		
-		def testDate = ... // create the date
-		assertOutputEquals( '01-01-2008', template, [myDate:testDate] )
-	}
+    void testDateFormat() {
+        def template = '<g:dateFormat format="dd-MM-yyyy" date="${myDate}" />'
+
+        def testDate = ... // create the date
+        assertOutputEquals( '01-01-2008', template, [myDate:testDate] )
+    }
 }
 {code}
 
@@ -310,14 +310,14 @@ You can also obtain the result of a GSP using the @applyTemplate@ method of the 
 
 {code}
 class FormatTagLibTests extends GroovyPagesTestCase {
-	void testDateFormat() {
-		def template = '<g:dateFormat format="dd-MM-yyyy" date="${myDate}" />'
-		
-		def testDate = ... // create the date
-		def result = applyTemplate( template, [myDate:testDate] )
-		
-		assertEquals '01-01-2008', result
-	}
+    void testDateFormat() {
+        def template = '<g:dateFormat format="dd-MM-yyyy" date="${myDate}" />'
+
+        def testDate = ... // create the date
+        def result = applyTemplate( template, [myDate:testDate] )
+
+        assertEquals '01-01-2008', result
+    }
 }
 {code}
 
@@ -327,10 +327,10 @@ Testing domain classes is typically a simple matter of using the [GORM API|guide
 
 {code:java}
 void testQuery() {
-	def books = [ new Book(title:"The Stand"), new Book(title:"The Shining")]
-	books*.save()
-	
-	assertEquals 2, Book.list().size()
+    def books = [ new Book(title:"The Stand"), new Book(title:"The Shining")]
+    books*.save()
+
+    assertEquals 2, Book.list().size()
 }
 {code}
 
@@ -338,10 +338,10 @@ This test will actually fail, because calling [save|domainClasses] does not actu
 
 {code:java}
 void testQuery() {
-	def books = [ new Book(title:"The Stand"), new Book(title:"The Shining")]
-	books*.save(flush:true)
-	
-	assertEquals 2, Book.list().size()
+    def books = [ new Book(title:"The Stand"), new Book(title:"The Shining")]
+    books*.save(flush:true)
+
+    assertEquals 2, Book.list().size()
 }
 {code}
 
