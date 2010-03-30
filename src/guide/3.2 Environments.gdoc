@@ -4,10 +4,10 @@ Grails supports the concept of per environment configuration. Both the @Config.g
 
 {code:java}
 dataSource {
-    pooled = false                          
-    driverClassName = "org.hsqldb.jdbcDriver"	
+    pooled = false
+    driverClassName = "org.hsqldb.jdbcDriver"
     username = "sa"
-    password = ""				
+    password = ""
 }
 environments {
     development {
@@ -15,13 +15,13 @@ environments {
             dbCreate = "create-drop" // one of 'create', 'createeate-drop','update'
             url = "jdbc:hsqldb:mem:devDB"
         }
-    }   
+    }
     test {
         dataSource {
             dbCreate = "update"
             url = "jdbc:hsqldb:mem:testDb"
         }
-    }   
+    }
     production {
         dataSource {
             dbCreate = "update"
@@ -63,12 +63,12 @@ import grails.util.Environment
 ...
 
 switch(Environment.current) {
-	case Environment.DEVELOPMENT:
-	   configureForDevelopment()
-	break
-	case Environment.PRODUCTION:
-	   configureForProduction()
-	break 
+    case Environment.DEVELOPMENT:
+        configureForDevelopment()
+    break
+    case Environment.PRODUCTION:
+        configureForProduction()
+    break
 }
 {code}
 
@@ -78,15 +78,15 @@ Its often desirable to run code when your application starts up on a per-environ
 
 {code}
 def init = { ServletContext ctx ->
-        environments {
-            production {
-                ctx.setAttribute("env", "prod")
-            }
-            development {
-                ctx.setAttribute("env", "dev")
-            }
+    environments {
+        production {
+            ctx.setAttribute("env", "prod")
         }
-        ctx.setAttribute("foo", "bar")
+        development {
+            ctx.setAttribute("env", "dev")
+        }
+    }
+    ctx.setAttribute("foo", "bar")
 }
 {code}
 
@@ -96,11 +96,11 @@ The previous @BootStrap@ example uses the @grails.util.Environment@ class intern
 
 {code}
 Environment.executeForCurrentEnvironment {
-	production {
-		// do something in production
-	}
-	development {
-		// do something only in development
-	}
+    production {
+        // do something in production
+    }
+    development {
+        // do something only in development
+    }
 }
 {code}

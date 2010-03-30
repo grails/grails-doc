@@ -12,16 +12,18 @@ Just to re-cap, content centric Ajax involves sending some HTML back from the se
 
 {code:java}
 def showBook = {
-	def b = Book.get(params.id)
-	
-	render(template:"bookTemplate", model:[book:b])
+    def b = Book.get(params.id)
+
+    render(template:"bookTemplate", model:[book:b])
 }
 {code}
 
 Calling this on the client involves using the [remoteLink|tags] tag:
 
 {code:xml}
-<g:remoteLink action="showBook" id="${book.id}" update="book${book.id}">Update Book</g:remoteLink>
+<g:remoteLink action="showBook" id="${book.id}"
+              update="book${book.id}">Update Book</g:remoteLink>
+
 <div id="book${book.id}">
    <!--existing book mark-up -->
 </div>
@@ -35,25 +37,25 @@ Data Centric Ajax typically involves evaluating the response on the client and u
 import grails.converters.*
 
 def showBook = {
-	def b = Book.get(params.id)
-	
-    render b as JSON	
+    def b = Book.get(params.id)
+
+    render b as JSON
 }
-{code} 
+{code}
 
 And then on the client parse the incoming JSON request using an Ajax event handler:
 
 {code:xml}
 <g:javascript>
 function updateBook(e) {
-	var book = eval("("+e.responseText+")") // evaluate the JSON
-	$("book"+book.id+"_title").innerHTML = book.title
+    var book = eval("("+e.responseText+")") // evaluate the JSON
+    $("book" + book.id + "_title").innerHTML = book.title
 }
 <g:javascript>
 <g:remoteLink action="test" update="foo" onSuccess="updateBook(e)">Update Book</g:remoteLink>
 <g:set var="bookId">book${book.id}</g:set>
 <div id="${bookId}">
-	<div id="${bookId}_title">The Stand</div>
+    <div id="${bookId}_title">The Stand</div>
 </div>
 {code}
 
@@ -65,9 +67,9 @@ On the server side using XML is equally trivial:
 import grails.converters.*
 
 def showBook = {
-	def b = Book.get(params.id)
-	
-    render b as XML	
+    def b = Book.get(params.id)
+
+    render b as XML
 }
 {code}
 
@@ -76,15 +78,15 @@ However, since DOM is involved the client gets more complicated:
 {code:xml}
 <g:javascript>
 function updateBook(e) {
-	var xml = e.responseXML
-	var id = xml.getElementsByTagName("book").getAttribute("id")
-	$("book"+id+"_title")=xml.getElementsByTagName("title")[0].textContent
+    var xml = e.responseXML
+    var id = xml.getElementsByTagName("book").getAttribute("id")
+    $("book" + id + "_title") = xml.getElementsByTagName("title")[0].textContent
 }
 <g:javascript>
 <g:remoteLink action="test" update="foo" onSuccess="updateBook(e)">Update Book</g:remoteLink>
 <g:set var="bookId">book${book.id}</g:set>
 <div id="${bookId}">
-	<div id="${bookId}_title">The Stand</div>
+    <div id="${bookId}_title">The Stand</div>
 </div>
 {code}
 
@@ -94,7 +96,7 @@ Script centric Ajax involves actually sending Javascript back that gets evaluate
 
 {code:java}
 def showBook = {
-	def b = Book.get(params.id)
+    def b = Book.get(params.id)
 
     response.contentType = "text/javascript"
     String title = b.title.encodeAsJavascript()

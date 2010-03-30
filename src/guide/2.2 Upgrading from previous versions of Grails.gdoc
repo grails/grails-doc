@@ -68,27 +68,23 @@ Grails now executes validation routines when the underlying Hibernate session is
 
 {code}
 static constraints = {
-	author(validator: { a ->
+	author validator: { a ->
 		assert a != Book.findByTitle("My Book").author		
-	})
+	}
 }
 {code}
 
 The above code can lead to a @StackOverflowError@ in Grails 1.2. The solution is to run the query in a new Hibernate @session@ (which is recommended in general as doing Hibernate work during flushing can cause other issues):
 
 {code}
-{code}
 static constraints = {
-	author(validator: { a ->
+	author validator: { a ->
 		Book.withNewSession {
 			assert a != Book.findByTitle("My Book").author					
 		}
-	})
+	}
 }
 {code}
-
-{code}
-
 
 h3. Upgrading from Grails 1.0.x
 

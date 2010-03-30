@@ -12,22 +12,22 @@ String description
 By default, in MySQL, Grails would define these columns as...
 
 {code:java}
- column name | data type 
- description | varchar(255) 
+column name | data type 
+description | varchar(255) 
 {code}
 
 But perhaps the business rules for this domain class state that a description can be up to 1000 characters in length.  If that were the case, we'd likely define the column as follows _if_ we were creating the table via an SQL script.
 
 {code:java}
- column name | data type 
- description | TEXT 
+column name | data type 
+description | TEXT 
 {code}
 
 Chances are we'd also want to have some application-based validation to make sure we don't exceed that 1000 character limit _before_ we persist any records.  In Grails, we achieve this validation via [constraints|guide:constraints].  We'd add the following constraint declaration to the domain class.
 
 {code}
 static constraints = {
-        description(maxSize:1000)
+    description(maxSize:1000)
 }
 {code}
 

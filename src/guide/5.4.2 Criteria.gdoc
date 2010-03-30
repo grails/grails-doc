@@ -30,8 +30,8 @@ As demonstrated in the previous example you can group criteria in a logical OR u
 
 {code:java}
 or {
-	between("balance", 500, 1000)
-	eq("branch", "London")
+    between("balance", 500, 1000)
+    eq("branch", "London")
 }
 {code}
 
@@ -39,8 +39,8 @@ This also works with logical AND:
 
 {code:java}
 and {
-	between("balance", 500, 1000)
-	eq("branch", "London")
+    between("balance", 500, 1000)
+    eq("branch", "London")
 }
 {code}
 
@@ -48,8 +48,8 @@ And you can also negate using logical NOT:
 
 {code:java}
 not {
-	between("balance", 500, 1000)
-	eq("branch", "London")
+    between("balance", 500, 1000)
+    eq("branch", "London")
 }
 {code}
 
@@ -74,9 +74,9 @@ We can query this association by using the property name @transaction@ as a buil
 def c = Account.createCriteria()
 def now = new Date()
 def results = c.list {
-       transactions {
-            between('date',now-10, now)
-       }
+    transactions {
+        between('date',now-10, now)
+    }
 }
 {code}
 
@@ -88,12 +88,12 @@ You can also nest such association queries within logical blocks:
 def c = Account.createCriteria()
 def now = new Date()
 def results = c.list {
-     or {
+    or {
         between('created',now-10,now)
         transactions {
-             between('date',now-10, now)
+            between('date',now-10, now)
         }
-     }
+    }
 }
 {code}
 
@@ -109,9 +109,9 @@ Projections may be used to customise the results. To use projections you need to
 def c = Account.createCriteria()
 
 def numberOfBranches = c.get {
-	projections {
-		countDistinct('branch')
-	}
+    projections {
+        countDistinct('branch')
+    }
 }
 
 {code}
@@ -142,7 +142,7 @@ You can use Hibernate's [ScrollableResults|api:org.hibernate.ScrollableResults] 
 
 {code:java}
 def results = crit.scroll {
-      maxResults(10)
+    maxResults(10)
 }
 def f = results.first()
 def l = results.last()
@@ -167,13 +167,13 @@ h4. Setting properties in the Criteria instance
 If a node within the builder tree doesn't match a particular criterion it will attempt to set a property on the Criteria object itself. Thus allowing full access to all the properties in this class. The below example calls @setMaxResults@ and @setFirstResult@ on the [Criteria|api:org.hibernate.Criteria] instance:
 
 {code:java}
-	import org.hibernate.FetchMode as FM
-	...
-	def results = c.list {
-		maxResults(10)
-		firstResult(50)
-		fetchMode("aRelationship", FM.EAGER)
-	}
+import org.hibernate.FetchMode as FM
+...
+def results = c.list {
+    maxResults(10)
+    firstResult(50)
+    fetchMode("aRelationship", FM.EAGER)
+}
 {code}
 
 h4. Querying with Eager Fetching
@@ -184,10 +184,10 @@ In the section on [Eager and Lazy Fetching|guide:5.3.4 Eager and Lazy Fetching] 
 
 def criteria = Task.createCriteria()
 def tasks = criteria.list{
-     eq "assignee.id", task.assignee.id
-     join 'assignee'
-     join 'project'
-     order 'priority', 'asc'
+    eq "assignee.id", task.assignee.id
+    join 'assignee'
+    join 'project'
+    order 'priority', 'asc'
 }
 {code}
 
@@ -216,11 +216,4 @@ c.list { ... }
  *listDistinct* | If subqueries or associations are used, one may end up with the same row multiple times in the result set, this allows listing only distinct entities and is equivalent to @DISTINCT_ROOT_ENTITY@ of the [CriteriaSpecification|api:org.hibernate.criterion.CriteriaSpecification] class.
 *count* | Returns the number of matching rows.
 {table}
-
-
-
-
-
-
-
 

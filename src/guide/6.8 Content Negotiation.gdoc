@@ -1,4 +1,4 @@
-Grails has built in support for [Content negotiation|http://en.wikipedia.org/wiki/Content_negotiation] using either the HTTP @Accept@ header, an explicit format request parameter or the extension of a mapped URI. 
+Grails has built in support for [Content negotiation|http://en.wikipedia.org/wiki/Content_negotiation] using either the HTTP @Accept@ header, an explicit format request parameter or the extension of a mapped URI.
 
 h4. Configuring Mime Types
 
@@ -52,15 +52,15 @@ In this case 'all' possible formats are accepted by the client. To deal with dif
 import grails.converters.*
 
 class BookController {
-	def books
-	def list = {
-		this.books = Book.list()
-		withFormat {
-			html bookList:books
-			js { render "alert('hello')" } 
-			xml { render books as XML }
-		}
-	}
+    def books
+    def list = {
+        this.books = Book.list()
+        withFormat {
+            html bookList:books
+            js { render "alert('hello')" }
+            xml { render books as XML }
+        }
+    }
 }
 {code}
 
@@ -84,7 +84,7 @@ You can also define this parameter in the [URL Mappings|guide:mappings] definiti
 
 {code:java}
 "/book/list"(controller:"book", action:"list") {
-	format = "xml"
+    format = "xml"
 }
 {code}
 
@@ -108,22 +108,23 @@ To test content negotiation in an integration test (see the section on [Testing|
 
 {code:java}
 void testJavascriptOutput() {
-	def controller = new TestController()
-	controller.request.addHeader "Accept", "text/javascript, text/html, application/xml, text/xml, */*"
-	
-	controller.testAction()
-	assertEquals "alert('hello')", controller.response.contentAsString
+    def controller = new TestController()
+    controller.request.addHeader "Accept",
+              "text/javascript, text/html, application/xml, text/xml, */*"
+
+    controller.testAction()
+    assertEquals "alert('hello')", controller.response.contentAsString
 }
-{code} 
+{code}
 
 Or you can set the format parameter to achieve a similar effect:
 
 {code:java}
 void testJavascriptOutput() {
-	def controller = new TestController()
-	controller.params.format = 'js'
-	
-	controller.testAction()
-	assertEquals "alert('hello')", controller.response.contentAsString
+    def controller = new TestController()
+    controller.params.format = 'js'
+
+    controller.testAction()
+    assertEquals "alert('hello')", controller.response.contentAsString
 }
 {code}

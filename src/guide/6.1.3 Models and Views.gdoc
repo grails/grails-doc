@@ -4,7 +4,7 @@ A model is essentially a map that the view uses when rendering. The keys within 
 
 {code:java}
 def show = {
- 	[ book : Book.get( params.id ) ]
+    [ book : Book.get( params.id ) ]
 }
 {code}
 
@@ -15,8 +15,8 @@ class BookController {
     List books
     List authors
     def list = {
-           books = Book.list()
-           authors = Author.list()
+        books = Book.list()
+        authors = Author.list()
     }
 }
 {code}
@@ -25,7 +25,7 @@ class BookController {
 This is possible due to the fact that controllers are prototype scoped. In other words a new controller is created for each request. Otherwise code such as the above would not be thread safe.
 {note}
 
-In the above example the @books@ and @authors@ properties will be available in the view. 
+In the above example the @books@ and @authors@ properties will be available in the view.
 
 A more advanced approach is to return an instance of the Spring [ModelAndView|api:org.springframework.web.servlet.ModelAndView] class:
 
@@ -47,9 +47,9 @@ In both of the previous two examples there was no code that specified which [vie
 
 {code:java}
 class BookController {
-	def show = {
-	 	[ book : Book.get( params.id ) ]
-	}	
+    def show = {
+         [ book : Book.get( params.id ) ]
+    }
 }
 {code}
 
@@ -59,18 +59,18 @@ If you wish to render another view, then the [render|controllers] method there t
 
 {code:java}
 def show = {
-  	def map = [ book : Book.get( params.id ) ]
+    def map = [ book : Book.get( params.id ) ]
     render(view:"display", model:map)
-}	
+}
 {code}
 
 In this case Grails will attempt to render a view at the location @grails-app/views/book/display.gsp@. Notice that Grails automatically qualifies the view location with the @book@ folder of the @grails-app/views@ directory. This is convenient, but if you have some shared views you need to access instead use:
 
 {code:java}
 def show = {
-  	def map = [ book : Book.get( params.id ) ]
+    def map = [ book : Book.get( params.id ) ]
     render(view:"/shared/display", model:map)
-}	
+}
 {code}
 
 In this case Grails will attempt to render a view at the location @grails-app/views/shared/display.gsp@.
@@ -105,37 +105,35 @@ render(text:"<xml>some xml</xml>",contentType:"text/xml",encoding:"UTF-8")
 If you plan on using Groovy's MarkupBuilder to generate html for use with the render method becareful of naming clashes between html elements and Grails tags. e.g.
 
 {code:java}
-    def login = {
-        StringWriter w = new StringWriter()
-        def builder = new groovy.xml.MarkupBuilder(w)
-        builder.html{
-            head{
-                title 'Log in'
-            }
-            body{
-                h1 'Hello'
-                form{
-
-                }
+def login = {
+    StringWriter w = new StringWriter()
+    def builder = new groovy.xml.MarkupBuilder(w)
+    builder.html{
+        head{
+            title 'Log in'
+        }
+        body{
+            h1 'Hello'
+            form{
             }
         }
-
-        def html = w.toString()
-        render html
     }
+
+    def html = w.toString()
+    render html
+}
 {code}
 
 Will actually [call the form tag|guide:6.2.2.6 Tags as Method Calls] (which will return some text that will be ignored by the MarkupBuilder). To correctly output a <form> elemement, use the following:
 
- {code:java}
-    def login = {
-        // ...
-        body{
-            h1 'Hello'
-            builder.form{
-
-            }
+{code:java}
+def login = {
+    // ...
+    body{
+        h1 'Hello'
+        builder.form{
         }
-        // ...
-   }
+    }
+    // ...
+}
 {code}

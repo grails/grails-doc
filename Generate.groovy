@@ -1,12 +1,13 @@
-import org.radeox.engine.BaseRenderEngine;
-import org.radeox.api.engine.*;
+import org.grails.doc.DocEngine
+import org.grails.doc.PdfBuilder
+
+import org.radeox.api.engine.*
 import org.radeox.engine.context.BaseInitialRenderContext
-import org.grails.doc.DocEngine;
 
 def ant = new AntBuilder()
 
 BASEDIR = System.getProperty("base.dir") ?: '.'
-GRAILS_HOME = System.getProperty('grails.home')
+GRAILS_HOME = System.getProperty("grails.home")
 CONTEXT_PATH = DocEngine.CONTEXT_PATH
 SOURCE_FILE = DocEngine.SOURCE_FILE
 
@@ -22,7 +23,8 @@ title = props.title
 version = props."grails.version"
 authors = props.author
 
-def compare = [compare: {o1, o2 ->
+def compare = [equals: { false },
+               compare: {o1, o2 ->
     def idx1 = o1.name[0..o1.name.indexOf(' ') - 1]
     def idx2 = o2.name[0..o2.name.indexOf(' ') - 1]
     def nums1 = idx1.split(/\./).findAll { it.trim() != ''}*.toInteger()
@@ -38,15 +40,14 @@ def compare = [compare: {o1, o2 ->
     for (i in 0..<nums1.size()) {
         result = nums1[i].compareTo(nums2[i])
         if (result != 0) break
-    }        
+    }
     result
-},
-        equals: { false }] as Comparator
+}] as Comparator
 
 files = new File("${BASEDIR}/src/guide").listFiles().findAll { it.name.endsWith(".gdoc") }.sort(compare)
-context = new BaseInitialRenderContext();
+context = new BaseInitialRenderContext()
 context.set(CONTEXT_PATH, "..")
-context.setParameters(new HashMap()) // required by some macros
+context.setParameters([:]) // required by some macros
 
 ant = new AntBuilder()
 cache = [:]
@@ -76,9 +77,9 @@ chapterToc = new StringBuffer()
 
 void writeChapter() {
     new File("${BASEDIR}/output/guide/${chapterTitle}.html").withWriter {
-        template.make(title:chapterTitle, 
+        template.make(title:chapterTitle,
                       header:chapterHeader,
-                      toc:chapterToc.toString(), 
+                      toc:chapterToc.toString(),
                       content:chapterContents.toString(),
                       path:"..").writeTo(it)
     }
@@ -114,10 +115,10 @@ new File("${BASEDIR}/resources/style/guideItem.html").withReader("UTF-8") {reade
                 writeChapter()
 
             chapterTitle = title // after previous used to write prev chapter
-			chapterHeader = header
+            chapterHeader = header
 
-			// links to page, not anchor
-			chaptersOnlyToc << "<div class=\"tocItem\" style=\"margin-left:${margin}px\"><a href=\"${chapterTitle}.html\">${chapterTitle}</a></div>"
+            // links to page, not anchor
+            chaptersOnlyToc << "<div class=\"tocItem\" style=\"margin-left:${margin}px\"><a href=\"${chapterTitle}.html\">${chapterTitle}</a></div>"
         }
         else {
             chapterToc << tocEntry
@@ -125,7 +126,7 @@ new File("${BASEDIR}/resources/style/guideItem.html").withReader("UTF-8") {reade
         }        // level 0=h1, (1..n)=h2
 
 
-		fullToc << tocEntry
+        fullToc << tocEntry
         context.set(SOURCE_FILE, entry.value)
         context.set(CONTEXT_PATH, "..")
         def body = engine.render(entry.value.text, context)
@@ -134,7 +135,7 @@ new File("${BASEDIR}/resources/style/guideItem.html").withReader("UTF-8") {reade
         chapterContents <<  body
 
         new File("${BASEDIR}/output/guide/pages/${title}.html").withWriter("UTF-8") {
-            template.make(title:title, header:header, 
+            template.make(title:title, header:header,
                           toc:"", content:body, path:"../..").writeTo(it)
         }
     }
@@ -178,7 +179,7 @@ new File("${BASEDIR}/resources/style/layout.html").withReader("UTF-8") {reader -
     new File("${BASEDIR}/output/guide/single.html").withWriter("UTF-8") {out ->
         template.make(vars).writeTo(out)
     }
-	vars.toc = chaptersOnlyToc
+    vars.toc = chaptersOnlyToc
     vars.body = ""
     new File("${BASEDIR}/output/guide/index.html").withWriter("UTF-8") {out ->
         template.make(vars).writeTo(out)
@@ -203,7 +204,7 @@ void writeReferenceItem(File file, String path, String section, String name) {
 files = new File("${BASEDIR}/src/ref").listFiles().toList().sort()
 reference = [:]
 new File("${BASEDIR}/resources/style/referenceItem.html").withReader("UTF-8") {reader ->
-    template = templateEngine.createTemplate(reader)		
+    template = templateEngine.createTemplate(reader)
     for(f in files) {
         if(f.directory && !f.name.startsWith(".")) {
 
@@ -232,9 +233,6 @@ new File("${BASEDIR}/resources/style/menu.html").withReader("UTF-8") {reader ->
     }
 }
 
-
-
+PdfBuilder.build(BASEDIR)
 
 println "Done. Look at output/index.html"
-
-

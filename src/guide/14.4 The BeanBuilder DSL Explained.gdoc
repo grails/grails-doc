@@ -254,7 +254,7 @@ class Person {
 }
 class BirthdayCardSender {
    List peopleSentCards = []
-   public void onBirthday(Person person) {
+   void onBirthday(Person person) {
       peopleSentCards << person
    }
 }
@@ -265,18 +265,18 @@ You can define an AOP aspect that uses a pointcut to detect whenever the @birthd
 
 {code:java}
 xmlns aop:"http://www.springframework.org/schema/aop"
-fred(Person) { 
- name = "Fred" 
- age = 45 
-} 
+fred(Person) {
+    name = "Fred"
+    age = 45
+}
 
 birthdayCardSenderAspect(BirthdayCardSender)
 
-aop { 
-   config("proxy-target-class":true) { 
-       aspect( id:"sendBirthdayCard",ref:"birthdayCardSenderAspect" ) { 
-          after method:"onBirthday", pointcut: "execution(void ..Person.birthday()) and this(person)" 
-       } 
-   } 
+aop {
+   config("proxy-target-class":true) {
+       aspect( id:"sendBirthdayCard",ref:"birthdayCardSenderAspect" ) {
+          after method:"onBirthday", pointcut: "execution(void ..Person.birthday()) and this(person)"
+       }
+   }
 }
 {code}

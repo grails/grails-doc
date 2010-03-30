@@ -10,7 +10,7 @@ The @beforeInterceptor@ intercepts processing before the action is executed. If 
 
 {code:java}
 def beforeInterceptor = {
-       println "Tracing action ${actionUri}"
+    println "Tracing action ${actionUri}"
 }
 {code}
 
@@ -21,13 +21,13 @@ The above is declared inside the body of the controller definition.  It will be 
 def beforeInterceptor = [action:this.&auth,except:'login']
 // defined as a regular method so its private
 def auth() {
-     if(!session.user) {
-            redirect(action:'login')
-            return false
-     }
+    if(!session.user) {
+        redirect(action:'login')
+        return false
+    }
 }
 def login = {
-     // display login page
+    // display login page
 }
 {code}
 
@@ -40,7 +40,7 @@ To define an interceptor that is executed after an action use the @afterIntercep
 
 {code:java}
 def afterInterceptor = { model ->
-       println "Tracing action ${actionUri}"
+    println "Tracing action ${actionUri}"
 }
 {code}
 
@@ -50,9 +50,9 @@ An after interceptor may also modify the Spring MVC [ModelAndView|api:org.spring
 
 {code:java}
 def afterInterceptor = { model, modelAndView ->
-       println "Current view is ${modelAndView.viewName}"
-       if(model.someVar) modelAndView.viewName = "/mycontroller/someotherview"
-       println "View is now ${modelAndView.viewName}"
+    println "Current view is ${modelAndView.viewName}"
+    if(model.someVar) modelAndView.viewName = "/mycontroller/someotherview"
+    println "View is now ${modelAndView.viewName}"
 }
 {code}
 
@@ -78,7 +78,4 @@ The other supported condition is 'only', this executes the interceptor for only 
 {code:java}
 def beforeInterceptor = [action:this.&auth,only:['secure']]
 {code}
-
-
-
 

@@ -127,30 +127,30 @@ The standard POM created for you by Grails already attaches the appropriate core
 
 Fear not: all things are possible. In this case, you can associate the command to a phase using an extra "execution" block:
 {code:xml}
-    <plugin>
-        <groupId>org.grails</groupId>
-        <artifactId>grails-maven-plugin</artifactId>
-        <version>1.0-SNAPSHOT</version>
-        <extensions>true</extensions>
-        <executions>
-          <execution>
+<plugin>
+    <groupId>org.grails</groupId>
+    <artifactId>grails-maven-plugin</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <extensions>true</extensions>
+    <executions>
+        <execution>
             <goals>
             ...
             </goals>
-          </execution>
-          <!-- Add the "functional-tests" command to the "integration-test" phase -->
-          <execution>
+        </execution>
+        <!-- Add the "functional-tests" command to the "integration-test" phase -->
+        <execution>
             <id>functional-tests</id>
             <phase>integration-test</phase>
             <goals>
-              <goal>exec</goal>
+                <goal>exec</goal>
             </goals>
             <configuration>
-              <command>functional-tests</command>
+                <command>functional-tests</command>
             </configuration>
-          </execution>
-        </executions>
-      </plugin>
+        </execution>
+    </executions>
+</plugin>
 {code}
 
 This also demonstrates the @grails:exec@ goal, which can be used to run any Grails command. Simply pass the name of the command as the @command@ system property, and optionally specify the arguments via the @args@ property:

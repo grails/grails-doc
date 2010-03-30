@@ -8,21 +8,21 @@ class ServicesGrailsPlugin {
     def watchedResources = "file:./grails-app/services/*Service.groovy"
 
     ...
-  def onChange = { event ->
-    if(event.source) {
-      def serviceClass = application.addServiceClass(event.source)
-      def serviceName = "${serviceClass.propertyName}"
-      def beans = beans {
-           "$serviceName"(serviceClass.getClazz()) { bean ->
-               bean.autowire =  true
-      }
+    def onChange = { event ->
+        if(event.source) {
+            def serviceClass = application.addServiceClass(event.source)
+            def serviceName = "${serviceClass.propertyName}"
+            def beans = beans {
+                "$serviceName"(serviceClass.getClazz()) { bean ->
+                    bean.autowire =  true
+                }
             }
-      if(event.ctx) {
-        event.ctx.registerBeanDefinition(serviceName,
-                                       beans.getBeanDefinition(serviceName))
-      }
+            if(event.ctx) {
+                event.ctx.registerBeanDefinition(serviceName,
+                                                 beans.getBeanDefinition(serviceName))
+            }
+        }
     }
-  }
 }
 {code}
 
