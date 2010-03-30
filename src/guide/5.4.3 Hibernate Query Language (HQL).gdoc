@@ -1,4 +1,4 @@
-GORM classes also support Hibernate's query language HQL, a very complete reference for which can be found [Chapter 14. HQL: The Hibernate Query Language|http://www.hibernate.org/hib_docs/reference/en/html/queryhql.html] of the Hibernate documentation. 
+GORM classes also support Hibernate's query language HQL, a very complete reference for which can be found [Chapter 14. HQL: The Hibernate Query Language|http://docs.jboss.org/hibernate/stable/core/reference/en/html/queryhql.html] of the Hibernate documentation. 
  
 GORM provides a number of methods that work with HQL including [find|domainClasses], [findAll|domainClasses] and [executeQuery|domainClasses]. An example of a query can be seen below:
 
@@ -26,12 +26,14 @@ Or even named parameters:
 
 {code:java}
 def results =
-      Book.findAll("from Book as b where b.title like :search or b.author like :search", [search:"The Shi%"])
+      Book.findAll("from Book as b where b.title like :search or b.author like :search",
+                   [search:"The Shi%"])
 {code}
 
 {code:java}
 def author = Author.findByName("Stephen King")
-def books = Book.findAll("from Book as book where book.author = :author", [author: author])
+def books = Book.findAll("from Book as book where book.author = :author",
+                         [author: author])
 {code}
 
 h4. Multiline Queries
