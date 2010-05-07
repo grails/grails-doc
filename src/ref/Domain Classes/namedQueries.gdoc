@@ -29,6 +29,12 @@ class Publication {
        publicationsWithBookInTitle {
            like 'title', '%Book%'
        }
+
+       recentPublicationsWithBookInTitle {
+           // calls to other named queries...
+           recentPublications()
+           publicationsWithBookInTitle()
+      }
    }
 
 }
@@ -61,6 +67,9 @@ def pubs = Publication.oldPublicationsLargerThan(350).list()
 
 // get all old publications with more than 350 pages and the word 'Grails' in the title
 def pubs = Publication.oldPublicationsLargerThan(350).findAllByTitleLike('%Grails%')
+
+// get all recent publications with 'Book' in their title
+def pubs = Publication.recentPublicationsWithBookInTitle()
 {code}
 
 {note}
