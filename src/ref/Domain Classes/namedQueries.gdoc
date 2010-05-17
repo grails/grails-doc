@@ -78,6 +78,34 @@ calling something like @Publication.get(42)@.  The former will only return a @Pu
 with id 42 meets all the criteria defined in the @recentPublications@ named query.
 {note}
 
+Named criteria support listDistinct().
+
+{code:java}
+class PlantCategory {
+    Set plants
+    String name
+
+    static hasMany = [plants:Plant]
+                                
+    static namedQueries = {
+        withPlantsInPatch {
+            plants {
+                eq 'goesInPatch', true
+            }
+        }
+    }
+}
+
+class Plant {
+    boolean goesInPatch
+    String name
+}
+{code}
+
+{code:java}
+PlantCategory.withPlantsInPatch.listDistinct()
+{code}
+
 Named criteria support additional criteria being supplied at invocation time in the form of a criteria closure:
 
 {code:java}
