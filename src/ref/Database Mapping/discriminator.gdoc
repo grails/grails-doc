@@ -8,13 +8,13 @@ h2. Examples
 
 {code:java}
 class Content {
-	...
+    ...
 }
-class PodCast extends Content{
-	...
-	static mapping = {
-		discriminator "audio"
-	}
+class PodCast extends Content {
+    ...
+    static mapping = {
+        discriminator "audio"
+    }
 }
 {code}
 
@@ -26,7 +26,7 @@ Arguments:
 
 * @column@ (optional) - The column name to store the discriminator
 * @value@ - The value to use for the discriminator
-* @formula@ (optional) - an SQL expression that is executed to evaluate the type of class. Use this or column but not both
+* @formula@ (optional) - an SQL expression that is executed to evaluate the type of class. Use this or @column@ but not both
 * @type@ (optional defaults to string) - the Hibernate type, used for the where clause condition to know if it needs to wrap it with ' or not
 
 
@@ -34,13 +34,13 @@ By default when mapping inheritance Grails uses a single-table model so that all
 
 {code:java}
 class Content {
-	...
+    ...
 }
-class PodCast extends Content{
-	...
-	static mapping = {
-		discriminator "audio"
-	}
+class PodCast extends Content {
+    ...
+    static mapping = {
+        discriminator "audio"
+    }
 }
 {code}
 
@@ -48,16 +48,16 @@ You can also customize the discriminator column name:
 
 {code:java}
 class Content {
-	...
-	static mapping = {
-		discriminator column:"content_type"
-	}
+    ...
+    static mapping = {
+        discriminator column:"content_type"
+    }
 }
-class PodCast extends Content{
-	...
-	static mapping = {
-		discriminator value: "audio"
-	}
+class PodCast extends Content {
+    ...
+    static mapping = {
+        discriminator value: "audio"
+    }
 }
 {code}
 
@@ -65,15 +65,15 @@ Or you can use a formula:
 
 {code:java}
 class Content {
-	...
-	static mapping = {
-		discriminator value: "1", formula="case when CLASS_TYPE in ('a', 'b', 'c') then 0 else 1 end", type="integer"
-	}
+    ...
+    static mapping = {
+        discriminator value: "1", formula="case when CLASS_TYPE in ('a', 'b', 'c') then 0 else 1 end", type="integer"
+    }
 }
 class PodCast extends Content{
-	...
-	static mapping = {
-		discriminator value: "0"
-	}
+    ...
+    static mapping = {
+        discriminator value: "0"
+    }
 }
 {code}

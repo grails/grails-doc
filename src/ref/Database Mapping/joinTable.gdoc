@@ -10,12 +10,12 @@ Basic collection type:
 
 {code:java}
 class Book {
-	static hasMany = [chapterPageCounts:Integer]
+    static hasMany = [chapterPageCounts:Integer]
 
     static mapping = {
         chapterPageCounts indexColumn:[name:"chapter_number", type:Integer],
                           joinTable:[column:"page_count"]
-	
+    
 }
 {code}
 
@@ -40,8 +40,8 @@ Many-to-many:
 class Book {
 
     String title
-	static belongsTo = Author
-	static hasMany = [authors:Author]
+    static belongsTo = Author
+    static hasMany = [authors:Author]
 
     static mapping = {
         authors joinTable:[name:"mm_author_books", key:'mm_book_id' ]
@@ -50,12 +50,11 @@ class Book {
 class Author {
     String name
 
-	static hasMany = [books:Book]
+    static hasMany = [books:Book]
 
     static mapping = {
         books joinTable:[name:"mm_author_books", key:'mm_author_id']
     }
-
 }
 {code}
 
@@ -66,8 +65,8 @@ Unidirectional One-to-many:
 class Employee {
     static hasMany = [projects: Project]
     static mapping = { 
-		projects joinTable: [name: 'EMP_PROJ', column: 'PROJECT_ID', key: 'EMPLOYEE_ID'] 
-	}
+        projects joinTable: [name: 'EMP_PROJ', column: 'PROJECT_ID', key: 'EMPLOYEE_ID'] 
+    }
 }
 
 class Project {  }
