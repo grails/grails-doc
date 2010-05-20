@@ -33,6 +33,7 @@ results = Book.findAllByReleaseDateIsNull()
 results = Book.findAllByReleaseDateIsNotNull()
 results = Book.findAllPaperbackByAuthor("Douglas Adams")
 results = Book.findAllNotPaperbackByAuthor("Douglas Adams")
+results = Book.findAllByAuthorInList(["Douglas Adams", "Hunter S. Thompson"])
 {code}
 
 h2. Description
@@ -49,8 +50,6 @@ Pagination and sorting parameters can be used as the last argument to a dynamic 
 def results = Book.findAllByTitle("The Shining", [max:10, sort:"title", order:"desc", offset:100] )
 {code}
 
-
-
 The following operator names can be used within the respective dynamic methods:
 
 * @LessThan@
@@ -65,8 +64,8 @@ The following operator names can be used within the respective dynamic methods:
 * @Not@
 * @NotEqual@
 * @And@
-* @Or@ 
+* @Or@
+* @InList@ 
 
 The above operator names can be considered keywords, and you will run into problems when querying domain classes that have one of these names used as property names. For more information on [dynamic finders|guide:finders] refer to the user guide.
-
 
