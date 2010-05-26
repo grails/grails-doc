@@ -13,6 +13,9 @@ Book.find("from Book as b where b.author='Dan Brown'")
 Book.find("from Book as b where b.author=?",['Dan Brown'])
 // with a named parameter (since 0.5)
 Book.find("from Book as b where b.author=:author",[author:'Dan Brown'])
+// use the query cache
+Book.find("from Book as b where b.author='Dan Brown'", [cache: true])
+Book.find("from Book as b where b.author=:author",[author:'Dan Brown'], [cache: true])
 
 // query by example
 def b = new Book(author:"Dan Brown")
@@ -35,5 +38,6 @@ Parameters:
 * @query@ - An HQL query
 * @positionalParams@ - A List of parameters for a positional parametrized HQL query
 * @namedParams@ - A Map of named parameters a HQL query
+* @queryParams@ - A Map of query parameters. Currently, only @cache@ is supported
 * @example@ - An instance of the domain class for query by example
 
