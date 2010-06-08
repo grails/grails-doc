@@ -40,10 +40,18 @@ h4. Custom Resolvers
 If all else fails since Grails builds on Apache Ivy you can specify an Ivy resolver:
 
 {code}
-repositories {
-	resolver new URLResolver(...)
+/*
+ * Configure our resolver.
+ */
+def libResolver = new org.apache.ivy.plugins.resolver.URLResolver()
+['libraries', 'builds'].each {
+	libResolver.addArtifactPattern("http://my.repository/${it}/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+ 	libResolver.addIvyPattern("http://my.repository/${it}/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
 }
+libResolver.name = "my-repository"
+libResolver.settings = ivySettings
 
+resolver libResolver
 {code}
 
 h4. Authentication
