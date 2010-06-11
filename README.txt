@@ -14,3 +14,11 @@ grails project:
 
 ant docs -Dgrails.home=/home/user/projects/grails-core
 
+Additionally you can create a local.properties file with this variable set, e.g.
+
+   grails.home=/home/user/projects/grails-core
+
+or
+
+   grails.home ../grails-core
+
