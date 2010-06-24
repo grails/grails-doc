@@ -10,7 +10,7 @@ h2. Examples
 class Author {
 	static hasMany = [books:Book]
 	static mapping = {
-		books cascade:'delete-orphan'
+		books cascade:'all-delete-orphan'
 	}
 }
 {code}
@@ -21,7 +21,7 @@ Usage: @association_name(cascade:string)@
 
 Arguments:
 
-* @cascade@ - The cascading behavior to define. Can be one or more (comma-separated) of @all@,@create@, @merge@, @save-update@, @delete@, @lock@, @refresh@, @evict@, @replicate@ or @delete-orphan@ (one-to-many associations only). 
+* @cascade@ - The cascading behavior to define. Can be one or more (comma-separated) of @all@,@create@, @merge@, @save-update@, @delete@, @lock@, @refresh@, @evict@, @replicate@ or @all-delete-orphan@ (one-to-many associations only). 
 
 By default GORM configures a cascading policy of "all" in the case where one entity "belongs to" another. For example:
 
@@ -57,6 +57,6 @@ class Author {
 }
 {code}
 
-Here a @Book@ will also be deleted if removed (orphaned) from the @books@ association.
+Here a @Book@ will also be deleted if it is removed (orphaned) from the @books@ association.
 
 See the section on [transitive persistence|http://docs.jboss.org/hibernate/stable/core/reference/en/html/objectstate.html#objectstate-transitive] in the Hibernate user guide.
