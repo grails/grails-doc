@@ -2,12 +2,17 @@ Associations in GORM are by default lazy. This is best explained by example:
 
 {code}
 class Airport {
-	String name
-	static hasMany = [flights:Flight]
+    String name
+    static hasMany = [flights:Flight]
 }
 class Flight {
-	String number
-	static belongsTo = [airport:Airport]
+    String number
+    Location destination
+    static belongsTo = [airport:Airport]
+}
+class Location {
+    String city
+    String country
 }
 {code}
 
@@ -16,33 +21,31 @@ Given the above domain classes and the following code:
 {code}
 def airport = Airport.findByName("Gatwick")
 airport.flights.each {
-	println it.name
+    println it.destination.city
 }
 {code}
 
-GORM will execute a single SQL query to fetch the @Airport@ instance and then 1 extra query _for each_ iteration over the @flights@ association. In other words you get N+1 queries.
-
-This can sometimes be optimal depending on the frequency of use of the association as you may have logic that dictates the associations is only accessed on certain occasions. 
+GORM will execute a single SQL query to fetch the @Airport@ instance, another to get its flights, and then 1 extra query for _each iteration_ over the @flights@ association to get the current flight's destination. In other words you get N+1 queries (if you exclude the original one to get the airport).
 
 h3. Configuring Eager Fetching
 
-An alternative is to use eager fetching which can specified as follows:
+An alternative approach that avoids the N+1 queries is to use eager fetching, which can be specified as follows:
 
 {code}
 class Airport {
-	String name
-	static hasMany = [flights:Flight]
-	static mapping = {
-		flight fetch:"join"
-	}
+    String name
+    static hasMany = [flights:Flight]
+    static mapping = {
+        flights lazy: false
+    }
 }
 {code}
 
-In  this case the association will be @Airport@ instance and the @flights@ association will be loaded all at once (depending on the mapping). This has the benefit of requiring fewer queries, however should be used carefully as you could load your entire database into memory with too many eager associations.
+In this case the @flights@ association will be loaded at the same time as its @Airport@ instance, although a second query will be executed to fetch the collection. You can also use @fetch: 'join'@ instead of @lazy: false@ , in which case GORM will only execute a single query to get the airports and their flights. This works well for single-ended associations, but you need to be careful with one-to-manys. Queries will work as you'd expect right up to the moment you add a limit to the number of results you want. At that point, you will likely end up with fewer results than you were expecting. The reason for this is quite technical but ultimately the problem arises from GORM using a left outer join.
 
-{note}
-Associations can also be declared non-lazy using the [ORM DSL|guide:ormdsl]
-{note}
+So, the recommendation is currently to use @fetch: 'join'@ for single-ended associations and @lazy: false@ for one-to-manys.
+
+Be careful how and where you use eager loading because you could load your entire database into memory with too many eager associations. You can find more information on the mapping options in the [section on the ORM DSL|guide:5.5.2.8 Eager and Lazy Fetching].
 
 h3. Using Batch Fetching
 
@@ -50,11 +53,11 @@ Although eager fetching is appropriate for some cases, it is not always desirabl
 
 {code:java}
 class Airport {
-	String name
-	static hasMany = [flights:Flight]
-	static mapping = {
-		flight batchSize:10
-	}
+    String name
+    static hasMany = [flights:Flight]
+    static mapping = {
+        flights batchSize:10
+    }
 }
 {code} 
 
@@ -62,9 +65,11 @@ In this case, due to the @batchSize@ argument, when you iterate over the @flight
 
 {code:java}
 class Flight {
-	...
-	static mapping = {
-		batchSize 10
-	}
+    ...
+    static mapping = {
+        batchSize 10
+    }
 }
 {code}
+
+Check out [part 3|http://blog.springsource.com/2010/07/28/gorm-gotchas-part-3/] of the GORM Gotchas series for more in-depth coverage of this tricky topic.

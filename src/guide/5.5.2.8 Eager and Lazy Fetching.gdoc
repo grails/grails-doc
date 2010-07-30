@@ -1,13 +1,20 @@
 h4. Lazy Collections
 
-As discussed in the section on [Eager and Lazy fetching|guide:fetching], GORM collections are lazily loaded by default but you can change this behaviour via the @fetchMode@ setting. If you prefer to group all your mappings inside the @mappings@ block you can also use the ORM DSL to configure fetching:
+As discussed in the section on [Eager and Lazy fetching|guide:fetching], GORM collections are lazily loaded by default but you can change this behaviour via the ORM DSL. There are several options available to you, but the most common ones are:
+
+* lazy: false
+* fetch: 'join'
+
+and they're used like this:
 
 {code:java}
 class Person {
     String firstName
+    Pet pet
     static hasMany = [addresses:Address]
     static mapping = {
         addresses lazy:false
+        pet fetch: 'join'
     }
 }
 
@@ -15,7 +22,32 @@ class Address {
     String street
     String postCode
 }
+
+class Pet {
+    String name
+}
 {code}
+
+The first option, @lazy: false@ , ensures that when a @Person@ instance is loaded, its @addresses@ collection is loaded at the same time with a second SELECT. The second option is basically the same, except the collection is loaded via a JOIN rather than another SELECT. Typically you will want to reduce the number of queries, so @fetch: 'join'@ will be the more appropriate option. On the other hand, it could feasibly be the more expensive approach if your domain model and data result in more and larger results than would otherwise be necessary.
+
+For more advanced users, the other settings available are:
+
+# batchSize: N
+# lazy: false, batchSize: N
+
+where N is an integer. These allow you to fetch results in batches, with one query per batch. As a simple example, consider this mapping for @Person@:
+
+{code}
+class Person {
+    String firstName
+    Pet pet
+
+    static mapping = {
+        pet batchSize: 5
+    }
+}
+{code}
+If a query returns multiple @Person@ instances, then when we access the first @pet@ property, Hibernate will fetch that @Pet@ plus the four next ones. You can get the same behaviour with eager loading by combining @batchSize@ with the @lazy: false@ option. You can find out more about these options in the [Hibernate user guide|http://docs.jboss.org/hibernate/core/3.3/reference/en/html/performance.html#performance-fetching] and this [primer on fetching strategies|http://community.jboss.org/wiki/AShortPrimerOnFetchingStrategies]. Note that ORM DSL does not currently support the "subselect" fetching strategy.
 
 h4. Lazy Single-Ended Associations
 

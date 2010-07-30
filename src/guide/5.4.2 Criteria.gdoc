@@ -172,7 +172,7 @@ import org.hibernate.FetchMode as FM
 def results = c.list {
     maxResults(10)
     firstResult(50)
-    fetchMode("aRelationship", FM.EAGER)
+    fetchMode("aRelationship", FM.JOIN)
 }
 {code}
 
@@ -191,7 +191,16 @@ def tasks = criteria.list{
 }
 {code}
 
-Notice the usage of the @join@ method. This method indicates the criteria API that a @JOIN@ query should be used to obtain the results.
+Notice the usage of the @join@ method: it tells the criteria API to use a @JOIN@ to fetch the named associations with the @Task@ instances. It's probably best not to use this for one-to-many associations though, because you will most likely end up with duplicate results. Instead, use the 'select' fetch mode:
+{code}
+import org.hibernate.FetchMode as FM
+...
+def results = Airport.withCriteria {
+    eq("region", "EMEA")
+    fetchMode "flights", FM.SELECT
+}
+{code}
+Although this approach triggers a second query to get the @flights@ association, you will get reliable results  - even with the @maxResults@ option.
 
 h4. Method Reference
 
