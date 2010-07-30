@@ -13,6 +13,10 @@ class Book {
    String title
    Date releaseDate
    String author
+
+   static constraints = {
+      releaseDate nullable: true
+   }
 }
 {code}
 
@@ -20,6 +24,8 @@ You can query in the form:
 
 {code:java}
 def book = Book.findWhere(author:"Stephen King", title:"The Stand")
+
+boolean isReleased = Book.findWhere(author:"Stephen King", title:"The Stand", releaseDate: null) != null
 {code}
 
 h2. Description
@@ -27,4 +33,3 @@ h2. Description
 Parameters:
 
 * @queryParams@ - A map of key value pairs to be used in the query
-
