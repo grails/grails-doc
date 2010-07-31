@@ -48,7 +48,7 @@ How you populate these paths is up to you. If you are using the @home@ attribute
 
 h3. Maven Integration
 
-From 1.1 onwards, Grails provides integration with "Maven 2":http://maven.apache.org via a Maven plugin. The current Maven plugin is based on, but effectively supercedes, the version created by [Octo|http://forge.octo.com/maven/sites/mtg/grails-maven-plugin], who did a great job.
+From 1.1 onwards, Grails provides integration with "Maven 2":http://maven.apache.org via a Maven plugin. The current Maven plugin is based on, but effectively supersedes, the version created by [Octo|http://forge.octo.com/], who did a great job.
 
 h4. Preparation
 
@@ -58,39 +58,76 @@ In order to use the new plugin, all you need is Maven 2 installed and set up. Th
 The Maven 2 integration for Grails has been designed and tested for Maven 2.0.9 and above. It will not work with earlier versions.
 {note}
 
-To make life easier for you, we do recommend that you add a plugin group for Grails to your Maven settings file ( @$USER_HOME/.m2/settings.xml@ ):
+{note}
+The default mvn setup DOES NOT supply sufficient memory to run the Grails environment. We recommend that you add the following environment variable setting to prevent poor performance:
 
-{code:xml}
-<settings>
-  ...
-  <pluginGroups>
-    <pluginGroup>org.grails</pluginGroup>
-  </pluginGroups>
-</settings>
-{code}
-
-In addition, if you have the Octo Maven Tools for Grails set up then you'll need to remove the  @com.octo.mtg@  plugin group.
+@export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=192m"@
+{note}
 
 h4. Creating a Grails Maven Project
 
-To create a Mavenized Grails project simple run the following command:
+To create a Mavenized Grails project simply run the following command:
 
 {code}
 mvn archetype:generate -DarchetypeGroupId=org.grails \\\
     -DarchetypeArtifactId=grails-maven-archetype \\\
-    -DarchetypeVersion=1.0 \\\
-    -DarchetypeRepository=http://snapshots.repository.codehaus.org \\\
+    -DarchetypeVersion=1.3.2 \\\
     -DgroupId=example -DartifactId=my-app
 {code}
 
-Choose whichever group ID and artifact ID you want for your application, but everything else must be as written. This will create a new Maven project with a POM and a couple of other files. What you won't see is anything that looks like a Grails application. So, the next step is to create the project structure that you're used to:
+Choose whichever grails version, group ID and artifact ID you want for your application, but everything else must be as written. This will create a new Maven project with a POM and a couple of other files. What you won't see is anything that looks like a Grails application. So, the next step is to create the project structure that you're used to.
+But first, if you want to set target JDK to Java 6, do that now. Open my-app/pom.xml and change
+{code}
+<plugin>
+  <artifactId>maven-compiler-plugin</artifactId>
+  <configuration>
+    <source>1.5</source>
+    <target>1.5</target>
+  </configuration>
+</plugin>
+{code}
+to
+{code}
+<plugin>
+  <artifactId>maven-compiler-plugin</artifactId>
+  <configuration>
+    <source>1.6</source>
+    <target>1.6</target>
+  </configuration>
+</plugin>
+{code}
+
+Then you're ready to create the project structure:
 
 {code}
 cd my-app
 mvn initialize
 {code}
 
-Now you have a Grails application all ready to go. The plugin integrates into the standard build cycle, so you can use the standard Maven phases to build and package your app:  @mvn clean@ ,  @mvn compile@ ,  @mvn test@ ,  @mvn package@ .
+if you see a message similar to this:
+
+{code}
+::::::::::::::::::::::::::::::::::::::::::::::
+::          UNRESOLVED DEPENDENCIES         ::
+::::::::::::::::::::::::::::::::::::::::::::::
+:: org.hibernate#hibernate-commons-annotations;3.3.0.ga: not found
+:: javassist#javassist;3.8.0.GA: not found
+::::::::::::::::::::::::::::::::::::::::::::::
+{code}
+
+edit grails-app/conf/BuildConfig.groovy:20 and uncomment the following line:
+
+{code}
+mavenCentral()
+{code}
+
+call again:
+
+{code}
+mvn initialize
+{code}
+
+Now you have a Grails application all ready to go. The plugin integrates into the standard build cycle, so you can use the standard Maven phases to build and package your app:  @mvn clean@ ,  @mvn compile@ ,  @mvn test@ ,  @mvn package@ , @mvn install@ .
 
 You can also take advantage of some of the Grails commands that have been wrapped as Maven goals:
 
@@ -113,13 +150,17 @@ You can also take advantage of some of the Grails commands that have been wrappe
 * @grails:run-app@ - Calls the [run-app|commandLine] command
 * @grails:uninstall-plugin@ - Calls the [uninstall-plugin|commandLine] command
 
+For a complete, up to date list, run @mvn grails:help@
+
 h4. Mavenizing an existing project
 
-Creating a new project is great way to start, but what if you already have one? You don't want to create a new project and then copy the contents of the old one over. The solution is to create a POM for the existing project using this Maven command:
+Creating a new project is great way to start, but what if you already have one? You don't want to create a new project and then copy the contents of the old one over. The solution is to create a POM for the existing project using this Maven command (substitute the version number with the grails version of your existing project):
 {code}
-mvn grails:create-pom -DgroupId=com.mycompany
+mvn org.grails:grails-maven-plugin:1.3.2:create-pom -DgroupId=com.mycompany
 {code}
 When this command has finished, you can immediately start using the standard phases, such as @mvn package@. Note that you have to specify a group ID when creating the POM.
+
+You may also want to set target JDK to Java 6, see above.
 
 h4. Adding Grails commands to phases
 
@@ -130,7 +171,7 @@ Fear not: all things are possible. In this case, you can associate the command t
 <plugin>
     <groupId>org.grails</groupId>
     <artifactId>grails-maven-plugin</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.3.2</version>
     <extensions>true</extensions>
     <executions>
         <execution>
@@ -158,3 +199,23 @@ This also demonstrates the @grails:exec@ goal, which can be used to run any Grai
 mvn grails:exec -Dcommand=create-webtest -Dargs=Book
 {code}
 
+h4. Debugging a Grails Maven Project
+
+Maven can be launched in debug mode using the "mvnDebug" command. To launch your Grails application in debug, simply run:
+
+{code}
+mvnDebug grails:run-app
+{code}
+
+The process will be suspended on startup and listening for a debugger on port 8000.
+
+If you need more control of the debugger, this can be specified using the MAVEN_OPTS environment variable, and launch Maven via the default "mvn" command:
+
+{code}
+MAVEN_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
+mvn grails:run-app
+{code}
+
+h4. Raising issues
+
+If you come across any problems with the Maven integration, please raise a JIRA issue as a sub-task of [GRAILS-3547|http://jira.codehaus.org/browse/GRAILS-3547].
