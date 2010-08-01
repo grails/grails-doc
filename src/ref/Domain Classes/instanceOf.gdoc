@@ -1,0 +1,53 @@
+h1. instanceOf
+
+h2. Purpose
+
+Determines if a domain class instance is an instance of the specified class, resolving the actual class if the instance is a proxy.
+
+h2. Examples
+
+Given the domain classes:
+
+{code:java}
+class Container {
+   static hasMany = [children: Child]
+}
+{code}
+
+{code:java}
+class Child {
+   String name
+   static belongsTo = [container: Container]
+}
+{code}
+
+{code:java}
+class Thing extends Child {}
+{code}
+
+{code:java}
+class Other extends Child {}
+{code}
+
+Then you can determine the type of the elements in a @Container@'s @children@ collection using
+
+{code:java}
+def container = Container.get(id)
+for (child in container.children) {
+   if (child.instanceOf(Thing)) {
+      // process Thing
+   }
+   else if (child.instanceOf(Other)) {
+      // process Other
+   }
+   else {
+      // handle unexpected type
+   }
+}
+{code}
+
+h2. Description
+
+Parameters:
+
+* @clazz@ - the type to check
