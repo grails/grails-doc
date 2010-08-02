@@ -60,9 +60,9 @@ class Person {
    Date lastUpdated
 
    def beforeDelete() {
-	  ActivityTrace.withNewSession {
-	 	  new ActivityTrace(eventName:"Person Deleted",data:name).save()
-	  }      
+      ActivityTrace.withNewSession {
+         new ActivityTrace(eventName:"Person Deleted",data:name).save()
+      }      
    }
 }
 
@@ -87,6 +87,81 @@ class Person {
    }
 }
 {code}
+
+h4. Custom Event Listeners
+
+You can also register event handler classes in an application's @grails-app/conf/spring/resources.groovy@ or in the @doWithSpring@ closure in a plugin descriptor by registering a Spring bean named @hibernateEventListeners@. This bean has one property, @listenerMap@ which specifies the listeners to register for various Hibernate events.
+
+The values of the map are instances of classes that implement one or more Hibernate listener interfaces. You can use one class that implements all of the required interfaces, or one concrete class per interface, or any combination. The valid map keys and corresponding interfaces are listed here:
+
+{table}
+*Name* | *Interface*
+auto-flush | [AutoFlushEventListener|api:org.hibernate.event.AutoFlushEventListener]
+merge | [MergeEventListener|api:org.hibernate.event.MergeEventListener]
+create | [PersistEventListener|api:org.hibernate.event.PersistEventListener]
+create-onflush | [PersistEventListener|api:org.hibernate.event.PersistEventListener]
+delete | [DeleteEventListener|api:org.hibernate.event.DeleteEventListener]
+dirty-check | [DirtyCheckEventListener|api:org.hibernate.event.DirtyCheckEventListener]
+evict | [EvictEventListener|api:org.hibernate.event.EvictEventListener]
+flush | [FlushEventListener|api:org.hibernate.event.FlushEventListener]
+flush-entity | [FlushEntityEventListener|api:org.hibernate.event.FlushEntityEventListener]
+load | [LoadEventListener|api:org.hibernate.event.LoadEventListener]
+load-collection | [InitializeCollectionEventListener|api:org.hibernate.event.InitializeCollectionEventListener]
+lock | [LockEventListener|api:org.hibernate.event.LockEventListener]
+refresh | [RefreshEventListener|api:org.hibernate.event.RefreshEventListener]
+replicate | [ReplicateEventListener|api:org.hibernate.event.ReplicateEventListener]
+save-update | [SaveOrUpdateEventListener|api:org.hibernate.event.SaveOrUpdateEventListener]
+save | [SaveOrUpdateEventListener|api:org.hibernate.event.SaveOrUpdateEventListener]
+update | [SaveOrUpdateEventListener|api:org.hibernate.event.SaveOrUpdateEventListener]
+pre-load | [PreLoadEventListener|api:org.hibernate.event.PreLoadEventListener]
+pre-update | [PreUpdateEventListener|api:org.hibernate.event.PreUpdateEventListener]
+pre-delete | [PreDeleteEventListener|api:org.hibernate.event.PreDeleteEventListener]
+pre-insert | [PreInsertEventListener|api:org.hibernate.event.PreInsertEventListener]
+pre-collection-recreate | [PreCollectionRecreateEventListener|api:org.hibernate.event.PreCollectionRecreateEventListener]
+pre-collection-remove | [PreCollectionRemoveEventListener|api:org.hibernate.event.PreCollectionRemoveEventListener]
+pre-collection-update | [PreCollectionUpdateEventListener|api:org.hibernate.event.PreCollectionUpdateEventListener]
+post-load | [PostLoadEventListener|api:org.hibernate.event.PostLoadEventListener]
+post-update | [PostUpdateEventListener|api:org.hibernate.event.PostUpdateEventListener]
+post-delete | [PostDeleteEventListener|api:org.hibernate.event.PostDeleteEventListener]
+post-insert | [PostInsertEventListener|api:org.hibernate.event.PostInsertEventListener]
+post-commit-update | [PostUpdateEventListener|api:org.hibernate.event.PostUpdateEventListener]
+post-commit-delete | [PostDeleteEventListener|api:org.hibernate.event.PostDeleteEventListener]
+post-commit-insert | [PostInsertEventListener|api:org.hibernate.event.PostInsertEventListener]
+post-collection-recreate | [PostCollectionRecreateEventListener|api:org.hibernate.event.PostCollectionRecreateEventListener]
+post-collection-remove | [PostCollectionRemoveEventListener|api:org.hibernate.event.PostCollectionRemoveEventListener]
+post-collection-update| [PostCollectionUpdateEventListener|api:org.hibernate.event.PostCollectionUpdateEventListener]
+{table}
+
+For example, you could register a class @AuditEventListener@ which implements @PostInsertEventListener@, @PostUpdateEventListener@, and @PostDeleteEventListener@ using the following in an application:
+
+{code}
+beans = {
+
+   auditListener(AuditEventListener)
+
+   hibernateEventListeners(HibernateEventListeners) {
+      listenerMap = ['post-insert':auditListener,
+                     'post-update':auditListener,
+                     'post-delete':auditListener]
+   }
+}
+{code}
+
+or use this in a plugin:
+
+{code}
+def doWithSpring = {
+
+   auditListener(AuditEventListener)
+
+   hibernateEventListeners(HibernateEventListeners) {
+      listenerMap = ['post-insert':auditListener,
+                     'post-update':auditListener,
+                     'post-delete':auditListener]
+   }
+}
+{code}
+
 
 h4. Automatic timestamping
 
