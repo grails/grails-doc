@@ -120,6 +120,24 @@ sqlRestriction "char_length( first_name ) = 4"
 {code}
 {table}
 
+With dynamic finders, you have access to options such as 'max', 'sort', etc. These are available to criteria queries as well, but they are named differently:
+
+{table}
+Name | Description | Example
+*order*(string, string) | Specifies both the sort column (the first argument) and the sort order (either 'asc' or 'desc'). | {code}
+order "age", "desc"
+{code}
+*firstResult*(int) | Specifies the offset for the results. A value of 0 will return all records up to the maximum specified. | {code}
+firstResult 20
+{code}
+*maxResults*(int) | Specifies the maximum number of records to return. | {code}
+maxResults 10
+{code}
+*cache*(boolean) | Tells Hibernate whether to cache the query or not (if the query cache is enabled). | {code}
+cache true
+{code}
+{table}
+
 Criteria also support the notion of projections. A projection is used to change the nature of the results. For example the following query using a projection to count the number of distinct @branch@ names there are for each @Account@:
 
 {code:java}
