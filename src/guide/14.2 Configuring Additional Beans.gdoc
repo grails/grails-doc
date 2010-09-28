@@ -109,3 +109,19 @@ beans = {
 }
 {code}
 
+The @GrailsApplication@ object can be accessed by the @application@ variable, which can be used to access config (amongst other things):
+
+{code:java}
+import grails.util.*
+beans = {
+    if (application.config.my.company.mockService) {
+        myBean(my.company.mock.MockImpl) {
+            bookService = ref("bookService")
+        }   
+    } else {
+        myBean(my.company.MyBeanImpl) {
+            bookService = ref("bookService")
+        }
+    }
+}
+{code}
