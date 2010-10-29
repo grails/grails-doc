@@ -3,6 +3,7 @@ GORM supports the registration of events as methods that get fired when certain 
 * @beforeInsert@ - Executed before an object is initially persisted to the database
 * @beforeUpdate@ - Executed before an object is updated 
 * @beforeDelete@ - Executed before an object is deleted
+* @beforeValidate@ - Executed before an object is validated
 * @afterInsert@ - Executed after an object is persisted to the database
 * @afterUpdate@ - Executed after an object has been updated
 * @afterDelete@ - Executed after an object has been deleted
@@ -71,6 +72,63 @@ class Person {
 Notice the usage of @withNewSession@ method above. Since events are triggered whilst Hibernate is flushing using persistence methods like @save()@ and @delete()@ won't result in objects being saved unless you run your operations with a new @Session@.
 
 Fortunately the @withNewSession@ method allows you to share the same transactional JDBC connection even though you're using a different underlying @Session@.
+
+h4. The beforeValidate event
+
+Fired before an object is validated.
+
+{code:java}
+class Person {
+   String name
+   
+   static constraints = {
+       name size: 5..45
+   }
+   
+   def beforeValidate() {
+       name = name?.trim()
+   }
+}
+{code}
+
+The @beforeValidate@ method is run before any validators are run.
+
+GORM supports an overloaded version of @beforeValidate@ which accepts a @List@ parameter which may include
+the names of the properties which are about to be validated.  This version of @beforeValidate@ will be called
+when the @validate@ method has been invoked and passed a @List@ of property names as an argument.
+
+{code:java}
+class Person {
+   String name
+   String town
+   Integer age
+   
+   static constraints = {
+       name size: 5..45
+       age range: 4..99
+   }
+   
+   def beforeValidate(List propertiesBeingValidated) {
+      // do pre validation work based on propertiesBeingValidated
+   }
+}
+
+def p = new Person(name: 'Jacob Brown', age: 10)
+p.validate(['age', 'name'])
+{code}
+
+{note}
+Note that when @validate@ is triggered indirectly because of a call to the @save@ method that
+the @validate@ method is being invoked with no arguments, not a @List@ that includes all of
+the property names.
+{note}
+
+Either or both versions of @beforeValidate@ may be defined in a domain class.  GORM will
+prefer the @List@ version if a @List@ is passed to @validate@ but will fall back on the
+no-arg version if the @List@ version does not exist.  Likewise, GORM will prefer the
+no-arg version if no arguments are passed to @validate@ but will fall back on the 
+@List@ version if the no-arg version does not exist.  In that case, null
+is passed to @beforeValidate@.
 
 h4. The onLoad event
 
