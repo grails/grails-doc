@@ -21,7 +21,7 @@ You can also specify a specific Maven repository to use by URL:
 
 {code}
 repositories {
-	mavenRepo "http://repository.codehaus.org"
+    mavenRepo "http://repository.codehaus.org"
 }
 {code}
 
@@ -31,7 +31,7 @@ If you do not wish to use a public Maven repository you can specify a flat file 
 
 {code}
 repositories {
-	flatDir name:'myRepo', dirs:'/path/to/repo'
+    flatDir name:'myRepo', dirs:'/path/to/repo'
 }
 {code}
 
@@ -45,14 +45,43 @@ If all else fails since Grails builds on Apache Ivy you can specify an Ivy resol
  */
 def libResolver = new org.apache.ivy.plugins.resolver.URLResolver()
 ['libraries', 'builds'].each {
-	libResolver.addArtifactPattern("http://my.repository/${it}/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
- 	libResolver.addIvyPattern("http://my.repository/${it}/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+    libResolver.addArtifactPattern("http://my.repository/${it}/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+    libResolver.addIvyPattern("http://my.repository/${it}/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
 }
 libResolver.name = "my-repository"
 libResolver.settings = ivySettings
 
 resolver libResolver
 {code}
+
+A common question is whether it's possible to pull dependencies from a repository using SSH. The answer is yes! Ivy comes with a dedicated resolver that you can configure and include in your project like so:
+{code}
+import org.apache.ivy.plugins.resolver.SshResolver
+...
+repositories {
+    ...
+
+    def sshResolver = new SshResolver(
+            name: "myRepo",
+            user: "username",
+            host: "dev.x.com",
+            keyFile: new File("/home/username/.ssh/id_rsa"),
+            m2compatible: true)
+
+    sshResolver.addArtifactPattern("/home/grails/repo/[organisation]/[artifact]/[revision]/[artifact]-[revision].[ext]")
+    sshResolver.latestStrategy = new org.apache.ivy.plugins.latest.LatestTimeStrategy()
+    sshResolver.changingPattern = ".*SNAPSHOT"
+    sshResolver.setCheckmodified(true)
+
+    resolver sshResolver
+}
+{code}
+
+If you're going to use the SSH resolver, then you will need to download the [JSch JAR|http://www.jcraft.com/jsch/] and add it to Grails' classpath. You can either do this by adding its path to the @CLASSPATH@ environment variable or by passing the path in the Grails command line:
+{code}
+grails -classpath /path/to/jsch compile|run-app|etc.
+{code}
+The environment variable is more convenient, but be aware that it affects many Java applications. An alternative on Unix is to create an alias for @grails -classpath ...@ so that you don't have to type the extra arguments each time.
 
 h4. Authentication
 
