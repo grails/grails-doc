@@ -10,7 +10,7 @@ Once you have the JAR in place you need to get familiar Grails' DataSource descr
 * @username@ - The username used to establish a JDBC connection
 * @password@ - The password used to establish a JDBC connection
 * @url@ - The JDBC URL of the database
-* @dbCreate@ - Whether to auto-generate the database from the domain model or not
+* @dbCreate@ - Whether to auto-generate the database from the domain model or not - one of 'create-drop', 'create', 'update' or 'validate'
 * @pooled@ - Whether to use a pool of connections (defaults to true)
 * @logSql@ - Enable SQL logging to stdout
 * @dialect@ - A String or Class that represents the Hibernate dialect used to communicate with the database. See the [org.hibernate.dialect|http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/dialect/package-summary.html] package for available dialects.
@@ -64,3 +64,14 @@ dataSource {
     }
 }
 {code}
+
+h4. More on dbCreate
+
+Hibernate can automatically create the database tables required for your domain model. You have some control over when and how it does this through the @dbCreate@ property, which can take these values:
+
+* *create* - Creates the schema on startup, clearing any existing tables and data first.
+* *create-drop* - Same as *create*, but also drops the tables when the application shuts down.
+* *update* - Updates the current schema without dropping any tables or data. Note that this can't properly handle certain schema changes like column renames (you're left with the old column containing the existing data).
+* *validate* - Checks that the current schema matches the domain model, but doesn't modify the database in any way.
+
+You can also remove the @dbCreate@ setting completely, which is recommended once you have an application and database in production. Database changes then have to be managed through proper migrations, either via SQL scripts or a migration tool like [Liquibase|http://www.liquibase.org/] (for which there is a plugin).
