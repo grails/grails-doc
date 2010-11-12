@@ -4,36 +4,39 @@ You can sort objects using queries arguments such as those found in the [list|do
 def airports = Airport.list(sort:'name')
 {code}
 
-However, you can also declare the sort order declaratively:
+However, you can also declare the default sort order for a collection in the mapping:
 
 {code:java}
 class Airport {
-	...
-	static mapping = {
-		sort "name"
-	}
+    ...
+    static mapping = {
+        sort "name"
+    }
 }
 {code}
 
-You can also configure the sort order if necessary:
+The above means that all collections of @Airport@s will be sorted by default by the airport name. If you also want to change the sort _order_, use this syntax:
 
 {code:java}
 class Airport {
-	...
-	static mapping = {
-		sort name:"desc"
-	}
+    ...
+    static mapping = {
+        sort name:"desc"
+    }
 }
 {code}
 
-Alternatively, you can configure sort order at the association level:
+Finally, you can configure the sorting at the association level:
 
 {code:java}
 class Airport {
-	...
-	static hasMany = [flights:Flight]
-	static mapping = {
-		flights sort:'number'
-	}
+    ...
+    static hasMany = [flights:Flight]
+
+    static mapping = {
+        flights sort:'number', order:'desc'
+    }
 }
 {code}
+
+In this case, the @flights@ collection will always be sorted in descending order of flight number.
