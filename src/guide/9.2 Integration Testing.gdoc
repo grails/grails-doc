@@ -1,5 +1,20 @@
 Integration tests differ from unit tests in that you have full access to the Grails environment within the test. Grails will use an in-memory HSQLDB database for integration tests and clear out all the data from the database in between each test.
 
+h4. Transactions
+
+The integration tests run inside a database transaction by default, which is then rolled back at the end of the tests. This means that data saved during the tests is not persisted to the database. If you actually want to check transactional behaviour of your services and controllers, then you can disable a test's transaction by adding a @transactional@ property to your test case:
+
+{code}
+class MyServiceTestCase extends GroovyTestCase {
+    static transactional = false
+
+    void testMyTransactionalServiceMethod() {
+        ...
+    }
+}
+{code}
+
+
 h4. Testing Controllers
 
 To test controllers you first have to understand the Spring Mock Library.
