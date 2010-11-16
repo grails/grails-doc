@@ -202,9 +202,21 @@ class ExampleController {
         }
         next {
             on("back").to "start"
-            on("go").to "end"
+            on("go").to "subber"
+        }
+        subber {
+            subflow(action: "sub")
+            on("end").to("end")
         }
         end()
+    }
+
+    def subFlow = {
+        subSubflowState {
+            subflow(controller: "other", action: "otherSub")
+            on("next").to("next")
+        }
+        ...
     }
 }
 {code}
@@ -227,29 +239,41 @@ class ExampleFlowTests extends grails.test.WebFlowTestCase {
 }
 {code}
 
-Once this is done in your test you need to kick off the flow with the @startFlow@ method which returns a @ViewSelection@ object:
+If the flow under test calls any subflows, these (or mocks) need to be registered before the calling flow :
+{code}
+protected void setUp() {
+    super.setUp()
+    registerFlow("other/otherSub") { // register a simplified mock
+        start {
+            on("next").to("end")
+        }
+        end()
+    }
+    registerFlow("example/sub", new ExampleController().subFlow) // register the original subflow
+}
+{code}
+
+Once this is done in your test you need to kick off the flow with the @startFlow@ method:
 
 {code}
 void testExampleFlow() {
     def viewSelection = startFlow()
-
-    assertEquals "start", viewSelection.viewName
     ...
 }
 {code}
 
-As demonstrated above you can check you're on the right state using the @viewName@ property of the @ViewSelection@ object. To trigger and event you need to use the @signalEvent@ method:
+To trigger and event you need to use the @signalEvent@ method:
 
 {code}
 void testExampleFlow() {
     ...
-    viewSelection = signalEvent("go")
-    assertEquals "next", viewSelection.viewName
-    assertEquals "world", viewSelection.model.hello
+    signalEvent("go")
+    assert "next" == flowExecution.activeSession.state.id
+    assert "world" == flowScope.hello
 }
 {code}
 
-Here we have signaled to the flow to execute the event "go" this causes a transition to the "next" state. In the example a transition action placed a @hello@ variable into the flow scope. We can test the value of this variable by inspecting the @model@ property of the @ViewSelection@ as above.
+Here we have signaled to the flow to execute the event "go" this causes a transition to the "next" state. In the example a transition action placed a @hello@ variable into the flow scope.
 
 
 h4. Testing Tag Libraries
