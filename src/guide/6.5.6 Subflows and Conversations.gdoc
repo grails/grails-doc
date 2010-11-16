@@ -17,7 +17,7 @@ def searchFlow = {
         on("searchAgain").to "displaySearchForm"
     }
     extendedSearch {
-        subflow(extendedSearchFlow)   // <--- extended search subflow
+        subflow(controller: "searchExtensions", action: "extendedSearch") // <--- extended search subflow
         on("moreResults").to "displayMoreResults"
         on("noResults").to "displayNoMoreResults"
     }
@@ -25,7 +25,12 @@ def searchFlow = {
     displayNoMoreResults()
 }{code}
 
-It references a subflow in the @extendedSearch@ state. The subflow is another flow entirely:
+It references a subflow in the @extendedSearch@ state. The controller parameter is optional if the subflow is defined in the same controller as the calling flow.
+{note}
+Prior to 1.3.5, the previous subflow call would look like @subflow(extendedSearchFlow)@, with the requirement that the name of the subflow state was the same as the called subflow (minus @Flow@). This way of calling a subflow is deprecated and only supported for backward compatibility.
+{note}
+
+The subflow is another flow entirely:
 
 {code:java}
 def extendedSearchFlow = {
@@ -50,7 +55,7 @@ Notice how it places the @extendedResults@ in conversation scope. This scope dif
 
 {code:java}
 extendedSearch {
-    subflow(extendedSearchFlow)   // <--- extended search subflow
+    subflow(controller: "searchExtensions", action: "extendedSearch") // <--- extended search subflow
     on("moreResults").to "displayMoreResults"
     on("noResults").to "displayNoMoreResults"
 }
