@@ -76,3 +76,13 @@ class Book implements Serializable {
 	}
 }
 {code}
+
+{note}
+The flow scope contains a reference to the Hibernate session. As a result, any object loaded into the session through a GORM query will also be in the flow and will need to implement Serializable.
+
+If you don't want your domain class to be Serializable or stored in the flow, then you will need to evict the entity manually before the end of the state:
+
+{code}
+flow.persistenceContext.evict(it)
+{code}
+{note}
