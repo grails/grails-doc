@@ -2,7 +2,7 @@ h1. createCriteria
 
 h2. Purpose
 
-Creates an returns an instance of Grails' [HibernateCriteriaBuilder|api:grails.orm.HibernateCriteriaBuilder] that can be used to construct criteria queries
+Creates an returns an instance of Grails' [HibernateCriteriaBuilder|api:grails.orm.HibernateCriteriaBuilder] that can be used to construct criteria queries.
 
 h2. Examples
 
@@ -19,11 +19,53 @@ def results = c.list {
 }
 {code}
 
+In order to use pagination you would have to make another query to retrieve the total number of matching results. A better way is to pass the necessary pagination values as arguments to the criteria method as shown below:
+
+{code:java}
+def c = Account.createCriteria()
+def results = c.list (max: 10, offset: 10) {
+	like("holderFirstName", "Fred%")
+	and {
+		between("balance", 500, 1000)
+		eq("branch", "London")
+	}
+	order("holderLastName", "desc")
+}
+{code}
+
+This will return a [PagedResultList|api:grails.orm.PagedResultList] which has a getTotalCount() method to return the total number of matching records for pagination.
+
+{code:java}
+println "Rendering ${results.size()} Accounts of ${results.totalCount}"
+{code}
+
 h2. Description
 
-Criteria queries are a type safe, advanced way to query that uses a Groovy builder to construct potentially complex queries. It is a much better alternative to using StringBuffer.
+Criteria queries are a type safe, advanced way to query that uses a Groovy builder to construct potentially complex queries. It is a much better alternative to using StringBuffer. Refer to the user guide section on [Criteria|guide:criteria] for usage instructions. 
 
-Refer to the user guide section on [Criteria|guide:criteria] for usage instructions. Below is a node reference for each criterion method:
+Method reference:
+
+If you invoke the builder with no method name such as:
+
+{code:java}
+c { … }
+{code}
+
+defaults to
+
+{code:java}
+c.list { … }
+{code}
+
+{table}
+ Method | Description
+ *list* | This is the default method. It returns all matching rows.
+ *get* | Returns a unique result set, i.e. just one row. The criteria has to be formed that way, that it only queries one row. This method is not to be confused with a limit to just the first row.
+ *scroll* | Returns a scrollable result set
+ *listDistinct* | If subqueries or associations are used, one may end up with the same row multiple times in the result set. In Hibernate one would do a "CriteriaSpecification.DISTINCT_ROOT_ENTITY". In grails one can do it even simpler by just using this method.
+{table}
+
+Below is a node reference for each criterion method:
 
 {table}
  Node | Description | Example    
