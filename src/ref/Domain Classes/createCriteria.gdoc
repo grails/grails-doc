@@ -2,20 +2,20 @@ h1. createCriteria
 
 h2. Purpose
 
-Creates an returns an instance of Grails' [HibernateCriteriaBuilder|api:grails.orm.HibernateCriteriaBuilder] that can be used to construct criteria queries.
+Creates and returns an instance of Grails' [HibernateCriteriaBuilder|api:grails.orm.HibernateCriteriaBuilder] that can be used to construct criteria queries.
 
 h2. Examples
 
 {code:java}
 def c = Account.createCriteria()
 def results = c.list {
-	like("holderFirstName", "Fred%")
-	and {
-		between("balance", 500, 1000)
-		eq("branch", "London")
-	}
-	maxResults(10)
-	order("holderLastName", "desc")
+    like("holderFirstName", "Fred%")
+    and {
+        between("balance", 500, 1000)
+        eq("branch", "London")
+    }
+    maxResults(10)
+    order("holderLastName", "desc")
 }
 {code}
 
@@ -24,12 +24,12 @@ In order to use pagination you would have to make another query to retrieve the 
 {code:java}
 def c = Account.createCriteria()
 def results = c.list (max: 10, offset: 10) {
-	like("holderFirstName", "Fred%")
-	and {
-		between("balance", 500, 1000)
-		eq("branch", "London")
-	}
-	order("holderLastName", "desc")
+    like("holderFirstName", "Fred%")
+    and {
+        between("balance", 500, 1000)
+        eq("branch", "London")
+    }
+    order("holderLastName", "desc")
 }
 {code}
 
@@ -45,18 +45,6 @@ Criteria queries are a type safe, advanced way to query that uses a Groovy build
 
 Method reference:
 
-If you invoke the builder with no method name such as:
-
-{code:java}
-c { … }
-{code}
-
-defaults to
-
-{code:java}
-c.list { … }
-{code}
-
 {table}
  Method | Description
  *list* | This is the default method. It returns all matching rows.
@@ -64,6 +52,18 @@ c.list { … }
  *scroll* | Returns a scrollable result set
  *listDistinct* | If subqueries or associations are used, one may end up with the same row multiple times in the result set. In Hibernate one would do a "CriteriaSpecification.DISTINCT_ROOT_ENTITY". In grails one can do it even simpler by just using this method.
 {table}
+
+If you invoke the builder with no method name like so
+
+{code:java}
+c { … }
+{code}
+
+the @list()@ method will be invoked automatically. In other words, it's the equivalent of
+
+{code:java}
+c.list { … }
+{code}
 
 Below is a node reference for each criterion method:
 
