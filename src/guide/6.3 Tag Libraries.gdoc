@@ -1,10 +1,10 @@
-Like "Java Server Pages":http://java.sun.com/products/jsp/ (JSP), GSP supports the concept of custom tag libraries. Unlike JSP, Grails tag library mechanism is simply, elegant and completely reload-able at runtime.
+Like "Java Server Pages":http://java.sun.com/products/jsp/ (JSP), GSP supports the concept of custom tag libraries. Unlike JSP, Grails tag library mechanism is simply, elegant and completely reloadable at runtime.
 
 Quite simply, to create a tag library create a Groovy class that ends with the convention @TagLib@ and place it within the @grails-app/taglib@ directory:
 
 {code:java}
 class SimpleTagLib {
-	
+
 }
 {code}
 
@@ -12,8 +12,8 @@ Now to create a tag simply create property that is assigned a block of code that
 
 {code:java}
 class SimpleTagLib {
-	def simple = { attrs, body ->
-		
+    def simple = { attrs, body ->
+
     }
 }
 {code}
@@ -22,8 +22,8 @@ The @attrs@ argument is a simple map of the attributes of the tag, whilst the @b
 
 {code:java}
 class SimpleTagLib {
-	def emoticon = { attrs, body ->
-	   out << body() << (attrs.happy == 'true' ? " :-)" : " :-(")	
+    def emoticon = { attrs, body ->
+       out << body() << (attrs.happy == 'true' ? " :-)" : " :-(")
     }
 }
 {code}
@@ -34,4 +34,41 @@ As demonstrated above there is an implicit @out@ variable that refers to the out
 <g:emoticon happy="true">Hi John</g:emoticon>
 {code}
 
+{note}
+To help IDEs like SpringSource Tool Suite (STS) and others autocomplete tag attributes, you should add Javadoc comments to your tag closures with @\@attr@ descriptions. Since taglibs use Groovy code it can be difficult to reliably detect all usable attributes.
 
+For example:
+
+{code:java}
+class SimpleTagLib {
+
+    /**
+     * Renders the body with an emoticon.
+     *
+     * @attr happy whether to show a happy emoticon ('true') or a sad emoticon ('false')
+     */
+    def emoticon = { attrs, body ->
+       out << body() << (attrs.happy == 'true' ? " :-)" : " :-(")
+    }
+}
+{code}
+
+and any mandatory attributes should include the REQUIRED keyword, e.g.
+
+{code:java}
+class SimpleTagLib {
+
+    /**
+     * Creates a new password field.
+     *
+     * @attr name REQUIRED the field name
+     * @attr value the field value
+     */
+    def passwordField = { attrs ->
+        attrs.type = "password"
+        attrs.tagName = "passwordField"
+        fieldImpl(out, attrs)
+    }
+}
+{code}
+{note}
