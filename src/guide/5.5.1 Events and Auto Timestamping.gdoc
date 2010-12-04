@@ -130,9 +130,9 @@ no-arg version if no arguments are passed to @validate@ but will fall back on th
 @List@ version if the no-arg version does not exist.  In that case, null
 is passed to @beforeValidate@.
 
-h4. The onLoad event
+h4. The onLoad/beforeLoad event
 
-Fired when an object is loaded from the db:
+Fired immediately before an object is loaded from the db:
 
 {code:java}
 class Person {
@@ -141,6 +141,24 @@ class Person {
    Date lastUpdated
 
    def onLoad() {
+      log.debug "Loading ${id}"
+   }
+}
+{code}
+
+@beforeLoad()@ is effectively a synonym for @onLoad()@, so only declare one or the other.
+
+h4. The afterLoad event
+
+Fired immediately after an object is loaded from the db:
+
+{code:java}
+class Person {
+   String name
+   Date dateCreated
+   Date lastUpdated
+
+   def afterLoad() {
       name = "I'm loaded"
    }
 }
