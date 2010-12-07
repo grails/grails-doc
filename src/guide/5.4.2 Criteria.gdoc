@@ -196,11 +196,26 @@ Notice the usage of the @join@ method: it tells the criteria API to use a @JOIN@
 import org.hibernate.FetchMode as FM
 ...
 def results = Airport.withCriteria {
-    eq("region", "EMEA")
+    eq "region", "EMEA"
     fetchMode "flights", FM.SELECT
 }
 {code}
 Although this approach triggers a second query to get the @flights@ association, you will get reliable results  - even with the @maxResults@ option.
+
+{note}
+@fetchMode@ and @join@ are general settings of the query and can only be specified at the top-level, i.e. you cannot use them inside projections or association constraints.
+{note}
+
+An important point to bear in mind is that if you include associations in the query constraints, those associations will automatically be eagerly loaded. For example, in this query:
+{code}
+def results = Airport.withCriteria {
+    eq "region", "EMEA"
+    flights {
+        like "number", "BA%"
+    }
+}
+{code}
+the @flights@ collection would be loaded eagerly via a join even though the fetch mode has not been explicitly set.
 
 h4. Method Reference
 
