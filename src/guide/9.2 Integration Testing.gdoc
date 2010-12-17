@@ -1,11 +1,24 @@
 Integration tests differ from unit tests in that you have full access to the Grails environment within the test. Grails will use an in-memory HSQLDB database for integration tests and clear out all the data from the database in between each test.
 
+One thing to bear in mind is that logging is enabled for your application classes, but that is different from logging in tests. So if you have something like this:
+
+{code:java}
+class MyServiceTests extends GroovyTestCase {
+    void testSomething() {
+        log.info "Starting tests"
+        ...
+    }
+}
+{code}
+
+the "starting tests" message is logged using a different system to the one used by the application. Basically the @log@ property in the example above is an instance of @java.util.logging.Logger@, which doesn't have exactly the same methods as the @log@ property injected into your application artifacts. For example, it doesn't have @debug()@ or @trace()@ methods, and the equivalent of @warn()@ is in fact @warning()@.
+
 h4. Transactions
 
 The integration tests run inside a database transaction by default, which is then rolled back at the end of the tests. This means that data saved during the tests is not persisted to the database. If you actually want to check transactional behaviour of your services and controllers, then you can disable a test's transaction by adding a @transactional@ property to your test case:
 
 {code}
-class MyServiceTestCase extends GroovyTestCase {
+class MyServiceTests extends GroovyTestCase {
     static transactional = false
 
     void testMyTransactionalServiceMethod() {
