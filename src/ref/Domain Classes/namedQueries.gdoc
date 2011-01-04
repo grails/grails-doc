@@ -138,3 +138,34 @@ def books = Publication.recentPublications.publicationsWithBookInTitle.list()
 // old publications with more than 500 pages and with 'Book' in the title
 def books = Publication.oldPublicationsLargerThan(500).publicationsWithBookInTitle.list()
 {code}
+
+When a named query involves a domain class relationship and the relationship class defines a named
+query, that named query may be accessed directly as a method call.  An example:
+
+{code:java}
+class Author {
+
+    static hasMany = [publications:Publication]
+
+    static namedQueries = {
+         authorsWithRecentPublications {
+             publications {
+                 // invoking a named query defined in the Publication class...
+                 recentPublications()
+             }
+         }
+    }
+}
+
+class Publication {
+
+    Author author
+    
+    static namedQueries = {
+        recentPublications {
+            def now = new Date()
+            gt 'datePublished', now - 10
+        }
+    }
+}
+{code}
