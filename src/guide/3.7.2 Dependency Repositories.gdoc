@@ -66,8 +66,10 @@ If all else fails since Grails builds on Apache Ivy you can specify an Ivy resol
  */
 def libResolver = new org.apache.ivy.plugins.resolver.URLResolver()
 ['libraries', 'builds'].each {
-    libResolver.addArtifactPattern("http://my.repository/${it}/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
-    libResolver.addIvyPattern("http://my.repository/${it}/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+    libResolver.addArtifactPattern(
+            "http://my.repository/\${it}/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+    libResolver.addIvyPattern(
+            "http://my.repository/\${it}/[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
 }
 libResolver.name = "my-repository"
 libResolver.settings = ivySettings
@@ -89,7 +91,8 @@ repositories {
             keyFile: new File("/home/username/.ssh/id_rsa"),
             m2compatible: true)
 
-    sshResolver.addArtifactPattern("/home/grails/repo/[organisation]/[artifact]/[revision]/[artifact]-[revision].[ext]")
+    sshResolver.addArtifactPattern(
+            "/home/grails/repo/[organisation]/[artifact]/[revision]/[artifact]-[revision].[ext]")
     sshResolver.latestStrategy = new org.apache.ivy.plugins.latest.LatestTimeStrategy()
     sshResolver.changingPattern = ".*SNAPSHOT"
     sshResolver.setCheckmodified(true)

@@ -300,9 +300,9 @@ class FooTagLib {
    }
 
    def bodyTag =  { attrs, body ->
-      out << "<${attrs.name}>"
+      out << "<\${attrs.name}>"
            out << body()
-      out << "</${attrs.name}>"
+      out << "</\${attrs.name}>"
    }
 }{code}
 
@@ -350,7 +350,7 @@ This can be easily tested as follows:
 {code}
 class FormatTagLibTests extends GroovyPagesTestCase {
     void testDateFormat() {
-        def template = '<g:dateFormat format="dd-MM-yyyy" date="${myDate}" />'
+        def template = '<g:dateFormat format="dd-MM-yyyy" date="\${myDate}" />'
 
         def testDate = ... // create the date
         assertOutputEquals( '01-01-2008', template, [myDate:testDate] )
@@ -363,7 +363,7 @@ You can also obtain the result of a GSP using the @applyTemplate@ method of the 
 {code}
 class FormatTagLibTests extends GroovyPagesTestCase {
     void testDateFormat() {
-        def template = '<g:dateFormat format="dd-MM-yyyy" date="${myDate}" />'
+        def template = '<g:dateFormat format="dd-MM-yyyy" date="\${myDate}" />'
 
         def testDate = ... // create the date
         def result = applyTemplate( template, [myDate:testDate] )
