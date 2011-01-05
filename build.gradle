@@ -104,7 +104,17 @@ task publishGuide(dependsOn: ['copyApiDocs']) {
         def sourceMacro = publishClassLoader.loadClass("grails.doc.macros.GspTagSourceMacro")
         publisher.registerMacro(sourceMacro.newInstance(new File(project.grailsHome, "src/java/org/codehaus/groovy/grails")))
         
+        // Radeox loads its bundles off the context class loader, which
+        // unfortunately doesn't contain the grails-docs JAR. So, we
+        // temporarily switch the DocPublisher class loader into the
+        // thread so that the Radeox bundles can be found.
+        def oldClassLoader = Thread.currentThread().contextClassLoader
+        Thread.currentThread().contextClassLoader = publisher.getClass().classLoader
+
         publisher.publish()
+
+        // Restore the old context class loader.
+        Thread.currentThread().contextClassLoader = oldClassLoader
     }
 }
 
