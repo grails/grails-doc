@@ -360,6 +360,14 @@ Finally, you can completely disable stacktrace filtering by setting the @grails.
 grails -Dgrails.full.stacktrace=true run-app
 {code}
 
+h3. Masking Request Parameters From Stacktrace Logs
+
+When Grails logs a stacktrace, the log message may include the names and values of all of the request parameters for the current request.  To mask out the values of secure request parameters, specify the parameter names in the @grails.exceptionresolver.params.exclude@ config property:
+
+{code:java}
+grails.exceptionresolver.params.exclude = ['password', 'creditCard']
+{code}
+
 h3. Logger inheritance
 
 Earlier, we mentioned that all loggers inherit from the root logger and that loggers are hierarchical based on '.'-separated terms. What this means is that unless you override a parent setting, a logger retains the level and the appenders configured for that parent. So with this configuration:
