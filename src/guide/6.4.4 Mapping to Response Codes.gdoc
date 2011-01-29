@@ -34,3 +34,18 @@ static mappings = {
 {code}
 
 With this configuration, an @IllegalArgumentException@ will be handled by the @illegalArgument@ action in @ErrorsController@, a @NullPointerException@ will be handled by the @nullPointer@ action, and a @MyException@ will be handled by the @customException@ action. Other exceptions will be handled by the catch-all rule and use the @/errors/serverError@ view.
+
+When mapping to controller's action the @request.exception@ holds the exception caught by Grails. 
+
+{code:java}
+class ErrorController {
+    def handleError = {
+        def exception = request.exception
+        // perform desired processing to handle the exception
+    }
+}
+{code}
+
+{warning}
+Beware that if your controller's action ends up throwing an exception as well it will end up with a @StackOverflow@ exception.
+{warning}
