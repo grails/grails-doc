@@ -93,14 +93,14 @@ The main advantage of this way is that you can now mix logic in within your bean
 {code:java}
 import grails.util.*
 beans = {
-	switch(GrailsUtil.environment) {
-		case "production":
+	switch(Environment.current) {
+		case Environment.PRODUCTION:
 			myBean(my.company.MyBeanImpl) {
 				bookService = ref("bookService")
 			}
 
 		break
-		case "development":
+		case Environment.DEVELOPMENT:
 			myBean(my.company.mock.MockImpl) {
 				bookService = ref("bookService")
 			}	
