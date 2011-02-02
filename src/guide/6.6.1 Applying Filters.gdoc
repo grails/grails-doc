@@ -23,9 +23,12 @@ The scope of the filter can be one of the following things:
 
 Filter rule attributes:
 * @controller@ - controller matching pattern, by default \* is replaced with .\* and a regex is compiled
+* @controllerExclude@ - controller exclusion pattern, by default \* is replaced with .\* and a regex is compiled
 * @action@ - action matching pattern, by default \* is replaced with .\* and a regex is compiled
+* @actionExclude@ - action exclusion pattern, by default \* is replaced with .\* and a regex is compiled
 * @regex@ (true/false) - use regex syntax (don't replace '\*' with '.\*')
 * @uri@ - a uri to match, expressed with as Ant style path (e.g. /book/\*\*)
+* @uriExclude@ - a uri pattern to exclude, expressed with as Ant style path (e.g. /book/\*\*)
 * @find@ (true/false) - rule matches with partial match (see java.util.regex.Matcher.find())
 * @invert@ (true/false) - invert the rule (NOT rule)
 
@@ -55,6 +58,12 @@ saveInActionName(action:'save', find:true) {
 
 }
 {code}
+* All actions starting with the letter 'b' except for actions beginning with the phrase 'bad*'
+{code:java}
+actionBeginningWithBButNotBad(action:'b*', actionExclude: 'bad*', find:true) {
+
+}
+{code}
 * Applied to a URI space
 {code:java}
 someURIs(uri:'/book/**') {
@@ -69,3 +78,7 @@ allURIs(uri:'/**') {
 {code}
 
 In addition, the order in which you define the filters within the @filters@ code block dictates the order in which they are executed.  To control the order of execution between @Filters@ classes, you can use the @dependsOn@ property discussed in [filter dependencies|guide:6.6.4 Filter Dependencies] section.
+
+{note}
+Note: When exclude patterns are used they take precedence over the matching patterns.  For example, if action is 'b\*' and actionExclude is 'bad\*' then actions like 'best' and 'bien' will have that filter applied but actions like 'bad' and 'badlands' will not.
+{note}
