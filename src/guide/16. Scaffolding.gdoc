@@ -9,17 +9,19 @@ The simplest way to get started with scaffolding is to enable scaffolding via th
 
 {code:java}
 class BookController {
-   def scaffold = true
+   static scaffold = true
 }
 {code}
 
-The above works because the @BookController@ follows the same naming convention as the @Book@ domain class, if we wanted to scaffold a specific domain class you can reference the class directly in the scaffold property:
+The above works because the @BookController@ follows the same naming convention as the @Book@ domain class. If we wanted to scaffold a specific domain class we could reference the class directly in the scaffold property:
 
 {code:java}
-def scaffold = Author
+class SomeController {
+    static scaffold = Author
+}
 {code}
 
-With  that done if you run this grails application the necessary actions and views will be auto-generated at runtime. The following actions are dynamically implemented by default by the runtime scaffolding mechanism:
+With that done if you run this grails application the necessary actions and views will be auto-generated at runtime. The following actions are dynamically implemented by default by the runtime scaffolding mechanism:
 
 * list
 * show
@@ -39,16 +41,16 @@ Note that when using the scaffold property Grails does not use code templates, o
 
 {code:java}
 class BookController {
-   def scaffold = Book
+    static scaffold = Book
 
-   def changeAuthor = {
+    def changeAuthor = {
         def b = Book.get( params["id"] )
         b.author = Author.get( params["author.id"] )
         b.save()
 
         // redirect to a scaffolded action
         redirect(action:show)
-   }
+    }
 }
 {code}
 
@@ -56,12 +58,19 @@ You can also override the scaffolded actions with your own actions if necessary:
 
 {code:java}
 class BookController {
-   def scaffold = Book
+    static scaffold = Book
 
-   // overrides scaffolded action to return both authors and books
-   def list = {
-         [ "books" : Book.list(), "authors": Author.list() ]
-   }
+    // overrides scaffolded action to return both authors and books
+    def list = {
+        [ bookInstanceList : Book.list(), bookInstanceTotal: Book.count(), authorInstanceList: Author.list() ]
+    }
+
+    def show = {
+        def book = Book.get(params.id)
+        log.error(book)
+        [ bookInstance : book ]
+    }
+         
 }
 {code}
 
@@ -69,6 +78,8 @@ All of this is what is known as "dynamic scaffolding" where the CRUD interface i
 
 {note}
 By default, the size of text areas in scaffolded views is defined in the CSS, so adding 'rows' and 'cols' attributes will have no effect.
+
+Also, the standard scaffold views expect model variables of the form @<propertyName>InstanceList@ for collections and @<propertyName>Instance@ for single instances. It's tempting to use properties like 'books' and 'book', but those won't work.
 {note}
 
 h4. Customizing the Generated Views
