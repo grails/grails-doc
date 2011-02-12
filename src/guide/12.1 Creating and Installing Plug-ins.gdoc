@@ -85,10 +85,16 @@ h4. Notes on excluded Artefacts
 
 Although the [create-plugin|commandLine] command creates certain files for you so that the plug-in can be run as a Grails application, not all of these files are included when packaging a plug-in. The following is a list of artefacts created, but not included by [package-plugin|commandLine]:
 
-* @grails-app/conf/DataSource.groovy@
+* @grails-app/conf/BootStrap.groovy@
+* @grails-app/conf/BuildConfig.groovy@
+* @grails-app/conf/Config.groovy@
+* @grails-app/conf/DataSource.groovy@ (and any other @*DataSource.groovy@)
 * @grails-app/conf/UrlMappings.groovy@
-* @build.xml@
+* @grails-app/conf/spring/resources.groovy@
 * Everything within @/web-app/WEB-INF@
+* Everything within @/web-app/plugins/\*\*@
+* Everything within @/test/\*\*@
+* SCM management files within @\*\*/.svn/\*\*@ and @\*\*/CVS/\*\*@
 
 If you need artefacts within @WEB-INF@ it is recommended you use the @_Install.groovy@ script (covered later), which is executed when a plug-in is installed, to provide such artefacts. In addition, although @UrlMappings.groovy@ is excluded you are allowed to include a @UrlMappings@ definition with a different name, such as @FooUrlMappings.groovy@.
 
