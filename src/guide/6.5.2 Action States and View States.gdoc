@@ -37,15 +37,15 @@ An action state is a state that executes code but does not render any view. The 
 
 {code:java}
 listBooks {
-   action { 
-	  [ bookList:Book.list() ]
+   action {
+      [ bookList:Book.list() ]
    }
    on("success").to "showCatalogue"
    on(Exception).to "handleError"
 }
 {code}
 
-As you can see an action looks very similar to a controller action and in fact you can re-use controller actions if you want. If the action successfully returns with no errors the @success@ event will be triggered. In this case since we return a map, this is regarded as the "model" and is automatically placed in [flow scope|guide:6.5.4 Flow Scopes]. 
+As you can see an action looks very similar to a controller action and in fact you can re-use controller actions if you want. If the action successfully returns with no errors the @success@ event will be triggered. In this case since we return a map, this is regarded as the "model" and is automatically placed in [flow scope|guide:6.5.4 Flow Scopes].
 
 
 In addition, in the above example we also use an exception handler to deal with errors on the line:
@@ -54,7 +54,7 @@ In addition, in the above example we also use an exception handler to deal with 
 on(Exception).to "handleError"
 {code}
 
-What this does is make the flow transition to a state called @handleError@ in the case of an exception. 
+What this does is make the flow transition to a state called @handleError@ in the case of an exception.
 
 You can write more complex actions that interact with the flow request context:
 
@@ -87,7 +87,7 @@ Another form of action is what is known as a _transition_ action. A transition a
 {code:java}
 enterPersonalDetails {
    on("submit") {
-       log.trace "Going to enter shipping"	
+       log.trace "Going to enter shipping"
    }.to "enterShipping"
    on("return").to "showCart"
 }

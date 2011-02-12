@@ -1,4 +1,4 @@
-h1. filters 
+h1. filters
 
 h2. Purpose
 
@@ -10,17 +10,16 @@ An example filter:
 
 {code:java}
 class SecurityFilters {
-   def filters = {
-       loginCheck(controller:'*', action:'*') {
-           before = {
-              if(!session.user && !actionName.equals('login')) {
-                  redirect(action:'login')
-                  return false
-               }
-           }
-
-       }
-   }
+    def filters = {
+        loginCheck(controller:'*', action:'*') {
+            before = {
+                if (!session.user && !actionName.equals('login')) {
+                    redirect(action:'login')
+                    return false
+                }
+            }
+        }
+    }
 }
 {code}
 
@@ -42,6 +41,3 @@ Configured Spring Beans:
 Configured Spring Beans given a filter called @SecurityFilters@:
 * @SecurityFiltersClass@ - The [org.codehaus.groovy.grails.web.filters.GrailsFiltersClass|api:org.codehaus.groovy.grails.web.filters.GrailsFiltersClass] instance which aids in analyzing the conventions within the filter.
 * @SecurityFilters@ - A singleton reference to the filter itself to support auto-wiring into a Filter
-
-
-

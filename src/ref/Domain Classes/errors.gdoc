@@ -9,7 +9,7 @@ h2. Examples
 {code:java}
 def user =  new User(params)
 
-if(user.validate()) {
+if (user.validate()) {
     // do something with user
 }
 else {
@@ -28,15 +28,16 @@ You can create your own errors using the [reject|api:org.springframework.validat
 {code:java}
 if (params.password != params.confirm_password) {
 
-   user.errors.reject('user.password.doesnotmatch',                                    // Error code within the grails-app/i18n/message.properties
-                      ['password', 'class User'] as Object[],                          // Groovy list cast to Object[]
-                       '[Property [{0}] of class [{1}] does not match confirmation]')   // Default mapping string
+    user.errors.reject(
+        'user.password.doesnotmatch',                                    // Error code within the grails-app/i18n/message.properties
+        ['password', 'class User'] as Object[],                          // Groovy list cast to Object[]
+        '[Property [{0}] of class [{1}] does not match confirmation]')   // Default mapping string
 
     // The following helps with field highlighting in your view
-    user.errors.rejectValue('password',                                                 // Field in view to highlight using <g:hasErrors> tag
-                            'user.password.doesnotmatch')                               // i18n error code
+    user.errors.rejectValue(
+        'password',                          // Field in view to highlight using <g:hasErrors> tag
+        'user.password.doesnotmatch')        // i18n error code
 
-    render(view:'signup', model:[user:user]) 
+    render(view:'signup', model:[user:user])
 }
 {code}
-

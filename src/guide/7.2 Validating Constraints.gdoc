@@ -5,7 +5,7 @@ To validate a domain class you can call the [validate|domainClasses] method on a
 {code:java}
 def user =  new User(params)
 
-if(user.validate()) {
+if (user.validate()) {
     // do something with user
 }
 else {
@@ -28,17 +28,17 @@ def user = new User(params)
 At this point you may already have errors in the @errors@ property due to type conversion (such as converting Strings to Dates). You can check these and obtain the original input value using the @Errors@ API:
 
 {code:java}
-if(user.hasErrors()) {
-	if(user.errors.hasFieldErrors("login")) {
-		println user.errors.getFieldError("login").rejectedValue
-	}
+if (user.hasErrors()) {
+    if (user.errors.hasFieldErrors("login")) {
+        println user.errors.getFieldError("login").rejectedValue
+    }
 }
 {code}
 
 The second phase of validation happens when you call [validate|domainClasses] or [save|domainClasses]. This is when Grails will validate the bound values againts the [constraints|domainClasses] you defined. For example, by default the persistent [save|domainClasses] method calls @validate@ before executing hence allowing you to write code like:
 
 {code:java}
-if(user.save()) {
+if (user.save()) {
     return user
 }
 else {
@@ -47,4 +47,3 @@ else {
     }
 }
 {code}
-

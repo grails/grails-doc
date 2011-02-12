@@ -11,17 +11,17 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 
 class I18nGrailsPlugin {
 
-	def version = 0.1
+    def version = 0.1
 
-	def doWithSpring = {
-		messageSource(ReloadableResourceBundleMessageSource) {
-			basename = "WEB-INF/grails-app/i18n/messages"
-		}
-		localeChangeInterceptor(LocaleChangeInterceptor) {
-			paramName = "lang"
-		}
-		localeResolver(CookieLocaleResolver)
-	}
+    def doWithSpring = {
+        messageSource(ReloadableResourceBundleMessageSource) {
+            basename = "WEB-INF/grails-app/i18n/messages"
+        }
+        localeChangeInterceptor(LocaleChangeInterceptor) {
+            paramName = "lang"
+        }
+        localeResolver(CookieLocaleResolver)
+    }
 }{code}
 
 This plugin sets up the Grails @messageSource@ bean and a couple of other beans to manage Locale resolution and switching. It using the [Spring Bean Builder|guide:spring] syntax to do so.
@@ -34,19 +34,18 @@ Consider the below example from the @ControllersPlugin@:
 
 {code:java}
 def doWithWebDescriptor = { webXml ->
-	def mappingElement = webXml.'servlet-mapping'
-	def lastMapping = mappingElement[mappingElement.size()-1]
-	lastMapping + {
-		'servlet-mapping' {
-			'servlet-name'("grails")
-			'url-pattern'("*.dispatch")
-		}
-	}
+    def mappingElement = webXml.'servlet-mapping'
+    def lastMapping = mappingElement[mappingElement.size()-1]
+    lastMapping + {
+        'servlet-mapping' {
+            'servlet-name'("grails")
+            'url-pattern'("*.dispatch")
+        }
+    }
 }
 {code}
 
 Here the plugin goes through gets a reference to the last @<servlet-mapping>@ element and appends Grails' servlet to the end of it using XmlSlurper's ability to programmatically modify XML using closures and blocks.
-	
 
 h4. Doing Post Initialisation Configuration
 
@@ -57,9 +56,9 @@ class SimplePlugin {
      def name="simple"
      def version = 1.1
 
-	 def doWithApplicationContext = { appCtx ->
+     def doWithApplicationContext = { appCtx ->
           SessionFactory sf = appCtx.getBean("sessionFactory")
           // do something here with session factory
-	 }
+     }
 }{code}
 

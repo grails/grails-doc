@@ -24,14 +24,14 @@ class ExamplePlugin {
       String.metaClass.swapCase = {->
            def sb = new StringBuffer()
            delegate.each {
-               sb << (Character.isUpperCase(it as char) ? 
-                      Character.toLowerCase(it as char) : 
+               sb << (Character.isUpperCase(it as char) ?
+                      Character.toLowerCase(it as char) :
                       Character.toUpperCase(it as char))
            }
            sb.toString()
       }
 
-      assert "UpAndDown" == "uPaNDdOWN".swapCase()       
+      assert "UpAndDown" == "uPaNDdOWN".swapCase()
   }
 }
 {code}
@@ -41,7 +41,6 @@ In this example we add a new method @swapCase@ to @java.lang.String@ directly by
 h4. Interacting with the ApplicationContext
 
 The @doWithDynamicMethods@ closure gets passed the Spring @ApplicationContext@ instance. This is useful as it allows you to interact with objects within it. For example if you where implementing a method to interact with Hibernate you could use the @SessionFactory@ instance in combination with a @HibernateTemplate@:
-	
 
 {code:java}
 import org.springframework.orm.hibernate3.HibernateTemplate
@@ -51,11 +50,11 @@ class ExampleHibernatePlugin {
    def doWithDynamicMethods = { applicationContext ->
 
        application.domainClasses.each { domainClass ->
-     
-           domainClass.metaClass.static.load = { Long id-> 
+
+           domainClass.metaClass.static.load = { Long id->
                 def sf = applicationContext.sessionFactory
                 def template = new HibernateTemplate(sf)
-				template.load(delegate, id)
+                template.load(delegate, id)
            }
        }
    }
@@ -77,4 +76,3 @@ class MyConstructorPlugin {
 }{code}
 
 Here we actually replace the default constructor with one that looks up prototyped Spring beans instead!
-

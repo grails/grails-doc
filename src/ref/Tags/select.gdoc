@@ -1,4 +1,4 @@
-h1. select 
+h1. select
 
 h2. Purpose
 
@@ -28,7 +28,7 @@ h2. Examples
 <g:select name="cars"
           from="${Car.list()}"
           value="${person?.cars*.id}"
-          optionKey="id" 
+          optionKey="id"
           multiple="true" />
 
 // create select with internationalized labels (this is useful for small static lists and the inList constraint)
@@ -62,15 +62,15 @@ Attributes
 * @multiple@ (optional) - Set to "true" to generate a multi-select listbox rather than a dropdown list.
 
 The @optionKey@ and @optionValue@ attribute of the @<g:select>@ tag deserve special mention as these allow you to control what is displayed to the user within the resulting @<select>@ tag and also the value which is submitted in a form submission. The default behaviour is to call @toString()@ on each element in the @from@ attribute, but for example if you had a list of @Book@ domain classes this may not be useful behaviour.
-	
+
 As an example the following @<g:select>@ uses the @optionKey@ attribute to resolve the @id@ property of each @Book@ as the value of the @value@ attribute in each @<option>@ tag. It also uses the @optionValue@ attribute of @<g:select>@ to display the @title@ property of each @Book@ to the user:
-	
+
 {code}
 <g:select optionKey="id" optionValue="title" name="book.title" from="${bookList}" />
-{code}	
+{code}
 
 If you require even more control over how each @<option>@ element is presented to the user you can use a closure to apply a transformation within the @optionValue@ attribute. As an example, the following code transforms each @Book@ title to upper case:
-	
+
 {code}
 <g:select optionKey="id" optionValue="${{it.title?.toUpperCase()}}" name="book.title" from="${bookList}" />
 {code}

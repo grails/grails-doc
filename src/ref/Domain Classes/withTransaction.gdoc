@@ -1,4 +1,4 @@
-h1. withTransaction 
+h1. withTransaction
 
 h2. Purpose
 
@@ -8,19 +8,19 @@ h2. Examples
 
 {code:java}
 Account.withTransaction { status ->
-	def source = Account.get(params.from)
-	def dest = Account.get(params.to)	
+    def source = Account.get(params.from)
+    def dest = Account.get(params.to)
 
-	def amount = params.amount.toInteger()
-	if(source.active) {
-		source.balance -= amount
-		if(dest.active) {
-			dest.amount += amount
-		}
-		else {
-			status.setRollbackOnly()
-		}
-	}	
+    def amount = params.amount.toInteger()
+    if (source.active) {
+        source.balance -= amount
+        if (dest.active) {
+            dest.amount += amount
+        }
+        else {
+            status.setRollbackOnly()
+        }
+    }
 }
 {code}
 

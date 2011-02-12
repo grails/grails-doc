@@ -1,4 +1,4 @@
-h1. remoteLink	
+h1. remoteLink
 
 h2. Purpose
 
@@ -9,15 +9,15 @@ h2. Examples
 Example controller for an application called @shop@:
 {code:java}
 class BookControlller {
-     def list = { 
-	    [ books: Book.list( params ) ] 	
-	 }
-     def show = { 
-	    [ book : Book.get( params['id'] ) ]      
+     def list = {
+         [ books: Book.list( params ) ]
      }
-     def bookByName = { 
-	     [ book : Book.findByName( params.bookName ) ] } 
-	 }
+     def show = {
+         [ book : Book.get( params['id'] ) ]
+     }
+     def bookByName = {
+         [ book : Book.findByName( params.bookName ) ] }
+     }
 {code}
 
 Example usages for above controller:
@@ -25,13 +25,13 @@ Example usages for above controller:
 {code:xml}
 <g:remoteLink action="show" id="1">Test 1</g:remoteLink>
 
-<g:remoteLink action="show" id="1" update="[success:'success',failure:'error']" 
+<g:remoteLink action="show" id="1" update="[success:'success',failure:'error']"
     on404="alert('not found');">Test 2</g:remoteLink>
 
-<g:remoteLink action="show" id="1" update="success" 
+<g:remoteLink action="show" id="1" update="success"
     onLoading="showSpinner();">Test 3</g:remoteLink>
 
-<g:remoteLink action="show" id="1" update="success" 
+<g:remoteLink action="show" id="1" update="success"
     params="[sortBy:'name',offset:offset]">Test 4</g:remoteLink>
 
 {code}
@@ -40,10 +40,9 @@ As a method call in GSP:
 
 {code:java}
 my link = <%= remoteLink( action:'show', id:1,
-  update:'success', onFailure:'showError();' ) 
+  update:'success', onFailure:'showError();' )
   { "this is the link body" } %>
 {code}
-
 
 
 h2. Description

@@ -1,85 +1,85 @@
-Unit testing are tests at the "unit" level. In other words you are testing individual methods or blocks of code without considering for surrounding infrastructure. In Grails you need to be particularity aware of the difference between unit and integration tests because in unit tests Grails *does not* inject any of the dynamic methods present during integration tests and at runtime. 
+Unit testing are tests at the "unit" level. In other words you are testing individual methods or blocks of code without considering for surrounding infrastructure. In Grails you need to be particularity aware of the difference between unit and integration tests because in unit tests Grails *does not* inject any of the dynamic methods present during integration tests and at runtime.
 
-This makes sense if you consider that the methods injected by Grails typically communicate with the database (with GORM) or the underlying Servlet engine (with Controllers). 
+This makes sense if you consider that the methods injected by Grails typically communicate with the database (with GORM) or the underlying Servlet engine (with Controllers).
 For example say you have service like the following in @BookController@:
 
 {code:java}
 class MyService {
     def otherService
 
-	String createSomething() { 
-		def stringId = otherService.newIdentifier()
-		def item = new Item(code: stringId, name: "Bangle") 
-		item.save() 
-		return stringId 
-	}
+    String createSomething() {
+        def stringId = otherService.newIdentifier()
+        def item = new Item(code: stringId, name: "Bangle")
+        item.save()
+        return stringId
+    }
 
-	int countItems(String name) { 
-		def items = Item.findAllByName(name) 
-		return items.size() 
-	} 
+    int countItems(String name) {
+        def items = Item.findAllByName(name)
+        return items.size()
+    }
 }
 {code}
 
 
-As you can see the service takes advantage of GORM methods. So how do you go about testing the above code in a unit test? The answer can be found in Grails' testing support classes. 
+As you can see the service takes advantage of GORM methods. So how do you go about testing the above code in a unit test? The answer can be found in Grails' testing support classes.
 
 h3. The Testing Framework
 
 The core of the testing plugin is the @grails.test.GrailsUnitTestCase@ class. This is a sub-class of @GroovyTestCase@ geared towards Grails applications and their artifacts. It provides several methods for mocking particular types as well as support for general mocking a la Groovy's MockFor and StubFor classes.
 
-Normally you might look at the @MyService@ example shown previously and the dependency on another service and the use of dynamic domain class methods with a bit of a groan. You can use meta-class programming and the "map as object" idiom, but these can quickly get ugly. How might we write the test with GrailsUnitTestCase ? 
+Normally you might look at the @MyService@ example shown previously and the dependency on another service and the use of dynamic domain class methods with a bit of a groan. You can use meta-class programming and the "map as object" idiom, but these can quickly get ugly. How might we write the test with GrailsUnitTestCase ?
 
 {code:java}
 import grails.test.GrailsUnitTestCase
 
-class MyServiceTests extends GrailsUnitTestCase { 
-	void testCreateSomething() { 
-		// Mock the domain class. 
-		mockDomain(Item)
+class MyServiceTests extends GrailsUnitTestCase {
+    void testCreateSomething() {
+        // Mock the domain class.
+        mockDomain(Item)
 
-		// Mock the "other" service. 
-		String testId = "NH-12347686" 
-		def otherControl = mockFor(OtherService) 
-		otherControl.demand.newIdentifier(1..1) {-> return testId }
+        // Mock the "other" service.
+        String testId = "NH-12347686"
+        def otherControl = mockFor(OtherService)
+        otherControl.demand.newIdentifier(1..1) {-> return testId }
 
-		// 	Initialise the service and test the target method. 
-		def testService = new MyService() 
-		testService.otherService = otherControl.createMock()
+        // Initialise the service and test the target method.
+        def testService = new MyService()
+        testService.otherService = otherControl.createMock()
 
-		def retval = testService.createSomething()
+        def retval = testService.createSomething()
 
-		// Check that the method returns the identifier returned by the 
-		// mock "other" service and also that a new Item instance has 
-		// been saved. 
-		def testInstances = Item.list() 		
-		assertEquals testId, retval 
-		assertEquals 1, testInstances.size() 
-		assertTrue testInstances[0] instanceof Item 
-	}
+        // Check that the method returns the identifier returned by the
+        // mock "other" service and also that a new Item instance has
+        // been saved.
+        def testInstances = Item.list()
+        assertEquals testId, retval
+        assertEquals 1, testInstances.size()
+        assertTrue testInstances[0] instanceof Item
+    }
 
-	void testCountItems() { 
-		// Mock the domain class, this time providing a list of test 
-		// Item instances that can be searched. 
-		def testInstances = [ new Item(code: "NH-4273997", name: "Laptop"), 
-							  new Item(code: "EC-4395734", name: "Lamp"), 
-							  new Item(code: "TF-4927324", name: "Laptop") ] 
-		mockDomain(Item, testInstances)
+    void testCountItems() {
+        // Mock the domain class, this time providing a list of test
+        // Item instances that can be searched.
+        def testInstances = [ new Item(code: "NH-4273997", name: "Laptop"),
+                              new Item(code: "EC-4395734", name: "Lamp"),
+                              new Item(code: "TF-4927324", name: "Laptop") ]
+        mockDomain(Item, testInstances)
 
-		// Initialise the service and test the target method.
-		def testService = new MyService()
+        // Initialise the service and test the target method.
+        def testService = new MyService()
 
-		assertEquals 2, testService.countItems("Laptop") 
-		assertEquals 1, testService.countItems("Lamp") 
-		assertEquals 0, testService.countItems("Chair") 
-	} 
+        assertEquals 2, testService.countItems("Laptop")
+        assertEquals 1, testService.countItems("Lamp")
+        assertEquals 0, testService.countItems("Chair")
+    }
 }
 {code}
 
 OK, so a fair bit of new stuff there, but once we break it down you should quickly see how easy it is to use the methods available to you. Take a look at the "testCreateSomething()" test method. The first thing you will probably notice is the @mockDomain()@ method, which is one of several provided by @GrailsUnitTestCase@:
 
 {code:java}
-def testInstances = [] 
+def testInstances = []
 mockDomain(Item, testInstances)
 {code}
 
@@ -98,7 +98,7 @@ void testSomething() {
 The next bit we want to look at is centered on the @mockFor@ method:
 
 {code:java}
-def otherControl = mockFor(OtherService) 
+def otherControl = mockFor(OtherService)
 otherControl.demand.newIdentifier(1..1) {-> return testId }
 {code}
 
@@ -109,9 +109,9 @@ The rest of the @testCreateSomething()@ method should be pretty familiar, partic
 Lastly, @testCountItems()@ in the example demonstrates another facet of the @mockDomain()@ method:
 
 {code:java}
-def testInstances = [ new Item(code: "NH-4273997", name: "Laptop"), 
-					  new Item(code: "EC-4395734", name: "Lamp"), 
-					  new Item(code: "TF-4927324", name: "Laptop") ] 
+def testInstances = [ new Item(code: "NH-4273997", name: "Laptop"),
+                      new Item(code: "EC-4395734", name: "Lamp"),
+                      new Item(code: "TF-4927324", name: "Laptop") ]
 mockDomain(Item, testInstances)
 {code}
 
@@ -174,14 +174,14 @@ class Book {
     String title
     String author
 
-	static constraints = { 
-		title(blank: false, unique: true) 
-		author(blank: false, minSize: 5) 
-	} 
+    static constraints = {
+        title(blank: false, unique: true)
+        author(blank: false, minSize: 5)
+    }
 }
 {code}
 
-Don't worry about whether the constraints are sensible or not (they're not!), they are for demonstration only. To test these constraints we can do the following: 
+Don't worry about whether the constraints are sensible or not (they're not!), they are for demonstration only. To test these constraints we can do the following:
 
 {code:java}
 class BookTests extends GrailsUnitTestCase {
@@ -189,22 +189,22 @@ class BookTests extends GrailsUnitTestCase {
         def existingBook = new Book(title: "Misery", author: "Stephen King")
         mockForConstraintsTests(Book, [ existingBook ])
 
-		// Validation should fail if both properties are null. 
-		def book = new Book() 
-		assertFalse book.validate() 
-		assertEquals "nullable", book.errors["title"] 
-		assertEquals "nullable", book.errors["author"]
+        // Validation should fail if both properties are null.
+        def book = new Book()
+        assertFalse book.validate()
+        assertEquals "nullable", book.errors["title"]
+        assertEquals "nullable", book.errors["author"]
 
-		// So let's demonstrate the unique and minSize constraints. 
-		book = new Book(title: "Misery", author: "JK") 
-		assertFalse book.validate() 
-		assertEquals "unique", 	book.errors["title"] 
-		assertEquals "minSize", book.errors["author"]
+        // So let's demonstrate the unique and minSize constraints.
+        book = new Book(title: "Misery", author: "JK")
+        assertFalse book.validate()
+        assertEquals "unique",     book.errors["title"]
+        assertEquals "minSize", book.errors["author"]
 
-		// Validation should pass! 
-		book = new Book(title: "The Shining", author: "Stephen King") 
-		assertTrue book.validate() 
-	} 
+        // Validation should pass!
+        book = new Book(title: "The Shining", author: "Stephen King")
+        assertTrue book.validate()
+    }
 }
 {code}
 

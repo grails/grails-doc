@@ -4,24 +4,21 @@ A typical usage scenario is as follows:
 
 {code:java}
 def transferFunds = {
-	Account.withTransaction { status ->
-		def source = Account.get(params.from)
-		def dest = Account.get(params.to)	
+    Account.withTransaction { status ->
+        def source = Account.get(params.from)
+        def dest = Account.get(params.to)
 
-		def amount = params.amount.toInteger()
-		if(source.active) {
-			source.balance -= amount
-			if(dest.active) {
-				dest.amount += amount
-			}
-			else {
-				status.setRollbackOnly()
-			}
-		}
-
-		
-	}
-	
+        def amount = params.amount.toInteger()
+        if (source.active) {
+            source.balance -= amount
+            if (dest.active) {
+                dest.amount += amount
+            }
+            else {
+                status.setRollbackOnly()
+            }
+        }
+    }
 }
 {code}
 

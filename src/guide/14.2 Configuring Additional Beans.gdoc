@@ -22,7 +22,7 @@ Beans declared in @resources.xml@ can also reference Grails classes by conventio
 
 {code:xml}
 <bean id="myBean" class="my.company.MyBeanImpl">
-	<property name="bookService" ref="bookService" />	
+    <property name="bookService" ref="bookService" />
 </bean>
 {code}
 
@@ -31,7 +31,7 @@ The bean itself would of course need a public setter, which in Groovy is defined
 {code:java}
 package my.company
 class MyBeanImpl {
-	BookService bookService
+    BookService bookService
 }
 {code}
 
@@ -40,10 +40,10 @@ or in Java like this:
 {code:java}
 package my.company;
 class MyBeanImpl {
-	private BookService bookService;
-	public void setBookService(BookService theBookService) {
-		this.bookService = theBookService;
-	}
+    private BookService bookService;
+    public void setBookService(BookService theBookService) {
+        this.bookService = theBookService;
+    }
 }
 {code}
 
@@ -51,8 +51,8 @@ Since much of Grails configuration is done at runtime by convention many of the 
 
 {code:xml}
 <bean id="myBean" class="my.company.MyBeanImpl">
-	<property name="bookService" ref="bookService" />	
-	<property name="dataSource" ref="dataSource" />
+    <property name="bookService" ref="bookService" />
+    <property name="dataSource" ref="dataSource" />
 </bean>
 {code}
 
@@ -60,8 +60,8 @@ Or if you need the Hibernate @SessionFactory@ this will work:
 
 {code:xml}
 <bean id="myBean" class="my.company.MyBeanImpl">
-	<property name="bookService" ref="bookService" />	
-	<property name="sessionFactory" ref="sessionFactory" />
+    <property name="bookService" ref="bookService" />
+    <property name="sessionFactory" ref="sessionFactory" />
 </bean>
 {code}
 
@@ -74,7 +74,7 @@ If you want to use the [Spring DSL|guide:springdsl] that Grails provides then yo
 
 {code:java}
 beans = {
-	// beans here
+    // beans here
 }
 {code}
 
@@ -82,9 +82,9 @@ The same configuration for the XML example could be represented as:
 
 {code:java}
 beans = {
-	myBean(my.company.MyBeanImpl) {
-		bookService = ref("bookService")
-	}	
+    myBean(my.company.MyBeanImpl) {
+        bookService = ref("bookService")
+    }
 }
 {code}
 
@@ -93,19 +93,19 @@ The main advantage of this way is that you can now mix logic in within your bean
 {code:java}
 import grails.util.*
 beans = {
-	switch(Environment.current) {
-		case Environment.PRODUCTION:
-			myBean(my.company.MyBeanImpl) {
-				bookService = ref("bookService")
-			}
+    switch(Environment.current) {
+        case Environment.PRODUCTION:
+            myBean(my.company.MyBeanImpl) {
+                bookService = ref("bookService")
+            }
+        break
 
-		break
-		case Environment.DEVELOPMENT:
-			myBean(my.company.mock.MockImpl) {
-				bookService = ref("bookService")
-			}	
-		break
-	}	
+        case Environment.DEVELOPMENT:
+            myBean(my.company.mock.MockImpl) {
+                bookService = ref("bookService")
+            }
+        break
+    }
 }
 {code}
 
@@ -117,7 +117,7 @@ beans = {
     if (application.config.my.company.mockService) {
         myBean(my.company.mock.MockImpl) {
             bookService = ref("bookService")
-        }   
+        }
     } else {
         myBean(my.company.MyBeanImpl) {
             bookService = ref("bookService")

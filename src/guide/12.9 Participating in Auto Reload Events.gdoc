@@ -9,7 +9,7 @@ class ServicesGrailsPlugin {
 
     ...
     def onChange = { event ->
-        if(event.source) {
+        if (event.source) {
             def serviceClass = application.addServiceClass(event.source)
             def serviceName = "${serviceClass.propertyName}"
             def beans = beans {
@@ -17,7 +17,7 @@ class ServicesGrailsPlugin {
                     bean.autowire =  true
                 }
             }
-            if(event.ctx) {
+            if (event.ctx) {
                 event.ctx.registerBeanDefinition(serviceName,
                                                  beans.getBeanDefinition(serviceName))
             }

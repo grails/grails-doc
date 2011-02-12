@@ -4,10 +4,10 @@ The database table name which the class maps to can be customized using a call t
 
 {code:java}
 class Person {
-  ..
-  static mapping = {
-      table 'people'
-  }
+    ..
+    static mapping = {
+        table 'people'
+    }
 }
 {code}
 
@@ -19,11 +19,11 @@ It is also possible to customize the mapping for individual columns onto the dat
 
 {code:java}
 class Person {
-  String firstName
-  static mapping = {
-      table 'people'
-      firstName column:'First_Name'
-  }
+    String firstName
+    static mapping = {
+        table 'people'
+        firstName column:'First_Name'
+    }
 }
 {code}
 
@@ -36,11 +36,11 @@ if you had a @PostCodeType@ you could use it as follows:
 
 {code:java}
 class Address {
-   String number
-   String postCode
-   static mapping = {
-      postCode type:PostCodeType
-   }
+    String number
+    String postCode
+    static mapping = {
+        postCode type:PostCodeType
+    }
 }
 {code}
 
@@ -48,11 +48,11 @@ Alternatively if you just wanted to map it to one of Hibernate's basic types oth
 
 {code:java}
 class Address {
-   String number
-   String postCode
-   static mapping = {
-      postCode type:'text'
-   }
+    String number
+    String postCode
+    static mapping = {
+        postCode type:'text'
+    }
 }
 {code}
 
@@ -85,13 +85,13 @@ With a bidirectional one-to-many you can change the foreign key column used simp
 
 {code:java}
 class Person {
-  String firstName
-  static hasMany = [addresses:Address]
-  static mapping = {
-      table 'people'
-      firstName column:'First_Name'
-	  addresses column:'Person_Address_Id'
-  }
+    String firstName
+    static hasMany = [addresses:Address]
+    static mapping = {
+        table 'people'
+        firstName column:'First_Name'
+        addresses column:'Person_Address_Id'
+    }
 }
 {code}
 
@@ -99,13 +99,13 @@ If you don't want the column to be in the @address@ table, but instead some inte
 
 {code:java}
 class Person {
-  String firstName
-  static hasMany = [addresses:Address]
-  static mapping = {
-      table 'people'
-      firstName column:'First_Name'
-      addresses joinTable:[name:'Person_Addresses', key:'Person_Id', column:'Address_Id']
-  }
+    String firstName
+    static hasMany = [addresses:Address]
+    static mapping = {
+        table 'people'
+        firstName column:'First_Name'
+        addresses joinTable:[name:'Person_Addresses', key:'Person_Id', column:'Address_Id']
+    }
 }
 {code}
 
@@ -115,13 +115,13 @@ Grails, by default maps a many-to-many association using a join table. For examp
 
 {code:java}
 class Group {
-	...
-	static hasMany = [people:Person]
+    ...
+    static hasMany = [people:Person]
 }
 class Person {
-	...
-	static belongsTo = Group
-	static hasMany = [groups:Group]
+    ...
+    static belongsTo = Group
+    static hasMany = [groups:Group]
 }
 {code}
 
@@ -132,13 +132,13 @@ class Group {
    ...
    static mapping = {
        people column:'Group_Person_Id'
-   }	
+   }
 }
 class Person {
    ...
    static mapping = {
        groups column:'Group_Group_Id'
-   }	
+   }
 }
 {code}
 
@@ -149,12 +149,12 @@ class Group {
    ...
    static mapping = {
        people column:'Group_Person_Id',joinTable:'PERSON_GROUP_ASSOCIATIONS'
-   }	
+   }
 }
 class Person {
    ...
    static mapping = {
        groups column:'Group_Group_Id',joinTable:'PERSON_GROUP_ASSOCIATIONS'
-   }	
+   }
 }
 {code}

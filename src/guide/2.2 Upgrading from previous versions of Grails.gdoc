@@ -40,8 +40,8 @@ Tags no longer return @java.lang.String@ instances but instead return a @StreamC
 
 {code}
 def foo = body()
-if(foo instanceof String) {
-	// do something
+if (foo instanceof String) {
+    // do something
 }
 {code}
 
@@ -49,8 +49,8 @@ In these cases you should use the @java.lang.CharSequence@ interface, which both
 
 {code}
 def foo = body()
-if(foo instanceof CharSequence) {
-	// do something
+if (foo instanceof CharSequence) {
+    // do something
 }
 {code}
 
@@ -68,9 +68,9 @@ Grails now executes validation routines when the underlying Hibernate session is
 
 {code}
 static constraints = {
-	author validator: { a ->
-		assert a != Book.findByTitle("My Book").author		
-	}
+    author validator: { a ->
+        assert a != Book.findByTitle("My Book").author
+    }
 }
 {code}
 
@@ -78,11 +78,11 @@ The above code can lead to a @StackOverflowError@ in Grails 1.2. The solution is
 
 {code}
 static constraints = {
-	author validator: { a ->
-		Book.withNewSession {
-			assert a != Book.findByTitle("My Book").author					
-		}
-	}
+    author validator: { a ->
+        Book.withNewSession {
+            assert a != Book.findByTitle("My Book").author
+        }
+    }
 }
 {code}
 
@@ -117,7 +117,7 @@ grails.views.enable.jsessionid=true
 
 5) The syntax used to configure Log4j has changed. See the user guide section on [Logging|guide:logging] for more information.
 
-h4. Plugin Changes 
+h4. Plugin Changes
 
 Since 1.1, Grails no longer stores plugins inside your @PROJECT_HOME/plugins@ directory by default. This may result in compilation errors in your application unless you either re-install all your plugins or set the following property in @grails-app/conf/BuildConfig.groovy@:
 
@@ -130,8 +130,8 @@ h4. Script Changes
 1) If you were previously using Grails 1.0.3 or below the following syntax is no longer support for importing scripts from GRAILS_HOME:
 
 {code}
-Ant.property(environment:"env")                             
-grailsHome = Ant.antProject.properties."env.GRAILS_HOME"    
+Ant.property(environment:"env")
+grailsHome = Ant.antProject.properties."env.GRAILS_HOME"
 
 includeTargets << new File ( "${grailsHome}/scripts/Bootstrap.groovy" )
 {code}
@@ -153,8 +153,8 @@ def stream = getClass().classLoader.getResourceAsStream("grails-app/conf/my-conf
 Instead you should use the Java File APIs with the @basedir@ property:
 
 {code}
-new File("${basedir}/grails-app/conf/my-config.xml").withInputStream { stream -> 
-      // read the file	
+new File("${basedir}/grails-app/conf/my-config.xml").withInputStream { stream ->
+    // read the file
 }
 {code}
 
@@ -172,7 +172,7 @@ h4. Data Mapping Changes
 
 {code}
 static mapping = {
-      someEnum enumType:"ordinal"
+    someEnum enumType:"ordinal"
 }
 {code}
 

@@ -2,16 +2,16 @@ GORM supports the concept of *dynamic finders*. A dynamic finder looks like a st
 
 Instead, a method is auto-magically generated using code synthesis at runtime, based on the properties of a given class. Take for example the @Book@ class:
 
-{code} 
+{code}
 class Book {
-	String title
-	Date releaseDate
-	Author author
-}                
-class Author {
-	String name
+    String title
+    Date releaseDate
+    Author author
 }
-{code}         
+class Author {
+    String name
+}
+{code}
 
 The @Book@ class has properties such as @title@, @releaseDate@ and @author@. These can be used by the [findBy|domainClasses] and [findAllBy|domainClasses] methods in the form of "method expressions":
 
@@ -41,7 +41,7 @@ The tokens marked with a '?' are optional. Each comparator changes the nature of
 def book = Book.findByTitle("The Stand")
 
 book =  Book.findByTitleLike("Harry Pot%")
-{code}                                    
+{code}
 
 In the above example the first query is equivalent to equality whilst the latter, due to the @Like@ comparator, is equivalent to a SQL @like@ expression.
 
@@ -60,7 +60,7 @@ The possible comparators include:
 * @IsNull@ - Is a null value (doesn't require an argument)
 
 Notice that the last 3 require different numbers of method arguments compared to the rest, as demonstrated in the following example:
- 
+
 {code}
 def now = new Date()
 def lastWeek = now - 7
@@ -68,21 +68,21 @@ def book = Book.findByReleaseDateBetween( lastWeek, now )
 
 books = Book.findAllByReleaseDateIsNull()
 books = Book.findAllByReleaseDateIsNotNull()
-{code}       
+{code}
 
-h4. Boolean logic (AND/OR) 
+h4. Boolean logic (AND/OR)
 
 Method expressions can also use a boolean operator to combine two criteria:
 
 {code}
-def books = 
+def books =
     Book.findAllByTitleLikeAndReleaseDateGreaterThan("%Java%", new Date()-30)
-{code}     
+{code}
 
 In this case we're using @And@ in the middle of the query to make sure both conditions are satisfied, but you could equally use @Or@:
- 
+
 {code}
-def books = 
+def books =
     Book.findAllByTitleLikeOrReleaseDateGreaterThan("%Java%", new Date()-30)
 {code}
 
@@ -98,16 +98,16 @@ def author = Author.findByName("Stephen King")
 def books = author ? Book.findAllByAuthor(author) : []
 {code}
 
-In this case if the @Author@ instance is not null we use it in a query to obtain all the @Book@ instances for the given @Author@.      
+In this case if the @Author@ instance is not null we use it in a query to obtain all the @Book@ instances for the given @Author@.
 
 h4. Pagination & Sorting
 
 The same pagination and sorting parameters available on the [list|domainClasses] method can also be used with dynamic finders by supplying a map as the final parameter:
 
 {code}
-def books = 
-  Book.findAllByTitleLike("Harry Pot%", [max:3, 
-                                         offset:2, 
-                                         sort:"title",
-                                         order:"desc"])
+def books =
+    Book.findAllByTitleLike("Harry Pot%", [max:3,
+                                           offset:2,
+                                           sort:"title",
+                                           order:"desc"])
 {code}

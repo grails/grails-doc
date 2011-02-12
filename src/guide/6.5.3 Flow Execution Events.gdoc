@@ -7,7 +7,7 @@ As discussed previously the start state of the flow in a previous code listing d
 {code:java}
 def shoppingCartFlow = {
     showCart {
-        on("checkout").to "enterPersonalDetails"           
+        on("checkout").to "enterPersonalDetails"
         on("continueShopping").to "displayCatalogue"
     }
     ...
@@ -37,7 +37,7 @@ enterPersonalDetails {
    on("submit") {
          def p = new Person(params)
          flow.person = p
-         if(!p.validate())return error()
+         if (!p.validate()) return error()
    }.to "enterShipping"
    on("return").to "showCart"
 }
@@ -50,7 +50,7 @@ With an action state you can also trigger events to redirect flow:
 {code:java}
 shippingNeeded {
    action {
-       if(params.shippingRequired) yes()
+       if (params.shippingRequired) yes()
        else no()
    }
    on("yes").to "enterShipping"

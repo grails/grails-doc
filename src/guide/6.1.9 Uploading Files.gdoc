@@ -4,10 +4,10 @@ Grails supports file uploads via Spring's [MultipartHttpServletRequest|api:org.s
 
 {code:xml}
 Upload Form: <br />
-	<g:form action="upload" method="post" enctype="multipart/form-data">
-		<input type="file" name="myFile" />
-		<input type="submit" />
-	</g:form>
+    <g:form action="upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="myFile" />
+        <input type="submit" />
+    </g:form>
 {code}
 
 
@@ -16,10 +16,10 @@ There are then a number of ways to handle the file upload. The first way is to w
 {code:java}
 def upload = {
     def f = request.getFile('myFile')
-    if(!f.empty) {
-      f.transferTo( new File('/some/local/dir/myfile.txt') )
+    if (!f.empty) {
+      f.transferTo(new File('/some/local/dir/myfile.txt'))
       response.sendError(200,'Done');
-    }    
+    }
     else {
        flash.message = 'file cannot be empty'
        render(view:'uploadForm')
@@ -29,7 +29,7 @@ def upload = {
 
 
 
-This is clearly handy for doing transfers to other destinations and manipulating the file directly as you can obtain an InputStream and so on via the [MultipartFile|api:org.springframework.web.multipart.MultipartFile] interface. 
+This is clearly handy for doing transfers to other destinations and manipulating the file directly as you can obtain an InputStream and so on via the [MultipartFile|api:org.springframework.web.multipart.MultipartFile] interface.
 
 h4. File Uploads through Data Binding
 
@@ -39,7 +39,7 @@ File uploads can also be performed via data binding. For example say you have an
 class Image {
    byte[] myFile
 }
-{code}	
+{code}
 
 Now if you create an image and pass in the @params@ object such as the below example, Grails will automatically bind the file's contents as a byte[] to the @myFile@ property:
 
@@ -53,5 +53,5 @@ It is also possible to set the contents of the file as a string by changing the 
 class Image {
    String myFile
 }
-{code}	
+{code}
 

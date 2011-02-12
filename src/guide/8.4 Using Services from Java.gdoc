@@ -2,9 +2,9 @@ One of the powerful things about services is that since they encapsulate re-usab
 
 {code:java}
 class BookService {
-	void buyBook(Book book) {
-		// logic
-	}
+    void buyBook(Book book) {
+        // logic
+    }
 }
 {code}
 
@@ -13,9 +13,9 @@ However, this can be rectified by placing this class in a package, by moving the
 {code:java}
 package bookstore
 class BookService {
-	void buyBook(Book book) {
-		// logic
-	}
+    void buyBook(Book book) {
+        // logic
+    }
 }{code}
 
 An alternative to packages is to instead have an interface within a package that the service implements:
@@ -23,7 +23,7 @@ An alternative to packages is to instead have an interface within a package that
 {code:java}
 package bookstore;
 interface BookStore {
-	void buyBook(Book book);
+    void buyBook(Book book);
 }
 {code}
 
@@ -31,9 +31,9 @@ And then the service:
 
 {code:java}
 class BookService implements bookstore.BookStore {
-	void buyBook(Book b) {
-		// logic
-	}
+    void buyBook(Book b) {
+        // logic
+    }
 }
 {code}
 
@@ -43,12 +43,12 @@ This latter technique is arguably cleaner, as the Java side only has a reference
 package bookstore;
 // note: this is Java class
 public class BookConsumer {
-	private BookStore store;
-	
-	public void setBookStore(BookStore storeInstance) {
-		this.store = storeInstance;
-	}	
-	...
+    private BookStore store;
+
+    public void setBookStore(BookStore storeInstance) {
+        this.store = storeInstance;
+    }
+    ...
 }
 {code}
 
@@ -56,7 +56,7 @@ Once this is done you can configure the Java class as a Spring bean in @grails-a
 
 {code:xml}
 <bean id="bookConsumer" class="bookstore.BookConsumer">
-	<property name="bookStore" ref="bookService" />
+    <property name="bookStore" ref="bookService" />
 </bean>
 {code}
 

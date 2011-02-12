@@ -1,4 +1,4 @@
-A one-to-many relationship is when one class, example @Author@, has many instances of a another class, example @Book@. With Grails you define such a relationship with the @hasMany@ setting: 
+A one-to-many relationship is when one class, example @Author@, has many instances of a another class, example @Book@. With Grails you define such a relationship with the @hasMany@ setting:
 
 {code}
 class Author {
@@ -7,7 +7,7 @@ class Author {
     String name
 }
 class Book {
-	String title
+    String title
 }
 {code}
 
@@ -23,7 +23,7 @@ Grails will automatically inject a property of type @java.util.Set@ into the dom
 def a = Author.get(1)
 
 a.books.each {
-	println it.title
+    println it.title
 }
 {code}
 
@@ -42,8 +42,8 @@ class Author {
     String name
 }
 class Book {
-	static belongsTo = [author:Author]
-	String title
+    static belongsTo = [author:Author]
+    String title
 }
 {code}
 
@@ -51,25 +51,25 @@ If you have two properties of the same type on the many side of a one-to-many yo
 
 {code}
 class Airport {
-	static hasMany = [flights:Flight]
-	static mappedBy = [flights:"departureAirport"]
+    static hasMany = [flights:Flight]
+    static mappedBy = [flights:"departureAirport"]
 }
 class Flight {
-	Airport departureAirport
-	Airport destinationAirport
+    Airport departureAirport
+    Airport destinationAirport
 }
-{code} 
+{code}
 
 This is also true if you have multiple collections that map to different properties on the many side:
 
 {code}
 class Airport {
-	static hasMany = [outboundFlights:Flight, inboundFlights:Flight]
-	static mappedBy = [outboundFlights:"departureAirport", inboundFlights:"destinationAirport"]
+    static hasMany = [outboundFlights:Flight, inboundFlights:Flight]
+    static mappedBy = [outboundFlights:"departureAirport", inboundFlights:"destinationAirport"]
 }
 class Flight {
-	Airport departureAirport
-	Airport destinationAirport
+    Airport departureAirport
+    Airport destinationAirport
 }
 {code}
 

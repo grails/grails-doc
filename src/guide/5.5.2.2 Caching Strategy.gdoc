@@ -79,15 +79,15 @@ def person = Person.findByFirstName("Fred", [cache:true])
 {code}
 
 {note}
-Note that in order for the results of the query to be cached, you still need to enable caching in your mapping as discussed in the previous section. 
+Note that in order for the results of the query to be cached, you still need to enable caching in your mapping as discussed in the previous section.
 {note}
 
 You can also cache criteria queries:
 
 {code:java}
 def people = Person.withCriteria {
-	like('firstName', 'Fr%')
-	cache true
+    like('firstName', 'Fr%')
+    cache true
 }
 {code}
 
@@ -95,7 +95,7 @@ h4. Cache usages
 
 Below is a description of the different cache settings and their usages:
 
-* @read-only@ - If your application needs to read but never modify instances of a persistent class, a read-only cache may be used. 
+* @read-only@ - If your application needs to read but never modify instances of a persistent class, a read-only cache may be used.
 * @read-write@ - If the application needs to update data, a read-write cache might be appropriate.
 * @nonstrict-read-write@ - If the application only occasionally needs to update data (ie. if it is extremely unlikely that two transactions would try to update the same item simultaneously) and strict transaction isolation is not required, a @nonstrict-read-write@ cache might be appropriate.
-* @transactional@ - The @transactional@ cache strategy provides support for fully transactional cache providers such as JBoss TreeCache. Such a cache may only be used in a JTA environment and you must specify @hibernate.transaction.manager_lookup_class@ in the @grails-app/conf/DataSource.groovy@ file's @hibernate@ config. 
+* @transactional@ - The @transactional@ cache strategy provides support for fully transactional cache providers such as JBoss TreeCache. Such a cache may only be used in a JTA environment and you must specify @hibernate.transaction.manager_lookup_class@ in the @grails-app/conf/DataSource.groovy@ file's @hibernate@ config.

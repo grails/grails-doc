@@ -22,11 +22,11 @@ enterPersonalDetails {
    on("return").to "showCart"
 }{code}
 
-Be aware that a new request is always created for each state, so an object placed in request scope in an action state (for example) will not be available in a subsequent view state. Use one of the other scopes to pass objects from one state to another. Also note that Web Flow: 
+Be aware that a new request is always created for each state, so an object placed in request scope in an action state (for example) will not be available in a subsequent view state. Use one of the other scopes to pass objects from one state to another. Also note that Web Flow:
 
-# Moves objects from flash scope to request scope upon transition between states; 
+# Moves objects from flash scope to request scope upon transition between states;
 # Merges objects from the flow and conversation scopes into the view model before rendering (so you shouldn't include a scope prefix when referencing these objects within a view, e.g. GSP pages).
-	
+
 
 h4. Flow Scopes and Serialization
 
@@ -34,7 +34,7 @@ When placing objects in @flash@, @flow@ or @conversation@ scope they must implem
 
 {code:java}
 class Book {
-	String title
+    String title
 }
 {code}
 
@@ -42,7 +42,7 @@ In order to place an instance of the @Book@ class in a flow scope you will need 
 
 {code:java}
 class Book implements Serializable {
-	String title
+    String title
 }
 {code}
 
@@ -50,8 +50,8 @@ This also impacts associations and closures you declare within a domain class. F
 
 {code:java}
 class Book implements Serializable {
-	String title
-	Author author
+    String title
+    Author author
 }
 {code}
 
@@ -59,10 +59,10 @@ Here if the @Author@ association is not @Serializable@ you will also get an erro
 
 {code:java}
 class Book implements Serializable {
-	String title
-	def onLoad = {
-		println "I'm loading"
-	}
+    String title
+    def onLoad = {
+        println "I'm loading"
+    }
 }
 {code}
 
@@ -70,9 +70,9 @@ The reason is that the assigned block on the @onLoad@ event cannot be serialized
 
 {code:java}
 class Book implements Serializable {
-	String title
-	transient onLoad = {
-		println "I'm loading"
-	}
+    String title
+    transient onLoad = {
+        println "I'm loading"
+    }
 }
 {code}

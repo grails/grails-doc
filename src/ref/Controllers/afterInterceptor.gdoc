@@ -1,17 +1,17 @@
-h1. afterInterceptor 
+h1. afterInterceptor
 
 h2. Purpose
 
-Allows interception of actions after they have executed, but before the view has rendered at the controller level. 
+Allows interception of actions after they have executed, but before the view has rendered at the controller level.
 
 h2. Examples
 
 Using a block:
 {code}
 class BookController {
-	def afterInterceptor = { model ->
-		model.foo = "bar"
-	}
+    def afterInterceptor = { model ->
+        model.foo = "bar"
+    }
 }
 {code}
 
@@ -20,13 +20,13 @@ In the above example the first argument to block is model (a map of key value pa
 Using a map with a method reference:
 {code}
 class BookController {
-	def afterInterceptor = [action:this.&invokeMe, only:['list']]	
-	def invokeMe(model) {
-		model.foo = "bar"
-	}	
-	def list = {
-		[bookList:Book.list()]
-	}
+    def afterInterceptor = [action:this.&invokeMe, only:['list']]
+    def invokeMe(model) {
+        model.foo = "bar"
+    }
+    def list = {
+        [bookList:Book.list()]
+    }
 }
 {code}
 
@@ -38,7 +38,7 @@ To define an interceptor that is executed after an action use the @afterIntercep
 
 {code}
 def afterInterceptor = { model ->
-       println "Tracing action ${actionUri}"
+    println "Tracing action ${actionUri}"
 }
 {code}
 
@@ -48,9 +48,9 @@ An @afterInterceptor@ may also modify the Spring MVC ModelAndView object prior t
 
 {code}
 def afterInterceptor = { model, modelAndView ->
-       println "Current view is ${modelAndView.viewName}"
-       if(model.someVar) modelAndView.viewName = "/mycontroller/someotherview"
-       println "View is now ${modelAndView.viewName}"
+    println "Current view is ${modelAndView.viewName}"
+    if (model.someVar) modelAndView.viewName = "/mycontroller/someotherview"
+    println "View is now ${modelAndView.viewName}"
 }
 {code}
 
