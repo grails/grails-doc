@@ -20,5 +20,5 @@ Additionally you can create a local.properties file with this variable set, e.g.
 
 or
 
-   grails.home ../grails-core
+   grails.home=../grails-core
 
