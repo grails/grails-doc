@@ -1,6 +1,6 @@
 apply plugin: "base"
 
-version = "1.3.6.1"
+version = "1.4.0.BUILD-SNAPSHOT"
 
 checkOutDir = "${buildDir.path}/checkout"
 outputDir = "${buildDir.path}/docs"
@@ -11,21 +11,22 @@ configurations {
 }
 
 repositories {
-    flatDir dirs: "${System.getProperty('grails.home')}/lib"
+    flatDir dirs: "${System.getProperty('grails.home')}/dist"
     mavenCentral()
     mavenRepo urls: "http://download.java.net/maven/2/"
+    mavenRepo urls: "http://snapshots.repository.codehaus.org/"
 }
 
 dependencies {
-    publish "org.grails:grails-docs:1.3.6", {
+    publish "org.grails:grails-docs:1.4.0.BUILD-SNAPSHOT", {
         exclude module: "core-renderer"
-        exclude module: "radeox"
     }
 
+    // Required while picking up grails-docs from dist dir.
+    publish "org.grails:grails-gdoc-engine:1.0-SNAPSHOT", "org.codehaus.groovy:groovy:1.8.0-rc-1"
+
     publish "org.slf4j:slf4j-log4j12:1.5.8",
-            "org.slf4j:jcl-over-slf4j:1.5.8",
-            "org.xhtmlrenderer:core-renderer:R8",
-            "radeox:radeox:1.0-b3"
+            "org.xhtmlrenderer:core-renderer:R8"
 }
 
 task fetchGrailsSource << {
@@ -51,7 +52,7 @@ task fetchGrailsSource << {
 fetchGrailsSource.onlyIf { !grailsHome }
 
 task apiDocs(type: GradleBuild, dependsOn: 'fetchGrailsSource') {
-    tasks = ["docs"]
+    tasks = ["groovydoc"]
 
     doFirst {
         // grailsHome may have been set during the execution of 'fetchGrailsSource'
@@ -65,7 +66,7 @@ task copyApiDocs(type: Copy) {
     into "${outputDir}/api"
 }
 
-task publishGuide(dependsOn: ['copyApiDocs']) {
+task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
     sourceDir = projectDir.path + "/src"
     targetDir = outputDir
     workDir = buildDir
@@ -100,7 +101,7 @@ task publishGuide(dependsOn: ['copyApiDocs']) {
         publisher.sponsorLogo = '<a href="http://springsource.com" target="_blank"><img alt="SpringSource Logo" title="SpringSource - Weapons for the War on Java Complexity" src="${path}/img/springsource-logo.png" border="0"/></a>'
         publisher.engineProperties = props
 
-        // Add support for display the source code for GSP tags.
+        // Add support for displaying the source code for GSP tags.
         def sourceMacro = publishClassLoader.loadClass("grails.doc.macros.GspTagSourceMacro")
         publisher.registerMacro(sourceMacro.newInstance(new File(project.grailsHome, "src/java/org/codehaus/groovy/grails")))
         
