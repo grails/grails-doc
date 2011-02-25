@@ -1,6 +1,8 @@
 apply plugin: "base"
 
-version = "1.4.0.BUILD-SNAPSHOT"
+version = System.getProperty("grails.version") ?: "1.4.0.BUILD-SNAPSHOT"
+
+archivesBaseName = "grails-docs"
 
 checkOutDir = "${buildDir.path}/checkout"
 outputDir = "${buildDir.path}/docs"
@@ -50,6 +52,8 @@ task apiDocs(type: GradleBuild, dependsOn: 'fetchGrailsSource') {
     tasks = [":grails-docs:install", "groovydoc"]
     buildFile = "${project.grailsHome}/build.gradle"
 }
+
+apiDocs.onlyIf { !System.getProperty("disable.groovydocs") }
 
 task copyApiDocs(type: Copy) {
     from "${project.grailsHome}/doc/api"
@@ -118,6 +122,14 @@ task publishPdf(dependsOn: ['publishGuide']) << {
 }
 
 task docs(dependsOn: ['publishPdf'])
+
+task dist(type: Zip, dependsOn: 'docs') {
+    from outputDir
+}
+
+artifacts {
+    archives dist
+}
 
 task wrapper(type: Wrapper) {
     gradleVersion = '0.9.2'
