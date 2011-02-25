@@ -11,17 +11,12 @@ configurations {
 }
 
 repositories {
-    flatDir dirs: "${System.getProperty('grails.home')}/dist"
     mavenCentral()
     mavenRepo urls: "http://download.java.net/maven/2/"
     mavenRepo urls: "http://snapshots.repository.codehaus.org/"
 }
 
 dependencies {
-    publish "org.grails:grails-docs:1.4.0.BUILD-SNAPSHOT", {
-        exclude module: "core-renderer"
-    }
-
     // Required while picking up grails-docs from dist dir.
     publish "org.grails:grails-gdoc-engine:1.0-SNAPSHOT", "org.codehaus.groovy:groovy:1.8.0-rc-1"
 
@@ -52,7 +47,7 @@ task fetchGrailsSource << {
 fetchGrailsSource.onlyIf { !grailsHome }
 
 task apiDocs(type: GradleBuild, dependsOn: 'fetchGrailsSource') {
-    tasks = ["groovydoc"]
+    tasks = [":grails-docs:install", "groovydoc"]
 
     doFirst {
         // grailsHome may have been set during the execution of 'fetchGrailsSource'
@@ -75,6 +70,10 @@ task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
         // Create a class loader for the publication stuff.
         def classpath = project.configurations.publish
         classpath = classpath.files.collect { it.toURI().toURL() }
+
+        // Add the grails-docs JAR.
+        def distDir = file("${project.grailsHome}/dist")
+        classpath << distDir.listFiles({ dir, name -> name.startsWith "grails-docs-" } as FilenameFilter)[0].toURI().toURL()
         project.publishClassLoader = new URLClassLoader(classpath as URL[], Thread.currentThread().contextClassLoader)
 
         def props = new Properties()
