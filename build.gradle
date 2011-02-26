@@ -72,7 +72,7 @@ task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
 
         // Add the grails-docs JAR.
         def distDir = file("${project.grailsHome}/dist")
-        classpath << distDir.listFiles({ dir, name -> name.startsWith "grails-docs-" } as FilenameFilter)[0].toURI().toURL()
+        classpath << distDir.listFiles({ dir, name -> name ==~ /grails-docs-.*\.jar/ } as FilenameFilter)[0].toURI().toURL()
         project.publishClassLoader = new URLClassLoader(classpath as URL[], Thread.currentThread().contextClassLoader)
 
         def props = new Properties()
@@ -101,7 +101,13 @@ task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
 
         // Add support for displaying the source code for GSP tags.
         def sourceMacro = publishClassLoader.loadClass("grails.doc.macros.GspTagSourceMacro")
-        publisher.registerMacro(sourceMacro.newInstance(new File(project.grailsHome, "src/java/org/codehaus/groovy/grails")))
+        def searchDirs = file(project.grailsHome).listFiles().findAll {
+            new File(it, "src/main/groovy/org/codehaus/groovy/grails").exists()
+        }.collect {
+            new File(it, "src/main/groovy/org/codehaus/groovy/grails")
+        }
+
+        publisher.registerMacro(sourceMacro.newInstance(searchDirs))
         
         // Radeox loads its bundles off the context class loader, which
         // unfortunately doesn't contain the grails-docs JAR. So, we
