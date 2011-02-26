@@ -4,17 +4,16 @@ Filters allow you to apply authentication across all controllers or across a URI
 
 {code:java}
 class SecurityFilters {
-   def filters = {
-       loginCheck(controller:'*', action:'*') {
-           before = {
-              if(!session.user && actionName != "login") {
-                  redirect(controller:"user",action:"login")
-                  return false					
-	           }
-           }
-
+    def filters = {
+        loginCheck(controller:'*', action:'*') {
+            before = {
+                if(!session.user && actionName != "login") {
+                    redirect(controller:"user",action:"login")
+                    return false
+                }
+            }
        }
-   }
+    }
 }
 {code}
 
@@ -24,21 +23,21 @@ The @login@ action itself is trivial too:
 
 {code:java}
 def login = {
-	if(request.get) render(view:"login")
-	else {
-		def u = User.findByLogin(params.login)
-		if(u) {
-			if(u.password == params.password) {
-				session.user = u
-				redirect(action:"home")
-			}
-			else {
-				render(view:"login", model:[message:"Password incorrect"])							
-			}
-		}
-		else {
-			render(view:"login", model:[message:"User not found"])			
-		}
-	}
+    if(request.get) render(view:"login")
+    else {
+        def u = User.findByLogin(params.login)
+        if(u) {
+            if(u.password == params.password) {
+                session.user = u
+                redirect(action:"home")
+            }
+            else {
+                render(view:"login", model:[message:"Password incorrect"])
+            }
+        }
+        else {
+            render(view:"login", model:[message:"User not found"])
+        }
+    }
 }
 {code}
