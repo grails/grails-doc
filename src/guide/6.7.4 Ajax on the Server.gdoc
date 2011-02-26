@@ -107,3 +107,18 @@ def showBook = {
 The important thing to remember is to set the @contentType@ to @text/javascript@. If you are using Prototype on the client the returned Javascript will automatically be evaluated due to this @contentType@ setting.
 
 Obviously in this case it is critical that you have an agreed client-side API as you don't want changes on the client breaking the server. This is one of the reasons Rails has something like RJS. Although Grails does not currently have a feature such as RJS there is a [Dynamic JavaScript Plug-in|http://grails.org/Dynamic+Javascript+Plugin] that offers similar capabilities.
+
+h4. Responding to both Ajax and non-Ajax requests
+
+It's straightforward to have the same Grails controller action handle both Ajax and non-Ajax requests. Grails adds the @isXhr()@ method to @HttpServletRequest@ which can be used to identify Ajax requests. For example you could render a page fragment via a template for Ajax requests or the full page for regular HTTP requests:
+
+{code:java}
+def listBooks = {
+	def books = Book.list(params)
+	if (request.xhr) {
+		render template: "bookTable", model: [books: books]
+	} else {
+		render view: "list", model: [books: books]
+	}
+}
+{code}
