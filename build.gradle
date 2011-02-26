@@ -1,6 +1,6 @@
 apply plugin: "base"
 
-version = System.getProperty("grails.version") ?: "1.4.0.BUILD-SNAPSHOT"
+version = System.getProperty("grails.version") ?: "1.3.7"
 
 archivesBaseName = "grails-docs"
 
@@ -37,7 +37,7 @@ task fetchGrailsSource << {
             "copy of the source. See README.txt for more information."
 
     def zipFile = "${checkOutDir}/grails-src.zip"
-    ant.get src: "http://github.com/grails/grails-core/zipball/master", dest: zipFile, verbose: true
+    ant.get src: "http://github.com/grails/grails-core/zipball/1.3.x-new-docs", dest: zipFile, verbose: true
 
     ant.unzip src: zipFile, dest: checkOutDir, {
         mapper type: "regexp", from: "(grails-grails-core-\\S*?/)(.*)", to: "grails-src/\\2"
@@ -49,7 +49,7 @@ task fetchGrailsSource << {
 fetchGrailsSource.onlyIf { !explicitGrailsHome }
 
 task apiDocs(type: GradleBuild, dependsOn: 'fetchGrailsSource') {
-    tasks = [":grails-docs:install", "groovydoc"]
+    tasks = ["libs", "groovydoc"]
     buildFile = "${project.grailsHome}/build.gradle"
 }
 
@@ -72,7 +72,9 @@ task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
 
         // Add the grails-docs JAR.
         def distDir = file("${project.grailsHome}/dist")
-        classpath << distDir.listFiles({ dir, name -> name.startsWith "grails-docs-" } as FilenameFilter)[0].toURI().toURL()
+        def docsJars = distDir.listFiles({ dir, name -> name.startsWith "grails-docs-" } as FilenameFilter)
+        classpath << docsJars[0].toURI().toURL()
+
         project.publishClassLoader = new URLClassLoader(classpath as URL[], Thread.currentThread().contextClassLoader)
 
         def props = new Properties()
