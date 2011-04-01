@@ -1,12 +1,12 @@
-h1. findOrCreateWhere
+h1. findOrSaveWhere
 
 h2. Purpose
 
 Uses named arguments that match the property names of the domain class to produce a query that returns the first result.  This
 method behaves just like [findWhere|domainClasses] except that it should never return null.  If a matching instance cannot be found in the
-database then a new instance is created, populated with values represented in the query parameters and returned.  The difference between
-this method and [findOrSaveWhere|domainClasses] is that this method will not save any newly created instance where [findOrSaveWhere|domainClasses] 
-does.
+database then a new instance is created, populated with values represented in the query parameters, saved and returned.  The difference between
+this method and [findOrCreateWhere|domainClasses] is that this method will save any newly created instance where [findOrCreateWhere|domainClasses] 
+does not.
 
 h2. Examples
 
@@ -27,7 +27,7 @@ class Book {
 You can query in the form:
 
 {code:java}
-def book = Book.findOrCreateWhere(author:"Stephen King", title:"The Stand")
+def book = Book.findOrSaveWhere(author:"Stephen King", title:"The Stand")
 {code}
 
 h2. Description
