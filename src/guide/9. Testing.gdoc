@@ -1,4 +1,8 @@
-Automated testing is seen as a key part of Grails, implemented using [Groovy Tests|http://groovy.codehaus.org/Testing+Guide]. Hence, Grails provides many ways to making testing easier from low level unit testing to high level functional tests. This section details the different capabilities that Grails offers in terms of testing.
+Automated testing is seen as a key part of Grails, implemented using mixins. Hence, Grails provides many ways to making testing easier from low level unit testing to high level functional tests. This section details the different capabilities that Grails offers in terms of testing.
+
+{note}
+Grails 1.3.x and below used the @grails.test.GrailsUnitTestCase@ class hierarchy for testing in a JUnit 3 style. Grails 1.4.x and above deprecates these test harnesses in favour of mixins that can be applied to a range of different kinds of tests (JUnit 3, Junit 4, Spock etc.)
+{note}
 
 The first thing to be aware of is that all of the @create-*@ commands actually end up creating @unit@ tests automatically for you. For example say you run the [create-controller|commandLine] command as follows:
 
@@ -20,7 +24,15 @@ Test are run with the [test-app|commandLine] command:
 grails test-app
 {code}
 
-The above command will produce output such as:
+Note that you will be able to run unit tests much quicker if you use an IDE or if you use the grails interactive command to start-up Grails in interactive mode, thus preventing the need to stop the JVM:
+
+{code:java}
+grails interactive
+...
+test-app
+{code}
+
+The @test-app@ command will produce output such as:
 
 {code:java}
 -------------------------------------------------------
@@ -38,7 +50,7 @@ Whilst reports will have been written out the @target/test-reports@ directory.
 You can force a clean before running tests by passing @-clean@ to the @test-app@ command.
 {note}
 
-h5. Targeting Tests
+h4. Targeting Tests
 
 You can selectively target the test(s) to be run in different ways. To run all tests for a controller named @SimpleController@ you would run:
 
@@ -82,7 +94,7 @@ This will run the @testLogin@ test in the @SimpleController@ tests. You can spec
 grails test-app some.org.* SimpleController.testLogin BookController
 {code}
 
-h5. Targeting Test Types and/or Phases
+h4. Targeting Test Types and/or Phases
 
 In addition to targeting certain tests, you can also target test _types_ and/or _phases_ by using the @phase:type@ syntax.
 
@@ -124,7 +136,7 @@ More than one pattern can be specified...
 grails test-app unit:spock integration:spock
 {code}
 
-h5. Targeting Tests in Types and/or Phases
+h4. Targeting Tests in Types and/or Phases
 
 Test and type/phase targetting can be applied at the same time:
 
