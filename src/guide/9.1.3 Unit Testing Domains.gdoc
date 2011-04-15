@@ -76,6 +76,43 @@ class BookControllerTests {
 }
 {code}
 
+If you have more than one domain to mock the @Mock@ annotation takes a list of mock collaborators:
+
+{code:java}
+@TestFor(BookController)
+@Mock([Book, Author])
+class BookControllerTests {
+   ...
+}
+{code}
+
+Alternatively you can also use the @DomainClassUnitTestMixin@ directly via the @TestMixin@ annotation:
+
+{code:java}
+@TestFor(BookController)
+@TestMixin(DomainClassUnitTestMixin)
+class BookControllerTests {
+   ...
+}
+{code}
+
+And then call the @mockDomain@ method to mock domains during your test:
+
+{code:java}
+void testSave() {
+	mockDomain(Author)
+	mockDomain(Book)	
+}
+{code}
+
+The @mockDomain@ method also includes an additional parameter that allows you to pass a map of maps to setup an domain, which is useful for fixture-like data:
+
+{code:java}
+void testSave() {
+	mockDomain(Book,  [[title:"The Stand", pages:"1000"], [title:"The Shining", pages:400], [title:"Along Came a Spider", pages:300]])	
+}
+
+{code}
 h4. Testing Constraints
 
 Your constraints contain logic and that logic is highly susceptible to bugs - the kind of bugs that can be tricky to track down (particularly as save() doesn't throw an exception when it fails). If your answer is that it's too hard or fiddly, that is no longer an excuse. Enter the @mockForConstraintsTests()@ method.
