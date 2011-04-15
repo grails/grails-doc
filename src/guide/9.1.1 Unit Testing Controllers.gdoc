@@ -1,12 +1,12 @@
 h4. The Basics
 
-To unit test controllers the @grails.test.mixin.web.ControllerUnitTestMixin@ test mixin is provided. To use the mixin annotate any test with the @grails.test.mixin.TestMixin@ annotation. For example in JUnit 3:
+To unit test controllers you use the @grails.test.mixin.TestFor@ annotation to target a particular controller. Using @TestFor@ in this manner activates the @grails.test.mixin.web.ControllerUnitTestMixin@ and its associated API. For example in JUnit 3:
 
 {code:java}
 import grails.test.mixin.*
-import grails.test.mixin.web.*
 
-@TestMixin(ControllerUnitTestMixin)
+
+@TestFor(SimpleController)
 class SimpleControllerTests extends GroovyTestCase {
 
 }
@@ -16,19 +16,22 @@ Or in Junit 4:
 
 {code:java}
 import grails.test.mixin.*
-import grails.test.mixin.web.*
-import org.junit.Test
 
-@TestMixin(ControllerUnitTestMixin)
+@TestFor(SimpleController)
 class SimpleControllerTests  {
-    @Test
 	void testSomething() {
 		
 	}
 }
 {code}
 
-With that done the main entry point for using the mixin is the @mockController(Class)@ method. The simplest hello world test case can be tested as follows:
+By defining the @TestFor@ annotation for a controller a new @controller@ field is automatically created for the controller under test. 
+
+{note}
+The @TestFor@ annotation will also automatically annotate any public methods starting with "test" with JUnit 4's @Test annotation. If you test method doesn't start with "test" you will need to add this manually
+{note}
+
+To test the simplest "Hello World"-style example you can do the following:
 
 {code:java}
 // Test class
@@ -41,7 +44,6 @@ class SimpleController {
 // JUnit 4 test method
 @Test
 void testHello() {
-	def controller = mockController(SimpleController)
 	controller.hello()
 	
 	assert response.text == 'hello'
@@ -65,7 +67,6 @@ class SimpleController {
 // JUnit 4 test method
 @Test
 void testIndex() {
-	def controller = mockController(SimpleController)
 	controller.index()
 	
 	assert response.redirectedUrl == '/simple/hello'
@@ -88,7 +89,6 @@ class SimpleController {
 // JUnit 4 test method
 @Test
 void testIndex() {
-	def controller = mockController(SimpleController)
 	controller.home()
 	
 	assert "/simple/homePage" == controller.modelAndView.viewName
@@ -115,7 +115,6 @@ In this example the controller will look for a template in @grails-app/views/sim
 {code:java}
 @Test
 void testDisplay() {
-	def controller = mockController(SimpleController)
 	controller.display()
 	assert response.text == 'contents of template'
 }
@@ -127,7 +126,6 @@ However, you may not want to render the real template, but merely test that is w
 @Test
 void testDisplay() {
 	groovyPages['/simple/_snippet.gsp'] = 'mock contents'
-	def controller = mockController(SimpleController)
 	controller.display()
 	assert response.text == 'mock contents'
 }
@@ -150,7 +148,6 @@ This can be tested using the @xml@ property of the response:
 {code:java}
 @Test
 void testRenderXml() {
-	def controller = mockController(SimpleController)
 	controller.renderXml()
     assert "<book title='Great'/>" == response.text
     assert "Great" == response.xml.@title.text()
@@ -173,8 +170,6 @@ def renderJson() {
 @Test
 void testRenderJson() {
 
-    def controller = mockController(SimpleController)
-
     controller.renderJson()
 
     assert '{"book":"Great"}' == controller.response.text
@@ -187,7 +182,7 @@ The @json@ property is an instance of @org.codehaus.groovy.grails.web.json.JSONE
 
 h4. Testing Spring Beans
 
-When using @ControllerUnitTestMixin@ only a subset of the Spring beans available to a running Grails application are available. If you wish to make additional beans available you can do so with the @defineBeans@ method of @GrailsUnitTestMixin@:
+When using @TestFor@ only a subset of the Spring beans available to a running Grails application are available. If you wish to make additional beans available you can do so with the @defineBeans@ method of @GrailsUnitTestMixin@:
 
 {code:java}
 
@@ -204,7 +199,6 @@ void testBeanWiring() {
 		simpleService(SimpleService)
 	}
 	
-	def controller = mockController(SimpleService)
 	controller.hello()
 	
 	assert response.text == "Hello World" 
@@ -212,7 +206,7 @@ void testBeanWiring() {
 }
 {code}
 
-When calling the @mockController@ method the controller is auto-wired via Spring just like in a running Grails application. After mocking a controller via @mockController@ subsequent instances of the controller will also be autowired. For example the following test passes:
+The controller is auto-wired via Spring just like in a running Grails application. Autowiring even occurs if you instantiate subsequent instances of the controller:
 
 {code:java}
 @Test
@@ -220,7 +214,6 @@ void testAutowiringViaNew() {
 	defineBeans {
 		simpleService(SimpleService)
 	}
-	mockController(SimpleController)
 	
 	def controller1 = new SimpleController()
 	def controller2 = new SimpleController()	
@@ -247,8 +240,6 @@ def sayHello() {
 // test
 @Test
 void testSayHello() {
-    def controller = mockController(SimpleController)
-
     request.format = 'xml'
     controller.sayHello()
 
@@ -276,7 +267,6 @@ You want to verify the logic that is executed on a good form submission and the 
 {code:java}
 @Test
 void testDuplicateFormSubmission() {
-	def controller = mockController(SimpleController)
 	controller.handleForm()
     assert "Bad" == response.text	
 }
@@ -290,8 +280,6 @@ import import org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerToken
 
 @Test
 void testValidFormSubmission() {
-	def controller = mockController(SimpleController)
-	
     def token = SynchronizerToken.store(session)
     params[SynchronizerToken.KEY] = token.currentToken.toString()
 	
@@ -327,8 +315,6 @@ To test this action you can register a @GrailsMockMultipartFile@ with the reques
 {code:java}
 @Test
 void testFileUpload() {
-    def controller = mockController(SimpleController)
-
     final file = new GrailsMockMultipartFile("myFile", "foo".bytes)
     request.addFile(file)
     controller.uploadFile()
@@ -359,7 +345,6 @@ To test this you need to mock the command object, populate it and then validate 
 {code:java}
 @Test
 void testInvalidCommand() {
-    def controller = mockController(SimpleController)
     def cmd = mockCommandObject(SimpleCommand)
     cmd.name = '' // doesn't allow blank names
 
@@ -386,7 +371,6 @@ This can be tested as follows:
 {code:java}
 @Test
 void testRenderBasicTemplateWithTags() {
-    def controller = mockController(SimpleController)
     messageSource.addMessage("foo.bar", request.locale, "World")
 
     controller.showMessage()

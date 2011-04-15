@@ -19,16 +19,121 @@ If something isn't supported then @GrailsUnitTestMixin@'s @mockFor@ method can c
 
 h4. The Basics
 
-@DomainClassUnitTestMixin@ is typically used in combination with @ControllerUnitTestMixin@ or @GroovyPageUnitTestMixin@. For example you can declare two mixins as follows:
+@DomainClassUnitTestMixin@ is typically used in combination with testing either a controller, service of tag library where the domain is a mock collaborator defined via the @Mock@ annotation:
 
 {code:java}
-import grails.test.mixin.TestMixin
-import grails.test.mixin.domain.DomainClassUnitTestMixin
-import grails.test.mixin.web.ControllerUnitTestMixin
-import org.junit.Test
+import grails.test.mixin.*
 
-@TestMixin([ControllerUnitTestMixin, DomainClassUnitTestMixin])
+@TestFor(SimpleController)
+@Mock(Simple)
 class SimpleControllerTests {
 
 }
 {code}
+
+The example above tests the @SimpleController@ class and mocks the behavior of the @Simple@ domain class as well. For example consider a typical scaffolded @save@ controller action:
+
+{code:java}
+class BookController {
+	def save = {
+	    def book = new Book(params)
+	    if (book.save(flush: true)) {
+	        flash.message = "${message(code: 'default.created.message', args: [message(code: 'book.label', default: 'Book'), book.id])}"
+	        redirect(action: "show", id: book.id)
+	    }
+	    else {
+	        render(view: "create", model: [bookInstance: book])
+	    }
+	}	
+}
+{code}
+
+Tests for this action can be written as follows:
+
+{code:java}
+import grails.test.mixin.*
+
+@TestFor(BookController)
+@Mock(Book)
+class BookControllerTests {
+	void testSaveInvalidBook() {
+	    controller.save()
+
+	    assert controller.modelAndView != null
+	    assert controller.modelAndView.model.bookInstance != null
+	    assert controller.modelAndView.viewName == '/book/create'
+	}
+	void testSaveValidBook() {
+	    params.title = "The Stand"
+	    params.pages = "500"
+
+	    controller.save()
+
+	    assert response.redirectedUrl == '/book/show/1'
+	    assert controller.flash.message != null
+	    assert Book.count() == 1
+
+	}	
+}
+{code}
+
+h4. Testing Constraints
+
+Your constraints contain logic and that logic is highly susceptible to bugs - the kind of bugs that can be tricky to track down (particularly as save() doesn't throw an exception when it fails). If your answer is that it's too hard or fiddly, that is no longer an excuse. Enter the @mockForConstraintsTests()@ method.
+
+This method is like a much reduced version of the @mockDomain()@ method that simply adds a @validate()@ method to a given domain class. All you have to do is mock the class, create an instance with field values, and then call @validate()@. You can then access the errors property on your domain instance to find out whether the validation failed or not. So if all we are doing is mocking the @validate()@ method, why the optional list of test instances? That is so that we can test unique constraints as you will soon see.
+
+So, suppose we have a simple domain class like so:
+
+{code:java}
+class Book {
+    String title
+    String author
+    static constraints = {
+        title(blank: false, unique: true)
+        author(blank: false, minSize: 5)
+    }
+}
+{code}
+
+Don't worry about whether the constraints are sensible or not (they're not!), they are for demonstration only. To test these constraints we can do the following:
+
+{code:java}
+
+@TestFor(Book)
+class BookTests  {
+    void testConstraints() {
+	 	
+        def existingBook = new Book(title: "Misery", author: "Stephen King")
+	 	
+        mockForConstraintsTests(Book, [ existingBook ])
+
+        // Validation should fail if both properties are null.	 
+        def book = new Book()
+	 	
+        assert !book.validate() 
+        assert "nullable" == book.errors["title"]	 	
+        assert "nullable" == book.errors["author"]
+	 	
+
+	 	
+        // So let's demonstrate the unique and minSize constraints.
+	 	
+        book = new Book(title: "Misery", author: "JK")
+        assert !book.validate() 
+        assert "unique" == book.errors["title"]
+	 	
+        assert "minSize" == book.errors["author"]
+	 	
+        // Validation should pass!
+        book = new Book(title: "The Shining", author: "Stephen King")
+        assert book.validate()
+    }
+	 	
+}
+	 	
+{code}
+
+You can probably look at that code and work out what's happening without any further explanation. The one thing we will explain is the way the errors property is used. First, it does return a real Spring @Errors@ instance, so you can access all the properties and methods you would normally expect. Second, this particular @Errors@ object also has map/property access as shown. Simply specify the name of the field you are interested in and the map/property access will return the name of the constraint that was violated. Note that it is the constraint name , not the message code (as you might expect).
+
+That's it for testing constraints. One final thing we would like to say is that testing the constraints in this way catches a common error: typos in the "constraints" property! It is currently one of the hardest bugs to track down normally, and yet a unit test for your constraints will highlight the problem straight away.

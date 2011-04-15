@@ -1,19 +1,20 @@
 h4. The Basics
 
-Tag libraries and GSP pages can be tested with the @grails.test.mixin.web.GroovyPageUnitTestMixin@ test mixin. To use the mixin declare it with the @TextMixin@ annotation:
+Tag libraries and GSP pages can be tested with the @grails.test.mixin.web.GroovyPageUnitTestMixin@ test mixin. To use the mixin declare which tag library is under test with the @TestFor@ annotation:
 
 {code:java}
-@TestMixin(GroovyPageUnitTestMixin)
-class GroovyPageUnitTestMixinTests {
+@TestFor(SimpleTagLib)
+class SimpleTagLibTests {
 
 
 }
 {code}
 
-Note that if you are testing invocation of a custom tag from a controller you can combine the @ControllerUnitTestMixin@ and the @GroovyPageUnitTestMixin@:
+Note that if you are testing invocation of a custom tag from a controller you can combine the @ControllerUnitTestMixin@ and the @GroovyPageUnitTestMixin@ using the @Mock@ annotation:
 
 {code:java}
-@TestMixin([ControllerUnitTestMixin, GroovyPageUnitTestMixin])
+@TestFor(SimpleController)
+@Mock(SimpleTagLib)
 class GroovyPageUnitTestMixinTests {
 
 }
@@ -37,13 +38,13 @@ class SimpleTagLib {
 You can test this tag library by calling @mockTagLib@ followed by the @applyTemplate@ method with a snippet of GSP:
 
 {code:java}
-@Test
-void testHelloTag() {
-    mockTagLib(SimleTagLib)
-
-    assert applyTemplate('<s:hello />')	== 'Hello World'
-    assert applyTemplate('<s:hello name="Fred" />')	== 'Hello Fred'
-}   
+@TestFor(SimpleTagLib)
+class SimpleTagLibTests {
+	void testHelloTag() {
+	    assert applyTemplate('<s:hello />')	== 'Hello World'
+	    assert applyTemplate('<s:hello name="Fred" />')	== 'Hello Fred'
+	}   	
+}
 {code}
 
 h4. Testing View and Template Rendering

@@ -1,0 +1,47 @@
+h4. The Basics
+
+Testing URL mappings can be done via the @TestFor@ annotation testing a particular URL mappings class. For example to test the default URL mappings you can do the following:
+
+{code:java}
+@TestFor(UrlMappings)
+class UrlMappingsTests {
+	
+}
+{code}
+
+{note}
+Note that since the default @UrlMappings@ class is in the default package your test will need to be in the default package too
+{note}
+
+With that done there are a number of useful methods that are defined by the @grails.test.mixin.web.UrlMappingsUnitTestMixin@ for testing URL mappings. These include:
+
+* @assertUrlMapping@ - Asserts a URL mappings is valid for the given URL. This combines the @assertForwardUrlMapping@ and @assertReverseUrlMapping@ assertions
+* @assertForwardUrlMapping@ - Asserts a URL mapping is forwarded for the given controller class (note that controller will need to be defined as a mock collaborate for this to work)
+* @assertReverseUrlMapping@ - Asserts that the given URL is produced when reverse mapping a link to a given controller and action
+
+h4. Asserting Forward URL Mappings
+
+If you simply want to assert that a given URL maps to a given controller then @assertForwardUrlMapping@ can help. For example, take the following URL mappings:
+
+{code:java}
+static mappings = {
+    "/action1"(controller: "simple", action: "action1")
+    "/action2"(controller: "simple", action: "action2")
+}
+{code}
+
+The following test can be written to assert these URL mappings:
+
+{code:java}
+void testUrlMappings() {
+	assertForwardUrlMapping("/action1", controller:'simple', action: "action1")	
+	assertForwardUrlMapping("/action2", controller:'simple', action: "action2")		
+	shouldFail {
+		assertForwardUrlMapping("/action2", controller:'simple', action: "action1")			
+	}
+}
+{code}
+
+h4. Assert Reverse URL Mappings
+
+If you want to check that the right links are produced for your URL mapping when using the @link@ tag in GSP views then @assertReverseUrlMapping@ can be used. An example test is largely identical to the previous listing except you use @assertReverseUrlMapping@ instead of @assertForwardUrlMapping@. Note that you can combine these 2 assertions with @assertUrlMapping@.
