@@ -1,18 +1,6 @@
 h4. The Basics
 
-To unit test controllers you use the @grails.test.mixin.TestFor@ annotation to target a particular controller. Using @TestFor@ in this manner activates the @grails.test.mixin.web.ControllerUnitTestMixin@ and its associated API. For example in JUnit 3:
-
-{code:java}
-import grails.test.mixin.*
-
-
-@TestFor(SimpleController)
-class SimpleControllerTests extends GroovyTestCase {
-
-}
-{code}
-
-Or in Junit 4:
+To unit test controllers you use the @grails.test.mixin.TestFor@ annotation to target a particular controller. Using @TestFor@ in this manner activates the @grails.test.mixin.web.ControllerUnitTestMixin@ and its associated API. For example:
 
 {code:java}
 import grails.test.mixin.*
@@ -28,7 +16,7 @@ class SimpleControllerTests  {
 By defining the @TestFor@ annotation for a controller a new @controller@ field is automatically created for the controller under test. 
 
 {note}
-The @TestFor@ annotation will also automatically annotate any public methods starting with "test" with JUnit 4's @Test annotation. If you test method doesn't start with "test" you will need to add this manually
+The @TestFor@ annotation will also automatically annotate any public methods starting with "test" with JUnit 4's @Test annotation. If your test method doesn't start with "test" you will need to add this manually
 {note}
 
 To test the simplest "Hello World"-style example you can do the following:
@@ -41,8 +29,6 @@ class SimpleController {
 	}
 }
 
-// JUnit 4 test method
-@Test
 void testHello() {
 	controller.hello()
 	
@@ -64,8 +50,6 @@ class SimpleController {
 	...
 }
 
-// JUnit 4 test method
-@Test
 void testIndex() {
 	controller.index()
 	
@@ -86,13 +70,11 @@ class SimpleController {
 	...
 }
 
-// JUnit 4 test method
-@Test
 void testIndex() {
 	controller.home()
 	
-	assert "/simple/homePage" == controller.modelAndView.viewName
-	assert "Hello World" == controller.modelAndView.model.title
+	assert view == "/simple/homePage" 
+	assert model.title == "Hello World"
 }
 {code}
 
@@ -113,7 +95,6 @@ class SimpleController {
 In this example the controller will look for a template in @grails-app/views/simple/_snippet.gsp@. You can test this as follows:
 
 {code:java}
-@Test
 void testDisplay() {
 	controller.display()
 	assert response.text == 'contents of template'
@@ -123,7 +104,6 @@ void testDisplay() {
 However, you may not want to render the real template, but merely test that is was rendered. In this case you can provide mock Groovy Pages:
 
 {code:java}
-@Test
 void testDisplay() {
 	groovyPages['/simple/_snippet.gsp'] = 'mock contents'
 	controller.display()
@@ -146,7 +126,6 @@ def renderXml() {
 This can be tested using the @xml@ property of the response:
 
 {code:java}
-@Test
 void testRenderXml() {
 	controller.renderXml()
     assert "<book title='Great'/>" == response.text
@@ -167,7 +146,6 @@ def renderJson() {
 }
 
 // test
-@Test
 void testRenderJson() {
 
     controller.renderJson()
@@ -193,7 +171,6 @@ class SimpleController {
 	}
 }
 
-@Test
 void testBeanWiring() {
 	defineBeans {
 		simpleService(SimpleService)
@@ -209,7 +186,6 @@ void testBeanWiring() {
 The controller is auto-wired via Spring just like in a running Grails application. Autowiring even occurs if you instantiate subsequent instances of the controller:
 
 {code:java}
-@Test
 void testAutowiringViaNew() {
 	defineBeans {
 		simpleService(SimpleService)
@@ -238,7 +214,6 @@ def sayHello() {
 }
 
 // test
-@Test
 void testSayHello() {
     request.format = 'xml'
     controller.sayHello()
@@ -265,7 +240,6 @@ def handleForm() {
 You want to verify the logic that is executed on a good form submission and the logic that is executed on a duplicate submission. Testing the bad submission is simple. Just invoke the controller:
 
 {code:java}
-@Test
 void testDuplicateFormSubmission() {
 	controller.handleForm()
     assert "Bad" == response.text	
@@ -278,7 +252,6 @@ Testing the successful submission requires providing an appropriate @Synchronize
 import org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerToken
 ...
 
-@Test
 void testValidFormSubmission() {
     def token = SynchronizerToken.store(session)
     params[SynchronizerToken.KEY] = token.currentToken.toString()
@@ -313,7 +286,6 @@ def uploadFile() {
 To test this action you can register a @GrailsMockMultipartFile@ with the request:
 
 {code:java}
-@Test
 void testFileUpload() {
     final file = new GrailsMockMultipartFile("myFile", "foo".bytes)
     request.addFile(file)
@@ -343,7 +315,6 @@ def handleCommand = { SimpleCommand simple ->
 To test this you need to mock the command object, populate it and then validate it as follows:
 
 {code:java}
-@Test
 void testInvalidCommand() {
     def cmd = mockCommandObject(SimpleCommand)
     cmd.name = '' // doesn't allow blank names
@@ -369,7 +340,6 @@ def showMessage() {
 This can be tested as follows:
 
 {code:java}
-@Test
 void testRenderBasicTemplateWithTags() {
     messageSource.addMessage("foo.bar", request.locale, "World")
 
