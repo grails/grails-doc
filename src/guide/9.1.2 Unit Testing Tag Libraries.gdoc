@@ -35,7 +35,7 @@ class SimpleTagLib {
 }
 {code}
 
-You can test this tag library by calling @mockTagLib@ followed by the @applyTemplate@ method with a snippet of GSP:
+You can test this tag library by using @TestFor@ and supplying the name of the tag library:
 
 {code:java}
 @TestFor(SimpleTagLib)
@@ -47,9 +47,25 @@ class SimpleTagLibTests {
 }
 {code}
 
+Alternatively, you can use the @TestMixin@ annotation and mock multiple tag libraries via the @mockTagLib(Class)@ method:
+
+{code:java}
+@grails.test.mixin.TestMixin(GroovyPageUnitTestMixin)
+class MultipleTagLibraryTests {
+	
+	@Test
+	void testMuliple() {
+		mockTagLib(FirstTagLib)
+		mockTagLib(SecondTagLib)
+		
+		...
+	}
+}
+{code}
+
 h4. Testing View and Template Rendering
 
-You can test rendering of views and templates in @grails-app/views@ via the @render(Map)@ method provided by @GroovyPageUnitTestMixin@:
+You can test rendering of views and templates in @grails-app/views@ via the @render(Map)@ method provided by @GroovyPageUnitTestMixin@ :
 
 {code:java}
 def result = render(template:"/simple/hello")
