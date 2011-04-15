@@ -1,0 +1,34 @@
+h4. Overview
+
+Domain class interaction can be tested without involving a database connection using the @DomainClassUnitTestMixin@. This implementation mimics the behavior of GORM against an in-memory @ConcurrentHashMap@ implementation. Note that it contains limitations in comparison to a real GORM implementation including. The following features of GORM for Hibernate can only be tested within an integration test:
+
+* String-based HQL queries
+* Composite Identifiers 
+* Dirty Checking Methods
+* Any Direct Interaction with Hibernate
+
+However, a large, commonly-used portion of the GORM API can be mocked via @DomainClassUnitTestMixin@ including:
+
+* Simple persistence methods like save(), delete() etc.
+* Dynamic Finders
+* Named Queries
+* Query-by-example
+* GORM Events
+
+If something isn't supported then @GrailsUnitTestMixin@'s @mockFor@ method can come in handy to mock the missing pieces. Alternatively you can write an integration test which bootstraps the complete Grails environment at a cost of test execution time.
+
+h4. The Basics
+
+@DomainClassUnitTestMixin@ is typically used in combination with @ControllerUnitTestMixin@ or @GroovyPageUnitTestMixin@. For example you can declare two mixins as follows:
+
+{code:java}
+import grails.test.mixin.TestMixin
+import grails.test.mixin.domain.DomainClassUnitTestMixin
+import grails.test.mixin.web.ControllerUnitTestMixin
+import org.junit.Test
+
+@TestMixin([ControllerUnitTestMixin, DomainClassUnitTestMixin])
+class SimpleControllerTests {
+
+}
+{code}
