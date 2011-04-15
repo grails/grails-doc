@@ -59,9 +59,8 @@ class BookControllerTests {
 	void testSaveInvalidBook() {
 	    controller.save()
 
-	    assert controller.modelAndView != null
-	    assert controller.modelAndView.model.bookInstance != null
-	    assert controller.modelAndView.viewName == '/book/create'
+	    assert model.bookInstance != null
+	    assert view == '/book/create'
 	}
 	void testSaveValidBook() {
 	    params.title = "The Stand"
@@ -70,7 +69,7 @@ class BookControllerTests {
 	    controller.save()
 
 	    assert response.redirectedUrl == '/book/show/1'
-	    assert controller.flash.message != null
+	    assert flash.message != null
 	    assert Book.count() == 1
 
 	}	
