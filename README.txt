@@ -1,6 +1,6 @@
 To build the documentation:
 
-ant docs
+gradlew docs
 
 Building the documentation relies on access to a copy of the Grails
 source code.  By default the build will download a copy of the source
@@ -12,7 +12,7 @@ advantage of a local copy of the source tree by setting the grails.home
 system property and assigning it a value that points to a copy of the
 grails project:
 
-ant docs -Dgrails.home=/home/user/projects/grails-core
+gradlew docs -Dgrails.home=/home/user/projects/grails-core
 
 Additionally you can create a local.properties file with this variable set, e.g.
 
