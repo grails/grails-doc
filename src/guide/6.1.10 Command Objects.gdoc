@@ -39,6 +39,21 @@ class LoginController {
 }
 {code}
 
+When using Methods instead of Closures for Actions, you can specify command objects in arguments:
+
+{code:java}
+class LoginController {
+    def login(LoginCommand cmd){
+        if (cmd.hasErrors()) {
+            redirect(action:'loginForm')
+        }
+        else {
+            // do something else
+        }
+    }
+}
+{code}
+
 h4. Command Objects and Dependency Injection
 
 Command objects can participate in dependency injection. This is useful if your command object has some custom validation logic which may need to interact with Grails [services|guide:services]:

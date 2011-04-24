@@ -50,3 +50,30 @@ def delete = {
     ... // remaining code
 }
 {code}
+
+h4. Scoped Controllers
+
+By default, controllers are created for each request. In fact, because the controller is @prototype@ scoped, it is thread-safe and combines nicely with actions as properties.
+
+You can change this behaviour by placing a controller in a particular scope. The supported scopes are:
+
+* @prototype@ (default) - A new controller will be created per request (recommended for actions as properties)
+* @session@ - A controller is created for the scope of a user session
+* @singleton@ - Only one instance of the controller ever exists (recommended for actions as methods)
+
+To enable one of the scopes, add a static scope property to your class whose value is one of the above:
+
+{code:java}
+static scope = "singleton"
+{code}
+
+You can define the default strategy under Config.groovy with the @grails.controllers.defaultScope@ key:
+
+{code:java}
+grails.controllers.defaultScope = "singleton"
+{code}
+
+{note}
+Use the scoped controllers wisely, for instance, we don't recommend having any properties in a singleton scoped controller.
+Setting a default scope different than @prototype@ may also leads to unexpected behaviors if you have controllers provided by installed grails plugins.
+{note}

@@ -34,7 +34,34 @@ class BookController {
 }
 {code}
 
+As
+
 This example maps to the @/book/list@ URI by default thanks to the property being named @list@.
+
+h4. Public Methods as Actions
+
+Since Grails 1.4 you can write actions as public methods:
+
+{code:java}
+class BookController{
+
+	def list(){
+        // do controller logic
+        // create model
+
+        return model
+	}
+}
+{code}
+
+Leveraging methods instead of properties leads to some advantages:
+* Memory efficient
+* Allow use of stateless controllers (@singleton@ scope)
+
+If you prefer the closure syntax and still want the method advantages, you can set the @grails.compile.artefacts.closures.convert@ to true in @BuildConfig.groovy@.
+{code}
+grails.compile.artefacts.closures.convert=true
+{code}
 
 h4. The Default Action
 
