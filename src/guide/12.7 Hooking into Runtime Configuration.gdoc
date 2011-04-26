@@ -30,6 +30,8 @@ h4. Participating in web.xml Generation
 
 Grails generates the @WEB-INF/web.xml@ file at load time, and although plugins cannot change this file directly, they can participate in the generation of the file. Essentially a plugin can provide a @doWithWebDescriptor@ property that is assigned a block of code that gets passed the @web.xml@ as a @XmlSlurper@ @GPathResult@.
 
+h5. Add @servlet@ and @servlet-mapping@
+
 Consider the below example from the @ControllersPlugin@:
 
 {code:java}
@@ -47,6 +49,33 @@ def doWithWebDescriptor = { webXml ->
 
 Here the plugin goes through gets a reference to the last @<servlet-mapping>@ element and appends Grails' servlet to the end of it using XmlSlurper's ability to programmatically modify XML using closures and blocks.
 	
+
+h5. Add @filter@ and @filter-mapping@
+
+Adding a filter with its mapping works a little different. Because you cannot be certain to have any @<filter>@ element present to hook on working with @web.xml@ mandatory nearby elements will solve that.
+
+* Add the @<filter>@ element(s) right after the last @<context-param>@.
+* Add the @<filter-mapping>@ element(s) right after the last @<filter>@.
+
+{code:java}
+def doWithWebDescriptor = { webXml ->
+    def contextParam = webXml.'context-param'
+    contextParam[contextParam.size() - 1] + {
+        'filter' {
+            'filter-name'('springSecurityFilterChain')
+            'filter-class'(DelegatingFilterProxy.name)
+        }
+    }
+
+    def filter = webXml.'filter'
+    filter[filter.size() - 1] + {
+        'filter-mapping'{
+            'filter-name'('springSecurityFilterChain')
+            'url-pattern'('/*')
+        }
+    }
+}
+{code}
 
 h4. Doing Post Initialisation Configuration
 
