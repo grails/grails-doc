@@ -10,36 +10,38 @@ Example controller for an application called "shop":
 
 {code:java}
 class BookController {
-     def list = { [ books: Book.list( params ) ] }
-     def oldList = { [ books: Book.list( params ) ] }
      def show = { [ book : Book.get( params['id'] ) ] }
+     def byAuthor = { [ books: Book.findByAuthor( params['author'], params ) ] }
 }
 {code}
 
 Example usages for above controller:
 
 {code:xml}
-<g:formRemote name="myForm" on404="alert('not found!')" update="updateMe" url="[action:'show']">
+<g:formRemote name="myForm" on404="alert('not found!')" update="updateMe"
+              url="[ controller: 'book', action:'show' ]">
     Book Id: <input name="id" type="text"></input>
 </g:formRemote>
-<div id="updateMe">this div is updated by the form</div>
+<div id="updateMe">this div is updated with the result of the show call</div>
 {code}
 
 {code:xml}
 <g:formRemote name="myForm" update="updateMe"
-              url="[ controller: 'book', action: 'list', params: [ sort: 'title', order: 'desc' ]]">
-    Book Id: <input name="id" type="text"></input>
+              url="[ controller: 'book', action: 'byAuthor', params: [ sort: 'title', order: 'desc' ]]">
+    Author: <input name="author" type="text"></input>
 </g:formRemote>
-<div id="updateMe">this div is updated by the form</div>
+<div id="updateMe">this div is updated with the result of the byAuthor call</div>
 {code}
 
-You can override both the form method and action to use when javascript is unavailable by providing @method@ and @action@ attributes. This example will submit the form to @/<context>/book/oldList@ using a GET if javascript is unavailable:
+You can override both the form method and action to use when javascript is unavailable by providing @method@ and @action@ attributes. This example will submit the form to @/<context>/book/show@ using a GET if javascript is unavailable:
 
 {code:xml}
-<g:formRemote name="myForm" method="GET" action="${createLink(controller: 'book', action: 'oldList')}"
-              url="[ controller: 'book', action: 'list', params: [ sort: 'title', order: 'desc' ]]">
+<g:formRemote name="myForm" update="updateMe"
+              method="GET" action="${createLink(controller: 'book', action: 'show')}"
+              url="[ controller: 'book', action: 'show']">
     Book Id: <input name="id" type="text"></input>
 </g:formRemote>
+<div id="updateMe"><!-- this div is updated by the result of the show call --></div>
 {code}
 
 h2. Description
