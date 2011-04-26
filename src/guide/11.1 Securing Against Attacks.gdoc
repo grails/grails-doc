@@ -29,6 +29,12 @@ It is also important to ensure that all data values rendered into views are esca
 
 You must also avoid the use of request parameters or data fields for determining the next URL to redirect the user to. If you use a @successURL@ parameter for example to determine where to redirect a user to after a successful login, attackers can imitate your login procedure using your own site, and then redirect the user back to their own site once logged in, potentially allowing JS code to then exploit the logged-in account on the site.
 
+h4. Cross-site request forgery
+
+CSRF involves unauthorized commands being transmitted from a user that a website trusts. A typical example would be another website embedding a link to perform an action on your website if the user is still authenticated.
+
+The best way to decrease risk against these types of attacks is to use the @useToken@ attribute on your forms. See [Handling Duplicate Form Submissions|guide:formtokens] for more information on how to use it. An additional measure would be to not use remember-me cookies.
+
 h4. HTML/URL injection
 
 This is where bad data is supplied such that when it is later used to create a link in a page, clicking it will not cause the expected behaviour, and may redirect to another site or alter request parameters.
