@@ -31,6 +31,8 @@ h4. Participating in web.xml Generation
 
 Grails generates the @WEB-INF/web.xml@ file at load time, and although plugins cannot change this file directly, they can participate in the generation of the file. Essentially a plugin can provide a @doWithWebDescriptor@ property that is assigned a block of code that gets passed the @web.xml@ as a @XmlSlurper@ @GPathResult@.
 
+h5. Add @servlet@ and @servlet-mapping@
+
 Consider the below example from the @ControllersPlugin@:
 
 {code:java}
@@ -48,6 +50,51 @@ def doWithWebDescriptor = { webXml ->
 
 Here the plugin goes through gets a reference to the last @<servlet-mapping>@ element and appends Grails' servlet to the end of it using XmlSlurper's ability to programmatically modify XML using closures and blocks.
 	
+
+h5. Add @filter@ and @filter-mapping@
+
+Adding a filter with its mapping works a little differently. The location of the @<filter>@ element doesn't matter since order is not important, so it's simplest to insert your custom filter definition immediately after the last @<context-param>@ element. Order _is_ important for mappings, but the usual approach is to add it immediately after the last @<filter>@ element like so:
+
+{code:java}
+def doWithWebDescriptor = { webXml ->
+    def contextParam = webXml.'context-param'
+    contextParam[contextParam.size() - 1] + {
+        'filter' {
+            'filter-name'('springSecurityFilterChain')
+            'filter-class'(DelegatingFilterProxy.name)
+        }
+    }
+
+    def filter = webXml.'filter'
+    filter[filter.size() - 1] + {
+        'filter-mapping'{
+            'filter-name'('springSecurityFilterChain')
+            'url-pattern'('/*')
+        }
+    }
+}
+{code}
+
+In some cases you will need to ensure that your filter comes after one of the standard Grails ones, such as the Spring character encoding filter or the SiteMesh filter. Fortunately, you can insert filter mappings immediately after the standard ones (more accurately, any that are in the template web.xml file) like so:
+
+{code:java}
+def doWithWebDescriptor = { webXml ->
+    ...
+
+    // Insert the Spring Security filter after the Spring
+    // character encoding filter.
+    def filter = webXml.'filter-mapping'.find {
+        it.'filter-name'.text() == "charEncodingFilter"
+    }
+
+    filter + {
+        'filter-mapping'{
+            'filter-name'('springSecurityFilterChain')
+            'url-pattern'('/*')
+        }
+    }
+}
+{code}
 
 h4. Doing Post Initialisation Configuration
 
