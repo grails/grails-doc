@@ -10,42 +10,47 @@ Example controller for an application called "shop":
 
 {code:java}
 class BookController {
-     def list = { [ books: Book.list( params ) ] }
      def show = { [ book : Book.get( params['id'] ) ] }
+     def byAuthor = { [ books: Book.findByAuthor( params['author'], params ) ] }
 }
 {code}
 
 Example usages for above controller:
 
 {code:xml}
-<g:formRemote name="myForm" on404="alert('not found!')" update="updateMe" url="[action:'show']">
-    Login: <input name="login" type="text"></input>
+<g:formRemote name="myForm" on404="alert('not found!')" update="updateMe"
+              url="[ controller: 'book', action:'show' ]">
+    Book Id: <input name="id" type="text"></input>
 </g:formRemote>
-<div id="updateMe">this div is updated by the form</div>
+<div id="updateMe">this div is updated with the result of the show call</div>
 {code}
 
 {code:xml}
 <g:formRemote name="myForm" update="updateMe"
-              url="[ controller: 'book', action: 'list', params: [ sort: 'title', order: 'desc' ]]">
-    Login: <input name="login" type="text"></input>
+              url="[ controller: 'book', action: 'byAuthor', params: [ sort: 'title', order: 'desc' ]]">
+    Author: <input name="author" type="text"></input>
 </g:formRemote>
-<div id="updateMe">this div is updated by the form</div>
+<div id="updateMe">this div is updated with the result of the byAuthor call</div>
 {code}
 
-You can override both the form method and action to use when javascript is unavailable by providing @method@ and @action@ attributes. This example will submit the form to @/<context>/book/oldList@ using a GET if javascript is unavailable:
+You can override both the form method and action to use when javascript is unavailable by providing @method@ and @action@ attributes. This example will submit the form to @/<context>/book/show@ using a GET if javascript is unavailable:
 
 {code:xml}
-<g:formRemote name="myForm" method="GET" action="${createLink(controller: 'book', action: 'oldList')}"
-              url="[ controller: 'book', action: 'list', params: [ sort: 'title', order: 'desc' ]]">
-    Login: <input name="login" type="text"></input>
+<g:formRemote name="myForm" update="updateMe"
+              method="GET" action="${createLink(controller: 'book', action: 'show')}"
+              url="[ controller: 'book', action: 'show']">
+    Book Id: <input name="id" type="text"></input>
 </g:formRemote>
+<div id="updateMe"><!-- this div is updated by the result of the show call --></div>
 {code}
 
 h2. Description
 
 Attributes
 
-* @url@ - The url to submit to as either a map (containing values for the controller, action, id, and params) or a URL string
+* @name@ (required) - The name of the form. This attribute will be assigned to @id@ attribute if not present, otherwise, the value of this attribute will be omitted
+* @url@ (required) - The url to submit to as either a map (containing values for the controller, action, id, and params) or a URL string
+* @id@ (optional) - The id of the form rendered to the output. If @id@ is not set, the value of @name@ will be assigned
 * @action@ (optional) - The action to execute as a fallback, defaults to the url if non specified
 * @update@ (optional) - Either a map containing the elements to update for 'success' or 'failure' states, or a string with the element to update in which cause failure events would be ignored
 * @before@ (optional) - The javascript function to call before the remote function call
@@ -58,9 +63,9 @@ Events
 * @onSuccess@ (optional) - The javascript function to call if successful
 * @onFailure@ (optional) - The javascript function to call if the call failed
 * @on_ERROR_CODE@ (optional) - The javascript function to call to handle specified error codes (eg on404="alert('not found!')")
-* @onUninitialized@ (optional) - The javascript function to call the a ajax engine failed to initialise
+* @onUninitialized@ (optional) - The javascript function to call if the ajax engine failed to initialise
 * @onLoading@ (optional) - The javascript function to call when the remote function is loading the response
-* @onLoaded@ (optional) - The javascript function to call when the remote function is completed loading the response
+* @onLoaded@ (optional) - The javascript function to call when the remote function completed loading the response
 * @onComplete@ (optional) - The javascript function to call when the remote function is complete, including any updates
 
 
