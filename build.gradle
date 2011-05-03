@@ -121,7 +121,17 @@ task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
 }
 
 task publishPdf(dependsOn: ['publishGuide']) << {
-    publishClassLoader.loadClass("grails.doc.PdfBuilder").build(outputDir, project.grailsHome)
+    try {
+        def currFile = new File(outputDir, "guide/single.html")
+        def pdfBuilder = publishClassLoader.loadClass("grails.doc.PdfBuilder")
+        def xml = pdfBuilder.createXml(currFile, new File(outputDir).absolutePath)
+        pdfBuilder.createPdf xml,
+                new File(currFile.parentFile, currFile.name[0..-5] + "pdf"),
+                currFile.toURL().toURI().toString()//file://${new File(outputDir).absolutePath}/guide/single.html"
+    }
+    catch (Exception ex) {
+        ex.printStackTrace()
+    }
 }
 
 task docs(dependsOn: ['publishPdf'])

@@ -41,7 +41,7 @@ Tags no longer return @java.lang.String@ instances but instead return a @StreamC
 {code}
 def foo = body()
 if(foo instanceof String) {
-	// do something
+    // do something
 }
 {code}
 
@@ -50,7 +50,7 @@ In these cases you should use the @java.lang.CharSequence@ interface, which both
 {code}
 def foo = body()
 if(foo instanceof CharSequence) {
-	// do something
+    // do something
 }
 {code}
 
@@ -68,9 +68,9 @@ Grails now executes validation routines when the underlying Hibernate session is
 
 {code}
 static constraints = {
-	author validator: { a ->
-		assert a != Book.findByTitle("My Book").author		
-	}
+    author validator: { a ->
+        assert a != Book.findByTitle("My Book").author
+    }
 }
 {code}
 
@@ -78,11 +78,11 @@ The above code can lead to a @StackOverflowError@ in Grails 1.2. The solution is
 
 {code}
 static constraints = {
-	author validator: { a ->
-		Book.withNewSession {
-			assert a != Book.findByTitle("My Book").author					
-		}
-	}
+    author validator: { a ->
+        Book.withNewSession {
+            assert a != Book.findByTitle("My Book").author
+        }
+    }
 }
 {code}
 
@@ -130,8 +130,8 @@ h4. Script Changes
 1) If you were previously using Grails 1.0.3 or below the following syntax is no longer support for importing scripts from GRAILS_HOME:
 
 {code}
-Ant.property(environment:"env")                             
-grailsHome = Ant.antProject.properties."env.GRAILS_HOME"    
+Ant.property(environment:"env")
+grailsHome = Ant.antProject.properties."env.GRAILS_HOME"
 
 includeTargets << new File ( "${grailsHome}/scripts/Bootstrap.groovy" )
 {code}

@@ -5,24 +5,25 @@ h4. Hooking into the Grails Spring configuration
 First, you can hook in Grails runtime configuration by providing a property called @doWithSpring@ which is assigned a block of code. For example the following snippet is from one of the core Grails plugins that provides [i18n|guide:i18n] support:
 
 {code:java}
-import org.springframework.web.servlet.i18n.CookieLocaleResolver;
-import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
-import org.springframework.context.support.ReloadableResourceBundleMessageSource;
+import org.springframework.web.servlet.i18n.CookieLocaleResolver
+import org.springframework.web.servlet.i18n.LocaleChangeInterceptor
+import org.springframework.context.support.ReloadableResourceBundleMessageSource
 
 class I18nGrailsPlugin {
 
-	def version = 0.1
+    def version = 0.1
 
-	def doWithSpring = {
-		messageSource(ReloadableResourceBundleMessageSource) {
-			basename = "WEB-INF/grails-app/i18n/messages"
-		}
-		localeChangeInterceptor(LocaleChangeInterceptor) {
-			paramName = "lang"
-		}
-		localeResolver(CookieLocaleResolver)
-	}
-}{code}
+    def doWithSpring = {
+        messageSource(ReloadableResourceBundleMessageSource) {
+            basename = "WEB-INF/grails-app/i18n/messages"
+        }
+        localeChangeInterceptor(LocaleChangeInterceptor) {
+            paramName = "lang"
+        }
+        localeResolver(CookieLocaleResolver)
+    }
+}
+{code}
 
 This plugin sets up the Grails @messageSource@ bean and a couple of other beans to manage Locale resolution and switching. It using the [Spring Bean Builder|guide:spring] syntax to do so.
 
@@ -34,14 +35,14 @@ Consider the below example from the @ControllersPlugin@:
 
 {code:java}
 def doWithWebDescriptor = { webXml ->
-	def mappingElement = webXml.'servlet-mapping'
-	def lastMapping = mappingElement[mappingElement.size()-1]
-	lastMapping + {
-		'servlet-mapping' {
-			'servlet-name'("grails")
-			'url-pattern'("*.dispatch")
-		}
-	}
+    def mappingElement = webXml.'servlet-mapping'
+    def lastMapping = mappingElement[mappingElement.size()-1]
+    lastMapping + {
+        'servlet-mapping' {
+            'servlet-name'("grails")
+            'url-pattern'("*.dispatch")
+        }
+    }
 }
 {code}
 
@@ -54,12 +55,12 @@ Sometimes it is useful to be able do some runtime configuration after the Spring
 
 {code:java}
 class SimplePlugin {
-     def name="simple"
-     def version = 1.1
+    def name="simple"
+    def version = 1.1
 
-	 def doWithApplicationContext = { appCtx ->
-          SessionFactory sf = appCtx.getBean("sessionFactory")
-          // do something here with session factory
-	 }
-}{code}
-
+    def doWithApplicationContext = { appCtx ->
+        SessionFactory sf = appCtx.getBean("sessionFactory")
+        // do something here with session factory
+    }
+}
+{code}
