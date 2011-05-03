@@ -22,7 +22,7 @@ repositories {
 
 dependencies {
     // Required while picking up grails-docs from dist dir.
-    publish "org.grails:grails-gdoc-engine:1.0-SNAPSHOT", "org.codehaus.groovy:groovy:1.8.0-rc-1"
+    publish "org.grails:grails-gdoc-engine:1.0-SNAPSHOT", "org.codehaus.groovy:groovy:1.8.0"
 
     publish "org.slf4j:slf4j-log4j12:1.5.8",
             "org.xhtmlrenderer:core-renderer:R8"
@@ -124,7 +124,20 @@ task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
 }
 
 task publishPdf(dependsOn: ['publishGuide']) << {
-    publishClassLoader.loadClass("grails.doc.PdfBuilder").build(outputDir, project.grailsHome)
+    try {
+    new File(outputDir, "guide").eachFileMatch(~/.*\.html/) { f ->
+//        def currFile = new File(outputDir, "guide/single.html")
+        def currFile = f
+        def pdfBuilder = publishClassLoader.loadClass("grails.doc.PdfBuilder")
+        def xml = pdfBuilder.createXml(currFile, new File(outputDir).absolutePath)
+        pdfBuilder.createPdf xml,
+                new File(currFile.parentFile, currFile.name[0..-5] + "pdf"),
+                currFile //file://${new File(outputDir).absolutePath}/guide/single.html"
+    }
+    }
+    catch (Exception ex) {
+        ex.printStackTrace()
+    }
 }
 
 task docs(dependsOn: ['publishPdf'])

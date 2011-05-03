@@ -7,9 +7,9 @@ import grails.test.mixin.*
 
 @TestFor(SimpleController)
 class SimpleControllerTests  {
-	void testSomething() {
-		
-	}
+    void testSomething() {
+     
+    }
 }
 {code}
 
@@ -24,36 +24,36 @@ To test the simplest "Hello World"-style example you can do the following:
 {code:java}
 // Test class
 class SimpleController {
-	def hello() {
-		render "hello"
-	}
+    def hello() {
+        render "hello"
+    }
 }
 
 void testHello() {
-	controller.hello()
-	
-	assert response.text == 'hello'
+    controller.hello()
+    
+    assert response.text == 'hello'
 }
 {code}
 
 
-The @response@ object is an instance of @org.codehaus.groovy.grails.plugins.testing.GrailsMockHttpServletResponse@ which extends Spring's @org.springframework.mock.web.MockHttpServletResponse@ and has a number of useful methods for inspecting the state of the response.
+The @response@ object is an instance of @GrailsMockHttpServletResponse@ (in the package @org.codehaus.groovy.grails.plugins.testing@) which extends Spring's @org.springframework.mock.web.MockHttpServletResponse@ and has a number of useful methods for inspecting the state of the response.
 
 For example to test a redirect you can use the @redirectUrl@ property:
 
 {code:java}
 // Test class
 class SimpleController {
-	def index() {
-		redirect action:'hello'
-	}
-	...
+    def index() {
+        redirect action:'hello'
+    }
+    ...
 }
 
 void testIndex() {
-	controller.index()
-	
-	assert response.redirectedUrl == '/simple/hello'
+    controller.index()
+    
+    assert response.redirectedUrl == '/simple/hello'
 }
 {code}
 
@@ -64,17 +64,17 @@ To test view rendering you can inspect the state of the controller's @modelAndVi
 {code:java}
 // Test class
 class SimpleController {
-	def home() {
-		render view:"homePage", model:[title:"Hello World"]
-	}
-	...
+    def home() {
+        render view:"homePage", model:[title:"Hello World"]
+    }
+    ...
 }
 
 void testIndex() {
-	controller.home()
-	
-	assert view == "/simple/homePage" 
-	assert model.title == "Hello World"
+    controller.home()
+    
+    assert view == "/simple/homePage" 
+    assert model.title == "Hello World"
 }
 {code}
 
@@ -86,9 +86,9 @@ Consider the following controller action:
 
 {code:java}
 class SimpleController {
-	def display() {
-		render template:"snippet"
-	}	
+    def display() {
+        render template:"snippet"
+    }	
 }
 {code}
 
@@ -96,8 +96,8 @@ In this example the controller will look for a template in @grails-app/views/sim
 
 {code:java}
 void testDisplay() {
-	controller.display()
-	assert response.text == 'contents of template'
+    controller.display()
+    assert response.text == 'contents of template'
 }
 {code}
 
@@ -105,9 +105,9 @@ However, you may not want to render the real template, but merely test that is w
 
 {code:java}
 void testDisplay() {
-	views['/simple/_snippet.gsp'] = 'mock contents'
-	controller.display()
-	assert response.text == 'mock contents'
+    views['/simple/_snippet.gsp'] = 'mock contents'
+    controller.display()
+    assert response.text == 'mock contents'
 }
 {code}
 
@@ -127,7 +127,7 @@ This can be tested using the @xml@ property of the response:
 
 {code:java}
 void testRenderXml() {
-	controller.renderXml()
+    controller.renderXml()
     assert "<book title='Great'/>" == response.text
     assert "Great" == response.xml.@title.text()
 }
@@ -165,21 +165,20 @@ When using @TestFor@ only a subset of the Spring beans available to a running Gr
 {code:java}
 
 class SimpleController {
-	SimpleService simpleService
-	def hello() {
-		render simpleService.sayHello()
-	}
+    SimpleService simpleService
+    def hello() {
+        render simpleService.sayHello()
+    }
 }
 
 void testBeanWiring() {
-	defineBeans {
-		simpleService(SimpleService)
-	}
-	
-	controller.hello()
-	
-	assert response.text == "Hello World" 
-	
+    defineBeans {
+        simpleService(SimpleService)
+    }
+    
+    controller.hello()
+    
+    assert response.text == "Hello World" 
 }
 {code}
 
@@ -187,15 +186,15 @@ The controller is auto-wired via Spring just like in a running Grails applicatio
 
 {code:java}
 void testAutowiringViaNew() {
-	defineBeans {
-		simpleService(SimpleService)
-	}
-	
-	def controller1 = new SimpleController()
-	def controller2 = new SimpleController()	
-	
-	assert controller1.simpleService != null
-	assert controller2.simpleService != null	
+    defineBeans {
+        simpleService(SimpleService)
+    }
+    
+    def controller1 = new SimpleController()
+    def controller2 = new SimpleController()	
+    
+    assert controller1.simpleService != null
+    assert controller2.simpleService != null	
 }
 {code}
 
@@ -241,7 +240,7 @@ You want to verify the logic that is executed on a good form submission and the 
 
 {code:java}
 void testDuplicateFormSubmission() {
-	controller.handleForm()
+    controller.handleForm()
     assert "Bad" == response.text	
 }
 {code}
@@ -256,7 +255,7 @@ void testValidFormSubmission() {
     def token = SynchronizerToken.store(session)
     params[SynchronizerToken.KEY] = token.currentToken.toString()
 	
-	controller.handleForm()
+    controller.handleForm()
     assert "Good" == response.text	
 }
 
@@ -333,7 +332,7 @@ You can test calling tag libraries using @ControllerUnitTestMixin@, although the
 
 {code:java}
 def showMessage() {
-	render g.message(code:"foo.bar")
+    render g.message(code:"foo.bar")
 }
 {code}
 

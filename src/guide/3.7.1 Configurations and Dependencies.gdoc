@@ -15,7 +15,9 @@ runtime 'com.mysql:mysql-connector-java:5.1.5'
 The above uses the string syntax which is @group:name:version@. You can also use a map-based syntax:
 
 {code}
-runtime group:'com.mysql', name:'mysql-connector-java', version:'5.1.5'
+runtime group:'com.mysql',
+        name:'mysql-connector-java',
+        version:'5.1.5'
 {code}
 
 In Maven terminology, @group@ corresponds to an artifact's @groupId@ and @name@ corresponds to its @artifactId@.
@@ -39,12 +41,16 @@ h3. Disabling transitive dependency resolution
 By default, Grails will not only get the JARs and plugins that you declare, but it will also get their transitive dependencies. This is usually what you want, but there are occasions where you want a dependency without all its baggage. In such cases, you can disable transitive dependency resolution on a case-by-case basis:
 
 {code}
-runtime('com.mysql:mysql-connector-java:5.1.5', 'net.sf.ehcache:ehcache:1.6.1') {
+runtime('com.mysql:mysql-connector-java:5.1.5',
+        'net.sf.ehcache:ehcache:1.6.1') {
     transitive = false
 }
 
 // Or
-runtime group:'com.mysql', name:'mysql-connector-java', version:'5.1.5', transitive:false
+runtime group:'com.mysql',
+        name:'mysql-connector-java',
+        version:'5.1.5',
+        transitive:false
 {code}
 
 h3. Excluding specific transitive dependencies
@@ -52,7 +58,8 @@ h3. Excluding specific transitive dependencies
 A far more common scenario is where you want the transitive dependencies, but some of them cause issues with your own dependencies or are unnecessary. For example, many Apache projects have 'commons-logging' as a transitive dependency, but it shouldn't be included in a Grails project (we use SLF4J). That's where the @excludes@ option comes in:
 
 {code}
-runtime('com.mysql:mysql-connector-java:5.1.5', 'net.sf.ehcache:ehcache:1.6.1') {
+runtime('com.mysql:mysql-connector-java:5.1.5',
+        'net.sf.ehcache:ehcache:1.6.1') {
     excludes "xml-apis", "commons-logging"
 }
 
@@ -66,7 +73,8 @@ runtime(group:'com.mysql', name:'mysql-connector-java', version:'5.1.5') {
 As you can see, you can either exclude dependencies by their artifact ID (also known as a module name) or any combination of group and artifact IDs (if you use the map notation). You may also come across @exclude@ as well, but that can only accept a single string or map:
 
 {code}
-runtime('com.mysql:mysql-connector-java:5.1.5', 'net.sf.ehcache:ehcache:1.6.1') {
+runtime('com.mysql:mysql-connector-java:5.1.5',
+        'net.sf.ehcache:ehcache:1.6.1') {
     exclude "xml-apis"
 }
 {code}

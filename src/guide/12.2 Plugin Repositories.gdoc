@@ -68,8 +68,11 @@ All of the above examples use HTTP, however you can specify any [Ivy resolver|ht
 {code}
 def sshResolver = new SshResolver(user:"myuser", host:"myhost.com")
 sshResolver.addArtifactPattern(
-        "/path/to/repo/grails-[artifact]/tags/LATEST_RELEASE/grails-[artifact]-[revision].[ext]")
-sshResolver.latestStrategy = new org.apache.ivy.plugins.latest.LatestTimeStrategy()
+        "/path/to/repo/grails-[artifact]/tags/" +
+        "LATEST_RELEASE/grails-[artifact]-[revision].[ext]")
+sshResolver.latestStrategy = 
+        new org.apache.ivy.plugins.latest.LatestTimeStrategy()
+
 sshResolver.changingPattern = ".*SNAPSHOT"
 sshResolver.setCheckmodified(true)
 {code}
@@ -87,7 +90,8 @@ h4. Publishing to Grails Compatible Repositories
 To publish a Grails plugin to a Grails compatible repository you specify the @grails.plugin.repos.distribution.myRepository@ setting within the grails-app/conf/BuildConfig.groovy file:
 
 {code}
-grails.plugin.repos.distribution.myRepository="https://svn.codehaus.org/grails/trunk/grails-test-plugin-repo"
+grails.plugin.repos.distribution.myRepository =
+        "https://svn.codehaus.org/grails/trunk/grails-test-plugin-repo"
 {code}
 
 You can also provide this settings in the USER_HOME/.grails/settings.groovy file if you prefer to share the same settings across multiple projects.
@@ -95,7 +99,7 @@ You can also provide this settings in the USER_HOME/.grails/settings.groovy file
 Once this is done you need to use the @repository@ argument of the @release-plugin@ command to specify the repository you want to release the plugin into:
 
 {code}
-grails release-plugin -repository=myRepository
+grails release-plugin -repository = myRepository
 {code}
 
 

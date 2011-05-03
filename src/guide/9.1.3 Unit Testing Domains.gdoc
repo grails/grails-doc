@@ -35,16 +35,18 @@ The example above tests the @SimpleController@ class and mocks the behavior of t
 
 {code:java}
 class BookController {
-	def save = {
-	    def book = new Book(params)
-	    if (book.save(flush: true)) {
-	        flash.message = "${message(code: 'default.created.message', args: [message(code: 'book.label', default: 'Book'), book.id])}"
-	        redirect(action: "show", id: book.id)
-	    }
-	    else {
-	        render(view: "create", model: [bookInstance: book])
-	    }
-	}	
+    def save = {
+        def book = new Book(params)
+        if (book.save(flush: true)) {
+            flash.message = message(
+                    code: 'default.created.message',
+                    args: [message(code: 'book.label', default: 'Book'), book.id])}"
+            redirect(action: "show", id: book.id)
+        }
+        else {
+            render(view: "create", model: [bookInstance: book])
+        }
+    }	
 }
 {code}
 
@@ -109,7 +111,10 @@ The @mockDomain@ method also includes an additional parameter that allows you to
 
 {code:java}
 void testSave() {
-	mockDomain(Book,  [[title:"The Stand", pages:"1000"], [title:"The Shining", pages:400], [title:"Along Came a Spider", pages:300]])	
+    mockDomain(Book, [
+            [title:"The Stand", pages:"1000"],
+            [title:"The Shining", pages:400],
+            [title:"Along Came a Spider", pages:300] ])
 }
 
 {code}
@@ -135,24 +140,23 @@ class Book {
 Don't worry about whether the constraints are sensible or not (they're not!), they are for demonstration only. To test these constraints we can do the following:
 
 {code:java}
-
 @TestFor(Book)
 class BookTests  {
     void testConstraints() {
 	 	
-        def existingBook = new Book(title: "Misery", author: "Stephen King")
-	 	
+        def existingBook = new Book(
+                title: "Misery",
+                author: "Stephen King")
+                
         mockForConstraintsTests(Book, [ existingBook ])
 
-        // Validation should fail if both properties are null.	 
+        // Validation should fail if both properties are null.
         def book = new Book()
 	 	
         assert !book.validate() 
-        assert "nullable" == book.errors["title"]	 	
+        assert "nullable" == book.errors["title"]
         assert "nullable" == book.errors["author"]
-	 	
-
-	 	
+        
         // So let's demonstrate the unique and minSize constraints.
 	 	
         book = new Book(title: "Misery", author: "JK")
@@ -165,9 +169,7 @@ class BookTests  {
         book = new Book(title: "The Shining", author: "Stephen King")
         assert book.validate()
     }
-	 	
 }
-	 	
 {code}
 
 You can probably look at that code and work out what's happening without any further explanation. The one thing we will explain is the way the errors property is used. First, it does return a real Spring @Errors@ instance, so you can access all the properties and methods you would normally expect. Second, this particular @Errors@ object also has map/property access as shown. Simply specify the name of the field you are interested in and the map/property access will return the name of the constraint that was violated. Note that it is the constraint name , not the message code (as you might expect).

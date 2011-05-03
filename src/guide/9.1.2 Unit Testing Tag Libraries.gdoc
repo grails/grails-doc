@@ -27,11 +27,11 @@ The core Grails tags don't need to be enabled during testing, however custom tag
 
 {code:java}
 class SimpleTagLib {
-	static namespace = 's'
-	
-	def hello = { attrs, body ->
-		out << "Hello ${attrs.name ?: 'World'}"
-	}
+    static namespace = 's'
+    
+    def hello = { attrs, body ->
+        out << "Hello ${attrs.name ?: 'World'}"
+    }
 }
 {code}
 
@@ -40,10 +40,10 @@ You can test this tag library by using @TestFor@ and supplying the name of the t
 {code:java}
 @TestFor(SimpleTagLib)
 class SimpleTagLibTests {
-	void testHelloTag() {
-	    assert applyTemplate('<s:hello />')	== 'Hello World'
-	    assert applyTemplate('<s:hello name="Fred" />')	== 'Hello Fred'
-	}   	
+    void testHelloTag() {
+        assert applyTemplate('<s:hello />')	== 'Hello World'
+        assert applyTemplate('<s:hello name="Fred" />') == 'Hello Fred'
+    }
 }
 {code}
 
@@ -53,13 +53,13 @@ Alternatively, you can use the @TestMixin@ annotation and mock multiple tag libr
 @grails.test.mixin.TestMixin(GroovyPageUnitTestMixin)
 class MultipleTagLibraryTests {
 	
-	@Test
-	void testMuliple() {
-		mockTagLib(FirstTagLib)
-		mockTagLib(SecondTagLib)
-		
-		...
-	}
+    @Test
+    void testMuliple() {
+        mockTagLib(FirstTagLib)
+        mockTagLib(SecondTagLib)
+        
+        ...
+    }
 }
 {code}
 

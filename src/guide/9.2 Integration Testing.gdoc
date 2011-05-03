@@ -162,12 +162,13 @@ If you wish the simulate the 'book' parameter as an XML request you could do som
 void testCreateWithXML() {
     def controller = new BookController()
     controller.request.contentType = 'text/xml'
-    controller.request.content = '''<?xml version="1.0" encoding="ISO-8859-1"?>
-    <book>
-        <title>The Stand</title>
-        ...
-    </book>
-    '''.getBytes() // note we need the bytes
+    controller.request.content = '''\\\\
+            <?xml version="1.0" encoding="ISO-8859-1"?>
+            <book>
+                <title>The Stand</title>
+                ...
+            </book>
+            '''.stripIndent().getBytes() // note we need the bytes
 
     def model = controller.create()
     assert model.book
@@ -181,7 +182,8 @@ The same can be achieved with a JSON request:
 void testCreateWithJSON() {
     def controller = new BookController()
     controller.request.contentType = "text/json"
-    controller.request.content = '{"id":1,"class":"Book","title":"The Stand"}'.getBytes()
+    controller.request.content =
+            '{"id":1,"class":"Book","title":"The Stand"}'.getBytes()
 
     def model = controller.create()
     assert model.book
@@ -262,7 +264,9 @@ protected void setUp() {
         }
         end()
     }
-    registerFlow("example/sub", new ExampleController().subFlow) // register the original subflow
+
+    // register the original subflow
+    registerFlow("example/sub", new ExampleController().subFlow)
 }
 {code}
 
@@ -312,13 +316,15 @@ The tests would look like:
 class FooTagLibTests extends GroovyTestCase {
 
     void testBarTag() {
-        assertEquals "<p>Hello World!</p>", new FooTagLib().bar(null,null).toString()
+        assertEquals "<p>Hello World!</p>",
+                     new FooTagLib().bar(null,null).toString()
     }
 
     void testBodyTag() {
-        assertEquals "<p>Hello World!</p>", new FooTagLib().bodyTag(name:"p") {
-            "Hello World!"
-        }.toString()
+        assertEquals "<p>Hello World!</p>",
+                     new FooTagLib().bodyTag(name:"p") {
+                         "Hello World!"
+                     }.toString()
     }
 }
 {code}
@@ -350,7 +356,8 @@ This can be easily tested as follows:
 {code}
 class FormatTagLibTests extends GroovyPagesTestCase {
     void testDateFormat() {
-        def template = '<g:dateFormat format="dd-MM-yyyy" date="\${myDate}" />'
+        def template =
+                '<g:dateFormat format="dd-MM-yyyy" date="\${myDate}" />'
 
         def testDate = ... // create the date
         assertOutputEquals( '01-01-2008', template, [myDate:testDate] )
@@ -363,7 +370,8 @@ You can also obtain the result of a GSP using the @applyTemplate@ method of the 
 {code}
 class FormatTagLibTests extends GroovyPagesTestCase {
     void testDateFormat() {
-        def template = '<g:dateFormat format="dd-MM-yyyy" date="\${myDate}" />'
+        def template =
+                '<g:dateFormat format="dd-MM-yyyy" date="\${myDate}" />'
 
         def testDate = ... // create the date
         def result = applyTemplate( template, [myDate:testDate] )
@@ -379,7 +387,9 @@ Testing domain classes is typically a simple matter of using the [GORM API|guide
 
 {code:java}
 void testQuery() {
-    def books = [ new Book(title:"The Stand"), new Book(title:"The Shining")]
+    def books = [
+            new Book(title:"The Stand"),
+            new Book(title:"The Shining")]
     books*.save()
 
     assertEquals 2, Book.list().size()
@@ -390,7 +400,9 @@ This test will actually fail, because calling [save|domainClasses] does not actu
 
 {code:java}
 void testQuery() {
-    def books = [ new Book(title:"The Stand"), new Book(title:"The Shining")]
+    def books = [
+            new Book(title:"The Stand"),
+            new Book(title:"The Shining")]
     books*.save(flush:true)
 
     assertEquals 2, Book.list().size()
