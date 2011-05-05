@@ -2,16 +2,18 @@ h1. ignoreNotFound
 
 h2. Purpose
 
-Specifies how foreign keys that reference missing rows will be handled in many-to-one relation. @true@ will treat a missing row as a @null@ association and load operation of such a missing reference will not break the process. @false@ will throw @org.hibernate.ObjectNotFoundException@ and is the default setting. @ignoreNotFound@ is a mapping to Hibernate @not-found@ property.
+Specifies how foreign keys that reference missing rows will be handled in many-to-one relationships. 
 
-It will be useful if you are in front of a legacy database with some fancy understanding of referential integrity. To get it behave properly with Grails you may use this property.
-
-h2. Example
+h2. Examples
 
 {code:java}
 class LegacyCdDomain {
     String title
     Thumbnail thumbnail
+
+    static mapping = {
+        thumbnail ignoreNotFound: true
+    }
 }
 
 class Thumbnail {
@@ -19,29 +21,18 @@ class Thumbnail {
 }
 {code}
 
-If from the database end, @LegacyCdDomain@ says it has @thumbnail@ with @thumbnail@'s @id@, but actually that @thumbnail@'s @id@ doesn't exist in @Thumbnail@ table, then it (Hibernate) will complain: @No row with the given identifier exists@.
-
-A possible way to load such corrupt data is to use @ignoreNotFound@ set @true@ in @LegacyCdDomain@ as follows:
-
-{code:java}
-class LegacyCdDomain {
-    String title
-    Thumbnail thumbnail
-    ...
-    static mapping = {
-        thumbnail ignoreNotFound: true
-    }
-}
-{code}
-
 h2. Description
 
 Usage: @association_name(ignoreNotFound: boolean)@
 
-Default value is set to @false@, missing references will throw @org.hibernate.ObjectNotFoundException@.
+When the data in the database is corrupt and a foreign key references a non existent record, Hibernate will complain with a "No row with the given identifier exists" message. For example, a @LegacyCdDomain@ record may have a reference to a @Thumbnail@ record with an ID of 1234, but the database may no longer contain a @Thumbnail@ with that ID.
+
+One possible way to load such corrupt data is to use the @ignoreNotFound@ mapping option. If you set it to @true@, Hibernate will treat a missing row as a @null@ association. So in the above example, our @LegacyCdDomain@ instance would load but its @thumbnail@ property would be @null@. Specifying a value of @false@ for @ignoreNotFound@ will result in Hibernate throwing an @org.hibernate.ObjectNotFoundException@.
 
 {warning}
 A dataset loaded with @ignoreNotFound: true@ may throw an exception during @save()@ because of the missing reference!
 {warning}
 
+The default value for this setting is @false@. It maps to Hibernate's @not-found@ property.
 
+This settings can be useful if you have a legacy database with unusual behaviour when it comes to referential integrity.
