@@ -2,7 +2,7 @@ h1. embedded
 
 h2. Purpose
 
-Supports embedding domain components into domain classes. An embedded component
+Grails supports [composition|guide:5.2.2 Composition in GORM] by embedding domain components into domain classes. An embedded component
 will become part of the domain class mapping to a database table. There is no join to
 an child embedded component table.
 
@@ -19,17 +19,12 @@ class Person {
 }
 
 class Country {
-    String iso3
     String name
-
-    static constraints = {
-        iso3(nullable: false)
-        name(nullable: false)
-    }
+    String iso3
 }
 {code}
 
-Consider the following data example:
+Consider following data:
 
 {code:java}
 def brazil = new Country(name: 'Brazil', iso3: 'BRA')
@@ -41,14 +36,23 @@ def germany = new Country(name: 'Germany', iso3: 'DEU')
 (new Person(name: 'Juan de los Palotes', bornInCountry: brazil, livesInCountry: france)).save(flush: true)
 {code}
 
-You can query @Person@s based on @Country@ objects with dynamic finders:
+The resulting mapping would looking like this:
+
+{table}
+id|name|born_in_country_name|born_in_country_iso3|lives_in_country_name|lives_in_country_iso3
+1|Jos Bleau|France|FRA|France|FRA
+2|Max Mustermann|Germany|DEU|France|FRA
+3|Juan de los Palotes|Brazil|BRA|France|FRA
+{table}
+
+You can query @Person@ based on @Country@ objects:
 
 {code:java}
 Person.findAllByBornInCountry(brazil)
 Person.findAllByLivesInCountry(france)
 {code}
 
-Or more explicit by a hand-made query:
+Or more explicit:
 
 {code:java}
 Person.findAll("from Person p where bornInCountry.iso3=?", [brazil.iso3])
@@ -64,5 +68,5 @@ created nor any join will be necessary to query.
 If you define the @Country@ class in a separate Groovy file in the @grails-app/domain@ directory
 you will also get an @country@ table. If you don't want this to happen use Groovy's ability to define
 multiple classes per file and include the @Country@ class below the @Person@ class in the
-@grails-app/domain/Country.groovy@ file.
+@grails-app/domain/Person.groovy@ file.
 {note}
