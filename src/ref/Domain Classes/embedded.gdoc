@@ -1,0 +1,72 @@
+h1. embedded
+
+h2. Purpose
+
+Grails supports [composition|guide:5.2.2 Composition in GORM] by embedding domain components into domain classes. An embedded component
+will become part of the domain class mapping to a database table. There is no join to
+an child embedded component table.
+
+h2. Examples
+
+{code:java}
+class Person {
+    String name
+
+    Country bornInCountry
+    Country livesInCountry
+
+    static embedded = ['bornInCountry', 'livesInCountry']
+}
+
+class Country {
+    String name
+    String iso3
+}
+{code}
+
+Consider following data:
+
+{code:java}
+def brazil = new Country(name: 'Brazil', iso3: 'BRA')
+def france = new Country(name: 'France', iso3: 'FRA')
+def germany = new Country(name: 'Germany', iso3: 'DEU')
+
+(new Person(name: 'Jos Bleau', bornInCountry: france, livesInCountry: france)).save(flush: true)
+(new Person(name: 'Max Mustermann', bornInCountry: germany, livesInCountry: france)).save(flush: true)
+(new Person(name: 'Juan de los Palotes', bornInCountry: brazil, livesInCountry: france)).save(flush: true)
+{code}
+
+The resulting mapping would looking like this:
+
+{table}
+id|name|born_in_country_name|born_in_country_iso3|lives_in_country_name|lives_in_country_iso3
+1|Jos Bleau|France|FRA|France|FRA
+2|Max Mustermann|Germany|DEU|France|FRA
+3|Juan de los Palotes|Brazil|BRA|France|FRA
+{table}
+
+You can query @Person@ based on @Country@ objects:
+
+{code:java}
+Person.findAllByBornInCountry(brazil)
+Person.findAllByLivesInCountry(france)
+{code}
+
+Or more explicit:
+
+{code:java}
+Person.findAll("from Person p where bornInCountry.iso3=?", [brazil.iso3])
+Person.findAll("from Person p where livesInCountry.iso3=?", [france.iso3])
+{code}
+
+h2. Description
+
+@embedded@ objects will become part of the domain class mapping at database level. No @id@ will be
+created nor any join will be necessary to query.
+
+{note}
+If you define the @Country@ class in a separate Groovy file in the @grails-app/domain@ directory
+you will also get an @country@ table. If you don't want this to happen use Groovy's ability to define
+multiple classes per file and include the @Country@ class below the @Person@ class in the
+@grails-app/domain/Person.groovy@ file.
+{note}
