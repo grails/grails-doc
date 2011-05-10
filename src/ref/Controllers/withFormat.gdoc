@@ -45,6 +45,15 @@ withFormat {
 {code}
 will use the "xml" type handler for the request.
 
+Another important factor to note is that the @withFormat@ method deals with the _response_ format and not the request format. As of Grails 1.4, there is a separate @withFormat@ method made available on the @request@ that you can use do handle the request format which is dictated by the @CONTENT_TYPE@ header of the request:
+
+{code:java}
+request.withFormat {
+	xml { .. }
+	html { .. }
+}
+{code}
+
 If you require the model to be lazily executed you can pass a closure or block instead of a map:
 
 {code:java}
@@ -54,4 +63,6 @@ withFormat {
 }
 {code}
 
-The block will only get executed if the @html@ format is matched.
+The block will only get executed if the @html@ format is matched. 
+
+

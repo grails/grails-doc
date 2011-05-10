@@ -32,16 +32,16 @@ Which simply means anything. However, on newer browser something all together mo
 
 bc. text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, text/plain;q=0.8, image/png, */*;q=0.5
 
-Grails parses this incoming format and adds a @property@ to the [request|servletAPI] object that outlines the preferred request format. For the above example the following assertion would pass:
+Grails parses this incoming format and adds a @property@ to the [response|servletAPI] object that outlines the preferred response format. For the above example the following assertion would pass:
 
 {code:java}
-assert 'html' == request.format
+assert 'html' == response.format
 {code}
 
 Why? The @text/html@ media type has the highest "quality" rating of 0.9, therefore is the highest priority. If you have an older browser as mentioned previously the result is slightly different:
 
 {code:java}
-assert 'all' == request.format
+assert 'all' == response.format
 {code}
 
 In this case 'all' possible formats are accepted by the client. To deal with different kinds of requests from [Controllers|guide:controllers] you can use the [withFormat|controllers] method that acts as kind of a switch statement:
@@ -69,6 +69,23 @@ How do we handle the "all" format? Simply order the content-types within your @w
 {note}
 When using [withFormat|controllers] make sure it is the last call in your controller action as the return value of the @withFormat@ method is used by the action to dictate what happens next.
 {note}
+
+h4. Request format vs. Response format
+
+As of Grails 1.4, there is a separate notion of the _request_ format and the _response_ format. The request format is dictated by the @CONTENT_TYPE@ header and is typically used to detect if the incoming request can be parsed into XML or JSON, whilst the response format uses the file extension, format parameter or ACCEPT header to attempt to deliver an appropriate response to the client.
+
+The [withFormat|controllers] available on controllers deals specifically with the response format. If you wish to add logic that deals with the request format then you can do so using a separate @withFormat@ method available on the request:
+
+{code:java}
+request.withFormat {
+	xml { 
+		// read XML
+	}
+	json {
+		// read JSON
+	}
+}
+{code}
 
 h4. Content Negotiation with the format Request Parameter
 
@@ -102,7 +119,7 @@ grails.mime.file.extensions = false
 
 h4. Testing Content Negotiation
 
-To test content negotiation in an integration test (see the section on [Testing|guide:testing]) you can either manipulate the incoming request headers:
+To test content negotiation in a unit or integration test (see the section on [Testing|guide:testing]) you can either manipulate the incoming request headers:
 
 {code:java}
 void testJavascriptOutput() {
