@@ -2,7 +2,7 @@ h1. embedded
 
 h2. Purpose
 
-Supports embedding domain components into domain classes.
+Supports embedding domain components into domain classes - otherwise known as [composition|guide:5.2.2 Composition in GORM].
 
 h2. Examples
 
@@ -24,22 +24,19 @@ class Person {
 class Country {
     String iso3
     String name
-
-    static constraints = {
-        iso3(nullable: false)
-        name(nullable: false)
-    }
 }
 {code}
 
 Grails will generate a @person@ database table that looks like:
 
+{table}
 *Column* | *Type*
 NAME | VARCHAR(255)
 BORN_IN_COUNTRY_ISO3 | VARCHAR(255)
 BORN_IN_COUNTRY_NAME | VARCHAR(255)
 LIVES_IN_COUNTRY_ISO3 | VARCHAR(255)
 LIVES_IN_COUNTRY_NAME | VARCHAR(255)
+{table}
 
 
 h2. Description
@@ -54,3 +51,5 @@ Querying on embedded properties is no different from querying on normal relation
 Person.findAllByBornInCountry(brazil)
 Person.findAllByLivesInCountry(france)
 {code}
+
+where @brazil@ and @france@ are instances of @Country@.
