@@ -2,11 +2,11 @@ h1. embedded
 
 h2. Purpose
 
-Supports embedding domain components into domain classes. An embedded component
-will become part of the domain class mapping to a database table. There is no join to
-an child embedded component table.
+Supports embedding domain components into domain classes.
 
 h2. Examples
+
+Given a @Person@ domain class and @Country@ class like so:
 
 {code:java}
 class Person {
@@ -18,6 +18,9 @@ class Person {
     static embedded = ['bornInCountry', 'livesInCountry']
 }
 
+// If you don't want an associated table created for this class, either
+// define it in the same file as Person or put Country.groovy under the
+// src/groovy directory.
 class Country {
     String iso3
     String name
@@ -29,40 +32,25 @@ class Country {
 }
 {code}
 
-Consider the following data example:
+Grails will generate a @person@ database table that looks like:
 
-{code:java}
-def brazil = new Country(name: 'Brazil', iso3: 'BRA')
-def france = new Country(name: 'France', iso3: 'FRA')
-def germany = new Country(name: 'Germany', iso3: 'DEU')
+*Column* | *Type*
+NAME | VARCHAR(255)
+BORN_IN_COUNTRY_ISO3 | VARCHAR(255)
+BORN_IN_COUNTRY_NAME | VARCHAR(255)
+LIVES_IN_COUNTRY_ISO3 | VARCHAR(255)
+LIVES_IN_COUNTRY_NAME | VARCHAR(255)
 
-(new Person(name: 'Jos Bleau', bornInCountry: france, livesInCountry: france)).save(flush: true)
-(new Person(name: 'Max Mustermann', bornInCountry: germany, livesInCountry: france)).save(flush: true)
-(new Person(name: 'Juan de los Palotes', bornInCountry: brazil, livesInCountry: france)).save(flush: true)
-{code}
 
-You can query @Person@s based on @Country@ objects with dynamic finders:
+h2. Description
+
+An embedded component does not store its data in a separate table as a normal domain class relationship does. Instead, the data is embedded in the owner's table. So in the above example, the @Country@ fields appear in the @person@ table. This means that queries are faster because there is no join, but you may end up with duplicate data across tables.
+
+The embedded component class is typically declared in the same file as the owning class or in its own file under @src/groovy@. You _can_ put the component class under @grails-app/domain@, but if you do so Grails will automatically create a dedicated table for it. Putting the class under @src/groovy@ is usually the best thing to do because you can then share the component across multiple domain classes.
+
+Querying on embedded properties is no different from querying on normal relationships, so you can for example still do:
 
 {code:java}
 Person.findAllByBornInCountry(brazil)
 Person.findAllByLivesInCountry(france)
 {code}
-
-Or more explicit by a hand-made query:
-
-{code:java}
-Person.findAll("from Person p where bornInCountry.iso3=?", [brazil.iso3])
-Person.findAll("from Person p where livesInCountry.iso3=?", [france.iso3])
-{code}
-
-h2. Description
-
-@embedded@ objects will become part of the domain class mapping at database level. No @id@ will be
-created nor any join will be necessary to query.
-
-{note}
-If you define the @Country@ class in a separate Groovy file in the @grails-app/domain@ directory
-you will also get an @country@ table. If you don't want this to happen use Groovy's ability to define
-multiple classes per file and include the @Country@ class below the @Person@ class in the
-@grails-app/domain/Country.groovy@ file.
-{note}
