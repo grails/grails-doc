@@ -8,7 +8,7 @@
 
 # Uncomment those lines to set JVM options. GRADLE_OPTS and JAVA_OPTS can be used together.
 # GRADLE_OPTS="$GRADLE_OPTS -Xmx512m"
-# JAVA_OPTS="$JAVA_OPTS -Xmx512m"
+JAVA_OPTS="$JAVA_OPTS -Xmx1024m -XX:MaxPermSize=256m"
 
 GRADLE_APP_NAME=Gradle
 
