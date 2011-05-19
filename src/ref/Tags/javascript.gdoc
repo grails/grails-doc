@@ -2,7 +2,9 @@ h1. javascript
 
 h2. Purpose
 
-Allows inclusion of javascript libraries and scripts as well a shorthand for inline Javascript
+Allows inclusion of javascript libraries and scripts as well a shorthand for inline Javascript. Specifying a library tells the Grails AJAX tags which JS provider to use.
+
+This tag is Resources plugin aware, and will defer to resources plugin to generate links and include javascript as and when necessary.
 
 h2. Examples
 
@@ -18,10 +20,14 @@ h2. Examples
 
 h2. Description
 
+If you do not include a "library" or "src" attribute but instead provide a body, the result is an inline script.
+
+If the Resources plugin is installed and a body is used to produce inline script, this will defer to the <r:script> tag to produce inline script that is included at the end of the body. For more control use <r:script> directly.
+
 Attributes
 
 * @contextPath@ (optional) - the context path to use (relative to the application context path). Defaults to "" or path to the plugin for a plugin view or template.
-*  @library@ (optional) - The name of the library to include. Either "prototype", "scriptaculous", "yahoo" or "dojo"
+*  @library@ (optional) - The name of the library to include. Either "prototype", "scriptaculous", "yahoo" or "dojo". If Resources plugin is installed, no link to the library will be rendered immediately. Rather, it will include the resource module with the same name as the library and let Resources do the rest. This means you must have a resource module declared with the same name, as if you had used an <r:use module="jquery"/> tag.
 *  @src@ (optional) - The name of the javascript file to import. Will look in /app/js dir
 *  @base@ (optional - Since 0.6) - specifies the full base url to prepend to the library name
 * @plugin@ (optional) - The plugin to look for the javascript in
