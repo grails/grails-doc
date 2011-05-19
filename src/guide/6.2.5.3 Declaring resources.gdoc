@@ -1,0 +1,49 @@
+A DSL is provided for declaring resources and modules. This can go either in your Config.groovy in the case of application-specific resources, or more commonly in a resources artefact in grails-app/conf.
+
+Note that you do not need to declare all your static resources, especially images. However to establish dependencies or other resources-specific attributes you must. Any resource that is not declared is called "ad-hoc" and will still be processed using defaults for that resource type.
+
+Example grails-app/conf/MyAppResources.groovy:
+
+{code:java}
+modules = {
+    core {
+        dependsOn 'jquery, utils'
+
+        resource uri:'/js/core.js', disposition: 'head'
+        resource uri:'/js/ui.js'
+        resource uri:'/css/main.css', 
+        resource uri:'/css/branding.css'
+        resource uri:'/css/print.css', attrs:[media:'print']
+    }
+    
+    utils {
+        dependsOn 'jquery'
+
+        resource uri:'/js/utils.js' 
+    }
+
+    forms {
+        dependsOn 'core,utils'
+     
+        resource uri:'/css/forms.css'
+        resource uri:'/js/forms.js'
+    }
+}
+{code}
+
+The above DSL defines three resource modules; 'core', 'utils' and 'forms'. The resources in these modules will be automatically bundled out of the box according to the module name, resulting in fewer files. You can override this with "bundle:'someOtherName'" on each resource, or call defaultBundle on the module (see [resources plugin documentation|http://grails-plugins.github.com/grails-resources]).
+
+It declares dependencies between them using dependsOn, which controls the load order of the resources.
+
+When you include an '<r:require module="forms"/>' in your GSP, it will in fact pull in all the resources from 'core' and 'utils' as well as 'jquery', all in the correct order.
+
+You'll also notice the disposition:'head' on the core.js file - telling Resources that while it can defer all the other JS files to the end of the body, this one must go into <head>.
+
+The CSS file for print styling adds custom attributes using the "attrs" map option, and these are passed through to r:external tag when the engine renders the link to the resource, so you can customize the HTML attributes of the link produced.
+
+There is no limit to the number of modules or xxxResources.groovy artefacts you can provide, and plugins can supply them to expose modules to applications, which is exactly how the jQuery plugin works.
+
+To define modules like this in your application's Config.groovy, you simply assign the DSL closure to the *grails.resources.modules* Config variable.
+
+For full details of the resource DSL please see the [resources plugin documentation|http://grails-plugins.github.com/grails-resources].
+
