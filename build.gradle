@@ -49,11 +49,13 @@ task fetchGrailsSource << {
 fetchGrailsSource.onlyIf { !explicitGrailsHome }
 
 task apiDocs(type: GradleBuild, dependsOn: 'fetchGrailsSource') {
-    tasks = [":grails-docs:install", "groovydoc"]
+	def deps = [":grails-docs:install"]
+	if(!System.getProperty("disable.groovydocs")) {
+		deps << ['groovydoc']
+	}
+    tasks = deps
     buildFile = "${project.grailsHome}/build.gradle"
 }
-
-apiDocs.onlyIf { !System.getProperty("disable.groovydocs") }
 
 task copyApiDocs(type: Copy) {
     from "${project.grailsHome}/doc/api"
