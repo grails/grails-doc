@@ -14,12 +14,8 @@ Given the domain class @Book@:
 
 {code:java}
 class Book {
-   Long id
-   Long version
    String title
-   Date releaseDate
    String author
-   Boolean paperback
 }
 {code}
 
@@ -29,6 +25,19 @@ The following are all possible:
 def b = Book.findOrCreateByTitle("The Shining")
 b = Book.findOrCreateByTitleAndAuthor("The Sum of All Fears", "Tom Clancy")
 b = Book.findByAuthorInList(["Douglas Adams", "Hunter S. Thompson"])
+{code}
+
+The following are roughly equivalent:
+
+{code:java}
+def b = Book.findOrCreateByTitle("The Shining")
+{code}
+
+{code:java}
+def b = Book.findByTitle("The Shining")
+if(!b) {
+    b = new Book(title: "The Shining")
+}
 {code}
 
 h2. Description
