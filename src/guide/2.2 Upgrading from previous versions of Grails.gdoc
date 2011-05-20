@@ -82,6 +82,61 @@ def processBook() {
 }
 {code}
 
+h4. HSQLDB Has Been Replaced With H2
+
+HSQLDB is still bundled with Grails but not configured as a default runtime dependency.  Upgrade options include replacing HSQLDB references in DataSource.groovy with
+H2 references or adding HSQLDB as a runtime dependency for the application.
+
+Adding HSQLDB as a runtime dependency can be done in BuildConfig.groovy with something like this:
+
+{code:java}
+grails.project.dependency.resolution = {
+    inherits("global") {
+    }
+    repositories {
+        grailsPlugins()
+        grailsHome()
+        grailsCentral()
+    }
+    
+    dependencies {
+        // Add HSQLDB As A Runtime Dependency
+        runtime 'hsqldb:hsqldb:1.8.0.10'
+    }
+}
+{code}
+
+A default DataSource.groovy which is compatible with H2 might look like this:
+
+{code:java}
+dataSource {
+    driverClassName = "org.h2.Driver"
+    username = "sa"
+    password = ""
+}
+// environment specific settings
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop" // one of 'create', 'create-drop','update'
+            url = "jdbc:h2:mem:devDb"
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:mem:testDb"
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:prodDb"
+        }
+    }
+}
+{code}
+
 h4. Updated Underlying APIs
 
 Grails 1.4 contains updated dependencies including Servlet 3.0, Tomcat 7, Spring 3.1, Hibernate 3.6 and Groovy 1.8. This means that certain plugins and applications that that depend on earlier versions of these APIs may no longer work. For example the Servlet 3.0 @HttpServletRequest@ interface includes new methods, if a plugin implements this interface for Servlet 2.5 but not for Servlet 3.0 then said plugin will break. The same can be said of any Spring interface. 
