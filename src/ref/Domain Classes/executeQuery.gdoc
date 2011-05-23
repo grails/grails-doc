@@ -19,6 +19,14 @@ Account.executeQuery( "select distinct a.number from Account a where a.branch = 
 Account.executeQuery( "select distinct a.number from Account a where a.branch = :branch", [branch:'London', max:10, offset:5] );
 // same as previous
 Account.executeQuery( "select distinct a.number from Account a where a.branch = :branch", [branch:'London'], [max:10, offset:5] );
+// tell underlying Hibernate Query object to not attach newly retrieved objects to the session, will only save with explicit @save@
+Account.executeQuery( "select distinct a.number from Account a", null, [readOnly: true])
+// time request out after 18 seconds
+Account.executeQuery( "select distinct a.number from Account a", null, [timeout: 18])
+// have Hibernate Query object return 30 rows at a time
+Account.executeQuery( "select distinct a.number from Account a", null, [fetchSize: 30])
+// modify the FlushMode of the Query (default is @FlushMode.AUTO@)
+Account.executeQuery( "select distinct a.number from Account a", null, [flushMode: FlushMode.MANUAL])
 
 {code}
 
@@ -29,9 +37,9 @@ The @executeQuery@ method allows the execution of arbitrary HQL queries that don
 {code:java}
 Book.executeQuery( String query )
 Book.executeQuery( String query, Collection positionalParams )
-Book.executeQuery( String query, Collection positionalParams, Map paginateParams )
+Book.executeQuery( String query, Collection positionalParams, Map metaParams )
 Book.executeQuery( String query, Map namedParams )
-Book.executeQuery( String query, Map namedParams, Map paginateParams )
+Book.executeQuery( String query, Map namedParams, Map metaParams )
 {code}
 
 Parameters:
@@ -39,4 +47,4 @@ Parameters:
 * @query@ - An HQL query
 * @positionalParams@ - A List of parameters for a positional parametrized HQL query
 * @namedParams@ - A Map of named parameters a HQL query
-* @paginateParams@ - A Map containing parameters 'max' or/and 'offset' (see examples below)
+* @metaParams@ - A Map containing pagination parameters @max@ or/and @offset@, as well as hibernate query parameters @readOnly@, @fetchSize@, @timeout@, and @flushMode@.  (see examples above)
