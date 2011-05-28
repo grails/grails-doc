@@ -3,7 +3,7 @@ h4. Overview
 Domain class interaction can be tested without involving a database connection using the @DomainClassUnitTestMixin@. This implementation mimics the behavior of GORM against an in-memory @ConcurrentHashMap@ implementation. Note that it contains limitations in comparison to a real GORM implementation. The following features of GORM for Hibernate can only be tested within an integration test:
 
 * String-based HQL queries
-* Composite Identifiers 
+* Composite Identifiers
 * Dirty Checking Methods
 * Any Direct Interaction with Hibernate
 
@@ -46,7 +46,7 @@ class BookController {
         else {
             render(view: "create", model: [bookInstance: book])
         }
-    }	
+    }
 }
 {code}
 
@@ -58,23 +58,22 @@ import grails.test.mixin.*
 @TestFor(BookController)
 @Mock(Book)
 class BookControllerTests {
-	void testSaveInvalidBook() {
-	    controller.save()
+    void testSaveInvalidBook() {
+        controller.save()
 
-	    assert model.bookInstance != null
-	    assert view == '/book/create'
-	}
-	void testSaveValidBook() {
-	    params.title = "The Stand"
-	    params.pages = "500"
+        assert model.bookInstance != null
+        assert view == '/book/create'
+    }
+    void testSaveValidBook() {
+        params.title = "The Stand"
+        params.pages = "500"
 
-	    controller.save()
+        controller.save()
 
-	    assert response.redirectedUrl == '/book/show/1'
-	    assert flash.message != null
-	    assert Book.count() == 1
-
-	}	
+        assert response.redirectedUrl == '/book/show/1'
+        assert flash.message != null
+        assert Book.count() == 1
+    }
 }
 {code}
 
@@ -102,8 +101,8 @@ And then call the @mockDomain@ method to mock domains during your test:
 
 {code:java}
 void testSave() {
-	mockDomain(Author)
-	mockDomain(Book)	
+    mockDomain(Author)
+    mockDomain(Book)
 }
 {code}
 
@@ -143,28 +142,28 @@ Don't worry about whether the constraints are sensible or not (they're not!), th
 @TestFor(Book)
 class BookTests  {
     void testConstraints() {
-	 	
+
         def existingBook = new Book(
                 title: "Misery",
                 author: "Stephen King")
-                
+
         mockForConstraintsTests(Book, [ existingBook ])
 
         // Validation should fail if both properties are null.
         def book = new Book()
-	 	
-        assert !book.validate() 
+
+        assert !book.validate()
         assert "nullable" == book.errors["title"]
         assert "nullable" == book.errors["author"]
-        
+
         // So let's demonstrate the unique and minSize constraints.
-	 	
+
         book = new Book(title: "Misery", author: "JK")
-        assert !book.validate() 
+        assert !book.validate()
         assert "unique" == book.errors["title"]
-	 	
+
         assert "minSize" == book.errors["author"]
-	 	
+
         // Validation should pass!
         book = new Book(title: "The Shining", author: "Stephen King")
         assert book.validate()

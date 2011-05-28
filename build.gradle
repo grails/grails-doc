@@ -31,7 +31,7 @@ dependencies {
 task fetchGrailsSource << {
     ant.mkdir dir: checkOutDir
 
-    println "Downloading Grails source code. If you already have a copy " + 
+    println "Downloading Grails source code. If you already have a copy " +
             "of the Grails source code checked out you can avoid this download " +
             "by setting the grails.home system property to point to your local " +
             "copy of the source. See README.txt for more information."
@@ -49,10 +49,10 @@ task fetchGrailsSource << {
 fetchGrailsSource.onlyIf { !explicitGrailsHome }
 
 task apiDocs(type: GradleBuild, dependsOn: 'fetchGrailsSource') {
-	def deps = [":grails-docs:install"]
-	if(!System.getProperty("disable.groovydocs")) {
-		deps << 'groovydoc'
-	}
+    def deps = [":grails-docs:install"]
+    if (!System.getProperty("disable.groovydocs")) {
+        deps << 'groovydoc'
+    }
     tasks = deps
     buildFile = "${project.grailsHome}/build.gradle"
 }
@@ -110,7 +110,7 @@ task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
         }
 
         publisher.registerMacro(sourceMacro.newInstance(searchDirs))
-        
+
         // Radeox loads its bundles off the context class loader, which
         // unfortunately doesn't contain the grails-docs JAR. So, we
         // temporarily switch the DocPublisher class loader into the
@@ -155,4 +155,3 @@ artifacts {
 task wrapper(type: Wrapper) {
     gradleVersion = '1.0-milestone-3'
 }
-

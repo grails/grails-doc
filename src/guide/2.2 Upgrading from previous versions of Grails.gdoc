@@ -8,10 +8,10 @@ In previous versions of Grails abstract classes in @grails-app/domain@ were not 
 
 {code:java}
 abstract class Sellable {
-	
+
 }
 class Book extends Sellable {
-	
+
 }
 {code}
 
@@ -24,20 +24,20 @@ You have two options when upgrading in this scenario:
 
 h4. Criteria Queries Default to INNER JOIN
 
-The previous default of LEFT JOIN for criteria queries across associations is now INNER JOIN. 
+The previous default of LEFT JOIN for criteria queries across associations is now INNER JOIN.
 
-h4. Controller Public Methods 
+h4. Controller Public Methods
 
 As of Grails 1.4, public methods of controllers are now treated as actions. If you were relying on the use of methods for privacy controls then this could result in unexpected behavior. To resolve this issue you should mark all methods of your application that are not to be exposed as @private@ methods.
 
-h4. The redirect Method 
+h4. The redirect Method
 
 The [redirect|controllers] method no longer commits the response. The result of this is code that relies of this behavior will break in 1.4. For example:
 
 {code:java}
 redirect action:"next"
-if(response.committed) {
-	// do something
+if (response.committed) {
+    // do something
 }
 {code}
 
@@ -45,8 +45,8 @@ In this case in Grails 1.3.x and below the @response.committed@ property would r
 
 {code:java}
 redidrect action:"next"
-if(request.redirected) {
-	// do something
+if (request.redirected) {
+    // do something
 }
 {code}
 
@@ -56,14 +56,14 @@ As of Grails 1.4 the [withFormat|controllers] method of controllers no longer ta
 
 {code:java}
 def processBook() {
-	withFormat {
-		xml {
-			// read request XML
-		}
-		html {
-			// read request parameters
-		}
-	}
+    withFormat {
+        xml {
+            // read request XML
+        }
+        html {
+            // read request parameters
+        }
+    }
 }
 {code}
 
@@ -71,14 +71,14 @@ Instead you will need to use the @withFormat@ method provided on the @request@ o
 
 {code:java}
 def processBook() {
-	request.withFormat {
-		xml {
-			// read request XML
-		}
-		html {
-			// read request parameters
-		}
-	}
+    request.withFormat {
+        xml {
+            // read request XML
+        }
+        html {
+            // read request parameters
+        }
+    }
 }
 {code}
 
@@ -98,7 +98,7 @@ grails.project.dependency.resolution = {
         grailsHome()
         grailsCentral()
     }
-    
+
     dependencies {
         // Add HSQLDB As A Runtime Dependency
         runtime 'hsqldb:hsqldb:1.8.0.10'
@@ -139,7 +139,7 @@ environments {
 
 h4. Updated Underlying APIs
 
-Grails 1.4 contains updated dependencies including Servlet 3.0, Tomcat 7, Spring 3.1, Hibernate 3.6 and Groovy 1.8. This means that certain plugins and applications that that depend on earlier versions of these APIs may no longer work. For example the Servlet 3.0 @HttpServletRequest@ interface includes new methods, if a plugin implements this interface for Servlet 2.5 but not for Servlet 3.0 then said plugin will break. The same can be said of any Spring interface. 
+Grails 1.4 contains updated dependencies including Servlet 3.0, Tomcat 7, Spring 3.1, Hibernate 3.6 and Groovy 1.8. This means that certain plugins and applications that that depend on earlier versions of these APIs may no longer work. For example the Servlet 3.0 @HttpServletRequest@ interface includes new methods, if a plugin implements this interface for Servlet 2.5 but not for Servlet 3.0 then said plugin will break. The same can be said of any Spring interface.
 
 h4. Removal of release-plugin
 
@@ -283,7 +283,7 @@ h4. Script Changes
 Ant.property(environment:"env")
 grailsHome = Ant.antProject.properties."env.GRAILS_HOME"
 
-includeTargets << new File ( "${grailsHome}/scripts/Bootstrap.groovy" )
+includeTargets << new File("${grailsHome}/scripts/Bootstrap.groovy")
 {code}
 
 Instead you should use the new @grailsScript@ method to import a named script:
