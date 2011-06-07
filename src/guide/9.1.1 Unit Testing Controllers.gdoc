@@ -8,12 +8,12 @@ import grails.test.mixin.*
 @TestFor(SimpleController)
 class SimpleControllerTests  {
     void testSomething() {
-     
+
     }
 }
 {code}
 
-By defining the @TestFor@ annotation for a controller a new @controller@ field is automatically created for the controller under test. 
+By defining the @TestFor@ annotation for a controller a new @controller@ field is automatically created for the controller under test.
 
 {note}
 The @TestFor@ annotation will also automatically annotate any public methods starting with "test" with JUnit 4's @Test annotation. If your test method doesn't start with "test" you will need to add this manually
@@ -31,7 +31,7 @@ class SimpleController {
 
 void testHello() {
     controller.hello()
-    
+
     assert response.text == 'hello'
 }
 {code}
@@ -52,7 +52,7 @@ class SimpleController {
 
 void testIndex() {
     controller.index()
-    
+
     assert response.redirectedUrl == '/simple/hello'
 }
 {code}
@@ -72,8 +72,8 @@ class SimpleController {
 
 void testIndex() {
     controller.home()
-    
-    assert view == "/simple/homePage" 
+
+    assert view == "/simple/homePage"
     assert model.title == "Hello World"
 }
 {code}
@@ -88,7 +88,7 @@ Consider the following controller action:
 class SimpleController {
     def display() {
         render template:"snippet"
-    }	
+    }
 }
 {code}
 
@@ -175,10 +175,10 @@ void testBeanWiring() {
     defineBeans {
         simpleService(SimpleService)
     }
-    
+
     controller.hello()
-    
-    assert response.text == "Hello World" 
+
+    assert response.text == "Hello World"
 }
 {code}
 
@@ -189,18 +189,18 @@ void testAutowiringViaNew() {
     defineBeans {
         simpleService(SimpleService)
     }
-    
+
     def controller1 = new SimpleController()
-    def controller2 = new SimpleController()	
-    
+    def controller2 = new SimpleController()
+
     assert controller1.simpleService != null
-    assert controller2.simpleService != null	
+    assert controller2.simpleService != null
 }
 {code}
 
 h4. Testing Mime Type Handling
 
-You can test mime type handling and the @withFormat@ method quite simply by setting the request's @format@ attribute:
+You can test mime type handling and the @withFormat@ method quite simply by setting the response's @format@ attribute:
 
 {code:java}
 // controller action
@@ -214,7 +214,7 @@ def sayHello() {
 
 // test
 void testSayHello() {
-    request.format = 'xml'
+    response.format = 'xml'
     controller.sayHello()
 
     assert '<?xml version="1.0" encoding="UTF-8"?><map><entry key="Hello">World</entry></map>' == response.text
@@ -241,7 +241,7 @@ You want to verify the logic that is executed on a good form submission and the 
 {code:java}
 void testDuplicateFormSubmission() {
     controller.handleForm()
-    assert "Bad" == response.text	
+    assert "Bad" == response.text
 }
 {code}
 
@@ -254,9 +254,9 @@ import org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerToken
 void testValidFormSubmission() {
     def token = SynchronizerToken.store(session)
     params[SynchronizerToken.KEY] = token.currentToken.toString()
-	
+
     controller.handleForm()
-    assert "Good" == response.text	
+    assert "Good" == response.text
 }
 
 {code}
@@ -298,11 +298,11 @@ The @GrailsMockMultipartFile@ takes the name of the file and the contents of the
 
 h4. Testing Command Objects
 
-Special support exists for testing command object handling via the @mockCommandObject@ method. For example consider the following action: 
+Special support exists for testing command object handling via the @mockCommandObject@ method. For example consider the following action:
 
 {code:java}
 def handleCommand = { SimpleCommand simple ->
-     if(simple.hasErrors()) {
+     if (simple.hasErrors()) {
          render "Bad"
      }
      else {
@@ -321,7 +321,7 @@ void testInvalidCommand() {
     cmd.validate()
     controller.handleCommand(cmd)
 
-    assert response.text == 'Bad'	
+    assert response.text == 'Bad'
 }
 {code}
 

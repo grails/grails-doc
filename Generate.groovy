@@ -205,8 +205,8 @@ files = new File("${BASEDIR}/src/ref").listFiles().toList().sort()
 reference = [:]
 new File("${BASEDIR}/resources/style/referenceItem.html").withReader("UTF-8") {reader ->
     template = templateEngine.createTemplate(reader)
-    for(f in files) {
-        if(f.directory && !f.name.startsWith(".")) {
+    for (f in files) {
+        if (f.directory && !f.name.startsWith(".")) {
 
             def section = f.name
             menu << "<h1 class=\"menuTitle\">${section}</h1>"
@@ -218,7 +218,7 @@ new File("${BASEDIR}/resources/style/referenceItem.html").withReader("UTF-8") {r
             }
 
             def items = f.listFiles().findAll{it.name.endsWith(".gdoc")}.sort()
-            for(item in items) {
+            for (item in items) {
                 //println "Generating reference item: ${name}"
                 writeReferenceItem(item, "../..", section, item.name[0..-6])
             }

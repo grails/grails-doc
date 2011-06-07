@@ -6,7 +6,6 @@ Tag libraries and GSP pages can be tested with the @grails.test.mixin.web.Groovy
 @TestFor(SimpleTagLib)
 class SimpleTagLibTests {
 
-
 }
 {code}
 
@@ -28,7 +27,7 @@ The core Grails tags don't need to be enabled during testing, however custom tag
 {code:java}
 class SimpleTagLib {
     static namespace = 's'
-    
+
     def hello = { attrs, body ->
         out << "Hello ${attrs.name ?: 'World'}"
     }
@@ -41,7 +40,7 @@ You can test this tag library by using @TestFor@ and supplying the name of the t
 @TestFor(SimpleTagLib)
 class SimpleTagLibTests {
     void testHelloTag() {
-        assert applyTemplate('<s:hello />')	== 'Hello World'
+        assert applyTemplate('<s:hello />') == 'Hello World'
         assert applyTemplate('<s:hello name="Fred" />') == 'Hello Fred'
     }
 }
@@ -52,12 +51,12 @@ Alternatively, you can use the @TestMixin@ annotation and mock multiple tag libr
 {code:java}
 @grails.test.mixin.TestMixin(GroovyPageUnitTestMixin)
 class MultipleTagLibraryTests {
-	
+
     @Test
     void testMuliple() {
         mockTagLib(FirstTagLib)
         mockTagLib(SecondTagLib)
-        
+
         ...
     }
 }
