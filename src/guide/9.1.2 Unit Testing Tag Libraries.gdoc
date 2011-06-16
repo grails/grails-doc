@@ -62,6 +62,23 @@ class MultipleTagLibraryTests {
 }
 {code}
 
+The @GroovyPageUnitTestMixin@ provides convenience methods for asserting template output equals or matches some expected value.
+
+{code:java}
+@grails.test.mixin.TestMixin(GroovyPageUnitTestMixin)
+class MultipleTagLibraryTests {
+
+    @Test
+    void testMuliple() {
+        mockTagLib(FirstTagLib)
+        mockTagLib(SecondTagLib)
+        assertOutputEquals ('Hello World', '<s:hello />')
+        assertOutputMatches (/.*Fred.*/, '<s:hello name="Fred" />')
+    }
+}
+{code}
+
+
 h4. Testing View and Template Rendering
 
 You can test rendering of views and templates in @grails-app/views@ via the @render(Map)@ method provided by @GroovyPageUnitTestMixin@ :
