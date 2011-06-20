@@ -73,7 +73,7 @@ task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
         classpath = classpath.files.collect { it.toURI().toURL() }
 
         // Add the grails-docs JAR.
-        def distDir = file("${project.grailsHome}/install/dist")
+        def distDir = file("${project.grailsHome}/dist")
         classpath << distDir.listFiles({ dir, name -> name ==~ /grails-docs-.*\.jar/ } as FilenameFilter)[0].toURI().toURL()
         project.publishClassLoader = new URLClassLoader(classpath as URL[], Thread.currentThread().contextClassLoader)
 
