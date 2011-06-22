@@ -15,6 +15,10 @@ class Book {
 }
 {code}
 
+{note}
+If you wish to use packages you can move the Book.groovy class into a sub directory under the domain directory and add the appropriate @package@ declaration as per Groovy (and Java's) packaging rules.  Using Hibernate reserved words (e.g. @Member@) as a class name without a package will often lead to a @org.hibernate.hql.ast.QuerySyntaxException@ being thrown.
+{note}
+
 The above class will map automatically to a table in the database called @book@ (the same name as the class). This behaviour is customizable through the [ORM Domain Specific Language|guide:ormdsl]
 
 Now that you have a domain class you can define its properties as Java types. For example:
@@ -28,10 +32,3 @@ class Book {
 {code}
 
 Each property is mapped to a column in the database, where the convention for column names is all lower case separated by underscores. For example @releaseDate@ maps onto a column @release_date@. The SQL types are auto-detected from the Java types, but can be customized via [Constraints|guide:constraints] or the [ORM DSL|guide:ormdsl].
-
-{note}
-Always use packages to avoid unexpected behaviour.
-
-* If you have a domain class without package named like any class from package @java.lang.*@ (e.g. @System@) Hibernate will try binding it to the default import and not to your domain class.
-* Using Hibernate reserved words (e.g. @Member@) without a package exception @org.hibernate.hql.ast.QuerySyntaxException@ will be thrown.
-{note}
