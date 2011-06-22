@@ -102,10 +102,10 @@ idEq(1)
 {code}       
  *ilike* | A case-insensitive 'like' expression | {code}
 ilike("holderFirstName","Steph%")
-{code}       
- *in* | Where a one property is contained within the specified list of values note: 'in' is a groovy reserve word, we must escape it by quotes. | {code}
-'in'("holderAge",[18..65])
-{code}       
+{code}
+ *in* | Where a property is contained within the specified list of values. Can also be chained with the not method where a property is not contained within the specified list of values. Note: 'in' is a groovy reserve word, so it must be escaped by quotes. | {code}
+'in'("holderAge",[18..65]) or not{'in'("holderAge",[18..65])}
+{code}
  *isEmpty* | Where a collection property is empty | {code}
 isEmpty("transactions")
 {code}       
@@ -144,8 +144,7 @@ order("holderLastName", "desc")
 {code}       
  *rlike* | Similar to like, but uses a regex. Only supported on Oracle and MySQL. | {code}
 rlike("holderFirstName",/Steph.+/)
-{code}       
-
+{code}
  *sizeEq* | Where a collection property's size equals a particular value | {code}
 sizeEq("transactions", 10)
 {code}       
