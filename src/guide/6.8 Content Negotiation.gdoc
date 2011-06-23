@@ -47,14 +47,14 @@ assert 'all' == response.format
 In this case 'all' possible formats are accepted by the client. To deal with different kinds of requests from [Controllers|guide:controllers] you can use the [withFormat|controllers] method that acts as kind of a switch statement:
 
 {code:java}
-import grails.converters.*
+import grails.converters.XML
 
 class BookController {
-    def books
-    def list = {
-        this.books = Book.list()
+
+    def list() {
+        def books = Book.list()
         withFormat {
-            html bookList:books
+            html bookList: books
             js { render "alert('hello')" }
             xml { render books as XML }
         }
@@ -62,7 +62,7 @@ class BookController {
 }
 {code}
 
-What happens here is that if the preferred format is @html@ then Grails will execute the @html()@ call only. What this is does is make Grails look for a view called either @grails-app/views/books/list.html.gsp@ or @grails-app/views/books/list.gsp@. If the format is @xml@ then the closure will be invoked and an XML response rendered.
+If the preferred format is @html@ then Grails will execute the @html()@ call only. This causes Grails to look for a view called either @grails-app/views/books/list.html.gsp@ or @grails-app/views/books/list.gsp@. If the format is @xml@ then the closure will be invoked and an XML response rendered.
 
 How do we handle the "all" format? Simply order the content-types within your @withFormat@ block so that whichever one you want executed comes first. So in the above example, "all" will trigger the @html@ handler.
 
@@ -95,7 +95,7 @@ If fiddling with request headers if not your favorite activity you can override 
 /book/list?format=xml
 {code}
 
-You can also define this parameter in the [URL Mappings|guide:mappings] definition:
+You can also define this parameter in the [URL Mappings|guide:urlmappings] definition:
 
 {code:java}
 "/book/list"(controller:"book", action:"list") {
@@ -105,13 +105,13 @@ You can also define this parameter in the [URL Mappings|guide:mappings] definiti
 
 h4. Content Negotiation with URI Extensions
 
-Grails also supports content negotiation via URI extensions. For example given the following URI:
+Grails also supports content negotiation using URI extensions. For example given the following URI:
 
 {code:java}
 /book/list.xml
 {code}
 
-Grails will shave off the extension and map it to @/book/list@ instead whilst simultaneously setting the content format to @xml@ based on this extension. This behaviour is enabled by default, so if you wish to turn it off, you must set the @grails.mime.file.extensions@ property in @grails-app/conf/Config.groovy@ to @false@:
+Grails will remove the extension and map it to @/book/list@ instead whilst simultaneously setting the content format to @xml@ based on this extension. This behaviour is enabled by default, so if you wish to turn it off, you must set the @grails.mime.file.extensions@ property in @grails-app/conf/Config.groovy@ to @false@:
 
 {code:java}
 grails.mime.file.extensions = false

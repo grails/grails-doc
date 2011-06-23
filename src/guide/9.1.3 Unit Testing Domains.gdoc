@@ -1,15 +1,19 @@
 h4. Overview
 
-Domain class interaction can be tested without involving a database connection using the @DomainClassUnitTestMixin@. This implementation mimics the behavior of GORM against an in-memory @ConcurrentHashMap@ implementation. Note that it contains limitations in comparison to a real GORM implementation. The following features of GORM for Hibernate can only be tested within an integration test:
+{note}
+The mocking support described here is best used when testing non-domain artifacts that use domain classes, to let you focus on testing the artifact without needing a database. But when testing persistence it's best to use integration tests which configure Hibernate and use a database.
+{note}
+
+Domain class interaction can be tested without involving a database connection using @DomainClassUnitTestMixin@. This implementation mimics the behavior of GORM against an in-memory @ConcurrentHashMap@ implementation. Note that this has limitations compared to a real GORM implementation. The following features of GORM for Hibernate can only be tested within an integration test:
 
 * String-based HQL queries
-* Composite Identifiers
-* Dirty Checking Methods
-* Any Direct Interaction with Hibernate
+* composite identifiers
+* dirty checking methods
+* any direct interaction with Hibernate
 
-However, a large, commonly-used portion of the GORM API can be mocked via @DomainClassUnitTestMixin@ including:
+However a large, commonly-used portion of the GORM API can be mocked using @DomainClassUnitTestMixin@ including:
 
-* Simple persistence methods like save(), delete() etc.
+* Simple persistence methods like @save()@, @delete()@ etc.
 * Dynamic Finders
 * Named Queries
 * Query-by-example
@@ -19,7 +23,7 @@ If something isn't supported then @GrailsUnitTestMixin@'s @mockFor@ method can c
 
 h4. The Basics
 
-@DomainClassUnitTestMixin@ is typically used in combination with testing either a controller, service of tag library where the domain is a mock collaborator defined via the @Mock@ annotation:
+@DomainClassUnitTestMixin@ is typically used in combination with testing either a controller, service or tag library where the domain is a mock collaborator defined by the @Mock@ annotation:
 
 {code:java}
 import grails.test.mixin.*
@@ -35,7 +39,7 @@ The example above tests the @SimpleController@ class and mocks the behavior of t
 
 {code:java}
 class BookController {
-    def save = {
+    def save() {
         def book = new Book(params)
         if (book.save(flush: true)) {
             flash.message = message(
@@ -58,12 +62,14 @@ import grails.test.mixin.*
 @TestFor(BookController)
 @Mock(Book)
 class BookControllerTests {
+
     void testSaveInvalidBook() {
         controller.save()
 
         assert model.bookInstance != null
         assert view == '/book/create'
     }
+
     void testSaveValidBook() {
         params.title = "The Stand"
         params.pages = "500"
@@ -77,7 +83,7 @@ class BookControllerTests {
 }
 {code}
 
-If you have more than one domain to mock the @Mock@ annotation takes a list of mock collaborators:
+@Mock@ annotation also supports a list of mock collaborators if you have more than one domain to mock:
 
 {code:java}
 @TestFor(BookController)
@@ -87,7 +93,7 @@ class BookControllerTests {
 }
 {code}
 
-Alternatively you can also use the @DomainClassUnitTestMixin@ directly via the @TestMixin@ annotation:
+Alternatively you can also use the @DomainClassUnitTestMixin@ directly with the @TestMixin@ annotation:
 
 {code:java}
 @TestFor(BookController)
@@ -106,37 +112,39 @@ void testSave() {
 }
 {code}
 
-The @mockDomain@ method also includes an additional parameter that allows you to pass a map of maps to setup an domain, which is useful for fixture-like data:
+The @mockDomain@ method also includes an additional parameter that lets you pass a Map of Maps to configure a domain, which is useful for fixture-like data:
 
 {code:java}
 void testSave() {
     mockDomain(Book, [
-            [title:"The Stand", pages:"1000"],
-            [title:"The Shining", pages:400],
-            [title:"Along Came a Spider", pages:300] ])
+            [title: "The Stand", pages: 1000],
+            [title: "The Shining", pages: 400],
+            [title: "Along Came a Spider", pages: 300] ])
 }
-
 {code}
+
 h4. Testing Constraints
 
-Your constraints contain logic and that logic is highly susceptible to bugs - the kind of bugs that can be tricky to track down (particularly as save() doesn't throw an exception when it fails). If your answer is that it's too hard or fiddly, that is no longer an excuse. Enter the @mockForConstraintsTests()@ method.
+Your constraints contain logic and that logic is highly susceptible to bugs - the kind of bugs that can be tricky to track down (particularly as by default @save()@ doesn't throw an exception when it fails). If your answer is that it's too hard or fiddly, that is no longer an excuse. Enter the @mockForConstraintsTests()@ method.
 
-This method is like a much reduced version of the @mockDomain()@ method that simply adds a @validate()@ method to a given domain class. All you have to do is mock the class, create an instance with field values, and then call @validate()@. You can then access the errors property on your domain instance to find out whether the validation failed or not. So if all we are doing is mocking the @validate()@ method, why the optional list of test instances? That is so that we can test unique constraints as you will soon see.
+This method is like a much reduced version of the @mockDomain()@ method that simply adds a @validate()@ method to a given domain class. All you have to do is mock the class, create an instance with populated data, and then call @validate()@. You can then access the @errors@ property to determine if validation failed. So if all we are doing is mocking the @validate()@ method, why the optional list of test instances? That is so that we can test the @unique@ constraint as you will soon see.
 
-So, suppose we have a simple domain class like so:
+So, suppose we have a simple domain class:
 
 {code:java}
 class Book {
+
     String title
     String author
+
     static constraints = {
-        title(blank: false, unique: true)
-        author(blank: false, minSize: 5)
+        title blank: false, unique: true
+        author blank: false, minSize: 5
     }
 }
 {code}
 
-Don't worry about whether the constraints are sensible or not (they're not!), they are for demonstration only. To test these constraints we can do the following:
+Don't worry about whether the constraints are sensible (they're not!), they are for demonstration only. To test these constraints we can do the following:
 
 {code:java}
 @TestFor(Book)
@@ -147,21 +155,20 @@ class BookTests  {
                 title: "Misery",
                 author: "Stephen King")
 
-        mockForConstraintsTests(Book, [ existingBook ])
+        mockForConstraintsTests(Book, [existingBook])
 
-        // Validation should fail if both properties are null.
+        // validation should fail if both properties are null
         def book = new Book()
 
         assert !book.validate()
         assert "nullable" == book.errors["title"]
         assert "nullable" == book.errors["author"]
 
-        // So let's demonstrate the unique and minSize constraints.
+        // So let's demonstrate the unique and minSize constraints
 
         book = new Book(title: "Misery", author: "JK")
         assert !book.validate()
         assert "unique" == book.errors["title"]
-
         assert "minSize" == book.errors["author"]
 
         // Validation should pass!
@@ -171,6 +178,6 @@ class BookTests  {
 }
 {code}
 
-You can probably look at that code and work out what's happening without any further explanation. The one thing we will explain is the way the errors property is used. First, it does return a real Spring @Errors@ instance, so you can access all the properties and methods you would normally expect. Second, this particular @Errors@ object also has map/property access as shown. Simply specify the name of the field you are interested in and the map/property access will return the name of the constraint that was violated. Note that it is the constraint name , not the message code (as you might expect).
+You can probably look at that code and work out what's happening without any further explanation. The one thing we will explain is the way the @errors@ property is used. First, is a real Spring @Errors@ instance, so you can access all the properties and methods you would normally expect. Second, this particular @Errors@ object also has map/property access as shown. Simply specify the name of the field you are interested in and the map/property access will return the name of the constraint that was violated. Note that it is the constraint name, not the message code (as you might expect).
 
-That's it for testing constraints. One final thing we would like to say is that testing the constraints in this way catches a common error: typos in the "constraints" property! It is currently one of the hardest bugs to track down normally, and yet a unit test for your constraints will highlight the problem straight away.
+That's it for testing constraints. One final thing we would like to say is that testing the constraints in this way catches a common error: typos in the "constraints" property name! It is currently one of the hardest bugs to track down normally, and yet a unit test for your constraints will highlight the problem straight away.

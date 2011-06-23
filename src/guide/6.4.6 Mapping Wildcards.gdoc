@@ -2,7 +2,7 @@ Grails' URL mappings mechanism also supports wildcard mappings. For example cons
 
 {code:java}
 static mappings = {
-    "/images/*.jpg"(controller:"image")
+    "/images/*.jpg"(controller: "image")
 }
 {code}
 
@@ -10,7 +10,7 @@ This mapping will match all paths to images such as @/image/logo.jpg@. Of course
 
 {code:java}
 static mappings = {
-    "/images/$name.jpg"(controller:"image")
+    "/images/$name.jpg"(controller: "image")
 }
 {code}
 
@@ -18,7 +18,7 @@ However, you can also use double wildcards to match more than one level below:
 
 {code:java}
 static mappings = {
-    "/images/**.jpg"(controller:"image")
+    "/images/**.jpg"(controller: "image")
 }
 {code}
 
@@ -27,7 +27,7 @@ In this cases the mapping will match @/image/logo.jpg@ as well as @/image/other/
 {code:java}
 static mappings = {
     // will match /image/logo.jpg and /image/other/logo.jpg
-    "/images/$name**.jpg"(controller:"image")
+    "/images/$name**.jpg"(controller: "image")
 }
 {code}
 
@@ -38,10 +38,10 @@ def name = params.name
 println name // prints "logo" or "other/logo"
 {code}
 
-If you are using wildcard URL mappings then you may want to exclude certain URIs from Grails' URL mapping process. To do this you can provide an @excludes@ setting inside the @UrlMappings.groovy@ class:
+If you use wildcard URL mappings then you may want to exclude certain URIs from Grails' URL mapping process. To do this you can provide an @excludes@ setting inside the @UrlMappings.groovy@ class:
 
 {code:java}
-class UrlMappings = {
+class UrlMappings {
     static excludes = ["/images/*", "/css/*"]
     static mappings = {
         ...

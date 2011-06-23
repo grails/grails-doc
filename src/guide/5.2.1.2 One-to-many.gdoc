@@ -2,10 +2,13 @@ A one-to-many relationship is when one class, example @Author@, has many instanc
 
 {code}
 class Author {
-    static hasMany = [ books : Book ]
+    static hasMany = [books: Book]
 
     String name
 }
+{code}
+
+{code}
 class Book {
     String title
 }
@@ -22,13 +25,13 @@ Grails will automatically inject a property of type @java.util.Set@ into the dom
 {code}
 def a = Author.get(1)
 
-a.books.each {
-    println it.title
+for (book in a.books) {
+    println book.title
 }
 {code}
 
 {note}
-The default fetch strategy used by Grails is "lazy", which means that the collection will be lazily initialized. This can lead to the [n+1 problem|http://www.javalobby.org/java/forums/t20533.html] if you are not careful.
+The default fetch strategy used by Grails is "lazy", which means that the collection will be lazily initialized on first access. This can lead to the [n+1 problem|http://www.javalobby.org/java/forums/t20533.html] if you are not careful.
 
 If you need "eager" fetching you can use the [ORM DSL|guide:ormdsl] or specify eager fetching as part of a [query|guide:querying]
 {note}
@@ -37,12 +40,15 @@ The default cascading behaviour is to cascade saves and updates, but not deletes
 
 {code}
 class Author {
-    static hasMany = [ books : Book ]
+    static hasMany = [books: Book]
 
     String name
 }
+{code}
+
+{code}
 class Book {
-    static belongsTo = [author:Author]
+    static belongsTo = [author: Author]
     String title
 }
 {code}
@@ -51,9 +57,12 @@ If you have two properties of the same type on the many side of a one-to-many yo
 
 {code}
 class Airport {
-    static hasMany = [flights:Flight]
-    static mappedBy = [flights:"departureAirport"]
+    static hasMany = [flights: Flight]
+    static mappedBy = [flights: "departureAirport"]
 }
+{code}
+
+{code}
 class Flight {
     Airport departureAirport
     Airport destinationAirport
@@ -64,9 +73,12 @@ This is also true if you have multiple collections that map to different propert
 
 {code}
 class Airport {
-    static hasMany = [outboundFlights:Flight, inboundFlights:Flight]
-    static mappedBy = [outboundFlights:"departureAirport", inboundFlights:"destinationAirport"]
+    static hasMany = [outboundFlights: Flight, inboundFlights: Flight]
+    static mappedBy = [outboundFlights: "departureAirport", inboundFlights: "destinationAirport"]
 }
+{code}
+
+{code}
 class Flight {
     Airport departureAirport
     Airport destinationAirport

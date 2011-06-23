@@ -1,25 +1,18 @@
-The @dbCreate@ property of the @DataSource@ definition is important as it dictates what Grails should do at runtime with regards to automatically generating the database tables from [GORM|guide:gorm] classes. The options are:
+The @dbCreate@ property of the @DataSource@ definition is important as it dictates what Grails should do at runtime with regards to automatically generating the database tables from [GORM|guide:GORM] classes. The options are described in the [DataSource|guide:ds] section:
 
-* @create-drop@ - Drops and re-creates the database when Grails starts, and drops the schema at the end of a clean shutdown.
-* @create@ - Drops and re-creates the database when Grails starts, but doesn't drop the schema at the end of a clean shutdown.
-* @update@ - Creates the database if it doesn't exist, and modifies it if it does exist. The modifications are rather basic though, and generally only include adding missing columns and tables. Will not drop or modify anything.
-* @validate@ - Makes no changes to your database. Compares the configuration with the existing database schema and reports warnings.
-* any other value - does nothing. Don't specify any value if you want to manage databases yourself or by using a 3rd-party tool.
+* @create@
+* @create-drop@
+* @update@
+* @validate@
+* no value
 
-{warning}
-Both @create-drop@ and @create@ will destroy all existing data hence use with caution!
-{warning}
+In [development|guide:environments] mode @dbCreate@ is by default set to "create-drop", but at some point in development (and certainly once you go to production) you'll need to stop dropping and re-creating the database every time you start up your server.
 
-In [development|guide:envs] mode @dbCreate@ is by default set to "create-drop":
+It's tempting to switch to @update@ so you retain existing data and only update the schema when your code changes, but Hibernate's update support is very conservative. It won't make any changes that could result in data loss, and doesn't detect renamed columns or tables, so you'll be left with the old one and will also have the new one.
 
-{code}
-dataSource {
-   dbCreate = "create-drop" // one of 'create', 'create-drop','update'
-}
-{code}
+Grails supports Rails-style migrations via the "Database Migration":http://grails.org/plugin/database-migration plugin which can be installed by running
 
-What this does is automatically drop and re-create the database tables on each restart of the application. Obviously this may not be what you want in production.
+bc.
+grails install-plugin database-migration
 
-{note}
-Grails supports Rails-style migrations via the [Grails Database Migration Plugin|http://grails-plugins.github.com/grails-database-migration/] which can be installed via the @grails install-plugin database-migration@ command.
-{note}
+The plugin uses "Liquibase":http://www.liquibase.org/ and and provides access to all of its functionality, and also has support for GORM (for example generating a change set by comparing your domain classes to a database).

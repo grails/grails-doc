@@ -2,7 +2,7 @@ h1. discriminator
 
 h2. Purpose
 
-Customizes the discriminator value used in table-per-subclass inheritance mapping.
+Customizes the discriminator column used in table-per-subclass inheritance mapping.
 
 h2. Examples
 
@@ -10,6 +10,9 @@ h2. Examples
 class Content {
     ...
 }
+{code}
+
+{code:java}
 class PodCast extends Content {
     ...
     static mapping = {
@@ -27,15 +30,17 @@ Arguments:
 * @column@ (optional) - The column name to store the discriminator
 * @value@ - The value to use for the discriminator
 * @formula@ (optional) - an SQL expression that is executed to evaluate the type of class. Use this or @column@ but not both
-* @type@ (optional defaults to string) - the Hibernate type, used for the where clause condition to know if it needs to wrap it with ' or not
+* @type@ (optional defaults to string) - the Hibernate type, used for the where clause condition to know if it needs to wrap it with '
 
-
-By default when mapping inheritance Grails uses a single-table model so that all subclasses share the same table. A discriminator column is then used to help Grails tell what type a particular row is. By default the class name is stored as the value of this column. You can use the @discriminator@ method to customize the value stored:
+By default when mapping inheritance Grails uses a single-table model where all classes share the same table. A discriminator column is used to determine the type for each row, by default the full class name. You can use the @discriminator@ method to customize what's stored:
 
 {code:java}
 class Content {
     ...
 }
+{code}
+
+{code:java}
 class PodCast extends Content {
     ...
     static mapping = {
@@ -50,9 +55,12 @@ You can also customize the discriminator column name:
 class Content {
     ...
     static mapping = {
-        discriminator column:"content_type"
+        discriminator column: "content_type"
     }
 }
+{code}
+
+{code:java}
 class PodCast extends Content {
     ...
     static mapping = {
@@ -67,10 +75,15 @@ Or you can use a formula:
 class Content {
     ...
     static mapping = {
-        discriminator value: "1", formula="case when CLASS_TYPE in ('a', 'b', 'c') then 0 else 1 end", type="integer"
+        discriminator value: "1",
+                      formula: "case when CLASS_TYPE in ('a', 'b', 'c') then 0 else 1 end",
+                      type: "integer"
     }
 }
-class PodCast extends Content{
+{code}
+
+{code:java}
+class PodCast extends Content {
     ...
     static mapping = {
         discriminator value: "0"

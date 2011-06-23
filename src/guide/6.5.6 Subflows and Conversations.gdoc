@@ -1,7 +1,7 @@
 Grails' Web Flow integration also supports subflows. A subflow is like a flow within a flow. For example take this search flow:
 
 {code:java}
-def searchFlow = {
+def searchFlow() {
     displaySearchForm {
         on("submit").to "executeSearch"
     }
@@ -28,13 +28,13 @@ def searchFlow = {
 
 It references a subflow in the @extendedSearch@ state. The controller parameter is optional if the subflow is defined in the same controller as the calling flow.
 {note}
-Prior to 1.3.5, the previous subflow call would look like @subflow(extendedSearchFlow)@, with the requirement that the name of the subflow state was the same as the called subflow (minus @Flow@). This way of calling a subflow is deprecated and only supported for backward compatibility.
+Prior to 1.3.5, the previous subflow call would look like @subflow(extendedSearchFlow)@, with the requirement that the name of the subflow state be the same as the called subflow (minus @Flow@). This way of calling a subflow is deprecated and only supported for backward compatibility.
 {note}
 
 The subflow is another flow entirely:
 
 {code:java}
-def extendedSearchFlow = {
+def extendedSearchFlow() {
     startExtendedSearch {
         on("findMore").to "searchMore"
         on("searchAgain").to "noResults"
@@ -52,7 +52,7 @@ def extendedSearchFlow = {
     noResults()
 }{code}
 
-Notice how it places the @extendedResults@ in conversation scope. This scope differs to flow scope as it allows you to share state that spans the whole conversation not just the flow. Also notice that the end state (either @moreResults@ or @noResults@ of the subflow triggers the events in the main flow:
+Notice how it places the @extendedResults@ in conversation scope. This scope differs to flow scope as it lets you share state that spans the whole conversation not just the flow. Also notice that the end state (either @moreResults@ or @noResults@ of the subflow triggers the events in the main flow:
 
 {code:java}
 extendedSearch {
@@ -62,4 +62,3 @@ extendedSearch {
     on("noResults").to "displayNoMoreResults"
 }
 {code}
-

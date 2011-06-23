@@ -2,37 +2,60 @@ h1. executeQuery
 
 h2. Purpose
 
-Allows the execution of [HQL queries|guide:hql] against a domain class
+Executes [HQL queries|guide:hql]
 
 h2. Examples
 
 {code:java}
 // simple query
 Account.executeQuery("select distinct a.number from Account a")
-// using with list of parameters
-Account.executeQuery("select distinct a.number from Account a where a.branch = ? and a.created > ?", ['London',lastMonth])
-// using with a single parameter and pagination params
-Account.executeQuery("select distinct a.number from Account a where a.branch = ?", ['London'], [max:10,offset:5])
-// using with Map of named parameters
-Account.executeQuery("select distinct a.number from Account a where a.branch = :branch", [branch:'London'])
-// using with Map of named parameters and pagination params
-Account.executeQuery("select distinct a.number from Account a where a.branch = :branch", [branch:'London', max:10, offset:5])
-// same as previous
-Account.executeQuery("select distinct a.number from Account a where a.branch = :branch", [branch:'London'], [max:10, offset:5])
-// tell underlying Hibernate Query object to not attach newly retrieved objects to the session, will only save with explicit @save@
-Account.executeQuery("select distinct a.number from Account a", null, [readOnly: true])
-// time request out after 18 seconds
-Account.executeQuery("select distinct a.number from Account a", null, [timeout: 18])
-// have Hibernate Query object return 30 rows at a time
-Account.executeQuery("select distinct a.number from Account a", null, [fetchSize: 30])
-// modify the FlushMode of the Query (default is @FlushMode.AUTO@)
-Account.executeQuery("select distinct a.number from Account a", null, [flushMode: FlushMode.MANUAL])
 
+// using with list of parameters
+Account.executeQuery("select distinct a.number from Account a " +
+                     "where a.branch = ? and a.created > ?",
+                     ['London', lastMonth])
+
+// using with a single parameter and pagination params
+Account.executeQuery("select distinct a.number from Account a " +
+                     "where a.branch = ?", ['London'],
+                     [max: 10, offset: 5])
+
+// using with Map of named parameters
+Account.executeQuery("select distinct a.number from Account a " +
+                     "where a.branch = :branch",
+                     [branch: 'London'])
+
+// using with Map of named parameters and pagination params
+Account.executeQuery("select distinct a.number from Account a " +
+                     "where a.branch = :branch",
+                     [branch: 'London', max: 10, offset: 5])
+
+// same as previous
+Account.executeQuery("select distinct a.number from Account a " +
+                     "where a.branch = :branch",
+                     [branch: 'London'], [max: 10, offset: 5])
+
+// tell underlying Hibernate Query object to not attach newly retrieved
+// objects to the session, will only save with explicit @save@
+Account.executeQuery("select distinct a.number from Account a",
+                     null, [readOnly: true])
+
+// time request out after 18 seconds
+Account.executeQuery("select distinct a.number from Account a",
+                     null, [timeout: 18])
+
+// have Hibernate Query object return 30 rows at a time
+Account.executeQuery("select distinct a.number from Account a",
+                     null, [fetchSize: 30])
+
+// modify the FlushMode of the Query (default is @FlushMode.AUTO@)
+Account.executeQuery("select distinct a.number from Account a",
+                     null, [flushMode: FlushMode.MANUAL])
 {code}
 
 h2. Description
 
-The @executeQuery@ method allows the execution of arbitrary HQL queries that don't necessary return instances of a domain class. This is useful if you only want a subset of data instead of the whole object hierarchy. The basic syntax is:
+The @executeQuery@ method allows the execution of arbitrary HQL queries. HQL queries can return domain class instances, or @Array@s of specified data when the query selects individual fields or calculated values. The basic syntax is:
 
 {code:java}
 Book.executeQuery(String query)
@@ -45,6 +68,6 @@ Book.executeQuery(String query, Map namedParams, Map metaParams)
 Parameters:
 
 * @query@ - An HQL query
-* @positionalParams@ - A List of parameters for a positional parametrized HQL query
-* @namedParams@ - A Map of named parameters a HQL query
-* @metaParams@ - A Map containing pagination parameters @max@ or/and @offset@, as well as hibernate query parameters @readOnly@, @fetchSize@, @timeout@, and @flushMode@.  (see examples above)
+* @positionalParams@ - A @List@ of parameters for a positional parameterized query
+* @namedParams@ - A @Map@ of named parameters for a named parameterized query
+* @metaParams@ - A @Map@ of pagination parameters @max@ or/and @offset@, as well as Hibernate query parameters @readOnly@, @fetchSize@, @timeout@, and @flushMode@

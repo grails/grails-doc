@@ -7,12 +7,17 @@ To redirect flow from one action to the next using an HTTP redirect.
 h2. Examples
 
 {code:java}
-redirect(uri:"book/list")
-redirect(url:"http://www.blogjava.net/BlueSUN")
-redirect(action:"show")
-redirect(controller:"book",action:"list")
-redirect(action:"show",id:4, params:[author:"Stephen King"])
+redirect(action: "show")
+
+redirect(controller: "book", action: "list")
+
+redirect(action: "show", id: 4, params: [author: "Stephen King"])
+
 redirect(controller: "book", action: "show", fragment: "profile")
+
+redirect(uri: "book/list")
+
+redirect(url: "http://www.blogjava.net/BlueSUN")
 {code}
 
 h2. Description
@@ -29,6 +34,6 @@ h4. Parameters
 * @mapping@ (optional) - The [named URL mapping|guide:namedMappings] to use to rewrite the link
 * @params@ (optional) - a map containing request parameters
 * @url@ (optional) - a map containing the action, controller, id etc.
-* @absolute@ (optional) - If set to "true" will prefix the link target address with the value of the grails.serverURL property from Config, or http://localhost:<port> if no value in Config and not running in production.
-* @base@ (optional) - Sets the prefix to be added to the link target address, typically an absolute server URL. This overrides the behaviour of the @absolute@ property, if both are specified.
-* @permanent@ (optional) - If set to "true" the redirect will be issued with a 301 HTTP status code (permanently moved), otherwise a 302 HTTP status code will be issued
+* @absolute@ (optional) - If @true@ will prefix the link target address with the value of the @grails.serverURL@ property from @Config.groovy@, or http://localhost:<port> if there is no value in @Config.groovy@ and not running in the production environment.
+* @base@ (optional) - Sets the prefix to be added to the link target address, typically an absolute server URL. This overrides the behaviour of the @absolute@ property if both are specified.
+* @permanent@ (optional) - If @true@ the redirect will be issued with a 301 HTTP status code (permanently moved), otherwise a 302 HTTP status code will be issued

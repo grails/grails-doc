@@ -1,11 +1,19 @@
 h4. Using Constructor Arguments
 
-Constructor arguments can be defined using parameters to each method that reside between the class of the bean and the last closure:
+Constructor arguments can be defined using parameters to each bean-defining method. Put them after the first argument (the Class):
 {code:java}
 bb.beans {
     exampleBean(MyExampleBean, "firstArgument", 2) {
-        someProperty = [1,2,3]
+        someProperty = [1, 2, 3]
     }
+}
+{code}
+
+This configuration corresponds to a @MyExampleBean@ with a constructor that looks like this:
+
+{code:java}
+MyExampleBean(String foo, int bar) {
+   ...
 }
 {code}
 
@@ -18,7 +26,7 @@ bb.beans {
     exampleBean(MyExampleBean) { bean ->
         bean.factoryMethod = "getInstance"
         bean.singleton = false
-        someProperty = [1,2,3]
+        someProperty = [1, 2, 3]
     }
 }
 {code}
@@ -28,7 +36,7 @@ As an alternative you can also use the return value of the bean defining method 
 {code:java}
 bb.beans {
     def example = exampleBean(MyExampleBean) {
-        someProperty = [1,2,3]
+        someProperty = [1, 2, 3]
     }
     example.factoryMethod = "getInstance"
 }
@@ -36,33 +44,37 @@ bb.beans {
 
 h4. Using Factory beans
 
-Spring defines the concept of factory beans and often a bean is created not from a class, but from one of these factories. In this case the bean has no class and instead you must pass the name of the factory bean to the bean:
+Spring defines the concept of factory beans and often a bean is created not directly from a new instance of a Class, but from one of these factories. In this case the bean has no Class argument and instead you must pass the name of the factory bean to the bean defining method:
 
 {code:java}
 bb.beans {
+
     myFactory(ExampleFactoryBean) {
-        someProperty = [1,2,3]
+        someProperty = [1, 2, 3]
     }
+
     myBean(myFactory) {
         name = "blah"
     }
 }
 {code}
 
-Note in the example above instead of a class we pass a reference to the @myFactory@ bean into the bean defining method. Another common task is provide the name of the factory method to call on the factory bean. This can be done using Groovy's named parameter syntax:
+Another common approach is provide the name of the factory method to call on the factory bean. This can be done using Groovy's named parameter syntax:
 
 {code:java}
 bb.beans {
+
     myFactory(ExampleFactoryBean) {
-        someProperty = [1,2,3]
+        someProperty = [1, 2, 3]
     }
-    myBean(myFactory:"getInstance") {
+
+    myBean(myFactory: "getInstance") {
         name = "blah"
     }
 }
 {code}
 
-Here the @getInstance@ method on the @ExampleFactoryBean@ bean will be called in order to create the @myBean@ bean.
+Here the @getInstance@ method on the @ExampleFactoryBean@ bean will be called to create the @myBean@ bean.
 
 h4. Creating Bean References at Runtime
 
@@ -72,27 +84,28 @@ Sometimes you don't know the name of the bean to be created until runtime. In th
 def beanName = "example"
 bb.beans {
     "${beanName}Bean"(MyExampleBean) {
-        someProperty = [1,2,3]
+        someProperty = [1, 2, 3]
     }
 }
 {code}
 
-In this case the @beanName@ variable defined earlier is used when invoking a bean defining method.
+In this case the @beanName@ variable defined earlier is used when invoking a bean defining method. The example has a hard-coded value but would work just as well with a name that is generated programmatically based on configuration, system properties, etc.
 
-Furthermore, because sometimes bean names are not known until runtime you may need to reference them by name when wiring together other beans. In this case using the @ref@ method:
+Furthermore, because sometimes bean names are not known until runtime you may need to reference them by name when wiring together other beans, in this case using the @ref@ method:
 
 {code:java}
 def beanName = "example"
 bb.beans {
+
     "${beanName}Bean"(MyExampleBean) {
-        someProperty = [1,2,3]
+        someProperty = [1, 2, 3]
     }
+
     anotherBean(AnotherBean) {
         example = ref("${beanName}Bean")
     }
 }
 {code}
-
 
 Here the example property of @AnotherBean@ is set using a runtime reference to the @exampleBean@. The @ref@ method can also be used to refer to beans from a parent @ApplicationContext@ that is provided in the constructor of the @BeanBuilder@:
 
@@ -114,19 +127,22 @@ You can use anonymous inner beans by setting a property of the bean to a block t
 
 {code:java}
 bb.beans {
-    marge(Person.class) {
-        name = "marge"
+
+    marge(Person) {
+        name = "Marge"
         husband =  { Person p ->
-            name = "homer"
+            name = "Homer"
             age = 45
-            props = [overweight:true, height:"1.8m"]
+            props = [overweight: true, height: "1.8m"]
         }
         children = [bart, lisa]
     }
+
     bart(Person) {
         name = "Bart"
         age = 11
     }
+
     lisa(Person) {
         name = "Lisa"
         age = 9
@@ -134,19 +150,21 @@ bb.beans {
 }
 {code}
 
-In the above example we set the @marge@ bean's husband property to a block that creates an inner bean reference. Alternatively if you have a factory bean you can ommit the type and just use passed bean definition instead to setup the factory:
+In the above example we set the @marge@ bean's husband property to a block that creates an inner bean reference. Alternatively if you have a factory bean you can omit the type and just use the specified bean definition instead to setup the factory:
 
 {code:java}
 bb.beans {
-    personFactory(PersonFactory.class)
-    marge(Person.class) {
-        name = "marge"
+
+    personFactory(PersonFactory)
+
+    marge(Person) {
+        name = "Marge"
         husband =  { bean ->
             bean.factoryBean = "personFactory"
             bean.factoryMethod = "newInstance"
-            name = "homer"
+            name = "Homer"
             age = 45
-            props = [overweight:true, height:"1.8m"]
+            props = [overweight: true, height: "1.8m"]
         }
         children = [bart, lisa]
     }
@@ -155,26 +173,35 @@ bb.beans {
 
 h4. Abstract Beans and Parent Bean Definitions
 
-To create an abstract bean definition define a bean that takes no class:
+To create an abstract bean definition define a bean without a @Class@ parameter:
 
 {code:java}
 class HolyGrailQuest {
     def start() { println "lets begin" }
 }
+{code}
+
+{code:java}
 class KnightOfTheRoundTable {
+
     String name
     String leader
-    KnightOfTheRoundTable(String n) {
-        this.name = n
-    }
     HolyGrailQuest quest
+
+    KnightOfTheRoundTable(String name) {
+        this.name = name
+    }
 
     def embarkOnQuest() {
         quest.start()
     }
 }
+{code}
 
-def bb = new grails.spring.BeanBuilder()
+{code:java}
+import grails.spring.BeanBuilder
+
+def bb = new BeanBuilder()
 bb.beans {
     abstractBean {
         leader = "Lancelot"
@@ -183,15 +210,16 @@ bb.beans {
 }
 {code}
 
-Here we define an abstract bean that sets that has a @leader@ property with the value of @"Lancelot"@. Now to use the abstract bean set it as the parent of the child bean:
+Here we define an abstract bean that has a @leader@ property with the value of @"Lancelot"@. To use the abstract bean set it as the parent of the child bean:
 
 {code:java}
 bb.beans {
     ...
     quest(HolyGrailQuest)
+
     knights(KnightOfTheRoundTable, "Camelot") { bean ->
         bean.parent = abstractBean
-        quest = quest
+        quest = ref('quest')
     }
 }
 {code}
@@ -200,16 +228,21 @@ bb.beans {
 When using a parent bean you must set the parent property of the bean before setting any other properties on the bean!
 {note}
 
-If you want an abstract bean that has a class you can do it this way:
+If you want an abstract bean that has a @Class@ specified you can do it this way:
 
 {code:java}
-def bb = new grails.spring.BeanBuilder()
+import grails.spring.BeanBuilder
+
+def bb = new BeanBuilder()
 bb.beans {
+
     abstractBean(KnightOfTheRoundTable) { bean ->
         bean.'abstract' = true
         leader = "Lancelot"
     }
+
     quest(HolyGrailQuest)
+
     knights("Camelot") { bean ->
         bean.parent = abstractBean
         quest = quest
@@ -217,20 +250,20 @@ bb.beans {
 }
 {code}
 
-In the above example we create an abstract bean of type @KnightOfTheRoundTable@ and use the bean argument to set it to abstract. Later we define a knights bean that has no class, but inherits the class from the parent bean.
+In this example we create an abstract bean of type @KnightOfTheRoundTable@ and use the bean argument to set it to abstract. Later we define a knights bean that has no @Class@ defined, but inherits the @Class@ from the parent bean.
 
 h4. Using Spring Namespaces
 
-Since Spring 2.0, users of Spring have been granted easier access to key features via XML namespaces. With BeanBuilder you can use any Spring namespace by first declaring it:
+Since Spring 2.0, users of Spring have had easier access to key features via XML namespaces. You can use a Spring namespace in BeanBuilder by declaring it with this syntax:
 
 {code:java}
 xmlns context:"http://www.springframework.org/schema/context"
 {code}
 
-And then invoking a method that matches the names of the Spring namespace tag and its associated attributes:
+and then invoking a method that matches the names of the Spring namespace tag and its associated attributes:
 
 {code:java}
-context.'component-scan'('base-package' :"my.company.domain")
+context.'component-scan'('base-package': "my.company.domain")
 {code}
 
 You can do some useful things with Spring namespaces, such as looking up a JNDI resource:
@@ -238,33 +271,39 @@ You can do some useful things with Spring namespaces, such as looking up a JNDI 
 {code:java}
 xmlns jee:"http://www.springframework.org/schema/jee"
 
-jee.'jndi-lookup'(id:"dataSource", 'jndi-name':"java:comp/env/myDataSource")
+jee.'jndi-lookup'(id: "dataSource", 'jndi-name': "java:comp/env/myDataSource")
 {code}
 
-The example above will create a Spring bean with the identifier of @dataSource@ by performing a JNDI lookup on the given JNDI name. With Spring namespaces you also get full access to all of the powerful AOP support in Spring from BeanBuilder. For example given the following two classes:
+This example will create a Spring bean with the identifier @dataSource@ by performing a JNDI lookup on the given JNDI name. With Spring namespaces you also get full access to all of the powerful AOP support in Spring from BeanBuilder. For example given these two classes:
 
 {code:java}
 class Person {
- int age;
- String name;
 
- void birthday() {
-      ++age;
- }
-}
-class BirthdayCardSender {
-   List peopleSentCards = []
-   void onBirthday(Person person) {
-      peopleSentCards << person
-   }
-}
+    int age
+    String name
 
+    void birthday() {
+        ++age;
+    }
+}
 {code}
 
-You can define an AOP aspect that uses a pointcut to detect whenever the @birthday()@ method is called:
+{code:java}
+class BirthdayCardSender {
+
+    List peopleSentCards = []
+
+    void onBirthday(Person person) {
+        peopleSentCards << person
+    }
+}
+{code}
+
+You can define an aspect that uses a pointcut to detect whenever the @birthday()@ method is called:
 
 {code:java}
 xmlns aop:"http://www.springframework.org/schema/aop"
+
 fred(Person) {
     name = "Fred"
     age = 45
@@ -273,9 +312,9 @@ fred(Person) {
 birthdayCardSenderAspect(BirthdayCardSender)
 
 aop {
-    config("proxy-target-class":true) {
+    config("proxy-target-class": true) {
         aspect(id: "sendBirthdayCard", ref: "birthdayCardSenderAspect") {
-            after method:"onBirthday", pointcut: "execution(void ..Person.birthday()) and this(person)"
+            after method: "onBirthday", pointcut: "execution(void ..Person.birthday()) and this(person)"
         }
     }
 }

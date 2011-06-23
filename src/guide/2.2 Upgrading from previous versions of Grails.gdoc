@@ -20,7 +20,7 @@ In Grails 1.3.x you would get a BOOK table and the properties from the @Sellable
 You have two options when upgrading in this scenario:
 
 # Move the abstract @Sellable@ class into the src/groovy package. If the @Sellable@ class is in the @src/groovy@ directory it will no longer be regarded a persistent
-# Use the database migration plugin to apply the appropriate changes to the database (typically renaming the table to the root abstract class of the inheritance tree)
+# Use the "database migration":http://grails.org/plugin/database-migration plugin to apply the appropriate changes to the database (typically renaming the table to the root abstract class of the inheritance tree)
 
 h4. Criteria Queries Default to INNER JOIN
 
@@ -28,23 +28,23 @@ The previous default of LEFT JOIN for criteria queries across associations is no
 
 h4. Controller Public Methods
 
-As of Grails 1.4, public methods of controllers are now treated as actions. If you were relying on the use of methods for privacy controls then this could result in unexpected behavior. To resolve this issue you should mark all methods of your application that are not to be exposed as @private@ methods.
+As of Grails 1.4, public methods of controllers are now treated as actions in addition to actions defined as traditional Closures. If you were relying on the use of methods for privacy controls or as helper methods then this could result in unexpected behavior. To resolve this issue you should mark all methods of your application that are not to be exposed as actions as @private@ methods.
 
 h4. The redirect Method
 
 The [redirect|controllers] method no longer commits the response. The result of this is code that relies of this behavior will break in 1.4. For example:
 
 {code:java}
-redirect action:"next"
+redirect action: "next"
 if (response.committed) {
     // do something
 }
 {code}
 
-In this case in Grails 1.3.x and below the @response.committed@ property would return true and the @if@ block will execute. In Grails 1.4 this is no longer the case and you should instead use the new @isRedirect@ method of the @request@ object:
+In this case in Grails 1.3.x and below the @response.committed@ property would return true and the @if@ block will execute. In Grails 1.4 this is no longer the case and you should instead use the new @isRedirected()@ method of the @request@ object:
 
 {code:java}
-redidrect action:"next"
+redirect action: "next"
 if (request.redirected) {
     // do something
 }
@@ -52,7 +52,7 @@ if (request.redirected) {
 
 h4. Content Negotiation
 
-As of Grails 1.4 the [withFormat|controllers] method of controllers no longer takes into account the request content type (dictated by the CONTENT_TYPE header), but instead deals exclusively with the response content type (dictated by the ACCEPT header or file extension). This means that if your application has code that relies on reading XML from the request using @withFormat@ this will no longer work:
+As of Grails 1.4 the [withFormat|controllers] method of controllers no longer takes into account the request content type (dictated by the @CONTENT_TYPE@ header), but instead deals exclusively with the response content type (dictated by the @ACCEPT@ header or file extension). This means that if your application has code that relies on reading XML from the request using @withFormat@ this will no longer work:
 
 {code:java}
 def processBook() {
@@ -67,7 +67,7 @@ def processBook() {
 }
 {code}
 
-Instead you will need to use the @withFormat@ method provided on the @request@ object:
+Instead you use the @withFormat@ method provided on the @request@ object:
 
 {code:java}
 def processBook() {
@@ -84,7 +84,7 @@ def processBook() {
 
 h4. HSQLDB Has Been Replaced With H2
 
-HSQLDB is still bundled with Grails but not configured as a default runtime dependency.  Upgrade options include replacing HSQLDB references in DataSource.groovy with
+HSQLDB is still bundled with Grails but is not configured as a default runtime dependency.  Upgrade options include replacing HSQLDB references in DataSource.groovy with
 H2 references or adding HSQLDB as a runtime dependency for the application.
 
 Adding HSQLDB as a runtime dependency can be done in BuildConfig.groovy with something like this:
@@ -100,13 +100,13 @@ grails.project.dependency.resolution = {
     }
 
     dependencies {
-        // Add HSQLDB As A Runtime Dependency
+        // Add HSQLDB as a runtime dependency
         runtime 'hsqldb:hsqldb:1.8.0.10'
     }
 }
 {code}
 
-A default DataSource.groovy which is compatible with H2 might look like this:
+A default DataSource.groovy which is compatible with H2 looks like this:
 
 {code:java}
 dataSource {
@@ -139,7 +139,7 @@ environments {
 
 h4. Updated Underlying APIs
 
-Grails 1.4 contains updated dependencies including Servlet 3.0, Tomcat 7, Spring 3.1, Hibernate 3.6 and Groovy 1.8. This means that certain plugins and applications that that depend on earlier versions of these APIs may no longer work. For example the Servlet 3.0 @HttpServletRequest@ interface includes new methods, if a plugin implements this interface for Servlet 2.5 but not for Servlet 3.0 then said plugin will break. The same can be said of any Spring interface.
+Grails 1.4 contains updated dependencies including Servlet 3.0, Tomcat 7, Spring 3.1, Hibernate 3.6 and Groovy 1.8. This means that certain plugins and applications that that depend on earlier versions of these APIs may no longer work. For example the Servlet 3.0 @HttpServletRequest@ interface includes new methods, so if a plugin implements this interface for Servlet 2.5 but not for Servlet 3.0 then said plugin will break. The same can be said of any Spring interface.
 
 h4. Removal of release-plugin
 
@@ -149,16 +149,15 @@ h4. Removal of Deprecated Classes
 
 The following deprecated classes have been removed: @grails.web.JsonBuilder@, @grails.web.OpenRicoBuilder@
 
-
 h3. Upgrading from Grails 1.2.x
 
 h4. Plugin Repositories
 
-As of Grails 1.3, Grails no longer natively supports resolving plugins against secured SVN repositories. Grails 1.2 and below's plugin resolution mechanism has been replaced by one built on Ivy the upside of which is that you can now resolve Grails plugins against Maven repositories as well as regular Grails repositories.
+As of Grails 1.3, Grails no longer natively supports resolving plugins against secured SVN repositories. The plugin resolution mechanism in Grails 1.2 and below has been replaced by one built on [Ivy|http://ant.apache.org/ivy/], the upside of which is that you can now resolve Grails plugins against Maven repositories as well as regular Grails repositories.
 
-Ivy supports a much richer setter of repository resolvers for resolving plugins with, including support for Webdav, HTTP, SSH and FTP. See the section on [resolvers|http://ant.apache.org/ivy/history/trunk/settings/resolvers.html] in the Ivy docs for all the available options and the section of [plugin repositories|guide:repositories] in the user guide which explains how to configure additional resolvers.
+Ivy supports a much richer setter of repository resolvers for resolving plugins, including support for Webdav, HTTP, SSH and FTP. See the section on [resolvers|http://ant.apache.org/ivy/history/trunk/settings/resolvers.html] in the Ivy docs for all the available options and the section of [plugin repositories|guide:repositories] in the user guide which explains how to configure additional resolvers.
 
-If you still need support for resolving plugins against secured SVN repositories then the [IvySvn|http://code.google.com/p/ivysvn/] project provides a set of Ivy resolvers for resolving against SVN repositories.
+If you still need support for resolving plugins against secured SVN repositories then the [IvySvn|http://code.google.com/p/ivysvn/] project provides a set of resolvers for SVN repositories.
 
 h3. Upgrading from Grails 1.1.x
 
@@ -176,17 +175,17 @@ In Grails 1.2 views have been made plugin aware and this is no longer necessary:
 <g:resource dir="images" file="foo.jpg" />
 {code}
 
-Additionally the above example will no longer link to an application image from a plugin view. To do so you need to change the above to:
+Additionally the above example will no longer link to an application image from a plugin view. To do so change the above to:
 
 {code}
 <g:resource contextPath="" dir="images" file="foo.jpg" />
 {code}
 
-The same rules apply to the [javascript|tags] and [render|tags]
+The same rules apply to the [javascript|tags] and [render|tags] tags.
 
 h4. Tag and Body return values
 
-Tags no longer return @java.lang.String@ instances but instead return a @StreamCharBuffer@ instance. The @StreamCharBuffer@ class implements all the same methods as @String@, however code like this may break:
+Tags no longer return @java.lang.String@ instances but instead return a Grails @StreamCharBuffer@ instance. The @StreamCharBuffer@ class implements all the same methods as @String@ but doesn't extend @String@, so code like this will break:
 
 {code}
 def foo = body()
@@ -195,7 +194,7 @@ if (foo instanceof String) {
 }
 {code}
 
-In these cases you should use the @java.lang.CharSequence@ interface, which both @String@ and @StreamCharBuffer@ implement:
+In these cases you should check for the @java.lang.CharSequence@ interface, which both @String@ and @StreamCharBuffer@ implement:
 
 {code}
 def foo = body()
@@ -206,7 +205,7 @@ if (foo instanceof CharSequence) {
 
 h4. New JSONBuilder
 
-There is a new version of @JSONBuilder@ which is semantically different to earlier versions of Grails. However, if your application depends on the older semantics you can still use the now deprecated implementation by settings the following property to @true@ in Config.groovy:
+There is a new version of @JSONBuilder@ which is semantically different from the one used in earlier versions of Grails. However, if your application depends on the older semantics you can still use the deprecated implementation by setting the following property to @true@ in Config.groovy:
 
 {code}
 grails.json.legacy.builder=true
@@ -214,7 +213,7 @@ grails.json.legacy.builder=true
 
 h4. Validation on Flush
 
-Grails now executes validation routines when the underlying Hibernate session is flushed to ensure that no invalid objects are persisted. If one of your constraints (such as a custom validator) is executing a query then this can cause an addition flush resulting in a @StackOverflowError@. Example:
+Grails now executes validation routines when the underlying Hibernate session is flushed to ensure that no invalid objects are persisted. If one of your constraints (such as a custom validator) executes a query then this can cause an additional flush, resulting in a @StackOverflowError@. For example:
 
 {code}
 static constraints = {
@@ -240,7 +239,7 @@ h3. Upgrading from Grails 1.0.x
 
 h4. Groovy 1.6
 
-Grails 1.1 and above ship with Groovy 1.6 and no longer supports code compiled against Groovy 1.5. If you have a library that is written in Groovy 1.5 you will need to recompile it against Groovy 1.6 before using it with Grails 1.1.
+Grails 1.1 and above ship with Groovy 1.6 and no longer supports code compiled against Groovy 1.5. If you have a library that was compiled with Groovy 1.5 you must recompile it against Groovy 1.6 or higher before using it with Grails 1.1.
 
 h4. Java 5.0
 
@@ -269,7 +268,7 @@ grails.views.enable.jsessionid=true
 
 h4. Plugin Changes
 
-Since 1.1, Grails no longer stores plugins inside your @PROJECT_HOME/plugins@ directory by default. This may result in compilation errors in your application unless you either re-install all your plugins or set the following property in @grails-app/conf/BuildConfig.groovy@:
+As of version 1.1, Grails no longer stores plugins inside your @PROJECT_HOME/plugins@ directory by default. This may result in compilation errors in your application unless you either re-install all your plugins or set the following property in @grails-app/conf/BuildConfig.groovy@:
 
 {code}
 grails.project.plugins.dir="./plugins"
@@ -292,9 +291,9 @@ Instead you should use the new @grailsScript@ method to import a named script:
 includeTargets << grailsScript("_GrailsBootstrap")
 {code}
 
-2) Due to an upgrade to Gant all references to the variable @Ant@ should be changed to @ant@.
+2) Due to an upgrade of Gant all references to the variable @Ant@ should be changed to @ant@.
 
-3) The root directory of the project is no long on the classpath, the result is that loading a resource like this will no longer work:
+3) The root directory of the project is no longer on the classpath, so loading a resource like this will no longer work:
 
 {code}
 def stream = getClass().classLoader.getResourceAsStream("grails-app/conf/my-config.xml")
@@ -326,7 +325,7 @@ static mapping = {
 }
 {code}
 
-2) Bidirectional one-to-one associations are now mapped with a single column on the owning side and a foreign key reference. You shouldn't need to change anything, however you may want to drop the column on the inverse side as it contains duplicate data.
+2) Bidirectional one-to-one associations are now mapped with a single column on the owning side and a foreign key reference. You shouldn't need to change anything; however you should drop column on the inverse side as it contains duplicate data.
 
 h4. REST Support
 

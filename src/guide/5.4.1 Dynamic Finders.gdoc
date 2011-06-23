@@ -8,6 +8,9 @@ class Book {
     Date releaseDate
     Author author
 }
+{code}
+
+{code}
 class Author {
     String name
 }
@@ -48,7 +51,7 @@ In the above example the first query is equivalent to equality whilst the latter
 The possible comparators include:
 
 * @InList@ - In the list of given values
-* @LessThan@ - less than the given value
+* @LessThan@ - less than a given value
 * @LessThanEquals@ - less than or equal a give value
 * @GreaterThan@ - greater than a given value
 * @GreaterThanEquals@ - greater than or equal a given value
@@ -56,10 +59,10 @@ The possible comparators include:
 * @Ilike@ - Similar to a @Like@, except case insensitive
 * @NotEqual@ - Negates equality
 * @Between@ - Between two values (requires two arguments)
-* @IsNotNull@ - Not a null value (doesn't require an argument)
-* @IsNull@ - Is a null value (doesn't require an argument)
+* @IsNotNull@ - Not a null value (doesn't take an argument)
+* @IsNull@ - Is a null value (doesn't take an argument)
 
-Notice that the last 3 require different numbers of method arguments compared to the rest, as demonstrated in the following example:
+Notice that the last three require different numbers of method arguments compared to the rest, as demonstrated in the following example:
 
 {code}
 def now = new Date()
@@ -72,21 +75,21 @@ books = Book.findAllByReleaseDateIsNotNull()
 
 h4. Boolean logic (AND/OR)
 
-Method expressions can also use a boolean operator to combine two criteria:
+Method expressions can also use a boolean operator to combine two or more criteria:
 
 {code}
 def books =
-    Book.findAllByTitleLikeAndReleaseDateGreaterThan("%Java%", new Date()-30)
+    Book.findAllByTitleLikeAndReleaseDateGreaterThan("%Java%", new Date() - 30)
 {code}
 
 In this case we're using @And@ in the middle of the query to make sure both conditions are satisfied, but you could equally use @Or@:
 
 {code}
 def books =
-    Book.findAllByTitleLikeOrReleaseDateGreaterThan("%Java%", new Date()-30)
+    Book.findAllByTitleLikeOrReleaseDateGreaterThan("%Java%", new Date() - 30)
 {code}
 
-At the moment, you can only use dynamic finders with a maximum of two criteria, i.e. the method name can only have one boolean operator. If you need to use more, you should consider using either [Criteria|guide:5.4.2 Criteria] or the [HQL|guide:5.4.3 Hibernate Query Language (HQL)].
+You can combine as many criteria as you like, but they must all be combined with @And@ or all @Or@. If you need to combine @And@ and @Or@ or if the number of criteria creates a very long method name, just convert the query to a [Criteria|guide:criteria] or [HQL|guide:hql] query.
 
 h4. Querying Associations
 
@@ -100,14 +103,11 @@ def books = author ? Book.findAllByAuthor(author) : []
 
 In this case if the @Author@ instance is not null we use it in a query to obtain all the @Book@ instances for the given @Author@.
 
-h4. Pagination & Sorting
+h4. Pagination and Sorting
 
 The same pagination and sorting parameters available on the [list|domainClasses] method can also be used with dynamic finders by supplying a map as the final parameter:
 
 {code}
-def books =
-    Book.findAllByTitleLike("Harry Pot%", [max:3,
-                                           offset:2,
-                                           sort:"title",
-                                           order:"desc"])
+def books = Book.findAllByTitleLike("Harry Pot%",
+               [max: 3, offset: 2, sort: "title", order: "desc"])
 {code}

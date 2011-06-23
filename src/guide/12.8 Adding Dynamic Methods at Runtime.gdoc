@@ -1,46 +1,45 @@
 h4. The Basics
 
-Grails plugins allow you to register dynamic methods with any Grails managed or other class at runtime. New methods can only be added within a @doWithDynamicMethods@ closure of a plugin.
+Grails plugins let you register dynamic methods with any Grails-managed or other class at runtime. This work is done in a @doWithDynamicMethods@ closure.
 
-For Grails managed classes like controllers, tag libraries and so forth you can add methods, constructors etc. using the "ExpandoMetaClass":http://groovy.codehaus.org/ExpandoMetaClass mechanism by accessing each controller's [MetaClass|api:http://groovy.codehaus.org/api/groovy/lang/MetaObjectProtocol.html]:
+For Grails-managed classes like controllers, tag libraries and so forth you can add methods, constructors etc. using the "ExpandoMetaClass":http://groovy.codehaus.org/ExpandoMetaClass mechanism by accessing each controller's [MetaClass|api:http://groovy.codehaus.org/api/groovy/lang/MetaObjectProtocol.html]:
 
 {code:java}
 class ExamplePlugin {
-  def doWithDynamicMethods = { applicationContext ->
-        application.controllerClasses.each { controllerClass ->
+    def doWithDynamicMethods = { applicationContext ->
+        for (controllerClass in application.controllerClasses) {
              controllerClass.metaClass.myNewMethod = {-> println "hello world" }
         }
-  }
+    }
 }
 {code}
 
-In this case we use the implicit application object to get a reference to all of the controller classes' MetaClass instances and then add a new method called @myNewMethod@ to each controller.
-Alternatively, if you know before hand the class you wish the add a method to you can simple reference that classes @metaClass@ property:
+In this case we use the implicit application object to get a reference to all of the controller classes' MetaClass instances and add a new method called @myNewMethod@ to each controller. If you know beforehand the class you wish the add a method to you can simply reference its @metaClass@ property.
+
+For example we can add a new method @swapCase@ to @java.lang.String@:
 
 {code:java}
 class ExamplePlugin {
 
-  def doWithDynamicMethods = { applicationContext ->
-      String.metaClass.swapCase = {->
-           def sb = new StringBuffer()
-           delegate.each {
-               sb << (Character.isUpperCase(it as char) ?
-                      Character.toLowerCase(it as char) :
-                      Character.toUpperCase(it as char))
-           }
-           sb.toString()
-      }
+    def doWithDynamicMethods = { applicationContext ->
+        String.metaClass.swapCase = {->
+             def sb = new StringBuffer()
+             delegate.each {
+                 sb << (Character.isUpperCase(it as char) ?
+                        Character.toLowerCase(it as char) :
+                        Character.toUpperCase(it as char))
+             }
+             sb.toString()
+        }
 
-      assert "UpAndDown" == "uPaNDdOWN".swapCase()
-  }
+        assert "UpAndDown" == "uPaNDdOWN".swapCase()
+    }
 }
 {code}
-
-In this example we add a new method @swapCase@ to @java.lang.String@ directly by accessing its @metaClass@.
 
 h4. Interacting with the ApplicationContext
 
-The @doWithDynamicMethods@ closure gets passed the Spring @ApplicationContext@ instance. This is useful as it allows you to interact with objects within it. For example if you where implementing a method to interact with Hibernate you could use the @SessionFactory@ instance in combination with a @HibernateTemplate@:
+The @doWithDynamicMethods@ closure gets passed the Spring @ApplicationContext@ instance. This is useful as it lets you interact with objects within it. For example if you were implementing a method to interact with Hibernate you could use the @SessionFactory@ instance in combination with a @HibernateTemplate@:
 
 {code:java}
 import org.springframework.orm.hibernate3.HibernateTemplate
@@ -49,7 +48,7 @@ class ExampleHibernatePlugin {
 
    def doWithDynamicMethods = { applicationContext ->
 
-       application.domainClasses.each { domainClass ->
+       for (domainClass in application.domainClasses) {
 
            domainClass.metaClass.static.load = { Long id->
                 def sf = applicationContext.sessionFactory
@@ -66,12 +65,11 @@ Also because of the autowiring and dependency injection capability of the Spring
 class MyConstructorPlugin {
 
     def doWithDynamicMethods = { applicationContext ->
-         application.domainClasses.each { domainClass ->
+         for (domainClass in application.domainClasses) {
               domainClass.metaClass.constructor = {->
                   return applicationContext.getBean(domainClass.name)
               }
          }
-
     }
 }{code}
 

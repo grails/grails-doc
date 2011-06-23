@@ -1,8 +1,8 @@
-When building Grails applications you have to consider the problem domain you are trying to solve. For example if you were building an "Amazon":http://www.amazon.com/ bookstore you would be thinking about books, authors, customers and publishers to name a few.
+When building Grails applications you have to consider the problem domain you are trying to solve. For example if you were building an [Amazon|http://www.amazon.com/]-style bookstore you would be thinking about books, authors, customers and publishers to name a few.
 
-These are modeled in GORM as Groovy classes so a @Book@ class may have a title, a release date, an ISBN number and so on. The next few sections show how to model the domain in GORM.
+These are modeled in GORM as Groovy classes, so a @Book@ class may have a title, a release date, an ISBN number and so on. The next few sections show how to model the domain in GORM.
 
-To create a domain class you can run the [create-domain-class|commandLine] target as follows:
+To create a domain class you run the [create-domain-class|commandLine] command as follows:
 
 {code}
 grails create-domain-class org.bookstore.Book
@@ -11,19 +11,19 @@ grails create-domain-class org.bookstore.Book
 The result will be a class at @grails-app/domain/org/bookstore/Book.groovy@:
 
 {code}
+package org.bookstore
+
 class Book {
 }
 {code}
 
-{note}
-If you wish to use packages you can move the Book.groovy class into a sub directory under the domain directory and add the appropriate @package@ declaration as per Groovy (and Java's) packaging rules.  Using Hibernate reserved words (e.g. @Member@) as a class name without a package will often lead to a @org.hibernate.hql.ast.QuerySyntaxException@ being thrown.
-{note}
-
-The above class will map automatically to a table in the database called @book@ (the same name as the class). This behaviour is customizable through the [ORM Domain Specific Language|guide:ormdsl]
+This class will map automatically to a table in the database called @book@ (the same name as the class). This behaviour is customizable through the [ORM Domain Specific Language|guide:ormdsl]
 
 Now that you have a domain class you can define its properties as Java types. For example:
 
 {code}
+package org.bookstore
+
 class Book {
     String title
     Date releaseDate
@@ -31,4 +31,4 @@ class Book {
 }
 {code}
 
-Each property is mapped to a column in the database, where the convention for column names is all lower case separated by underscores. For example @releaseDate@ maps onto a column @release_date@. The SQL types are auto-detected from the Java types, but can be customized via [Constraints|guide:constraints] or the [ORM DSL|guide:ormdsl].
+Each property is mapped to a column in the database, where the convention for column names is all lower case separated by underscores. For example @releaseDate@ maps onto a column @release_date@. The SQL types are auto-detected from the Java types, but can be customized with [Constraints|guide:constraints] or the [ORM DSL|guide:ormdsl].

@@ -9,11 +9,11 @@ log4j = {
     error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
            'org.codehaus.groovy.grails.web.pages' //  GSP
 
-    warn   'org.mortbay.log'
+    warn   'org.apache.catalina'
 }
 {code}
 
-This says that for the two 'org.codehaus.groovy.*' loggers, only messages logged at 'error' level and above will be shown. The 'org.mortbay.log' logger also shows messages at the 'warn' level. What does that mean? First of all, you have to understand how levels work.
+This says that for loggers whose name starts with 'org.codehaus.groovy.grails.web.servlet' or 'org.codehaus.groovy.grails.web.pages', only messages logged at 'error' level and above will be shown. Loggers with names starting with 'org.apache.catalina' logger only show messages at the 'warn' level and above. What does that mean? First of all, you have to understand how levels work.
 
 h4. Logging levels
 
@@ -44,14 +44,14 @@ h4. Loggers
 
 Loggers are fundamental to the logging system, but they are a source of some confusion. For a start, what are they? Are they shared? How do you configure them?
 
-A logger is the object you log messages to, so in the call @log.debug(msg)@, @log@ is a logger instance (of type [Log|http://commons.apache.org/logging/apidocs/org/apache/commons/logging/Log.html]). These loggers are uniquely identified by name and if two separate classes use loggers with the same name, those loggers are effectively the same instance.
+A logger is the object you log messages to, so in the call @log.debug(msg)@, @log@ is a logger instance (of type [Log|http://commons.apache.org/logging/apidocs/org/apache/commons/logging/Log.html]). These loggers are cached and uniquely identified by name, so if two separate classes use loggers with the same name, those loggers are actually the same instance.
 
 There are two main ways to get hold of a logger:
 
 # use the @log@ instance injected into artifacts such as domain classes, controllers and services;
 # use the Commons Logging API directly.
 
-If you use the dynamic @log@ property, then the name of the logger is 'grails.app.<type>.<className>', where @type@ is the type of the artifact, say 'controller' or 'service, and @className@ is the fully qualified name of the artifact. For example, let's say you have this service:
+If you use the dynamic @log@ property, then the name of the logger is 'grails.app.<type>.<className>', where @type@ is the type of the artifact, for example 'controller' or 'service, and @className@ is the fully qualified name of the artifact. For example, if you have this service:
 
 {code:java}
 package org.example
@@ -76,11 +76,11 @@ class MyClass {
 }
 {code}
 
-This will create a logger with the name 'org.other.MyClass' - note the lack of a 'grails.app.' prefix. You can also pass a name to the @getLog()@ method, such as "myLogger", but this is less common because the logging system treats names with dots ('.') in a special way.
+This will create a logger with the name 'org.other.MyClass' - note the lack of a 'grails.app.' prefix since the class isn't an artifact. You can also pass a name to the @getLog()@ method, such as "myLogger", but this is less common because the logging system treats names with dots ('.') in a special way.
 
 h4. Configuring loggers
 
-You have already seen how to configure a logger in Grails:
+You have already seen how to configure loggers in Grails:
 
 {code:java}
 log4j = {
@@ -88,18 +88,18 @@ log4j = {
 }
 {code}
 
-This example configures a logger named 'org.codehaus.groovy.grails.web.servlet' to ignore any messages sent to it at a level of 'warn' or lower. But is there a logger with this name in the application? No. So why have a configuration for it? Because the above rule applies to any logger whose name _begins with_ 'org.codehaus.groovy.grails.servlet.' as well. For example, the rule applies to both the @org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet@ class and the @org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest@ one.
+This example configures loggers with names starting with 'org.codehaus.groovy.grails.web.servlet' to ignore any messages sent to them at a level of 'warn' or lower. But is there a logger with this name in the application? No. So why have a configuration for it? Because the above rule applies to any logger whose name _begins with_ 'org.codehaus.groovy.grails.servlet.' as well. For example, the rule applies to both the @org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet@ class and the @org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest@ one.
 
-In other words, loggers are effectively hierarchical. This makes configuring them by package much, much simpler than it would otherwise be.
+In other words, loggers are hierarchical. This makes configuring them by package much simpler than it would otherwise be.
 
-The most common things that you will want to capture log output from are your controllers, services, and other artifacts. To do that you'll need to use the convention mentioned earlier: _grails.app.<artifactType>.<className>_. In particular the class name must be fully qualifed, i.e. with the package if there is one:
+The most common things that you will want to capture log output from are your controllers, services, and other artifacts. Use the convention mentioned earlier to do that: _grails.app.<artifactType>.<className>_. In particular the class name must be fully qualifed, i.e. with the package if there is one:
 
 {code:java}
 log4j = {
     // Set level for all application artifacts
     info "grails.app"
 
-    // Set for a specific controller
+    // Set for a specific controller in the default package
     debug "grails.app.controllers.YourController"
 
     // Set for a specific domain class
@@ -160,7 +160,7 @@ log4j = {
 
 In the above example, the root logger will log to two appenders - the default 'stdout' (console) appender and a custom 'file' appender.
 
-For power users there is an alternative syntax for configuring the root logger: the root @org.apache.log4j.Logger@ instance is passed as an argument to the log4j closure. This allows you to work with the logger directly:
+For power users there is an alternative syntax for configuring the root logger: the root @org.apache.log4j.Logger@ instance is passed as an argument to the log4j closure. This lets you work with the logger directly:
 
 {code:java}
 log4j = { root ->
@@ -207,7 +207,7 @@ Each named argument passed to an appender maps to a property of the underlying [
 
 You can have as many appenders as you like - just make sure that they all have unique names. You can even have multiple instances of the same appender type, for example several file appenders that log to different files.
 
-If you prefer to create the appender programmatically or if you want to use an appender implementation that's not available via the above syntax, then you can simply declare an @appender@ entry with an instance of the appender you want:
+If you prefer to create the appender programmatically or if you want to use an appender implementation that's not available in the above syntax, simply declare an @appender@ entry with an instance of the appender you want:
 
 {code:java}
 import org.apache.log4j.*
@@ -230,7 +230,7 @@ Once you have declared your extra appenders, you can attach them to specific log
 error myAppender: "grails.app.controller.BookController"
 {code}
 
-This will ensure that the 'org.codehaus.groovy.grails.commons' logger and its children send log messages to 'myAppender' as well as any appenders configured for the root logger. If you want to add more than one appender to the logger, then add them to the same level declaration:
+This will ensure that the 'grails.app.controller.BookController' logger sends log messages to 'myAppender' as well as any appenders configured for the root logger. To add more than one appender to the logger, then add them to the same level declaration:
 
 {code:java}
 error myAppender:      "grails.app.controller.BookController",
@@ -250,7 +250,7 @@ fatal rollingFile:     "grails.app.controller.BookController"
 
 you'd find that only 'fatal' level messages get logged for 'grails.app.controller.BookController'. That's because the last level declared for a given logger wins. What you probably want to do is limit what level of messages an appender writes.
 
-Let's say an appender is attached to a logger configured with the 'all' level. That will give us a lot of logging information that may be fine in a file, but makes working at the console difficult. So, we configure the console appender to only write out messages at 'info' level or above:
+An appender that is attached to a logger configured with the 'all' level will generate a lot of logging information. That may be fine in a file, but it makes working at the console difficult. So we configure the console appender to only write out messages at 'info' level or above:
 
 {code:java}
 log4j = {
@@ -292,9 +292,9 @@ log4j = {
 
 h3. Environment-specific configuration
 
-Since the logging configuration is inside @Config.groovy@, you can of course put it inside an environment-specific block. However, there is a problem with this approach: you have to provide the full logging configuration each time you define the @log4j@ setting. In other words, you cannot selectively override parts of the configuration - it's all or nothing.
+Since the logging configuration is inside @Config.groovy@, you can put it inside an environment-specific block. However, there is a problem with this approach: you have to provide the full logging configuration each time you define the @log4j@ setting. In other words, you cannot selectively override parts of the configuration - it's all or nothing.
 
-To get round this, the logging DSL provides its own environment blocks that you can put anywhere in the configuration:
+To get around this, the logging DSL provides its own environment blocks that you can put anywhere in the configuration:
 
 {code:java}
 log4j = {
@@ -393,7 +393,7 @@ log4j = {
 }
 {code}
 
-all loggers in the application will have a level of 'debug' and will log to both the 'stdout' and 'file' appenders. What if you only want to log to 'stdout' for a particular logger? In that case, you need to change the 'additivity' for a logger.
+all loggers in the application will have a level of 'debug' and will log to both the 'stdout' and 'file' appenders. What if you only want to log to 'stdout' for a particular logger? Change the 'additivity' for a logger in that case.
 
 Additivity simply determines whether a logger inherits the configuration from its parent. If additivity is false, then its not inherited. The default for all loggers is true, i.e. they inherit the configuration. So how do you change this setting? Here's an example:
 
@@ -416,3 +416,29 @@ So when you specify a log level, add an 'additivity' named argument. Note that y
 {code:java}
 info additivity: false, "grails.app.controller.BookController", "grails.app.service.BookService"
 {code}
+
+h3. Customizing stack trace printing and filtering
+
+Stacktraces in general and those generated when using Groovy in particular are quite verbose and contain many stack frames that aren't interesting when diagnosing problems. So Grails uses a implementation of the @org.codehaus.groovy.grails.exceptions.StackTraceFilterer@ interface to filter out irrelevant stack frames. To customize the approach used for filtering, implement that interface in a class in src/groovy or src/java and register it in @Config.groovy@:
+
+{code}
+grails.logging.stackTraceFiltererClass = 'com.yourcompany.yourapp.MyStackTraceFilterer'
+{code}
+
+In addition, Grails customizes the display of the filtered stacktrace to make the information more readable. To customize this, implement the @org.codehaus.groovy.grails.exceptions.StackTracePrinter@ interface in a class in src/groovy or src/java and register it in @Config.groovy@:
+
+{code}
+grails.logging.stackTracePrinterClass = 'com.yourcompany.yourapp.MyStackTracePrinter'
+{code}
+
+Finally, to render error information in the error GSP, an HTML-generating printer implementation is needed. The default implementation is @org.codehaus.groovy.grails.web.errors.ErrorsViewStackTracePrinter@ and it's registered as a Spring bean. To use your own implementation, either implement the @org.codehaus.groovy.grails.exceptions.StackTraceFilterer@ directly or subclass @ErrorsViewStackTracePrinter@ and register it in @grails-app/conf/spring/resources.groovy@ as:
+
+{code}
+import com.yourcompany.yourapp.MyErrorsViewStackTracePrinter
+
+beans = {
+
+    errorsViewStackTracePrinter(MyErrorsViewStackTracePrinter, ref('grailsResourceLocator'))
+}
+{code}
+		  

@@ -1,4 +1,4 @@
-One of the powerful things about services is that since they encapsulate re-usable logic, you can use them from other classes, including Java classes. There are a couple of ways you can re-use a service from Java. The simplest way is to move your service into a package within the @grails-app/services@ directory. The reason this is a critical step is that it is not possible to import classes into Java from the default package (the package used when no package declaration is present). So for example the @BookService@ below cannot be used from Java as it stands:
+One of the powerful things about services is that since they encapsulate re-usable logic, you can use them from other classes, including Java classes. There are a couple of ways you can reuse a service from Java. The simplest way is to move your service into a package within the @grails-app/services@ directory. The reason this is important is that it is not possible to import classes into Java from the default package (the package used when no package declaration is present). So for example the @BookService@ below cannot be used from Java as it stands:
 
 {code:java}
 class BookService {
@@ -12,18 +12,21 @@ However, this can be rectified by placing this class in a package, by moving the
 
 {code:java}
 package bookstore
+
 class BookService {
     void buyBook(Book book) {
         // logic
     }
-}{code}
+}
+{code}
 
 An alternative to packages is to instead have an interface within a package that the service implements:
 
 {code:java}
-package bookstore;
+package bookstore
+
 interface BookStore {
-    void buyBook(Book book);
+    void buyBook(Book book)
 }
 {code}
 
@@ -37,12 +40,16 @@ class BookService implements bookstore.BookStore {
 }
 {code}
 
-This latter technique is arguably cleaner, as the Java side only has a reference to the interface and not to the implementation class. Either way, the goal of this exercise to enable Java to statically resolve the class (or interface) to use, at compile time. Now that this is done you can create a Java class within the @src/java@ package, and provide a setter that uses the type and the name of the bean in Spring:
+This latter technique is arguably cleaner, as the Java side only has a reference to the interface and not to the implementation class (although it's always a good idea to use packages). Either way, the goal of this exercise to enable Java to statically resolve the class (or interface) to use, at compile time.
+
+Now that this is done you can create a Java class within the @src/java@ directory and add a setter that uses the type and the name of the bean in Spring:
 
 {code:java}
+// src/java/bookstore/BookConsumer.java
 package bookstore;
-// note: this is Java class
+
 public class BookConsumer {
+
     private BookStore store;
 
     public void setBookStore(BookStore storeInstance) {
@@ -52,7 +59,7 @@ public class BookConsumer {
 }
 {code}
 
-Once this is done you can configure the Java class as a Spring bean in @grails-app/conf/spring/resources.xml@ (For more information one this see the section on [Grails and Spring|guide:spring]):
+Once this is done you can configure the Java class as a Spring bean in @grails-app/conf/spring/resources.xml@ (for more information see the section on [Grails and Spring|guide:spring]):
 
 {code:xml}
 <bean id="bookConsumer" class="bookstore.BookConsumer">
@@ -60,3 +67,14 @@ Once this is done you can configure the Java class as a Spring bean in @grails-a
 </bean>
 {code}
 
+or in @grails-app/conf/spring/resources.groovy@:
+
+{code:java}
+import bookstore.BookConsumer
+
+beans = {
+    bookConsumer(BookConsumer) {
+        bookStore = ref("bookService")
+    }
+}
+{code}

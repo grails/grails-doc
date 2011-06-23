@@ -1,14 +1,14 @@
-Iterative tags are trivial too, since you can invoke the body multiple times:
+Iterative tags are easy too, since you can invoke the body multiple times:
 
 {code:java}
 def repeat = { attrs, body ->
-    attrs.times?.toInteger().times { num ->
+    attrs.times?.toInteger()?.times { num ->
         out << body(num)
     }
 }
 {code}
 
-In this example we check for a @times@ attribute and if it exists convert it to a number then use Groovy's @times@ method to iterate by the number of times specified by the number:
+In this example we check for a @times@ attribute and if it exists convert it to a number, then use Groovy's @times@ method to iterate the specified number of times:
 
 {code:xml}
 <g:repeat times="3">
@@ -19,16 +19,15 @@ In this example we check for a @times@ attribute and if it exists convert it to 
 Notice how in this example we use the implicit @it@ variable to refer to the current number. This works because when we invoked the body we passed in the current value inside the iteration:
 
 {code:java}
-        out << body(num)
+    out << body(num)
 {code}
 
-That value is then passed as the default variable @it@ to the tag. However, if you have nested tags this can lead to conflicts, hence you should should instead name the variables that the body uses:
-
+That value is then passed as the default variable @it@ to the tag. However, if you have nested tags this can lead to conflicts, so you should should instead name the variables that the body uses:
 
 {code:java}
 def repeat = { attrs, body ->
-    def var = attrs.var ? attrs.var : "num"
-    attrs.times?.toInteger().times { num ->
+    def var = attrs.var ?: "num"
+    attrs.times?.toInteger()?.times { num ->
         out << body((var):num)
     }
 }
@@ -37,7 +36,7 @@ def repeat = { attrs, body ->
 Here we check if there is a @var@ attribute and if there is use that as the name to pass into the body invocation on this line:
 
 {code:java}
-        out << body((var):num)
+    out << body((var):num)
 {code}
 
 {note}

@@ -1,16 +1,18 @@
 h4. Using the render method to output XML
 
-Grails' supports a few different ways to produce XML and JSON responses. The first one covered is via the [render|controllers] method.
+Grails supports a few different ways to produce XML and JSON responses. The first is the [render|controllers] method.
 
 The @render@ method can be passed a block of code to do mark-up building in XML:
 
 {code}
-def list = {
+def list() {
+
     def results = Book.list()
-    render(contentType:"text/xml") {
+
+    render(contentType: "text/xml") {
         books {
             for (b in results) {
-                book(title:b.title)
+                book(title: b.title)
             }
         }
     }
@@ -26,35 +28,38 @@ The result of this code would be something like:
 </books>
 {code}
 
-Note that you need to be careful to avoid naming conflicts when using mark-up building. For example this code would produce an error:
+Be careful to avoid naming conflicts when using mark-up building. For example this code would produce an error:
 
 {code}
-def list = {
+def list() {
+
     def books = Book.list()  // naming conflict here
-    render(contentType:"text/xml") {
+
+    render(contentType: "text/xml") {
         books {
             for (b in results) {
-                book(title:b.title)
+                book(title: b.title)
             }
         }
     }
 }
 {code}
 
-The reason is that there is local variable @books@ which Groovy attempts to invoke as a method.
-
+This is because there is local variable @books@ which Groovy attempts to invoke as a method.
 
 h4. Using the render method to output JSON
 
 The @render@ method can also be used to output JSON:
 
 {code}
-def list = {
+def list() {
+
     def results = Book.list()
-    render(contentType:"text/json") {
+
+    render(contentType: "text/json") {
         books = array {
             for (b in results) {
-                book title:b.title
+                book title: b.title
             }
         }
     }
@@ -70,13 +75,13 @@ In this case the result would be something along the lines of:
 ]
 {code}
 
-Again the same dangers with naming conflicts apply to JSON building.
+The same dangers with naming conflicts described above for XML also apply to JSON building.
 
 h4. Automatic XML Marshalling
 
-Grails also supports automatic marshaling of [domain classes|guide:gorm] to XML via special converters.
+Grails also supports automatic marshalling of [domain classes|guide:GORM] to XML using special converters.
 
-To start off with import the @grails.converters@ package into your controller:
+To start off with, import the @grails.converters@ package into your controller:
 
 {code}
 import grails.converters.*
@@ -111,11 +116,11 @@ def xml = Book.list().encodeAsXML()
 render xml
 {code}
 
-For more information on XML marshaling see the section on [REST|guide:REST]
+For more information on XML marshalling see the section on [REST|guide:REST]
 
 h4. Automatic JSON Marshalling
 
-Grails also supports automatic marshaling to JSON via the same mechanism. Simply substitute @XML@ with @JSON@:
+Grails also supports automatic marshalling to JSON using the same mechanism. Simply substitute @XML@ with @JSON@:
 
 {code}
 render Book.list() as JSON

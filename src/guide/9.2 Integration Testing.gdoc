@@ -1,6 +1,6 @@
-Integration tests differ from unit tests in that you have full access to the Grails environment within the test. Grails will use an in-memory HSQLDB database for integration tests and clear out all the data from the database in between each test.
+Integration tests differ from unit tests in that you have full access to the Grails environment within the test. Grails uses an in-memory H2 database for integration tests and clears out all the data from the database between tests.
 
-One thing to bear in mind is that logging is enabled for your application classes, but that is different from logging in tests. So if you have something like this:
+One thing to bear in mind is that logging is enabled for your application classes, but it is different from logging in tests. So if you have something like this:
 
 {code:java}
 class MyServiceTests extends GroovyTestCase {
@@ -11,11 +11,11 @@ class MyServiceTests extends GroovyTestCase {
 }
 {code}
 
-the "starting tests" message is logged using a different system to the one used by the application. Basically the @log@ property in the example above is an instance of @java.util.logging.Logger@, which doesn't have exactly the same methods as the @log@ property injected into your application artifacts. For example, it doesn't have @debug()@ or @trace()@ methods, and the equivalent of @warn()@ is in fact @warning()@.
+the "starting tests" message is logged using a different system than the one used by the application. The @log@ property in the example above is an instance of @java.util.logging.Logger@ (inherited from the base class, not injected by Grails), which doesn't have the same methods as the @log@ property injected into your application artifacts. For example, it doesn't have @debug()@ or @trace()@ methods, and the equivalent of @warn()@ is in fact @warning()@.
 
 h4. Transactions
 
-The integration tests run inside a database transaction by default, which is then rolled back at the end of the tests. This means that data saved during the tests is not persisted to the database. If you actually want to check transactional behaviour of your services and controllers, then you can disable a test's transaction by adding a @transactional@ property to your test case:
+Integration tests run inside a database transaction by default, which is rolled back at the end of the each test. This means that data saved during a test is not persisted to the database. Add a @transactional@ property to your test class to check transactional behaviour:
 
 {code}
 class MyServiceTests extends GroovyTestCase {
@@ -27,21 +27,22 @@ class MyServiceTests extends GroovyTestCase {
 }
 {code}
 
+Be sure to remove any persisted data from a non-transactional test, for example in the @tearDown@ method, so these tests don't interfere with standard transactional tests that expect a clean database.
 
 h4. Testing Controllers
 
 To test controllers you first have to understand the Spring Mock Library.
 
-Essentially Grails automatically configures each test with a [MockHttpServletRequest|api:org.springframework.mock.web.MockHttpServletRequest], [MockHttpServletResponse|api:org.springframework.mock.web.MockHttpServletResponse], and [MockHttpSession|api:org.springframework.mock.web.MockHttpSession] which you can then use to perform your tests. For example consider the following controller:
+Grails automatically configures each test with a [MockHttpServletRequest|api:org.springframework.mock.web.MockHttpServletRequest], [MockHttpServletResponse|api:org.springframework.mock.web.MockHttpServletResponse], and [MockHttpSession|api:org.springframework.mock.web.MockHttpSession] that you can use in your tests. For example consider the following controller:
 
 {code:java}
 class FooController {
 
-    def text = {
+    def text() {
         render "bar"
     }
 
-    def someRedirect = {
+    def someRedirect() {
         redirect(action:"bar")
     }
 }{code}
@@ -58,16 +59,16 @@ class FooControllerTests extends GroovyTestCase {
     }
 
     void testSomeRedirect() {
-
         def fc = new FooController()
         fc.someRedirect()
         assertEquals "/foo/bar", fc.response.redirectedUrl
     }
-}{code}
+}
+{code}
 
-In the above case the response is an instance of @MockHttpServletResponse@ which we can use to obtain the @contentAsString@ (when writing to the response) or the URL redirected to for example. These mocked versions of the Servlet API are, unlike the real versions, all completely mutable and hence you can set properties on the request such as the @contextPath@ and so on.
+In the above case @response@ is an instance of @MockHttpServletResponse@ which we can use to obtain the generated content with @contentAsString@ (when writing to the response) or the redirected URL. These mocked versions of the Servlet API are completely mutable (unlike the real versions) and hence you can set properties on the request such as the @contextPath@ and so on.
 
-Grails *does not* invoke [interceptors|guide:interceptors] or servlet filters automatically when calling actions during integration testing. You should test interceptors and filters in isolation, and via [functional testing|guide:functionalTesting] if necessary.
+Grails *does not* invoke [interceptors|guide:interceptors] or servlet filters when calling actions during integration testing. You should test interceptors and filters in isolation, using [functional testing|guide:functionalTesting] if necessary.
 
 h4. Testing Controllers with Services
 
@@ -79,7 +80,7 @@ Given a controller using a service:
 class FilmStarsController {
     def popularityService
 
-    def update = {
+    def update() {
         // do something with popularityService
     }
 }{code}
@@ -105,7 +106,7 @@ Given a controller using a command object:
 
 {code:java}
 class AuthenticationController {
-    def signup = { SignupForm form ->
+    def signup(SignupForm form) {
         ...
     }
 }{code}
@@ -124,10 +125,10 @@ Grails auto-magically sees your call to @signup()@ as a call to the action and p
 
 h4. Testing Controllers and the render Method
 
-The [render|controllers] method allows you to render a custom view at any point within the body of an action. For instance, consider the example below:
+The [render|controllers] method lets you render a custom view at any point within the body of an action. For instance, consider the example below:
 
 {code:java}
-def save = {
+def save() {
     def book = Book(params)
     if (book.save()) {
         // handle
@@ -148,19 +149,21 @@ def model = bookController.modelAndView.model.book
 
 h4. Simulating Request Data
 
-If you're testing an action that requires request data such as a REST web service you can use the Spring [MockHttpServletRequest|api:org.springframework.mock.web.MockHttpServletRequest] object to do so. For example consider this action which performs data binding from an incoming request:
+You can use the Spring [MockHttpServletRequest|api:org.springframework.mock.web.MockHttpServletRequest] to test an action that requires request data, for example a REST web service. For example consider this action which performs data binding from an incoming request:
 
 {code:java}
-def create = {
-    [book: new Book(params.book) ]
+def create() {
+    [book: new Book(params.book)]
 }
 {code}
 
-If you wish the simulate the 'book' parameter as an XML request you could do something like the following:
+To simulate the 'book' parameter as an XML request you could do something like the following:
 
 {code:java}
 void testCreateWithXML() {
+
     def controller = new BookController()
+
     controller.request.contentType = 'text/xml'
     controller.request.content = '''\\\\
             <?xml version="1.0" encoding="ISO-8859-1"?>
@@ -180,7 +183,9 @@ The same can be achieved with a JSON request:
 
 {code:java}
 void testCreateWithJSON() {
+
     def controller = new BookController()
+
     controller.request.contentType = "text/json"
     controller.request.content =
             '{"id":1,"class":"Book","title":"The Stand"}'.getBytes()
@@ -192,24 +197,25 @@ void testCreateWithJSON() {
 {code}
 
 {note}
-With JSON don't forget the @class@ property to specify the name the target type to bind too. In the XML this is implicit within the name of the @<book>@ node, but with JSON you need this property as part of the JSON packet.
+With JSON don't forget the @class@ property to specify the name the target type to bind to. In XML this is implicit within the name of the @<book>@ node, but this property is required as part of the JSON packet.
 {note}
 
 For more information on the subject of REST web services see the section on [REST|guide:REST].
 
 h4. Testing Web Flows
 
-Testing [Web Flows|guide:webflow] requires a special test harness called @grails.test.WebFlowTestCase@ which sub classes Spring Web Flow's [AbstractFlowExecutionTests|api:org.springframework.webflow.test.execution.AbstractFlowExecutionTests] class.
+Testing [Web Flows|guide:webflow] requires a special test harness called @grails.test.WebFlowTestCase@ which subclasses Spring Web Flow's [AbstractFlowExecutionTests|api:org.springframework.webflow.test.execution.AbstractFlowExecutionTests] class.
 
 {note}
 Subclasses of @WebFlowTestCase@ *must* be integration tests
 {note}
 
-For example given this trivial flow:
+For example given this simple flow:
 
 {code}
 class ExampleController {
-    def exampleFlow = {
+
+    def exampleFlow() {
         start {
             on("go") {
                 flow.hello = "world"
@@ -226,7 +232,7 @@ class ExampleController {
         end()
     }
 
-    def subFlow = {
+    def subFlow() {
         subSubflowState {
             subflow(controller: "other", action: "otherSub")
             on("next").to("next")
@@ -240,24 +246,29 @@ You need to tell the test harness what to use for the "flow definition". This is
  method:
 
 {code}
-class ExampleFlowTests extends grails.test.WebFlowTestCase {
+import grails.test.WebFlowTestCase
+
+class ExampleFlowTests extends WebFlowTestCase {
     def getFlow() { new ExampleController().exampleFlow }
     ...
 }
 {code}
 
-If you need to specify the flow id you can do so by overriding the getFlowId method otherwise the default is @test@:
+You can specify the flow id by overriding the @getFlowId@ method, otherwise the default is @test@:
 {code}
-class ExampleFlowTests extends grails.test.WebFlowTestCase {
+import grails.test.WebFlowTestCase
+
+class ExampleFlowTests extends WebFlowTestCase {
     String getFlowId() { "example" }
     ...
 }
 {code}
 
-If the flow under test calls any subflows, these (or mocks) need to be registered before the calling flow :
+If the flow under test calls any subflows, these (or mocks) must be registered before the calling the flow:
 {code}
 protected void setUp() {
     super.setUp()
+
     registerFlow("other/otherSub") { // register a simplified mock
         start {
             on("next").to("end")
@@ -270,7 +281,7 @@ protected void setUp() {
 }
 {code}
 
-Once this is done in your test you need to kick off the flow with the @startFlow@ method:
+Then you kick off the flow with the @startFlow@ method:
 
 {code}
 void testExampleFlow() {
@@ -279,7 +290,7 @@ void testExampleFlow() {
 }
 {code}
 
-To trigger and event you need to use the @signalEvent@ method:
+Use the @signalEvent@ method to trigger an event:
 
 {code}
 void testExampleFlow() {
@@ -290,25 +301,26 @@ void testExampleFlow() {
 }
 {code}
 
-Here we have signaled to the flow to execute the event "go" this causes a transition to the "next" state. In the example a transition action placed a @hello@ variable into the flow scope.
-
+Here we have signaled to the flow to execute the event "go" which causes a transition to the "next" state. In the example a transition action placed a @hello@ variable into the flow scope.
 
 h4. Testing Tag Libraries
 
-Testing tag libraries is actually pretty trivial because when a tag is invoked as a method it returns its result as a string. So for example if you have a tag library like this:
+Testing tag libraries is simple because when a tag is invoked as a method it returns its result as a string (technically a @StreamCharBuffer@ but this class implements all of the methods of @String@). So for example if you have a tag library like this:
 
 {code:java}
 class FooTagLib {
-   def bar =  { attrs, body ->
-          out << "<p>Hello World!</p>"
-   }
 
-   def bodyTag =  { attrs, body ->
-      out << "<\${attrs.name}>"
-           out << body()
-      out << "</\${attrs.name}>"
-   }
-}{code}
+    def bar =  { attrs, body ->
+        out << "<p>Hello World!</p>"
+    }
+
+    def bodyTag =  { attrs, body ->
+        out << "<\${attrs.name}>"
+        out << body()
+        out << "</\${attrs.name}>"
+    }
+}
+{code}
 
 The tests would look like:
 
@@ -317,36 +329,38 @@ class FooTagLibTests extends GroovyTestCase {
 
     void testBarTag() {
         assertEquals "<p>Hello World!</p>",
-                     new FooTagLib().bar(null,null).toString()
+                     new FooTagLib().bar(null, null).toString()
     }
 
     void testBodyTag() {
         assertEquals "<p>Hello World!</p>",
-                     new FooTagLib().bodyTag(name:"p") {
+                     new FooTagLib().bodyTag(name: "p") {
                          "Hello World!"
                      }.toString()
     }
 }
 {code}
 
-Notice that for the second example, @testBodyTag@, we pass a block that returns the body of the tag. This is handy for representing the body as a String.
+Notice that for the second example, @testBodyTag@, we pass a block that returns the body of the tag. This is convenient to representing the body as a String.
 
 h4. Testing Tag Libraries with GroovyPagesTestCase
 
-In addition to doing simply testing of tag libraries like the above you can also use the @grails.test.GroovyPagesTestCase@ class to test tag libraries.
+In addition to doing simple testing of tag libraries like in the above examples, you can also use the @grails.test.GroovyPagesTestCase@ class to test tag libraries with integration tests.
 
-The @GroovyPagesTestCase@ class is a sub class of the regular @GroovyTestCase@ class and provides utility methods for testing the output of a GSP rendering.
+The @GroovyPagesTestCase@ class is a subclass of the standard @GroovyTestCase@ class and adds utility methods for testing the output of GSP rendering.
 
 {note}
 @GroovyPagesTestCase@ can only be used in an integration test.
 {note}
 
-As an example given a date formatting tag library such as the one below:
+For example, consider this date formatting tag library:
 
 {code}
+import java.text.SimpleDateFormat
+
 class FormatTagLib {
     def dateFormat = { attrs, body ->
-        out << new java.text.SimpleDateFormat(attrs.format) << attrs.date
+        out << new SimpleDateFormat(attrs.format) << attrs.date
     }
 }
 {code}
@@ -383,27 +397,27 @@ class FormatTagLibTests extends GroovyPagesTestCase {
 
 h4. Testing Domain Classes
 
-Testing domain classes is typically a simple matter of using the [GORM API|guide:GORM], however there are some things to be aware of. Firstly, if you are testing queries you will often need to "flush" in order to ensure the correct state has been persisted to the database. For example take the following example:
+Testing domain classes is typically a simple matter of using the [GORM API|guide:GORM], but there are a few things to be aware of. Firstly, when testing queries you often need to "flush" to ensure the correct state has been persisted to the database. For example take the following example:
 
 {code:java}
 void testQuery() {
     def books = [
-            new Book(title:"The Stand"),
-            new Book(title:"The Shining")]
+            new Book(title: "The Stand"),
+            new Book(title: "The Shining")]
     books*.save()
 
     assertEquals 2, Book.list().size()
 }
 {code}
 
-This test will actually fail, because calling [save|domainClasses] does not actually persist the @Book@ instances when called. Calling @save@ merely indicates to Hibernate that at some point in the future these instances should be persisted. If you wish to commit changes immediately you need to "flush" them:
+This test will fail because calling [save|domainClasses] does not actually persist the @Book@ instances when called. Calling @save@ only indicates to Hibernate that at some point in the future these instances should be persisted. To commit changes immediately you "flush" them:
 
 {code:java}
 void testQuery() {
     def books = [
-            new Book(title:"The Stand"),
-            new Book(title:"The Shining")]
-    books*.save(flush:true)
+            new Book(title: "The Stand"),
+            new Book(title: "The Shining")]
+    books*.save(flush: true)
 
     assertEquals 2, Book.list().size()
 }
