@@ -65,7 +65,8 @@ def pubs = Publication.recentPublications.findAllByTitle('Some Title')
 // get all old publications with more than 350 pages
 def pubs = Publication.oldPublicationsLargerThan(350).list()
 
-// get all old publications with more than 350 pages and the word 'Grails' in the title
+// get all old publications with more than 350 pages
+// and the word 'Grails' in the title
 def pubs = Publication.oldPublicationsLargerThan(350).findAllByTitleLike('%Grails%')
 
 // get all recent publications with 'Book' in their title
@@ -119,7 +120,9 @@ def books = Publication.recentPublications {
         like 'author', 'Phil%'
     }
 }
-// get the number of recent publications with author names beginning with Tony or Phil...
+
+// get the number of recent publications with
+// author names beginning with Tony or Phil...
 def numberOfBooks = Publication.recentPublications.count {
     or {
         like 'author', 'Tony%'
@@ -136,5 +139,7 @@ as if all of the chained criteria had been combined in a single criteria closure
 def books = Publication.recentPublications.publicationsWithBookInTitle.list()
 
 // old publications with more than 500 pages and with 'Book' in the title
-def books = Publication.oldPublicationsLargerThan(500).publicationsWithBookInTitle.list()
+def books = Publication.oldPublicationsLargerThan(500)
+                       .publicationsWithBookInTitle
+                       .list()
 {code}
