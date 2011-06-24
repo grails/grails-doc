@@ -22,7 +22,7 @@ try {
 }
 catch (org.springframework.dao.DataIntegrityViolationException e) {
     flash.message = "Could not delete person ${p.name}"
-    redirect(action:"show", id:p.id)
+    redirect(action: "show", id: p.id)
 }
 {code}
 
@@ -31,6 +31,7 @@ Note that Grails does not supply a @deleteAll@ method as deleting data is discou
 If you really need to batch delete data you can use the [executeUpdate|domainClasses] method to do batch DML statements:
 
 {code}
-Customer.executeUpdate("delete Customer c where c.name = :oldName", [oldName:"Fred"])
+Customer.executeUpdate("delete Customer c where c.name = :oldName",
+                       [oldName: "Fred"])
 {code}
 

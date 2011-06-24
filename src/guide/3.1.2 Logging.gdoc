@@ -234,7 +234,8 @@ This will ensure that the 'grails.app.controller.BookController' logger sends lo
 
 {code:java}
 error myAppender:      "grails.app.controller.BookController",
-      myFileAppender:  ["grails.app.controller.BookController", "grails.app.service.BookService"],
+      myFileAppender:  ["grails.app.controller.BookController",
+                        "grails.app.service.BookService"],
       rollingFile:     "grails.app.controller.BookController"
 {code}
 
@@ -276,7 +277,8 @@ You can specify custom patterns to an appender using the @layout@ setting:
 {code:java}
 log4j = {
     appenders {
-        console name: "customAppender", layout: pattern(conversionPattern: "%c{2} %m%n")
+        console name: "customAppender",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
     }
 }
 {code}
@@ -285,7 +287,8 @@ This also works for the built-in appender "stdout", which logs to the console:
 {code:java}
 log4j = {
     appenders {
-        console name: "stdout", layout: pattern(conversionPattern: "%c{2} %m%n")
+        console name: "stdout",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
     }
 }
 {code}
@@ -299,11 +302,13 @@ To get around this, the logging DSL provides its own environment blocks that you
 {code:java}
 log4j = {
     appenders {
-        console name: "stdout", layout: pattern(conversionPattern: "%c{2} %m%n")
+        console name: "stdout",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
 
         environments {
             production {
-                rollingFile name: "myAppender", maxFileSize: 1024, file: "/tmp/logs/myApp.log"
+                rollingFile name: "myAppender", maxFileSize: 1024,
+                            file: "/tmp/logs/myApp.log"
             }
         }
     }
@@ -341,7 +346,8 @@ This won't stop Grails from attempting to create the stacktrace.log file - it ju
 {code:java}
 log4j = {
     appenders {
-        rollingFile name: "stacktrace", maxFileSize: 1024, file: "/var/tmp/logs/myApp-stacktrace.log"
+        rollingFile name: "stacktrace", maxFileSize: 1024,
+                    file: "/var/tmp/logs/myApp-stacktrace.log"
     }
 }
 {code}
@@ -407,14 +413,16 @@ log4j = {
     }
 
     info additivity: false
-         stdout: ["grails.app.controller.BookController", "grails.app.service.BookService"]
+         stdout: \["grails.app.controller.BookController",
+                  "grails.app.service.BookService"\]
 }
 {code}
 
 So when you specify a log level, add an 'additivity' named argument. Note that you when you specify the additivity, you must configure the loggers for a named appender. The following syntax will _not_ work:
 
 {code:java}
-info additivity: false, "grails.app.controller.BookController", "grails.app.service.BookService"
+info additivity: false, \["grails.app.controller.BookController",
+                         "grails.app.service.BookService"\]
 {code}
 
 h3. Customizing stack trace printing and filtering
@@ -422,13 +430,15 @@ h3. Customizing stack trace printing and filtering
 Stacktraces in general and those generated when using Groovy in particular are quite verbose and contain many stack frames that aren't interesting when diagnosing problems. So Grails uses a implementation of the @org.codehaus.groovy.grails.exceptions.StackTraceFilterer@ interface to filter out irrelevant stack frames. To customize the approach used for filtering, implement that interface in a class in src/groovy or src/java and register it in @Config.groovy@:
 
 {code}
-grails.logging.stackTraceFiltererClass = 'com.yourcompany.yourapp.MyStackTraceFilterer'
+grails.logging.stackTraceFiltererClass =
+         'com.yourcompany.yourapp.MyStackTraceFilterer'
 {code}
 
 In addition, Grails customizes the display of the filtered stacktrace to make the information more readable. To customize this, implement the @org.codehaus.groovy.grails.exceptions.StackTracePrinter@ interface in a class in src/groovy or src/java and register it in @Config.groovy@:
 
 {code}
-grails.logging.stackTracePrinterClass = 'com.yourcompany.yourapp.MyStackTracePrinter'
+grails.logging.stackTracePrinterClass =
+         'com.yourcompany.yourapp.MyStackTracePrinter'
 {code}
 
 Finally, to render error information in the error GSP, an HTML-generating printer implementation is needed. The default implementation is @org.codehaus.groovy.grails.web.errors.ErrorsViewStackTracePrinter@ and it's registered as a Spring bean. To use your own implementation, either implement the @org.codehaus.groovy.grails.exceptions.StackTraceFilterer@ directly or subclass @ErrorsViewStackTracePrinter@ and register it in @grails-app/conf/spring/resources.groovy@ as:
@@ -438,7 +448,8 @@ import com.yourcompany.yourapp.MyErrorsViewStackTracePrinter
 
 beans = {
 
-    errorsViewStackTracePrinter(MyErrorsViewStackTracePrinter, ref('grailsResourceLocator'))
+    errorsViewStackTracePrinter(MyErrorsViewStackTracePrinter,
+                                ref('grailsResourceLocator'))
 }
 {code}
 		  

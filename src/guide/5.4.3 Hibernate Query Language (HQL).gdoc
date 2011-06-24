@@ -19,15 +19,17 @@ def results =
 
 {code:java}
 def author = Author.findByName("Stephen King")
-def books = Book.findAll("from Book as book where book.author = ?", [author])
+def books = Book.findAll("from Book as book where book.author = ?",
+                         [author])
 {code}
 
 Or even named parameters:
 
 {code:java}
 def results =
-      Book.findAll("from Book as b where b.title like :search or b.author like :search",
-                   [search:"The Shi%"])
+      Book.findAll("from Book as b " +
+                   "where b.title like :search or b.author like :search",
+                   [search: "The Shi%"])
 {code}
 
 {code:java}
@@ -57,6 +59,8 @@ You can also perform pagination and sorting whilst using HQL queries. To do so s
 
 {code:java}
 def results =
-      Book.findAll("from Book as b where b.title like 'Lord of the%' order by b.title asc",
+      Book.findAll("from Book as b where " +
+                   "b.title like 'Lord of the%' " +
+                   "order by b.title asc",
                    [max: 10, offset: 20])
 {code}

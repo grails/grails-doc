@@ -64,7 +64,8 @@ def pubs = Publication.recentPublications.findAllByTitle('Some Title')
 // get all old publications with more than 350 pages
 def pubs = Publication.oldPublicationsLargerThan(350).list()
 
-// get all old publications with more than 350 pages and the word 'Grails' in the title
+// get all old publications with more than 350 pages
+// and the word 'Grails' in the title
 def pubs = Publication.oldPublicationsLargerThan(350).findAllByTitleLike('%Grails%')
 
 // get all recent publications with 'Book' in their title
@@ -119,7 +120,8 @@ def books = Publication.recentPublications {
     }
 }
 
-// get the number of recent publications with author names beginning with Tony or Phil...
+// get the number of recent publications with
+// author names beginning with Tony or Phil...
 def numberOfBooks = Publication.recentPublications.count {
     or {
         like 'author', 'Tony%'
@@ -135,7 +137,9 @@ Named criteria may be chained together.  When criteria are chained together, the
 def books = Publication.recentPublications.publicationsWithBookInTitle.list()
 
 // old publications with more than 500 pages and with 'Book' in the title
-def books = Publication.oldPublicationsLargerThan(500).publicationsWithBookInTitle.list()
+def books = Publication.oldPublicationsLargerThan(500)
+                       .publicationsWithBookInTitle
+                       .list()
 {code}
 
 When a named query involves a domain class relationship and the relationship class defines a named query, that named query may be accessed directly as a method call.  An example:
@@ -154,7 +158,7 @@ class Author {
          }
     }
 }
-{code:java}
+{code}
 
 {code:java}
 class Publication {

@@ -78,15 +78,15 @@ h4. Boolean logic (AND/OR)
 Method expressions can also use a boolean operator to combine two or more criteria:
 
 {code}
-def books =
-    Book.findAllByTitleLikeAndReleaseDateGreaterThan("%Java%", new Date() - 30)
+def books = Book.findAllByTitleLikeAndReleaseDateGreaterThan(
+                      "%Java%", new Date() - 30)
 {code}
 
 In this case we're using @And@ in the middle of the query to make sure both conditions are satisfied, but you could equally use @Or@:
 
 {code}
-def books =
-    Book.findAllByTitleLikeOrReleaseDateGreaterThan("%Java%", new Date() - 30)
+def books = Book.findAllByTitleLikeOrReleaseDateGreaterThan(
+                      "%Java%", new Date() - 30)
 {code}
 
 You can combine as many criteria as you like, but they must all be combined with @And@ or all @Or@. If you need to combine @And@ and @Or@ or if the number of criteria creates a very long method name, just convert the query to a [Criteria|guide:criteria] or [HQL|guide:hql] query.
