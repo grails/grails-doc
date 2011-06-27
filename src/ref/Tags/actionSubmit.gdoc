@@ -2,26 +2,30 @@ h1. actionSubmit
 
 h2. Purpose
 
-Creates a submit button that maps to a specific action, which allows you to have multiple submit buttons in a single form. Javascript event handlers can be added using the same parameter names as in HTML.
-
+Generates a submit button that maps to a specific action, which lets you have multiple submit buttons in a single form. JavaScript event handlers can be added using the same parameter names as in HTML.
 
 h2. Examples
 
 {code:xml}
 <g:actionSubmit value="Update" />
+
 <!--'Update' is action, label is 'Some update label'-->
 <g:actionSubmit value="Some update label" action="Update" />
+
 <!--label derived from message bundle-->
 <g:actionSubmit value="${message(code:'label.update')}" action="Update" />
+
 <g:actionSubmit value="Delete" />
-<g:actionSubmit value="DeleteAll" onclick="return confirm('Are you sure???')" />
+
+<g:actionSubmit value="DeleteAll"
+                onclick="return confirm('Are you sure???')" />
 {code}
 
 h2. Description
 
 Attributes
 
-* @value@ (required) - The title of the button and name of action when not explicitly defined.
+* @value@ (required) - The caption of the button and name of action when not explicitly defined.
 * @action@ (optional) - The name of the action to be executed, otherwise it is derived from the value.
 
 When you use a normal submit button inside a form, it is the form itself that determines what URL the request is sent to, and therefore what action is executed. However, this tag overrides that behaviour and determines which action is executed. Note that it is still the form that determines the target controller.
@@ -50,7 +54,7 @@ and a GSP page containing this simple form:
 
 {code:xml}
 <g:form controller="test">
-  <g:actionSubmit value="Submit" action="success"/>
+    <g:actionSubmit value="Submit" action="success"/>
 </g:form>
 {code}
 
@@ -59,19 +63,17 @@ The URL generated for the @<form>@ element will either be ".../test" or ".../tes
 This isn't too much of a problem when the form URL does not include an action name, but if you have a version of Grails that appends the name of the default action, or you specify an action in your @<g:form>@ tag, then you should probably use a custom URL mapping to hide the action name:
 
 {code}
-   "/test/submit" {
-       controller = "test"
-       action = "index"
-   }
+"/test/submit" {
+    controller = "test"
+    action = "index"
+}
 {code}
 
 where the action specified in the mapping is either the default action of the controller, or the action specified in the @<g:form>@ tag.
 
-Also note that this tag relies on the multipart resolver to be able to inspect parameters included with mulitpart requests. If you disable the resolver by setting grails.disableCommonsMultipart to true in Config.groovy, actionSubmit will not work.
+Also note that this tag relies on the multipart resolver to be able to inspect parameters included with mulitpart requests. If you disable the resolver by setting @grails.disableCommonsMultipart@ to true in @Config.groovy@, @actionSubmit@ will not work.
 
 h2. Source
 
 {source:tag=FormTagLib.actionSubmit}
 {source}
-
-

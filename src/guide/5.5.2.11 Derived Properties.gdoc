@@ -1,6 +1,4 @@
-A derived property is a property that takes its value from a SQL expression,
-often but not necessarily based on the value of some other persistent
-property.  Consider a Product class like this:
+A derived property is one that takes its value from a SQL expression, often but not necessarily based on the value of one or more other persistent properties.  Consider a Product class like this:
 
 {code:java}
 class Product {
@@ -10,10 +8,7 @@ class Product {
 }
 {code}
 
-If the @tax@ property is derived based on the value of @price@ and @taxRate@
-properties then there may be no need to persist the @tax@ property in the
-database.  The SQL used to derive the value of a derived property may be
-expressed in the ORM DSL like this:
+If the @tax@ property is derived based on the value of @price@ and @taxRate@ properties then is probably no need to persist the @tax@ property.  The SQL used to derive the value of a derived property may be expressed in the ORM DSL like this:
 
 {code:java}
 class Product {
@@ -27,13 +22,9 @@ class Product {
 }
 {code}
 
-Note that the formula expressed in the ORM DSL is SQL so references to other
-properties should relate to the persistence model not the object model, which
-is why the example refers to @PRICE@ and @TAX_RATE@ instead of @price@ and
-@taxRate@.
+Note that the formula expressed in the ORM DSL is SQL so references to other properties should relate to the persistence model not the object model, which is why the example refers to @PRICE@ and @TAX_RATE@ instead of @price@ and @taxRate@.
 
-With that in place, when a Product is retrieved with something like @Product.get(42)@, the SQL that is generated to support
-that will look something like this:
+With that in place, when a Product is retrieved with something like @Product.get(42)@, the SQL that is generated to support that will look something like this:
 
 {code}
 select
@@ -48,14 +39,7 @@ where
     product0_.id=?
 {code}
 
-Since the @tax@ property is being derived at runtime and not stored in the
-database it might seem that the same effect could be achieved by adding
-a method like @getTax()@ to the @Product@ class that simply returns the
-product of the @taxRate@ and @price@ properties.  With an approach like
-that you would give up the ability query the database based on the value
-of the @tax@ property.  Using a derived property allows exactly that.  To
-retrieve all @Product@ objects that have a @tax@ value greater than 21.12
-you could execute a query like this:
+Since the @tax@ property is derived at runtime and not stored in the database it might seem that the same effect could be achieved by adding a method like @getTax()@ to the @Product@ class that simply returns the product of the @taxRate@ and @price@ properties.  With an approach like that you would give up the ability query the database based on the value of the @tax@ property.  Using a derived property allows exactly that.  To retrieve all @Product@ objects that have a @tax@ value greater than 21.12 you could execute a query like this:
 
 {code:java}
 Product.findAllByTaxGreaterThan(21.12)
@@ -85,7 +69,5 @@ where
 {code}
 
 {note}
-Note that because the value of a derived property is generated in the database and depends
-on the execution of SQL code, derived properties may not have GORM constraints applied
-to them.  If constraints are specified for a derived property, they will be ignored.
+Because the value of a derived property is generated in the database and depends on the execution of SQL code, derived properties may not have GORM constraints applied to them.  If constraints are specified for a derived property, they will be ignored.
 {note}

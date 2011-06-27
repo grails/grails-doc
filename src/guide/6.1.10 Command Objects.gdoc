@@ -1,65 +1,69 @@
-Grails controllers support the concept of command objects. A command object is similar to a form bean in something like Struts and they are useful in circumstances when you want to populate a subset of the properties needed to update a domain class. Or where there is no domain class required for the interaction, but you need features such as [data binding|guide:dataBinding] and [validation|guide:validation].
+Grails controllers support the concept of command objects. A command object is similar to a form bean in a framework like Struts, and they are useful for populating a subset of the properties needed to update a domain class. Or where there is no domain class required for the interaction, but you need features such as [data binding|guide:dataBinding] and [validation|guide:validation].
 
 h4. Declaring Command Objects
 
-Command objects are typically declared in the same source file as a controller directly below the controller class definition. For example:
+Command objects are typically declared in the same source file as a controller, directly below the controller class definition. For example:
 
 {code:java}
 class UserController {
     ...
 }
+
 class LoginCommand {
     String username
     String password
+
     static constraints = {
-        username(blank:false, minSize:6)
-        password(blank:false, minSize:6)
+        username(blank: false, minSize: 6)
+        password(blank: false, minSize: 6)
     }
 }
 {code}
 
-As the previous example demonstrates you can supply [constraints|guide:constraints] to command objects just as you can with [domain classes|guide:GORM].
+As this example shows, you can define [constraints|guide:constraints] in command objects just like in [domain classes|guide:GORM].
 
 h4. Using Command Objects
 
 To use command objects, controller actions may optionally specify any number of command object parameters. The parameter types must be supplied so that Grails knows what objects to create, populate and validate.
 
-Before the controller action is executed Grails will automatically create an instance of the command object class, populate the properties of the command object with request parameters having corresponding names and the command object will be validated. For Example:
+Before the controller action is executed Grails will automatically create an instance of the command object class, populate its properties with by binding the request parameters, and validate the command object. For example:
 
 {code:java}
 class LoginController {
+
     def login = { LoginCommand cmd ->
         if (cmd.hasErrors()) {
-            redirect(action:'loginForm')
+            redirect(action: 'loginForm')
+            return
         }
-        else {
-            // do something else
-        }
+
+        // work with the command object data
     }
 }
 {code}
 
-When using Methods instead of Closures for Actions, you can specify command objects in arguments:
+When using methods instead of Closures for actions, you can specify command objects in arguments:
 
 {code:java}
 class LoginController {
     def login(LoginCommand cmd) {
         if (cmd.hasErrors()) {
-            redirect(action:'loginForm')
+            redirect(action: 'loginForm')
+            return
         }
-        else {
-            // do something else
-        }
+
+        // work with the command object data
     }
 }
 {code}
 
 h4. Command Objects and Dependency Injection
 
-Command objects can participate in dependency injection. This is useful if your command object has some custom validation logic which may need to interact with Grails [services|guide:services]:
+Command objects can participate in dependency injection. This is useful if your command object has some custom validation logic uses Grails [services|guide:services]:
 
 {code}
 class LoginCommand {
+
     def loginService
 
     String username
@@ -73,6 +77,4 @@ class LoginCommand {
 }
 {code}
 
-In this example the command object interacts with a bean injected by name from the Spring @ApplicationContext@.
-
-
+In this example the command object interacts with the @loginService@ bean which is injected by name from the Spring @ApplicationContext@.

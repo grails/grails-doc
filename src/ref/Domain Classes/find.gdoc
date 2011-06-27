@@ -2,24 +2,27 @@ h1. find
 
 h2. Purpose
 
-Finds and returns the first result for the given query or @null@ if no instance was found
+Finds the first matching result for the given query or @null@ if no instance is found
 
 h2. Examples
 
 {code:java}
 // Dan brown's first book
 Book.find("from Book as b where b.author='Dan Brown'")
+
 // with a positional parameter
-Book.find("from Book as b where b.author=?",['Dan Brown'])
-// with a named parameter (since 0.5)
-Book.find("from Book as b where b.author=:author",[author:'Dan Brown'])
+Book.find("from Book as b where b.author=?", ['Dan Brown'])
+
+// with a named parameter
+Book.find("from Book as b where b.author=:author", [author: 'Dan Brown'])
+
 // use the query cache
 Book.find("from Book as b where b.author='Dan Brown'", [cache: true])
-Book.find("from Book as b where b.author=:author",[author:'Dan Brown'], [cache: true])
+Book.find("from Book as b where b.author=:author", [author: 'Dan Brown'], [cache: true])
 
 // query by example
-def b = new Book(author:"Dan Brown")
-Book.find(b)
+def example = new Book(author: "Dan Brown")
+Book.find(example)
 {code}
 
 h2. Description
@@ -36,8 +39,7 @@ Book.find(Book example)
 Parameters:
 
 * @query@ - An HQL query
-* @positionalParams@ - A List of parameters for a positional parametrized HQL query
-* @namedParams@ - A Map of named parameters a HQL query
-* @queryParams@ - A Map of query parameters. Currently, only @cache@ is supported
+* @positionalParams@ - A @List@ of parameters for a positional parametrized HQL query
+* @namedParams@ - A @Map@ of named parameters a HQL query
+* @queryParams@ - A @Map@ of query parameters. Currently, only @cache@ is supported
 * @example@ - An instance of the domain class for query by example
-

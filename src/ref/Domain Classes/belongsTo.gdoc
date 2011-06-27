@@ -2,7 +2,7 @@ h1. belongsTo
 
 h2. Purpose
 
-Defines a "belongs to" relationship where the class specified by @belongsTo@ assumes ownership of the relationship. This has the effect of controlling how saves and deletes cascade. The exact behaviour depends on the type of relationship you have:
+Defines a "belongs to" relationship where the class specified by @belongsTo@ assumes ownership of the relationship. This has the effect of controlling how saves and deletes cascade. The exact behaviour depends on the type of relationship:
 
 * Many-to-one/one-to-one: saves and deletes cascade from the owner to the dependant (the class with the @belongsTo@).
 * One-to-many: saves always cascade from the one side to the many side, but if the many side has @belongsTo@, then deletes also cascade in that direction.
@@ -13,15 +13,17 @@ h2. Examples
 {code:java}
 class Book {
    String title
-   static belongsTo = [author:Author]
+
+   static belongsTo = [author: Author]
 }
 {code}
 
-In this example the @Book@ class specifies that it belongs to the @Author@ class, hence when an @Author@ instance is deleted so are all the @Book@ instances associated with the @Author@
+In this example the @Book@ class specifies that it belongs to the @Author@ class, hence when an @Author@ instance is deleted so are all its associated @Book@ instances.
 
 h2. Description
 
-The @belongsTo@ property serves to abstract the nature of the cascading behaviour in Hibernate. If you want one class to belong to another but not have a back reference, then you can specify a class or a list of classes as the value:
+The @belongsTo@ property abstracts the nature of the cascading behaviour in Hibernate. If you want one class to belong to another but not have a back reference, then you can specify a class or a list of classes as the value:
+
 {code}
 class Book {
     static belongsTo = Author
@@ -32,7 +34,7 @@ or:
 
 {code}
 class Book {
-    static belongsTo = [ Author, Library ]
+    static belongsTo = [Author, Library]
 }
 {code}
 
@@ -51,10 +53,10 @@ or:
 
 {code}
 class Book {
-    static belongsTo = [ author: Author ]
+    static belongsTo = [author: Author]
 }
 {code}
 
-In the above examples, both techniques create a property called @author@ of type @Author@. Also, the map property can specify multiple properties and types if the class belongs to more than one owner.
+In these examples, both techniques create an @Author@ property named @author@. Also, the Map property can specify multiple properties and types if the class belongs to more than one owner.
 
-The @belongsTo@ property is simple and means you don't have to worry about the Hibernate cascading strategies, but if you need more control over cascading you can take advantage of the [ORM DSL|guide:ormdsl]. This allows fine grained control of cascading updates and deletes.
+The @belongsTo@ property is simple and means you don't have to worry about the Hibernate cascading strategies, but if you need more control over cascading you can use the [ORM DSL|guide:ormdsl]. This allows fine grained control of cascading updates and deletes.

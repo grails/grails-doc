@@ -22,21 +22,20 @@ Arguments:
 * @sqlType@ (optional) - The underlying SQL type
 * @enumType@ (optional) - The enum type in for type-safe Enum properties. Either @ordinal@ or @string@.
 * @index@ (optional) - The index name
-* @unique@ (optional) - Whether it is unique or not
+* @unique@ (optional) - Whether it is unique
 * @length@ (optional) - The length of the column
 * @precision@ (optional) - The precision of the column
 * @scale@ (optional) - The scale of the column
 
-
-By default GORM uses the property name and type to automatically work out a how to map a particular domain property onto the database. For example a String property is typically mapped onto a varchar(255) column. You can customize these using a method that matches the property name and passing the necessary column configuration arguments:
+By default GORM uses the property name and type to determine how to map a property in the database. For example a @String@ property is typically mapped as a @varchar(255)@ column. You can customize these with column configuration arguments:
 
 {code:java}
-    static mapping = {
-        currency column: "currency", sqlType: "char", length: 3
-    }
+static mapping = {
+    currency column: "currency", sqlType: "char", length: 3
+}
 {code}
 
-If you are using a Hibernate [type|databaseMapping] that requires multiple column definitions you can use the @column@ method to define each column:
+If you use a Hibernate [type|databaseMapping] that requires multiple column definitions you can use the @column@ method to define each column:
 
 {code:java}
 static mapping =  {

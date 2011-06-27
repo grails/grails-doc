@@ -1,4 +1,4 @@
-If you are using Maven to build your Grails project, you can use the standard Maven targets @mvn install@ and @mvn deploy@.
+If you use Maven to build your Grails project, you can use the standard Maven targets @mvn install@ and @mvn deploy@.
 If not, you can deploy a Grails project or plugin to a Maven repository using the [maven-publisher|http://grails.org/plugin/maven-publisher] plugin.
 
 The plugin provides the ability to publish Grails projects and plugins to local and remote Maven repositories. There are two key additional targets added by the plugin:
@@ -32,12 +32,12 @@ It is assumed that you have specified the necessary @<distributionManagement>@ c
 grails maven-deploy --repository=myRepo
 {code}
 
-The @repository@ argument specifies the 'id' for the repository. You need to configure the details of the repository specified by this 'id' within your @grails-app/conf/BuildConfig.groovy@ file or in your @USER_HOMER/.grails/settings.groovy@ file:
+The @repository@ argument specifies the 'id' for the repository. Configure the details of the repository specified by this 'id' within your @grails-app/conf/BuildConfig.groovy@ file or in your @$USER_HOME/.grails/settings.groovy@ file:
 
 {code}
 grails.project.dependency.distribution = {
-     localRepository = "/path/to/my/local"
-     remoteRepository(id:"myRepo", url:"http://myserver/path/to/repo")
+    localRepository = "/path/to/my/local"
+    remoteRepository(id: "myRepo", url: "http://myserver/path/to/repo")
 }
 {code}
 
@@ -52,12 +52,12 @@ The syntax for configuring remote repositories matches the syntax from the [remo
 Can be expressed as:
 
 {code}
-remoteRepository(id:"myRepo", url:"scp://localhost/www/repository") {
-    authentication username:"...", privateKey:"\${userHome}/.ssh/id_dsa"
+remoteRepository(id: "myRepo", url: "scp://localhost/www/repository") {
+    authentication username: "...", privateKey: "\${userHome}/.ssh/id_dsa"
 }
 {code}
 
-By default the plugin will try to detect the protocol to use from the URL of the repository (ie "http" from "http://.." etc.), however if you need to explicitly specify a different protocol you can do:
+By default the plugin will try to detect the protocol to use from the URL of the repository (ie "http" from "http://.." etc.), however to specify a different protocol you can do:
 
 {code}
 grails maven-deploy --repository=myRepo --protocol=webdav

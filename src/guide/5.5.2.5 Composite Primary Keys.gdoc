@@ -1,19 +1,39 @@
 GORM supports the concept of composite identifiers (identifiers composed from 2 or more properties). It is not an approach we recommend, but is available to you if you need it:
 
 {code:java}
-class Person {
-  String firstName
-  String lastName
+import org.apache.commons.lang.builder.HashCodeBuilder
 
-  static mapping = {
-      id composite:['firstName', 'lastName']
-  }
+class Person implements Serializable {
+
+    String firstName
+    String lastName
+
+    boolean equals(other) {
+        if (!(other instanceof Person)) {
+            return false
+        }
+
+        other.firstName == firstName && other.lastName == lastName
+    }
+
+    int hashCode() {
+        def builder = new HashCodeBuilder()
+        builder.append firstName
+        builder.append lastName
+        builder.toHashCode()
+    }
+
+    static mapping = {
+        id composite: ['firstName', 'lastName']
+    }
 }
 {code}
 
-The above will create a composite id of the @firstName@ and @lastName@ properties of the Person class. When you later need to retrieve an instance by id you have to use a prototype of the object itself:
+The above will create a composite id of the @firstName@ and @lastName@ properties of the Person class. To retrieve an instance by id you use a prototype of the object itself:
 
 {code:java}
-def p = Person.get(new Person(firstName:"Fred", lastName:"Flintstone"))
+def p = Person.get(new Person(firstName: "Fred", lastName: "Flintstone"))
 println p.firstName
 {code}
+
+Domain classes mapped with composite primary keys must implement the @Serializable@ interface and override the @equals@ and @hashCode@ methods, using the properties in the composite key for the calculations. The example above uses a @HashCodeBuilder@ for convenience but it's fine to implement it yourself.

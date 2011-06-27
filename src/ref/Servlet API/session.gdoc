@@ -8,14 +8,14 @@ h2. Examples
 
 {code}
 class UserController {
-    def logout = {
+
+    def logout() {
         log.info "User agent: " + request.getHeader("User-Agent")
         session.invalidate()
-        redirect(action:"login")
+        redirect(action: "login")
     }
-    def login = {
 
-    }
+    def login() {}
 }
 {code}
 
@@ -23,7 +23,7 @@ h2. Description
 
 The [HttpSession|api:javax.servlet.http.HttpSession] class is useful for associated session data with a client.
 
-Session attributes which are normally accessible via the [getAttribute|api:javax.servlet.http.HttpSession#getAttribute(java.lang.String)] can also be indexed into using the array index operator or de-reference operator:
+Session attributes which are normally accessible from the [getAttribute|api:javax.servlet.http.HttpSession#getAttribute(java.lang.String)] can also be indexed into using the array index operator or de-reference operator:
 
 {code:java}
 def user = session["user"]
@@ -32,5 +32,3 @@ session["user"] = "John"
 
 asset "John" == session.user
 {code}
-
-

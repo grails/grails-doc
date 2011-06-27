@@ -2,7 +2,12 @@ If all the other projects in your team or company are built using a standard bui
 
 h3. Ant Integration
 
-When you create a Grails application via the [create-app|commandLine] command, Grails automatically creates an "Apache Ant":http://ant.apache.org/ @build.xml@ file for you containing the following targets:
+When you create a Grails application with the [create-app|commandLine] command, Grails doesn't automatically create an Ant @build.xml@ file but you can generate one with the [integrate-with|commandLine] command:
+
+bc.
+grails integrate-with --ant
+
+This creates a @build.xml@ file containing the following targets:
 
 * @clean@ - Cleans the Grails application
 * @compile@ - Compiles your application's source code
@@ -17,9 +22,9 @@ Each of these can be run by Ant, for example:
 ant war
 {code}
 
-The build file is all geared up to use "Apache Ivy":http://ant.apache.org/ivy/ for dependency management, which means that it will automatically download all the requisite Grails JAR files and other dependencies on demand. You don't even have to install Grails locally to use it! That makes it particularly useful for continuous integration systems such as "CruiseControl":http://cruisecontrol.sourceforge.net/ or "Hudson":https://hudson.dev.java.net/.
+The build file is configured to use "Apache Ivy":http://ant.apache.org/ivy/ for dependency management, which means that it will automatically download all the requisite Grails JAR files and other dependencies on demand. You don't even have to install Grails locally to use it! That makes it particularly useful for continuous integration systems such as [CruiseControl|http://cruisecontrol.sourceforge.net/] or [Jenkins|http://jenkins-ci.org/].
 
-It uses the Grails [Ant task|api:grails.ant.GrailsTask] to hook into the existing Grails build system. The task allows you to run any Grails script that's available, not just the ones used by the generated build file. To use the task, you must first declare it:
+It uses the Grails [Ant task|api:grails.ant.GrailsTask] to hook into the existing Grails build system. The task lets you run any Grails script that's available, not just the ones used by the generated build file. To use the task, you must first declare it:
 {code}
 <taskdef name="grailsTask"
          classname="grails.ant.GrailsTask"
@@ -34,7 +39,7 @@ This raises the question: what should be in "grails.classpath"? The task itself 
  script | The name of the Grails script to run, e.g. "TestApp". | Yes.
  args | The arguments to pass to the script, e.g. "-unit -xml". | No. Defaults to "".
  environment | The Grails environment to run the script in. | No. Defaults to the script default.
- includeRuntimeClasspath | Advanced setting: adds the application's runtime classpath to the build classpath if true. | No. Defaults to true.
+ includeRuntimeClasspath | Advanced setting: adds the application's runtime classpath to the build classpath if true. | No. Defaults to @true@.
 {table}
 
 The task also supports the following nested elements, all of which are standard Ant path structures:
@@ -44,11 +49,11 @@ The task also supports the following nested elements, all of which are standard 
 * @runtimeClasspath@ - Classpath used to run the application and package the WAR. Typically includes everything in @compileClasspath.
 * @testClasspath@ - Classpath used to compile and run the tests. Typically includes everything in @runtimeClasspath@.
 
-How you populate these paths is up to you. If you are using the @home@ attribute and put your own dependencies in the @lib@ directory, then you don't even need to use any of them. For an example of their use, take a look at the generated Ant build file for new apps.
+How you populate these paths is up to you. If you use the @home@ attribute and put your own dependencies in the @lib@ directory, then you don't even need to use any of them. For an example of their use, take a look at the generated Ant build file for new apps.
 
 h3. Maven Integration
 
-From 1.1 onwards, Grails provides integration with "Maven 2":http://maven.apache.org via a Maven plugin. The current Maven plugin is based on, but effectively supersedes, the version created by [Octo|http://forge.octo.com/], who did a great job.
+Grails provides integration with "Maven 2":http://maven.apache.org with a Maven plugin. The current Maven plugin is based on but supersedes the version created by [Octo|http://forge.octo.com/], who did a great job with the original.
 
 h4. Preparation
 
@@ -61,7 +66,7 @@ The Maven 2 integration for Grails has been designed and tested for Maven 2.0.9 
 {note}
 The default mvn setup DOES NOT supply sufficient memory to run the Grails environment. We recommend that you add the following environment variable setting to prevent poor performance:
 
-@export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=192m"@
+@export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=256"@
 {note}
 
 h4. Creating a Grails Maven Project
@@ -76,7 +81,7 @@ mvn archetype:generate -DarchetypeGroupId=org.grails \\\
 {code}
 
 Choose whichever grails version, group ID and artifact ID you want for your application, but everything else must be as written. This will create a new Maven project with a POM and a couple of other files. What you won't see is anything that looks like a Grails application. So, the next step is to create the project structure that you're used to.
-But first, if you want to set target JDK to Java 6, do that now. Open my-app/pom.xml and change
+But first, to set target JDK to Java 6, do that now. Open my-app/pom.xml and change
 {code}
 <plugin>
   <artifactId>maven-compiler-plugin</artifactId>
@@ -117,8 +122,8 @@ Resolving plugin JAR dependencies ...
 you need to add the plugins manually to application.properties:
 
 {code}
-plugins.hibernate=1.3.2
-plugins.tomcat=1.3.2
+plugins.hibernate=1.4.0
+plugins.tomcat=1.4.0
 {code}
 
 then run
@@ -132,7 +137,7 @@ and the hibernate and tomcat plugins will be installed.
 
 Now you have a Grails application all ready to go. The plugin integrates into the standard build cycle, so you can use the standard Maven phases to build and package your app:  @mvn clean@ ,  @mvn compile@ ,  @mvn test@ ,  @mvn package@ , @mvn install@ .
 
-You can also take advantage of some of the Grails commands that have been wrapped as Maven goals:
+You can also use some of the Grails commands that have been wrapped as Maven goals:
 
 * @grails:create-controller@ - Calls the [create-controller|commandLine] command
 * @grails:create-domain-class@ - Calls the [create-domain-class|commandLine] command
@@ -163,7 +168,7 @@ mvn org.grails:grails-maven-plugin:1.3.2:create-pom -DgroupId=com.mycompany
 {code}
 When this command has finished, you can immediately start using the standard phases, such as @mvn package@. Note that you have to specify a group ID when creating the POM.
 
-You may also want to set target JDK to Java 6, see above.
+You may also want to set target JDK to Java 6; see above.
 
 h4. Adding Grails commands to phases
 
@@ -197,7 +202,7 @@ Fear not: all things are possible. In this case, you can associate the command t
 </plugin>
 {code}
 
-This also demonstrates the @grails:exec@ goal, which can be used to run any Grails command. Simply pass the name of the command as the @command@ system property, and optionally specify the arguments via the @args@ property:
+This also demonstrates the @grails:exec@ goal, which can be used to run any Grails command. Simply pass the name of the command as the @command@ system property, and optionally specify the arguments with the @args@ property:
 {code}
 mvn grails:exec -Dcommand=create-webtest -Dargs=Book
 {code}
@@ -212,7 +217,7 @@ mvnDebug grails:run-app
 
 The process will be suspended on startup and listening for a debugger on port 8000.
 
-If you need more control of the debugger, this can be specified using the MAVEN_OPTS environment variable, and launch Maven via the default "mvn" command:
+If you need more control of the debugger, this can be specified using the MAVEN_OPTS environment variable, and launch Maven with the default "mvn" command:
 
 {code}
 MAVEN_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"

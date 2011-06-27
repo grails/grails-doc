@@ -10,7 +10,8 @@ Example controller for an application called "shop":
 
 {code:java}
 class BookController {
-    def changeTitle = {
+
+    def changeTitle() {
        def b = Book.get(params.id)
        b.title = params.value
        b.save()
@@ -26,37 +27,33 @@ Example usages for above controller:
 <div id="titleDiv">I'm updated with the new title!</div>
 {code}
 
-
 h2. Description
 
 Attributes
 
 * @name@ (required) - the name of the field
 * @value@ (optional) - The initial value of the field
-* @paramName@ (optional) - The name of the parameter send to the server
-* @action@ (optional) - the name of the action to use in the link, if not specified the default action will be linked
-* @controller@ (optional) - the name of the controller to use in the link, if not specified the current controller will be linked
+* @paramName@ (optional) - The name of the parameter to send to the server
+* @action@ (optional) - the name of the action to use in the link; if not specified the default action will be linked
+* @controller@ (optional) - the name of the controller to use in the link; if not specified the current controller will be linked
 * @id@ (optional) - The id to use in the link
-* @update@ (optional) - Either a map containing the elements to update for 'success' or 'failure' states, or a string with the element to update in which cause failure events would be ignored
-* @before@ (optional) - The javascript function to call before the remote function call
-* @after@ (optional) - The javascript function to call after the remote function call
-* @asynchronous@ (optional) - Whether to do the call asynchronously or not (defaults to true)
-* @method@ (optional) - The method to use the execute the call (defaults to "post")
+* @update@ (optional) - Either a Map containing the elements to update for 'success' or 'failure' states, or a string with the element id to update, in which case failure events would be ignored
+* @before@ (optional) - The JavaScript function to call before the remote function call
+* @after@ (optional) - The JavaScript function to call after the remote function call
+* @asynchronous@ (optional) - Whether to do the call asynchronously (defaults to @true@)
+* @method@ (optional) - The method to use the execute the call (defaults to POST)
 
 Events
 
-* @onSuccess@ (optional) - The javascript function to call if successful
-* @onFailure@ (optional) - The javascript function to call if the call failed
-* @on_ERROR_CODE@ (optional) - The javascript function to call to handle specified error codes (eg on404="alert('not found!')")
-* @onUninitialized@ (optional) - The javascript function to call the a ajax engine failed to initialise
-* @onLoading@ (optional) - The javascript function to call when the remote function is loading the response
-* @onLoaded@ (optional) - The javascript function to call when the remote function is completed loading the response
-* @onComplete@ (optional) - The javascript function to call when the remote function is complete, including any updates
-
+* @onSuccess@ (optional) - The JavaScript function to call if successful
+* @onFailure@ (optional) - The JavaScript function to call if the call fails
+* @on_ERROR_CODE@ (optional) - The JavaScript function to call to handle the specified error code (eg on404="alert('not found!')")
+* @onUninitialized@ (optional) - The JavaScript function to call if Ajax fails to initialise
+* @onLoading@ (optional) - The JavaScript function to call when the remote function loads the response
+* @onLoaded@ (optional) - The JavaScript function to call when the remote function completes loading the response
+* @onComplete@ (optional) - The JavaScript function to call when the remote function completes, including any updates
 
 h2. Source
 
 {source:tag=JavascriptTagLib.remoteField}
 {source}
-
-

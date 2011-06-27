@@ -6,14 +6,14 @@ Validates a domain class against the applied constraints (see [Validation|guide:
 
 h2. Description
 
-The @validate@ method will validate a domain class based on its defined [constraints|guide:constraints]. The errors will be stored within the [errors|domainClasses] object.
+The @validate@ method validates a domain class based on its defined [constraints|guide:constraints]. The errors are stored in the [errors|domainClasses] property of the domain class instance.
 
-The @validate@ method accepts an optional @List@ argument which may contain the names of the properties that should be validated.  When a @List@ is passed to the @validate@ method, only the properties defined in the @List@ will be validated.
+The @validate@ method accepts an optional @List@ argument which contains the names of the properties to be validated. When a @List@ of names is specified, only those properties will be validated.
 
 h2. Examples
 
 {code:java}
-def b = new Book(title:"The Shining")
+def b = new Book(title: "The Shining")
 if (!b.validate()) {
     b.errors.each {
         println it
@@ -34,4 +34,4 @@ if (!a.validate(["title", "releaseDate"])) {
 
 Parameters:
 
-* @deepValidate@ (optional) - Determines whether associations of the domain instance should also be validated, i.e. whether validation cascades or not. This is @true@ by default - set to @false@ to disable cascading validation.
+* @deepValidate@ (optional) - Whether associations of the domain instance should also be validated, i.e. whether validation cascades. This is @true@ by default; set it to @false@ to disable cascading validation.

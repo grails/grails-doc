@@ -9,7 +9,7 @@ h2. Examples
 To obtain a request parameter called @id@:
 {code}
 class BookController {
-    def show {
+    def show() {
         def book = Book.get(params.id)
     }
 }
@@ -18,16 +18,16 @@ class BookController {
 To perform data binding (see [Data Binding|guide:dataBinding] in the user guide):
 
 {code}
-def save = {
+def save() {
     def book = new Book(params) // bind request parameters onto properties of book
 }
 {code}
 
 h2. Description
 
-The standard Servlet API provides access to parameters via the @HttpServletRequest@ object. Although Grails provides the same capability through the [request|controllers] object, it goes a bit further by providing a mutable map of request parameters called @params@.
+The standard Servlet API provides access to parameters with the @HttpServletRequest@ object. Although Grails provides the same capability through the [request|controllers] object, it goes a bit further by providing a mutable map of request parameters called @params@.
 
-The @params@ object can be indexed into via de-refrencing so given the URL @/hello?foo=bar@ you can obtain the value of foo as follows:
+The @params@ object can be indexed into using the array index operator or de-reference operator, so given so given the URL @/hello?foo=bar@ you can access @foo@ with
 
 bc.
 println params.foo

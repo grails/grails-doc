@@ -1,15 +1,15 @@
-Data binding is the act of "binding" incoming request parameters onto the properties of an object or an entire graph of objects. Data binding should deal with all necessary type conversion since request parameters, which are typically delivered via a form submission, are always strings whilst the properties of a Groovy or Java object may well not be.
+Data binding is the act of "binding" incoming request parameters onto the properties of an object or an entire graph of objects. Data binding should deal with all necessary type conversion since request parameters, which are typically delivered by a form submission, are always strings whilst the properties of a Groovy or Java object may well not be.
 
-Grails uses [Spring's|http://www.springframework.org] underlying data binding capability to perform data binding.
+Grails uses [Spring|http://www.springframework.org]'s underlying data binding capability to perform data binding.
 
 h4. Binding Request Data to the Model
 
-There are two ways to bind request parameters onto the properties of a domain class. The first involves using a domain classes' implicit constructor:
+There are two ways to bind request parameters onto the properties of a domain class. The first involves using a domain classes' Map constructor:
 
 {code:java}
-def save = {
-  def b = new Book(params)
-  b.save()
+def save() {
+    def b = new Book(params)
+    b.save()
 }
 {code}
 
@@ -19,17 +19,17 @@ The data binding happens within the code @new Book(params)@. By passing the [par
 /book/save?title=The%20Stand&author=Stephen%20King
 {code}
 
-Then the @title@ and @author@ request parameters would automatically get set on the domain class. If you need to perform data binding onto an existing instance then you can use the [properties|domainClasses] property:
+Then the @title@ and @author@ request parameters would automatically be set on the domain class. You can use the [properties|domainClasses] property to perform data binding onto an existing instance:
 
 {code:java}
-def save = {
-  def b = Book.get(params.id)
-  b.properties = params
-  b.save()
+def save() {
+    def b = Book.get(params.id)
+    b.properties = params
+    b.save()
 }
 {code}
 
-This has exactly the same effect as using the implicit constructor.
+This has the same effect as using the implicit constructor.
 
 h4. Data binding and Single-ended Associations
 
@@ -39,7 +39,7 @@ If you have a @one-to-one@ or @many-to-one@ association you can use Grails' data
 /book/save?author.id=20
 {code}
 
-Grails will automatically detect the @.id@ suffix on the request parameter and look-up the @Author@ instance for the given id when doing data binding such as:
+Grails will automatically detect the @.id@ suffix on the request parameter and look up the @Author@ instance for the given id when doing data binding such as:
 
 {code:java}
 def b = new Book(params)
@@ -55,7 +55,7 @@ h4. Data Binding and Many-ended Associations
 
 If you have a one-to-many or many-to-many association there are different techniques for data binding depending of the association type.
 
-If you have a @Set@ based association (default for a @hasMany@) then the simplest way to populate an association is to simply send a list of identifiers. For example consider the usage of @<g:select>@ below:
+If you have a @Set@ based association (the default for a @hasMany@) then the simplest way to populate an association is to send a list of identifiers. For example consider the usage of @<g:select>@ below:
 
 {code:xml}
 <g:select name="books"
@@ -64,9 +64,9 @@ If you have a @Set@ based association (default for a @hasMany@) then the simples
           value="${author?.books}" />
 {code}
 
-This produces a select box that allows you to select multiple values. In this case if you submit the form Grails will automatically use the identifiers from the select box to populate the @books@ association.
+This produces a select box that lets you select multiple values. In this case if you submit the form Grails will automatically use the identifiers from the select box to populate the @books@ association.
 
-However, if you have a scenario where you want to update the properties of the associated objects the this technique won't work. Instead you have to use the subscript operator:
+However, if you have a scenario where you want to update the properties of the associated objects the this technique won't work. Instead you use the subscript operator:
 
 {code:xml}
 <g:textField name="books[0].title" value="the Stand" />
@@ -77,7 +77,7 @@ However, with @Set@ based association it is critical that you render the mark-up
 
 This is not a problem if you use @List@ based associations, since a @List@ has a defined order and an index you can refer to. This is also true of @Map@ based associations.
 
-Note also that if the association you are binding to has a size of 2 and you refer to an element that is outside the size of association:
+Note also that if the association you are binding to has a size of two and you refer to an element that is outside the size of association:
 
 {code:xml}
 <g:textField name="books[0].title" value="the Stand" />
@@ -116,7 +116,7 @@ Entries at particular indexes can be removed in the same way too. For example:
 
 Will render a select box that will remove the association at @books[0]@ if the empty option is chosen.
 
-Binding to a @Map@ property works in exactly the same way except that the list index in the parameter name is replaced by the map key:
+Binding to a @Map@ property works the same way except that the list index in the parameter name is replaced by the map key:
 
 {code:xml}
 <g:select name="images[cover].id"
@@ -137,7 +137,7 @@ For example so you have an incoming request to:
  /book/save?book.title=The%20Stand&author.name=Stephen%20King
 {code}
 
-You'll notice the difference with the above request is that each parameter has a prefix such as @author.@ or @book.@ which is used to isolate which parameters belong to which type. Grails' @params@ object is like a multi-dimensional hash and you can index into to isolate only a subset of the parameters to bind.
+You'll notice the difference with the above request is that each parameter has a prefix such as @author.@ or @book.@ which is used to isolate which parameters belong to which type. Grails' @params@ object is like a multi-dimensional hash and you can index into it to isolate only a subset of the parameters to bind.
 
 {code:java}
 def b = new Book(params.book)
@@ -151,7 +151,7 @@ def a = new Author(params.author)
 
 h4. Data binding and type conversion errors
 
-Sometimes when performing data binding it is not possible to convert a particular String into a particular target type. What you get is a type conversion error. Grails will retain type conversion errors inside the [errors|domainClasses] property of a Grails domain class. Take this example:
+Sometimes when performing data binding it is not possible to convert a particular String into a particular target type. This results in a type conversion error. Grails will retain type conversion errors inside the [errors|domainClasses] property of a Grails domain class. For example:
 
 {code:java}
 class Book {
@@ -160,14 +160,13 @@ class Book {
 }
 {code}
 
-Here we have a domain class @Book@ that uses the Java concrete type @java.net.URL@ to represent URLs. Now say we had an incoming request such as:
+Here we have a domain class @Book@ that uses the @java.net.URL@ class to represent URLs. Given an incoming request such as:
 
 {code:java}
   /book/save?publisherURL=a-bad-url
 {code}
 
-
-In this case it is not possible to bind the string @a-bad-url@ to the @publisherURL@ property os a type mismatch error occurs. You can check for these like this:
+it is not possible to bind the string @a-bad-url@ to the @publisherURL@ property as a type mismatch error occurs. You can check for these like this:
 
 {code:java}
 def b = new Book(params)
@@ -178,7 +177,7 @@ if (b.hasErrors()) {
 }
 {code}
 
-Although we have not yet covered error codes (for more information see the section on [Validation|guide:validation]), for type conversion errors you would want a message to use for the error inside the grails-app/i18n/messages.properties file. You can use a generic error message handler such as:
+Although we have not yet covered error codes (for more information see the section on [Validation|guide:validation]), for type conversion errors you would want a message from the @grails-app/i18n/messages.properties@ file to use for the error. You can use a generic error message handler such as:
 
 {code:java}
 typeMismatch.java.net.URL=The field {0} is not a valid URL
@@ -192,7 +191,7 @@ typeMismatch.Book.publisherURL=The publisher URL you specified is not a valid UR
 
 h4. Data Binding and Security concerns
 
-When batch updating properties from request parameters you need to be careful not to allow clients to bind malicious data to domain classes that end up being persisted to the database. You can limit what properties are bound to a given domain class using the subscript operator:
+When batch updating properties from request parameters you need to be careful not to allow clients to bind malicious data to domain classes and be persisted in the database. You can limit what properties are bound to a given domain class using the subscript operator:
 
 {code:java}
 def p = Person.get(1)
@@ -202,7 +201,7 @@ p.properties['firstName','lastName'] = params
 
 In this case only the @firstName@ and @lastName@ properties will be bound.
 
-Another way to do this is instead of using domain classes as the target of data binding you could use [Command Objects|guide:commandObjects]. Alternatively there is also the flexible [bindData|controllers] method.
+Another way to do this is is to use [Command Objects|guide:commandObjects] as the target of data binding instead of domain classes. Alternatively there is also the flexible [bindData|controllers] method.
 
 The @bindData@ method allows the same data binding capability, but to arbitrary objects:
 
@@ -211,16 +210,16 @@ def p = new Person()
 bindData(p, params)
 {code}
 
-However, the @bindData@ method also allows you to exclude certain parameters that you don't want updated:
+The @bindData@ method also lets you exclude certain parameters that you don't want updated:
 
 {code:java}
 def p = new Person()
-bindData(p, params, [exclude:'dateOfBirth'])
+bindData(p, params, [exclude: 'dateOfBirth'])
 {code}
 
 Or include only certain properties:
 
 {code:java}
 def p = new Person()
-bindData(p, params, [include:['firstName','lastName]])
+bindData(p, params, [include: ['firstName', 'lastName]])
 {code}

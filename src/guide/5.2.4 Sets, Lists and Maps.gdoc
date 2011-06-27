@@ -4,42 +4,47 @@ By default when you define a relationship with GORM it is a @java.util.Set@ whic
 
 {code}
 class Author {
-   static hasMany = [books:Book]
+    static hasMany = [books: Book]
 }
 {code}
 
-The books property that GORM injects is a @java.util.Set@. The problem with this is there is no ordering when accessing the collection, which may not be what you want. To get custom ordering you can say that the set is a @SortedSet@:
+The books property that GORM injects is a @java.util.Set@. Sets guarantee uniquenes but not order, which may not be what you want. To have custom ordering you configure the Set as a @SortedSet@:
 
 {code}
 class Author {
-   SortedSet books
-   static hasMany = [books:Book]
+
+    SortedSet books
+
+    static hasMany = [books: Book]
 }
 {code}
 
-In this case a @java.util.SortedSet@ implementation is used which means you have to implement @java.lang.Comparable@ in your Book class:
+In this case a @java.util.SortedSet@ implementation is used which means you must implement @java.lang.Comparable@ in your Book class:
 
 {code}
 class Book implements Comparable {
-   String title
-   Date releaseDate = new Date()
 
-   int compareTo(obj) {
-       releaseDate.compareTo(obj.releaseDate)
-   }
+    String title
+    Date releaseDate = new Date()
+
+    int compareTo(obj) {
+        releaseDate.compareTo(obj.releaseDate)
+    }
 }
 {code}
 
-The result of the above class is that the Book instances in the books collections of the Author class will be ordered by their release date.
+The result of the above class is that the Book instances in the books collection of the Author class will be ordered by their release date.
 
 h4. Lists of objects
 
-If you simply want to be able to keep objects in the order which they were added and to be able to reference them by index like an array you can define your collection type as a @List@:
+To keep objects in the order which they were added and to be able to reference them by index like an array you can define your collection type as a @List@:
 
 {code}
 class Author {
-   List books
-   static hasMany = [books:Book]
+
+    List books
+
+    static hasMany = [books: Book]
 }
 {code}
 
@@ -49,7 +54,7 @@ In this case when you add new elements to the books collection the order is reta
 author.books[0] // get the first book
 {code}
 
-The way this works at the database level is Hibernate creates a @books_idx@ column where it saves the index of the elements in the collection in order to retain this order at the db level.
+The way this works at the database level is Hibernate creates a @books_idx@ column where it saves the index of the elements in the collection in order to retain this order at the database level.
 
 When using a @List@, elements must be added to the collection before being saved, otherwise Hibernate will throw an exception (@org.hibernate.HibernateException@: null index column for collection):
 
@@ -71,7 +76,7 @@ If you want a simple map of string/value pairs GORM can map this with the follow
 
 {code}
 class Author {
-   Map books // map of ISBN:book names
+    Map books // map of ISBN:book names
 }
 
 def a = new Author()
@@ -84,8 +89,10 @@ If you want a Map of objects then you can do this:
 
 {code}
 class Book {
-  Map authors
-  static hasMany = [authors:Author]
+
+    Map authors
+
+    static hasMany = [authors: Author]
 }
 
 def a = new Author(name:"Stephen King")

@@ -1,47 +1,46 @@
 h4. Programmatic File Uploads
 
-Grails supports file uploads via Spring's [MultipartHttpServletRequest|api:org.springframework.web.multipart.MultipartHttpServletRequest] interface. To upload a file the first step is to create a multipart form like the one below:
+Grails supports file uploads using Spring's [MultipartHttpServletRequest|api:org.springframework.web.multipart.MultipartHttpServletRequest] interface. The first step for file uploading is to create a multipart form like this:
 
 {code:xml}
 Upload Form: <br />
-    <g:form action="upload" method="post" enctype="multipart/form-data">
+    <g:uploadForm action="upload">
         <input type="file" name="myFile" />
         <input type="submit" />
-    </g:form>
+    </g:uploadForm>
 {code}
 
+The @uploadForm@ tag conveniently adds the @enctype="multipart/form-data"@ attribute to the standard @<g:form>@ tag.
 
-There are then a number of ways to handle the file upload. The first way is to work with the Spring [MultipartFile|api:org.springframework.web.multipart.MultipartFile] instance directly:
+There are then a number of ways to handle the file upload. One is to work with the Spring [MultipartFile|api:org.springframework.web.multipart.MultipartFile] instance directly:
 
 {code:java}
-def upload = {
+def upload() {
     def f = request.getFile('myFile')
-    if (!f.empty) {
-      f.transferTo(new File('/some/local/dir/myfile.txt'))
-      response.sendError(200,'Done');
+    if (f.empty) {
+        flash.message = 'file cannot be empty'
+        render(view: 'uploadForm')
+        return
     }
-    else {
-       flash.message = 'file cannot be empty'
-       render(view:'uploadForm')
-    }
+
+    f.transferTo(new File('/some/local/dir/myfile.txt'))
+    response.sendError(200, 'Done')
 }
 {code}
 
-
-
-This is clearly handy for doing transfers to other destinations and manipulating the file directly as you can obtain an InputStream and so on via the [MultipartFile|api:org.springframework.web.multipart.MultipartFile] interface.
+This is convenient for doing transfers to other destinations and manipulating the file directly as you can obtain an @InputStream@ and so on with the [MultipartFile|api:org.springframework.web.multipart.MultipartFile] interface.
 
 h4. File Uploads through Data Binding
 
-File uploads can also be performed via data binding. For example say you have an @Image@ domain class as per the below example:
+File uploads can also be performed using data binding. Consider this @Image@ domain class:
 
 {code:java}
 class Image {
-   byte[] myFile
+    byte[] myFile
 }
 {code}
 
-Now if you create an image and pass in the @params@ object such as the below example, Grails will automatically bind the file's contents as a byte[] to the @myFile@ property:
+If you create an image using the @params@ object in the constructor as in the example below, Grails will automatically bind the file's contents as a @byte[]@ to the @myFile@ property:
 
 {code:java}
 def img = new Image(params)
@@ -54,4 +53,3 @@ class Image {
    String myFile
 }
 {code}
-

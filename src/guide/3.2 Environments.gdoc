@@ -1,37 +1,37 @@
 h4. Per Environment Configuration
 
-Grails supports the concept of per environment configuration. Both the @Config.groovy@ file and the @DataSource.groovy@ file within the @grails-app/conf@ directory can take advantage of per environment configuration using the syntax provided by "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper. As an example consider the following default @DataSource@ definition provided by Grails:
+Grails supports the concept of per environment configuration. The @Config.groovy@, @DataSource.groovy@, and @BootStrap.groovy@ files in the @grails-app/conf@ directory can use per-environment configuration using the syntax provided by "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper. As an example consider the following default @DataSource@ definition provided by Grails:
 
 {code:java}
 dataSource {
     pooled = false
-    driverClassName = "org.hsqldb.jdbcDriver"
+    driverClassName = "org.h2.Driver"
     username = "sa"
     password = ""
 }
 environments {
     development {
         dataSource {
-            dbCreate = "create-drop" // one of 'create', 'create-drop','update'
-            url = "jdbc:hsqldb:mem:devDB"
+            dbCreate = "create-drop" // one of 'create', 'create-drop', 'update', 'validate', ''
+            url = "jdbc:h2:mem:devDb"
         }
     }
     test {
         dataSource {
             dbCreate = "update"
-            url = "jdbc:hsqldb:mem:testDb"
+            url = "jdbc:h2:mem:testDb"
         }
     }
     production {
         dataSource {
             dbCreate = "update"
-            url = "jdbc:hsqldb:file:prodDb;shutdown=true"
+            url = "jdbc:h2:prodDb"
         }
     }
 }
 {code}
 
-Notice how the common configuration is provided at the top level and then an @environments@ block specifies per environment settings for the @dbCreate@ and @url@ properties of the @DataSource@. This syntax can also be used within @Config.groovy@.
+Notice how the common configuration is provided at the top level and then an @environments@ block specifies per environment settings for the @dbCreate@ and @url@ properties of the @DataSource@.
 
 h4. Packaging and Running for Different Environments
 
@@ -41,13 +41,13 @@ Grails' [command line|guide:commandLine] has built in capabilities to execute an
 grails [environment] [command name]
 {code}
 
-In addition, there are 3 preset environments known to Grails: @dev@, @prod@, and @test@ for @development@, @production@ and @test@. For example to create a WAR for the @test@ environment you could do:
+In addition, there are 3 preset environments known to Grails: @dev@, @prod@, and @test@ for @development@, @production@ and @test@. For example to create a WAR for the @test@ environment you wound run:
 
 {code:java}
 grails test war
 {code}
 
-If you have other environments that you need to target you can pass a @grails.env@ variable to any command:
+To target other environments you can pass a @grails.env@ variable to any command:
 
 {code:java}
 grails -Dgrails.env=UAT run-app
@@ -62,13 +62,13 @@ import grails.util.Environment
 
 ...
 
-switch(Environment.current) {
+switch (Environment.current) {
     case Environment.DEVELOPMENT:
         configureForDevelopment()
-    break
+        break
     case Environment.PRODUCTION:
         configureForProduction()
-    break
+        break
 }
 {code}
 

@@ -1,4 +1,4 @@
-As as mentioned previously, a plugin is merely a regular Grails application with a contained plug-in descriptors. However when installed, the structure of a plugin differs slightly. For example, take a look at this plugin directory structure:
+As as mentioned previously, a plugin is basically a regular Grails application with a plugin descriptor. However when installed, the structure of a plugin differs slightly. For example, take a look at this plugin directory structure:
 
 {code:java}
 + grails-app
@@ -14,9 +14,9 @@ As as mentioned previously, a plugin is merely a regular Grails application with
      + js
      + css{code}
 
-Essentially when a plugin is installed into a project, the contents of the @grails-app@ directory will go into a directory such as @plugins/example-1.0/grails-app@. They *will not* be copied into the main source tree. A plugin never interferes with a project's primary source tree.
+When a plugin is installed the contents of the @grails-app@ directory will go into a directory such as @plugins/example-1.0/grails-app@. They *will not* be copied into the main source tree. A plugin never interferes with a project's primary source tree.
 
-Dealing with static resources is slightly different. When developing a plugin, just like an application, all static resources can go in the @web-app@ directory. You can then link to static resources just like in an application (example below links to a javascript source):
+Dealing with static resources is slightly different. When developing a plugin, just like an application, all static resources go in the @web-app@ directory. You can then link to static resources just like in an application. This example links to a JavaScript source:
 
 {code:xml}
 <g:resource dir="js" file="mycode.js" />
@@ -28,4 +28,4 @@ There is a special @pluginContextPath@ variable that can be used whilst both dev
 
 At runtime the @pluginContextPath@ variable will either evaluate to an empty string or @/plugins/example@ depending on whether the plugin is running standalone or has been installed in an application
 
-Java & Groovy code that the plugin provides within the lib and @src/java@ and @src/groovy@ directories will be compiled into the main project's @web-app/WEB-INF/classes@ directory so that they are made available at runtime.
+Java and Groovy code that the plugin provides within the lib and @src/java@ and @src/groovy@ directories will be compiled into the main project's @web-app/WEB-INF/classes@ directory so that they are made available at runtime.

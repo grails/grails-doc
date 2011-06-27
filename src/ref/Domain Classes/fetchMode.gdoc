@@ -8,9 +8,12 @@ h2. Examples
 
 {code:java}
 class Author {
-   String name
-   static hasMany = [books:Book]
-   static fetchMode = [books:'eager']
+
+    String name
+
+    static hasMany = [books: Book]
+
+    static fetchMode = [books: 'eager']
 }
 {code}
 
@@ -18,6 +21,6 @@ In this example the @fetchMode@ static property specifies that the @book@ associ
 
 h2. Description
 
-By default associations in Grails are fetched lazily (each record is read from the database only when its first accessed from the collection). This makes sense for most cases, however in the case where you have a small number of records to fetch and/or are repeatedly required to load lazy associations (resulting in N+1) it makes sense to use eager fetching.
+By default associations in Grails are fetched lazily (each record is read from the database only when it is first accessed from the collection). This makes sense for most cases, however in the case where you have a small number of records to fetch and/or are repeatedly required to load lazy associations (resulting in N+1 queries) it makes sense to use eager fetching.
 
-In the case of eager fetching and a one-to-many association, the instance as well as the association will be initialized when they are loaded (eagerly). However, caution should be observed when using eager fetching, being too eager can result in your entire database being loaded into memory!
+In the case of eager fetching and a one-to-many association, the instance as well as the association will be initialized when they are loaded (eagerly). However, caution should be observed when using eager fetching, since being too eager can result in your entire database being loaded into memory!

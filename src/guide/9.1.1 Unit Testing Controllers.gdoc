@@ -1,9 +1,9 @@
 h4. The Basics
 
-To unit test controllers you use the @grails.test.mixin.TestFor@ annotation to target a particular controller. Using @TestFor@ in this manner activates the @grails.test.mixin.web.ControllerUnitTestMixin@ and its associated API. For example:
+You use the @grails.test.mixin.TestFor@ annotation to unit test controllers. Using @TestFor@ in this manner activates the @grails.test.mixin.web.ControllerUnitTestMixin@ and its associated API. For example:
 
 {code:java}
-import grails.test.mixin.*
+import grails.test.mixin.TestFor
 
 @TestFor(SimpleController)
 class SimpleControllerTests  {
@@ -13,10 +13,10 @@ class SimpleControllerTests  {
 }
 {code}
 
-By defining the @TestFor@ annotation for a controller a new @controller@ field is automatically created for the controller under test.
+Adding the @TestFor@ annotation to a controller causes a new @controller@ field to be automatically created for the controller under test.
 
 {note}
-The @TestFor@ annotation will also automatically annotate any public methods starting with "test" with JUnit 4's @Test annotation. If your test method doesn't start with "test" you will need to add this manually
+The @TestFor@ annotation will also automatically annotate any public methods starting with "test" with JUnit 4's @Test annotation. If any of your test method don't start with "test" just add this manually
 {note}
 
 To test the simplest "Hello World"-style example you can do the following:
@@ -28,7 +28,9 @@ class SimpleController {
         render "hello"
     }
 }
+{code}
 
+{code:java}
 void testHello() {
     controller.hello()
 
@@ -36,8 +38,7 @@ void testHello() {
 }
 {code}
 
-
-The @response@ object is an instance of @GrailsMockHttpServletResponse@ (in the package @org.codehaus.groovy.grails.plugins.testing@) which extends Spring's @org.springframework.mock.web.MockHttpServletResponse@ and has a number of useful methods for inspecting the state of the response.
+The @response@ object is an instance of @org.codehaus.groovy.grails.plugins.testing.GrailsMockHttpServletResponse@ which extends Spring's @org.springframework.mock.web.MockHttpServletResponse@ and has a number of useful methods for inspecting the state of the response.
 
 For example to test a redirect you can use the @redirectUrl@ property:
 
@@ -45,11 +46,13 @@ For example to test a redirect you can use the @redirectUrl@ property:
 // Test class
 class SimpleController {
     def index() {
-        redirect action:'hello'
+        redirect action: 'hello'
     }
     ...
 }
+{code}
 
+{code:java}
 void testIndex() {
     controller.index()
 
@@ -59,17 +62,19 @@ void testIndex() {
 
 h4. Testing View Rendering
 
-To test view rendering you can inspect the state of the controller's @modelAndView@ property which is an instance of @org.springframework.web.servlet.ModelAndView@ or you can use the @view@ and @model@ properties provided by the mixin:
+To test view rendering you can inspect the state of the controller's @modelAndView@ property (an instance of @org.springframework.web.servlet.ModelAndView@) or you can use the @view@ and @model@ properties provided by the mixin:
 
 {code:java}
 // Test class
 class SimpleController {
     def home() {
-        render view:"homePage", model:[title:"Hello World"]
+        render view: "homePage", model: [title: "Hello World"]
     }
     ...
 }
+{code}
 
+{code:java}
 void testIndex() {
     controller.home()
 
@@ -80,7 +85,7 @@ void testIndex() {
 
 h4. Testing Template Rendering
 
-Unlike view rendering, template rendering will actually attempt to write the template directly to response rather than returning a @ModelAndView@ hence it requires a different approach to testing.
+Unlike view rendering, template rendering will actually attempt to write the template directly to the response rather than returning a @ModelAndView@ hence it requires a different approach to testing.
 
 Consider the following controller action:
 
@@ -101,7 +106,7 @@ void testDisplay() {
 }
 {code}
 
-However, you may not want to render the real template, but merely test that is was rendered. In this case you can provide mock Groovy Pages:
+However, you may not want to render the real template, but just test that is was rendered. In this case you can provide mock Groovy Pages:
 
 {code:java}
 void testDisplay() {
@@ -144,7 +149,9 @@ def renderJson() {
         book = "Great"
     }
 }
+{code}
 
+{code:java}
 // test
 void testRenderJson() {
 
@@ -163,14 +170,15 @@ h4. Testing Spring Beans
 When using @TestFor@ only a subset of the Spring beans available to a running Grails application are available. If you wish to make additional beans available you can do so with the @defineBeans@ method of @GrailsUnitTestMixin@:
 
 {code:java}
-
 class SimpleController {
     SimpleService simpleService
     def hello() {
         render simpleService.sayHello()
     }
 }
+{code}
 
+{code:java}
 void testBeanWiring() {
     defineBeans {
         simpleService(SimpleService)
@@ -182,7 +190,7 @@ void testBeanWiring() {
 }
 {code}
 
-The controller is auto-wired via Spring just like in a running Grails application. Autowiring even occurs if you instantiate subsequent instances of the controller:
+The controller is auto-wired by Spring just like in a running Grails application. Autowiring even occurs if you instantiate subsequent instances of the controller:
 
 {code:java}
 void testAutowiringViaNew() {
@@ -211,20 +219,24 @@ def sayHello() {
         html data
     }
 }
+{code}
 
+{code:java}
 // test
 void testSayHello() {
     response.format = 'xml'
     controller.sayHello()
 
-    assert '<?xml version="1.0" encoding="UTF-8"?><map><entry key="Hello">World</entry></map>' == response.text
-}
+    String expected = '<?xml version="1.0" encoding="UTF-8"?>' +
+                      '<map><entry key="Hello">World</entry></map>'
 
+    assert expected == response.text
+}
 {code}
 
 h4. Testing Duplicate Form Submissions
 
-Testing duplicate form submissions is a little bit more involved. Say for example you have an action that handles a form such as:
+Testing duplicate form submissions is a little bit more involved. For example if you have an action that handles a form such as:
 
 {code:java}
 def handleForm() {
@@ -236,7 +248,7 @@ def handleForm() {
 }
 {code}
 
-You want to verify the logic that is executed on a good form submission and the logic that is executed on a duplicate submission. Testing the bad submission is simple. Just invoke the controller:
+you want to verify the logic that is executed on a good form submission and the logic that is executed on a duplicate submission. Testing the bad submission is simple. Just invoke the controller:
 
 {code:java}
 void testDuplicateFormSubmission() {
@@ -258,10 +270,9 @@ void testValidFormSubmission() {
     controller.handleForm()
     assert "Good" == response.text
 }
-
 {code}
 
-If you wish to test both the valid and the invalid request in the same test you will need to reset the response between executions of the controller:
+If you test both the valid and the invalid request in the same test be sure to reset the response between executions of the controller:
 
 {code:java}
 controller.handleForm() // first execution
@@ -273,7 +284,7 @@ controller.handleForm() // second execution
 
 h4. Testing File Upload
 
-To test file uploads you need to use the @GrailsMockMultipartFile@ class. For example consider the following controller action:
+You use the @GrailsMockMultipartFile@ class to test file uploads. For example consider the following controller action:
 
 {code:java}
 def uploadFile() {
@@ -294,24 +305,24 @@ void testFileUpload() {
 }
 {code}
 
-The @GrailsMockMultipartFile@ takes the name of the file and the contents of the file as arguments to the constructor. It has a mock implementation of the @transferTo@ method that simply records the @targetFileLocation@ and doesn't write to disk.
+The @GrailsMockMultipartFile@ constructor arguments are the name and contents of the file. It has a mock implementation of the @transferTo@ method that simply records the @targetFileLocation@ and doesn't write to disk.
 
 h4. Testing Command Objects
 
-Special support exists for testing command object handling via the @mockCommandObject@ method. For example consider the following action:
+Special support exists for testing command object handling with the @mockCommandObject@ method. For example consider the following action:
 
 {code:java}
-def handleCommand = { SimpleCommand simple ->
-     if (simple.hasErrors()) {
-         render "Bad"
-     }
-     else {
-         render "Good"
-     }
+def handleCommand(SimpleCommand simple) {
+    if (simple.hasErrors()) {
+        render "Bad"
+    }
+    else {
+        render "Good"
+    }
 }
 {code}
 
-To test this you need to mock the command object, populate it and then validate it as follows:
+To test this you mock the command object, populate it and then validate it as follows:
 
 {code:java}
 void testInvalidCommand() {
@@ -325,14 +336,13 @@ void testInvalidCommand() {
 }
 {code}
 
-
 h4. Testing Calling Tag Libraries
 
-You can test calling tag libraries using @ControllerUnitTestMixin@, although the mechanism for testing the tag called varies from tag to tag. For example to test a call to the @message@ tag you need to add a message to the @messageSource@. For example consider the following action:
+You can test calling tag libraries using @ControllerUnitTestMixin@, although the mechanism for testing the tag called varies from tag to tag. For example to test a call to the @message@ tag, add a message to the @messageSource@. Consider the following action:
 
 {code:java}
 def showMessage() {
-    render g.message(code:"foo.bar")
+    render g.message(code: "foo.bar")
 }
 {code}
 
@@ -340,11 +350,10 @@ This can be tested as follows:
 
 {code:java}
 void testRenderBasicTemplateWithTags() {
-    messageSource.addMessage("foo.bar", request.locale, "World")
+    messageSource.addMessage("foo.bar", request.locale, "Hello World")
 
     controller.showMessage()
 
     assert response.text == "Hello World"
 }
-
 {code}

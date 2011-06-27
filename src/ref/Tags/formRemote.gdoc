@@ -2,7 +2,7 @@ h1. formRemote
 
 h2. Purpose
 
-Creates a form tag that uses a remote uri to execute an ajax call serializing the form elements falling back to a normal form submit if javascript is not supported.
+Creates a form tag that uses a remote uri to execute an Ajax call, serializing the form elements and falling back to a normal form submit if JavaScript is not supported.
 
 h2. Examples
 
@@ -10,37 +10,46 @@ Example controller for an application called "shop":
 
 {code:java}
 class BookController {
-     def show = { [book: Book.get(params.id)] }
-     def byAuthor = { [books: Book.findByAuthor(params.author, params)] }
+    def show() {
+        [book: Book.get(params.id)]
+    }
+
+    def byAuthor() {
+        [books: Book.findByAuthor(params.author, params)]
+    }
 }
 {code}
 
-Example usages for above controller:
+Example usages for this controller:
 
 {code:xml}
 <g:formRemote name="myForm" on404="alert('not found!')" update="updateMe"
-              url="[ controller: 'book', action:'show' ]">
-    Book Id: <input name="id" type="text"></input>
+              url="[controller: 'book', action:'show']">
+    Book Id: <input name="id" type="text" />
 </g:formRemote>
+
 <div id="updateMe">this div is updated with the result of the show call</div>
 {code}
 
 {code:xml}
 <g:formRemote name="myForm" update="updateMe"
-              url="[ controller: 'book', action: 'byAuthor', params: [ sort: 'title', order: 'desc' ]]">
-    Author: <input name="author" type="text"></input>
+              url="[controller: 'book', action: 'byAuthor',
+                    params: [sort: 'title', order: 'desc']]">
+    Author: <input name="author" type="text" />
 </g:formRemote>
+
 <div id="updateMe">this div is updated with the result of the byAuthor call</div>
 {code}
 
-You can override both the form method and action to use when javascript is unavailable by providing @method@ and @action@ attributes. This example will submit the form to @/<context>/book/show@ using a GET if javascript is unavailable:
+You can override both the form method and action to use when JavaScript is unavailable by providing @method@ and @action@ attributes. This example will submit the form to @/<context>/book/show@ using a GET if JavaScript is unavailable:
 
 {code:xml}
 <g:formRemote name="myForm" update="updateMe"
               method="GET" action="${createLink(controller: 'book', action: 'show')}"
-              url="[ controller: 'book', action: 'show']">
-    Book Id: <input name="id" type="text"></input>
+              url="[controller: 'book', action: 'show']">
+    Book Id: <input name="id" type="text" />
 </g:formRemote>
+
 <div id="updateMe"><!-- this div is updated by the result of the show call --></div>
 {code}
 
@@ -49,29 +58,26 @@ h2. Description
 Attributes
 
 * @name@ (required) - The name of the form. This attribute will be assigned to @id@ attribute if not present, otherwise, the value of this attribute will be omitted
-* @url@ (required) - The url to submit to as either a map (containing values for the controller, action, id, and params) or a URL string
+* @url@ (required) - The url to submit to as either a Map (containing values for the controller, action, id, and params) or a URL string
 * @id@ (optional) - The id of the form rendered to the output. If @id@ is not set, the value of @name@ will be assigned
-* @action@ (optional) - The action to execute as a fallback, defaults to the url if non specified
-* @update@ (optional) - Either a map containing the elements to update for 'success' or 'failure' states, or a string with the element to update in which cause failure events would be ignored
-* @before@ (optional) - The javascript function to call before the remote function call
-* @after@ (optional) - The javascript function to call after the remote function call
-* @asynchronous@ (optional) - Whether to do the call asynchronously or not (defaults to true)
-* @method@ (optional) - The method to use the execute the call (defaults to "post")
+* @action@ (optional) - The action to execute as a fallback, defaults to the url if not specified
+* @update@ (optional) - Either a Map containing the elements to update for 'success' or 'failure' states, or a string with the element id to update, in which case failure events would be ignored
+* @before@ (optional) - The JavaScript function to call before the remote function call
+* @after@ (optional) - The JavaScript function to call after the remote function call
+* @asynchronous@ (optional) - Whether to do the call asynchronously (defaults to @true@)
+* @method@ (optional) - The method to use the execute the call (defaults to POST)
 
 Events
 
-* @onSuccess@ (optional) - The javascript function to call if successful
-* @onFailure@ (optional) - The javascript function to call if the call failed
-* @on_ERROR_CODE@ (optional) - The javascript function to call to handle specified error codes (eg on404="alert('not found!')")
-* @onUninitialized@ (optional) - The javascript function to call if the ajax engine failed to initialise
-* @onLoading@ (optional) - The javascript function to call when the remote function is loading the response
-* @onLoaded@ (optional) - The javascript function to call when the remote function completed loading the response
-* @onComplete@ (optional) - The javascript function to call when the remote function is complete, including any updates
-
+* @onSuccess@ (optional) - The JavaScript function to call if successful
+* @onFailure@ (optional) - The JavaScript function to call if the call fails
+* @on_ERROR_CODE@ (optional) - The JavaScript function to call to handle the specified error code (eg on404="alert('not found!')")
+* @onUninitialized@ (optional) - The JavaScript function to call if Ajax fails to initialise
+* @onLoading@ (optional) - The JavaScript function to call when the remote function loads the response
+* @onLoaded@ (optional) - The JavaScript function to call when the remote function completes loading the response
+* @onComplete@ (optional) - The JavaScript function to call when the remote function completes, including any updates
 
 h2. Source
 
 {source:tag=JavascriptTagLib.formRemote}
 {source}
-
-

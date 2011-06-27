@@ -3,23 +3,38 @@ h4. SQL injection
 Hibernate, which is the technology underlying GORM domain classes, automatically escapes data when committing to database so this is not an issue. However it is still possible to write bad dynamic HQL code that uses unchecked request parameters. For example doing the following is vulnerable to HQL injection attacks:
 
 {code:java}
-def vulnerable = {
+def vulnerable() {
     def books = Book.find("from Book as b where b.title ='" + params.title + "'")
 }
 {code}
 
-Do *not* do this. If you need to pass in parameters use named or positional parameters instead:
+or the analagous call using a GString:
 
 {code:java}
-def safe = {
-    def books = Book.find("from Book as b where b.title =?", [params.title])
+def vulnerable() {
+    def books = Book.find("from Book as b where b.title ='${params.title}'")
 }
 {code}
 
+Do *not* do this. Use named or positional parameters instead to pass in parameters:
+
+{code:java}
+def safe() {
+    def books = Book.find("from Book as b where b.title = ?", [params.title])
+}
+{code}
+
+or
+
+{code:java}
+def safe() {
+    def books = Book.find("from Book as b where b.title = :title", [title: params.title])
+}
+{code}
 
 h4. Phishing
 
-This really a public relations issue in terms of avoiding hijacking of your branding and a declared communication policy with your customers. Customers need to know how to identify bonafide emails received.
+This really a public relations issue in terms of avoiding hijacking of your branding and a declared communication policy with your customers. Customers need to know how to identify valid emails.
 
 h4. XSS - cross-site scripting injection
 
@@ -27,7 +42,7 @@ It is important that your application verifies as much as possible that incoming
 
 It is also important to ensure that all data values rendered into views are escaped correctly. For example when rendering to HTML or XHTML you must call [encodeAsHTML|guide:codecs] on every object to ensure that people cannot maliciously inject JavaScript or other HTML into data or tags viewed by others. Grails supplies several [Dynamic Encoding Methods|guide:codecs] for this purpose and if your output escaping format is not supported you can easily write your own codec.
 
-You must also avoid the use of request parameters or data fields for determining the next URL to redirect the user to. If you use a @successURL@ parameter for example to determine where to redirect a user to after a successful login, attackers can imitate your login procedure using your own site, and then redirect the user back to their own site once logged in, potentially allowing JS code to then exploit the logged-in account on the site.
+You must also avoid the use of request parameters or data fields for determining the next URL to redirect the user to. If you use a @successURL@ parameter for example to determine where to redirect a user to after a successful login, attackers can imitate your login procedure using your own site, and then redirect the user back to their own site once logged in, potentially allowing JavaScript code to then exploit the logged-in account on the site.
 
 h4. Cross-site request forgery
 

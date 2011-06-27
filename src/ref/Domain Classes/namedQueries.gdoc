@@ -2,13 +2,13 @@ h1. namedQueries
 
 h2. Purpose
 
-The @namedQueries@ static property is used to define named queries.  Named queries support the criteria builder
-syntax.  See the section on the [Criteria Builder|guide:criteria] in the user guide for more information.
+The @namedQueries@ static property defines named queries.  Named queries support the criteria builder syntax.  See the section on the [Criteria Builder|guide:criteria] in the user guide for more information.
 
 h2. Examples
 
 {code:java}
 class Publication {
+
    String title
    String author
    Date datePublished
@@ -36,7 +36,6 @@ class Publication {
            publicationsWithBookInTitle()
       }
    }
-
 }
 {code}
 
@@ -72,23 +71,21 @@ def pubs = Publication.oldPublicationsLargerThan(350).findAllByTitleLike('%Grail
 def pubs = Publication.recentPublicationsWithBookInTitle().list()
 {code}
 
-The @list@ method on named queries supports the same attributes as the static @list@ method added to domain
-classes (sort, order, ignoreCase, fetch etc...).  See the [list|domainClasses] docs for details.
+The @list@ method on named queries supports the same attributes as the static @list@ method added to domain classes (sort, order, ignoreCase, fetch etc...).  See the [list|domainClasses] docs for details.
 
 {note}
-Note that calling something like @Publication.recentPublications.get(42)@ is not the same thing as
-calling something like @Publication.get(42)@.  The former will only return a @Publication@ if the @Publication@
-with id 42 meets all the criteria defined in the @recentPublications@ named query.
+Note that calling something like @Publication.recentPublications.get(42)@ is not the same as calling something like @Publication.get(42)@.  The former will only return a @Publication@ if the @Publication@ with id 42 meets all the criteria defined in the @recentPublications@ named query.
 {note}
 
-Named criteria support listDistinct().
+Named criteria support @listDistinct()@:
 
 {code:java}
 class PlantCategory {
+
     Set plants
     String name
 
-    static hasMany = [plants:Plant]
+    static hasMany = [plants: Plant]
 
     static namedQueries = {
         withPlantsInPatch {
@@ -98,7 +95,9 @@ class PlantCategory {
         }
     }
 }
+{code}
 
+{code:java}
 class Plant {
     boolean goesInPatch
     String name
@@ -119,6 +118,7 @@ def books = Publication.recentPublications {
         like 'author', 'Phil%'
     }
 }
+
 // get the number of recent publications with author names beginning with Tony or Phil...
 def numberOfBooks = Publication.recentPublications.count {
     or {
@@ -128,8 +128,7 @@ def numberOfBooks = Publication.recentPublications.count {
 }
 {code}
 
-Named criteria may be chained together.  When criteria are chained together, the query will be generated
-as if all of the chained criteria had been combined in a single criteria closure.
+Named criteria may be chained together.  When criteria are chained together, the query will be generated as if all of the chained criteria had been combined in a single criteria closure.
 
 {code:java}
 // recent publications with 'Book' in the title
@@ -139,13 +138,12 @@ def books = Publication.recentPublications.publicationsWithBookInTitle.list()
 def books = Publication.oldPublicationsLargerThan(500).publicationsWithBookInTitle.list()
 {code}
 
-When a named query involves a domain class relationship and the relationship class defines a named
-query, that named query may be accessed directly as a method call.  An example:
+When a named query involves a domain class relationship and the relationship class defines a named query, that named query may be accessed directly as a method call.  An example:
 
 {code:java}
 class Author {
 
-    static hasMany = [publications:Publication]
+    static hasMany = [publications: Publication]
 
     static namedQueries = {
          authorsWithRecentPublications {
@@ -156,7 +154,9 @@ class Author {
          }
     }
 }
+{code:java}
 
+{code:java}
 class Publication {
 
     Author author

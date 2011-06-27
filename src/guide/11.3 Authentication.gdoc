@@ -1,6 +1,6 @@
-Although there is no current default mechanism for authentication as it is possible to implement authentication in literally thousands of different ways. It is however, trivial to implement a simple authentication mechanism using either [interceptors|guide:interceptors] or [filters|guide:filters].
+Although there is no current default mechanism for authentication as it is possible to implement authentication in literally thousands of different ways. It is however, easy to implement a simple authentication mechanism using either [interceptors|guide:interceptors] or [filters|guide:filters].
 
-Filters allow you to apply authentication across all controllers or across a URI space. For example you can create a new set of filters in a class called @grails-app/conf/SecurityFilters.groovy@:
+Filters let you apply authentication across all controllers or across a URI space. For example you can create a new set of filters in a class called @grails-app/conf/SecurityFilters.groovy@:
 
 {code:java}
 class SecurityFilters {
@@ -19,10 +19,10 @@ class SecurityFilters {
 
 Here the @loginCheck@ filter will intercept execution _before_ an action executed and if their is no user in the session and the action being executed is not the @login@ action then redirect to the @login@ action.
 
-The @login@ action itself is trivial too:
+The @login@ action itself is simple too:
 
 {code:java}
-def login = {
+def login() {
     if (request.get) render(view:"login")
     else {
         def u = User.findByLogin(params.login)
