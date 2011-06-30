@@ -2,21 +2,20 @@ The previous section on on XML and JSON responses covered simplistic examples of
 
 h4. JSONBuilder and Grails versions
 
-JSONBuilder behaves different depending on the version of Grails you use. For version below 1.2 there deprecated [grails.web.JSONBuilder|api:grails.web.JSONBuilder] class is used. This section covers the usage of the Grails 1.2 JSONBuilder
+JSONBuilder behaves different depending on the version of Grails you use. For version below 1.2 the deprecated [grails.web.JSONBuilder|api:grails.web.JSONBuilder] class is used. This section covers the usage of the Grails 1.2 JSONBuilder
 
-For backwards compatibility the old @JSONBuilder@ class is used with the @render@ method for older applications, if you want to use the newer/better @JSONBuilder@ class then you can do so by setting the following in @Config.groovy@:
+For backwards compatibility the old @JSONBuilder@ class is used with the @render@ method for older applications; to use the newer/better @JSONBuilder@ class set the following in @Config.groovy@:
 
 {code}
-grails.json.legacy.builder=false
+grails.json.legacy.builder = false
 {code}
-
 
 h4. Rendering Simple Objects
 
-To render a simple JSON object just set properties within the context of the closure:
+To render a simple JSON object just set properties within the context of the Closure:
 
 {code}
-render(contentType:"text/json") {
+render(contentType: "text/json") {
     hello = "world"
 }
 {code}
@@ -32,7 +31,7 @@ h4. Rendering JSON Arrays
 To render a list of objects simple assign a list:
 
 {code}
-render(contentType:"text/json") {
+render(contentType: "text/json") {
     categories = ['a', 'b', 'c']
 }
 {code}
@@ -46,7 +45,7 @@ This will produce:
 You can also render lists of complex objects, for example:
 
 {code}
-render(contentType:"text/json") {
+render(contentType: "text/json") {
     categories = [ { a = "A" }, { b = "B" } ]
 }
 {code}
@@ -57,10 +56,10 @@ This will produce:
 {"categories":[ {"a":"A"} , {"b":"B"}] }
 {code}
 
-If you want to return a list as the root then you have to use the special @element@ method:
+Use the special @element@ method to return a list as the root:
 
 {code}
-render(contentType:"text/json") {
+render(contentType: "text/json") {
     element 1
     element 2
     element 3
@@ -75,12 +74,12 @@ The above code produces:
 
 h4. Rendering Complex Objects
 
-Rendering complex objects can be done with closures. For example:
+Rendering complex objects can be done with Closures. For example:
 
 {code}
-render(contentType:"text/json") {
+render(contentType: "text/json") {
     categories = ['a', 'b', 'c']
-    title ="Hello JSON"
+    title = "Hello JSON"
     information = {
         pages = 10
     }
@@ -95,22 +94,22 @@ The above will produce the JSON:
 
 h4. Arrays of Complex Objects
 
-As mentioned previously you can nest complex objects within arrays using closures:
+As mentioned previously you can nest complex objects within arrays using Closures:
 
 {code}
-render(contentType:"text/json") {
+render(contentType: "text/json") {
     categories = [ { a = "A" }, { b = "B" } ]
 }
 {code}
 
-However, if you need to build them up dynamically then you may want to use the @array@ method:
+You can use the @array@ method to build them up dynamically:
 
 {code}
 def results = Book.list()
-render(contentType:"text/json") {
+render(contentType: "text/json") {
     books = array {
         for (b in results) {
-            book title:b.title
+            book title: b.title
         }
     }
 }
@@ -125,7 +124,7 @@ def builder = new JSONBuilder()
 
 def result = builder.build {
     categories = ['a', 'b', 'c']
-    title ="Hello JSON"
+    title = "Hello JSON"
     information = {
         pages = 10
     }
@@ -137,4 +136,3 @@ println result.toString()
 def sw = new StringWriter()
 result.render sw
 {code}
-

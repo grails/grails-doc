@@ -2,7 +2,7 @@ h1. run-war
 
 h2. Purpose
 
-Packages the current Grails application into a Web Application Archive (WAR) file and runs the application in a Tomcat container on port @8080@.
+Packages the current Grails application into a Web Application Archive (WAR) file and runs the application in a Tomcat container on port @8080@ (by default).
 
 h2. Examples
 
@@ -21,6 +21,10 @@ Usage:
 grails [env]* run-war
 {code}
 
+{warning}
+Unlike the @war@ command, @run-war@ default to the development environment (like most commands). To build and run a WAR file for a different environment just specify the environment name, e.g. @grails prod run-war@.
+{warning}
+
 Arguments:
 
 * @https@ - Start an HTTPS server (on port 8443 by default) alongside the main server. Just to be clear, the application will be accessible via HTTPS _and_ HTTP.
@@ -38,6 +42,4 @@ Fired Events:
 * @StatusFinal@ - When the container has been started
 * @StatusUpdate@ - When the container is reloading
 
-This command will package Grails inside a WAR file and then run it with the installed container. Useful for quick deployment and/or testing. However, unlike [run-app|commandLine] this command does not support reloading as a Grails WAR archive does not ship with Groovy sources, but only compiled byte code.
-
-
+This command packages your application into a WAR file and then runs it in the installed container. It is useful for quick deployment and/or testing. However, unlike [run-app|commandLine] this command does not support reloading as a Grails WAR archive does not ship with Groovy sources, but only compiled byte code.

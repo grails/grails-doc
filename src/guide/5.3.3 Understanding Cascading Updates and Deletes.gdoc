@@ -9,21 +9,23 @@ Here is an example:
 {code}
 class Airport {
     String name
-    static hasMany = [flights:Flight]
+    static hasMany = [flights: Flight]
 }
+{code}
 
+{code}
 class Flight {
     String number
-    static belongsTo = [airport:Airport]
+    static belongsTo = [airport: Airport]
 }
 {code}
 
 If I now create an @Airport@ and add some @Flight@s to it I can save the @Airport@ and have the updates cascaded down to each flight, hence saving the whole object graph:
 
 {code}
-new Airport(name:"Gatwick")
-        .addToFlights(new Flight(number:"BA3430"))
-        .addToFlights(new Flight(number:"EZ0938"))
+new Airport(name: "Gatwick")
+        .addToFlights(new Flight(number: "BA3430"))
+        .addToFlights(new Flight(number: "EZ0938"))
         .save()
 {code}
 
@@ -39,8 +41,11 @@ However, if I were to remove @belongsTo@ then the above cascading deletion code 
 h5. Bidirectional one-to-many with belongsTo
 
 {code}
-class A { static hasMany = [bees:B] }
-class B { static belongsTo = [a:A] }
+class A { static hasMany = [bees: B] }
+{code}
+
+{code}
+class B { static belongsTo = [a: A] }
 {code}
 
 In the case of a bidirectional one-to-many where the many side defines a @belongsTo@ then the cascade strategy is set to "ALL" for the one side and "NONE" for the many side.
@@ -48,7 +53,10 @@ In the case of a bidirectional one-to-many where the many side defines a @belong
 h5. Unidirectional one-to-many
 
 {code}
-class A { static hasMany = [bees:B] }
+class A { static hasMany = [bees: B] }
+{code}
+
+{code}
 class B {  }
 {code}
 
@@ -57,7 +65,10 @@ In the case of a unidirectional one-to-many where the many side defines no belon
 h5. Bidirectional one-to-many, no belongsTo
 
 {code}
-class A { static hasMany = [bees:B] }
+class A { static hasMany = [bees: B] }
+{code}
+
+{code}
 class B { A a }
 {code}
 
@@ -67,7 +78,10 @@ h5. Unidirectional one-to-one with belongsTo
 
 {code}
 class A {  }
-class B { static belongsTo = [a:A] }
+{code}
+
+{code}
+class B { static belongsTo = [a: A] }
 {code}
 
 In the case of a unidirectional one-to-one association that defines a @belongsTo@ then the cascade strategy is set to "ALL" for the owning side of the relationship (A->B) and "NONE" from the side that defines the @belongsTo@ (B->A)

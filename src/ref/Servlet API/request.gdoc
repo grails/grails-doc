@@ -2,16 +2,16 @@ h1. request
 
 h2. Purpose
 
-The @request@ object is an instance of the Servlet API's [HttpServletRequest|api:javax.servlet.http.HttpServletRequest] class
+The @request@ object is an instance of the Servlet API's [HttpServletRequest|api:javax.servlet.http.HttpServletRequest] interface
 
 h2. Examples
 
 {code}
 class BookController {
-    def list = {
+    def list() {
         log.info "User agent: " + request.getHeader("User-Agent")
 
-        render(view:actionName)
+        render(view: actionName)
     }
 }
 {code}
@@ -30,25 +30,26 @@ Grails enhances the @HttpServletRequest@ instance by adding the following new pr
 * @each@ - Implementation of Groovy's @each@ method for iterating over request attributes.
 * @find@ - Implementation of Groovy's default @find@ method for searching request attributes.
 * @findAll@ - Implementation of Groovy's default @findAll@ method for searching request attributes.
-* @format@ - The request format, used for [content negotiation|guide:6.8 Content Negotiation].
-* @withFormat(Closure)@ - The withFormat method, used for [content negotiation|guide:6.8 Content Negotiation].
-* @xhr@ - Returns true if the current request is an XML-HTTP (AJAX) request.
+* @format@ - The request format, used for [content negotiation|guide:contentNegotiation].
+* @withFormat(Closure)@ - The withFormat method, used for [content negotiation|guide:contentNegotiation].
+* @xhr@ - Returns @true@ if the current request is an Ajax request.
 
 The @XML@ and @JSON@ properties are useful for XML APIs and can be used to parse incoming XML or JSON packages. For example given a request body of:
+
 {code:xml}
 <book>
    <title>The Stand</title>
 </book>
 {code}
 
-This can be parsed trivially:
+This can be parsed easily:
 
 {code:java}
 def title = request.XML?.book?.title
 render "The Title is $title"
 {code}
 
-Request attributes which are normally accessible via the [getAttribute|api:javax.servlet.ServletRequest#getAttribute(java.lang.String)] can also be indexed into using the array index operator or de-reference operator:
+Request attributes which are normally accessible from the [getAttribute|api:javax.servlet.ServletRequest#getAttribute(java.lang.String)] can also be indexed into using the array index operator or de-reference operator:
 
 {code:java}
 def user = request['user']

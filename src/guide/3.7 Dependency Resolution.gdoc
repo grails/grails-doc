@@ -1,6 +1,6 @@
-In order to control how JAR dependencies are resolved Grails features (since version 1.2) a dependency resolution DSL that allows you to control how dependencies for applications and plugins are resolved.
+Grails features a dependency resolution DSL that lets you control how plugins and JAR dependencies are resolved.
 
-Inside the @grails-app/conf/BuildConfig.groovy@ file you can specify a @grails.project.dependency.resolution@ property that configures how dependencies are resolved:
+You specify a @grails.project.dependency.resolution@ property inside the @grails-app/conf/BuildConfig.groovy@ file that configures how dependencies are resolved:
 
 {code}
 grails.project.dependency.resolution = {
@@ -11,31 +11,44 @@ grails.project.dependency.resolution = {
 The default configuration looks like the following:
 
 {code}
+grails.project.class.dir = "target/classes"
+grails.project.test.class.dir = "target/test-classes"
+grails.project.test.reports.dir = "target/test-reports"
+//grails.project.war.file = "target/${appName}-${appVersion}.war"
+
 grails.project.dependency.resolution = {
     // inherit Grails' default dependencies
     inherits("global") {
         // uncomment to disable ehcache
         // excludes 'ehcache'
     }
-    log "warn" // log level of Ivy resolver, either 'error', ...
+    log "warn" // log level of Ivy resolver, either 'error', 'warn', 'info', 'debug' or 'verbose'
     repositories {
         grailsPlugins()
         grailsHome()
         grailsCentral()
 
-        // uncomment the below to enable remote dependency resolution
+        // uncomment these to enable remote dependency resolution
         // from public Maven repositories
-        //mavenLocal()
         //mavenCentral()
+        //mavenLocal()
         //mavenRepo "http://snapshots.repository.codehaus.org"
         //mavenRepo "http://repository.codehaus.org"
         //mavenRepo "http://download.java.net/maven/2/"
         //mavenRepo "http://repository.jboss.com/maven2/"
     }
     dependencies {
-        // specify dependencies here under either 'build', 'compile', ...
+        // specify dependencies here under either 'build', 'compile', 'runtime', 'test' or 'provided' scopes eg.
 
-        // runtime 'mysql:mysql-connector-java:5.1.5'
+        // runtime 'mysql:mysql-connector-java:5.1.16'
+    }
+
+    plugins {
+        compile ":hibernate:$grailsVersion"
+        compile ":jquery:1.6.1.1"
+        compile ":resources:1.0"
+
+        build ":tomcat:$grailsVersion"
     }
 }
 {code}

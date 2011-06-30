@@ -2,32 +2,33 @@ h1. war
 
 h2. Purpose
 
-The @war@ command will create a Web Application Archive (WAR) file which can be deployed on any Java EE compliant application server
+The @war@ command creates a Web Application Archive (WAR) file which can be deployed on any Java EE compliant application server.
 
 h2. Examples
 
 {code:java}
 grails war
 grails test war
-grails -Dgrails.env=foo war
+grails -Dgrails.env=staging war
 {code}
 
 h2. Description
 
 Usage:
 {code:java}
-grails [environment]* war [arguments]*
+grails [environment]* war [filename]* [arguments]*
 {code}
 
 Arguments:
 
+* @filename@ - The path and name to use in place of the default
 * @nojars@ - Packages the WAR with no jar files. Used for shared deployment
 
 Fired Events:
 
 * @StatusFinal@ - When the WAR file has been created
 
-The @war@ command will create a web application archive (WAR) file using the application name and version number. By default a war file deployable to the production environment will be created, but the environment can be specified using Grails standard convention:
+By default the @war@ command creates a web application archive (WAR) file using the application name and version number. The @war@ command is different from most commands since it runs in the production environment by default instead of development, but like any script the environment can be specified using the standard convention:
 
 {code:java}
 grails test war
@@ -43,4 +44,4 @@ You can also specify a custom environment:
 grails -Dgrails.env=UAT war
 {code}
 
-Once the WAR has been created you should follow the instructions that relate to the container which you are using to complete deployment
+Once the WAR has been created you can deploy it to your container using its standard WAR deployment process.

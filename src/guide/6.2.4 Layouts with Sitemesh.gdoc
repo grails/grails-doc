@@ -18,11 +18,11 @@ Grails leverages [Sitemesh|http://www.opensymphony.com/sitemesh/], a decorator e
 </html>
 {code}
 
-The key elements are the [layoutHead|tags], [layoutTitle|tags] and [layoutBody|tags] tag usages, here is what they do:
+The key elements are the [layoutHead|tags], [layoutTitle|tags] and [layoutBody|tags] tag invocations:
 
 * @layoutTitle@ - outputs the target page's title
-* @layoutHead@ - outputs the target pages head tag contents
-* @layoutBody@ - outputs the target pages body tag contents
+* @layoutHead@ - outputs the target page's head tag contents
+* @layoutBody@ - outputs the target page's body tag contents
 
 The previous example also demonstrates the [pageProperty|tags] tag which can be used to inspect and return aspects of the target page.
 
@@ -34,13 +34,13 @@ There are a few ways to trigger a layout. The simplest is to add a meta tag to t
 <html>
     <head>
         <title>An Example Page</title>
-        <meta name="layout" content="main"></meta>
+        <meta name="layout" content="main" />
     </head>
     <body>This is my content!</body>
 </html>
 {code}
 
-In this case a layout called @grails-app/views/layouts/main.gsp@ will be used to layout the page. If we were to use the layout from the previous section the output would resemble the below:
+In this case a layout called @grails-app/views/layouts/main.gsp@ will be used to layout the page. If we were to use the layout from the previous section the output would resemble this:
 
 {code:xml}
 <html>
@@ -64,18 +64,17 @@ Another way to specify a layout is to specify the name of the layout by assignin
 class BookController {
     static layout = 'customer'
 
-    def list = {  ... }
+    def list() { ... }
 }
 {code}
 
 You can create a layout called @grails-app/views/layouts/customer.gsp@ which will be applied to all views that the @BookController@ delegates to.  The value of the "layout" property may contain a directory structure relative to the @grails-app/views/layouts/@ directory.  For example:
 
-
 {code:java}
 class BookController {
     static layout = 'custom/customer'
 
-    def list = {  ... }
+    def list() { ... }
 }
 {code}
 
@@ -83,15 +82,15 @@ Views rendered from that controller would be decorated with the @grails-app/view
 
 h4. Layout by Convention
 
-Another way to associate layouts is to use "layout by convention". For example, if you have a controller such as:
+Another way to associate layouts is to use "layout by convention". For example, if you have this controller:
 
 {code:java}
 class BookController {
-    def list = {  ... }
+    def list() { ... }
 }
 {code}
 
-You can create a layout called @grails-app/views/layouts/book.gsp@, by convention, which will be applied to all views that the @BookController@ delegates to.
+You can create a layout called @grails-app/views/layouts/book.gsp@, which will be applied to all views that the @BookController@ delegates to.
 
 Alternatively, you can create a layout called @grails-app/views/layouts/book/list.gsp@ which will only be applied to the @list@ action within the @BookController@.
 
@@ -102,15 +101,14 @@ is @grails-app/views/layouts/application.gsp@.  The name of the application defa
 in @grails-app/conf/Config.groovy@ as follows:
 
 {code:java}
-// grails-app/conf/Config.groovy
-grails.sitemesh.default.layout='myLayoutName'
+grails.sitemesh.default.layout = 'myLayoutName'
 {code}
 
 With that property in place, the application default layout will be @grails-app/views/layouts/myLayoutName.gsp@.
 
 h4. Inline Layouts
 
-Grails' also supports Sitemesh's concept of inline layouts with the [applyLayout|tags] tag. The @applyLayout@ tag can be used to apply a layout to a template, URL or arbitrary section of content.   Essentially, this allows to even further modularize your view structure by "decorating" your template includes.
+Grails' also supports Sitemesh's concept of inline layouts with the [applyLayout|tags] tag. This can be used to apply a layout to a template, URL or arbitrary section of content. This lets you even further modularize your view structure by "decorating" your template includes.
 
 Some examples of usage can be seen below:
 
@@ -126,17 +124,17 @@ The content to apply a layout to
 
 h4. Server-Side Includes
 
-While the [applyLayout|tags] tag is useful for applying layouts to external content, if you simply want to include external content in the current page you can do so with the [include|tags]:
+While the [applyLayout|tags] tag is useful for applying layouts to external content, if you simply want to include external content in the current page you use the [include|tags] tag:
 
 {code:xml}
-<g:include controller="book" action="list"></g:include>
+<g:include controller="book" action="list" />
 {code}
 
 You can even combine the [include|tags] tag and the [applyLayout|tags] tag for added flexibility:
 
 {code:xml}
 <g:applyLayout name="myLayout">
-   <g:include controller="book" action="list"></g:include>
+   <g:include controller="book" action="list" />
 </g:applyLayout>
 {code}
 

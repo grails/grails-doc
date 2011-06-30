@@ -1,27 +1,29 @@
-h4. Controlling Plug-in Dependencies
+h4. Controlling Plugin Dependencies
 
-Plug-ins often depend on the presence of other plugins and can also adapt depending on the presence of others. To cover this, a plugin can define two properties. The first is called @dependsOn@. For example, take a look at this snippet from the Grails Hibernate plugin:
+Plugins often depend on the presence of other plugins and can adapt depending on the presence of others. This is implemented with two properties. The first is called @dependsOn@. For example, take a look at this snippet from the Hibernate plugin:
 
 {code:java}
 class HibernateGrailsPlugin {
-    def version = 1.0
-    def dependsOn = [dataSource:1.0,
-                     domainClass:1.0,
-                     i18n:1.0,
-                     core: 1.0]
+
+    def version = "1.0"
+
+    def dependsOn = [dataSource: "1.0",
+                     domainClass: "1.0",
+                     i18n: "1.0",
+                     core: "1.0"]
 }
 {code}
 
-As the above example demonstrates the Hibernate plugin is dependent on the presence of 4 plugins: The @dataSource@ plugin, The @domainClass@ plugin, the @i18n@ plugin and the @core@ plugin.
+The Hibernate plugin is dependent on the presence of four plugins: the @dataSource@, @domainClass@, @i18n@ and @core@ plugins.
 
-Essentially the dependencies will be loaded first and then the Hibernate plugin. If all dependencies do not load, then the plugin will not load.
+The dependencies will be loaded before the Hibernate plugin and if all dependencies do not load, then the plugin will not load.
 
 The @dependsOn@ property also supports a mini expression language for specifying version ranges. A few examples of the syntax can be seen below:
 
 {code:java}
-def dependsOn = [foo:"* > 1.0"]
-def dependsOn = [foo:"1.0 > 1.1"]
-def dependsOn = [foo:"1.0 > *"]
+def dependsOn = [foo: "* > 1.0"]
+def dependsOn = [foo: "1.0 > 1.1"]
+def dependsOn = [foo: "1.0 > *"]
 {code}
 
 When the wildcard * character is used it denotes "any" version. The expression syntax also excludes any suffixes such as -BETA, -ALPHA etc. so for example the expression "1.0 > 1.1" would match any of the following versions:
@@ -34,13 +36,13 @@ When the wildcard * character is used it denotes "any" version. The expression s
 
 h4. Controlling Load Order
 
-Using @dependsOn@ establishes a "hard" dependency in that if the dependency is not resolved, the plugin will give up and won't load.  It is possible though to have a "weaker" dependency using the @loadAfter@ property:
+Using @dependsOn@ establishes a "hard" dependency in that if the dependency is not resolved, the plugin will give up and won't load.  It is possible though to have a weaker dependency using the @loadAfter@ property:
 
 {code:java}
 def loadAfter = ['controllers']
 {code}
 
-Here the plugin will be loaded after the @controllers@ plugin if it exists, otherwise it will just be loaded. The plugin can then adapt to the presence of the other plugin, for example the Hibernate plugin has this code in the @doWithSpring@ closure:
+Here the plugin will be loaded after the @controllers@ plugin if it exists, otherwise it will just be loaded. The plugin can then adapt to the presence of the other plugin, for example the Hibernate plugin has this code in its @doWithSpring@ closure:
 
 {code:java}
 if (manager?.hasGrailsPlugin("controllers")) {
@@ -52,4 +54,4 @@ if (manager?.hasGrailsPlugin("controllers")) {
 }
 {code}
 
-Here the Hibernate plugin will only register an @OpenSessionInViewInterceptor@ if the @controllers@ plugin has been loaded. The manager variable is an instance of the [GrailsPluginManager|api:org.codehaus.groovy.grails.plugins.GrailsPluginManager] interface and it provides methods to interact with other plugins and the @GrailsPluginManager@ itself from any plugin.
+Here the Hibernate plugin will only register an @OpenSessionInViewInterceptor@ if the @controllers@ plugin has been loaded. The @manager@ variable is an instance of the [GrailsPluginManager|api:org.codehaus.groovy.grails.plugins.GrailsPluginManager] interface and it provides methods to interact with other plugins.

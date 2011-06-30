@@ -2,7 +2,7 @@ h1. submitToRemote
 
 h2. Purpose
 
-Creates a button that submits the surrounding form as a remote ajax call serializing the fields into parameters.
+Creates a button that submits the containing form as a remote Ajax call, serializing the fields into parameters.
 
 h2. Examples
 
@@ -10,8 +10,14 @@ Example controller for an application called "shop":
 
 {code:java}
 class BookController {
-     def list = { [books: Book.list(params)] }
-     def show = { [book: Book.get(params.id)] }
+
+    def list() {
+        [books: Book.list(params)]
+    }
+
+    def show() {
+        [book: Book.get(params.id)]
+    }
 }
 {code}
 
@@ -19,38 +25,35 @@ Example usages for above controller:
 
 {code:xml}
 <g:form action="show">
-        Login: <input name="login" type="text"></input>
-        <g:submitToRemote update="updateMe" />
+    Login: <input name="login" type="text" />
+    <g:submitToRemote update="updateMe" />
 </g:form>
-<div id="updateMe">this div is updated by the form</div>
-{code}
 
+<div id="updateMe">this div will be updated with the response from the form submit</div>
+{code}
 
 h2. Description
 
 Attributes
 
-* @url@ - The url to submit to, either a map contraining keys for the action,controller and id or string value
-* @update@ (optional) - Either a map containing the elements to update for 'success' or 'failure' states, or a string with the element to update in which cause failure events would be ignored
-* @before@ (optional) - The javascript function to call before the remote function call
-* @after@ (optional) - The javascript function to call after the remote function call
-* @asynchronous@ (optional) - Whether to do the call asynchronously or not (defaults to true)
-* @method@ (optional) - The method to use the execute the call (defaults to "post")
+* @url@ - The url to submit to, either a map contraining keys for the action, controller and id or a string value
+* @update@ (optional) - Either a Map containing the elements to update for 'success' or 'failure' states, or a string with the element id to update, in which case failure events would be ignored
+* @before@ (optional) - The JavaScript function to call before the remote function call
+* @after@ (optional) - The JavaScript function to call after the remote function call
+* @asynchronous@ (optional) - Whether to do the call asynchronously (defaults to @true@)
+* @method@ (optional) - The method to use the execute the call (defaults to POST)
 
 Events
 
-* @onSuccess@ (optional) - The javascript function to call if successful
-* @onFailure@ (optional) - The javascript function to call if the call failed
-* @on_ERROR_CODE@ (optional) - The javascript function to call to handle specified error codes (eg on404="alert('not found!')")
-* @onUninitialized@ (optional) - The javascript function to call the a ajax engine failed to initialise
-* @onLoading@ (optional) - The javascript function to call when the remote function is loading the response
-* @onLoaded@ (optional) - The javascript function to call when the remote function is completed loading the response
-* @onComplete@ (optional) - The javascript function to call when the remote function is complete, including any updates
-
+* @onSuccess@ (optional) - The JavaScript function to call if successful
+* @onFailure@ (optional) - The JavaScript function to call if the call fails
+* @on_ERROR_CODE@ (optional) - The JavaScript function to call to handle the specified error code (eg on404="alert('not found!')")
+* @onUninitialized@ (optional) - The JavaScript function to call if Ajax fails to initialise
+* @onLoading@ (optional) - The JavaScript function to call when the remote function loads the response
+* @onLoaded@ (optional) - The JavaScript function to call when the remote function completes loading the response
+* @onComplete@ (optional) - The JavaScript function to call when the remote function completes, including any updates
 
 h2. Source
 
 {source:tag=JavascriptTagLib.submitToRemote}
 {source}
-
-

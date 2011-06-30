@@ -1,17 +1,16 @@
-As mentioned before a flow has a defined start and end state. A start state is the state which is entered when a user first initiates a conversation (or flow). The start state of A Grails flow is the first method call that takes a block. For example:
-
+As mentioned before a flow has a defined start and end state. A start state is the state which is entered when a user first initiates a conversation (or flow). The start state of a Grails flow is the first method call that takes a block. For example:
 
 {code:java}
 class BookController {
    ...
-   def shoppingCartFlow = {
+   def shoppingCartFlow() {
        showCart {
            on("checkout").to "enterPersonalDetails"
            on("continueShopping").to "displayCatalogue"
        }
        ...
        displayCatalogue {
-            redirect(controller:"catalogue", action:"show")
+           redirect(controller: "catalogue", action: "show")
        }
        displayInvoice()
    }

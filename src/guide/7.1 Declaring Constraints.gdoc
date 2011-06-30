@@ -1,4 +1,4 @@
-Within a domain class a [constraints|domainClasses] are defined with the constraints property that is assigned a code block:
+Within a domain class [constraints|domainClasses] are defined with the constraints property that is assigned a code block:
 
 {code:java}
 class User {
@@ -15,16 +15,15 @@ class User {
 
 You then use method calls that match the property name for which the constraint applies in combination with named parameters to specify constraints:
 
-
 {code:java}
 class User {
     ...
 
     static constraints = {
-        login(size:5..15, blank:false, unique:true)
-        password(size:5..15, blank:false)
-        email(email:true, blank:false)
-        age(min:18, nullable:false)
+        login size: 5..15, blank: false, unique: true
+        password size: 5..15, blank: false
+        email email: true, blank: false
+        age min: 18
     }
 }
 {code}
@@ -32,10 +31,10 @@ class User {
 In this example we've declared that the @login@ property must be between 5 and 15 characters long, it cannot be blank and must be unique. We've also applied other constraints to the @password@, @email@ and @age@ properties.
 
 {note}
-By default, all domain class properties are not nullable (i.e. they have an implied 'nullable: false' constraint). The same is not true for command object properties, which are nullable by default.
+By default, all domain class properties are not nullable (i.e. they have an implicit @nullable: false@ constraint). The same is not true for command object properties, which are nullable by default.
 {note}
 
-A complete reference for the available constraints can be found in the left navigation bar (if you have frames enabled) under the Constraints heading.
+A complete reference for the available constraints can be found in the Quick Reference section under the Constraints heading.
 
 h3. A word of warning - referencing domain class properties from constraints
 
@@ -64,4 +63,4 @@ class Response {
 }
 {code}
 
-In this example, the @obj@ argument to the custom validator is the domain _instance_ that is being validated, so we can access its @survey@ property and return a boolean to indicate whether the new value for the @answer@ property, @val@, is valid or not.
+In this example, the @obj@ argument to the custom validator is the domain _instance_ that is being validated, so we can access its @survey@ property and return a boolean to indicate whether the new value for the @answer@ property, @val@, is valid.

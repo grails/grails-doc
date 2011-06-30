@@ -1,10 +1,10 @@
 h4. Simple Variables
 
-The previous section demonstrated how to map trivial URLs with concrete "tokens". In URL mapping speak tokens are the sequence of characters between each slash, '/'. A concrete token is one which is well defined such as as @/product@. However, in many circumstances you don't know what the value of a particular token will be until runtime. In this case you can use variable placeholders within the URL for example:
+The previous section demonstrated how to map simple URLs with concrete "tokens". In URL mapping speak tokens are the sequence of characters between each slash, '/'. A concrete token is one which is well defined such as as @/product@. However, in many circumstances you don't know what the value of a particular token will be until runtime. In this case you can use variable placeholders within the URL for example:
 
 {code:java}
 static mappings = {
-  "/product/$id"(controller:"product")
+  "/product/$id"(controller: "product")
 }
 {code}
 
@@ -12,20 +12,19 @@ In this case by embedding a $id variable as the second token Grails will automat
 
 {code:java}
 class ProductController {
-     def index = { render params.id }
+     def index() { render params.id }
 }
 {code}
-
 
 You can of course construct more complex examples of mappings. For example the traditional blog URL format could be mapped as follows:
 
 {code:java}
 static mappings = {
-   "/$blog/$year/$month/$day/$id"(controller:"blog", action:"show")
+   "/$blog/$year/$month/$day/$id"(controller: "blog", action: "show")
 }
 {code}
 
-The above mapping would allow you to do things like:
+The above mapping would let you do things like:
 
 {code:java}
 /graemerocher/2007/01/10/my_funky_blog_entry
@@ -65,8 +64,7 @@ static mappings = {
 }
 {code}
 
-With this mapping all of the below URLs would match with only the relevant parameters being populated in the [params|controllers] object:
-
+With this mapping all of these URLs would match with only the relevant parameters being populated in the [params|controllers] object:
 
 bc.
 /graemerocher/2007/01/10/my_funky_blog_entry
@@ -75,10 +73,9 @@ bc.
 /graemerocher/2007
 /graemerocher
 
-
 h4. Arbitrary Variables
 
-You can also pass arbitrary parameters from the URL mapping into the controller by merely setting them in the block passed to the mapping:
+You can also pass arbitrary parameters from the URL mapping into the controller by just setting them in the block passed to the mapping:
 
 {code:java}
 "/holiday/win" {

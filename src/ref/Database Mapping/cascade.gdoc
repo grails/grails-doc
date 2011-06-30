@@ -8,9 +8,11 @@ h2. Examples
 
 {code:java}
 class Author {
-    static hasMany = [books:Book]
+
+    static hasMany = [books: Book]
+
     static mapping = {
-        books cascade:'all-delete-orphan'
+        books cascade: 'all-delete-orphan'
     }
 }
 {code}
@@ -27,36 +29,44 @@ By default GORM configures a cascading policy of "all" in the case where one ent
 
 {code}
 class Book {
-    static belongsTo = [author:Author]
-}
-class Author {
-    static hasMany = [books:Book]
+    static belongsTo = [author: Author]
 }
 {code}
 
-Here all persistence operations will cascade from the @Author@ domain to the @Book@ domain. So when a @Author@ is deleted so will all his books.
+{code}
+class Author {
+    static hasMany = [books: Book]
+}
+{code}
 
-If the association doesn't define an owner (a "belong to" relationship):
+Here all persistence operations will cascade from the @Author@ domain to the @Book@ domain. So when an @Author@ is deleted so will all the associated books.
+
+If the association doesn't define an owner (a "belongs to" relationship):
 
 {code}
 class Book {
 }
+{code}
+
+{code}
 class Author {
-    static hasMany = [books:Book]
+    static hasMany = [books: Book]
 }
 {code}
 
-Then GORM uses a cascading policy of "save-update" by default. So if an @Author@ is deleted the @Book@ domains associated with the @Author@ won't be deleted. If you wish to customize this behavior you can use the @cascade@ argument on an association:
+then GORM uses a cascading policy of "save-update" by default. So if an @Author@ is deleted the @Book@ associated domains won't be deleted. Use the @cascade@ argument on an association to customize this behavior:
 
 {code:java}
 class Author {
-    static hasMany = [books:Book]
+
+    static hasMany = [books: Book]
+
     static mapping = {
-        books cascade:'all-delete-orphan'
+        books cascade: 'all-delete-orphan'
     }
 }
 {code}
 
-Here a @Book@ will also be deleted if it is removed (orphaned) from the @books@ association.
+Using this configuration a @Book@ will also be deleted if it is removed (orphaned) from an @Author@'s @books@ association.
 
-See the section on [transitive persistence|http://docs.jboss.org/hibernate/stable/core/reference/en/html/objectstate.html#objectstate-transitive] in the Hibernate user guide.
+See the section on [transitive persistence|http://docs.jboss.org/hibernate/stable/core/reference/en-US/html/objectstate.html#objectstate-transitive] in the Hibernate user guide.

@@ -1,10 +1,10 @@
-Beyond the specific targeted mocking APIs there is also a all-purpose @mockFor()@ method that is available whenever using the @TestFor@ annotation. The signature of the @mockFor@ is:
+Beyond the specific targeted mocking APIs there is also an all-purpose @mockFor()@ method that is available when using the @TestFor@ annotation. The signature of @mockFor@ is:
 
 {code:java}
 mockFor(class, loose = false)
 {code}
 
-General purpose mocking that allows you to set up either strict or loose demands on a class.
+This is general-purpose mocking that lets you set up either strict or loose demands on a class.
 
 This method is surprisingly intuitive to use. By default it will create a strict mock control object (one for which the order in which methods are called is important) that you can use to specify demands:
 
@@ -15,11 +15,11 @@ strictControl.demand.someMethod(0..2) { String arg1, int arg2 -> ... }
 strictControl.demand.static.aStaticMethod {-> ... }
 {code}
 
-Notice that you can mock static methods as well as instance ones simply by using the "static" property after "demand". You then specify the name of the method that you want to mock with an optional range as its argument. This range determines how many times you expect the method to be called, so if the number of invocations falls outside of that range (either too few or too many) then an assertion error will be thrown. If no range is specified, a default of "1..1" is assumed, i.e. that the method must be called exactly once.
+Notice that you can mock static as well as instance methods by using the "static" property. You then specify the name of the method to mock, with an optional range argument. This range determines how many times you expect the method to be called, and if the number of invocations falls outside of that range (either too few or too many) then an assertion error will be thrown. If no range is specified, a default of "1..1" is assumed, i.e. that the method must be called exactly once.
 
-The last part of a demand is a closure representing the implementation of the mock method. The closure arguments should match the number and types of the mocked method, but otherwise you are free to add whatever you want in the body.
+The last part of a demand is a closure representing the implementation of the mock method. The closure arguments must match the number and types of the mocked method, but otherwise you are free to add whatever you want in the body.
 
-As we mentioned before, if you want an actual mock instance of the class that you are mocking, then you need to call @mockControl.createMock()@. In fact, you can call this as many times as you like to create as many mock instances as you need. And once you have executed the test method, you can call @mockControl.verify()@ to check whether the expected methods were actually called or not.
+As we mentioned before, call @mockControl.createMock()@ to get an actual mock instance of the class that you are mocking. You can call this multiple times to create as many mock instances as you need. And once you have executed the test method, call @mockControl.verify()@ to check that the expected methods were called.
 
 Lastly, the call:
 

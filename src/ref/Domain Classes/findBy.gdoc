@@ -2,7 +2,7 @@ h1. findBy*
 
 h2. Purpose
 
-Dynamic method that uses the properties of the domain class to allow the creation of Grails query method expressions that return the first result of the query
+Dynamic method that uses the properties of the domain class to execute a query returning the first matching result.
 
 h2. Examples
 
@@ -10,12 +10,10 @@ Given the domain class @Book@:
 
 {code:java}
 class Book {
-   Long id
-   Long version
-   String title
-   Date releaseDate
-   String author
-   Boolean paperback
+    String title
+    Date releaseDate
+    String author
+    Boolean paperback
 }
 {code}
 
@@ -28,7 +26,7 @@ b = Book.findByReleaseDateBetween(firstDate, new Date())
 b = Book.findByReleaseDateGreaterThanEquals(firstDate)
 b = Book.findByReleaseDateLessThanEquals(firstDate)
 b = Book.findByTitleLike("%Hobbit%")
-b = Book.findByTitleIlike("%Hobbit%") // (since 0.5) - ignorecase
+b = Book.findByTitleIlike("%Hobbit%") // ignores case
 b = Book.findByTitleNotEqual("Harry Potter")
 b = Book.findByReleaseDateIsNull()
 b = Book.findByReleaseDateIsNotNull()
@@ -59,4 +57,3 @@ The following operator names can be used within the respective dynamic methods:
 * @InList@
 
 The above operator names can be considered keywords, and you will run into problems when querying domain classes that have one of these names used as property names. For more information on [dynamic finders|guide:finders] refer to the user guide.
-

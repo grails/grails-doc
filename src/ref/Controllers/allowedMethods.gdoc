@@ -2,53 +2,69 @@ h1. allowedMethods
 
 h2. Purpose
 
-To limit access to controller actions based on the HTTP request method.
+Limits access to controller actions based on the HTTP request method, sending a 405 (Method Not Allowed) error code when an incorrect HTTP method is used.
 
 h2. Examples
 
-bc.
+{code}
 class PersonController {
-    // action1 may be invoked via a POST
+    // action1 may be invoked from a POST
     // action2 has no restrictions
-    // action3 may be invoked via a POST or DELETE
+    // action3 may be invoked from a POST or DELETE
     static allowedMethods = \[action1:'POST',
                              action3:\['POST', 'DELETE'\]\]
-    def action1 = { ... }
-    def action2 = { ... }
-    def action3 = { ... }
+    def action1() { ... }
+    def action2() { ... }
+    def action3() { ... }
 }
+{code}
 
 h2. Description
 
-The request method may be inspected inside of a controller action and the application may respond however is appropriate.  The code below is a way to prevent the delete action from being invoked using an HTTP-GET.
+The @allowedMethods@ property provides a simple declarative syntax to specify which HTTP methods are allowed for your controller actions. By default, all request methods are allowed for all controller actions. The @allowedMethods@ property is optional and only needs to be defined if the controller has actions to be restricted to certain request methods.
 
-bc.
+You can do these checks programmatically in the controller actions and send a 405 error code yourself, but this tends to clutter the controller methods which should focus more on application logic and routing. This approach might not be sufficient in more complex scenarios, and in those cases it's fine to handle things yourself.
+
+The @allowedMethods@ property is a Map, where the keys are the names of actions to be restricted and the values are either a @String@ or a @List@ of @String@s. If the value is a @String@, it represents the only request method that may be used to invoke that action. If it is a @List@ of @String@s the @List@ it represents all of the request methods that may be used to invoke that action. If the specified restrictions are violated then a 405 error code is returned in the response.
+
+For example this code prevents the @delete@ action from being invoked using an HTTP GET:
+
+{code}
 class PersonController {
-    def delete = {
+    def delete() {
         if (request.method == 'GET') {
             // redirect to the list action
-            redirect(action:list)
+            redirect(action: list)
         } else {
             // the rest of the delete action goes here
         }
     }
 }
+{code}
 
-Instead of redirecting to some other action the application may want to return a 405 (Method Not Allowed) error code like this:
+It could instead return a 405 error code rather than redirecting:
 
-bc.
+{code}
 class PersonController {
-    def delete = {
-      if (request.method == 'GET') {
-          response.sendError(405)
-      } else {
-          // the rest of the delete action goes here
-      }
+    def delete() {
+        if (request.method == 'GET') {
+            response.sendError(405)
+        } else {
+            // the rest of the delete action goes here
+        }
     }
 }
+{code}
 
-A problem with inspecting the request method inside of the controller action is that this code ends up being repeated in a lot of actions within a controller, in many controllers in an application and in many applications.  For specialized application specific handling of invalid requests this may make sense but for the general case the Grails framework provides a simple declarative syntax to help with this problem.
+But the cleanest solution is to use @allowedMethods@:
 
-Grails provides a simple declarative syntax to help limit access to controller actions based on the HTTP request method.  The optional @allowedMethods@ property may be added to a controller to let the framework know which HTTP methods are allowed for controller actions.  By default, all request methods are allowed for all controller actions.  The @allowedMethods@ property only needs to be defined if the controller contains actions that need to be restricted to certain request methods.
+{code}
+class PersonController {
 
-The @allowedMethods@ property should be assigned a value that is a Map.  The keys in the map should be the names of actions that need to be restricted.  The value associated with each of those keys may be either a String or a List of Strings.  If the value is a String, that String represents the only request method that may be used to invoke that action.  If the value is a List of Strings the List represents all of the request methods that may be used to invoke that action.  If the specified restrictions are violated then a 405 will be returned in the response.
+    static allowedMethods = \[save: "POST", update: "POST", delete: "POST"\]
+
+    def delete() {
+        // the delete logic goes here
+    }
+}
+{code}

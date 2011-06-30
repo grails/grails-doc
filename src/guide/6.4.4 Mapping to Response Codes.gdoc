@@ -1,4 +1,4 @@
-Grails also allows you to map HTTP response codes to controllers, actions or views. All you have to do is use a method name that matches the response code you are interested in:
+Grails also lets you map HTTP response codes to controllers, actions or views. Just use a method name that matches the response code you are interested in:
 
 {code:java}
 static mappings = {
@@ -8,7 +8,7 @@ static mappings = {
 }
 {code}
 
-Or alternatively if you merely want to provide custom error pages:
+Or you can specify custom error pages:
 
 {code:java}
 static mappings = {
@@ -38,11 +38,11 @@ static mappings = {
 
 With this configuration, an @IllegalArgumentException@ will be handled by the @illegalArgument@ action in @ErrorsController@, a @NullPointerException@ will be handled by the @nullPointer@ action, and a @MyException@ will be handled by the @customException@ action. Other exceptions will be handled by the catch-all rule and use the @/errors/serverError@ view.
 
-You can access the exception from your custom error handing view or controller action via the request's @exception@ attribute like so:
+You can access the exception from your custom error handing view or controller action using the request's @exception@ attribute like so:
 
 {code:java}
 class ErrorController {
-    def handleError = {
+    def handleError() {
         def exception = request.exception
         // perform desired processing to handle the exception
     }

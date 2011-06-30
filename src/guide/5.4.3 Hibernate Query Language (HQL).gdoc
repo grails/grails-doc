@@ -1,4 +1,4 @@
-GORM classes also support Hibernate's query language HQL, a very complete reference for which can be found [Chapter 14. HQL: The Hibernate Query Language|http://docs.jboss.org/hibernate/stable/core/reference/en/html/queryhql.html] of the Hibernate documentation.
+GORM classes also support Hibernate's query language HQL, a very complete reference for which can be found [in the Hibernate documentation|http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/queryhql.html] of the Hibernate documentation.
 
 GORM provides a number of methods that work with HQL including [find|domainClasses], [findAll|domainClasses] and [executeQuery|domainClasses]. An example of a query can be seen below:
 
@@ -38,7 +38,7 @@ def books = Book.findAll("from Book as book where book.author = :author",
 
 h4. Multiline Queries
 
-If you need to separate the query across multiple lines you can use a line continuation character:
+Use the line continuation character to separate the query across multiple lines:
 
 {code:java}
 def results = Book.findAll("\\\
@@ -48,15 +48,15 @@ where b.author = a and a.surname = ?", ['Smith'])
 {code}
 
 {note}
-Groovy multiline strings will NOT work with HQL queries
+Triple-quoted Groovy multiline Strings will NOT work with HQL queries.
 {note}
 
 h4. Pagination and Sorting
 
-You can also perform pagination and sorting whilst using HQL queries. To do so simply specify the pagination options as a map at the end of the method call and include an "ORDER BY" clause in the HQL:
+You can also perform pagination and sorting whilst using HQL queries. To do so simply specify the pagination options as a Map at the end of the method call and include an "ORDER BY" clause in the HQL:
 
 {code:java}
 def results =
       Book.findAll("from Book as b where b.title like 'Lord of the%' order by b.title asc",
-                   [max:10, offset:20])
+                   [max: 10, offset: 20])
 {code}

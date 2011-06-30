@@ -19,7 +19,7 @@ h3. Event types
 
 h4. The beforeInsert event
 
-Fired before an object is saved to the db
+Fired before an object is saved to the database
 
 {code:java}
 class Person {
@@ -71,7 +71,7 @@ class Person {
 
 Notice the usage of @withNewSession@ method above. Since events are triggered whilst Hibernate is flushing using persistence methods like @save()@ and @delete()@ won't result in objects being saved unless you run your operations with a new @Session@.
 
-Fortunately the @withNewSession@ method allows you to share the same transactional JDBC connection even though you're using a different underlying @Session@.
+Fortunately the @withNewSession@ method lets you share the same transactional JDBC connection even though you're using a different underlying @Session@.
 
 h4. The beforeValidate event
 
@@ -127,12 +127,11 @@ Either or both versions of @beforeValidate@ may be defined in a domain class.  G
 prefer the @List@ version if a @List@ is passed to @validate@ but will fall back on the
 no-arg version if the @List@ version does not exist.  Likewise, GORM will prefer the
 no-arg version if no arguments are passed to @validate@ but will fall back on the
-@List@ version if the no-arg version does not exist.  In that case, null
-is passed to @beforeValidate@.
+@List@ version if the no-arg version does not exist.  In that case, @null@ is passed to @beforeValidate@.
 
 h4. The onLoad/beforeLoad event
 
-Fired immediately before an object is loaded from the db:
+Fired immediately before an object is loaded from the database:
 
 {code:java}
 class Person {
@@ -150,7 +149,7 @@ class Person {
 
 h4. The afterLoad event
 
-Fired immediately after an object is loaded from the db:
+Fired immediately after an object is loaded from the database:
 
 {code:java}
 class Person {
@@ -168,7 +167,7 @@ h4. Custom Event Listeners
 
 You can also register event handler classes in an application's @grails-app/conf/spring/resources.groovy@ or in the @doWithSpring@ closure in a plugin descriptor by registering a Spring bean named @hibernateEventListeners@. This bean has one property, @listenerMap@ which specifies the listeners to register for various Hibernate events.
 
-The values of the map are instances of classes that implement one or more Hibernate listener interfaces. You can use one class that implements all of the required interfaces, or one concrete class per interface, or any combination. The valid map keys and corresponding interfaces are listed here:
+The values of the Map are instances of classes that implement one or more Hibernate listener interfaces. You can use one class that implements all of the required interfaces, or one concrete class per interface, or any combination. The valid Map keys and corresponding interfaces are listed here:
 
 {table}
 *Name* | *Interface*
@@ -216,9 +215,9 @@ beans = {
    auditListener(AuditEventListener)
 
    hibernateEventListeners(HibernateEventListeners) {
-      listenerMap = ['post-insert':auditListener,
-                     'post-update':auditListener,
-                     'post-delete':auditListener]
+      listenerMap = ['post-insert': auditListener,
+                     'post-update': auditListener,
+                     'post-delete': auditListener]
    }
 }
 {code}
@@ -231,17 +230,16 @@ def doWithSpring = {
    auditListener(AuditEventListener)
 
    hibernateEventListeners(HibernateEventListeners) {
-      listenerMap = ['post-insert':auditListener,
-                     'post-update':auditListener,
-                     'post-delete':auditListener]
+      listenerMap = ['post-insert': auditListener,
+                     'post-update': auditListener,
+                     'post-delete': auditListener]
    }
 }
 {code}
 
-
 h4. Automatic timestamping
 
-The examples above demonstrated using events to update a @lastUpdated@ and @dateCreated@ property to keep track of updates to objects. However, this is actually not necessary. By merely defining a @lastUpdated@ and @dateCreated@ property these will be automatically updated for you by GORM.
+The examples above demonstrated using events to update a @lastUpdated@ and @dateCreated@ property to keep track of updates to objects. However, this is actually not necessary. By defining a @lastUpdated@ and @dateCreated@ property these will be automatically updated for you by GORM.
 
 If this is not the behaviour you want you can disable this feature with:
 

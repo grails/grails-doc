@@ -2,22 +2,27 @@ h1. remoteLink
 
 h2. Purpose
 
-Creates a link that calls a remote function when clicked
+Creates a link that uses Ajax to call a remote function when clicked
 
 h2. Examples
 
 Example controller for an application called @shop@:
+
 {code:java}
 class BookController {
-     def list = {
+
+     def list() {
          [books: Book.list(params)]
      }
-     def show = {
+
+     def show() {
          [book: Book.get(params.id)]
      }
-     def bookByName = {
-         [book: Book.findByName(params.bookName)] }
+
+     def bookByName() {
+         [book: Book.findByName(params.bookName)]
      }
+}
 {code}
 
 Example usages for above controller:
@@ -48,32 +53,29 @@ h2. Description
 
 Attributes
 
-* @action@ (optional) - the name of the action to use in the link, if not specified the default action will be linked
-* @controller@ (optional) - the name of the controller to use in the link, if not specified the current controller will be linked
+* @action@ (optional) - the name of the action to use in the link; if not specified the default action will be linked
+* @controller@ (optional) - the name of the controller to use in the link; if not specified the current controller will be linked
 * @id@ (optional) - The id to use in the link
 * @fragment@ (optional) - The link fragment (often called anchor tag) to use
 * @mapping@ (optional) - The [named URL mapping|guide:namedMappings] to use to rewrite the link
-* @params@ (optional) - a map containing request parameters
-* @update@ (optional) - Either a map containing the elements to update for 'success' or 'failure' states, or a string with the element to update in which case failure events would be ignored
-* @before@ (optional) - The javascript function to call before the remote function call
-* @after@ (optional) - The javascript function to call after the remote function call
-* @asynchronous@ (optional) - Whether to do the call asynchronously or not (defaults to true)
-* @method@ (optional) - The method to use the execute the call (defaults to "post")
+* @params@ (optional) - a Map containing request parameters
+* @update@ (optional) - Either a Map containing the elements to update for 'success' or 'failure' states, or a string with the element id to update, in which case failure events would be ignored
+* @before@ (optional) - The JavaScript function to call before the remote function call
+* @after@ (optional) - The JavaScript function to call after the remote function call
+* @asynchronous@ (optional) - Whether to do the call asynchronously (defaults to true)
+* @method@ (optional) - The method to use the execute the call (defaults to POST)
 
 Events
 
-* @onSuccess@ (optional) - The javascript function to call if successful
-* @onFailure@ (optional) - The javascript function to call if the call failed
-* @on_ERROR_CODE@ (optional) - The javascript function to call to handle specified error codes (eg on404="alert('not found!')"). With Prototype, this prevents execution of onSuccess and onFailure.
-* @onUninitialized@ (optional) - The javascript function to call the a ajax engine failed to initialise
-* @onLoading@ (optional) - The javascript function to call when the remote function is loading the response
-* @onLoaded@ (optional) - The javascript function to call when the remote function is completed loading the response
-* @onComplete@ (optional) - The javascript function to call when the remote function is complete, including any updates
-
+* @onSuccess@ (optional) - The JavaScript function to call if successful
+* @onFailure@ (optional) - The JavaScript function to call if the call fails
+* @on_ERROR_CODE@ (optional) - The JavaScript function to call to handle the specified error code (eg on404="alert('not found!')"). With Prototype, this prevents execution of @onSuccess@ and @onFailure@.
+* @onUninitialized@ (optional) - The JavaScript function to call if Ajax fails to initialise
+* @onLoading@ (optional) - The JavaScript function to call when the remote function loads the response
+* @onLoaded@ (optional) - The JavaScript function to call when the remote function completes loading the response
+* @onComplete@ (optional) - The JavaScript function to call when the remote function completes, including any updates
 
 h2. Source
 
 {source:tag=JavascriptTagLib.remoteLink}
 {source}
-
-

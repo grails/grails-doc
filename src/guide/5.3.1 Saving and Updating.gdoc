@@ -5,23 +5,21 @@ def p = Person.get(1)
 p.save()
 {code}
 
-A major difference with Hibernate is when you call [save|domainClasses] it does not necessarily perform any SQL operations *at that point*. Hibernate typically batches up SQL statements and executes them at the end. This is typically done for you automatically by Grails, which manages your Hibernate session.
-
-There are occasions, however, when you may want to control when those statements are executed or, in Hibernate terminology, when the session is "flushed". To do so you can use the flush argument to the save method:
+This save will be not be pushed to the database immediately - it will be pushed when the next flush occurs. But there are occasions when you want to control when those statements are executed or, in Hibernate terminology, when the session is "flushed". To do so you can use the flush argument to the save method:
 
 {code}
 def p = Person.get(1)
-p.save(flush:true)
+p.save(flush: true)
 {code}
 
-Note that in this case all pending SQL statements including previous saves will be synchronized with the db. This also allows you to catch any exceptions thrown, which is typically useful in highly concurrent scenarios involving [optimistic locking|guide:5.3.5 Pessimistic and Optimistic Locking]:
+Note that in this case _all_ pending SQL statements including previous saves, deletes, etc. will be synchronized with the database. This also lets you catch any exceptions, which is typically useful in highly concurrent scenarios involving [optimistic locking|guide:locking]:
 
 {code}
 def p = Person.get(1)
 try {
-    p.save(flush:true)
+    p.save(flush: true)
 }
-catch(Exception e) {
+catch (org.springframework.dao.DataIntegrityViolationException e) {
     // deal with exception
 }
 {code}
@@ -33,11 +31,11 @@ def p = Person.get(1)
 try {
     p.save(failOnError: true)
 }
-catch (Exception e) {
+catch (ValidationException e) {
     // deal with exception
 }
 {code}
 
-You can even change the default behaviour via a setting in @Config.groovy@, as described in the [section on configuration|guide:3.1.3 GORM]. Just remember that when you are saving domain instances that have been bound with data provided by the user, the likelihood of validation exceptions is quite high and you won't want those exceptions propagating to the end user.
+You can even change the default behaviour with a setting in @Config.groovy@, as described in the [section on configuration|guide:configGORM]. Just remember that when you are saving domain instances that have been bound with data provided by the user, the likelihood of validation exceptions is quite high and you won't want those exceptions propagating to the end user.
 
 You can find out more about the subtleties of saving data in [this article|http://blog.springsource.com/2010/06/23/gorm-gotchas-part-1/] - a must read!

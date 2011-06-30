@@ -19,7 +19,7 @@ def results = c.list {
 }
 {code}
 
-In order to use pagination you would have to make another query to retrieve the total number of matching results. A better way is to pass the necessary pagination values as arguments to the criteria method as shown below:
+To use pagination you would have to make another query to retrieve the total number of matching results. A better way is to pass the pagination values as arguments to the criteria method as shown below:
 
 {code:java}
 def c = Account.createCriteria()
@@ -33,7 +33,7 @@ def results = c.list (max: 10, offset: 10) {
 }
 {code}
 
-This will return a [PagedResultList|api:grails.orm.PagedResultList] which has a getTotalCount() method to return the total number of matching records for pagination.
+This will return a [PagedResultList|api:grails.orm.PagedResultList] which has a getTotalCount() method to return the total number of matching records for pagination. Two queries are still run, but they're run for you and the results and total count are combined in the @PagedResultList@.
 
 {code:java}
 println "Rendering ${results.size()} Accounts of ${results.totalCount}"
@@ -41,23 +41,23 @@ println "Rendering ${results.size()} Accounts of ${results.totalCount}"
 
 h2. Description
 
-Criteria queries are a type safe, advanced way to query that uses a Groovy builder to construct potentially complex queries. It is a much better alternative to using StringBuffer. Refer to the user guide section on [Criteria|guide:criteria] for usage instructions.
+Criteria queries are a type-safe, advanced way to query that uses a Groovy builder to construct potentially complex queries. It is a much better alternative to using a StringBuilder to dynamically construct an HQL query. Refer to the user guide section on [Criteria|guide:criteria] for usage instructions.
 
 Method reference:
 
 {table}
- Method | Description
- *list* | This is the default method. It returns all matching rows.
- *get* | Returns a unique result set, i.e. just one row. The criteria has to be formed that way, that it only queries one row. This method is not to be confused with a limit to just the first row.
- *scroll* | Returns a scrollable result set
- *listDistinct* | If subqueries or associations are used, one may end up with the same row multiple times in the result set. In Hibernate one would do a "CriteriaSpecification.DISTINCT_ROOT_ENTITY". In grails one can do it even simpler by just using this method.
+Method | Description
+*list* | The default method; returns all matching rows.
+*get* | Returns a unique result, i.e. just one row. The criteria has to be formed that way, that it only queries one row. This method is not to be confused with a limit to just the first row.
+*scroll* | Returns a scrollable result set
+*listDistinct* | If subqueries or associations are used, one may end up with the same row multiple times in the result set. In Hibernate one would do a "CriteriaSpecification.DISTINCT_ROOT_ENTITY". In Grails one can do it by just using this method.
 {table}
 
 {warning}
 The @listDistinct()@ method does not work well with the pagination options @maxResult@ and @firstResult@. If you need distinct results with pagination, we currently recommend that you use HQL. You can find out more information from [this blog post|http://floledermann.blogspot.com/2007/10/solving-hibernate-criterias-distinct.html].
 {warning}
 
-If you invoke the builder with no method name like so
+If you invoke the builder with no method name
 
 {code:java}
 c { … }
@@ -72,8 +72,8 @@ c.list { … }
 Below is a node reference for each criterion method:
 
 {table}
- Node | Description | Example
- *between* | Where the property value is between to distinct values | {code}
+Node | Description | Example
+*between* | Where the property value is between two distinct values | {code}
 between("balance", 500, 1000)
 {code}
  *eq* | Where a property equals a particular value.| {code}
@@ -83,28 +83,28 @@ eq("branch", "London")
 eq("branch", "london", [ignoreCase: true])
 {code}
  *eqProperty* | Where one property must equal another | {code}
-eqProperty("lastTransaction","firstTransaction")
+eqProperty("lastTx", "firstTx")
 {code}
  *gt* | Where a property is greater than a particular value | {code}
 gt("balance",1000)
 {code}
  *gtProperty* | Where a one property must be greater than another | {code}
-gtProperty("balance","overdraft")
+gtProperty("balance", "overdraft")
 {code}
  *ge* | Where a property is greater than or equal to a particular value | {code}
-ge("balance",1000)
+ge("balance", 1000)
 {code}
  *geProperty* | Where a one property must be greater than or equal to another | {code}
-geProperty("balance","overdraft")
+geProperty("balance", "overdraft")
 {code}
  *idEq* | Where an objects id equals the specified value | {code}
 idEq(1)
 {code}
  *ilike* | A case-insensitive 'like' expression | {code}
-ilike("holderFirstName","Steph%")
+ilike("holderFirstName", "Steph%")
 {code}
- *in* | Where a one property is contained within the specified list of values note: 'in' is a groovy reserve word, we must escape it by quotes. | {code}
-'in'("holderAge",[18..65])
+ *in* | Where a property is contained within the specified list of values. Can also be chained with the @not@ method where a property is not contained within the specified list of values. Note: 'in' is a Groovy reserve word, so it must be escaped by quotes. | {code}
+'in'("age",[18..65]) or not {'in'("age",[18..65])}
 {code}
  *isEmpty* | Where a collection property is empty | {code}
 isEmpty("transactions")
@@ -112,40 +112,39 @@ isEmpty("transactions")
  *isNotEmpty* | Where a collection property is not empty | {code}
 isNotEmpty("transactions")
 {code}
- *isNull* | Where a property is null | {code}
+ *isNull* | Where a property is @null@ | {code}
 isNull("holderGender")
 {code}
- *isNotNull* | Where a property is not null | {code}
+ *isNotNull* | Where a property is not @null@ | {code}
 isNotNull("holderGender")
 {code}
  *lt* | Where a property is less than a particular value | {code}
-lt("balance",1000)
+lt("balance", 1000)
 {code}
  *ltProperty* | Where a one property must be less than another | {code}
-ltProperty("balance","overdraft")
+ltProperty("balance", "overdraft")
 {code}
  *le* | Where a property is less than or equal to a particular value | {code}
-le("balance",1000)
+le("balance", 1000)
 {code}
  *leProperty* | Where a one property must be less than or equal to another | {code}
-leProperty("balance","overdraft")
+leProperty("balance", "overdraft")
 {code}
  *like* | Equivalent to SQL like expression | {code}
-like("holderFirstName","Steph%")
+like("holderFirstName", "Steph%")
 {code}
- *ne* | Where a property does not equals a particular value | {code}
+ *ne* | Where a property does not equal a particular value | {code}
 ne("branch", "London")
 {code}
  *neProperty* | Where one property does not equal another | {code}
-neProperty("lastTransaction","firstTransaction")
+neProperty("lastTx", "firstTx")
 {code}
  *order* | Order the results by a particular property | {code}
 order("holderLastName", "desc")
 {code}
  *rlike* | Similar to like, but uses a regex. Only supported on Oracle and MySQL. | {code}
-rlike("holderFirstName",/Steph.+/)
+rlike("holderFirstName", /Steph.+/)
 {code}
-
  *sizeEq* | Where a collection property's size equals a particular value | {code}
 sizeEq("transactions", 10)
 {code}
@@ -169,11 +168,11 @@ sqlRestriction "char_length(first_name) = 4"
 {code}
 {table}
 
-With dynamic finders, you have access to options such as 'max', 'sort', etc. These are available to criteria queries as well, but they are named differently:
+With dynamic finders, you have access to options such as @max@, @sort@, etc. These are available to criteria queries as well, but they have different names:
 
 {table}
 Name | Description | Example
-*order*(string, string) | Specifies both the sort column (the first argument) and the sort order (either 'asc' or 'desc'). | {code}
+*order*(String, String) | Specifies both the sort column (the first argument) and the sort order (either 'asc' or 'desc'). | {code}
 order "age", "desc"
 {code}
 *firstResult*(int) | Specifies the offset for the results. A value of 0 will return all records up to the maximum specified. | {code}
@@ -182,12 +181,12 @@ firstResult 20
 *maxResults*(int) | Specifies the maximum number of records to return. | {code}
 maxResults 10
 {code}
-*cache*(boolean) | Tells Hibernate whether to cache the query or not (if the query cache is enabled). | {code}
-cache true
+*cache*(boolean) | Indicates if the query should be cached (if the query cache is enabled). | {code}
+cache @true@
 {code}
 {table}
 
-Criteria also support the notion of projections. A projection is used to change the nature of the results. For example the following query using a projection to count the number of distinct @branch@ names there are for each @Account@:
+Criteria also support the notion of projections. A projection is used to change the nature of the results. For example the following query uses a projection to count the number of distinct @branch@ names that exist for each @Account@:
 
 {code:java}
 def c = Account.createCriteria()
@@ -205,12 +204,12 @@ Name | Description | Example
 *property* | Returns the given property in the returned results | {code:java}
 property("firstName"){code}
 *distinct* | Returns results using a single or collection of distinct property names | {code:java}
-distinct("lastName") or distinct(['firstName', 'lastName']){code}
+distinct("fn") or distinct(['fn', 'ln']){code}
 *avg* | Returns the average value of the given property | {code:java}
 avg("age"){code}
 *count* | Returns the count of the given property name | {code:java}
 count("branch"){code}
-*countDistinct* | Returns the distinct count of the given property name | {code:java}
+*countDistinct* | Returns the count of the given property name for distinct rows | {code:java}
 countDistinct("branch"){code}
 *groupProperty* | Groups the results by the given property | {code:java}
 groupProperty("lastName"){code}

@@ -1,9 +1,9 @@
 h4. Validation Basics
 
-To validate a domain class you can call the [validate|domainClasses] method on any instance:
+Call the [validate|domainClasses] method to validate a domain class instance:
 
 {code:java}
-def user =  new User(params)
+def user = new User(params)
 
 if (user.validate()) {
     // do something with user
@@ -19,7 +19,7 @@ The @errors@ property on domain classes is an instance of the Spring [Errors|api
 
 h4. Validation Phases
 
-Within Grails there are essentially 2 phases of validation, the first phase is [data binding|guide:dataBinding] which occurs when you bind request parameters onto an instance such as:
+Within Grails there are two phases of validation, the first one being [data binding|guide:dataBinding] which occurs when you bind request parameters onto an instance such as:
 
 {code:java}
 def user = new User(params)
@@ -35,7 +35,7 @@ if (user.hasErrors()) {
 }
 {code}
 
-The second phase of validation happens when you call [validate|domainClasses] or [save|domainClasses]. This is when Grails will validate the bound values againts the [constraints|domainClasses] you defined. For example, by default the persistent [save|domainClasses] method calls @validate@ before executing hence allowing you to write code like:
+The second phase of validation happens when you call [validate|domainClasses] or [save|domainClasses]. This is when Grails will validate the bound values againts the [constraints|domainClasses] you defined. For example, by default the [save|domainClasses] method calls @validate@ before executing, allowing you to write code like:
 
 {code:java}
 if (user.save()) {

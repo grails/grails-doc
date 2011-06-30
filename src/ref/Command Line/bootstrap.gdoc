@@ -2,31 +2,31 @@ h1. bootstrap
 
 h2. Purpose
 
-The [bootstrap|commandLine] command is mainly intended to be used by other scripts and enables the ability to bootstrap a Grails application instance outside of the container for usage in tools that require a reference to Grails' ApplicationContext
+The [bootstrap|commandLine] command is mainly intended to be used by other scripts and enables the ability to bootstrap a Grails application instance outside of the container for usage in tools that require a reference to Grails' @ApplicationContext@.
 
 Examples of its usage include Grails' [shell|commandLine] and [console|commandLine]
 
 h2. Examples
 
-When used as an include you need to supply the following at the top of your Gant script:
+Add this to the top of your Gant script to use this as an include:
 
 {code:java}
 includeTargets << grailsScript("_GrailsBootstrap")
 {code}
 
-Once this is in place you can bootstrap Grails using two distinct methods:
+Once this is in place you can bootstrap Grails using either of these methods:
 
-* @loadApp@ - Loads and creates the GrailsApplication instance
-* @configureApp@ - Loads all the Grails plug-ins and creates the Spring ApplicationContext
+* @loadApp@ - Loads and creates the @GrailsApplication@ instance
+* @configureApp@ - Loads all plugins and creates the Spring @ApplicationContext@
 
-The @loadApp@ command will create a @grailsApp@ variable which you can the evaluate:
+After running @loadApp@ the @GrailsApplication@ instance will be available as the @grailsApp@ variable:
 
 {code:java}
 loadApp()
-grailsApp.allClasses.each { println it }
+for (grailsClass in grailsApp.allClasses) { println grailsClass }
 {code}
 
-The @configureApp@ command will create @pluginManager@ and @appCtx@ variables representing the [GrailsPluginManager|api:org.codehaus.groovy.grails.plugins.GrailsPluginManager] instance and the Spring @ApplicationContext@
+After running @configureApp@ the [GrailsPluginManager|api:org.codehaus.groovy.grails.plugins.GrailsPluginManager] instance will be available as the @pluginManager@ variable and the Spring @ApplicationContext@ instance will be available as the @appCtx@ variable:
 
 {code:java}
 configureApp()
@@ -40,4 +40,3 @@ Usage:
 {code:java}
 grails bootstrap
 {code}
-

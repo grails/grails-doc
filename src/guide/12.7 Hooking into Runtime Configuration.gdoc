@@ -11,7 +11,7 @@ import org.springframework.context.support.ReloadableResourceBundleMessageSource
 
 class I18nGrailsPlugin {
 
-    def version = 0.1
+    def version = "0.1"
 
     def doWithSpring = {
         messageSource(ReloadableResourceBundleMessageSource) {
@@ -25,20 +25,22 @@ class I18nGrailsPlugin {
 }
 {code}
 
-This plugin sets up the Grails @messageSource@ bean and a couple of other beans to manage Locale resolution and switching. It using the [Spring Bean Builder|guide:spring] syntax to do so.
+This plugin configures the Grails @messageSource@ bean and a couple of other beans to manage Locale resolution and switching. It using the [Spring Bean Builder|guide:spring] syntax to do so.
 
 h4. Participating in web.xml Generation
 
-Grails generates the @WEB-INF/web.xml@ file at load time, and although plugins cannot change this file directly, they can participate in the generation of the file. Essentially a plugin can provide a @doWithWebDescriptor@ property that is assigned a block of code that gets passed the @web.xml@ as a @XmlSlurper@ @GPathResult@.
+Grails generates the @WEB-INF/web.xml@ file at load time, and although plugins cannot change this file directly, they can participate in the generation of the file. A plugin can provide a @doWithWebDescriptor@ property that is assigned a block of code that gets passed the @web.xml@ as an @XmlSlurper@ @GPathResult@.
 
 h5. Add @servlet@ and @servlet-mapping@
 
-Consider the below example from the @ControllersPlugin@:
+Consider this example from the @ControllersPlugin@:
 
 {code:java}
 def doWithWebDescriptor = { webXml ->
+
     def mappingElement = webXml.'servlet-mapping'
-    def lastMapping = mappingElement[mappingElement.size()-1]
+
+    def lastMapping = mappingElement[mappingElement.size() - 1]
     lastMapping + {
         'servlet-mapping' {
             'servlet-name'("grails")
@@ -48,7 +50,7 @@ def doWithWebDescriptor = { webXml ->
 }
 {code}
 
-Here the plugin goes through gets a reference to the last @<servlet-mapping>@ element and appends Grails' servlet to the end of it using XmlSlurper's ability to programmatically modify XML using closures and blocks.
+Here the plugin gets a reference to the last @<servlet-mapping>@ element and appends Grails' servlet after it using XmlSlurper's ability to programmatically modify XML using closures and blocks.
 
 h5. Add @filter@ and @filter-mapping@
 
@@ -56,7 +58,9 @@ Adding a filter with its mapping works a little differently. The location of the
 
 {code:java}
 def doWithWebDescriptor = { webXml ->
+
     def contextParam = webXml.'context-param'
+
     contextParam[contextParam.size() - 1] + {
         'filter' {
             'filter-name'('springSecurityFilterChain')
@@ -74,7 +78,7 @@ def doWithWebDescriptor = { webXml ->
 }
 {code}
 
-In some cases you will need to ensure that your filter comes after one of the standard Grails ones, such as the Spring character encoding filter or the SiteMesh filter. Fortunately, you can insert filter mappings immediately after the standard ones (more accurately, any that are in the template web.xml file) like so:
+In some cases you need to ensure that your filter comes after one of the standard Grails filters, such as the Spring character encoding filter or the SiteMesh filter. Fortunately you can insert filter mappings immediately after the standard ones (more accurately, any that are in the template web.xml file) like so:
 
 {code:java}
 def doWithWebDescriptor = { webXml ->
@@ -101,11 +105,12 @@ Sometimes it is useful to be able do some runtime configuration after the Spring
 
 {code:java}
 class SimplePlugin {
+
     def name = "simple"
     def version = "1.1"
 
     def doWithApplicationContext = { appCtx ->
-        SessionFactory sf = appCtx.getBean("sessionFactory")
+        def sessionFactory = appCtx.sessionFactory
         // do something here with session factory
     }
 }
