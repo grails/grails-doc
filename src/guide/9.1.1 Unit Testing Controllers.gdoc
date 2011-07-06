@@ -165,6 +165,90 @@ void testRenderJson() {
 
 The @json@ property is an instance of @org.codehaus.groovy.grails.web.json.JSONElement@ which is a map-like structure that is useful for parsing JSON responses.
 
+h4. Testing XML and JSON Requests
+
+Grails provides various convenient ways to automatically parse incoming XML and JSON packets. For example you can bind incoming JSON or XML requests using Grails' data binding:
+
+{code}
+def consumeBook() {
+      def b = new Book(params['book'])
+      
+      render b.title
+}
+{code}
+
+To test this Grails provides an easy way to specify an XML or JSON packet via the @xml@ or @json@ properties. For example the above action can be tested by specifying a String containing the XML:
+
+{code}
+void testConsumeBookXml() {
+    request.xml = '<book><title>The Shining</title></book>'
+    controller.consumeBook()
+    
+    assert response.text == 'The Shining'
+}
+{code}
+
+Or alternatively a domain instance can be specified and it will be auto-converted into the appropriate XML request:
+
+{code}
+void testConsumeBookXml() {
+    request.xml = new Book(title:"The Shining")
+    controller.consumeBook()
+    
+    assert response.text == 'The Shining'
+}
+{code}
+
+The same can be done for JSON requests:
+
+{code}
+void testConsumeBookJson() {
+    request.json = new Book(title:"The Shining")
+    controller.consumeBook()
+    
+    assert response.text == 'The Shining'
+}
+{code}
+
+If you prefer not to use Grails' data binding but instead manually parse the incoming XML or JSON that can be tested too. For example consider the controller action below:
+
+{code}
+def consume() {
+    request.withFormat {
+        xml {
+            render request.XML.@title
+        }
+        json {
+            render request.JSON.title
+        }
+    }
+}
+{code}
+
+To test the XML request you can specify the XML as a string:
+
+{code}
+void testConsumeXml() {
+    request.xml = '<book title="The Stand" />'
+    
+    controller.consume()
+    
+    assert response.text == 'The Stand'
+}
+{code}
+
+And, of course, the same can be done for JSON:
+
+{code}
+void testConsumeJson() {
+    request.json = '{title:"The Stand"}'
+    controller.consume()
+    
+    assert response.text == 'The Stand'        
+    
+}
+{code}
+
 h4. Testing Spring Beans
 
 When using @TestFor@ only a subset of the Spring beans available to a running Grails application are available. If you wish to make additional beans available you can do so with the @defineBeans@ method of @GrailsUnitTestMixin@:
