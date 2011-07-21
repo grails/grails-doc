@@ -154,6 +154,45 @@ Notice how we use the prefix before the first dot of the @book.title@ parameter 
 def a = new Author(params.author)
 {code}
 
+h4. Data Binding and Action Arguments
+
+Controller action arguments are subject to request parameter data binding.  There are 2 categories of controller action arguments.  The first category is command objects.  Complex types are treated as command objects.  See the [Command Objects|guide:commandObjects] section of the user guide for details.  The other category is basic object types.  Supported types are the 8 primitives, their corresponding type wrappers and [java.lang.String|api:java.lang.String].  The default behavior is to map request parameters to action arguments by name:
+
+{code:java}
+class AccountingController {
+
+   // accountNumber will be initialized with the value of params.accountNumber
+   // accountType will be initialized with params.accountType
+   def displayInvoice(String accountNumber, int accountType) {
+       // ...
+   }
+}
+{code}
+
+For primitive arguments and arguments which are instances of any of the primitive type wrapper classes a type conversion has to be carried out before the request parameter value can be bound to the action argument.  The type conversion happens automatically.  In a case like the example shown above, the @params.accountType@ request parameter has to be converted to an @int@.  If type conversion fails for any reason, the argument will have its default value per normal Java behavior (null for type wrapper references, false for booleans and zero for numbers) and a corresponding error will be added to the @errors@ property of the defining controller.
+
+{code:java}
+/accounting/displayInvoice?accountNumber=B59786&accountType=bogusValue
+{code}
+
+Since "bogusValue" cannot be converted to type int, the value of accountType will be zero, @controller.errors.hasErrors()@ will be true, @controller.errors.errorCount@ will be equal to 1 and @controller.errors.getFieldError('accountType')@ will contain the corresponding error.
+
+If the argument name does not match the name of the request parameter then the @\@grails.web.RequestParameter@ annotation may be applied to an argument to express the name of the request parameter which should be bound to that argument:
+
+{code:java}
+import grails.web.RequestParameter
+
+class AccountingController {
+
+   // mainAccountNumber will be initialized with the value of params.accountNumber
+   // accountType will be initialized with params.accountType
+   def displayInvoice(@RequestParameter('accountNumber') String mainAccountNumber, int accountType) {
+       // ...
+   }
+}
+{code}
+
+
 h4. Data binding and type conversion errors
 
 Sometimes when performing data binding it is not possible to convert a particular String into a particular target type. This results in a type conversion error. Grails will retain type conversion errors inside the [errors|domainClasses] property of a Grails domain class. For example:
