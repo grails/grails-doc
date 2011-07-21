@@ -1,17 +1,39 @@
-Since Grails 1.2, the documentation engine that powers the creation of this documentation is available to your Grails projects.
+Since Grails 1.2, the documentation engine that powers the creation of this documentation has been available for your own Grails projects.
 
-The documentation engine uses a variation on the Textile syntax to automatically create project documentation with smart linking, formatting etc.
+The documentation engine uses a variation on the [Textile|http://textile.sitemonks.com/] syntax to automatically create project documentation with smart linking, formatting etc.
 
 h4. Creating project documentation
 
-To use the engine you need to follow a few conventions. Firstly you need to create a @src/docs/guide@ directory and then have numbered text files using the @gdoc@ format. For example:
+To use the engine you need to follow a few conventions. First, you need to create a @src/docs/guide@ directory where your documentation source files will go. Then, you need to create the source docs themselves. Each chapter should have its own gdoc file as should all numbered sub-sections. You will end up with something like:
 
 {code}
-+ src/docs/guide/1. Introduction.gdoc
-+ src/docs/guide/2. Getting Started.gdoc
++ src/docs/guide/introduction.gdoc
++ src/docs/guide/introduction/changes.gdoc
++ src/docs/guide/gettingStarted.gdoc
++ src/docs/guide/configuration.gdoc
++ src/docs/guide/configuration/build.gdoc
++ src/docs/guide/configuration/build/controllers.gdoc
 {code}
 
-The title of each chapter is taken from the file name. The order is dictated by the numerical value at the beginning of the file name.
+Note that you can have all your gdoc files in the top-level directory if you want, but you can also put sub-sections in sub-directories named after the parent section - as the above example shows.
+
+Once you have your source files, you still need to tell the documentation engine what the structure of your user guide is going to be. To do that, you add a @src/docs/guide/toc.yml@ file that contains the structure and titles for each section. This file is in [YAML|http://www.yaml.org/] format and basically represents the structure of the user guide in tree form. For example, the above files could be represented as:
+
+{code:yaml}
+introduction:
+  title: Introduction
+  changes: Change Log
+gettingStarted: Getting Started
+configuration:
+  title: Configuration
+  build:
+    title: Build Config
+    controllers: Specifying Controllers
+{code}
+
+The format is pretty straightforward. Any section that has sub-sections is represented with the corresponding filename (minus the .gdoc extension) followed by a colon. The next line should contain @title:@ plus the title of the section as seen by the end user. Every sub-section then has its own line after the title. Leaf nodes, i.e. those without any sub-sections, declare their title on the same line as the section name but after the colon.
+
+That's it. You can easily add, remove, and move sections within the @toc.yml@ to restructure the generated user guide. You should also make sure that all section names, i.e. the gdoc filenames, should be unique since they are used for creating internal links and for the HTML filenames. Don't worry though, the documentation engine will warn you of duplicate section names.
 
 h4. Creating reference items
 
@@ -84,25 +106,13 @@ or
 "SpringSource":http://www.springsource.com/
 {code}
 
-For links to other sections inside the user guide you can use the @guide:@ prefix:
+For links to other sections inside the user guide you can use the @guide:@ prefix with the name of the section you want to link to:
 
 {code}
-[Intro|guide:1. Introduction]
+[Intro|guide:introduction]
 {code}
 
-The documentation engine will warn you if any links to sections in your guide break. Sometimes though it is preferable not to hard code the actual names of guide sections since you may move them around. To get around this you can create an alias inside @grails-app/conf/Config.groovy@:
-
-{code}
-grails.doc.alias.intro="1. Introduction"
-{code}
-
-And then the link becomes:
-
-{code}
-[Intro|guide:intro]
-{code}
-
-This is useful since if you linked the to "1. Introduction" chapter many times you would have to change all of those links.
+The section name comes from the corresponding gdoc filename. The documentation engine will warn you if any links to sections in your guide break. 
 
 To link to reference items you can use a special syntax:
 
