@@ -235,7 +235,8 @@ This will ensure that the 'org.codehaus.groovy.grails.commons' logger and its ch
 
 {code:java}
 error myAppender:      "grails.app.controller.BookController",
-      myFileAppender:  ["grails.app.controller.BookController", "grails.app.service.BookService"],
+      myFileAppender:  ["grails.app.controller.BookController",
+                        "grails.app.service.BookService"],
       rollingFile:     "grails.app.controller.BookController"
 {code}
 
@@ -277,7 +278,8 @@ You can specify custom patterns to an appender using the @layout@ setting:
 {code:java}
 log4j = {
     appenders {
-        console name: "customAppender", layout: pattern(conversionPattern: "%c{2} %m%n")
+        console name: "customAppender",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
     }
 }
 {code}
@@ -286,7 +288,8 @@ This also works for the built-in appender "stdout", which logs to the console:
 {code:java}
 log4j = {
     appenders {
-        console name: "stdout", layout: pattern(conversionPattern: "%c{2} %m%n")
+        console name: "stdout",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
     }
 }
 {code}
@@ -300,11 +303,13 @@ To get round this, the logging DSL provides its own environment blocks that you 
 {code:java}
 log4j = {
     appenders {
-        console name: "stdout", layout: pattern(conversionPattern: "%c{2} %m%n")
+        console name: "stdout",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
 
         environments {
             production {
-                rollingFile name: "myAppender", maxFileSize: 1024, file: "/tmp/logs/myApp.log"
+                rollingFile name: "myAppender", maxFileSize: 1024,
+                            file: "/tmp/logs/myApp.log"
             }
         }
     }
@@ -342,7 +347,8 @@ This won't stop Grails from attempting to create the stacktrace.log file - it ju
 {code:java}
 log4j = {
     appenders {
-        rollingFile name: "stacktrace", maxFileSize: 1024, file: "/var/tmp/logs/myApp-stacktrace.log"
+        rollingFile name: "stacktrace", maxFileSize: 1024,
+                    file: "/var/tmp/logs/myApp-stacktrace.log"
     }
 }
 {code}
@@ -408,12 +414,14 @@ log4j = {
     }
 
     info additivity: false
-         stdout: ["grails.app.controller.BookController", "grails.app.service.BookService"]
+         stdout: \["grails.app.controller.BookController",
+                  "grails.app.service.BookService"\]
 }
 {code}
 
 So when you specify a log level, add an 'additivity' named argument. Note that you when you specify the additivity, you must configure the loggers for a named appender. The following syntax will _not_ work:
 
 {code:java}
-info additivity: false, "grails.app.controller.BookController", "grails.app.service.BookService"
+info additivity: false, \["grails.app.controller.BookController",
+                         "grails.app.service.BookService"\]
 {code}

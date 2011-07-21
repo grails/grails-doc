@@ -16,6 +16,23 @@ def safe = {
 }
 {code}
 
+Do *not* do this. Use named or positional parameters instead to pass in parameters:
+
+{code:java}
+def safe() {
+    def books = Book.find("from Book as b where b.title = ?",
+                          [params.title])
+}
+{code}
+
+or
+
+{code:java}
+def safe() {
+    def books = Book.find("from Book as b where b.title = :title",
+                          [title: params.title])
+}
+{code}
 
 h4. Phishing
 

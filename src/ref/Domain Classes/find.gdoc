@@ -16,6 +16,9 @@ Book.find("from Book as b where b.author=:author",[author:'Dan Brown'])
 // use the query cache
 Book.find("from Book as b where b.author='Dan Brown'", [cache: true])
 Book.find("from Book as b where b.author=:author",[author:'Dan Brown'], [cache: true])
+Book.find("from Book as b where b.author=:author",
+          [author: 'Dan Brown'],
+          [cache: true])
 
 // query by example
 def b = new Book(author:"Dan Brown")
@@ -27,10 +30,12 @@ h2. Description
 The @find@ method allows querying with Hibernate's query language [HQL|guide:hql] and querying by example. The basic syntax is:
 
 {code:java}
-Book.find( String query )
-Book.find( String query, Collection positionalParams )
-Book.find( String query, Map namedParams )
-Book.find( Book example )
+Book.find(String query)
+Book.find(String query, Collection positionalParams)
+Book.find(String query, Collection positionalParams, Map queryParams)
+Book.find(String query, Map namedParams)
+Book.find(String query, Map namedParams, Map queryParams)
+Book.find(Book example)
 {code}
 
 Parameters:

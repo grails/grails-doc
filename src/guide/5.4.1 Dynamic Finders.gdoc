@@ -75,15 +75,15 @@ h4. Boolean logic (AND/OR)
 Method expressions can also use a boolean operator to combine two criteria:
 
 {code}
-def books = 
-    Book.findAllByTitleLikeAndReleaseDateGreaterThan("%Java%", new Date()-30)
-{code}     
+def books = Book.findAllByTitleLikeAndReleaseDateGreaterThan(
+                      "%Java%", new Date() - 30)
+{code}
 
 In this case we're using @And@ in the middle of the query to make sure both conditions are satisfied, but you could equally use @Or@:
  
 {code}
-def books = 
-    Book.findAllByTitleLikeOrReleaseDateGreaterThan("%Java%", new Date()-30)
+def books = Book.findAllByTitleLikeOrReleaseDateGreaterThan(
+                      "%Java%", new Date() - 30)
 {code}
 
 At the moment, you can only use dynamic finders with a maximum of two criteria, i.e. the method name can only have one boolean operator. If you need to use more, you should consider using either [Criteria|guide:5.4.2 Criteria] or the [HQL|guide:5.4.3 Hibernate Query Language (HQL)].
