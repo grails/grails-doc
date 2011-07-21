@@ -1,0 +1,49 @@
+h1. form:field
+
+h2. Purpose
+
+Renders an input for a specific property with surrounding labels, error messages and structural markup. The tag will attempt to find a template for rendering the field in the following places:
+
+# A template called @grails-app/views/<controller>/<property name>/_field.gsp@ where _controller_ is the current controller and _property name_ is the final part of the property path. e.g. if the controller is _BookController_ and the property path _author.name_ then the tag will look for a template called @grails-app/views/book/name/_field.gsp@.
+# A template called @grails-app/views/forms/<class>.<property>/_field.gsp@. e.g. for a bean of type _bookstore.Book_ with an _author_ property of type _bookstore.Author_ and a property path of _author.name_ the taglib will look for a template called @grails-app/views/forms/bookstore.Author.name/_field.gsp@.
+# A template called @grails-app/views/forms/<type>/_field.gsp@ where _type_ is the property type. e.g. for a property path of _employee.dateOfBirth_ where _dateOfBirth_ is a _java.util.Date_ the taglib will look for a template called @grails-app/views/forms/java.util.Date/_field.gsp@.
+# A template called @grails-app/views/forms/default/_field.gsp@.
+
+The following attributes are passed to the field template:
+
+* @bean@ (@Object@): The object resolved from the _bean_ attribute the tag was called with.
+* @property@ (@String@): As passed to the tag.
+* @input@ (@String@): The rendered input for the property.
+* @type@ (@Class@): The type of the property. For nested paths this is the property at the end of the path.
+* @label@ (@String@): The label for the field as resolved from the i18n bundle (or overridden by the _label_ or _labelKey_ attributes). The default key used to resolve the label is @<type>.<property name>.label@.
+* @value@ (@Object@): The value of the property which may have been overridden by the _value_ or _default_ attributes.
+* @constraints@ (@ConstrainedProperty@): The constraints of the property at the end of the path.
+* @persistentProperty@ (@GrailsDomainClassProperty@): The GORM property descriptor for the property at the end of the path.
+* @errors@ (@List<String>@): Resolved messages for any errors associated with the property.
+* @required@ (@boolean@): @true@ if the property is non-nullable (and non-blankable for a String property). Always @false@ for _boolean_ properties. This can be overridden (to either @true@ or @false@) by the _required_ attribute passed to the tag.
+* @invalid@ (@boolean@): @true@ if the property has any errors. This can be overridden (to either @true@ or @false@) by the _required_ attribute passed to the tag.
+
+h2. Examples
+
+{code:xml}
+<form:field bean="${book}" property="title" />
+<form:field bean="${book}" property="authors[0].name" />
+{code}
+
+h2. Description
+
+Attributes
+
+* @bean@ (required) - Can be either an object or the name of a bean in page scope.
+* @property@ (required) - The path to the property. This can be arbitrarily deep and use both _List_ and _Map_ indexing.
+* @value@ (optional) - Overrides the value of the property with a specified one.
+* @default@ (optional) - Provides a value to use if the actual value of the property is @null@.
+* @label@ (optional) - Overrides the default label for the field.
+* @labelKey@ (optional) - Overrides the default label for the field with a message from the i18n bundle.
+* @required@ (optional) - Overrides the default required status for the field as determined by its constraints.
+* @invalid@ (optional) - Overrides the default invalid status for the field as determined by the presence or absence of validation errors.
+
+h2. Source
+
+{source:tag=FormFieldsTagLib.field}
+{source}
