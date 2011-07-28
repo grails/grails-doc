@@ -1,0 +1,70 @@
+h4. The GORM API
+
+The GORM API has been formalized into a set of classes (@GormStaticApi@, @GormInstanceApi@ and @GormValidationApi@) that get statically wired into every domain class at the byte code level. The result is better code completion for IDEs, better integration with Java and the potential for more GORM implementations for other types of data stores.
+
+h4. New findByOrCreate Methods
+
+Domain classes have support for the findOrCreateWhere, findOrSaveWhere, findOrCreateBy and findOrSaveBy query methods which behave just like findWhere and findBy methods except that they should never return null. If a matching instance cannot be found in the database then a new instance is created, populated with values represented in the query parameters and returned. In the case of findOrSaveWhere and findOrSaveBy, the instance is saved before being returned.
+
+{code}
+def book = Book.findOrCreateWhere(author: 'Douglas Adams', title: "The Hitchiker's Guide To The Galaxy")
+def book = Book.findOrSaveWhere(author: 'Daniel Suarez', title: 'Daemon')
+def book = Book.findOrCreateByAuthorAndTitle('Daniel Suarez', 'Daemon')
+def book = Book.findOrSaveByAuthorAndTitle('Daniel Suarez', 'Daemon')
+{code}
+
+h4. Abstract Inheritance
+
+GORM now supports abstract inheritance trees which means you can define queries and associations linking to abstract classes:
+
+{code}
+abstract Media {
+     String title
+     …
+}
+class Book extends Media {
+}
+class Album extends Media {
+
+}
+class Account {
+    static hasMany = [purchasedMedia:Media]
+}
+
+..
+
+def allMedia = Media.list()
+{code}
+
+h4. Multiple Data Sources Support
+
+It is now possible to define multiple datasources in @DataSource.groovy@ and declare one or many datasources a particular domain uses by default:
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasource 'ALL'
+   }
+}
+{code}
+
+If multiple datasources are specified for a domain then you can use the name of a particular datasource as a namespace in front of any regular GORM method:
+
+{code}
+def zipCode = ZipCode.auditing.get(42)
+{code} 
+
+h4. Database Migrations
+
+A new [database migration plugin|http://grails.org/plugin/database-migration] has been designed and built for Grails 2.0 allowing you to apply migrations to your database, rollback changes and diff your domain model with the current state of the database.
+
+h4. Database Reverse Engineering
+
+A new [database reverse engineering|http://www.grails.org/plugin/db-reverse-engineer] plugin has been designed and built for Grails 2.0 that allows you to generate a domain model from an existing database schema.
+
+h4. Hibernate 3.6
+
+Grails 2.0 is now built on Hibernate 3.6
