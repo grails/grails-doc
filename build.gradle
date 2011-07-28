@@ -25,7 +25,8 @@ dependencies {
     publish "org.grails:grails-gdoc-engine:1.0.1", "org.codehaus.groovy:groovy:1.8.0"
 
     publish "org.slf4j:slf4j-log4j12:1.5.8",
-            "org.xhtmlrenderer:core-renderer:R8"
+            "org.xhtmlrenderer:core-renderer:R8",
+            "org.yaml:snakeyaml:1.8"
 }
 
 task fetchGrailsSource << {
@@ -60,6 +61,28 @@ task apiDocs(type: GradleBuild, dependsOn: 'fetchGrailsSource') {
 task copyApiDocs(type: Copy) {
     from "${project.grailsHome}/doc/api"
     into "${outputDir}/api"
+}
+
+task migrate << {
+    // Create a class loader for the publication stuff.
+    def classpath = project.configurations.publish
+    classpath = classpath.files.collect { it.toURI().toURL() }
+
+    // Add the grails-docs JAR.
+    def distDir = file("${project.grailsHome}/dist")
+    classpath << distDir.listFiles({ dir, name -> name ==~ /grails-docs-.*\.jar/ } as FilenameFilter)[0].toURI().toURL()
+    project.publishClassLoader = new URLClassLoader(classpath as URL[], Thread.currentThread().contextClassLoader)
+
+    def props = new Properties()
+    new File("${projectDir}/resources/doc.properties").withInputStream {input ->
+        props.load(input)
+    }
+    props = props.findAll { key, value -> key.startsWith("alias.") }.collectEntries { key, value -> [key[6..-1], value] }
+
+    def migrator = publishClassLoader.loadClass("grails.doc.LegacyDocMigrator").newInstance(
+            file(projectDir.path + "/src/guide"),
+            props)
+    migrator.migrate()
 }
 
 task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
