@@ -16,17 +16,16 @@ You can render content (templates, binary data etc.) in an asynchronous manner b
 
 {code}
 def index() {
-        def ctx = startAsync()
-        ctx.start {
-            new Book(title:"The Stand").save()
-            render template:"books", model:[books:Book.list()] 
-            ctx.complete()
-        }
+    def ctx = startAsync()
+    ctx.start {
+        new Book(title:"The Stand").save()
+        render template:"books", model:[books:Book.list()]
+        ctx.complete()
+    }
 }
 {code}
 
 Note that you must call the @complete()@ method to terminate the connection. 
-
 
 h4. Resuming an Async Request
 
@@ -34,13 +33,12 @@ You resume processing of an async request (for example to delegate to view rende
 
 {code}
 def index() {
-      def ctx = startAsync()
-      ctx.start {
-		  // do working
-		  ...
-		  // render view
-          ctx.dispatch()
-      }
+    def ctx = startAsync()
+    ctx.start {
+        // do working
+        ...
+        // render view
+        ctx.dispatch()
+    }
 }
 {code}
-

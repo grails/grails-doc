@@ -5,11 +5,11 @@ It is now possible to define controller actions as methods instead of using clos
 {code}
 // action as a method
 def index() {
-	
+
 }
 // action as a closure
 def index = {
-	
+
 }
 {code}
 
@@ -20,7 +20,7 @@ It is now possible to bind form parameters to action arguments where the name of
 {code:xml}
 <g:form name="myForm" action="save">
     <input name="name" />
-    <input name="age" />	
+    <input name="age" />
 </g:form>
 {code}
 
@@ -34,7 +34,7 @@ def save(String name, int age) {
 
 h4. Static Resource Abstraction
 
-A new [static resource abstraction|guide:resources] is included that allows declarative handling of JavaScript, CSS and image resources including automatic ordering, compression, caching and gzip handling.  
+A new [static resource abstraction|guide:resources] is included that allows declarative handling of JavaScript, CSS and image resources including automatic ordering, compression, caching and gzip handling.
 
 h4. Servlet 3.0 Async Features
 
@@ -45,7 +45,7 @@ def index() {
     def ctx = startAsync()
     ctx.start {
         new Book(title:"The Stand").save()
-        render template:"books", model:[books:Book.list()] 
+        render template:"books", model:[books:Book.list()]
         ctx.complete()
     }
 }
@@ -59,7 +59,7 @@ A general purpose @LinkGenerator@ class is now available that is usable anywhere
 LinkGenerator grailsLinkGenerator
 
 def generateLink() {
-	grailsLinkGenerator.link(controller:"book", action:"list")
+    grailsLinkGenerator.link(controller:"book", action:"list")
 }
 {code}
 
@@ -71,11 +71,11 @@ Like the @LinkGenerator@ the new @PageRenderer@ can be used to render GSP pages 
 grails.gsp.PageRenderer groovyPageRenderer
 
 void welcomeUser(User user) {
-	def contents = groovyPageRenderer.render(view:"/emails/welcomeLetter", model:[user: user])
-	sendEmail {
-		to user.email
-		body contents
-	}
+    def contents = groovyPageRenderer.render(view:"/emails/welcomeLetter", model:[user: user])
+    sendEmail {
+        to user.email
+        body contents
+    }
 }
 {code}
 
@@ -83,7 +83,7 @@ The @PageRenderer@ service also allows you to pre-process GSPs into HTML templat
 
 {code}
 new File("/path/to/welcome.html").withWriter { w ->
-	groovyPageRenderer.renderTo(view:"/page/content", w)
+    groovyPageRenderer.renderTo(view:"/page/content", w)
 }
 {code}
 
@@ -113,7 +113,7 @@ filter3(uriExclude: '/secure*') {
 
 h4. Performance Improvements
 
-Performance of GSP page rendering has once again been improved by optimizing the GSP compiler to inline method calls where possible. 
+Performance of GSP page rendering has once again been improved by optimizing the GSP compiler to inline method calls where possible.
 
 h4. HTML5 Scaffolding
 
