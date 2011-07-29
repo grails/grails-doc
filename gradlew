@@ -2,7 +2,7 @@
 
 ##############################################################################
 ##                                                                          ##
-##  Gradle wrapper script for UN*X                                         ##
+##  Gradle wrapper script for UN*X                                          ##
 ##                                                                          ##
 ##############################################################################
 
@@ -143,7 +143,7 @@ if $cygwin ; then
             eval `echo args$i`="\"$arg\""
         fi
         i=$((i+1))
-    done 
+    done
     case $i in
         (0) set -- ;;
         (1) set -- "$args0" ;;

@@ -5,11 +5,11 @@ It is now possible to define controller actions as methods instead of using clos
 {code}
 // action as a method
 def index() {
-	
+
 }
 // action as a closure
 def index = {
-	
+
 }
 {code}
 
@@ -19,8 +19,8 @@ It is now possible to bind form parameters to action arguments where the name of
 
 {code:xml}
 <g:form name="myForm" action="save">
-	<input name="name" />
-	<input name="age" />	
+    <input name="name" />
+    <input name="age" />
 </g:form>
 {code}
 
@@ -28,38 +28,38 @@ You can define an action that declares arguments for each input and automaticall
 
 {code}
 def save(String name, int age) {
-	// remaining
+    // remaining
 }
 {code}
 
 h4. Static Resource Abstraction
 
-A new [static resource abstraction|guide:resources] is included that allows declarative handling of JavaScript, CSS and images resources including automatic ordering, compression, caching and gzip handling.  
+A new [static resource abstraction|guide:resources] is included that allows declarative handling of JavaScript, CSS and image resources including automatic ordering, compression, caching and gzip handling.
 
 h4. Servlet 3.0 Async Features
 
-Grails now supports Servlet 3.0 including the Asynchronous programming model included within the specification:
+Grails now supports Servlet 3.0 including the Asynchronous programming model defined by the specification:
 
 {code}
 def index() {
-        def ctx = startAsync()
-        ctx.start {
-            new Book(title:"The Stand").save()
-            render template:"books", model:[books:Book.list()] 
-            ctx.complete()
-        }
+    def ctx = startAsync()
+    ctx.start {
+        new Book(title:"The Stand").save()
+        render template:"books", model:[books:Book.list()]
+        ctx.complete()
+    }
 }
 {code}
 
 h4. Link Generation API
 
-A general purpose @LinkGenerator@ class is now available that is usable anywhere within a Grails application and not just within the context of a controller. For example if you need to generate links in a service, background job of asynchronous task outside the scope of a request:
+A general purpose @LinkGenerator@ class is now available that is usable anywhere within a Grails application and not just within the context of a controller. For example if you need to generate links in a service or an asynchronous background job outside the scope of a request:
 
 {code}
 LinkGenerator grailsLinkGenerator
 
 def generateLink() {
-	grailsLinkGenerator.link(controller:"book", action:"list")
+    grailsLinkGenerator.link(controller:"book", action:"list")
 }
 {code}
 
@@ -68,14 +68,14 @@ h4. Page Rendering API
 Like the @LinkGenerator@ the new @PageRenderer@ can be used to render GSP pages outside the scope of a web request, such as in a scheduled job or web service. The @PageRenderer@ class features a very similar API to the @render@ method found within controllers:
 
 {code}
-PageRenderer groovyPageRenderer
+grails.gsp.PageRenderer groovyPageRenderer
 
 void welcomeUser(User user) {
-	def contents = groovyPageRenderer.render(view:"/emails/welcomeLetter", model:[user: user])
-	sendEmail {
-		to user.email
-		body contents
-	}
+    def contents = groovyPageRenderer.render(view:"/emails/welcomeLetter", model:[user: user])
+    sendEmail {
+        to user.email
+        body contents
+    }
 }
 {code}
 
@@ -83,7 +83,7 @@ The @PageRenderer@ service also allows you to pre-process GSPs into HTML templat
 
 {code}
 new File("/path/to/welcome.html").withWriter { w ->
-	groovyPageRenderer.renderTo(view:"/page/content", w)
+    groovyPageRenderer.renderTo(view:"/page/content", w)
 }
 {code}
 
@@ -113,7 +113,7 @@ filter3(uriExclude: '/secure*') {
 
 h4. Performance Improvements
 
-Performance of GSP page rendering has once again been improved by optimizing the GSP compiler to inline method calls where possible. 
+Performance of GSP page rendering has once again been improved by optimizing the GSP compiler to inline method calls where possible.
 
 h4. HTML5 Scaffolding
 

@@ -6,7 +6,7 @@ You use the @grails.test.mixin.TestFor@ annotation to unit test controllers. Usi
 import grails.test.mixin.TestFor
 
 @TestFor(SimpleController)
-class SimpleControllerTests  {
+class SimpleControllerTests {
     void testSomething() {
 
     }
@@ -171,9 +171,9 @@ Grails provides various convenient ways to automatically parse incoming XML and 
 
 {code}
 def consumeBook() {
-      def b = new Book(params['book'])
-      
-      render b.title
+    def b = new Book(params['book'])
+
+    render b.title
 }
 {code}
 
@@ -183,7 +183,7 @@ To test this Grails provides an easy way to specify an XML or JSON packet via th
 void testConsumeBookXml() {
     request.xml = '<book><title>The Shining</title></book>'
     controller.consumeBook()
-    
+
     assert response.text == 'The Shining'
 }
 {code}
@@ -194,7 +194,7 @@ Or alternatively a domain instance can be specified and it will be auto-converte
 void testConsumeBookXml() {
     request.xml = new Book(title:"The Shining")
     controller.consumeBook()
-    
+
     assert response.text == 'The Shining'
 }
 {code}
@@ -205,7 +205,7 @@ The same can be done for JSON requests:
 void testConsumeBookJson() {
     request.json = new Book(title:"The Shining")
     controller.consumeBook()
-    
+
     assert response.text == 'The Shining'
 }
 {code}
@@ -230,9 +230,9 @@ To test the XML request you can specify the XML as a string:
 {code}
 void testConsumeXml() {
     request.xml = '<book title="The Stand" />'
-    
+
     controller.consume()
-    
+
     assert response.text == 'The Stand'
 }
 {code}
@@ -243,9 +243,8 @@ And, of course, the same can be done for JSON:
 void testConsumeJson() {
     request.json = '{title:"The Stand"}'
     controller.consume()
-    
-    assert response.text == 'The Stand'        
-    
+
+    assert response.text == 'The Stand'
 }
 {code}
 

@@ -19,8 +19,8 @@ GORM now supports abstract inheritance trees which means you can define queries 
 
 {code}
 abstract Media {
-     String title
-     …
+    String title
+    …
 }
 class Book extends Media {
 }
@@ -38,7 +38,7 @@ def allMedia = Media.list()
 
 h4. Multiple Data Sources Support
 
-It is now possible to define multiple datasources in @DataSource.groovy@ and declare one or many datasources a particular domain uses by default:
+It is now possible to define multiple datasources in @DataSource.groovy@ and declare one or more datasources a particular domain uses by default:
 
 {code}
 class ZipCode {
@@ -46,7 +46,7 @@ class ZipCode {
    String code
 
    static mapping = {
-      datasource 'ALL'
+      datasource 'ZIP_CODES'
    }
 }
 {code}
@@ -55,7 +55,9 @@ If multiple datasources are specified for a domain then you can use the name of 
 
 {code}
 def zipCode = ZipCode.auditing.get(42)
-{code} 
+{code}
+
+For more information see the section on [Multiple Data Sources|guide:multipleDatasources] in the user guide.
 
 h4. Database Migrations
 
@@ -68,3 +70,10 @@ A new [database reverse engineering|http://www.grails.org/plugin/db-reverse-engi
 h4. Hibernate 3.6
 
 Grails 2.0 is now built on Hibernate 3.6
+
+h4. Bag Collections
+
+You can now use Hibernate [Bag|http://docs.jboss.org/hibernate/stable/core/reference/en-US/html/collections.html]s for mapped collections to avoid the memory and performance issues of loading large collections to enforce @Set@ uniqueness or @List@ order.
+
+For more information see the section on [Sets, Lists and Maps|guide:sets,ListsAndMaps] in the user guide.
+
