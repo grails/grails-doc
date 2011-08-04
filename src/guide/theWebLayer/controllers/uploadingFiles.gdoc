@@ -37,6 +37,11 @@ File uploads can also be performed using data binding. Consider this @Image@ dom
 {code:java}
 class Image {
     byte[] myFile
+
+    static constraints = {
+        // Limit upload file size to 2MB
+        myFile maxSize: 1024 * 1024 * 2
+    }
 }
 {code}
 
@@ -45,6 +50,8 @@ If you create an image using the @params@ object in the constructor as in the ex
 {code:java}
 def img = new Image(params)
 {code}
+
+It's important that you set the [size|constraints] or [maxSize|constraints] constraints, otherwise your database may be created with a small column size that can't handle reasonably sized files. For example, both H2 and MySQL default to a blob size of 255 bytes for @byte[]@ properties.
 
 It is also possible to set the contents of the file as a string by changing the type of the @myFile@ property on the image to a String type:
 
