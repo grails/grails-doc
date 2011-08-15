@@ -26,7 +26,8 @@ dependencies {
 
     publish "org.slf4j:slf4j-log4j12:1.5.8",
             "org.xhtmlrenderer:core-renderer:R8",
-            "org.yaml:snakeyaml:1.8"
+            "org.yaml:snakeyaml:1.8",
+            "commons-lang:commons-lang:2.4"
 }
 
 task fetchGrailsSource << {
@@ -79,52 +80,105 @@ task migrate << {
     }
     props = props.findAll { key, value -> key.startsWith("alias.") }.collectEntries { key, value -> [key[6..-1], value] }
 
-    def migrator = publishClassLoader.loadClass("grails.doc.LegacyDocMigrator").newInstance(
+    def migrator = project.publishClassLoader.loadClass("grails.doc.LegacyDocMigrator").newInstance(
             file(projectDir.path + "/src/guide"),
             props)
     migrator.migrate()
 }
 
-task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
-    sourceDir = projectDir.path + "/src"
-    targetDir = outputDir
-    workDir = buildDir
+task createPublishClassLoader << {
+    // Create a class loader for the publication stuff.
+    def classpath = project.configurations.publish
+    classpath = classpath.files.collect { it.toURI().toURL() }
 
-    doLast {
-        // Create a class loader for the publication stuff.
-        def classpath = project.configurations.publish
-        classpath = classpath.files.collect { it.toURI().toURL() }
+    // Add the grails-docs JAR.
+    def distDir = project.file("${project.grailsHome}/dist")
+    def grailsDocJars = distDir.listFiles({ dir, name -> name ==~ /grails-docs-.*\.jar/ } as FilenameFilter)
+    if (grailsDocJars.size() > 1) {
+        log.error "Found multiple grails-doc JARs in ${distDir}"
+        return 1
+    }
+    else if (grailsDocJars.size() == 0) {
+        log.error "No grails-doc JAR found in ${distDir}"
+        return 2
+    }
 
-        // Add the grails-docs JAR.
-        def distDir = file("${project.grailsHome}/dist")
-        def grailsDocJars = distDir.listFiles({ dir, name -> name ==~ /grails-docs-.*\.jar/ } as FilenameFilter)
-        if (grailsDocJars.size() > 1) {
-            log.error "Found multiple grails-doc JARs in ${distDir}"
-            return 1
+    classpath << grailsDocJars[0].toURI().toURL()
+    project.publishClassLoader = new URLClassLoader(
+            classpath as URL[],
+            Thread.currentThread().contextClassLoader)
+}
+
+task publishGuide(type: PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs', 'createPublishClassLoader'])
+
+task publishPdf(type: PublishPdf, dependsOn: ['publishGuide'])
+
+tasks.addRule("Pattern: publishGuide_<lang>") { String taskName ->
+    def m = taskName =~ /publishGuide_(\w+)/
+    if (m) {
+        def lang = m[0][1]
+        task(taskName, type: PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs', 'createPublishClassLoader']) {
+            language = lang
         }
-        else if (grailsDocJars.size() == 0) {
-            log.error "No grails-doc JAR found in ${distDir}"
-            return 2
+    }
+}
+
+tasks.addRule("Pattern: publishPdf_<lang>") { String taskName ->
+    def m = taskName =~ /publishPdf_(\w+)/
+    if (m) {
+        def lang = m[0][1]
+        task(taskName, type: PublishPdf, dependsOn: "publishGuide_${lang}") {
+            language = lang
         }
+    }
+}
 
-        classpath << grailsDocJars[0].toURI().toURL()
-        project.publishClassLoader = new URLClassLoader(classpath as URL[], Thread.currentThread().contextClassLoader)
+task docs(dependsOn: ['publishPdf'])
 
+for (f in new File(projectDir, "src").listFiles()) {
+    if (f.directory && !(f.name in ["guide", "ref"])) {
+        docs.dependsOn << "publishPdf_${f.name}"
+    }
+}
+
+task dist(type: Zip, dependsOn: 'docs') {
+    from outputDir
+}
+
+artifacts {
+    archives dist
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '1.0-milestone-3'
+}
+
+class PublishGuide extends DefaultTask {
+    File sourceDir = new File(project.projectDir, "src")
+    File targetDir = project.outputDir as File
+    File workDir = project.buildDir as File
+    File resourcesDir = new File(project.projectDir, "resources")
+    String language
+
+    @TaskAction
+    def publishGuide() {
         def props = new Properties()
-        new File("${projectDir}/resources/doc.properties").withInputStream {input ->
+        new File("${resourcesDir}/doc.properties").withInputStream {input ->
             props.load(input)
         }
         new File("${project.grailsHome}/build.properties").withInputStream {input ->
             props.load(input)
         }
 
-        def publisher = publishClassLoader.loadClass("grails.doc.DocPublisher").newInstance(file(sourceDir), file(targetDir))
+        def publisher = project.publishClassLoader.loadClass("grails.doc.DocPublisher").newInstance(project.file(sourceDir), project.file(targetDir))
         publisher.ant = ant
         publisher.workDir = workDir
-        publisher.images = file("${projectDir}/resources/img")
-        publisher.css = file("${projectDir}/resources/css")
-        publisher.js = file("${projectDir}/resources/js")
-        publisher.style = file("${projectDir}/resources/style")
+        publisher.apiDir = "${project.outputDir}" as File
+        publisher.language = language ?: ''
+        publisher.images = project.file("${resourcesDir}/img")
+        publisher.css = project.file("${resourcesDir}/css")
+        publisher.js = project.file("${resourcesDir}/js")
+        publisher.style = project.file("${resourcesDir}/style")
         publisher.title = props.title
         publisher.version = props."grails.version"
         publisher.authors = props.authors
@@ -135,8 +189,8 @@ task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
         publisher.engineProperties = props
 
         // Add support for displaying the source code for GSP tags.
-        def sourceMacro = publishClassLoader.loadClass("grails.doc.macros.GspTagSourceMacro")
-        def searchDirs = file(project.grailsHome).listFiles().findAll {
+        def sourceMacro = project.publishClassLoader.loadClass("grails.doc.macros.GspTagSourceMacro")
+        def searchDirs = project.file(project.grailsHome).listFiles().findAll {
             new File(it, "src/main/groovy/org/codehaus/groovy/grails").exists()
         }.collect {
             new File(it, "src/main/groovy/org/codehaus/groovy/grails")
@@ -158,33 +212,22 @@ task publishGuide(dependsOn: ['apiDocs', 'copyApiDocs']) {
     }
 }
 
-task publishPdf(dependsOn: ['publishGuide']) << {
-    try {
-    new File(outputDir, "guide").eachFileMatch(~/.*\.html/) { f ->
-//        def currFile = new File(outputDir, "guide/single.html")
-        def currFile = f
-        def pdfBuilder = publishClassLoader.loadClass("grails.doc.PdfBuilder")
-        def xml = pdfBuilder.createXml(currFile, new File(outputDir).absolutePath)
-        pdfBuilder.createPdf xml,
-                new File(currFile.parentFile, currFile.name[0..-5] + "pdf"),
-                currFile //file://${new File(outputDir).absolutePath}/guide/single.html"
+class PublishPdf extends DefaultTask {
+    String language
+
+    @TaskAction
+    def publish() {
+        try {
+            def baseDir = new File(project.outputDir, language ?: '')
+            def currFile = new File(baseDir, "guide/single.html")
+            def pdfBuilder = project.publishClassLoader.loadClass("grails.doc.PdfBuilder")
+            def xml = pdfBuilder.createXml(currFile, baseDir.absolutePath)
+            pdfBuilder.createPdf xml,
+                    new File(currFile.parentFile, currFile.name[0..-5] + "pdf"),
+                    new File(baseDir, "guide/single.html")
+        }
+        catch (Exception ex) {
+            ex.printStackTrace()
+        }
     }
-    }
-    catch (Exception ex) {
-        ex.printStackTrace()
-    }
-}
-
-task docs(dependsOn: ['publishPdf'])
-
-task dist(type: Zip, dependsOn: 'docs') {
-    from outputDir
-}
-
-artifacts {
-    archives dist
-}
-
-task wrapper(type: Wrapper) {
-    gradleVersion = '1.0-milestone-3'
 }

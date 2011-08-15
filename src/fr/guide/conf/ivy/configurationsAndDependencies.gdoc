@@ -1,0 +1,92 @@
+Grails features five dependency resolution configurations (or 'scopes'):
+
+*  @build@: Dependencies for the build system only
+*  @compile@: Dependencies for the compile step
+*  @runtime@: Dependencies needed at runtime but not for compilation (see above)
+*  @test@: Dependencies needed for testing but not at runtime (see above)
+*  @provided@: Dependencies needed at development time, but not during WAR deployment
+
+Within the @dependencies@ block you can specify a dependency that falls into one of these configurations by calling the equivalent method. For example if your application requires the MySQL driver to function at @runtime@ you can specify that like this:
+
+{code}
+runtime 'com.mysql:mysql-connector-java:5.1.16'
+{code}
+
+This uses the string syntax: @group:name:version@. You can also use a Map-based syntax:
+
+{code}
+runtime group: 'com.mysql',
+        name: 'mysql-connector-java',
+        version: '5.1.16'
+{code}
+
+In Maven terminology, @group@ corresponds to an artifact's @groupId@ and @name@ corresponds to its @artifactId@.
+
+Multiple dependencies can be specified by passing multiple arguments:
+
+{code}
+runtime 'com.mysql:mysql-connector-java:5.1.16',
+        'net.sf.ehcache:ehcache:1.6.1'
+
+// Or
+
+runtime(
+    [group:'com.mysql', name:'mysql-connector-java', version:'5.1.16'],
+    [group:'net.sf.ehcache', name:'ehcache', version:'1.6.1']
+)
+{code}
+
+h3. Disabling transitive dependency resolution
+
+By default, Grails will not only get the JARs and plugins that you declare, but it will also get their transitive dependencies. This is usually what you want, but there are occasions where you want a dependency without all its baggage. In such cases, you can disable transitive dependency resolution on a case-by-case basis:
+
+{code}
+runtime('com.mysql:mysql-connector-java:5.1.16',
+        'net.sf.ehcache:ehcache:1.6.1') {
+    transitive = false
+}
+
+// Or
+runtime group:'com.mysql',
+        name:'mysql-connector-java',
+        version:'5.1.16',
+        transitive:false
+{code}
+
+h3. Excluding specific transitive dependencies
+
+A far more common scenario is where you want the transitive dependencies, but some of them cause issues with your own dependencies or are unnecessary. For example, many Apache projects have 'commons-logging' as a transitive dependency, but it shouldn't be included in a Grails project (we use SLF4J). That's where the @excludes@ option comes in:
+
+{code}
+runtime('com.mysql:mysql-connector-java:5.1.16',
+        'net.sf.ehcache:ehcache:1.6.1') {
+    excludes "xml-apis", "commons-logging"
+}
+
+// Or
+runtime(group:'com.mysql', name:'mysql-connector-java', version:'5.1.16') {
+    excludes([ group: 'xml-apis', name: 'xml-apis'],
+             [ group: 'org.apache.httpcomponents' ],
+             [ name: 'commons-logging' ])
+{code}
+
+As you can see, you can either exclude dependencies by their artifact ID (also known as a module name) or any combination of group and artifact IDs (if you use the Map notation). You may also come across @exclude@ as well, but that can only accept a single string or Map:
+
+{code}
+runtime('com.mysql:mysql-connector-java:5.1.16',
+        'net.sf.ehcache:ehcache:1.6.1') {
+    exclude "xml-apis"
+}
+{code}
+
+h3. Using Ivy module configurations
+
+If you use Ivy module configurations and wish to depend on a specific configuration of a module, you can use the @dependencyConfiguration@ method to specify the configuration to use.
+
+{code}
+provided("my.org:web-service:1.0") {
+    dependencyConfiguration "api"
+}
+{code}
+
+If the dependency configuration is not explicitly set, the configuration named @"default"@ will be used (which is also the correct value for dependencies coming from Maven style repositories).

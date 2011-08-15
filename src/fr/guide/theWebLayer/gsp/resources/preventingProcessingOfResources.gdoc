@@ -1,0 +1,45 @@
+Sometimes you do not want a resource to be processed in a particular way, or even at all. Occasionally you may also want to disable all resource mapping.
+
+h4. Preventing the application of a specific mapper to an individual resource
+
+All resource declarations support a convention of noXXXX:true where XXXX is a mapper name.
+
+So for example to prevent the "hashandcache" mapper from being applied to a resource (which renames and moves it, potentially breaking relative links written in JavaScript code), you would do this:
+
+{code:java}
+modules = {
+    forms {
+        resource url: '/css/forms.css', nohashandcache: true
+        resource url: '/js/forms.js', nohashandcache: true
+    }
+}
+{code}
+
+h4. Excluding/including paths and file types from specific mappers
+
+Mappers have includes/excludes Ant patterns to control whether they apply to a given resource. Mappers set sensible defaults for these based on their activity, for example the zipped-resources plugin's "zip" mapper is set to exclude images by default.
+
+You can configure this in your @Config.groovy@ using the mapper name e.g:
+
+{code:java}
+// We wouldn't link to .exe files using Resources but for the sake of example:
+grails.resources.zip.excludes = ['**/*.zip', '**/*.exe']
+
+// Perhaps for some reason we want to prevent bundling on "less" CSS files:
+grails.resources.bundle.excludes = ['**/*.less']
+{code}
+
+There is also an "includes" inverse. Note that settings these replaces the default includes/excludes for that mapper - it is not additive.
+
+h4. Controlling what is treated as an "ad-hoc" (legacy) resource
+
+Ad-hoc resources are those undeclared, but linked to directly in your application *without* using the Grails or Resources linking tags (resource, img or external).
+
+These may occur with some legacy plugins or code with hardcoded paths in.
+
+There is a Config.groovy setting *grails.resources.adhoc.patterns* which defines a list of Servlet API compliant filter URI mappings, which the Resources filter will use to detect such "ad-hoc resource" requests.
+
+By default this is set to:
+{code:java}
+grails.resources.adhoc.patterns = ['images/*', '*.js', '*.css']
+{code}

@@ -1,0 +1,83 @@
+As of Grails 1.3 you can declaratively specify plugins as dependencies via the dependency DSL instead of using the [install-plugin|commandLine] command:
+
+{code}
+grails.project.dependency.resolution = {
+    ...
+    repositories {
+        ...
+    }
+
+    plugins {
+        runtime ':hibernate:1.2.1'
+    }
+
+    dependencies {
+        ...
+    }
+    ...
+}
+{code}
+
+If you don't specify a group id the default plugin group id of @org.grails.plugins@ is used. You can specify to use the latest version of a particular plugin by using "latest.integration" as the version number:
+
+{code}
+plugins {
+    runtime ':hibernate:latest.integration'
+}
+{code}
+
+h4. Integration vs. Release
+
+The "latest.integration" version label will also include resolving snapshot versions. To not include snapshot versions then use the "latest.release" label:
+
+{code}
+plugins {
+    runtime ':hibernate:latest.release'
+}
+{code}
+
+{note}
+The "latest.release" label only works with Maven compatible repositories. If you have a regular SVN-based Grails repository then you should use "latest.integration".
+{note}
+
+And of course if you use a Maven repository with an alternative group id you can specify a group id:
+
+{code}
+plugins {
+    runtime 'mycompany:hibernate:latest.integration'
+}
+{code}
+
+h4. Plugin Exclusions
+
+You can control how plugins transitively resolves both plugin and JAR dependencies using exclusions. For example:
+
+{code}
+plugins {
+    runtime(':weceem:0.8') {
+        excludes "searchable"
+    }
+}
+{code}
+
+Here we have defined a dependency on the "weceem" plugin which transitively depends on the "searchable" plugin. By using the @excludes@ method you can tell Grails _not_ to transitively install the searchable plugin. You can combine this technique to specify an alternative version of a plugin:
+
+{code}
+plugins {
+    runtime(':weceem:0.8') {
+        excludes "searchable" // excludes most recent version
+    }
+    runtime ':searchable:0.5.4' // specifies a fixed searchable version
+}
+{code}
+
+You can also completely disable transitive plugin installs, in which case no transitive dependencies will be resolved:
+
+{code}
+plugins {
+    runtime(':weceem:0.8') {
+        transitive = false
+    }
+    runtime ':searchable:0.5.4' // specifies a fixed searchable version
+}
+{code}

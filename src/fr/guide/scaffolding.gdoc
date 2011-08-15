@@ -1,0 +1,153 @@
+Scaffolding lets you auto-generate a whole application for a given domain class including:
+
+* The necessary [views|guide:gsp]
+* Controller actions for create/read/update/delete (CRUD) operations
+
+h4. Dynamic Scaffolding
+
+The simplest way to get started with scaffolding is to enable it with the @scaffold@ property. Set the @scaffold@ property in the controller to @true@ for the @Book@ domain class:
+
+{code:java}
+class BookController {
+    static scaffold = true
+}
+{code}
+
+This works because the @BookController@ follows the same naming convention as the @Book@ domain class. To scaffold a specific domain class we could reference the class directly in the scaffold property:
+
+{code:java}
+class SomeController {
+    static scaffold = Author
+}
+{code}
+
+With this configured, when you start your application the actions and views will be auto-generated at runtime. The following actions are dynamically implemented by default by the runtime scaffolding mechanism:
+
+* list
+* show
+* edit
+* delete
+* create
+* save
+* update
+
+A CRUD interface will also be generated. To access this open @http://localhost:8080/app/book@ in a browser.
+
+If you prefer to keep your domain model in Java and [mapped with Hibernate|guide:hibernate] you can still use scaffolding, simply import the domain class and set its name as the @scaffold@ argument.
+
+You can add new actions to a scaffolded controller, for example:
+
+{code:java}
+class BookController {
+
+    static scaffold = Book
+
+    def changeAuthor() {
+        def b = Book.get(params.id)
+        b.author = Author.get(params["author.id"])
+        b.save()
+
+        // redirect to a scaffolded action
+        redirect(action:show)
+    }
+}
+{code}
+
+You can also override the scaffolded actions:
+
+{code:java}
+class BookController {
+
+    static scaffold = Book
+
+    // overrides scaffolded action to return both authors and books
+    def list() {
+        [bookInstanceList: Book.list(),
+         bookInstanceTotal: Book.count(),
+         authorInstanceList: Author.list()]
+    }
+
+    def show() {
+        def book = Book.get(params.id)
+        log.error(book)
+        [bookInstance : book]
+    }
+}
+{code}
+
+All of this is what is known as "dynamic scaffolding" where the CRUD interface is generated dynamically at runtime.
+
+{note}
+By default, the size of text areas in scaffolded views is defined in the CSS, so adding 'rows' and 'cols' attributes will have no effect.
+
+Also, the standard scaffold views expect model variables of the form @<propertyName>InstanceList@ for collections and @<propertyName>Instance@ for single instances. It's tempting to use properties like 'books' and 'book', but those won't work.
+{note}
+
+h4. Customizing the Generated Views
+
+The views adapt to [Validation constraints|guide:constraints]. For example you can change the order that fields appear in the views simply by re-ordering the constraints in the builder:
+
+{code:java}
+def constraints = {
+    title()
+    releaseDate()
+}
+{code}
+
+You can also get the generator to generate lists instead of text inputs if you use the @inList@ constraint:
+
+{code:java}
+def constraints = {
+    title()
+    category(inList: ["Fiction", "Non-fiction", "Biography"])
+    releaseDate()
+}
+{code}
+
+Or if you use the @range@ constraint on a number:
+
+{code:java}
+def constraints = {
+    age(range:18..65)
+}
+{code}
+
+Restricting the size with a constraint also effects how many characters can be entered in the generated view:
+
+{code:java}
+def constraints = {
+    name(size:0..30)
+}
+{code}
+
+h4. Static Scaffolding
+
+Grails also supports "static" scaffolding.
+
+The above scaffolding features are useful but in real world situations it's likely that you will want to customize the logic and views. Grails lets you generate a controller and the views used to create the above interface from the command line. To generate a controller type:
+
+{code:java}
+grails generate-controller Book
+{code}
+
+or to generate the views:
+
+{code:java}
+grails generate-views Book
+{code}
+
+or to generate everything:
+
+{code:java}
+grails generate-all Book
+{code}
+
+If you have a domain class in a package or are generating from a [Hibernate mapped class|guide:hibernate] remember to include the fully qualified package name:
+
+{code:java}
+grails generate-all com.bookstore.Book
+{code}
+
+h4. Customizing the Scaffolding templates
+
+The templates used by Grails to generate the controller and views can be customized by installing the templates with the [install-templates|commandLine] command.

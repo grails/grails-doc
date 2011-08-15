@@ -1,0 +1,63 @@
+h1. afterInterceptor
+
+h2. Purpose
+
+Allows interception of actions after they have executed, but before the view is rendered.
+
+h2. Examples
+
+Using a block:
+{code}
+class BookController {
+    static afterInterceptor = { model ->
+        model.foo = "bar"
+    }
+}
+{code}
+
+In this example we use a more fine-grained approach, using a Groovy method pointer to specify a helper method to use and a list of action names to be intercepted:
+
+{code}
+class BookController {
+
+    static afterInterceptor = [action: this.&invokeMe, only: ['list']]
+
+    private invokeMe(model) {
+        model.foo = "bar"
+    }
+
+    def list() {
+        [bookList: Book.list()]
+    }
+}
+{code}
+
+In this example we use the Map syntax to constraint the @afterInterceptor@ to execute *only* for the @list@ action.
+
+h2. Description
+
+To define an interceptor that is executed after an action use the @afterInterceptor@ property:
+
+{code}
+static afterInterceptor = { model ->
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+The first argument of the @Closure@ is the model @Map@ that resulted from the action that executed and will be passed to the view. This lets you manipulate the model before rendering the view. The model might be empty but will not be @null@.
+
+An @afterInterceptor@ may also inspect or modify the Spring MVC @ModelAndView@ object prior to rendering. In this case, the example becomes:
+
+{code}
+static afterInterceptor = { model, modelAndView ->
+    println "Current view is ${modelAndView.viewName}"
+    if (model.someVar) {
+        modelAndView.viewName = "/mycontroller/someotherview"
+    }
+    println "View is now ${modelAndView.viewName}"
+}
+{code}
+
+This allows the view to be changed based on the model returned by the current action. Note that the @modelAndView@ may be @null@ if the action being intercepted called @redirect@ or @render@.
+
+This example limited the intercepted actions using the @only@ argument but the @except@ argument can also be used to list the actions to not intercept, rather than those to intercept.

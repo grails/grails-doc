@@ -1,0 +1,37 @@
+h4. New Unit Testing Console Output
+
+Test output from the test-app command has been improved:
+
+!test-output.png!
+
+h4. New Unit Testing API
+
+There is a new unit testing API based on mixins that supports JUnit 3, 4 and Spock style tests (with Spock 0.6 and above). Example:
+
+{code:java}
+import grails.test.mixin.TestFor
+
+@TestFor(SimpleController)
+class SimpleControllerTests  {
+    void testIndex() {
+        controller.home()
+
+        assert view == "/simple/homePage"
+        assert model.title == "Hello World"
+    }
+}
+{code}
+
+The [documentation on testing|guide:testing] has also been re-written around this new framework.
+
+h4. Unit Testing GORM
+
+A new in-memory GORM implementation is present that supports many more features of the GORM API making unit testing of criteria queries, named queries and other previously unsupported methods possible.
+
+h4. Faster Unit Testing with Interactive Mode
+
+The new interactive mode (activated by typing 'grails') greatly improves the execution time of running unit and integration tests.
+
+h4. Unit Test Scaffolding
+
+A unit test is now generated for scaffolded controllers

@@ -1,0 +1,33 @@
+h1. migrate-docs
+
+h2. Purpose
+
+Migrates old style gdocs in which the section numbers are in the file names to the new approach where section numbers and titles are put into a toc.yml file.
+
+h2. Examples
+
+{code:java}
+grails migrate-docs
+{code}
+
+h2. Description
+
+Originally, the source files for Grails-generated user guides included the section numbers and titles in the gdoc filenames. This made it very easy to get going, but tricky to renumber sections and change their titles since the corresponding URLs would also change. The @[doc|commandLine]@ command now allows you to specify sections in a table of contents in YAML form, so the guide can be restructured without breaking URLs.
+
+If you already have a user guide in the old style, then this command will automatically convert the source files to the new format. The gdoc files are created under the directory @src/docs/migratedGuide@ along with:
+
+* @toc.yml@ - the YAML table of contents file containing the original user guide structure
+* @links.yml@ - a map of new section names to old ones (see later for more detail)
+* @rewriteRules.txt@ - a simple text file containing the mappings from old HTML filenames to new ones
+
+The gdoc files themselves are also renamed, with the section numbers removed and the titles converted into Java property notation. This automatic conversion may not always work particularly well, so be prepared to change gdoc the filenames and their corresponding entries in the above files if necessary. For example,
+
+* 12.1 Welcome to the New World.gdoc
+
+will become
+
+* welcomeToTheNewWorld.gdoc
+
+Once the migration has finished, you can replace the @src/docs/guide@ directory with the contents of @migratedGuide@ and run the @doc@ command. This command is aware of the @links.yml@ file and will use it to add legacy links into the generated documentation so that old HTML fragment identifiers will continue to work.
+
+Of course, old URLs will break because the names of the HTML files have changed. Hence why the @rewriteRules@ file is created: you can use it to create the appropriate Apache HTTPD rewrite rules or the equivalent for your web server.

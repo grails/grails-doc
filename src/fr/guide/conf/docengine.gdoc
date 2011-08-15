@@ -1,0 +1,235 @@
+Since Grails 1.2, the documentation engine that powers the creation of this documentation has been available for your own Grails projects.
+
+The documentation engine uses a variation on the [Textile|http://textile.sitemonks.com/] syntax to automatically create project documentation with smart linking, formatting etc.
+
+h4. Creating project documentation
+
+To use the engine you need to follow a few conventions. First, you need to create a @src/docs/guide@ directory where your documentation source files will go. Then, you need to create the source docs themselves. Each chapter should have its own gdoc file as should all numbered sub-sections. You will end up with something like:
+
+{code}
++ src/docs/guide/introduction.gdoc
++ src/docs/guide/introduction/changes.gdoc
++ src/docs/guide/gettingStarted.gdoc
++ src/docs/guide/configuration.gdoc
++ src/docs/guide/configuration/build.gdoc
++ src/docs/guide/configuration/build/controllers.gdoc
+{code}
+
+Note that you can have all your gdoc files in the top-level directory if you want, but you can also put sub-sections in sub-directories named after the parent section - as the above example shows.
+
+Once you have your source files, you still need to tell the documentation engine what the structure of your user guide is going to be. To do that, you add a @src/docs/guide/toc.yml@ file that contains the structure and titles for each section. This file is in [YAML|http://www.yaml.org/] format and basically represents the structure of the user guide in tree form. For example, the above files could be represented as:
+
+{code:yaml}
+introduction:
+  title: Introduction
+  changes: Change Log
+gettingStarted: Getting Started
+configuration:
+  title: Configuration
+  build:
+    title: Build Config
+    controllers: Specifying Controllers
+{code}
+
+The format is pretty straightforward. Any section that has sub-sections is represented with the corresponding filename (minus the .gdoc extension) followed by a colon. The next line should contain @title:@ plus the title of the section as seen by the end user. Every sub-section then has its own line after the title. Leaf nodes, i.e. those without any sub-sections, declare their title on the same line as the section name but after the colon.
+
+That's it. You can easily add, remove, and move sections within the @toc.yml@ to restructure the generated user guide. You should also make sure that all section names, i.e. the gdoc filenames, should be unique since they are used for creating internal links and for the HTML filenames. Don't worry though, the documentation engine will warn you of duplicate section names.
+
+h4. Creating reference items
+
+Reference items appear in the Quick Reference section of the documentation. Each reference item belongs to a category and a category is a directory located in the @src/docs/ref@ directory. For example, suppose you have defined a new controller method called @renderPDF@. That belongs to the @Controllers@ category so you would create a gdoc text file at the following location:
+
+{code}
++ src/docs/ref/Controllers/renderPDF.gdoc
+{code}
+
+h4. Configuring Output Properties
+
+There are various properties you can set within your @grails-app/conf/Config.groovy@ file that customize the output of the documentation such as:
+
+* *grails.doc.authors* - The authors of the documentation
+* *grails.doc.license* - The license of the software
+* *grails.doc.copyright* - The copyright message to display
+* *grails.doc.footer* - The footer to use
+
+Other properties such as the name of the documentation and the version are pulled from your project itself.
+
+h4. Generating Documentation
+
+Once you have created some documentation (refer to the syntax guide in the next chapter) you can generate an HTML version of the documentation using the command:
+
+{code}
+grails doc
+{code}
+
+This command will output an @docs/manual/index.html@ which can be opened in a browser to view your documentation.
+
+h4. Documentation Syntax
+
+As mentioned the syntax is largely similar to Textile or Confluence style wiki markup. The following sections walk you through the syntax basics.
+
+h5. Basic Formatting
+
+Monospace: @monospace@
+{code}
+\@monospace\@
+{code}
+
+Italic: _italic_
+{code}
+\_italic\_
+{code}
+
+Bold: *bold*
+{code}
+*bold*
+{code}
+
+Image:
+!http://grails.org/images/new/grailslogo_topNav.png!
+
+{code:xml}
+\!http://grails.org/images/new/grailslogo_topNav.png\!
+{code}
+
+h5. Linking
+
+There are several ways to create links with the documentation generator. A basic external link can either be defined using confluence or textile style markup:
+
+{code}
+[SpringSource|http://www.springsource.com/]
+{code}
+
+or
+
+{code}
+"SpringSource":http://www.springsource.com/
+{code}
+
+For links to other sections inside the user guide you can use the @guide:@ prefix with the name of the section you want to link to:
+
+{code}
+[Intro|guide:introduction]
+{code}
+
+The section name comes from the corresponding gdoc filename. The documentation engine will warn you if any links to sections in your guide break.
+
+To link to reference items you can use a special syntax:
+
+{code}
+[controllers|renderPDF]
+{code}
+
+In this case the category of the reference item is on the left hand side of the | and the name of the reference item on the right.
+
+Finally, to link to external APIs you can use the @api:@ prefix. For example:
+
+{code}
+[String|api:java.lang.String]
+{code}
+
+The documentation engine will automatically create the appropriate javadoc link in this case. To add additional APIs to the engine you can configure them in @grails-app/conf/Config.groovy@. For example:
+
+{code}
+grails.doc.api.org.hibernate=
+            "http://docs.jboss.org/hibernate/stable/core/javadocs"
+{code}
+
+The above example configures classes within the @org.hibernate@ package to link to the Hibernate website's API docs.
+
+h5. Lists and Headings
+
+Headings can be created by specifying the letter 'h' followed by a number and then a dot:
+
+{code}
+h3.<space>Heading3
+h4.<space>Heading4
+{code}
+
+Unordered lists are defined with the use of the * character:
+
+{code}
+* item 1
+** subitem 1
+** subitem 2
+* item 2
+{code}
+
+Numbered lists can be defined with the # character:
+
+{code}
+# item 1
+{code}
+
+Tables can be created using the @table@ macro:
+
+{table}
+ *Name* | *Number*
+ Albert | 46
+ Wilma | 1348
+ James | 12
+{table}
+
+{code}
+\{table}
+ *Name* | *Number*
+ Albert | 46
+ Wilma | 1348
+ James | 12
+\{table}
+{code}
+
+h5. Code and Notes
+
+You can define code blocks with the @code@ macro:
+
+{code}
+class Book {
+    String title
+}
+{code}
+
+{code}
+\{code\}
+class Book {
+    String title
+}
+\{code\}
+{code}
+
+The example above provides syntax highlighting for Java and Groovy code, but you can also highlight XML markup:
+
+{code:xml}
+<hello>world</hello>
+{code}
+
+{code}
+\{code:xml\}
+<hello>world</hello>
+\{code\}
+{code}
+
+There are also a couple of macros for displaying notes and warnings:
+
+Note:
+{note}
+This is a note!
+{note}
+
+{code}
+\{note\}
+This is a note!
+\{note\}
+{code}
+
+Warning:
+
+{warning}
+This is a warning!
+{warning}
+
+{code}
+\{warning\}
+This is a warning!
+\{warning\}
+{code}

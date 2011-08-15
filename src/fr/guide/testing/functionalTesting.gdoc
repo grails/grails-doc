@@ -1,0 +1,59 @@
+Functional tests involve making HTTP requests against the running application and verifying the resultant behaviour. Grails does not ship with any support for writing functional tests directly, but there are several plugins available for this.
+
+* @Canoo Webtest@ - "http://grails.org/plugin/webtest":http://grails.org/plugin/webtest
+* @G-Func@ - "http://grails.org/plugin/functional-test":http://grails.org/plugin/functional-test
+* @Geb@ - "http://grails.org/plugin/geb":http://grails.org/plugin/geb
+* @Selenium-RC@ - "http://grails.org/plugin/selenium-rc":http://grails.org/plugin/selenium-rc
+* @WebDriver@ - "http://grails.org/plugin/webdriver":http://grails.org/plugin/webdriver
+
+Consult the documentation for each plugin for its capabilities.
+
+h4. Common Options
+
+There are options that are common to all plugins that control how the Grails application is launched, if at all.
+
+h5. inline
+
+The @-inline@ option specifies that the grails application should be started inline (i.e. like @run-app@).
+
+*This option is implicitly set unless the @baseUrl@ or @war@ options are set*
+
+h5. war
+
+The @-war@ option specifies that the grails application should be packaged as a war and started. This is useful as it tests your application in a production-like state, but it has a longer startup time than the @-inline@ option. It also runs the war in a forked JVM, meaning that you cannot access any internal application objects.
+
+{code:java}
+grails test-app functional: -war
+{code}
+
+Note that the same build/config options for the [run-war|commandLine] command apply to functional testing against the WAR.
+
+h5. https
+
+The @-https@ option results in the application being able to receive https requests as well as http requests. It is compatible with both the @-inline@ and @-war@ options.
+
+{code:java}
+grails test-app functional: -https
+{code}
+
+Note that this does not change the test _base url_ to be https, it will still be http unless the @-httpsBaseUrl@ option is also given.
+
+h5. httpsBaseUrl
+
+The @-httpsBaseUrl@ causes the implicit base url to be used for tests to be a https url.
+
+{code:java}
+grails test-app functional: -httpsBaseUrl
+{code}
+
+This option is ignored if the @-baseUrl@ option is specified.
+
+h5. baseUrl
+
+The @baseUrl@ option allows the base url for tests to be specified.
+
+{code:java}
+grails test-app functional: -baseUrl=http://mycompany.com/grailsapp
+{code}
+
+This option will prevent the local grails application being started unless @-inline@ or @-war@ are given as well. To use a custom base url but still test against the local Grails application you *must* specify one of either the @-inline@ or @-war@ options.

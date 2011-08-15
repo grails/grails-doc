@@ -1,0 +1,63 @@
+The Resources framework uses "mappers" to mutate the resources into the final format served to the user.
+
+The resource mappers are applied to each static resource once, in a specific order. You can create your own resource mappers, and several plugins provide some already for zipping, caching and minifying.
+
+Out of the box, the Resources plugin provides bundling of resources into fewer files, which is achieved with a few mappers that also perform CSS re-writing to handle when your CSS files are moved into a bundle.
+
+h4. Bundling multiple resources into fewer files
+
+The 'bundle' mapper operates by default on any resource with a "bundle" defined - or inherited from a @defaultBundle@ clause on the module. Modules have an implicit default bundle name the same as the name of the module.
+
+Files of the same kind will be aggregated into this bundle file. Bundles operate across module boundaries:
+
+{code:java}
+modules = {
+    core {
+        dependsOn 'jquery, utils'
+        defaultBundle 'common'
+
+        resource url: '/js/core.js', disposition: 'head'
+        resource url: '/js/ui.js', bundle: 'ui'
+        resource url: '/css/main.css', bundle: 'theme'
+        resource url: '/css/branding.css'
+        resource url: '/css/print.css', attrs: [media: 'print']
+    }
+
+    utils {
+        dependsOn 'jquery'
+
+        resource url: '/js/utils.js', bundle: 'common'
+    }
+
+    forms {
+        dependsOn 'core,utils'
+
+        resource url: '/css/forms.css', bundle: 'ui'
+        resource url: '/js/forms.js', bundle: 'ui'
+    }
+}
+{code}
+
+Here you see that resources are grouped into bundles; 'common', 'ui' and 'theme' - across module boundaries.
+
+Note that auto-bundling by module does *not* occur if there is only one resource in the module.
+
+h4. Making resources cache "eternally" in the client browser
+
+Caching resources "eternally" in the client is only viable if the resource has a unique name that changes whenever the contents change, and requires caching headers to be set on the response.
+
+The [cached-resources|http://grails.org/plugin/cached-resources] plugin provides a mapper that achieves this by hashing your files and renaming them based on this hash. It also sets the caching headers on every response for those resources. To use, simply install the cached-resources plugin.
+
+Note that the caching headers can only be set if your resources are being served by your application. If you have another server serving the static content from your app (e.g. Apache HTTPD), configure it to send caching headers. Alternatively you can configure it to request and proxy the resources from your container.
+
+h4. Zipping resources
+
+Returning gzipped resources is another way to reduce page load times and reduce bandwidth.
+
+The [zipped-resources|http://grails.org/plugin/zipped-resources] plugin provides a mapper that automatically compresses your content, excluding by default already compressed formats such as gif, jpeg and png.
+
+Simply install the zipped-resources plugin and it works.
+
+h4. Minifying
+
+There are a number of CSS and JavaScript minifiers available to obfuscate and reduce the size of your code. At the time of writing none are publicly released but releases are imminent.
