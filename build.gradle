@@ -109,7 +109,12 @@ task createPublishClassLoader << {
             Thread.currentThread().contextClassLoader)
 }
 
-task publishGuide(type: PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs', 'createPublishClassLoader'])
+task publishGuide(type: PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs', 'createPublishClassLoader']) {
+    // No language setting because we want the English guide to be
+    // generated with a 'en' in the path, but the source is in 'en'
+    // so that it's easy to track with git.
+    sourceDir = new File(project.projectDir, "src/en")
+}
 
 task publishPdf(type: PublishPdf, dependsOn: ['publishGuide'])
 
@@ -136,7 +141,7 @@ tasks.addRule("Pattern: publishPdf_<lang>") { String taskName ->
 task docs(dependsOn: ['publishPdf'])
 
 for (f in new File(projectDir, "src").listFiles()) {
-    if (f.directory && !(f.name in ["guide", "ref"])) {
+    if (f.directory && !(f.name in ["en", "guide", "ref"])) {
         docs.dependsOn << "publishPdf_${f.name}"
     }
 }
