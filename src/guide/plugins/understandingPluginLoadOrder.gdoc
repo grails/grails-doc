@@ -55,3 +55,49 @@ if (manager?.hasGrailsPlugin("controllers")) {
 {code}
 
 Here the Hibernate plugin will only register an @OpenSessionInViewInterceptor@ if the @controllers@ plugin has been loaded. The @manager@ variable is an instance of the [GrailsPluginManager|api:org.codehaus.groovy.grails.plugins.GrailsPluginManager] interface and it provides methods to interact with other plugins.
+
+
+h4. Scopes and Environments
+
+It's not only plugin load order that you can control. You can also specify which environments your plugin should be loaded in and which scopes (stages of a build). Simply declare one or both of these properties in your plugin descriptor:
+
+{code}
+def environments = ['development', 'test', 'myCustomEnv']
+def scopes = [excludes:'war']
+{code}
+
+In this example, the plugin will only load in the 'development' and 'test' environments. Nor will it be packaged into the WAR file, because it's excluded from the 'war' phase. This allows @development-only@ plugins to not be packaged for production use.
+
+The full list of available scopes are defined by the enum [BuildScope|api:grails.util.BuildScope], but here's a summary:
+
+* @test@ - when running tests
+* @functional-test@ - when running functional tests
+* @run@ - for run-app and run-war
+* @war@ - when packaging the application as a WAR file
+* @all@ - plugin applies to all scopes (default)
+
+Both properties can be one of:
+
+* a string - a sole inclusion
+* a list - a list of environments or scopes to include
+* a map - for full control, with 'includes' and/or 'excludes' keys that can have string or list values
+
+For example,
+
+{code}
+def environments = "test"
+{code}
+
+will only include the plugin in the test environment, whereas
+
+{code}
+def environments = ["development", "test"]
+{code}
+
+will include it in both the development _and_ test environments. Finally,
+
+{code}
+def environments = [includes: ["development", "test"]]
+{code}
+
+will do the same thing.
