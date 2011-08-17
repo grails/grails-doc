@@ -22,56 +22,56 @@ Cada um destes podem ser corridos por Ant, por exemplo:
 ant war
 {code}
 
-The build file is configured to use "Apache Ivy":http://ant.apache.org/ivy/ for dependency management, which means that it will automatically download all the requisite Grails JAR files and other dependencies on demand. You don't even have to install Grails locally to use it! That makes it particularly useful for continuous integration systems such as [CruiseControl|http://cruisecontrol.sourceforge.net/] or [Jenkins|http://jenkins-ci.org/].
+O ficheiro de construção é configurado para utilizar "Apache Ivy":http://ant.apache.org/ivy/ para a gestão de dependências, o que significa que irá descarregar automaticamente todos os ficheiros JAR Grails e outras dependências quando for necessário. Não tens sequer que instalar Grails localmente para o poder usar ! Isto torna-o particularmente útil para sistemas de integração contínua tais como [CruiseControl|http://cruisecontrol.sourceforge.net/] ou [Jenkins|http://jenkins-ci.org/].
 
-It uses the Grails [Ant task|api:grails.ant.GrailsTask] to hook into the existing Grails build system. The task lets you run any Grails script that's available, not just the ones used by the generated build file. To use the task, you must first declare it:
+Utiliza a [Ant task|api:grails.ant.GrailsTask] Grails para se ligar ao sistema de construção Grails existente. A tarefa permite-te correr qualquer script Grails que esteja disponível, não apenas aqueles que são utilizados pelo ficheiro de construção gerado. Para utilizar a tarefa deves primeiro declará-la:
 {code}
 <taskdef name="grailsTask"
          classname="grails.ant.GrailsTask"
          classpathref="grails.classpath"/>
 {code}
 
-This raises the question: what should be in "grails.classpath"? The task itself is in the "grails-bootstrap" JAR artifact, so that needs to be on the classpath at least. You should also include the "groovy-all" JAR. With the task defined, you just need to use it! The following table shows you what attributes are available:
+Isto levanta a questão: o que deve estar no "grails.classpath"? A tarefa propriamente dita está no artefato JAR "grails-bootstrap", por isso precisa, pelo menos, de estar no . Deves também incluir o JAR "groovy-all". Com a tarefa definida, apenas precisas utilizá-la! A tabela seguinte mostra os atributos que estão disponíveis:
 {table}
- Attribute | Description | Required
- home | The location of the Grails installation directory to use for the build. | Yes, unless classpath is specified.
- classpathref | Classpath to load Grails from. Must include the "grails-bootstrap" artifact and should include "grails-scripts". | Yes, unless @home@ is set or you use a @classpath@ element.
- script | The name of the Grails script to run, e.g. "TestApp". | Yes.
- args | The arguments to pass to the script, e.g. "-unit -xml". | No. Defaults to "".
- environment | The Grails environment to run the script in. | No. Defaults to the script default.
- includeRuntimeClasspath | Advanced setting: adds the application's runtime classpath to the build classpath if true. | No. Defaults to @true@.
+ Atributo | Descrição | Necessário
+ home | Localização do diretório de instalação de Grails para usar na construção. | Sim, a não ser que seja especificado o classpath.
+ classpathref | Classpath a partir do qual carregar Grails. Deve incluir o artefato "grails-bootstrap" e deve incluir "grails-scripts". | Sim, a menos que @home@ esteja definido ou utilizes um elemento @classpath@ .
+ script | O nome do script Grails a correr, ex. "TestApp". | Sim.
+ args | Os argumentas a passar para script, ex. "-unit -xml". | Não. Por defeito "".
+ environment | O ambiente Grails em que o script deve correr. | Não. Valor por defeito igual ao do script.
+ includeRuntimeClasspath | Configuração avançada: Se true adiciona o classpath de tempo de execução da aplicação ao classpath de construção. | Não. Por defeito @true@.
 {table}
 
-The task also supports the following nested elements, all of which are standard Ant path structures:
+A tarefa também suporta os seguintes elementos aninhados, todos eles estruturas de caminho Ant padrão:
 
-* @classpath@ - The build classpath (used to load Gant and the Grails scripts).
-* @compileClasspath@ - Classpath used to compile the application's classes.
-* @runtimeClasspath@ - Classpath used to run the application and package the WAR. Typically includes everything in @compileClasspath.
-* @testClasspath@ - Classpath used to compile and run the tests. Typically includes everything in @runtimeClasspath@.
+* @classpath@ - O classpath de construção(utilizado para caregar os scripts Gant e Grails).
+* @compileClasspath@ - Classpath utilizado para compilar as classes da aplicação.
+* @runtimeClasspath@ - Classpath utilizado para correr a aplicação e empacotar o WAR. Tipicamente inclui tudo em @compileClasspath.
+* @testClasspath@ - Classpath utilizado para compilar e correr os testes. Tipicamente inclui tudo em  @runtimeClasspath@.
 
-How you populate these paths is up to you. If you use the @home@ attribute and put your own dependencies in the @lib@ directory, then you don't even need to use any of them. For an example of their use, take a look at the generated Ant build file for new apps.
+A forma de popular estes caminhos cabe a cada um. Se utilizas o atributo @home@ e colocas as tuas próprias dependências na directoria @lib@, então nem precisas utilizar nenhum deles. Para um exemplo da sua utilização, espreita o ficheiro de construção Ant gerado para novas aplicações.
 
-h3. Maven Integration
+h3. Integração Maven
 
-Grails provides integration with "Maven 2":http://maven.apache.org with a Maven plugin. The current Maven plugin is based on but supersedes the version created by [Octo|http://forge.octo.com/], who did a great job with the original.
+Grails fornece integração com "Maven 2":http://maven.apache.org através de um plugin Maven. O plugin Maven atual é baseado (mas acrescenta) na versãocriada por [Octo|http://forge.octo.com/], que fez um excelente trabalho com o original.
 
-h4. Preparation
+h4. Preparação
 
-In order to use the new plugin, all you need is Maven 2 installed and set up. This is because *you no longer need to install Grails separately to use it with Maven!*
-
-{note}
-The Maven 2 integration for Grails has been designed and tested for Maven 2.0.9 and above. It will not work with earlier versions.
-{note}
+Para poder utilizar o novo plugin, tudo o que necessitas é ter Maven 2 instalado e configurado. Isto porque *já não necessitas instalar Grails separadamente para utilizá-lo com Maven!*
 
 {note}
-The default mvn setup DOES NOT supply sufficient memory to run the Grails environment. We recommend that you add the following environment variable setting to prevent poor performance:
+A integração Maven 2 para Grails foi desenhada e testada para Maven 2.0.9 e mais recentes. Não irá funcionar em versões mais antigas.
+{note}
+
+{note}
+A configuração mvn por defeito NÃO fornece memória suficiente para correr o ambiente Grails. Recomendamos que adiciones a seguinte configuração de variável de ambiente para evitar um mau desempenho:
 
 @export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=256"@
 {note}
 
-h4. Creating a Grails Maven Project
+h4. Criando um Projeto Maven Grails
 
-To create a Mavenized Grails project simply run the following command:
+Para criar um projeto Grails Mavenizedo basta executar o comando seguinte:
 
 {code}
 mvn archetype:generate -DarchetypeGroupId=org.grails \\\
@@ -80,8 +80,8 @@ mvn archetype:generate -DarchetypeGroupId=org.grails \\\
     -DgroupId=example -DartifactId=my-app
 {code}
 
-Choose whichever grails version, group ID and artifact ID you want for your application, but everything else must be as written. This will create a new Maven project with a POM and a couple of other files. What you won't see is anything that looks like a Grails application. So, the next step is to create the project structure that you're used to.
-But first, to set target JDK to Java 6, do that now. Open my-app/pom.xml and change
+Escolhe uma qualquer versão de grails, ID de grupo e ID de artefato que desejes para a tua aplicação, mas tudo o resto deve ficar como está escrito. Isto irá criar um novo projeto Maven com um POM e alguns outros ficheiros. Aquilo que não verás é algo que se assemelhe a uma aplicação Grails. Por isso, o próximo passo é criar a estrutura de projeto a que estás habituado.
+Mas primeiro, há que configurar o JDK alvo para Java 6, vamos fazê-lo agora. Abre my-app/pom.xml e muda
 {code}
 <plugin>
   <artifactId>maven-compiler-plugin</artifactId>
@@ -102,7 +102,7 @@ to
 </plugin>
 {code}
 
-Then you're ready to create the project structure:
+Então estarás pronto para criar a estrutura do projeto:
 
 {code}
 cd my-app
@@ -110,7 +110,7 @@ mvn initialize
 {code}
 
 {note}
-if you see a message similar to this:
+se vires uma mensagem semelhante a esta:
 
 {code}
 Resolving plugin JAR dependencies ...
@@ -119,20 +119,20 @@ Resolving plugin JAR dependencies ...
         module not found: org.hibernate#hibernate-core;3.3.1.GA
 {code}
 
-you need to add the plugins manually to application.properties:
+necessitas adicionar os plugins manualmente a application.properties:
 
 {code}
 plugins.hibernate=2.0.0
 plugins.tomcat=2.0.0
 {code}
 
-then run
+então executa
 
 {code}
 mvn compile
 {code}
 
-and the hibernate and tomcat plugins will be installed.
+e os plugins hibernate e tomcat serão instalados.
 {note}
 
 Now you have a Grails application all ready to go. The plugin integrates into the standard build cycle, so you can use the standard Maven phases to build and package your app:  @mvn clean@ ,  @mvn compile@ ,  @mvn test@ ,  @mvn package@ , @mvn install@ .
