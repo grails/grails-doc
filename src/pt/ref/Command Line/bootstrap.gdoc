@@ -1,0 +1,42 @@
+h1. bootstrap
+
+h2. Purpose
+
+The [bootstrap|commandLine] command is mainly intended to be used by other scripts and enables the ability to bootstrap a Grails application instance outside of the container for usage in tools that require a reference to Grails' @ApplicationContext@.
+
+Examples of its usage include Grails' [shell|commandLine] and [console|commandLine]
+
+h2. Examples
+
+Add this to the top of your Gant script to use this as an include:
+
+{code:java}
+includeTargets << grailsScript("_GrailsBootstrap")
+{code}
+
+Once this is in place you can bootstrap Grails using either of these methods:
+
+* @loadApp@ - Loads and creates the @GrailsApplication@ instance
+* @configureApp@ - Loads all plugins and creates the Spring @ApplicationContext@
+
+After running @loadApp@ the @GrailsApplication@ instance will be available as the @grailsApp@ variable:
+
+{code:java}
+loadApp()
+for (grailsClass in grailsApp.allClasses) { println grailsClass }
+{code}
+
+After running @configureApp@ the [GrailsPluginManager|api:org.codehaus.groovy.grails.plugins.GrailsPluginManager] instance will be available as the @pluginManager@ variable and the Spring @ApplicationContext@ instance will be available as the @appCtx@ variable:
+
+{code:java}
+configureApp()
+Connection c = appCtx.getBean('dataSource').getConnection()
+// do something with connection
+{code}
+
+h2. Description
+
+Usage:
+{code:java}
+grails bootstrap
+{code}

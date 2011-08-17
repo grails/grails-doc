@@ -1,0 +1,34 @@
+h1. findOrCreateWhere
+
+h2. Purpose
+
+Uses named arguments that match the property names of the domain class to produce a query that returns the first result.  This method behaves just like [findWhere|domainClasses] except that it will never return @null@.  If a matching instance cannot be found then a new instance will be created, populated with values from the query parameters and returned.  The difference between this method and [findOrSaveWhere|domainClasses] is that this method will not save a newly created instance where [findOrSaveWhere|domainClasses] does.
+
+h2. Examples
+
+Given the domain class:
+
+{code:java}
+class Book {
+
+   String title
+   Date releaseDate
+   String author
+
+   static constraints = {
+      releaseDate nullable: true
+   }
+}
+{code}
+
+You can query in the form:
+
+{code:java}
+def book = Book.findOrCreateWhere(author: "Stephen King", title: "The Stand")
+{code}
+
+h2. Description
+
+Parameters:
+
+* @queryParams@ - A @Map@ of key/value pairs to be used in the query. If no matching instance is found then this data is used to initialize a new instance.

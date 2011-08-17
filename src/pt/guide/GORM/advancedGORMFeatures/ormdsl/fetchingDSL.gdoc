@@ -1,0 +1,155 @@
+h4. Lazy Collections
+
+As discussed in the section on [Eager and Lazy fetching|guide:fetching], GORM collections are lazily loaded by default but you can change this behaviour with the ORM DSL. There are several options available to you, but the most common ones are:
+
+* lazy: false
+* fetch: 'join'
+
+and they're used like this:
+
+{code:java}
+class Person {
+
+    String firstName
+    Pet pet
+
+    static hasMany = [addresses: Address]
+
+    static mapping = {
+        addresses lazy: false
+        pet fetch: 'join'
+    }
+}
+{code}
+
+{code:java}
+class Address {
+    String street
+    String postCode
+}
+{code}
+
+{code:java}
+class Pet {
+    String name
+}
+{code}
+
+The first option, @lazy: false@ , ensures that when a @Person@ instance is loaded, its @addresses@ collection is loaded at the same time with a second SELECT. The second option is basically the same, except the collection is loaded with a JOIN rather than another SELECT. Typically you want to reduce the number of queries, so @fetch: 'join'@ is the more appropriate option. On the other hand, it could feasibly be the more expensive approach if your domain model and data result in more and larger results than would otherwise be necessary.
+
+For more advanced users, the other settings available are:
+
+# batchSize: N
+# lazy: false, batchSize: N
+
+where N is an integer. These let you fetch results in batches, with one query per batch. As a simple example, consider this mapping for @Person@:
+
+{code}
+class Person {
+
+    String firstName
+    Pet pet
+
+    static mapping = {
+        pet batchSize: 5
+    }
+}
+{code}
+If a query returns multiple @Person@ instances, then when we access the first @pet@ property, Hibernate will fetch that @Pet@ plus the four next ones. You can get the same behaviour with eager loading by combining @batchSize@ with the @lazy: false@ option. You can find out more about these options in the [Hibernate user guide|http://docs.jboss.org/hibernate/core/3.3/reference/en/html/performance.html#performance-fetching] and this [primer on fetching strategies|http://community.jboss.org/wiki/AShortPrimerOnFetchingStrategies]. Note that ORM DSL does not currently support the "subselect" fetching strategy.
+
+h4. Lazy Single-Ended Associations
+
+In GORM, one-to-one and many-to-one associations are by default lazy. Non-lazy single ended associations can be problematic when you load many entities because each non-lazy association will result in an extra SELECT statement. If the associated entities also have non-lazy associations, the number of queries grows significantly!
+
+Use the same technique as for lazy collections to make a one-to-one or many-to-one association non-lazy/eager:
+
+{code:java}
+class Person {
+    String firstName
+}
+{code}
+
+{code:java}
+class Address {
+
+    String street
+    String postCode
+
+    static belongsTo = [person: Person]
+
+    static mapping = {
+        person lazy: false
+    }
+}
+{code}
+
+Here we configure GORM to load the associated @Person@ instance (through the @person@ property) whenever an @Address@ is loaded.
+
+h4. Lazy Single-Ended Associations and Proxies
+
+Hibernate uses runtime-generated proxies to facilitate single-ended lazy associations; Hibernate dynamically subclasses the entity class to create the proxy.
+
+Consider the previous example but with a lazily-loaded @person@ association: Hibernate will set the @person@ property to a proxy that is a subclass of @Person@. When you call any of the getters (except for the @id@ property) or setters on that proxy, Hibernate will load the entity from the database.
+
+Unfortunately this technique can produce surprising results. Consider the following example classes:
+
+{code:java}
+class Pet {
+    String name
+}
+{code}
+
+{code:java}
+class Dog extends Pet {
+}
+{code}
+
+{code:java}
+class Person {
+    String name
+    Pet pet
+}
+{code}
+
+and assume that we have a single @Person@ instance with a @Dog@ as the @pet@. The following code will work as you would expect:
+{code}
+def person = Person.get(1)
+assert person.pet instanceof Dog
+assert Pet.get(person.petId) instanceof Dog
+{code}
+
+But this won't:
+
+{code}
+def person = Person.get(1)
+assert person.pet instanceof Dog
+assert Pet.list()[0] instanceof Dog
+{code}
+
+The second assertion fails, and to add to the confusion, this will work:
+
+{code}
+assert Pet.list()[0] instanceof Dog
+{code}
+
+What's going on here? It's down to a combination of how proxies work and the guarantees that the Hibernate session makes. When you load the @Person@ instance, Hibernate creates a proxy for its @pet@ relation and attaches it to the session. Once that happens, whenever you retrieve that @Pet@ instance with a query, a @get()@, or the @pet@ relation _within the same session_ , Hibernate gives you the proxy.
+
+Fortunately for us, GORM automatically unwraps the proxy when you use @get()@ and @findBy\*()@, or when you directly access the relation. That means you don't have to worry at all about proxies in the majority of cases. But GORM doesn't do that for objects returned with a query that returns a list, such as @list()@ and @findAllBy\*()@. However, if Hibernate hasn't attached the proxy to the session, those queries will return the real instances - hence why the last example works.
+
+You can protect yourself to a degree from this problem by using the @instanceOf@ method by GORM:
+
+{code:java}
+def person = Person.get(1)
+assert Pet.list()[0].instanceOf(Dog)
+{code}
+
+However, it won't help here if casting is involved. For example, the following code will throw a @ClassCastException@ because the first pet in the list is a proxy instance with a class that is neither @Dog@ nor a sub-class of @Dog@:
+
+{code:java}
+def person = Person.get(1)
+Dog pet = Pet.list()[0]
+{code}
+
+Of course, it's best not to use static types in this situation. If you use an untyped variable for the pet instead, you can access any @Dog@ properties or methods on the instance without any problems.
+
+These days it's rare that you will come across this issue, but it's best to be aware of it just in case. At least you will know why such an error occurs and be able to work around it.

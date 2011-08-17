@@ -1,0 +1,40 @@
+h1. run-script
+
+h2. Purpose
+
+Runs one or more custom Groovy scripts, bootstrapping the Grails application first. Gant scripts can't directly call application classes since they aren't on the classpath when the script is compiled. You can load them dynamically but this complicates the scripts.
+
+This script configures the Grails environment, so the Spring application context and Hibernate/GORM are available and you can access the database using domain classes, call service methods, etc.
+
+In addition, the script(s) run in the context of a Hibernate Session to avoid lazy loading exceptions.
+
+h2. Examples
+
+{code:java}
+// run a single script in the dev environment
+grails run-script userScripts/createBook.groovy
+{code}
+
+{code:java}
+// run multiple scripts in the dev environment
+grails run-script userScripts/someScript.groovy userScripts/otherScript.groovy
+{code}
+
+{code:java}
+// run a single script in the prod environment
+grails prod run-script userScripts/updateDatabase.groovy
+{code}
+
+Also see [Ted Naleid's Blog|http://naleid.com/blog/2010/12/03/grails-run-script-updated-for-grails-1-3-5/] for more usage examples.
+
+h2. Description
+
+Usage:
+{code:java}
+grails [environment] run-script [scriptName]
+{code}
+
+Arguments:
+
+* @environment@ - The environment containing the database configuration to use (dev, prod, etc...).
+* @scriptName@ - one or more paths to scripts to run

@@ -1,0 +1,24 @@
+Within the body of the filter you can then define one or several of the following interceptor types for the filter:
+
+* @before@ - Executed before the action. Return @false@ to indicate that the response has been handled that that all future filters and the action should not execute
+* @after@ - Executed after an action. Takes a first argument as the view model to allow modification of the model before rendering the view
+* @afterView@ - Executed after view rendering.  Takes an Exception as an argument which will be non-@null@ if an exception occurs during processing. Note: this Closure is called before the layout is applied.
+
+For example to fulfill the common simplistic authentication use case you could define a filter as follows:
+
+{code:java}
+class SecurityFilters {
+   def filters = {
+       loginCheck(controller: '*', action: '*') {
+           before = {
+              if (!session.user && !actionName.equals('login')) {
+                  redirect(action: 'login')
+                  return false
+               }
+           }
+       }
+   }
+}
+{code}
+
+Here the @loginCheck@ filter uses a @before@ interceptor to execute a block of code that checks if a user is in the session and if not redirects to the login action. Note how returning false ensure that the action itself is not executed.
