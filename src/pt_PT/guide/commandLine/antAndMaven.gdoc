@@ -31,7 +31,7 @@ Utiliza a [Ant task|api:grails.ant.GrailsTask] Grails para se ligar ao sistema d
          classpathref="grails.classpath"/>
 {code}
 
-Isto levanta a questão: o que deve estar no "grails.classpath"? A tarefa propriamente dita está no artefato JAR "grails-bootstrap", por isso precisa, pelo menos, de estar no . Deves também incluir o JAR "groovy-all". Com a tarefa definida, apenas precisas utilizá-la! A tabela seguinte mostra os atributos que estão disponíveis:
+Isto levanta a questão: o que deve estar no "grails.classpath"? A tarefa propriamente dita está no artefato JAR "grails-bootstrap", por isso precisa, pelo menos, de estar no classpath. Deve também incluir o JAR "groovy-all". Com a tarefa definida, apenas precisa utilizá-la! A tabela seguinte mostra os atributos que estão disponíveis:
 {table}
  Atributo | Descrição | Necessário
  home | Localização do diretório de instalação de Grails para usar na construção. | Sim, a não ser que seja especificado o classpath.
@@ -49,7 +49,7 @@ A tarefa também suporta os seguintes elementos aninhados, todos eles estruturas
 * @runtimeClasspath@ - Classpath utilizado para correr a aplicação e empacotar o WAR. Tipicamente inclui tudo em @compileClasspath.
 * @testClasspath@ - Classpath utilizado para compilar e correr os testes. Tipicamente inclui tudo em  @runtimeClasspath@.
 
-A forma de popular estes caminhos cabe a cada um. Se utilizas o atributo @home@ e colocas as tuas próprias dependências na directoria @lib@, então nem precisas utilizar nenhum deles. Para um exemplo da sua utilização, espreita o ficheiro de construção Ant gerado para novas aplicações.
+A forma de popular estes caminhos cabe a cada um. Se utiliza o atributo @home@ e coloca as suas próprias dependências na directoria @lib@, então nem precisa utilizar nenhum deles. Para um exemplo da sua utilização, veja o ficheiro de construção Ant gerado para novas aplicações.
 
 h3. Integração Maven
 
@@ -57,14 +57,14 @@ Grails fornece integração com "Maven 2":http://maven.apache.org através de um
 
 h4. Preparação
 
-Para poder utilizar o novo plugin, tudo o que necessitas é ter Maven 2 instalado e configurado. Isto porque *já não necessitas instalar Grails separadamente para utilizá-lo com Maven!*
+Para poder utilizar o novo plugin, tudo o que necessita é ter Maven 2 instalado e configurado. Isto porque *já não necessita instalar Grails separadamente para utilizá-lo com Maven!*
 
 {note}
 A integração Maven 2 para Grails foi desenhada e testada para Maven 2.0.9 e mais recentes. Não irá funcionar em versões mais antigas.
 {note}
 
 {note}
-A configuração mvn por defeito NÃO fornece memória suficiente para correr o ambiente Grails. Recomendamos que adiciones a seguinte configuração de variável de ambiente para evitar um mau desempenho:
+A configuração mvn por defeito NÃO fornece memória suficiente para correr o ambiente Grails. Recomendamos que adicione a seguinte configuração de variável de ambiente para evitar um mau desempenho:
 
 @export MAVEN_OPTS="-Xmx512m -XX:MaxPermSize=256"@
 {note}
@@ -80,8 +80,8 @@ mvn archetype:generate -DarchetypeGroupId=org.grails \\\
     -DgroupId=example -DartifactId=my-app
 {code}
 
-Escolhe uma qualquer versão de grails, ID de grupo e ID de artefato que desejes para a tua aplicação, mas tudo o resto deve ficar como está escrito. Isto irá criar um novo projeto Maven com um POM e alguns outros ficheiros. Aquilo que não verás é algo que se assemelhe a uma aplicação Grails. Por isso, o próximo passo é criar a estrutura de projeto a que estás habituado.
-Mas primeiro, há que configurar o JDK alvo para Java 6, vamos fazê-lo agora. Abre my-app/pom.xml e muda
+Escolha uma qualquer versão de grails, ID de grupo e ID de artefato que deseje para a sua aplicação, mas tudo o resto deve ficar como está escrito. Isto irá criar um novo projeto Maven com um POM e alguns outros ficheiros. Aquilo que não verá é algo que se assemelhe a uma aplicação Grails. Por isso, o próximo passo é criar a estrutura de projeto a que está habituado.
+Mas primeiro, há que configurar o JDK alvo para Java 6, vamos fazê-lo agora. Abra my-app/pom.xml e mude
 {code}
 <plugin>
   <artifactId>maven-compiler-plugin</artifactId>
@@ -91,7 +91,7 @@ Mas primeiro, há que configurar o JDK alvo para Java 6, vamos fazê-lo agora. A
   </configuration>
 </plugin>
 {code}
-to
+para
 {code}
 <plugin>
   <artifactId>maven-compiler-plugin</artifactId>
@@ -102,7 +102,7 @@ to
 </plugin>
 {code}
 
-Então estarás pronto para criar a estrutura do projeto:
+Então estará pronto para criar a estrutura do projeto:
 
 {code}
 cd my-app
@@ -110,7 +110,7 @@ mvn initialize
 {code}
 
 {note}
-se vires uma mensagem semelhante a esta:
+se vir uma mensagem semelhante a esta:
 
 {code}
 Resolving plugin JAR dependencies ...
@@ -119,14 +119,14 @@ Resolving plugin JAR dependencies ...
         module not found: org.hibernate#hibernate-core;3.3.1.GA
 {code}
 
-necessitas adicionar os plugins manualmente a application.properties:
+necessita adicionar os plugins manualmente a application.properties:
 
 {code}
 plugins.hibernate=2.0.0
 plugins.tomcat=2.0.0
 {code}
 
-então executa
+então execute
 
 {code}
 mvn compile
@@ -135,46 +135,46 @@ mvn compile
 e os plugins hibernate e tomcat serão instalados.
 {note}
 
-Now you have a Grails application all ready to go. The plugin integrates into the standard build cycle, so you can use the standard Maven phases to build and package your app:  @mvn clean@ ,  @mvn compile@ ,  @mvn test@ ,  @mvn package@ , @mvn install@ .
+Agora já tem uma aplicação Grails pronta a executar. O plugin integra-se no ciclo de construção standard, por isso pode utilizar as fases standard de Maven para construir e empacotar a sua aplicação:  @mvn clean@ ,  @mvn compile@ ,  @mvn test@ ,  @mvn package@ , @mvn install@ .
 
-You can also use some of the Grails commands that have been wrapped as Maven goals:
+Também pode utiizar alguns dos comandos Grails que foram embrulhados como metas Maven:
 
-* @grails:create-controller@ - Calls the [create-controller|commandLine] command
-* @grails:create-domain-class@ - Calls the [create-domain-class|commandLine] command
-* @grails:create-integration-test@ - Calls the [create-integration-test|commandLine] command
-* @grails:create-pom@ - Creates a new Maven POM for an existing Grails project
-* @grails:create-script@ - Calls the [create-script|commandLine] command
-* @grails:create-service@ - Calls the [create-service|commandLine] command
-* @grails:create-taglib@ - Calls the [create-tag-lib|commandLine] command
-* @grails:create-unit-test@ - Calls the [create-unit-test|commandLine] command
-* @grails:exec@ - Executes an arbitrary Grails command line script
-* @grails:generate-all@ - Calls the [generate-all|commandLine] command
-* @grails:generate-controller@  - Calls the [generate-controller|commandLine] command
-* @grails:generate-views@ - Calls the [generate-views|commandLine] command
-* @grails:install-plugin@ - Calls the [install-plugin|commandLine] command
-* @grails:install-templates@ - Calls the [install-templates|commandLine] command
-* @grails:list-plugins@ - Calls the [list-plugins|commandLine] command
-* @grails:package@ - Calls the [package|commandLine] command
-* @grails:run-app@ - Calls the [run-app|commandLine] command
-* @grails:uninstall-plugin@ - Calls the [uninstall-plugin|commandLine] command
+* @grails:create-controller@ - Chama o comando [create-controller|commandLine]
+* @grails:create-domain-class@ - Chama o comando [create-domain-class|commandLine]
+* @grails:create-integration-test@ - Chama o comando [create-integration-test|commandLine]
+* @grails:create-pom@ - Cria um novo POM Maven para um projeto Grails existente
+* @grails:create-script@ - Chama o comando [create-script|commandLine]
+* @grails:create-service@ - Chama o comando [create-service|commandLine]
+* @grails:create-taglib@ - Chama o comando [create-tag-lib|commandLine]
+* @grails:create-unit-test@ - Chama o comando [create-unit-test|commandLine]
+* @grails:exec@ - Executa um script de linha de comando Grails arbitrário
+* @grails:generate-all@ - Chama o comando [generate-all|commandLine]
+* @grails:generate-controller@  - Chama o comando [generate-controller|commandLine]
+* @grails:generate-views@ - Chama o comando [generate-views|commandLine]
+* @grails:install-plugin@ - Chama o comando [install-plugin|commandLine]
+* @grails:install-templates@ - Chama o comando [install-templates|commandLine]
+* @grails:list-plugins@ - Chama o comando [list-plugins|commandLine]
+* @grails:package@ - Chama o comando [package|commandLine]
+* @grails:run-app@ - Chama o comando [run-app|commandLine]
+* @grails:uninstall-plugin@ - Chama o comando [uninstall-plugin|commandLine]
 
-For a complete, up to date list, run @mvn grails:help@
+Para uma lista, completa e atualizada, execute @mvn grails:help@
 
-h4. Mavenizing an existing project
+h4. Mavenizando um projeto existente
 
-Creating a new project is great way to start, but what if you already have one? You don't want to create a new project and then copy the contents of the old one over. The solution is to create a POM for the existing project using this Maven command (substitute the version number with the grails version of your existing project):
+Criar um novo projeto é uma ótima maneira de começar, mas e se já tiver um projeto? Não vai querer criar um novo projeto e depois copiar o conteúdo do antigo para o recém criado. A solução é criar um POM para o projeto existente utilizando este comando Maven (substitua o número da versãopelo da versão de grails do seu projeto existente):
 {code}
 mvn org.grails:grails-maven-plugin:1.3.2:create-pom -DgroupId=com.mycompany
 {code}
-When this command has finished, you can immediately start using the standard phases, such as @mvn package@. Note that you have to specify a group ID when creating the POM.
+Quando este comando terminar, pode começar a utilizar as fases standard imediatamente, tais como @mvn package@. Note que deve especificar um ID de grupo quando criar o POM.
 
-You may also want to set target JDK to Java 6; see above.
+Também pode desejar definir o JDK alvo para Java 6; ver acima.
 
-h4. Adding Grails commands to phases
+h4. Adicionando comandos Grails às fases
 
-The standard POM created for you by Grails already attaches the appropriate core Grails commands to their corresponding build phases, so "compile" goes in the "compile" phase and "war" goes in the "package" phase. That doesn't help though when you want to attach a plugin's command to a particular phase. The classic example is functional tests. How do you make sure that your functional tests (using which ever plugin you have decided on) are run during the "integration-test" phase?
+O POM standard criado para si por Grails já anexa os comandos principais de Grails apropriados às suas fases de construção correspondentes, assim sendo "compile" está na fase "compile" e "war" está na fase "package". No entanto isto não ajuda quando quer juntar o comando de um plugin a uma fase em particular. O exemplo clássico é o dos testes funcionais. Como garantir que os seus testes funcionais (usando um qualquer plugin pelo qual se tenha decidido) correm durante a fase "integration-test"?
 
-Fear not: all things are possible. In this case, you can associate the command to a phase using an extra "execution" block:
+Não tenha receio: tudo é possível. Neste caso, pode associar o comando a uma fase utilizando um bloco de "execução" extra:
 {code:xml}
 <plugin>
     <groupId>org.grails</groupId>
@@ -202,28 +202,28 @@ Fear not: all things are possible. In this case, you can associate the command t
 </plugin>
 {code}
 
-This also demonstrates the @grails:exec@ goal, which can be used to run any Grails command. Simply pass the name of the command as the @command@ system property, and optionally specify the arguments with the @args@ property:
+Isto também demonstra a meta @grails:exec@, que pode ser utilizado para executar qualquer comando Grails. Passe simplesmente o nome do comando como a propriedade de sistema @command@, e opcionalmente especifique os argumentos com a propriedade @args@:
 {code}
 mvn grails:exec -Dcommand=create-webtest -Dargs=Book
 {code}
 
-h4. Debugging a Grails Maven Project
+h4. Debugging de um Projeto Maven Grails
 
-Maven can be launched in debug mode using the "mvnDebug" command. To launch your Grails application in debug, simply run:
+Maven pode ser lançado em modo debug utilizando o comando "mvnDebug". Para lançar a sua aplicação Grails em debug, execute simplesmente:
 
 {code}
 mvnDebug grails:run-app
 {code}
 
-The process will be suspended on startup and listening for a debugger on port 8000.
+O processo será suspenso no começo e ficará a escutar um debugger no port0 8000.
 
-If you need more control of the debugger, this can be specified using the MAVEN_OPTS environment variable, and launch Maven with the default "mvn" command:
+Se necessita de mais controlo sobre o debugger, isso pode ser especificado utilizando a variável de ambiente MAVEN_OPTS, e lançando Maven com o comando por defeito "mvn":
 
 {code}
 MAVEN_OPTS="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"
 mvn grails:run-app
 {code}
 
-h4. Raising issues
+h4. Levantando questões
 
-If you come across any problems with the Maven integration, please raise a JIRA issue as a sub-task of [GRAILS-3547|http://jira.codehaus.org/browse/GRAILS-3547].
+Se encontar algum problema durante a integração Maven, por favor levante uma questão JIRA como uma sub-tarefa de [GRAILS-3547|http://jira.codehaus.org/browse/GRAILS-3547].
