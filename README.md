@@ -53,6 +53,20 @@ Translations
 
 This project can host multiple translations of the user guide, with `src/en` being the main one. To add another one, simply create a new language directory under `src` and copy into it all the files under `src/en`. The build will take care of the rest.
 
+Once you have a copy of the original guide, you can use the `{hidden}` macro to wrap the English text that you have replaced, rather than remove it. This makes it easier to compare changes to the English guide against your translation. For example:
+
+    {hidden}
+    When you create a Grails application with the [create-app|commandLine] command,
+    Grails doesn't automatically create an Ant @build.xml@ file but you can generate
+    one with the [integrate-with|commandLine] command:
+    {hidden}
+
+    Quando crias uma aplicação Grails com o comando [create-app|commandLine], Grails
+    não cria automaticamente um ficheiro de construção Ant @build.xml@ mas podes gerar
+    um com o comando [integrate-with|commandLine]:
+
+Because the English text remains in your gdoc files, 'diff' will show differences on the English lines. You can then use the output of 'diff' to see which bits of your translation need updating. On top of that, the `{hidden}` macro ensures that the text inside it is not displayed in the browser, although you can display it by adding this URL as a bookmark: `javascript:toggleHidden();` (requires you to build the user guide with Grails 2.0 M2 or later).
+
 You can build specific translations very easily using the `publishGuide_*` and `publishPdf_*` tasks. For example, to build both the French HTML and PDF user guides, simply execute
 
     ./gradlew publishPdf_fr
