@@ -31,29 +31,29 @@ testDependencies | Uma lista de dependências em tempo de teste do projeto como 
 runtimeDependencies | Uma lista de dependências em tempo de execução do projeto como instâncias @File@.
 {table}
 
-Of course, these properties aren't much good if you can't get hold of them. Fortunately that's easy to do: an instance of @BuildSettings@ is available to your scripts as the @grailsSettings@ script variable. You can also access it from your code by using the @grails.util.BuildSettingsHolder@ class, but this isn't recommended.
+Claro que estas propriedades não servem de muito se não as conseguir perceber. Felizmente isso é fácil de fazer: uma instÂncia de @BuildSettings@ está disponível para os seus scripts como a variável de script @grailsSettings@. Também pode aceder a ela, a partir do seu código, utilizando a classe @grails.util.BuildSettingsHolder@, mas isso não é recomendado.
 
-h3. Overriding the defaults
+h3. Alterando as predefinições
 
-All of the properties in the first table can be overridden by a system property or a configuration option - simply use the "config option" name. For example, to change the project working directory, you could either run this command:
+Todas as propriedades na primeira tabela podem ser alteradas por uma propriedade de sistema ou opção de configuração - use simplesmente o nome da "opção de configuração". Por exemplo, para alterar a diretoria de trabalho do projeto, pode executar este comando:
 {code}
 grails -Dgrails.project.work.dir=work compile
 {code}
-or add this option to your @grails-app/conf/BuildConfig.groovy@ file:
+ou adicionar esta opção ao seu ficheiro @grails-app/conf/BuildConfig.groovy@ file:
 {code}
 grails.project.work.dir = "work"
 {code}
-Note that the default values take account of the property values they depend on, so setting the project working directory like this would also relocate the compiled classes, test classes, resources, and plugins.
+Note que os valores pré-definidos têm em conta o valor das propriedades de que dependem, por isso alterar a diretoria de trabalho do projeto desta forma irá também mudar de local as classes compiladas, classes de teste, recursos e plugins.
 
-What happens if you use both a system property and a configuration option? Then the system property wins because it takes precedence over the @BuildConfig.groovy@ file, which in turn takes precedence over the default values.
+O que acontece quando utiliza tanto uma propriedade de sistema como uma opção de configuração? Neste caso ganha a propriedade de sistema porque tem precedência sobre o ficheiro @BuildConfig.groovy@, que por sua vez tem precedência sobre os valores pré-definidos.
 
-The @BuildConfig.groovy@ file is a sibling of @grails-app/conf/Config.groovy@ - the former contains options that only affect the build, whereas the latter contains those that affect the application at runtime. It's not limited to the options in the first table either: you will find build configuration options dotted around the documentation, such as ones for specifying the port that the embedded servlet container runs on or for determining what files get packaged in the WAR file.
+O ficheiro @BuildConfig.groovy@ é irmão de @grails-app/conf/Config.groovy@ - o primeiro contém opções que só afetam a construção, enquanto que o último contém opções que afetam a aplicação em tempo de execução. Também não está limitado às opções na primeira tabela: irá encontrar opções de configuração de construção assinaladas ao longo da documentação, tais como as que especificam o porto em que corre o contentor de servlet integrado ou para determinar que ficheiros são empacotados no ficheiro WAR.
 
-h3. Available build settings
+h3. Opções de configuração de construção
 
 {table}
- Name | Description
- grails.server.port.http | Port to run the embedded servlet container on ("run-app" and "run-war"). Integer.
+ Nome | Descrição
+ grails.server.port.http | Porto onde corre o contentor de servlet embebido em ("run-app" e "run-war"). Integer.
  grails.server.port.https | Port to run the embedded servlet container on for HTTPS ("run-app \-\-https" and "run-war \-\-https"). Integer.
  grails.config.base.webXml | Path to a custom web.xml file to use for the application (alternative to using the web.xml template).
  grails.compiler.dependencies | Legacy approach to adding extra dependencies to the compiler classpath. Set it to a closure containing "fileset()" entries. These entries will be processed by an @AntBuilder@ so the syntax is the Groovy form of the corresponding XML elements in an Ant build file, e.g. @fileset(dir: "$basedir/lib", include: "\*\*/\*.class)@.
