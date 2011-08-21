@@ -1,10 +1,10 @@
-You can create your own Gant scripts by running the [create-script|commandLine] command from the root of your project. For example the following command:
+Pode criar os seus próprios scripts Gant executando o comando [create-script|commandLine] a partir da raiz do seu projeto. Por exemplo o comando seguinte:
 
 {code}
 grails create-script compile-sources
 {code}
 
-Will create a script called @scripts/CompileSources.groovy@. A Gant script itself is similar to a regular Groovy script except that it supports the concept of "targets" and dependencies between them:
+Irá criar um script chamado @scripts/CompileSources.groovy@. Os scripts Gant, em si, são semelhantes a scripts Groovy regulares excepto no fato de suportarem o conceito de "alvos" e dependências entre si:
 
 {code:title=scripts/CompileSources.groovy}
 target(default:"The default target is the one that gets executed by Grails") {
@@ -21,16 +21,16 @@ target(compile:"Compile some sources") {
 }
 {code}
 
-As demonstrated in the script above, there is an implicit @ant@ variable (an instance of @groovy.util.AntBuilder@) that allows access to the [Apache Ant API|http://ant.apache.org/manual/index.html].
+Como se demonstra no script acima, existe uma variável @ant@ implícita (uma instância de @groovy.util.AntBuilder@) que permite o acesso a [Apache Ant API|http://ant.apache.org/manual/index.html].
 {note}
-In previous versions of Grails (1.0.3 and below), the variable was @Ant@, i.e. with a capital first letter.
+Em versões anteriores de Grails (1.0.3 e abaixo), a variável era @Ant@, ex. com uma primeira letra maiúscula.
 {note}
 
-You can also "depend" on other targets using the @depends@ method demonstrated in the @default@ target above.
+Também pode "depender" de outros alvos utilizando o método @depends@ demonstrado acima no alvo @default@.
 
-h3. The default target
+h3. O alvo por defeito
 
-In the example above, we specified a target with the explicit name "default". This is one way of defining the default target for a script. An alternative approach is to use the @setDefaultTarget()@ method:
+No exemplo acima, especificámos um alvo com o nome explícito "default". Esta é uma forma de definir o alvo por defeito para um script. Uma abordagem alternativa é utilizar o método @setDefaultTarget()@:
 
 {code:title=scripts/CompileSources.groovy}
 target("clean-compile": "Performs a clean compilation on the app source") {
@@ -49,6 +49,6 @@ target(compile:"Compile some sources") {
 setDefaultTarget("clean-compile")
 {code}
 
-This lets you call the default target directly from other scripts if you wish. Also, although we have put the call to @setDefaultTarget()@ at the end of the script in this example, it can go anywhere as long as it comes _after_ the target it refers to ("clean-compile" in this case).
+Isto permite-lhe invocar diretamente o alvo por defeito a partir de outros scripts se assim o desejar. De notar que, embora neste exemplo tenhamos colocado a chamada a @setDefaultTarget()@ no final do script, ela pode ser colocada em qualquer sítio desde que seja colocada _depois_ do alvo a que se refere ("clean-compile" neste caso).
 
-Which approach is better? To be honest, you can use whichever you prefer - there don't seem to be any major advantages in either case. One thing we would say is that if you want to allow other scripts to call your "default" target, you should move it into a shared script that doesn't have a default target at all. We'll talk some more about this in the next section.
+Que abordagem é melhor? Honestamente, pode utilizar a que preferir - não parecem existir nenhumas desvantagens de maior em nenhum dos casos. Algo que gostaria de referir é que se deseja permitir que outros scripts invoquem o seu alvo "default", deve movê-lo para um script partilhado que não tenha nenhum alvo pré-definido. Falaremos mais sobre este assunto na próxima secção.
