@@ -7,6 +7,6 @@ class HiddenMacro extends BaseMacro {
     String getName() { "hidden" }
 
     void execute(Writer out, MacroParameter params) {
-        out << '<div style="display:none;" id="hidden-block" class="hidden-block">' << params.content << '</div>'
+        out << '<div class="hidden-block">' << params.content << '</div>'
     }
 }
