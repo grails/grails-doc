@@ -1,0 +1,82 @@
+h4. Available Scopes
+
+Scopes are hash-like objects where you can store variables. The following scopes are available to controllers:
+
+* [servletContext|controllers] - Also known as application scope, this scope lets you share state across the entire web application. The servletContext is an instance of [ServletContext|api:javax.servlet.ServletContext]
+* [session|controllers] - The session allows associating state with a given user and typically uses cookies to associate a session with a client. The session object is an instance of [HttpSession|api:javax.servlet.http.HttpSession]
+* [request|controllers] - The request object allows the storage of objects for the current request only. The request object is an instance of [HttpServletRequest|api:javax.servlet.http.HttpServletRequest]
+* [params|controllers] - Mutable map of incoming request query string or POST parameters
+* [flash|controllers] - See below
+
+h4. Accessing Scopes
+
+Scopes can be accessed using the variable names above in combination with Groovy's array index operator, even on classes provided by the Servlet API such as the [HttpServletRequest|api:javax.servlet.http.HttpServletRequest]:
+
+{code:java}
+class BookController {
+    def find() {
+        def findBy = params["findBy"]
+        def appContext = request["foo"]
+        def loggedUser = session["logged_user"]
+    }
+}
+{code}
+
+You can also access values within scopes using the de-reference operator, making the syntax even more clear:
+
+{code:java}
+class BookController {
+    def find() {
+        def findBy = params.findBy
+        def appContext = request.foo
+        def loggedUser = session.logged_user
+    }
+}
+{code}
+
+This is one of the ways that Grails unifies access to the different scopes.
+
+h4. Using Flash Scope
+
+Grails supports the concept of [flash|controllers] scope as a temporary store to make attributes available for this request and the next request only. Afterwards the attributes are cleared. This is useful for setting a message directly before redirecting, for example:
+
+{code:java}
+def delete() {
+    def b = Book.get(params.id)
+    if (!b) {
+        flash.message = "User not found for id ${params.id}"
+        redirect(action:list)
+    }
+    ... // remaining code
+}
+{code}
+
+When the @list@ action is requested, the @message@ value will be in scope and can be used to display an information message. It will be removed from the @flash@ scope after this second request.
+
+Note that the attribute name can be anything you want, and the values are often strings used to display messages, but can be any object type.
+
+h4. Scoped Controllers
+
+By default, a new controller instance is created for each request. In fact, because the controller is @prototype@ scoped, it is thread-safe since each request happens on its own thread.
+
+You can change this behaviour by placing a controller in a particular scope. The supported scopes are:
+
+* @prototype@ (default) - A new controller will be created for each request (recommended for actions as Closure properties)
+* @session@ - One controller is created for the scope of a user session
+* @singleton@ - Only one instance of the controller ever exists (recommended for actions as methods)
+
+To enable one of the scopes, add a static @scope@ property to your class with one of the valid scope values listed above, for example
+
+{code:java}
+static scope = "singleton"
+{code}
+
+You can define the default strategy under in @Config.groovy@ with the @grails.controllers.defaultScope@ key, for example:
+
+{code:java}
+grails.controllers.defaultScope = "singleton"
+{code}
+
+{note}
+Use scoped controllers wisely. For instance, we don't recommend having any properties in a singleton-scoped controller since they will be shared for _all_ requests. Setting a default scope other than @prototype@ may also lead to unexpected behaviors if you have controllers provided by installed plugins that expect that the scope is @prototype@.
+{note}

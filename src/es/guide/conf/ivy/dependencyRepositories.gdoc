@@ -1,0 +1,144 @@
+h4. Remote Repositories
+
+Initially your BuildConfig.groovy does not use any remote public Maven repositories. There is a default @grailsHome()@ repository that will locate the JAR files Grails needs from your Grails installation. To use a public repository, specify it in the @repositories@ block:
+
+{code}
+repositories {
+    mavenCentral()
+}
+{code}
+
+In this case the default public Maven repository is specified. To use the SpringSource Enterprise Bundle Repository you can use the @ebr()@ method:
+
+{code}
+repositories {
+    ebr()
+}
+{code}
+
+You can also specify a specific Maven repository to use by URL:
+
+{code}
+repositories {
+    mavenRepo "http://repository.codehaus.org"
+}
+{code}
+
+h4. Controlling Repositories Inherited from Plugins
+
+A plugin you have installed may define a reference to a remote repository just as an application can. By default your application will inherit this repository definition when you install the plugin.
+
+If you do not wish to inherit repository definitions from plugins then you can disable repository inheritance:
+
+{code:java}
+repositories {
+    inherit false
+}
+{code}
+
+In this case your application will not inherit any repository definitions from plugins and it is down to you to provide appropriate (possibly internal) repository definitions.
+
+h4. Local Resolvers
+
+If you do not wish to use a public Maven repository you can specify a flat file repository:
+
+{code}
+repositories {
+    flatDir name:'myRepo', dirs:'/path/to/repo'
+}
+{code}
+
+To specify your local Maven cache (@~/.m2/repository@) as a repository:
+
+{code}
+repositories {
+    mavenLocal()
+}
+{code}
+h4. Custom Resolvers
+
+If all else fails since Grails builds on Apache Ivy you can specify an Ivy resolver:
+
+{code}
+/*
+ * Configure our resolver.
+ */
+def libResolver = new org.apache.ivy.plugins.resolver.URLResolver()
+['libraries', 'builds'].each {
+
+    libResolver.addArtifactPattern(
+            "http://my.repository/\${it}/" +
+            "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+
+    libResolver.addIvyPattern(
+            "http://my.repository/\${it}/" +
+            "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+}
+
+libResolver.name = "my-repository"
+libResolver.settings = ivySettings
+
+resolver libResolver
+{code}
+
+It's also possible to pull dependencies from a repository using SSH. Ivy comes with a dedicated resolver that you can configure and include in your project like so:
+{code}
+import org.apache.ivy.plugins.resolver.SshResolver
+...
+repositories {
+    ...
+
+    def sshResolver = new SshResolver(
+            name: "myRepo",
+            user: "username",
+            host: "dev.x.com",
+            keyFile: new File("/home/username/.ssh/id_rsa"),
+            m2compatible: true)
+
+    sshResolver.addArtifactPattern(
+            "/home/grails/repo/[organisation]/[artifact]/" +
+            "[revision]/[artifact]-[revision].[ext]")
+
+    sshResolver.latestStrategy =
+            new org.apache.ivy.plugins.latest.LatestTimeStrategy()
+
+    sshResolver.changingPattern = ".*SNAPSHOT"
+
+    sshResolver.setCheckmodified(true)
+
+    resolver sshResolver
+}
+{code}
+
+Download the [JSch|http://www.jcraft.com/jsch/] JAR and add it to Grails' classpath to use the SSH resolver. You can do this by passing the path in the Grails command line:
+{code}
+grails -classpath /path/to/jsch compile|run-app|etc.
+{code}
+
+You can also add its path to the @CLASSPATH@ environment variable but be aware this it affects many Java applications. An alternative on Unix is to create an alias for @grails -classpath ...@ so that you don't have to type the extra arguments each time.
+
+h4. Authentication
+
+If your repository requires authentication you can configure this using a @credentials@ block:
+
+{code}
+credentials {
+    realm = ".."
+    host = "localhost"
+    username = "myuser"
+    password = "mypass"
+}
+{code}
+
+This can be placed in your @USER_HOME/.grails/settings.groovy@ file using the @grails.project.ivy.authentication@ setting:
+
+{code}
+grails.project.ivy.authentication = {
+    credentials {
+        realm = ".."
+        host = "localhost"
+        username = "myuser"
+        password = "mypass"
+    }
+}
+{code}

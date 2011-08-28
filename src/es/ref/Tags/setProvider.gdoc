@@ -1,0 +1,23 @@
+h1. setProvider
+
+h2. Purpose
+
+Enables adaptive AJAX tags in a view or template without generating a link to the Javascript files as the <g:[javascript|tags]/> tag does. Useful for AJAX HTML responses and when using the Resources plugin and <r:require/>.
+
+h2. Examples
+
+{code:xml}
+<%-- Enable adaptive AJAX tags based on jQuery --%>
+<g:setProvider library="jquery"/>
+{code}
+
+h2. Description
+
+Activates adaptive AJAX tags such as <g:[formRemote|tags]/> and <g:[remoteLink|tags]/> without generating any HTML. It's basically the <g:[javascript|tags]/> tag without the generated link to the Javascript files.
+
+The tag must be declared before any AJAX tags, so it's typically found at the beginning of a GSP or in the <head> element. It can be used in GSP partial templates as well as views. It's also idempotent, so it can be called several times as long as the same library is declared each time. This is important if you use the tag in partial templates that may be included in a view (that also has the tag) or rendered directly as an AJAX response.
+
+Attributes
+
+* @library@ (required) - The name of the library to include. Typical values include "jquery", "prototype", "scriptaculous", "yahoo" or "dojo" but plugins can contribute new providers.
+* @plugin@ (optional) - The plugin that provides the adaptive AJAX support.
