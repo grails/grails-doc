@@ -1,0 +1,91 @@
+h1. discriminator
+
+h2. Purpose
+
+Customizes the discriminator column used in table-per-subclass inheritance mapping.
+
+h2. Examples
+
+{code:java}
+class Content {
+    ...
+}
+{code}
+
+{code:java}
+class PodCast extends Content {
+    ...
+    static mapping = {
+        discriminator "audio"
+    }
+}
+{code}
+
+h2. Description
+
+Usage: @discriminator(string/map)@
+
+Arguments:
+
+* @column@ (optional) - The column name to store the discriminator
+* @value@ - The value to use for the discriminator
+* @formula@ (optional) - an SQL expression that is executed to evaluate the type of class. Use this or @column@ but not both
+* @type@ (optional defaults to string) - the Hibernate type, used for the where clause condition to know if it needs to wrap it with '
+
+By default when mapping inheritance Grails uses a single-table model where all classes share the same table. A discriminator column is used to determine the type for each row, by default the full class name. You can use the @discriminator@ method to customize what's stored:
+
+{code:java}
+class Content {
+    ...
+}
+{code}
+
+{code:java}
+class PodCast extends Content {
+    ...
+    static mapping = {
+        discriminator "audio"
+    }
+}
+{code}
+
+You can also customize the discriminator column name:
+
+{code:java}
+class Content {
+    ...
+    static mapping = {
+        discriminator column: "content_type"
+    }
+}
+{code}
+
+{code:java}
+class PodCast extends Content {
+    ...
+    static mapping = {
+        discriminator value: "audio"
+    }
+}
+{code}
+
+Or you can use a formula:
+
+{code:java}
+class Content {
+    ...
+    static mapping = {
+        discriminator value: "1", type: "integer",
+            formula: "case when CLASS_TYPE in ('a', 'b', 'c') then 0 else 1 end",
+    }
+}
+{code}
+
+{code:java}
+class PodCast extends Content {
+    ...
+    static mapping = {
+        discriminator value: "0"
+    }
+}
+{code}

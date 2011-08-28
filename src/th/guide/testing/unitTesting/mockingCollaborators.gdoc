@@ -1,0 +1,30 @@
+Beyond the specific targeted mocking APIs there is also an all-purpose @mockFor()@ method that is available when using the @TestFor@ annotation. The signature of @mockFor@ is:
+
+{code:java}
+mockFor(class, loose = false)
+{code}
+
+This is general-purpose mocking that lets you set up either strict or loose demands on a class.
+
+This method is surprisingly intuitive to use. By default it will create a strict mock control object (one for which the order in which methods are called is important) that you can use to specify demands:
+
+{code:java}
+
+def strictControl = mockFor(MyService)
+strictControl.demand.someMethod(0..2) { String arg1, int arg2 -> ... }
+strictControl.demand.static.aStaticMethod {-> ... }
+{code}
+
+Notice that you can mock static as well as instance methods by using the "static" property. You then specify the name of the method to mock, with an optional range argument. This range determines how many times you expect the method to be called, and if the number of invocations falls outside of that range (either too few or too many) then an assertion error will be thrown. If no range is specified, a default of "1..1" is assumed, i.e. that the method must be called exactly once.
+
+The last part of a demand is a closure representing the implementation of the mock method. The closure arguments must match the number and types of the mocked method, but otherwise you are free to add whatever you want in the body.
+
+As we mentioned before, call @mockControl.createMock()@ to get an actual mock instance of the class that you are mocking. You can call this multiple times to create as many mock instances as you need. And once you have executed the test method, call @mockControl.verify()@ to check that the expected methods were called.
+
+Lastly, the call:
+
+{code:java}
+def looseControl = mockFor(MyService, true)
+{code}
+
+will create a mock control object that has only loose expectations, i.e. the order that methods are invoked does not matter.

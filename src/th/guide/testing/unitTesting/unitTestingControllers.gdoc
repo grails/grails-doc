@@ -1,0 +1,442 @@
+h4. The Basics
+
+You use the @grails.test.mixin.TestFor@ annotation to unit test controllers. Using @TestFor@ in this manner activates the @grails.test.mixin.web.ControllerUnitTestMixin@ and its associated API. For example:
+
+{code:java}
+import grails.test.mixin.TestFor
+
+@TestFor(SimpleController)
+class SimpleControllerTests {
+    void testSomething() {
+
+    }
+}
+{code}
+
+Adding the @TestFor@ annotation to a controller causes a new @controller@ field to be automatically created for the controller under test.
+
+{note}
+The @TestFor@ annotation will also automatically annotate any public methods starting with "test" with JUnit 4's @Test annotation. If any of your test method don't start with "test" just add this manually
+{note}
+
+To test the simplest "Hello World"-style example you can do the following:
+
+{code:java}
+// Test class
+class SimpleController {
+    def hello() {
+        render "hello"
+    }
+}
+{code}
+
+{code:java}
+void testHello() {
+    controller.hello()
+
+    assert response.text == 'hello'
+}
+{code}
+
+The @response@ object is an instance of @org.codehaus.groovy.grails.plugins.testing.GrailsMockHttpServletResponse@ which extends Spring's @org.springframework.mock.web.MockHttpServletResponse@ and has a number of useful methods for inspecting the state of the response.
+
+For example to test a redirect you can use the @redirectUrl@ property:
+
+{code:java}
+// Test class
+class SimpleController {
+    def index() {
+        redirect action: 'hello'
+    }
+    ...
+}
+{code}
+
+{code:java}
+void testIndex() {
+    controller.index()
+
+    assert response.redirectedUrl == '/simple/hello'
+}
+{code}
+
+h4. Testing View Rendering
+
+To test view rendering you can inspect the state of the controller's @modelAndView@ property (an instance of @org.springframework.web.servlet.ModelAndView@) or you can use the @view@ and @model@ properties provided by the mixin:
+
+{code:java}
+// Test class
+class SimpleController {
+    def home() {
+        render view: "homePage", model: [title: "Hello World"]
+    }
+    ...
+}
+{code}
+
+{code:java}
+void testIndex() {
+    controller.home()
+
+    assert view == "/simple/homePage"
+    assert model.title == "Hello World"
+}
+{code}
+
+h4. Testing Template Rendering
+
+Unlike view rendering, template rendering will actually attempt to write the template directly to the response rather than returning a @ModelAndView@ hence it requires a different approach to testing.
+
+Consider the following controller action:
+
+{code:java}
+class SimpleController {
+    def display() {
+        render template:"snippet"
+    }
+}
+{code}
+
+In this example the controller will look for a template in @grails-app/views/simple/_snippet.gsp@. You can test this as follows:
+
+{code:java}
+void testDisplay() {
+    controller.display()
+    assert response.text == 'contents of template'
+}
+{code}
+
+However, you may not want to render the real template, but just test that is was rendered. In this case you can provide mock Groovy Pages:
+
+{code:java}
+void testDisplay() {
+    views['/simple/_snippet.gsp'] = 'mock contents'
+    controller.display()
+    assert response.text == 'mock contents'
+}
+{code}
+
+h4. Testing XML and JSON Responses
+
+XML and JSON response are also written directly to the response. Grails' mocking capabilities provide some conveniences for testing XML and JSON response. For example consider the following action:
+
+{code:java}
+def renderXml() {
+    render(contentType:"text/xml") {
+        book(title:"Great")
+    }
+}
+{code}
+
+This can be tested using the @xml@ property of the response:
+
+{code:java}
+void testRenderXml() {
+    controller.renderXml()
+    assert "<book title='Great'/>" == response.text
+    assert "Great" == response.xml.@title.text()
+}
+{code}
+
+The @xml@ property is a parsed result from Groovy's "XmlSlurper":http://groovy.codehaus.org/Reading+XML+using+Groovy's+XmlSlurper class which is very convenient for parsing XML.
+
+Testing JSON responses is pretty similar, instead you use the @json@ property:
+
+{code:java}
+// controller action
+def renderJson() {
+    render(contentType:"text/json") {
+        book = "Great"
+    }
+}
+{code}
+
+{code:java}
+// test
+void testRenderJson() {
+
+    controller.renderJson()
+
+    assert '{"book":"Great"}' == controller.response.text
+    assert "Great" == response.json.book
+}
+
+{code}
+
+The @json@ property is an instance of @org.codehaus.groovy.grails.web.json.JSONElement@ which is a map-like structure that is useful for parsing JSON responses.
+
+h4. Testing XML and JSON Requests
+
+Grails provides various convenient ways to automatically parse incoming XML and JSON packets. For example you can bind incoming JSON or XML requests using Grails' data binding:
+
+{code}
+def consumeBook() {
+    def b = new Book(params['book'])
+
+    render b.title
+}
+{code}
+
+To test this Grails provides an easy way to specify an XML or JSON packet via the @xml@ or @json@ properties. For example the above action can be tested by specifying a String containing the XML:
+
+{code}
+void testConsumeBookXml() {
+    request.xml = '<book><title>The Shining</title></book>'
+    controller.consumeBook()
+
+    assert response.text == 'The Shining'
+}
+{code}
+
+Or alternatively a domain instance can be specified and it will be auto-converted into the appropriate XML request:
+
+{code}
+void testConsumeBookXml() {
+    request.xml = new Book(title:"The Shining")
+    controller.consumeBook()
+
+    assert response.text == 'The Shining'
+}
+{code}
+
+The same can be done for JSON requests:
+
+{code}
+void testConsumeBookJson() {
+    request.json = new Book(title:"The Shining")
+    controller.consumeBook()
+
+    assert response.text == 'The Shining'
+}
+{code}
+
+If you prefer not to use Grails' data binding but instead manually parse the incoming XML or JSON that can be tested too. For example consider the controller action below:
+
+{code}
+def consume() {
+    request.withFormat {
+        xml {
+            render request.XML.@title
+        }
+        json {
+            render request.JSON.title
+        }
+    }
+}
+{code}
+
+To test the XML request you can specify the XML as a string:
+
+{code}
+void testConsumeXml() {
+    request.xml = '<book title="The Stand" />'
+
+    controller.consume()
+
+    assert response.text == 'The Stand'
+}
+{code}
+
+And, of course, the same can be done for JSON:
+
+{code}
+void testConsumeJson() {
+    request.json = '{title:"The Stand"}'
+    controller.consume()
+
+    assert response.text == 'The Stand'
+}
+{code}
+
+h4. Testing Spring Beans
+
+When using @TestFor@ only a subset of the Spring beans available to a running Grails application are available. If you wish to make additional beans available you can do so with the @defineBeans@ method of @GrailsUnitTestMixin@:
+
+{code:java}
+class SimpleController {
+    SimpleService simpleService
+    def hello() {
+        render simpleService.sayHello()
+    }
+}
+{code}
+
+{code:java}
+void testBeanWiring() {
+    defineBeans {
+        simpleService(SimpleService)
+    }
+
+    controller.hello()
+
+    assert response.text == "Hello World"
+}
+{code}
+
+The controller is auto-wired by Spring just like in a running Grails application. Autowiring even occurs if you instantiate subsequent instances of the controller:
+
+{code:java}
+void testAutowiringViaNew() {
+    defineBeans {
+        simpleService(SimpleService)
+    }
+
+    def controller1 = new SimpleController()
+    def controller2 = new SimpleController()
+
+    assert controller1.simpleService != null
+    assert controller2.simpleService != null
+}
+{code}
+
+h4. Testing Mime Type Handling
+
+You can test mime type handling and the @withFormat@ method quite simply by setting the response's @format@ attribute:
+
+{code:java}
+// controller action
+def sayHello() {
+    def data = [Hello:"World"]
+    withFormat {
+        xml { render data as XML }
+        html data
+    }
+}
+{code}
+
+{code:java}
+// test
+void testSayHello() {
+    response.format = 'xml'
+    controller.sayHello()
+
+    String expected = '<?xml version="1.0" encoding="UTF-8"?>' +
+                      '<map><entry key="Hello">World</entry></map>'
+
+    assert expected == response.text
+}
+{code}
+
+h4. Testing Duplicate Form Submissions
+
+Testing duplicate form submissions is a little bit more involved. For example if you have an action that handles a form such as:
+
+{code:java}
+def handleForm() {
+    withForm {
+        render "Good"
+    }.invalidToken {
+        render "Bad"
+    }
+}
+{code}
+
+you want to verify the logic that is executed on a good form submission and the logic that is executed on a duplicate submission. Testing the bad submission is simple. Just invoke the controller:
+
+{code:java}
+void testDuplicateFormSubmission() {
+    controller.handleForm()
+    assert "Bad" == response.text
+}
+{code}
+
+Testing the successful submission requires providing an appropriate @SynchronizerToken@:
+
+{code:java}
+import org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerToken
+...
+
+void testValidFormSubmission() {
+    def token = SynchronizerToken.store(session)
+    params[SynchronizerToken.KEY] = token.currentToken.toString()
+
+    controller.handleForm()
+    assert "Good" == response.text
+}
+{code}
+
+If you test both the valid and the invalid request in the same test be sure to reset the response between executions of the controller:
+
+{code:java}
+controller.handleForm() // first execution
+...
+response.reset()
+...
+controller.handleForm() // second execution
+{code}
+
+h4. Testing File Upload
+
+You use the @GrailsMockMultipartFile@ class to test file uploads. For example consider the following controller action:
+
+{code:java}
+def uploadFile() {
+    MultipartFile file = request.getFile("myFile")
+    file.transferTo(new File("/local/disk/myFile"))
+}
+{code}
+
+To test this action you can register a @GrailsMockMultipartFile@ with the request:
+
+{code:java}
+void testFileUpload() {
+    final file = new GrailsMockMultipartFile("myFile", "foo".bytes)
+    request.addFile(file)
+    controller.uploadFile()
+
+    assert file.targetFileLocation.path == "/local/disk/myFile"
+}
+{code}
+
+The @GrailsMockMultipartFile@ constructor arguments are the name and contents of the file. It has a mock implementation of the @transferTo@ method that simply records the @targetFileLocation@ and doesn't write to disk.
+
+h4. Testing Command Objects
+
+Special support exists for testing command object handling with the @mockCommandObject@ method. For example consider the following action:
+
+{code:java}
+def handleCommand(SimpleCommand simple) {
+    if (simple.hasErrors()) {
+        render "Bad"
+    }
+    else {
+        render "Good"
+    }
+}
+{code}
+
+To test this you mock the command object, populate it and then validate it as follows:
+
+{code:java}
+void testInvalidCommand() {
+    def cmd = mockCommandObject(SimpleCommand)
+    cmd.name = '' // doesn't allow blank names
+
+    cmd.validate()
+    controller.handleCommand(cmd)
+
+    assert response.text == 'Bad'
+}
+{code}
+
+h4. Testing Calling Tag Libraries
+
+You can test calling tag libraries using @ControllerUnitTestMixin@, although the mechanism for testing the tag called varies from tag to tag. For example to test a call to the @message@ tag, add a message to the @messageSource@. Consider the following action:
+
+{code:java}
+def showMessage() {
+    render g.message(code: "foo.bar")
+}
+{code}
+
+This can be tested as follows:
+
+{code:java}
+void testRenderBasicTemplateWithTags() {
+    messageSource.addMessage("foo.bar", request.locale, "Hello World")
+
+    controller.showMessage()
+
+    assert response.text == "Hello World"
+}
+{code}

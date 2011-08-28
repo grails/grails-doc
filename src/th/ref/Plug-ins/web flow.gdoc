@@ -1,0 +1,44 @@
+h1. webflow
+
+h2. Purpose
+
+The @webflow@ plugin configures Grails' support for "Spring Webflow":http://www.springsource.org/webflow
+
+h2. Examples
+
+An example web flow:
+
+{code:java}
+class BookController {
+   ...
+   def shoppingCartFlow() {
+       showCart {
+           on("checkout").to "enterPersonalDetails"
+           on("continueShopping").to "displayCatalogue"
+       }
+       ...
+       displayCatalogue {
+            redirect(controller:"catalogue", action:"show")
+       }
+       displayInvoice()
+   }
+}
+{code}
+
+h2. Description
+
+Refer to the section on [Web Flow|guide:webflow] in the Grails user guide which details Grails' web flow support.
+
+Configured Spring Beans:
+
+* @conversationManager@ - An instance of the "SessionBindingConversationManager":http://static.springsource.org/spring-webflow/docs/2.0.8.RELEASE/javadoc-api/org/springframework/webflow/conversation/impl/SessionBindingConversationManager.html interface that manages conversations in the session.
+* @executionListenerLoader@ - A Web Flow "StaticFlowExecutionListenerLoader":http://static.springsource.org/spring-webflow/docs/2.0.8.RELEASE/javadoc-api/org/springframework/webflow/execution/factory/StaticFlowExecutionListenerLoader.html that uses the @hibernateConversationListener@ bean with flow execution events to manage the Hibernate session.
+* @flowBuilderServices@ - An instance of the "FlowBuilderServices":http://static.springsource.org/spring-webflow/docs/2.0.8.RELEASE/javadoc-api/org/springframework/webflow/engine/builder/support/FlowBuilderServices.html class used to help the Flow engine locate services.
+* @flowExecutor@ - An instance of the [GrailsFlowExecutorImpl|http://grails.org/doc/latest/api/org/codehaus/groovy/grails/webflow/execution/GrailsFlowExecutorImpl.html] that knows how to execute Grails flows based on flow execution keys.
+* @flowExecutionFactory@ - An instance of the "FlowExecutionImplFactory":http://static.springsource.org/spring-webflow/docs/2.0.8.RELEASE/javadoc-api/org/springframework/webflow/engine/impl/FlowExecutionImplFactory.html that constructs flow executions.
+* @flowExecutionSnapshotFactory@ - An instance of the "SerializedFlowExecutionSnapshotFactory":http://static.springsource.org/spring-webflow/docs/2.0.8.RELEASE/javadoc-api/org/springframework/webflow/execution/repository/snapshot/SerializedFlowExecutionSnapshotFactory.html class that is used to create flow snapshots that can be stored for resumption later on.
+* @flowExecutionRepository@ - An instance of the "DefaultFlowExecutionRepository":http://static.springsource.org/spring-webflow/docs/2.0.8.RELEASE/javadoc-api/org/springframework/webflow/execution/repository/impl/DefaultFlowExecutionRepository.html class that is used to store flows.
+* @flowRegistry@ - An instance of the [ControllerFlowRegistry|http://grails.org/doc/latest/api/org/codehaus/groovy/grails/webflow/engine/builder/ControllerFlowRegistry.html] class that stores persisted flows.
+* @flowScopeRegistrar@ - An instance of the Spring Web Flow "ScopeRegistrar":http://static.springsource.org/spring-webflow/docs/2.0.8.RELEASE/javadoc-api/org/springframework/webflow/scope/ScopeRegistrar.html class which registers the flow scopes with the @ApplicationContext@ so that services can be scoped using flow scopes such as @flow@, @conversation@ and @flash@.
+* @hibernateConversationListener@ - An instance of the Web Flow [SessionAwareHibernateFlowExecutionListener:http://grails.org/doc/latest/api/org/codehaus/groovy/grails/webflow/persistence/SessionAwareHibernateFlowExecutionListener.html] class that manages the Hibernate session for the scope of a flow, allowing atomic use of flows.
+* @viewFactoryCreator@ - An instance of the "MvcViewFactoryCreator":http://static.springsource.org/spring-webflow/docs/2.0.8.RELEASE/javadoc-api/org/springframework/webflow/mvc/builder/MvcViewFactoryCreator.html class used to construct views

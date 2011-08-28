@@ -1,0 +1,64 @@
+Grails' Web Flow integration also supports subflows. A subflow is like a flow within a flow. For example take this search flow:
+
+{code:java}
+def searchFlow() {
+    displaySearchForm {
+        on("submit").to "executeSearch"
+    }
+    executeSearch {
+        action {
+            [results:searchService.executeSearch(params.q)]
+        }
+        on("success").to "displayResults"
+        on("error").to "displaySearchForm"
+    }
+    displayResults {
+        on("searchDeeper").to "extendedSearch"
+        on("searchAgain").to "displaySearchForm"
+    }
+    extendedSearch {
+        // Extended search subflow
+        subflow(controller: "searchExtensions", action: "extendedSearch")
+        on("moreResults").to "displayMoreResults"
+        on("noResults").to "displayNoMoreResults"
+    }
+    displayMoreResults()
+    displayNoMoreResults()
+}{code}
+
+It references a subflow in the @extendedSearch@ state. The controller parameter is optional if the subflow is defined in the same controller as the calling flow.
+{note}
+Prior to 1.3.5, the previous subflow call would look like @subflow(extendedSearchFlow)@, with the requirement that the name of the subflow state be the same as the called subflow (minus @Flow@). This way of calling a subflow is deprecated and only supported for backward compatibility.
+{note}
+
+The subflow is another flow entirely:
+
+{code:java}
+def extendedSearchFlow() {
+    startExtendedSearch {
+        on("findMore").to "searchMore"
+        on("searchAgain").to "noResults"
+    }
+    searchMore {
+        action {
+           def results = searchService.deepSearch(ctx.conversation.query)
+           if (!results) return error()
+           conversation.extendedResults = results
+        }
+        on("success").to "moreResults"
+        on("error").to "noResults"
+    }
+    moreResults()
+    noResults()
+}{code}
+
+Notice how it places the @extendedResults@ in conversation scope. This scope differs to flow scope as it lets you share state that spans the whole conversation not just the flow. Also notice that the end state (either @moreResults@ or @noResults@ of the subflow triggers the events in the main flow:
+
+{code:java}
+extendedSearch {
+    // Extended search subflow
+    subflow(controller: "searchExtensions", action: "extendedSearch")
+    on("moreResults").to "displayMoreResults"
+    on("noResults").to "displayNoMoreResults"
+}
+{code}

@@ -1,0 +1,71 @@
+{hidden}
+To implement the typical "hello world!" example run the [create-controller|commandLine] command:
+{hidden}
+
+สำหรับการสร้าง "hello world!" นั้นทำได้โดยการรันคำสั่ง [create-controller|commandLine]:
+
+bc.
+grails create-controller hello
+
+{hidden}
+This will create a new controller (Refer to the section on [Controllers|guide:controllers] for more information) in the
+{hidden}
+คำสั่งนี้จะสร้างคอนโทรเลอร์ใหม่ (สามารถอ้างอิงในส่วนนี้ได้ใน [Controllers|guide:controllers])ใน 
+@grails-app/controllers@ {hidden}directory called{hidden} ไดเรกทอรี่ที่เรียกว่า @helloworld/HelloController.groovy@.
+
+{hidden}
+{note}
+If no package is specified with create-controller script, Grails automatically uses the application name as the package name. This default is configurable with the @grails.project.groupId@ attribute in Config.groovy.
+{note}
+{hidden}
+
+{note}
+ถ้าหากว่าไม่ได้กำหนดชื่อของแพกเกจในคำสั่ง create-controller Grails จะใช้ชื่อของแอพพลิเคชั่นเป็นชื่อของแพกเกจ ค่านี้ถูกกำหนดใน @grails.project.groupId@ ในไฟล์ Config.groovy
+{note}
+
+{hidden}
+Controllers are capable of dealing with web requests and to fulfil the "hello world!" use case our implementation needs to look like the following:
+{hidden}
+
+คอนโทรเลอร์มีความสามารถในการจัดการกับ web requests และ ตัวอย่างของ "hello world!" โดยจะมีตัวอย่างโค๊ดดังต่อไปนี้
+
+{code:java}
+package helloworld
+
+class HelloController {
+
+    def world() {
+        render "Hello World!"
+    }
+}
+{code}
+
+{hidden}
+Job done. Now start-up the container with another new command called [run-app|commandLine]:
+{hidden}
+
+หลังจากนี้ทำการรีสตาท์คอนเทนเนอร์โดยใช้คำสั่งนี้ [run-app|commandLine]:
+
+bc.
+grails run-app
+
+{hidden}
+This will start-up a server on port 8080 and you should now be able to access your application with the URL: 
+{hidden}
+
+คำสั่งนี้จะทำการเริ่มเครื่องแม่ข่ายที่พอทร์ 8080 และคุณจะสามารถเข้าไปยังแอพพลิเคชั่นที่เพิ่งสร้างขึ้นได้ดัง URL:
+@http://localhost:8080/helloworld@
+
+{hidden}
+The result will look something like the following screenshot:
+{hidden}
+
+ผลลัพท์จะเห็นได้ดั่งภาพตัวอย่างนี้
+
+!intropage.png!
+
+{hidden}
+This is the Grails intro page which is rendered by the @web-app/index.gsp@ file. You will note it has a detected the presence of your controller and clicking on the link to our controller we can see the text "Hello World!" printed to the browser window.
+{hidden}
+
+หน้านี้เป็นหน้าเริ่มต้นของ Grails ที่แสดงผลจาก @web-app/index.gsp@ คุณจะเห็นได้จากว่าหน้านี้ได้แสดงคอนโทรเลอร์ที่เพิ่งสร้างขึ้น และคุณสามารถคลิกเพื่อเข้าไปดูข้อความ "Hello World!" ที่แสดงผลได้ที่หน้าต่าง
