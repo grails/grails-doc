@@ -56,3 +56,19 @@ grails.project.dependency.resolution = {
 
 The details of the above will be explained in the next few sections.
 
+* Grails makes a best effort to cache the previous resolve and avoid resolving again unless you change @BuildConfig.groovy@. The ivy cache directory can also be configured via @BuildConfig.groovy@.
+
+{code}
+grails.project.dependency.resolution = {
+    cacheDir "target/ivy-cache"
+}
+{code}
+
+* There's a checksum validation done when Ivy downloads libraries. Unfortunately, some libraries have the wrong checksum due to bugs in deployment libraries. To be able to use those libraries (at own risk), the Ivy checksum validation can be disabled via @BuildConfig.groovy@:
+
+{code}
+grails.project.dependency.resolution = {
+    checksums false // whether to verify checksums or not
+}
+{code}
+
