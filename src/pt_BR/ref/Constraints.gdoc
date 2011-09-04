@@ -1,0 +1,171 @@
+{hidden}
+h1. Constraints Usage
+
+Constraints provide Grails with a declarative DSL for defining validation rules, schema generation and CRUD generation meta data. For example, consider these constraints:
+
+{code:java}
+class User {
+    ...
+
+    static constraints = {
+        login size: 5..15, blank: false, unique: true
+        password size: 5..15, blank: false
+        email email: true, blank: false
+        age min: 18
+    }
+}
+{code}
+
+Refer to the user guide topic on [Constraints|guide:constraints] for more information.
+
+h1. Global Constraints
+
+You can apply constraints globally inside @grails-app/conf/Config.groovy@ as follows:
+
+{code}
+grails.gorm.default.constraints = {
+    '*'(nullable: true, size: 1..20)
+}
+{code}
+
+The wildcard signifies that the constraints apply to all properties. You can also define shared constraints:
+
+{code}
+grails.gorm.default.constraints = {
+    myShared(nullable: true, size: 1..20)
+}
+{code}
+
+That can be reused in your class:
+
+{code:java}
+class User {
+    ...
+
+    static constraints = {
+        login(shared: "myShared")
+    }
+}
+{code}
+
+h1. Quick reference
+
+{table}
+Constraint | Description | Example
+blank | Validates that a String value is not blank | @login(blank:false)@
+creditCard | Validates that a String value is a valid credit card number | @cardNumber(creditCard: true)@
+email | Validates that a String value is a valid email address. | @homeEmail(email: true)@
+inList | Validates that a value is within a range or collection of constrained values. | @name(inList: \["Joe", "Fred", "Bob"\])@
+matches | Validates that a String value matches a given regular expression. | @login(matches: "\[a-zA-Z\]+")@
+max | Validates that a value does not exceed the given maximum value. | @age(max: new Date())@ @price(max: 999F)@
+maxSize | Validates that a value's size does not exceed the given maximum value. | @children(maxSize: 25)@
+min | Validates that a value does not fall below the given minimum value. | @age(min: new Date())@ @price(min: 0F)@
+minSize | Validates that a value's size does not fall below the given minimum value. | @children(minSize: 25)@
+notEqual | Validates that that a property is not equal to the specified value | @login(notEqual: "Bob")@
+nullable | Allows a property to be set to @null@ - defaults to @false@. | @age(nullable: true)@
+range | Uses a Groovy range to ensure that a property's value occurs within a specified range | @age(range: 18..65)@
+scale | Set to the desired scale for floating point numbers (i.e., the number of digits to the right of the decimal point). | @salary(scale: 2)@
+size | Uses a Groovy range to restrict the size of a collection or number or the length of a String. | @children(size: 5..15)@
+unique | Constrains a property as unique at the database level | @login(unique: true)@
+url | Validates that a String value is a valid URL. | @homePage(url: true)@
+validator | Adds custom validation to a field. | See documentation
+{table}
+
+h1. Scaffolding
+
+Some constraints have no impact on persistence but customize the scaffolding. It's not usually good practice to include UI information in your domain, but it's a great convenience if you use Grails' scaffolding extensively.
+
+{table}
+Constraint | Description
+display | Boolean that determines whether the property is displayed in the scaffolding views. If @true@ (the default), the property _is_ displayed.
+editable | Boolean that determines whether the property can be edited from the scaffolding views. If @false@, the associated form fields are displayed in read-only mode.
+format | Specify a display format for types that accept one, such as dates. For example, 'yyyy-MM-dd'.
+password | Boolean indicating whether this is property should be displayed with a password field. Only works on fields that would normally be displayed with a text field.
+widget | Controls what widget is used to display the property. For example, 'textArea' will force the scaffolding to use a <textArea> tag.
+{table}
+{hidden}
+
+h1. Uso das constraints
+
+As constraints oferecem a você uma maneira fácil de declarar regras de validações dos atributos em suas classes de domínios. Além disso, as constraints definidas podem influenciar a geração do banco de dados e a geração do CRUD do scaffold. Por exemplo, considere o código abaixo:
+
+{code:java}
+class User {
+    ...
+
+    static constraints = {
+        login size: 5..15, blank: false, unique: true
+        password size: 5..15, blank: false
+        email email: true, blank: false
+        age min: 18
+    }
+}
+{code}
+
+Consulte o guia do usuário no item [Constraints|guide:constraints] para mais informações.
+
+h1. Constraints globais
+
+Você pode aplicar as constraints de uma maneira geral para sua aplicação dentro do arquivo @grails-app/conf/Config.groovy@ como a seguir:
+
+{code}
+grails.gorm.default.constraints = {
+    '*'(nullable: true, size: 1..20)
+}
+{code}
+
+O asterísco indica que a constraint irá ser aplicada para todas as propriedades. Você ainda pode criar conjuntos de constraints pré-definidas para utilizar em suas classes da seguinte maneira
+
+{code}
+grails.gorm.default.constraints = {
+    myShared(nullable: true, size: 1..20)
+}
+{code}
+
+Este conjunto de constraints poderá ser utilizado posteriormente da seguinte maneira:
+
+{code:java}
+class User {
+    ...
+
+    static constraints = {
+        login(shared: "myShared")
+    }
+}
+{code}
+
+h1. Guia rápido
+
+{table}
+Constraint | Descrição | Exemplo
+blank | Indica que o valor de uma String não pode ser vazio (em branco) | @login(blank:false)@
+creditCard | Indica que o número deve ser um cartão de crédito válido | @cardNumber(creditCard: true)@
+email | Valida que a string deve ser um endereço de e-mail corretamente formatado | @homeEmail(email: true)@
+inList | Indica que o valor da propriedade deve ser um dentre os indicados na lista. | @name(inList: \["Joe", "Fred", "Bob"\])@
+matches | Garante que a String deve respeitar o padrão regex indicado. | @login(matches: "\[a-zA-Z\]+")@
+max | Valida se a propriedade não é maior que o valor indicado. | @age(max: new Date())@ @price(max: 999F)@
+maxSize | Valida se o valor não excede o tamanho máximo. | @children(maxSize: 25)@
+min | Valida se a propriedade não é menor que o valor indicado. | @age(min: new Date())@ @price(min: 0F)@
+minSize | Valida se o valor não é inferior ao tamanho mínimo. | @children(minSize: 25)@
+notEqual | Garante que a propriedade não seja igual ao valor especificado | @login(notEqual: "Bob")@
+nullable | Indica que a propriedade poderá ou não ser @null@ - o padrão é @false@. | @age(nullable: true)@
+range | Usa um objeto do tipo Range para garantir que a propriedade esteja na faixa definida | @age(range: 18..65)@
+scale | Indica a precisão a ser usada para propriedades ponto flutuante (ex: o númoer de dígitos a direita do ponto decimal). | @salary(scale: 2)@
+size | Usa um Range para garantir o tamanho mínimo e máximo de uma String. | @children(size: 5..15)@
+unique | Garante que apenas uma propriedade será salva com este valor (unique no banco de dados) | @login(unique: true)@
+url | Valida se o valor digitado é uma URL corretamente formatada. | @homePage(url: true)@
+validator | Adiciona uma validação customizada para o campo. | See documentation
+{table}
+
+h1. Scaffolding
+
+Existem algumas constraints (indicadas abaixo) que não geram impacto em nível de persistencia dos objetos, mas definem como o Scaffold irá acontecer para elas. Não é uma boa prática manter informações de interface dentro de sua domain class, mas para casos onde o Scaffold é muito usado, este recurso pode ajudar.
+
+{table}
+Constraint | Descrição
+display | Define se a propriedade será mostrada no Scaffold. Se @true@ (valor padrão), a propriedade _será_ mostrada.
+editable | Define se a propriedade será editável. Se @false@, o campo será mostrado em modo read-only.
+format | Define um padrão (formato) para o tipo caso ele aceite um. Por exemplo, para datas 'dd/MM/yyyy'.
+password | Diz se a propriedade deve ser mostrada na tela como um campo de password. Funciona apenas em campos que iriam ser renderizados como um campo texto.
+widget | Define qual widget será usado para renderizar a propriedade. Por exemplo, 'textArea' irá forçar o Scaffold a usar uma tag <textarea>.
+{table}
