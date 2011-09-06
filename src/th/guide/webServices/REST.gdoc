@@ -1,10 +1,22 @@
+{hidden}
 REST is not really a technology in itself, but more an architectural pattern. REST is very simple and just involves using plain XML or JSON as a communication medium, combined with URL patterns that are "representational" of the underlying system, and HTTP methods such as GET, PUT, POST and DELETE.
+{hidden}
 
+REST ไม่ได้เป็นเทคโนโลยีในตัวมันเอง แต่เป็นในทางของ Architectural Pattern มากกว่า ในการใช้งาน REST นั้นง่ายมากโดยเพียงแค่ใช้ XML และ JSON เป็นสื่อกลางในการสื่อสาร และรวมเข้ากับการใช้ URL patterns ที่เป็นเหมือน representational หรือ ตัวช่วยแสดงในระบบ และ HTTP methods เช่น GET, PUT, POST และ DELETE
+
+{hidden}
 Each HTTP method maps to an action type. For example GET for retrieving data, PUT for creating data, POST for updating and so on. In this sense REST fits quite well with [CRUD|guide:scaffolding].
+{hidden}
+
+แต่ล่ะ HTTP method จะเกี่ยวโยงกับแต่ล่ะ action type เช่น GET จะไว้สำหรับเรียกดูข้อมูล PUT ไว้สำหรับสร้างข้อมูล POST ไว้สำหรับแก้ไขข้อมูล โดยจะเห็นได้ว่า REST สามารถใช้กับ [CRUD|guide:scaffolding] ได้เป็นอย่างดี
 
 h4. URL patterns
 
+{hidden}
 The first step to implementing REST with Grails is to provide RESTful [URL mappings|guide:urlmappings]:
+{hidden}
+
+โดยขั้นตอนแรกในการสร้าง REST กับ  Grails คือการให้การสนับสนุน RESTful [URL mappings|guide:urlmappings]:
 
 {code:java}
 static mappings = {
@@ -12,7 +24,12 @@ static mappings = {
 }
 {code}
 
+{hidden}
 This maps the URI @/product@ onto a @ProductController@. Each HTTP method such as GET, PUT, POST and DELETE map to unique actions within the controller as outlined by the table below:
+{hidden}
+
+ตัวอย่างด้านบนจะไปแมพกับ URI @/product@ onto a @ProductController@ โดยแต่ล่ะ HTTP method เช่น GET, PUT, POST และ DELETE จะไป
+แมพกับแต่ล่ะ action ที่ไม่ซ้ำกันในคอนโทรเลอร์ดังที่จะเห็นด้านล่าง
 
 {table}
 Method     | Action
@@ -22,9 +39,17 @@ Method     | Action
 @DELETE@   | @delete@
 {table}
 
+{hidden}
 In addition, Grails provides automatic XML or JSON marshalling for you.
+{hidden}
 
+นอกจากนี้ Grails ยังสนับสนุนการสร้าง XML หรือ JSON แบบอัตโนมัติด้วย
+
+{hidden}
 You can alter how HTTP methods are handled by using URL Mappings to [map to HTTP methods|guide:mappingHTTP]:
+{hidden}
+
+คุณสามารถปรับว่า HTTP methods โดยใช้ URL Mappings แมพกับ [map to HTTP methods|guide:mappingHTTP]:
 
 {code:java}
 "/product/$id"(controller: "product") {
@@ -32,7 +57,11 @@ You can alter how HTTP methods are handled by using URL Mappings to [map to HTTP
 }
 {code}
 
+{hidden}
 However, unlike the @resource@ argument used previously, in this case Grails will not provide automatic XML or JSON marshalling unless you specify the @parseRequest@ argument:
+{hidden}
+
+แต่ยังไงก็ตาม ตัวแปร @resource@  ที่ใชก่อนหน้านี้ ในลักษณะนี้ Grails จะใช้ XML หรือ JSON เพื่อสนับสนุนในการเปลี่ยน XML และ JSON กลับไปกลับมา นอกจากเสียแต่ว่าคุณกำหนดตัวแปร @parseRequest@
 
 {code:java}
 "/product/$id"(controller: "product", parseRequest: true) {
@@ -42,7 +71,11 @@ However, unlike the @resource@ argument used previously, in this case Grails wil
 
 h4. HTTP Methods
 
+{hidden}
 In the previous section you saw how you can easily define URL mappings that map specific HTTP methods onto specific controller actions. Writing a REST client that then sends a specific HTTP method is then easy (example in Groovy's HTTPBuilder module):
+{hidden}
+
+ในส่วนด้านบนคุณจะเห็นได้ว่าคุณสามารถกำหนด URL mappings อย่างง่ายๆได้ โดยสามารถเจาะจงแมพกับ HTTP methods ที่ต้องการได้กับ action ของคอนโทรเลอร์ได้ การเขียน REST client ที่ส่ง HTTP method เข้ามาจึงเป็นการง่าย โดยตัวอย่างดูได้จาก (example in Groovy's HTTPBuilder module):
 
 {code}
 import groovyx.net.http.*
@@ -60,7 +93,11 @@ def http = new HTTPBuilder("http://localhost:8080/amazon")
  }
 {code}
 
+{hidden}
 Issuing a request with a method other than @GET@ or @POST@ from a regular browser is not possible without some help from Grails. When defining a [form|tags] you can specify an alternative method such as @DELETE@:
+{hidden}
+
+การเรียกใช้ request กับ method นอกจาก @GET หรือ @POST@ จากบราวเซอร์ปกตินั้นทำได้ค่อนข้างยากถ้าไม่ได้รับความช่วยเหลือจาก Grails โดยคุณสามารถใช้ [form|tags] เพื่อกำหนด @DELETE@ ได้
 
 {code}
 <g:form controller="book" method="DELETE">
