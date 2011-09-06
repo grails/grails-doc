@@ -1,0 +1,61 @@
+{hidden}
+h1. response
+
+h2. Purpose
+
+The @response@ object is an instance of the Servlet API's [HttpServletResponse|api:javax.servlet.http.HttpServletResponse] class
+
+h2. Examples
+
+{code}
+class BookController {
+    def downloadFile() {
+        byte[] bytes = // read bytes
+        response.outputStream << bytes
+    }
+}
+{code}
+
+h2. Description
+
+The Servlet API's @HttpServletResponse@ class can be used within Grails to perform all typical activities such as writing out binary data, writing directly to the response and sending error response codes to name but a few. Refer to the documentation on the [HttpServletResponse|api:javax.servlet.http.HttpServletResponse] class in the Servlet API for more information. Grails provides the following additional methods and/or properties on the @response@ object
+
+* @format@ - The request format, used for [content negotiation|guide:contentNegotiation].
+* @withFormat(Closure)@ - The withFormat method, used for [content negotiation|guide:contentNegotiation].
+
+Grails also overrides the left shift operator on the @response@ object making it easier to write to the response writer:
+
+{code:java}
+response << "Hello World"
+{code}
+{hidden}
+
+h1. response
+
+h2. Propósito
+
+O objeto @response@ é uma instância da classe [HttpServletResponse|api:javax.servlet.http.HttpServletResponse] da API Servlet.
+
+h2. Exemplos
+
+{code}
+class BookController {
+    def downloadFile() {
+        byte[] bytes = // read bytes
+        response.outputStream << bytes
+    }
+}
+{code}
+
+h2. Descrição
+
+A classe @HttpServletResponse@ pode ser usada para atividades de interação com a resposta que será dada ao browser do cliente, como escrever objetos, imagens e streams de informação, ou então para o envio de códigos e status HTTP. Consulte a documentação da classe [HttpServletResponse|api:javax.servlet.http.HttpServletResponse] diretamente na API Servlet para ter mais informações. O grails insere dois novos métodos/propriedades no objeto @response@:
+
+* @format@ - O formato do request feito, usado para fazer '[content negotiation|guide:contentNegotiation]'.
+* @withFormat(Closure)@ - O método withFormat também pode ser usado para fazer '[content negotiation|guide:contentNegotiation]'.
+
+O grails ainda sobrecarrega o operador 'left shift' no objeto @response@, facilitando a escrita direta no writer do response:
+
+{code:java}
+response << "Hello World"
+{code}

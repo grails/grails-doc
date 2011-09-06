@@ -1,0 +1,123 @@
+{hidden}
+h1. request
+
+h2. Purpose
+
+The @request@ object is an instance of the Servlet API's [HttpServletRequest|api:javax.servlet.http.HttpServletRequest] interface
+
+h2. Examples
+
+{code}
+class BookController {
+    def list() {
+        log.info "User agent: " + request.getHeader("User-Agent")
+
+        render(view: actionName)
+    }
+}
+{code}
+
+h2. Description
+
+The [HttpServletRequest|api:javax.servlet.http.HttpServletRequest] class is useful for, amongst other things, obtaining request headers, storing request scoped attributes and establishing information about the client. Refer to the Servlet API's javadocs for further information.
+
+Grails enhances the @HttpServletRequest@ instance by adding the following new properties and methods:
+
+* @XML@ - An instance of @XmlSlurper@'s [GPathResult|http://groovy.codehaus.org/api/groovy/util/slurpersupport/GPathResult.html] class that allows parsing of an incoming XML request (useful for REST).
+* @JSON@ - An instance of Grails' [JSONObject|api:org.codehaus.groovy.grails.web.json.JSONObject] class that allows parsing of an incoming JSON request (useful for JSON based REST).
+* @forwardURI@ - Useful for obtaining the current request URI since the @request@ objects @requestURI@ property returns the original URI, not the matched one.
+* @get@ - Returns true if the current request is an HTTP @GET@ request.
+* @post@ - Returns true if the current request is an HTTP @POST@ request.
+* @each@ - Implementation of Groovy's @each@ method for iterating over request attributes.
+* @find@ - Implementation of Groovy's default @find@ method for searching request attributes.
+* @findAll@ - Implementation of Groovy's default @findAll@ method for searching request attributes.
+* @format@ - The request format, used for [content negotiation|guide:contentNegotiation].
+* @withFormat(Closure)@ - The withFormat method, used for [content negotiation|guide:contentNegotiation].
+* @xhr@ - Returns @true@ if the current request is an Ajax request.
+
+The @XML@ and @JSON@ properties are useful for XML APIs and can be used to parse incoming XML or JSON packages. For example given a request body of:
+
+{code:xml}
+<book>
+   <title>The Stand</title>
+</book>
+{code}
+
+This can be parsed easily:
+
+{code:java}
+def title = request.XML?.book?.title
+render "The Title is $title"
+{code}
+
+Request attributes which are normally accessible from the [getAttribute|api:javax.servlet.ServletRequest#getAttribute(java.lang.String)] can also be indexed into using the array index operator or de-reference operator:
+
+{code:java}
+def user = request['user']
+
+request['user'] = 'John'
+
+asset 'John' == request.user
+{code}
+{hidden}
+
+h1. request
+
+h2. Propósito
+
+O objeto @request@ é uma instância de uma classe que implementa a interface [HttpServletRequest|api:javax.servlet.http.HttpServletRequest] da API Servlet.
+
+h2. Exemplos
+
+{code}
+class BookController {
+    def list() {
+        log.info "User agent: " + request.getHeader("User-Agent")
+
+        render(view: actionName)
+    }
+}
+{code}
+
+h2. Descrição
+
+A classe [HttpServletRequest|api:javax.servlet.http.HttpServletRequest] é util para, entre outras coisas, armazenar atributos pertencentes a esta requisição do usuário. Consulte a documentação da API Servlet diretamente para mais informações sobre o HttpServletRequest.
+
+O Grails ainda adiciona novas propriedades e métodos ao @request@ para facilitar seu uso:
+
+* @XML@ - Uma instância de um @XmlSlurper@ [GPathResult|http://groovy.codehaus.org/api/groovy/util/slurpersupport/GPathResult.html] que contém o XML enviado pelo cliente neste request. Muito utilizado para requisições REST.
+* @JSON@ - Uma instância do [JSONObject|api:org.codehaus.groovy.grails.web.json.JSONObject] do grails que permite navegar no JSON enviado pelo cliente neste request. Muito utilizado também em requisições REST ou AJAX.
+* @forwardURI@ - Usado para se obter a URI do request atual.
+* @get@ - Retorna @true@ se o request foi feito se utilizando do método HTTP @GET@.
+* @post@ - Retorna @true@ se o request foi feito se utilizando do método HTTP @POST@.
+* @each@ - Usado para se iterar diretamente nos atributos do request. (Semelhante ao @each@ do Groovy)
+* @find@ - Usado para se procurar algum atributo específico do request. (Semelhante ao @find@ do Groovy)
+* @findAll@ - Busca todos os atributos do request que satisfaçam a condição. (Semelhante ao @findAll@ do Groovy)
+* @format@ - O formato do request para se fazer '[content negotiation|guide:contentNegotiation]'.
+* @withFormat(Closure)@ - Também usado para se executar um código baseado no formato do request. Usado para se fazer '[content negotiation|guide:contentNegotiation]'.
+* @xhr@ - Retorna @true@ se o request corrente foi feito utilizando AJAX.
+
+Os atributos @XML@ e @JSON@ são usados para tratar o conteúdo do request quando o controller recebe um conteúdo em XML ou JSON como nos exemplos abaixo:
+
+{code:xml}
+<book>
+   <title>The Stand</title>
+</book>
+{code}
+
+Que pode ser tratado facilmente da seguinte maneira:
+
+{code:java}
+def title = request.XML?.book?.title
+render "The Title is $title"
+{code}
+
+Os atributos do request são normalmente acessíveis a partir do método [getAttribute|api:javax.servlet.ServletRequest#getAttribute(java.lang.String)] ou usando o método facilitador do Groovy:
+
+{code:java}
+def user = request['user']
+
+request['user'] = 'John'
+
+asset 'John' == request.user
+{code}

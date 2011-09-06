@@ -1,0 +1,71 @@
+{hidden}
+h1. session
+
+h2. Purpose
+
+The @session@ object is an instance of the Servlet API's [HttpSession|api:javax.servlet.http.HttpSession] class
+
+h2. Examples
+
+{code}
+class UserController {
+
+    def logout() {
+        log.info "User agent: " + request.getHeader("User-Agent")
+        session.invalidate()
+        redirect(action: "login")
+    }
+
+    def login() {}
+}
+{code}
+
+h2. Description
+
+The [HttpSession|api:javax.servlet.http.HttpSession] class is useful for associated session data with a client.
+
+Session attributes which are normally accessible from the [getAttribute|api:javax.servlet.http.HttpSession#getAttribute(java.lang.String)] can also be indexed into using the array index operator or de-reference operator:
+
+{code:java}
+def user = session["user"]
+
+session["user"] = "John"
+
+asset "John" == session.user
+{code}
+{hidden}
+
+h1. session
+
+h2. Propósito
+
+O objeto @session@ é uma instância comum da classe [HttpSession|api:javax.servlet.http.HttpSession] da API Servlet.
+
+h2. Exemplos
+
+{code}
+class UserController {
+
+    def logout() {
+        log.info "User agent: " + request.getHeader("User-Agent")
+        session.invalidate()
+        redirect(action: "login")
+    }
+
+    def login() {}
+}
+{code}
+
+h2. Descrição
+
+A classe [HttpSession|api:javax.servlet.http.HttpSession] é usada para associar informações do cliente junto a sua sessão no servidor.
+
+Os atributos da sessão são normalmente acessíveis através do método [getAttribute|api:javax.servlet.http.HttpSession#getAttribute(java.lang.String)], ou então pelo facilitador groovy de acesso:
+
+{code:java}
+def user = session["user"]
+
+session["user"] = "John"
+
+asset "John" == session.user
+{code}
