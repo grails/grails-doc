@@ -1,12 +1,20 @@
 h4. Displaying Errors
 
+{hidden}
 Typically if you get a validation error you redirect back to the view for rendering. Once there you need some way of displaying errors. Grails supports a rich set of tags for dealing with errors. To render the errors as a list you can use [renderErrors|tags]:
+{hidden}
+
+โดยปกติแล้วถ้าพบว่ามีข้อผิดพลาดเกิดขึ้น เราก็ต้องการที่จะกลับไปยังหน้าแสดงผล เพื่อแสดงข้อความข้อผิดพลาดนั้นๆ Grails สนับสนุนการแสดงนี้โดยใช้ tags เพื่อการแสดงข้อความที่ผิดพลาดโดยใช้ [renderErrors|tags]
 
 {code:xml}
 <g:renderErrors bean="${user}" />
 {code}
 
+{hidden}
 If you need more control you can use [hasErrors|tags] and [eachError|tags]:
+{hidden}
+
+ถ้าคุณต้องการการความยืดหยุ่นมากกว่านั้นคุณอาจจะใช้ [hasErrors|tags] และ [eachError|tags] ได้
 
 {code:xml}
 <g:hasErrors bean="${user}">
@@ -20,7 +28,11 @@ If you need more control you can use [hasErrors|tags] and [eachError|tags]:
 
 h4. Highlighting Errors
 
+{hidden}
 It is often useful to highlight using a red box or some indicator when a field has been incorrectly input. This can also be done with the [hasErrors|tags] by invoking it as a method. For example:
+{hidden}
+
+โดยส่วนใหญ่แล้วเราจะแสดงข้อความโดยใช้กล่องข้อความสีแดง เมื่อฟิลด์นั้นๆถูกใส่ข้อมูลที่ผิดพลาด เราสามารถใช้วิธีนี้ได้โดยใช้ [hasErrors|tags] 
 
 {code:xml}
 <div class='value ${hasErrors(bean:user,field:'login','errors')}'>
@@ -28,14 +40,26 @@ It is often useful to highlight using a red box or some indicator when a field h
 </div>
 {code}
 
+{hidden}
 This code checks if the @login@ field of the @user@ bean has any errors and if so it adds an @errors@ CSS class to the @div@, allowing you to use CSS rules to highlight the @div@.
+{hidden}
+
+โค๊ดในส่วนนี้จะตรวจสอบว่า @login@ ฟิลด์ของ @user@ นั่นมีข้อผิดพลาดตรงไหนหรือเปล่า ถ้ามีก็จะเพิ่มลงไปใน @errors@ ลงในคลาส CSS ของ @div@ เพื่อให้ @div@ นั้นแสดงกล่องข้อความสีแดงออกมาจาก CSS ที่เพิ่มไป
 
 h4. Retrieving Input Values
 
+{hidden}
 Each error is actually an instance of the [FieldError|api:org.springframework.validation.FieldError] class in Spring, which retains the original input value within it. This is useful as you can use the error object to restore the value input by the user using the [fieldValue|tags] tag:
+{hidden}
+
+แต่ล่ะข้อความคือหนึ่ง instance ของ [FieldError|api:org.springframework.validation.FieldError] ในสปริงและก็จะมีค่าใสตัวของมันเอง โดยจะมีประโยชน์ในการใช้ error ออปเจกนั้นสำหรับเก็บค่าจากผู้ใช้โดยใช้ [fieldValue|tags] tag
 
 {code:xml}
 <input type="text" name="login" value="${fieldValue(bean:user,field:'login')}"/>
 {code}
 
+{hidden}
 This code will check for an existing @FieldError@ in the @User@ bean and if there is obtain the originally input value for the @login@ field.
+{hidden}
+
+โค๊ดส่วนนี้จะตรวจสอบค่า @FieldError@ ที่มีอยู่แล้วใน @User@ bean ถ้ามีก็จะเก็บค่านั้นลงใปในฟิลด์ @login@ 

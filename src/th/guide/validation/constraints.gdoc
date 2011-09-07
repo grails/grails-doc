@@ -1,4 +1,8 @@
+{hidden}
 Within a domain class [constraints|domainClasses] are defined with the constraints property that is assigned a code block:
+{hidden}
+
+ในโดเมนคลาส [constraints|domainClasses] จะถูกกำหนดไว้ในค่าของ constraints ที่อยู่ในบล๊อกของโค๊ด
 
 {code:java}
 class User {
@@ -13,7 +17,11 @@ class User {
 }
 {code}
 
+{hidden}
 You then use method calls that match the property name for which the constraint applies in combination with named parameters to specify constraints:
+{hidden}
+
+โดยคุณก็จะสามารถเรียกใช้ method ที่ตรงกับชื่อของค่านั้นสำหรับแต่ล่ะ constraint 
 
 {code:java}
 class User {
@@ -28,17 +36,33 @@ class User {
 }
 {code}
 
+{hidden}
 In this example we've declared that the @login@ property must be between 5 and 15 characters long, it cannot be blank and must be unique. We've also applied other constraints to the @password@, @email@ and @age@ properties.
+{hidden}
+
+ในตัวอย่างนี้เราประกาศค่า @login@ ว่าจะต้องมีตัวอักษรระหว่าง 5 ถึง 15 โดยไม่สามารถเป็นค่าว่างได้และต้องเป็นค่าเฉพาะตัว เราก็ยังกำหนดค่าของ @password@, @email@ และ @age@ ด้วย
 
 {note}
+{hidden}
 By default, all domain class properties are not nullable (i.e. they have an implicit @nullable: false@ constraint). The same is not true for command object properties, which are nullable by default.
+{hidden}
+โดยปกติแล้วค่าของโดเมนคลาสทั้งหมดจะไม่สามารถเป็นค่าว่างได้ โดยจะถูกกำหนดไว้ @nullable: false@ constraint โดยหลักการนี้จะไม่ตรงกับ command object เพราะแต่ล่ะค่าจะเป็นค่าว่างโดยปกติ
 {note}
 
+{hidden}
 A complete reference for the available constraints can be found in the Quick Reference section under the Constraints heading.
+{hidden}
+
+โดยข้อมูลอ้างอิงโดยสมบูรณ์จะสามารถหาได้จาก Quick Reference ในหัวข้อ Constraints
 
 h3. A word of warning - referencing domain class properties from constraints
 
+{hidden}
 It's very easy to attempt to reference instance variables from the static constraints block, but this isn't legal in Groovy (or Java). If you do so, you will get a @MissingPropertyException@ for your trouble. For example, you may try
+{hidden}
+
+เป็นการง่ายมากที่จะลองใช้ค่าตัวแปร instance ในบล๊อกของ static constraints แต่นี้ไม่ถูกต้องตามหลักของ Groovy หรือแม้แต่ Java ถ้าคุณทำแบบนั้นคุณก็จะถูกแจ้งว่า @MissingPropertyException@ โดยดังเช่นตัวอย่าง
+
 {code}
 class Response {
     Survey survey
@@ -51,7 +75,11 @@ class Response {
 }
 {code}
 
+{hidden}
 See how the @inList@ constraint references the instance property @survey@? That won't work. Instead, use a custom [validator|constraints]:
+{hidden}
+
+โดยคุณจะเห็นได้ว่า @inList@ constraint อ้างอิงกับค่าของ @survey@ ซึ่งแบบนี้จะไม่ถูกต้องโดยเราจะต้องใช้ custom [validator|constraints] แทน
 
 {code}
 class Response {
@@ -63,4 +91,8 @@ class Response {
 }
 {code}
 
+{hidden}
 In this example, the @obj@ argument to the custom validator is the domain _instance_ that is being validated, so we can access its @survey@ property and return a boolean to indicate whether the new value for the @answer@ property, @val@, is valid.
+{hidden}
+
+ในตัวอย่างนี้ ค่า @obj@ เป็นค่าที่ถูกกำหนดขึ้นมาเองโดยเป็น _instance_ ที่ถูกตรวจสอบ โดยเราสามารถเข้าถึง @survey@ โดยการคืนค่า boolean เพื่อแสดงให้เห็นว่าค่า @answer@, @val@ นั้นถูกต้องหรือเปล่า

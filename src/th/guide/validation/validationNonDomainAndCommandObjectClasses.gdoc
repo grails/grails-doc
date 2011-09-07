@@ -1,8 +1,16 @@
+{hidden}
 [Domain classes|guide:domainClasses] and [command objects|guide:commandObjects] support validation by default.  Other classes may be made validateable by defining the static @constraints@ property in the class (as described above) and then telling the framework about them.  It is important that the application register the validateable classes with the framework.  Simply defining the @constraints@ property is not sufficient.
+{hidden}
+
+[Domain classes|guide:domainClasses] และ [command objects|guide:commandObjects] สนับสนุนการตรวจสอบข้อผิดพลาดโดยปกติอยู่แล้ว ถ้าสำหรับคลาสอื่นๆก็สามารถทำให้ตรวจสอบข้อผิดพลาดได้ โดยการกำหนดค่า static @constraints@ ในคลาสนั้นๆ แล้วบอกกับ Grails ให้รับรู้ถึงคลาสนั้นๆ การบอกให้ Grails รับรู้ถึงการมีอยู่ของคลาสนั้นๆมีความสำคัญมาก โดยเพียงการกำหนด @constraints@ นั้นไม่พอเพียง โดยจะเห็นได้จากตัวอย่างด้านล่าง
 
 h4. The Validateable Annotation
 
+{hidden}
 Classes which define the static @constraints@ property and are annotated with @Validateable can be made validateable by the framework. Consider this example:
+{hidden}
+
+คลาสที่กำหนดค่า static @constraints@ และประกาศ @Validateable ไว้ด้วยสามารถจะทำให้เป็นคลาสที่ตรวจสอบความผิดพลาดได้ โดยจะเห็นได้จากตัวอย่างด้านล่าง
 
 {code:java}
 // src/groovy/com/mycompany/myapp/User.groovy
@@ -23,17 +31,29 @@ class User {
 }
 {code}
 
+{hidden}
 You tell the framework which packages to search for @Validateable@ classes in by assigning a list of Strings to the @grails.validateable.packages@ property in @Config.groovy@:
+{hidden}
+
+คุณต้องบอกกับ Grails ว่า แพกเกจในให้ทำการค้นหา @Validateable@ โดยการกำหนดค่าสตริงใน @grails.validateable.packages@ ใน @Config.groovy@:
 
 {code:java}
 grails.validateable.packages = ['com.mycompany.dto', 'com.mycompany.util']
 {code}
 
+{hidden}
 The framework will only search those packages (and child packages of those) for classes annotated with @\@Validateable@.
+{hidden}
+
+เฟรมเวิกจะทำการค้นหาเฉพาะในแพกเกจนั้นๆและ แพกเกจลูกโดยหาจาก @\@Validateable@
 
 h4. Registering Validateable Classes
 
+{hidden}
 If a class is not marked with @Validateable, it may still be made validateable by the framework. The steps required to do this are to define the static @constraints@ property in the class (as described above) and then telling the framework about the class by assigning a value to the @grails.validateable.classes@ property in @Config.groovy@:
+{hidden}
+
+ถ้าคลาสนั้นไม่ได้ถูกกำหนดให้เป็น @Validateable เราก็ยังสามารถทำให้เป็นคลาสที่ถูกตรวจสอบความผิดพลาดได้โดยเฟรมเวิก โดยนอกจากกำหนดค่า static @constraints@ ในคลาสดั่งที่เห็นในตัวอย่างด้านบนแล้ว เราก็ยังต้องบอกกับเฟรมเวิกถึงการมีอยู่ของคลาสนั้นด้วยโดยการคำหนดค่า @grails.validateable.classes@ ใน @Config.groovy@:
 
 {code:java}
 grails.validateable.classes = [com.mycompany.myapp.User, com.mycompany.dto.Account]

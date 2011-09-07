@@ -105,11 +105,19 @@ Issuing a request with a method other than @GET@ or @POST@ from a regular browse
 </g:form>
 {code}
 
+{hidden}
 Grails will send a hidden parameter called @_method@, which will be used as the request's HTTP method. Another alternative for changing the method for non-browser clients is to use the @X-HTTP-Method-Override@ to specify the alternative method name.
+{hidden}
+
+Grails จะส่งพารามิเตอร์ลับที่เรียกว่า @_method@ เพื่อจะใช้เป็น header ของ request โดยอีกทางเลือกนึงสำหรับการเปลี่ยน method โดย client ที่ไม่ใช่บราวเซอร์เราจะใช้ @X-HTTP-Method-Override@ เป็นอีกทางเลือกนึง
 
 h4. XML Marshalling - Reading
 
+{hidden}
 The controller can use Grails' [XML marshalling|guide:xmlAndJSON] support to implement the GET method:
+{hidden}
+
+โดยคอนโทรเลอร์ก็อาจใช้ [XML marshalling|guide:xmlAndJSON] ของ Grails เพื่อสนับสนุนการสร้าง GET method
 
 {code:java}
 import grails.converters.XML
@@ -129,11 +137,19 @@ class ProductController {
 }
 {code}
 
+{hidden}
 If there is an @id@ we search for the @Product@ by name and return it, otherwise we return all Products. This way if we go to @/products@ we get all products, otherwise if we go to @/product/MacBook@ we only get a MacBook.
+{hidden}
+
+ถ้ามีการกำหนด @id@ เราสามารถค้นหา @Product@ โดยชื่อและคืนค่าไป มิฉะนั้นเราจะได้ โปรดักส์ทั้งหมดกลับไป โดยถ้าเราเรียกไปที่ @/products@ เราจะได้โปรดักส์ทั้งหมดไม่อย่างนั้นถ้าเราเรียกไปที่ @/product/MacBook@ เราจะได้เฉพาะ MacBook กลับไป
 
 h4. XML Marshalling - Updating
 
+{hidden}
 To support updates such as @PUT@ and @POST@ you can use the [params|controllers] object which Grails enhances with the ability to read an incoming XML packet. Given an incoming XML packet of:
+{hidden}
+
+เพื่อสนับสนุนการอัพเดท เช่น @PUT@ และ @POST@ เราสามารถใช้ [params|controllers] ที่ Grails เพิ่มความสามารถในการอ่าน XML packet ให้ดีขึ้น เช่นถ้าเรามี XML packet ที่เข้ามาแบบด้านล่าง
 
 {code:xml}
 <?xml version="1.0" encoding="ISO-8859-1"?>
@@ -145,7 +161,11 @@ To support updates such as @PUT@ and @POST@ you can use the [params|controllers]
 </product>
 {code}
 
+{hidden}
 you can read this XML packet using the same techniques described in the [Data Binding|guide:dataBinding] section, using the [params|controllers] object:
+{hidden}
+
+เราจะอ่าน XML packet นี้โดยใช้เทคนิดที่อธิบายไว้ใน [Data Binding|guide:dataBinding] โดยใช้ [params|controllers] object
 
 {code:java}
 def save() {
@@ -160,19 +180,34 @@ def save() {
 }
 {code}
 
+{hidden}
 In this example by indexing into the @params@ object using the @product@ key we can automatically create and bind the XML using the @Product@ constructor. An interesting aspect of the line:
+{hidden}
+
+ในตัวอย่างนี้ใช้การอินเด็ก @params@ ออปเจกโดยใช้ @product@ คีย์ที่เราสามารถสร้าง XML อัตโนมัติโดยใช้ @Product@ constructor ตามตัวอย่างด้านล่าง
 
 {code:java}
 def p = new Product(params.product)
 {code}
 
+{hidden}
 is that it requires no code changes to deal with a form submission that submits form data, or an XML request, or a JSON request.
+{hidden}
+
+โดยโค๊ดด้านบนไม่ต้องทำการเปลี่ยนอะไรอีกเพื่อใช้จัดการกับ ฟอร์มเพื่อรับข้อมูล หรือ XML request หรือ แม้แต่ JSON request
 
 {note}
+{hidden}
 If you require different responses to different clients (REST, HTML etc.) you can use [content negotation|guide:contentNegotiation]
+{hidden}
+ถ้าคุณต้องการ responses ที่ต่างไปเช่น (REST,HTML) คุณสามารถใช้ [content negotation|guide:contentNegotiation]
 {note}
 
+{hidden}
 The @Product@ object is then saved and rendered as XML, otherwise an error message is produced using Grails' [validation|guide:validation] capabilities in the form:
+{hidden}
+
+@Product@ ออปเจก ที่ถูกเซฟและถูกอ่านไปเป็น XML มิฉะนั้น ข้อความ error จะถูกสร้างโดย [validation|guide:validation] ของ Grails
 
 {code:xml}
 <error>
@@ -182,4 +217,8 @@ The @Product@ object is then saved and rendered as XML, otherwise an error messa
 
 h4. REST with JAX-RS
 
+{hidden}
 There also is a [JAX-RS Plugin|http://grails.org/plugin/jaxrs] which can be used to build web services based on the Java API for RESTful Web Services ([JSR 311: JAX-RS|http://jcp.org/en/jsr/summary?id=311]).
+{hidden}
+
+เราสามารถใช้ [JAX-RS Plugin|http://grails.org/plugin/jaxrs] เพื่อสร้าง web services ได้โดย Java API สำหรับ RESTful Web Services ([JSR 311: JAX-RS|http://jcp.org/en/jsr/summary?id=311])
