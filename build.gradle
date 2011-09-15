@@ -73,12 +73,11 @@ task createPublishClassLoader << {
     def distDir = project.file("${project.grailsHome}/dist")
     def grailsDocJars = distDir.listFiles({ dir, name -> name ==~ /grails-docs-.*\.jar/ } as FilenameFilter)
     if (grailsDocJars.size() > 1) {
-        log.error "Found multiple grails-doc JARs in ${distDir}"
-        return 1
+        throw new RuntimeException("Found multiple grails-doc JARs in ${distDir}")
+        
     }
     else if (grailsDocJars.size() == 0) {
-        log.error "No grails-doc JAR found in ${distDir}"
-        return 2
+        throw new RuntimeException("No grails-doc JAR found in ${distDir}")
     }
 
     classpath << grailsDocJars[0].toURI().toURL()
