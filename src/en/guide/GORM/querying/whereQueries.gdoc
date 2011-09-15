@@ -1,0 +1,209 @@
+The @where@ method, introduced in Grails 2.0, builds on the support for [Detached Criteria|guide:detachedCriteria] by providing an enhanced, type-safe query DSL for common queries. The @where@ method is more flexible than dynamic finders, less verbose than criteria and provides a powerful mechanism to compose queries.
+
+h4. Basic Querying
+
+The @where@ method accepts a closure that looks very similar to Groovy's regular collection methods. The closure should define the logical criteria in regular Groovy syntax, for example:
+
+{code}
+def query = Person.where {
+   firstName == "Bart"
+}
+Person bart = query.find()
+{code}
+
+The returned object is a @DetachedCriteria@ instance, which means it is not associated with any particular database connection or session. This means you can use the @where@ method to define common queries at the class level:
+
+{code}
+class Person {
+    static simpsons = where {
+         lastName == "Simpson"
+    }
+    ...
+}
+...
+Person.simpsons.each {
+    println it.firstname
+}
+{code}
+
+Query execution is lazy and only happens upon usage of the @DetachedCriteria@ instance. 
+
+Each Groovy operator maps onto a regular criteria method. The following table provides a map of Groovy operators to methods:
+
+{table}
+Operator | Criteria Method | Description
+*==* | eq | Equal to
+*!=* | ne | Not equal to
+*>* | gt | Greater than
+*<* | lt | Less than
+*>=* | ge | Greater than or equal to
+*<=* | le | Less than or equal to
+*in* | inList | Contained within the given list
+*==~* | like | Like a given string
+*=~* | ilike | Case insensitive like
+{table}
+
+It is possible use regular Groovy comparison operators and logic to formulate complex queries:
+
+{code}
+def query = Person.where {
+    (lastName != "Simpson" && firstName != "Fred") || (firstName == "Bart" && age > 9)
+}
+def results = query.list(sort:"firstName")
+{code}
+
+The Groovy regex matching operators map onto like and ilike queries unless the expression on the right hand side is a @Pattern@ object, in which case they map onto an @rlike@ query:
+
+{code}
+def query = Person.where {
+     firstName ==~ ~/B.+/
+}
+{code}
+
+{note}
+Note that @rlike@ queries are only supported if the underlying database supports regular expressions
+{note}
+
+h4. Query Composition
+
+Since the return value of the @where@ method is a [DetachedCriteria|guide:detachedCriteria] instance you can compose new queries from the original query:
+
+{code}
+def query = Person.where {
+     lastName == "Simpson"
+}
+def bartQuery = query.where {
+     firstName == "Bart"
+}
+Person p = bartQuery.find()
+{code}
+
+Note that you cannot pass a closure defined as a variable into the @where@ method unless it has been explicitly cast to a @DetachedCriteria@ instance. In other words the following will product an error:
+
+{code}
+def callable = {
+    lastName == "Simpson"
+}
+def query = Person.where(callable)
+{code} 
+
+The above must be written as follows:
+
+{code}
+import grails.gorm.DetachedCriteria
+
+def callable = {
+    lastName == "Simpson"
+} as DetachedCriteria<Person>
+def query = Person.where(callable)
+{code}
+
+As you can see the closure definition is cast (using the Groovy @as@ keyword) to a [DetachedCriteria|guide:detachedCriteria] instance targeted at the @Person@ class.
+
+h4. Conjunction, Disjunction and Negation
+
+As mentioned previously you can combine regular Groovy logical operators (@||@ and @&&@) to form conjunctions and disjunctions:
+
+{code}
+def query = Person.where {
+    (lastName != "Simpson" && firstName != "Fred") || (firstName == "Bart" && age > 9)
+}
+{code}
+
+You can also negate a logical comparison using @!@:
+
+{code}
+def query = Person.where {
+    firstName == "Fred" && !(lastName == 'Simpson')
+}
+{code}
+
+h4. Property Comparison Queries
+
+If you use a property name on both the left hand and right side of a comparison expression then the appropriate property comparison criteria is automatically used:
+
+{code}
+def query = Person.where {
+   firstName == lastName
+}
+{code}
+
+The following table described how each comparison operator maps onto each criteria property comparison method:
+
+{table}
+Operator | Criteria Method | Description
+*==* | eqProperty | Equal to
+*!=* | neProperty | Not equal to
+*>* | gtProperty | Greater than
+*<* | ltProperty | Less than
+*>=* | geProperty | Greater than or equal to
+*<=* | leProperty | Less than or equal to
+{table}
+
+h4. Querying Associations
+
+Associations can be queried by using the dot operator to specify the property name of the association to be queried:
+
+{code}
+def query = Pet.where {
+    owner.firstName == "Joe" || owner.firstName == "Fred"
+}
+{code}
+
+You can group multiple criterion inside a closure method call where the name of the method matches the association name:
+
+{code}
+def query = Person.where {
+    pets { name == "Jack" || name == "Joe" }
+}
+{code}
+
+This technique can be combined with other top-level criteria:
+
+{code}
+def query = Person.where {
+     pets { name == "Jack" } || firstName == "Ed"
+}
+{code}
+
+For collection associations it is possible to apply queries to the size of the collection:
+
+{code}
+def query = Person.where {
+       pets.size() == 2
+}
+{code}
+
+The following table shows which operator maps onto which criteria method for each size() comparison:
+
+{table}
+Operator | Criteria Method | Description
+*==* | sizeEq | The collection size is equal to
+*!=* | sizeNe | The collection size is not equal to
+*>* | sizeGt | The collection size is greater than
+*<* | sizeLt | The collection size is less than
+*>=* | sizeGe | The collection size is greater than or equal to
+*<=* | sizeLe | The collection size is less than or equal to
+{table}
+
+
+h4. Subqueries
+
+It is possible to execute subqueries within where queries. For example to find all the people older than the average age the following query can be used:
+
+{code}
+final query = Person.where {
+  age > avg(age)
+}
+{code}
+
+The following table lists the possible subqueries:
+
+{table}
+Method | Description
+*avg* | The average of all values
+*sum* | The sum of all values
+*max* | The maximum value
+*min* | The minimum value
+*count* | The count of all values
+{table}
