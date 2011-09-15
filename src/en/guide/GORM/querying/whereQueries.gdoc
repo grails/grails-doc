@@ -78,7 +78,7 @@ def bartQuery = query.where {
 Person p = bartQuery.find()
 {code}
 
-Note that you cannot pass a closure defined as a variable into the @where@ method unless it has been explicitly cast to a @DetachedCriteria@ instance. In other words the following will product an error:
+Note that you cannot pass a closure defined as a variable into the @where@ method unless it has been explicitly cast to a @DetachedCriteria@ instance. In other words the following will produce an error:
 
 {code}
 def callable = {
@@ -207,3 +207,27 @@ Method | Description
 *min* | The minimum value
 *count* | The count of all values
 {table}
+
+h4. Batch Updates and Deletes
+
+Since each @where@ method call returns a [DetachedCriteria|guide:detachedCriteria] instance, you can use @where@ queries to execute batch operations such as batch updates and deletes. For example, the following query will update all people with the surname "Simpson" to have the surname "Bloggs":
+
+{code}
+def query = Person.where {
+    lastName == 'Simpson'
+}
+int total = query.updateAll(lastName:"Bloggs")
+{code}
+
+{note}
+Note that one limitation with regards to batch operations is that join queries (queries that query associations) are not allowed.
+{note}
+
+To batch delete records you can use the @deleteAll@ method:
+
+{code}
+def query = Person.where {
+    lastName == 'Simpson'
+}
+int total = query.deleteAll()
+{code}
