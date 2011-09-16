@@ -26,7 +26,17 @@ Person.simpsons.each {
 }
 {code}
 
-Query execution is lazy and only happens upon usage of the @DetachedCriteria@ instance. 
+Query execution is lazy and only happens upon usage of the [DetachedCriteria|guide:detachedCriteria] instance. If you want to execute a where-style query immediately there are variations of the @findAll@ and @find@ methods to accomplish this:
+
+{code}
+def results = Person.findAll {
+     lastName == "Simpson"
+}
+def results = Person.findAll(sort:"firstName") {
+     lastName == "Simpson"
+}
+Person p = Person.find { firstName == "Bart" }
+{code}
 
 Each Groovy operator maps onto a regular criteria method. The following table provides a map of Groovy operators to methods:
 
