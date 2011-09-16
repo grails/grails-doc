@@ -222,6 +222,7 @@ Method | Description
 *max* | The maximum value
 *min* | The minimum value
 *count* | The count of all values
+*property* | Retrieves a property of the resulting entities
 {table}
 
 You can apply additional criteria to any subquery by using the @of@ method and passing in a closure containing the criteria:
@@ -231,6 +232,15 @@ def query = Person.where {
   age > avg(age).of { lastName == "Simpson" } && firstName == "Homer"
 }
 {code}
+
+Since @property@ subquery return multiple results, the criterion used compares all results. For example the following query will find all people younger than people with the surname "Simpson":
+
+{code}
+Person.where {
+    age < property(age).of { lastName == "Simpson" }
+}
+{code}
+
 
 h4. Other Functions
 
