@@ -64,6 +64,22 @@ def query = Person.where {
 Note that @rlike@ queries are only supported if the underlying database supports regular expressions
 {note}
 
+A @between@ criteria query can be done by combining the @in@ keyword with a range:
+
+{code}
+def query = Person.where {
+     age in 18..65
+}
+{code}
+
+Finally, you can do @isNull@ and @isNotNull@ style queries by using @null@ with regular comparison operators:
+
+{code}
+def query = Person.where {
+     middleName == null
+}
+{code}
+
 h4. Query Composition
 
 Since the return value of the @where@ method is a [DetachedCriteria|guide:detachedCriteria] instance you can compose new queries from the original query:
@@ -207,6 +223,48 @@ Method | Description
 *min* | The minimum value
 *count* | The count of all values
 {table}
+
+You can apply additional criteria to any subquery by using the @of@ method and passing in a closure containing the criteria:
+
+{code}
+def query = Person.where {
+  age > avg(age).of { lastName == "Simpson" } && firstName == "Homer"
+}
+{code}
+
+h4. Other Functions
+
+There are several functions available to you within the context of a query. These are summarized in the table below:
+
+{table}
+Method | Description
+*second* | The second of a date property
+*minute* | The minute of a date property
+*hour* | The hour of a date property
+*day* | The day of the month of a date property
+*month* | The month of a date property
+*year* | The year of a date property
+*lower* | Converts a string property to upper case
+*upper* | Converts a string property to lower case
+*length* | The length of a string property
+*trim* | Trims a string property
+{table}
+
+For example the following query can be used to find all pet's born in 2011:
+
+{code}
+def query = Pet.where {
+    year(birthDate) == 2011
+}
+{code}
+
+You can also apply functions to associations:
+
+{code}
+def query = Person.where {
+    year(pets.birthDate) == 2009
+}
+{code}
 
 h4. Batch Updates and Deletes
 
