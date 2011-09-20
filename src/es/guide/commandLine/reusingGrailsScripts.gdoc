@@ -41,14 +41,14 @@ Don't worry too much about the syntax using a class, it's quite specialised. If 
 
 {hidden}
 
-h3. Tirando en objetivos de otros scripts
+h3. Usando targets de otros scripts
 
-Gant permite que se extraen en todos los destinos (excepto "predeterminado") desde otro script de Gant. Luego puede depender o invocar esos objetivos como si se ha definido en el script actual. El mecanismo para hacerlo es el @ includeTargets @ propiedad. Simplemente "anexar" un archivo o una clase a él utilizando el operador de desplazamiento a la izquierda:
+Gant permite usar todos los targets (excepto el "default") de otro script de Gant. Luego puede depender de o invocar esos targets como si se hubieran definido en el propio script. El mecanismo para hacerlo es el de la propiedad @includeTargets@. Simplemente anexe un fichero o una clase a él utilizando el operador de desplazamiento a la izquierda:
 {code}
 includeTargets << File("/path/to/my/script.groovy") nueva
 includeTargets << gant.tools.Ivy
 {code}
-No te preocupes demasiado acerca de la sintaxis mediante una clase, bastante se ha especializado. Si te interesa, busque en la documentación de Gant.
+No se preocupe demasiado acerca de la sintaxis usada para una clase, es bastante especial. Si le interesa, busque en la documentación de Gant.
 
 {hidden}
 
@@ -60,11 +60,11 @@ The syntax for the @grailsScript()@ method is pretty straightforward: simply pas
 
 {hidden}
 
-h3. Principales destinos de Grails
+h3. Principales targets de Grails
 
-Como se ha visto en el ejemplo al principio de esta sección, utilice el archivo - ni la sintaxis basada en clases para @ includeTargets @ cuando incluidos núcleo Grails objetivos. En su lugar, debe utilizar el especial @ grailsScript() @ método proporcionado por el iniciador del comando Grails (tenga en cuenta que esto no está disponible en scripts de Gant normales, sólo Grails ones).
+Como se ha visto en el ejemplo al principio de esta sección, no se utiliza el fichero ni la sintaxis de clases para  @includeTargets@ cuando se incluyen targets principales de Grails. En su lugar, debe utilizar el método especial @grailsScript()@ proporcionado por el lanzdor del comando Grails (tenga en cuenta que esto no está disponible en scripts de Gant normales, sólo en los de Grails).
 
-La sintaxis de la @ grailsScript() @ método es bastante sencilla: simplemente pasarlo el nombre de la secuencia de Grails para incluir, sin ninguna información de ruta de acceso. Aquí hay una lista de secuencias de comandos de Grails que podría volver a utilizar:
+La sintaxis del método @grailsScript()@  es bastante sencilla: simplemente pas el nombre del script de Grails que se debe incluir, sin ninguna información de ruta de acceso. Aquí hay una lista de los scripts de Grails que podría volver a utilizar:
 
 {hidden}
 {table}
@@ -86,18 +86,18 @@ h3. Script architecture
 
 {table}
  * Script * | * Descripción *
- \_GrailsSettings | Realmente debería incluir esto! Afortunadamente, se incluye automáticamente por todos los scripts de Grails excepto \_GrailsProxy, por lo que normalmente no tiene que incluir explícitamente.
- \_GrailsEvents | Incluir esto para desencadenar eventos. Agrega un @ event(String eventName, List args) @ método. Una vez más, incluido por casi todos los otros scripts de Grails.
- \_GrailsClasspath | Configura las rutas de clases de la compilación, pruebas y tiempo de ejecución. Si desea utilizar o jugar con ellos, incluir este script. Una vez más, incluido por casi todos los otros scripts de Grails.
-\_GrailsProxy | Si no tiene acceso directo a internet y utilizar a un proxy, incluir esta secuencia de comandos para configurar el acceso a través de proxy.
- \_GrailsArgParsing | Proporciona un @ parseArguments @ destino que hace lo que dice sobre el estaño: analiza los argumentos proporcionados por el usuario cuando ejecuta la secuencia de comandos. Agrega a la @ argsMap @ propiedad.
- \_GrailsTest | Contiene todo el código compartido de prueba. Es útil si desea agregar cualquier pruebas adicionales.
- \_GrailsRun | Ofrece todo que lo necesario para ejecutar la aplicación en el contenedor de servlet configurado, ya sea normalmente (@ runApp@/@runAppHttps @) o de una guerra de archivo (@ runWar@/@runWarHttps @).
+ \_GrailsSettings | ¡Realmente debería usar esto! Afortunadamente, se usa automáticamente por todos los scripts de Grails excepto \_GrailsProxy, por lo que normalmente no tiene que usarlo explícitamente.
+ \_GrailsEvents | Use esto para desencadenar eventos. Agrega un método @event(String eventName, List args)@. Una vez más, usada por casi todos los otros scripts de Grails.
+ \_GrailsClasspath | Configura el classpath de la compilación, pruebas y tiempo de ejecución. Si desea usarlos o jugar con ellos, use este script. Una vez más, usado por casi todos los otros scripts de Grails.
+\_GrailsProxy | Si no tiene acceso directo a internet y utilizar a un proxy, use esta secuencia de comandos para configurar el acceso a través de proxy.
+ \_GrailsArgParsing | Proporciona un target @parseArguments@ que analiza los argumentos proporcionados por el usuario cuando ejecuta el script. Agrega a la propiedad @argsMap@.
+ \_GrailsTest | Contiene todo el código compartido de prueba. Es útil si desea agregar cualquier prueba adicional.
+ \_GrailsRun | Ofrece todo que lo necesario para ejecutar la aplicación en el contenedor de servlet configurado, ya sea normalmente (@runApp@/@runAppHttp @) o desde un fichero WAR (@runWar@/@runWarHttps@).
 {table}
 
-Hay muchos guiones más proporcionados por Grails, por lo que es digno de excavación en las secuencias de comandos para averiguar qué tipo de objetivos están disponibles. Cualquier cosa que comienza con un "_" está diseñado para su reutilización.
+Hay muchos scripts más proporcionados por Grails, por lo que es merece la pena bucear en los scripts mismos para averiguar qué tipo de objetivos están disponibles. Cualquier cosa que comienza con un "_" está diseñado para su reutilización.
 
-h3. Arquitectura de secuencia de comandos
+h3. Arquitectura un script
 
 {hidden}
 
@@ -107,9 +107,10 @@ Internal scripts are all about code sharing and reuse. In fact, we recommend you
 
 {hidden}
 
-Usted tal vez pensando en lo que están haciendo esos caracteres de subrayado en los nombres de las secuencias de comandos de Grails. Es la forma de Grails de determinar que una secuencia de comandos es _internal_, o en otras palabras que tiene "comando" no correspondiente. Por lo que no se puede ejecutar "_grails-configuración de grails" por ejemplo. También es por qué no tienen un objetivo predeterminado.
+Tal vez está pensando en lo que están haciendo esos caracteres de subrayado en los nombres de los scripts de Grails. Es la forma de Grails de determinar que una secuencia de comandos es _interna_, o en otras palabras que tiene "comando" correspondiente. Por lo que no se puede ejecutar "grails _grails-settings" por ejemplo. También es por esto qué no tienen un target predeterminado.
 
-Scripts internos son todo sobre código compartir y reutilización. De hecho, se recomienda adoptar un enfoque similar en sus propios scripts: poner todos sus objetivos en una secuencia de comandos interno que puede ser fácilmente compartido y proporcionar comandos simples scripts que analizar cualquier argumentos de línea de comandos y delegar a los destinos en la secuencia de comandos interno. Por ejemplo si tiene una secuencia de comandos que ejecuta algunas pruebas funcionales, se puede dividir así:
+Los scripts internos son todo para compartir código y reutilizarlo. De hecho, se recomienda adoptar un enfoque similar en sus propios scripts: poner todos sus targets en un script interno que puede ser fácilmente compartido y proporcionar script simples que analizen cualquier argumentos y deleguen en los targets de los scripts internos. Por ejemplo si tiene una secuencia de comandos que ejecuta algunas pruebas funcionales, se puede dividir así:
+
 {code}
 ./scripts/FunctionalTests.groovy:
 
@@ -139,10 +140,10 @@ Here are a few general guidelines on writing scripts:
 * Avoid name clashes by using closures assigned to script variables instead of targets. You can then pass arguments direct to the closures.
 {hidden}
 
-Aquí hay unas directrices generales sobre cómo escribir secuencias de comandos:
+Aquí hay unas directrices generales sobre cómo escribir scripts:
 
-* Secuencias de comandos se dividió en una secuencia de "comandos" y uno interno.
-* Poner la mayor parte de la aplicación en la secuencia de comandos interno.
-* Poner el argumento de análisis en la secuencia de "comandos".
-* Para pasar argumentos a un destino, crear algunas variables de secuencia de comandos y les inicializar antes de llamar a la meta.
-* Evitar enfrentamientos de nombre utilizando cierres asignados a las variables de secuencia de comandos en lugar de objetivos. A continuación, puede pasar directo argumentos a los cierres.
+* Dividir los scripts un script de "comando" y uno interno.
+* Poner la mayor parte de la implementación en la secuencia de comandos interno.
+* Poner el análisis de los parámetros en el script de "comando".
+* Para pasar argumentos a un target, crear algunas variables de script e inicializarlas antes de llamar al target.
+* Evitar colisiones de nombres utilizando closures asignadas a las variables del script en lugar de targets. Así puede pasar argumentos directamente a las closures.
