@@ -60,6 +60,42 @@ void testIndex() {
 }
 {code}
 
+Many actions make use of the parameter data associated with the request. For example, the 'sort', 'max', and 'offset' parameters are quite common. Providing these in the test is as simple as adding appropriate values to a special @params@ variable:
+
+{code:java}
+void testList() {
+    params.sort = "name"
+    params.max = 20
+    params.offset = 0
+
+    controller.list()
+    ...
+}
+{code}
+
+You can even control what type of request the controller action sees by setting the @method@ property of the mock request:
+
+{code:java}
+void testSave() {
+    request.method = "POST"
+    controller.save()
+    ...
+}
+{code}
+
+This is particularly important if your actions do different things depending on the type of the request. Finally, you can mark a request as AJAX like so:
+
+{code:java}
+void testGetPage() {
+    request.method = "POST"
+    request.makeAjaxRequest()
+    controller.getPage()
+    ...
+}
+{code}
+
+You only need to do this though if the code under test uses the @xhr@ property on the request.
+
 h4. Testing View Rendering
 
 To test view rendering you can inspect the state of the controller's @modelAndView@ property (an instance of @org.springframework.web.servlet.ModelAndView@) or you can use the @view@ and @model@ properties provided by the mixin:
@@ -82,6 +118,8 @@ void testIndex() {
     assert model.title == "Hello World"
 }
 {code}
+
+Note that the view string is the absolute view path, so it starts with a '/' and will include path elements, such as the directory named after the action's controller.
 
 h4. Testing Template Rendering
 
