@@ -80,6 +80,15 @@ criteria.each {
 
 In this case the query is only executed when the @each@ method is called. The same applies to all other Groovy collection iteration methods.
 
+You can also execute dynamic finders on @DetachedCriteria@ just like on domain classes. For example:
+
+{code}
+def criteria = new DetachedCriteria(Person).build {
+    eq 'lastName', 'Simpson'
+}
+def bart = criteria.findByFirstName("Bart")
+{code}
+
 h4. Using Detached Criteria for Subqueries
 
 Within the context of a regular criteria query you can use @DetachedCriteria@ to execute subquery. For example if you want to find all people who are older than the average age the following query will accomplish that:

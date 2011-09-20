@@ -124,3 +124,17 @@ There is a new HTML5-based scaffolding UI:
 h4. jQuery by Default
 
 The jQuery plugin is now the default JavaScript library installed into a Grails application. For backwards compatibility a [Prototype plugin|http://grails.org/plugin/prototype] is available. Refer to the [documentation|http://grails.org/plugin/prototype] on the Prototype plugin for installation instructions.
+
+h4. Easy Date Parsing
+
+A new @date@ method has been added to the @params@ object to allow easy, null-safe parsing of dates:
+
+{code}
+def val = params.date('myDate', 'dd-MM-yyyy')
+
+// or a list for formats
+def val = params.date('myDate', ['yyyy-MM-dd', 'yyyyMMdd', 'yyMMdd'])
+
+// or the format read from messages.properties via the key 'date.myDate.format'
+def val = params.date('myDate')
+{code}
