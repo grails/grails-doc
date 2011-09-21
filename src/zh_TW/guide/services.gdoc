@@ -1,0 +1,50 @@
+Grails中也有service層的概念. Grails團隊不鼓勵在controller中嵌入核心應用邏輯，因為這樣不利於代碼的重用，也影響清晰的分層。
+
+{hidden}
+Grails defines the notion of a service layer. The Grails team discourages the embedding of core application logic inside controllers, as it does not promote reuse and a clean separation of concerns.
+{hidden}
+
+Grails中,應用的主要邏輯都放在的service層，controller負責處理請求流程。
+
+{hidden}
+Services in Grails are the place to put the majority of the logic in your application, leaving controllers responsible for handling request flow with redirects and so on.
+{hidden}
+
+h4. 創建一個Service
+
+{hidden}
+h4. Creating a Service
+{hidden}
+
+要創建一個Grails service,你只要進入命令行模式，在項目的根目錄下，執行[create-service|commandLine]命令:
+
+{hidden}
+You can create a Grails service by running the [create-service|commandLine] command from the root of your project in a terminal window:
+{hidden}
+
+{code:java}
+grails create-service helloworld.simple
+{code}
+
+{note}
+如果create-service腳本中沒有指定package，Grails會自動使用程序的名稱為package的名稱。
+{note}
+
+{hidden}
+{note}
+If no package is specified with the create-service script, Grails automatically uses the application name as the package name.
+{note}
+{hidden}
+
+這樣就會創建一個service，這個service位於@grails-app/services/helloworld/SimpleService.groovy@ .除了名字按照Grails的約定以@Service@結尾以外,這個文件就是一個普通的Groovy類:
+
+{hidden}
+The above example will create a service at the location @grails-app/services/helloworld/SimpleService.groovy@. A service's name ends with the convention @Service@, other than that a service is a plain Groovy class:
+{hidden}
+
+{code:java}
+package helloworld
+
+class SimpleService {
+}
+{code}
