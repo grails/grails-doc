@@ -1,0 +1,184 @@
+By default all domain classes share a single @DataSource@ and a single database, but you have the option to partition your domain classes into two or more @DataSource@s.
+
+h4. Configuring Additional DataSources
+
+The default @DataSource@ configuration in @grails-app/conf/DataSource.groovy@ looks something like this:
+
+{code}
+dataSource {
+    pooled = true
+    driverClassName = "org.h2.Driver"
+    username = "sa"
+    password = ""
+}
+hibernate {
+    cache.use_second_level_cache = true
+    cache.use_query_cache = true
+    cache.provider_class = 'net.sf.ehcache.hibernate.EhCacheProvider'
+}
+
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop"
+            url = "jdbc:h2:mem:devDb"
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:mem:testDb"
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:prodDb"
+        }
+    }
+}
+{code}
+
+This configures a single @DataSource@ with the Spring bean named @dataSource@. To configure extra @DataSource@s, add another @dataSource@ block (at the top level, in an environment block, or both, just like the standard @DataSource@ definition) with a custom name, separated by an underscore. For example, this configuration adds a second @DataSource@, using MySQL in the development environment and Oracle in production:
+
+{code}
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop"
+            url = "jdbc:h2:mem:devDb"
+        }
+        dataSource_lookup {
+            dialect = org.hibernate.dialect.MySQLInnoDBDialect
+            driverClassName = 'com.mysql.jdbc.Driver'
+            username = 'lookup'
+            password = 'secret'
+            url = 'jdbc:mysql://localhost/lookup'
+            dbCreate = 'update'
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:mem:testDb"
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:prodDb"
+        }
+        dataSource_lookup {
+            dialect = org.hibernate.dialect.Oracle10gDialect
+            driverClassName = 'oracle.jdbc.driver.OracleDriver'
+            username = 'lookup'
+            password = 'secret'
+            url = 'jdbc:oracle:thin:@localhost:1521:lookup'
+            dbCreate = 'update'
+        }
+    }
+}
+{code}
+
+You can use the same or different databases as long as they're supported by Hibernate.
+
+h4. Configuring Domain Classes
+
+If a domain class has no @DataSource@ configuration, it defaults to the standard @'dataSource'@. Set the @datasource@ property in the @mapping@ block to configure a non-default @DataSource@. For example, if you want to use the @ZipCode@ domain to use the @'lookup'@ @DataSource@, configure it like this;
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasource 'lookup'
+   }
+}
+{code}
+
+A domain class can also use two or more @DataSource@s. Use the @datasources@ property with a list of names to configure more than one, for example:
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasources(['lookup', 'auditing'])
+   }
+}
+{code}
+
+If a domain class uses the default @DataSource@ and one or more others, use the special name @'DEFAULT'@ to indicate the default @DataSource@:
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasources(['lookup', 'DEFAULT'])
+   }
+}
+{code}
+
+If a domain class uses all configured @DataSource@s use the special value @'ALL'@:
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasource 'ALL'
+   }
+}
+{code}
+
+h4. Namespaces and GORM Methods
+
+If a domain class uses more than one @DataSource@ then you can use the namespace implied by each @DataSource@ name to make GORM calls for a particular @DataSource@. For example, consider this class which uses two @DataSource@s:
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasources(['lookup', 'auditing'])
+   }
+}
+{code}
+
+The first @DataSource@ specified is the default when not using an explicit namespace, so in this case we default to 'lookup'. But you can call GORM methods on the 'auditing' @DataSource@ with the @DataSource@ name, for example:
+
+{code}
+def zipCode = ZipCode.auditing.get(42)
+...
+zipCode.auditing.save()
+{code}
+
+As you can see, you add the @DataSource@ to the method call in both the static case and the instance case.
+
+h4. Services
+
+Like Domain classes, by default Services use the default @DataSource@ and @PlatformTransactionManager@. To configure a Service to use a different @DataSource@, use the static @datasource@ property, for example:
+
+{code}
+class DataService {
+
+   static datasource = 'lookup'
+
+   void someMethod(...) {
+      ...
+   }
+}
+{code}
+
+A transactional service can only use a single @DataSource@, so be sure to only make changes for domain classes whose @DataSource@ is the same as the Service.
+
+h4. XA and Two-phase Commit
+
+Grails has no native support for [XA|https://secure.wikimedia.org/wikipedia/en/wiki/X/Open_XA] @DataSource@s or [two-phase commit|https://secure.wikimedia.org/wikipedia/en/wiki/Two-phase_commit], but the [Atomikos plugin|http://grails.org/plugin/atomikos] makes it easy. See the plugin documentation for the simple changes needed in your @DataSource@ definitions to reconfigure them as XA @DataSource@s.
+

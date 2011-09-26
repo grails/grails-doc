@@ -1,0 +1,23 @@
+When your resources are being moved around, renamed and otherwise mutated, it can be hard to debug client-side issues. Modern browsers, especially Safari, Chrome and Firefox have excellent tools that let you view all the resources requested by a page, including the headers and other information about them.
+
+There are several debugging features built in to the Resources framework.
+
+h4. X-Grails-Resources-Original-Src Header
+
+Every resource served in development mode will have the X-Grails-Resources-Original-Src: header added, indicating the original source file(s) that make up the response.
+
+h4. Adding the debug flag
+
+If you add a query parameter *_debugResources=y* to your URL and request the page, Resources will bypass any processing so that you can see your original source files.
+
+This also adds a unique timestamp to all your resource URLs, to defeat any caching that browsers may use. This means that you should always see your very latest code when you reload the page.
+
+h4. Turning on debug all the time
+
+You can turn on the aforementioned debug mechanism without requiring a query parameter, but turning it on in Config.groovy:
+
+{code}
+grails.resources.debug = true
+{code}
+
+You can of course set this per-environment.

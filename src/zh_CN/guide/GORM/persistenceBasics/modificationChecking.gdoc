@@ -1,0 +1,66 @@
+Once you have loaded and possibly modified a persistent domain class instance, it isn't straightforward to retrieve the original values. If you try to reload the instance using [get|domainClasses] Hibernate will return the current modified instance from its Session cache. Reloading using another query would trigger a flush which could cause problems if your data isn't ready to be flushed yet. So GORM provides some methods to retrieve the original values that Hibernate caches when it loads the instance (which it uses for dirty checking).
+
+h4. isDirty
+
+You can use the [isDirty|domainClasses] method to check if any field has been modified:
+
+{code}
+def airport = Airport.get(10)
+assert !airport.isDirty()
+
+airport.properties = params
+if (airport.isDirty()) {
+   // do something based on changed state
+}
+{code}
+
+{note}
+@isDirty()@ does not currently check collection associations, but it does check all other persistent properties and associations.
+{note}
+
+You can also check if individual fields have been modified:
+
+{code}
+def airport = Airport.get(10)
+assert !airport.isDirty()
+
+airport.properties = params
+if (airport.isDirty('name')) {
+   // do something based on changed name
+}
+{code}
+
+h4. getDirtyPropertyNames
+
+You can use the [getDirtyPropertyNames|domainClasses] method to retrieve the names of modified fields; this may be empty but will not be null:
+
+{code}
+def airport = Airport.get(10)
+assert !airport.isDirty()
+
+airport.properties = params
+def modifiedFieldNames = airport.getDirtyPropertyNames()
+for (fieldName in modifiedFieldNames) {
+   // do something based on changed value
+}
+{code}
+
+h4. getPersistentValue
+
+You can use the [getPersistentValue|domainClasses] method to retrieve the value of a modified field:
+
+{code}
+def airport = Airport.get(10)
+assert !airport.isDirty()
+
+airport.properties = params
+def modifiedFieldNames = airport.getDirtyPropertyNames()
+for (fieldName in modifiedFieldNames) {
+    def currentValue = airport."$fieldName"
+    def originalValue = airport.getPersistentValue(fieldName)
+    if (currentValue != originalValue) {
+        // do something based on changed value
+    }
+}
+{code}
+
