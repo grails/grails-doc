@@ -21,6 +21,29 @@ def book = Book.findOrSaveByAuthorAndTitle('Daniel Suarez', 'Daemon')
 {code}
 {hidden}
 
+h4. Detached Criteria and Where Queries
+
+Grails 2.0 features support for [DetachedCriteria|guide:detachedCriteria] which are criteria queries that are not associated with any session or connection and thus can be more easily reused and composed:
+
+{code}
+def criteria = new DetachedCriteria(Person).build {
+    eq 'lastName', 'Simpson'
+}
+def results = criteria.list(max:4, sort:"firstName")
+{code}
+
+To support the addition of [DetachedCriteria|guide:detachedCriteria] queries and encourage their use a new @where@ method and DSL has been introduced to greatly reduce the complexity of criteria queries:
+
+{code}
+def query = Person.where {
+    (lastName != "Simpson" && firstName != "Fred") || (firstName == "Bart" && age > 9)
+}
+def results = query.list(sort:"firstName")
+{code} 
+
+See the documentation on [DetachedCriteria|guide:detachedCriteria] and [Where Queries|guide:whereQueries] for more information.
+
+
 h4. 全新的findOrCreate和findOrSave方法
 
 领域类现在已经支持findOrCreateWhere, findOrSaveWhere, findOrCreateBy和findOrSaveBy查询方法，这些方法除了不返回null值以外，跟findWhere和findBy方法基本类似。如果在数据库中没有找到符合条件的实例，系统将会根据查询参数创建一个全新的实例返回，不过在findOrSaveWhere 和findOrSaveBy中,实例是先保存入库再返回的。示例代码如下：
