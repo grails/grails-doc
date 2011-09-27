@@ -1,0 +1,29 @@
+The [H2 database console|http://h2database.com/html/quickstart.html#h2_console] is a convenient feature of H2 that provides a web-based interface to any database that you have a JDBC driver for, and it's very useful to view the database you're developing against. It's especially useful when running against an in-memory database.
+
+You can access the console by navigating to *http://localhost:8080/appname/dbconsole* in a browser. The URI can be configured using the @grails.dbconsole.urlRoot@ attribute in Config.groovy and defaults to @'/dbconsole'@.
+
+The console is enabled by default in development mode and can be disabled or enabled in other environments by using the @grails.dbconsole.enabled@ attribute in Config.groovy. For example you could enable the console in production using
+
+{code}
+environments {
+    production {
+        grails.serverURL = "http://www.changeme.com"
+        grails.dbconsole.enabled = true
+        grails.dbconsole.urlRoot = '/admin/dbconsole'
+    }
+    development {
+        grails.serverURL = "http://localhost:8080/\${appName}"
+    }
+    test {
+        grails.serverURL = "http://localhost:8080/\${appName}"
+    }
+}
+{code}
+
+{warning}
+If you enable the console in production be sure to guard access to it using a trusted security framework.
+{warning}
+
+h4. Configuration
+
+By default the console is configured for an H2 database which will work with the default settings if you haven't configured an external database - you just need to change the JDBC URL to @jdbc:h2:mem:devDB@. If you've configured an external database (e.g. MySQL, Oracle, etc.) then you can use the Saved Settings dropdown to choose a settings template and fill in the url and username/password information from your DataSource.groovy.

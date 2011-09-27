@@ -1,0 +1,84 @@
+To create a filter create a class that ends with the convention @Filters@ in the @grails-app/conf@ directory. Within this class define a code block called @filters@ that contains the filter definitions:
+
+{code:java}
+class ExampleFilters {
+   def filters = {
+        // your filters here
+   }
+}
+{code}
+
+Each filter you define within the @filters@ block has a name and a scope. The name is the method name and the scope is defined using named arguments. For example to define a filter that applies to all controllers and all actions you can use wildcards:
+
+{code:java}
+sampleFilter(controller:'*', action:'*') {
+  // interceptor definitions
+}
+{code}
+
+The scope of the filter can be one of the following things:
+
+* A controller and/or action name pairing with optional wildcards
+* A URI, with Ant path matching syntax
+
+Filter rule attributes:
+* @controller@ - controller matching pattern, by default \* is replaced with .\* and a regex is compiled
+* @controllerExclude@ - controller exclusion pattern, by default \* is replaced with .\* and a regex is compiled
+* @action@ - action matching pattern, by default \* is replaced with .\* and a regex is compiled
+* @actionExclude@ - action exclusion pattern, by default \* is replaced with .\* and a regex is compiled
+* @regex@ (@true@/@false@) - use regex syntax (don't replace '\*' with '.\*')
+* @uri@ - a uri to match, expressed with as Ant style path (e.g. /book/\*\*)
+* @uriExclude@ - a uri pattern to exclude, expressed with as Ant style path (e.g. /book/\*\*)
+* @find@ (@true@/@false@) - rule matches with partial match (see @java.util.regex.Matcher.find()@)
+* @invert@ (@true@/@false@) - invert the rule (NOT rule)
+
+Some examples of filters include:
+
+* All controllers and actions
+{code:java}
+all(controller: '*', action: '*') {
+
+}
+{code}
+* Only for the @BookController@
+{code:java}
+justBook(controller: 'book', action: '*') {
+
+}
+{code}
+* All controllers except the @BookController@
+{code:java}
+notBook(controller: 'book', invert: true) {
+
+}
+{code}
+* All actions containing 'save' in the action name
+{code:java}
+saveInActionName(action: '*save*', find: true) {
+
+}
+{code}
+* All actions starting with the letter 'b' except for actions beginning with the phrase 'bad*'
+{code:java}
+actionBeginningWithBButNotBad(action: 'b*', actionExclude: 'bad*', find: true) {
+
+}
+{code}
+* Applied to a URI space
+{code:java}
+someURIs(uri: '/book/**') {
+
+}
+{code}
+* Applied to all URIs
+{code:java}
+allURIs(uri: '/**') {
+
+}
+{code}
+
+In addition, the order in which you define the filters within the @filters@ code block dictates the order in which they are executed.  To control the order of execution between @Filters@ classes, you can use the @dependsOn@ property discussed in [filter dependencies|guide:filterDependencies] section.
+
+{note}
+Note: When exclude patterns are used they take precedence over the matching patterns.  For example, if action is 'b\*' and actionExclude is 'bad\*' then actions like 'best' and 'bien' will have that filter applied but actions like 'bad' and 'badlands' will not.
+{note}

@@ -1,0 +1,34 @@
+When building Grails applications you have to consider the problem domain you are trying to solve. For example if you were building an [Amazon|http://www.amazon.com/]-style bookstore you would be thinking about books, authors, customers and publishers to name a few.
+
+These are modeled in GORM as Groovy classes, so a @Book@ class may have a title, a release date, an ISBN number and so on. The next few sections show how to model the domain in GORM.
+
+To create a domain class you run the [create-domain-class|commandLine] command as follows:
+
+{code}
+grails create-domain-class org.bookstore.Book
+{code}
+
+The result will be a class at @grails-app/domain/org/bookstore/Book.groovy@:
+
+{code}
+package org.bookstore
+
+class Book {
+}
+{code}
+
+This class will map automatically to a table in the database called @book@ (the same name as the class). This behaviour is customizable through the [ORM Domain Specific Language|guide:ormdsl]
+
+Now that you have a domain class you can define its properties as Java types. For example:
+
+{code}
+package org.bookstore
+
+class Book {
+    String title
+    Date releaseDate
+    String ISBN
+}
+{code}
+
+Each property is mapped to a column in the database, where the convention for column names is all lower case separated by underscores. For example @releaseDate@ maps onto a column @release_date@. The SQL types are auto-detected from the Java types, but can be customized with [Constraints|guide:constraints] or the [ORM DSL|guide:ormdsl].

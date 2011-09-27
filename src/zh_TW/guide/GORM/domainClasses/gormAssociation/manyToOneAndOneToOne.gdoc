@@ -1,0 +1,85 @@
+A many-to-one relationship is the simplest kind, and is defined with a property of the type of another domain class. Consider this example:
+
+h5. Example A
+
+{code}
+class Face {
+    Nose nose
+}
+{code}
+
+{code}
+class Nose {
+}
+{code}
+
+In this case we have a unidirectional many-to-one relationship from @Face@ to @Nose@. To make this relationship bidirectional define the other side as follows:
+
+h5. Example B
+
+{code}
+class Face {
+    Nose nose
+}
+{code}
+
+{code}
+class Nose {
+    static belongsTo = [face:Face]
+}
+{code}
+
+In this case we use the @belongsTo@ setting to say that @Nose@ "belongs to" @Face@. The result of this is that we can create a @Face@, attach a @Nose@ instance to it and when we save or delete the @Face@ instance, GORM will save or delete the @Nose@. In other words, saves and deletes will cascade from @Face@ to the associated @Nose@:
+
+{code}
+new Face(nose:new Nose()).save()
+{code}
+
+The example above will save both face and nose. Note that the inverse _is not_ true and will result in an error due to a transient @Face@:
+
+{code}
+new Nose(face:new Face()).save() // will cause an error
+{code}
+
+Now if we delete the @Face@ instance, the @Nose@ will go too:
+
+{code}
+def f = Face.get(1)
+f.delete() // both Face and Nose deleted
+{code}
+
+To make the relationship a true one-to-one, use the @hasOne@ property on the owning side, e.g. @Face@:
+
+h5. Example C
+
+{code}
+class Face {
+    static hasOne = [nose:Nose]
+}
+{code}
+
+{code}
+class Nose {
+    Face face
+}
+{code}
+
+Note that using this property puts the foreign key on the inverse table to the previous example, so in this case the foreign key column is stored in the @nose@ table inside a column called @face_id@. Also, @hasOne@ only works with bidirectional relationships.
+
+Finally, it's a good idea to add a unique constraint on one side of the one-to-one relationship:
+
+{code}
+class Face {
+    static hasOne = [nose:Nose]
+
+    static constraints = {
+        nose unique: true
+    }
+}
+{code}
+
+{code}
+class Nose {
+    Face face
+}
+{code}

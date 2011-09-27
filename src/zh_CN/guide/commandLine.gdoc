@@ -1,0 +1,77 @@
+Grails' command line system is built on [Gant|http://gant.codehaus.org/] - a simple Groovy wrapper around [Apache Ant|http://ant.apache.org].
+
+However, Grails takes it further through the use of convention and the @grails@ command. When you type:
+
+{code}
+grails [command name]
+{code}
+
+Grails searches in the following directories for Gant scripts to execute:
+
+* @USER_HOME/.grails/scripts@
+* @PROJECT_HOME/scripts@
+* @PROJECT_HOME/plugins/*/scripts@
+* @GRAILS_HOME/scripts@
+
+Grails will also convert command names that are in lower case form such as run-app into camel case. So typing
+
+{code}
+grails run-app
+{code}
+
+Results in a search for the following files:
+
+* @USER_HOME/.grails/scripts/RunApp.groovy@
+* @PROJECT_HOME/scripts/RunApp.groovy@
+* @PLUGINS_HOME/*/scripts/RunApp.groovy@
+* @GLOBAL_PLUGINS_HOME/*/scripts/RunApp.groovy@
+* @GRAILS_HOME/scripts/RunApp.groovy@
+
+If multiple matches are found Grails will give you a choice of which one to execute.
+
+When Grails executes a Gant script, it invokes the "default" target defined in that script. If there is no default, Grails will quit with an error.
+
+To get a list of all commands and some help about the available commands type:
+
+{code}
+grails help
+{code}
+
+which outputs usage instructions and the list of commands Grails is aware of:
+
+{code}
+Usage (optionals marked with *):
+grails [environment]* [target] [arguments]*
+
+Examples:
+grails dev run-app
+grails create-app books
+
+Available Targets (type grails help 'target-name' for more info):
+grails bootstrap
+grails bug-report
+grails clean
+grails compile
+...
+{code}
+
+{note}
+Refer to the Command Line reference in the Quick Reference menu of the reference guide for more information about individual commands
+{note}
+
+It's often useful to provide custom arguments to the JVM when running Grails commands, in particular with @run-app@ where you may for example want to set a higher maximum heap size. The Grails command will use any JVM options provided in the general @JAVA_OPTS@ environment variable, but you can also specify a Grails-specific environment variable too:
+
+{code}
+export GRAILS_OPTS="-Xmx1G -Xms256m -XX:MaxPermSize=256m"
+grails run-app
+{code}
+
+h4. non-interactive mode
+
+When you run a script manually and it prompts you for information, you can answer the questions and continue running the script. But when you run a script as part of an automated process, for example a continuous integration build server, there's no way to "answer" the questions. So you can pass the @\-\-non-interactive@ switch to the script command to tell Grails to accept the default answer for any questions, for example whether to install a missing plugin.
+
+For example:
+
+{code}
+grails war --non-interactive
+{code}

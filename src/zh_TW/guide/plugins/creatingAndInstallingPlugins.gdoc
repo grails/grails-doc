@@ -1,0 +1,128 @@
+h4. Creating Plugins
+
+Creating a Grails plugin is a simple matter of running the command:
+
+{code:java}
+grails create-plugin [PLUGIN NAME]
+{code}
+
+This will create a plugin project for the name you specify. For example running @grails create-plugin example@ would create a new plugin project called @example@.
+
+The structure of a Grails plugin is very nearly the same as a Grails application project's except that in the root of the plugin directory you will find a plugin Groovy file called the "plugin descriptor".
+
+Being a regular Grails project has a number of benefits in that you can immediately test your plugin by running:
+
+{code:java}
+grails run-app
+{code}
+
+The plugin descriptor name ends with the convention @GrailsPlugin@ and is found in the root of the plugin project. For example:
+
+{code:java}
+class ExampleGrailsPlugin {
+   def version = "0.1"
+
+   ...
+}
+{code}
+
+All plugins must have this class in the root of their directory structure. The plugin class defines the version of the plugin and other metadata, and optionally various hooks into plugin extension points (covered shortly).
+
+You can also provide additional information about your plugin using several special properties:
+
+* @title@ - short one-sentence description of your plugin
+* @version@ - The version of your plugin. Valid values include example "0.1", "0.2-SNAPSHOT", "1.1.4" etc.
+* @grailsVersion@ - The version of version range of Grails that the plugin supports. eg. "1.2 > *" (indicating 1.2 or higher)
+* @author@ - plugin author's name
+* @authorEmail@ - plugin author's contact e-mail
+* @description@ - full multi-line description of plugin's features
+* @documentation@ - URL of the plugin's documentation
+
+Here is an example from the [Quartz Grails plugin|http://grails.org/plugin/quartz]:
+
+{code:java}
+class QuartzGrailsPlugin {
+    def version = "0.1"
+    def grailsVersion = "1.1 > *"
+    def author = "Sergey Nebolsin"
+    def authorEmail = "nebolsin@gmail.com"
+    def title = "Quartz Plugin"
+    def description = '''\\\
+The Quartz plugin allows your Grails application to schedule jobs\\\
+to be executed using a specified interval or cron expression. The\\\
+underlying system uses the Quartz Enterprise Job Scheduler configured\\\
+via Spring, but is made simpler by the coding by convention paradigm.\\\
+'''
+    def documentation = "http://grails.org/plugin/quartz"
+
+   ...
+}
+{code}
+
+h4. Installing and Distributing Plugins
+
+To distribute a plugin you navigate to its root directory in a console and run:
+
+{code:java}
+grails package-plugin
+{code}
+
+This will create a zip file of the plugin starting with @grails-@ then the plugin name and version. For example with the example plugin created earlier this would be @grails-example-0.1.zip@. The @package-plugin@ command will also generate a @plugin.xml@ file which contains machine-readable information about plugin's name, version, author, and so on.
+
+Once you have a plugin distribution file you can navigate to a Grails project and run:
+
+{code:java}
+grails install-plugin /path/to/grails-example-0.1.zip
+{code}
+
+If the plugin is hosted on an HTTP server you can install it with:
+
+{code:java}
+grails install-plugin http://myserver.com/plugins/grails-example-0.1.zip
+{code}
+
+h4. Notes on excluded Artefacts
+
+Although the [create-plugin|commandLine] command creates certain files for you so that the plugin can be run as a Grails application, not all of these files are included when packaging a plugin. The following is a list of artefacts created, but not included by [package-plugin|commandLine]:
+
+* @grails-app/conf/BootStrap.groovy@
+* @grails-app/conf/BuildConfig.groovy@ (although it is used to generate @dependencies.groovy@)
+* @grails-app/conf/Config.groovy@
+* @grails-app/conf/DataSource.groovy@ (and any other @*DataSource.groovy@)
+* @grails-app/conf/UrlMappings.groovy@
+* @grails-app/conf/spring/resources.groovy@
+* Everything within @/web-app/WEB-INF@
+* Everything within @/web-app/plugins/\*\*@
+* Everything within @/test/\*\*@
+* SCM management files within @\*\*/.svn/\*\*@ and @\*\*/CVS/\*\*@
+
+If you need artefacts within @WEB-INF@ it is recommended you use the @_Install.groovy@ script (covered later), which is executed when a plugin is installed, to provide such artefacts. In addition, although @UrlMappings.groovy@ is excluded you are allowed to include a @UrlMappings@ definition with a different name, such as @MyPluginUrlMappings.groovy@.
+
+h4. Specifying Plugin Locations
+
+An application can load plugins from anywhere on the file system, even if they have not been installed. Specify the location of the (unpacked) plugin in the application's @grails-app/conf/BuildConfig.groovy@ file:
+
+{code:java}
+// Useful to test plugins you are developing.
+grails.plugin.location.shiro =
+        "/home/dilbert/dev/plugins/grails-shiro"
+
+// Useful for modular applications where all plugins and
+// applications are in the same directory.
+grails.plugin.location.'grails-ui' = "../grails-grails-ui"
+{code}
+
+This is particularly useful in two cases:
+
+* You are developing a plugin and want to test it in a real application without packaging and installing it first.
+* You have split an application into a set of plugins and an application, all in the same "super-project" directory.
+
+h4. Global plugins
+
+Plugins can also be installed globally for all applications for a particular version of Grails using the @\-global@ flag, for example:
+
+{code}
+grails install-plugin webtest -global
+{code}
+
+The default location is \$USER_HOME/.grails/<grailsVersion>/global-plugins but this can be customized with the @grails.global.plugins.dir@ setting in @BuildConfig.groovy@.

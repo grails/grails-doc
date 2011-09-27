@@ -1,0 +1,101 @@
+If you use Maven to build your Grails project, you can use the standard Maven targets @mvn install@ and @mvn deploy@.
+If not, you can deploy a Grails project or plugin to a Maven repository using the [maven-publisher|http://grails.org/plugin/maven-publisher] plugin.
+
+The plugin provides the ability to publish Grails projects and plugins to local and remote Maven repositories. There are two key additional targets added by the plugin:
+
+* *maven-install* - Installs a Grails project or plugin into your local Maven cache
+* *maven-deploy* - Deploys a Grails project or plugin to a remote Maven repository
+
+By default this plugin will automatically generate a valid @pom.xml@ for you unless a @pom.xml@ is already present in the root of the project, in which case this @pom.xml@ file will be used.
+
+h4. maven-install
+
+The @maven-install@ command will install the Grails project or plugin artifact into your local Maven cache:
+
+{code}
+grails maven-install
+{code}
+
+In the case of plugins, the plugin zip file will be installed, whilst for application the application WAR file will be installed.
+
+h4. maven-deploy
+
+The @maven-deploy@ command will deploy a Grails project or plugin into a remote Maven repository:
+
+{code}
+grails maven-deploy
+{code}
+
+It is assumed that you have specified the necessary @<distributionManagement>@ configuration within a @pom.xml@ or that you specify the @id@ of the remote repository to deploy to:
+
+{code}
+grails maven-deploy --repository=myRepo
+{code}
+
+The @repository@ argument specifies the 'id' for the repository. Configure the details of the repository specified by this 'id' within your @grails-app/conf/BuildConfig.groovy@ file or in your @$USER_HOME/.grails/settings.groovy@ file:
+
+{code}
+grails.project.dependency.distribution = {
+    localRepository = "/path/to/my/local"
+    remoteRepository(id: "myRepo", url: "http://myserver/path/to/repo")
+}
+{code}
+
+The syntax for configuring remote repositories matches the syntax from the [remoteRepository|http://maven.apache.org/ant-tasks/reference.html#remoteRepository] element in the Ant Maven tasks. For example the following XML:
+
+{code}
+<remoteRepository id="myRepo" url="scp://localhost/www/repository">
+    <authentication username="..." privateKey="\${user.home}/.ssh/id_dsa"/>
+</remoteRepository>
+{code}
+
+Can be expressed as:
+
+{code}
+remoteRepository(id: "myRepo", url: "scp://localhost/www/repository") {
+    authentication username: "...", privateKey: "\${userHome}/.ssh/id_dsa"
+}
+{code}
+
+By default the plugin will try to detect the protocol to use from the URL of the repository (ie "http" from "http://.." etc.), however to specify a different protocol you can do:
+
+{code}
+grails maven-deploy --repository=myRepo --protocol=webdav
+{code}
+
+The available protocols are:
+
+* http
+* scp
+* scpexe
+* ftp
+* webdav
+
+h4. Groups, Artifacts and Versions
+
+Maven defines the notion of a 'groupId', 'artifactId' and a 'version'. This plugin pulls this information from the Grails project conventions or plugin descriptor.
+
+h5. Projects
+
+For applications this plugin will use the Grails application name and version provided by Grails when generating the @pom.xml@ file. To change the version you can run the @set-version@ command:
+
+{code}
+grails set-version 0.2
+{code}
+
+The Maven @groupId@ will be the same as the project name, unless you specify a different one in Config.groovy:
+
+{code}
+grails.project.groupId="com.mycompany"
+{code}
+
+h5. Plugins
+
+With a Grails plugin the @groupId@ and @version@ are taken from the following properties in the *GrailsPlugin.groovy descriptor:
+
+{code}
+String groupId = 'myOrg'
+String version = '0.1'
+{code}
+
+The 'artifactId' is taken from the plugin name. For example if you have a plugin called @FeedsGrailsPlugin@ the @artifactId@ will be "feeds". If your plugin does not specify a @groupId@ then this defaults to "org.grails.plugins".

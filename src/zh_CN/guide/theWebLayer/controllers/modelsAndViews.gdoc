@@ -1,0 +1,161 @@
+h4. Returning the Model
+
+A model is a Map that the view uses when rendering. The keys within that Map correspond to variable names accessible by the view. There are a couple of ways to return a model. First, you can explicitly return a Map instance:
+
+{code:java}
+def show() {
+    [book: Book.get(params.id)]
+}
+{code}
+
+{note}
+The above does _not_ reflect what you should use with the scaffolding views - see the [scaffolding section|guide:scaffolding] for more details.
+{note}
+
+If no explicit model is returned the controller's properties will be used as the model, thus allowing you to write code like this:
+
+{code:java}
+class BookController {
+
+    List books
+    List authors
+
+    def list() {
+        books = Book.list()
+        authors = Author.list()
+    }
+}
+{code}
+
+{note}
+This is possible due to the fact that controllers are prototype scoped. In other words a new controller is created for each request. Otherwise code such as the above would not be thread-safe, and all users would share the same data.
+{note}
+
+In the above example the @books@ and @authors@ properties will be available in the view.
+
+A more advanced approach is to return an instance of the Spring [ModelAndView|api:org.springframework.web.servlet.ModelAndView] class:
+
+{code:java}
+import org.springframework.web.servlet.ModelAndView
+
+def index() {
+    // get some books just for the index page, perhaps your favorites
+    def favoriteBooks = ...
+
+    // forward to the list view to show them
+    return new ModelAndView("/book/list", [ bookList : favoriteBooks ])
+}
+{code}
+
+One thing to bear in mind is that certain variable names can not be used in your model:
+
+* @attributes@
+* @application@
+
+Currently, no error will be reported if you do use them, but this will hopefully change in a future version of Grails.
+
+h4. Selecting the View
+
+In both of the previous two examples there was no code that specified which [view|guide:gsp] to render. So how does Grails know which one to pick? The answer lies in the conventions. Grails will look for a view at the location @grails-app/views/book/show.gsp@ for this @list@ action:
+
+{code:java}
+class BookController {
+    def show() {
+         [book: Book.get(params.id)]
+    }
+}
+{code}
+
+To render a different view, use the [render|controllers] method:
+
+{code:java}
+def show() {
+    def map = [book: Book.get(params.id)]
+    render(view: "display", model: map)
+}
+{code}
+
+In this case Grails will attempt to render a view at the location @grails-app/views/book/display.gsp@. Notice that Grails automatically qualifies the view location with the @book@ directory of the @grails-app/views@ directory. This is convenient, but to access shared views you need instead you can use an absolute path instead of a relative one:
+
+{code:java}
+def show() {
+    def map = [book: Book.get(params.id)]
+    render(view: "/shared/display", model: map)
+}
+{code}
+
+In this case Grails will attempt to render a view at the location @grails-app/views/shared/display.gsp@.
+
+Grails also supports JSPs as views, so if a GSP isn't found in the expected location but a JSP is, it will be used instead.
+
+h4. Rendering a Response
+
+Sometimes it's easier (for example with Ajax applications) to render snippets of text or code to the response directly from the controller. For this, the highly flexible @render@ method can be used:
+
+{code:java}
+render "Hello World!"
+{code}
+
+The above code writes the text "Hello World!" to the response. Other examples include:
+
+{code}
+// write some markup
+render {
+   for (b in books) {
+      div(id: b.id, b.title)
+   }
+}
+{code}
+
+{code}
+// render a specific view
+render(view: 'show')
+{code}
+
+{code}
+// render a template for each item in a collection
+render(template: 'book_template', collection: Book.list())
+{code}
+
+{code}
+// render some text with encoding and content type
+render(text: "<xml>some xml</xml>", contentType: "text/xml", encoding: "UTF-8")
+{code}
+
+If you plan on using Groovy's @MarkupBuilder@ to generate HTML for use with the @render@ method be careful of naming clashes between HTML elements and Grails tags, for example:
+
+{code:java}
+import groovy.xml.MarkupBuilder
+...
+def login() {
+    def writer = new StringWriter()
+    def builder = new MarkupBuilder(writer)
+    builder.html {
+        head {
+            title 'Log in'
+        }
+        body {
+            h1 'Hello'
+            form {
+            }
+        }
+    }
+
+    def html = writer.toString()
+    render html
+}
+{code}
+
+This will actually [call the form tag|guide:tagsAsMethodCalls] (which will return some text that will be ignored by the @MarkupBuilder@). To correctly output a @<form>@ element, use the following:
+
+{code:java}
+def login() {
+    // ...
+    body {
+        h1 'Hello'
+        builder.form {
+        }
+    }
+    // ...
+}
+{code}

@@ -1,0 +1,42 @@
+h4. Referring to a JNDI DataSource
+
+Most Java EE containers supply @DataSource@ instances via "Java Naming and Directory Interface":http://www.oracle.com/technetwork/java/jndi/index.html (JNDI). Grails supports the definition of JNDI data sources as follows:
+
+{code:java}
+dataSource {
+    jndiName = "java:comp/env/myDataSource"
+}
+{code}
+
+The format on the JNDI name may vary from container to container, but the way you define the @DataSource@ in Grails remains the same.
+
+h4. Configuring a Development time JNDI resource
+
+The way in which you configure JNDI data sources at development time is plugin dependent. Using the "Tomcat":http://grails.org/plugin/tomcat plugin you can define JNDI resources using the @grails.naming.entries@ setting in @grails-app/conf/Config.groovy@:
+
+{code}
+grails.naming.entries = [
+    "bean/MyBeanFactory": [
+        auth: "Container",
+        type: "com.mycompany.MyBean",
+        factory: "org.apache.naming.factory.BeanFactory",
+        bar: "23"
+    ],
+    "jdbc/EmployeeDB": [
+        type: "javax.sql.DataSource", //required
+        auth: "Container", // optional
+        description: "Data source for Foo", //optional
+        driverClassName: "org.h2.Driver",
+        url: "jdbc:h2:mem:database",
+        username: "dbusername",
+        password: "dbpassword",
+        maxActive: "8",
+        maxIdle: "4"
+    ],
+    "mail/session": [
+        type: "javax.mail.Session,
+        auth: "Container",
+        "mail.smtp.host": "localhost"
+    ]
+]
+{code}

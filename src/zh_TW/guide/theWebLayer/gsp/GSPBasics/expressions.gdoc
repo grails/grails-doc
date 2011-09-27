@@ -1,0 +1,17 @@
+In GSP the @<%= %>@ syntax introduced earlier is rarely used due to the support for GSP expressions. A GSP expression is similar to a JSP EL expression or a Groovy GString and takes the form @${expr}@:
+
+{code:xml}
+<html>
+  <body>
+    Hello ${params.name}
+  </body>
+</html>
+{code}
+
+However, unlike JSP EL you can have any Groovy expression within the @${..}@ block. Variables within the @${..}@ block are *not* escaped by default, so any HTML in the variable's string is rendered directly to the page. To reduce the risk of Cross-site-scripting (XSS) attacks, you can enable automatic HTML escaping with the @grails.views.default.codec@ setting in @grails-app/conf/Config.groovy@:
+
+{code:java}
+grails.views.default.codec='html'
+{code}
+
+Other possible values are 'none' (for no default encoding) and 'base64'.
