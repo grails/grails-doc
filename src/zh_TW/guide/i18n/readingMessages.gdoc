@@ -1,0 +1,43 @@
+h4. Reading Messages in the View
+
+The most common place that you need messages is inside the view. Use the [message|tags] tag for this:
+
+{code:xml}
+<g:message code="my.localized.content" />
+{code}
+
+As long as you have a key in your @messages.properties@ (with appropriate locale suffix) such as the one below then Grails will look up the message:
+
+{code:java}
+my.localized.content=Hola, Me llamo John. Hoy es domingo.
+{code}
+
+Messages can also include arguments, for example:
+
+{code:xml}
+<g:message code="my.localized.content" args="${ ['Juan', 'lunes'] }" />
+{code}
+
+The message declaration specifies positional parameters which are dynamically specified:
+
+{code:java}
+my.localized.content=Hola, Me llamo {0}. Hoy es {1}.
+{code}
+
+h4. Reading Messages in Controllers and Tag Libraries
+
+It's simple to read messages in a controller since you can invoke tags as methods:
+
+{code:java}
+def show() {
+    def msg = message(code: "my.localized.content", args: ['Juan', 'lunes'])
+}
+{code}
+
+The same technique can be used in [tag libraries|guide:taglibs], but if your tag library uses a custom [namespace|guide:namespaces] then you must prefix the call with @g.@:
+
+{code:java}
+def myTag = { attrs, body ->
+    def msg = g.message(code: "my.localized.content", args: ['Juan', 'lunes'])
+}
+{code}

@@ -1,0 +1,58 @@
+Grails features a dependency resolution DSL that lets you control how plugins and JAR dependencies are resolved.
+
+You specify a @grails.project.dependency.resolution@ property inside the @grails-app/conf/BuildConfig.groovy@ file that configures how dependencies are resolved:
+
+{code}
+grails.project.dependency.resolution = {
+   // config here
+}
+{code}
+
+The default configuration looks like the following:
+
+{code}
+grails.project.class.dir = "target/classes"
+grails.project.test.class.dir = "target/test-classes"
+grails.project.test.reports.dir = "target/test-reports"
+//grails.project.war.file = "target/\${appName}-\${appVersion}.war"
+
+grails.project.dependency.resolution = {
+    // inherit Grails' default dependencies
+    inherits("global") {
+        // uncomment to disable ehcache
+        // excludes 'ehcache'
+    }
+    log "warn"
+    repositories {
+        grailsPlugins()
+        grailsHome()
+        grailsCentral()
+
+        // uncomment these to enable remote dependency resolution
+        // from public Maven repositories
+        //mavenCentral()
+        //mavenLocal()
+        //mavenRepo "http://snapshots.repository.codehaus.org"
+        //mavenRepo "http://repository.codehaus.org"
+        //mavenRepo "http://download.java.net/maven/2/"
+        //mavenRepo "http://repository.jboss.com/maven2/"
+    }
+    dependencies {
+        // specify dependencies here under either 'build', 'compile',
+        // 'runtime', 'test' or 'provided' scopes eg.
+
+        // runtime 'mysql:mysql-connector-java:5.1.16'
+    }
+
+    plugins {
+        compile "\:hibernate:\$grailsVersion"
+        compile "\:jquery:1.6.1.1"
+        compile "\:resources:1.0"
+
+        build "\:tomcat:\$grailsVersion"
+    }
+}
+{code}
+
+The details of the above will be explained in the next few sections.
+

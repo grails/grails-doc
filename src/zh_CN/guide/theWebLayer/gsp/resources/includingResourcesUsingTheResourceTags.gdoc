@@ -1,0 +1,134 @@
+h4. Pulling in resources with r:require
+
+To use resources, your GSP page must indicate which resource modules it requires. For example with the [jQuery plugin|http://grails.org/plugin/jquery], which exposes a "jquery" resource module, to use jQuery in any page on your site you simply add:
+
+{code:xml}
+<html>
+   <head>
+      <r:require module="jquery"/>
+      <r:layoutResources/>
+   </head>
+   <body>
+      ...
+      <r:layoutResources/>
+   </body>
+</html>
+{code}
+
+This will automatically include all resources needed for jQuery, including them at the correct locations in the page. By default the plugin sets the disposition to be "head", so they load early in the page.
+
+You can call @r:require@ multiple times in a GSP page, and you use the "modules" attribute to provide a list of modules:
+
+{code:xml}
+<html>
+   <head>
+      <r:require modules="jquery, main, blueprint, charting"/>
+      <r:layoutResources/>
+   </head>
+   <body>
+      ...
+      <r:layoutResources/>
+   </body>
+</html>
+{code}
+
+The above may result in many JavaScript and CSS files being included, in the correct order, with some JavaScript files loading at the end of the body to improve the apparent page load time.
+
+However you cannot use r:require in isolation - as per the examples you must have the <r:layoutResources/> tag to actually perform the render.
+
+h4. Rendering the links to resources with r:layoutResources
+
+When you have declared the resource modules that your GSP page requires, the framework needs to render the links to those resources at the correct time.
+
+To achieve this correctly, you must include the r:layoutResources tag twice in your page, or more commonly, in your GSP layout:
+
+{code:xml}
+<html>
+   <head>
+      <g:layoutTitle/>
+      <r:layoutResources/>
+   </head>
+   <body>
+      <g:layoutBody/>
+      <r:layoutResources/>
+   </body>
+</html>
+{code}
+
+This represents the simplest Sitemesh layout you can have that supports Resources.
+
+The Resources framework has the concept of a "disposition" for every resource. This is an indication of where in the page the resource should be included.
+
+The default disposition applied depends on the type of resource. All CSS must be rendered in <head> in HTML, so "head" is the default for all CSS, and will be rendered by the first r:layoutResources. Page load times are improved when JavaScript is loaded after the page content, so the default for JavaScript files is "defer", which means it is rendered when the second r:layoutResources is invoked.
+
+Note that both your GSP page and your Sitemesh layout (as well as any GSP template fragments) can call r:require to depend on resources. The only limitation is that you must call r:require before the r:layoutResources that should render it.
+
+h4. Adding page-specific JavaScript code with r:script
+
+Grails has the [javascript|tags] tag which is adapted to defer to Resources plugin if installed, but it is recommended that you call @r:script@ directly when you need to include fragments of JavaScript code.
+
+This lets you write some "inline" JavaScript which is actually *not* rendered inline, but either in the <head> or at the end of the body, based on the disposition.
+
+Given a Sitemesh layout like this:
+
+{code:xml}
+<html>
+   <head>
+      <g:layoutTitle/>
+      <r:layoutResources/>
+   </head>
+   <body>
+      <g:layoutBody/>
+      <r:layoutResources/>
+   </body>
+</html>
+{code}
+
+...in your GSP you can inject some JavaScript code into the head or deferred regions of the page like this:
+
+{code:xml}
+<html>
+   <head>
+      <title>Testing r:script magic!</title>
+   </head>
+   <body>
+      <r:script disposition="head">
+         window.alert('This is at the end of <head>');
+      </r:script>
+      <r:script disposition="defer">
+         window.alert('This is at the end of the body, and the page has loaded.');
+      </r:script>
+   </body>
+</html>
+{code}
+
+The default disposition is "defer", so the disposition in the latter r:script is purely included for demonstration.
+
+Note that such r:script code fragments *always* load after any modules that you have used, to ensure that any required libraries have loaded.
+
+h4. Linking to images with r:img
+
+This tag is used to render @<img>@ markup, using the Resources framework to process the resource on the fly (if configured to do so - e.g. make it eternally cacheable).
+
+This includes any extra attributes on the @<img>@ tag if the resource has been previously declared in a module.
+
+With this mechanism you can specify the width, height and any other attributes in the resource declaration in the module, and they will be pulled in as necessary.
+
+Example:
+
+{code:xml}
+<html>
+   <head>
+      <title>Testing r:img</title>
+   </head>
+   <body>
+      <r:img uri="/images/logo.png"/>
+   </body>
+</html>
+{code}
+
+Note that Grails has a built-in @g:img@ tag as a shortcut for rendering @<img>@ tags that refer to a static resource. The Grails [img|tags] tag is Resources-aware and will delegate to @r:img@ if found. However it is recommended that you use @r:img@ directly if using the Resources plugin.
+
+Alongside the regular Grails [resource|tags] tag attributes, this also supports the "uri" attribute for increased brevity.
+
+See [r:resource documentation|http://grails-plugins.github.com/grails-resources] for full details.

@@ -1,0 +1,41 @@
+One major different between GSP tags and other tagging technologies is that GSP tags can be called as either regular tags or as method calls from [controllers|guide:controllers], [tag libraries|guide:taglibs] or GSP views.
+
+h4. Tags as method calls from GSPs
+
+Tags return their results as a String-like object (a @StreamCharBuffer@ which has all of the same methods as String) instead of writing directly to the response when called as methods. For example:
+
+{code:xml}
+Static Resource: ${createLinkTo(dir: "images", file: "logo.jpg")}
+{code}
+
+This is particularly useful for using a tag within an attribute:
+
+{code:xml}
+<img src="${createLinkTo(dir: 'images', file: 'logo.jpg')}" />
+{code}
+
+In view technologies that don't support this feature you have to nest tags within tags, which becomes messy quickly and often has an adverse effect of WYSWIG tools such as Dreamweaver that attempt to render the mark-up as it is not well-formed:
+
+{code:xml}
+<img src="<g:createLinkTo dir="images" file="logo.jpg" />" />
+{code}
+
+h4. Tags as method calls from Controllers and Tag Libraries
+
+You can also invoke tags from controllers and tag libraries. Tags within the default @g:@ [namespace|guide:namespaces] can be invoked without the prefix and a @StreamCharBuffer@ result is returned:
+
+{code:java}
+def imageLocation = createLinkTo(dir:"images", file:"logo.jpg").toString()
+{code}
+
+Prefix the namespace to avoid naming conflicts:
+
+{code:java}
+def imageLocation = g.createLinkTo(dir:"images", file:"logo.jpg").toString()
+{code}
+
+For tags that use a [custom namespace|guide:namespaces], use that prefix for the method call. For example (from the [FCK Editor plugin|http://grails.org/plugin/fckeditor]):
+
+{code:java}
+def editor = fckeditor.editor(name: "text", width: "100%", height: "400")
+{code}

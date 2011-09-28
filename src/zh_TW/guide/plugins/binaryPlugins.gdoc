@@ -1,0 +1,46 @@
+Regular Grails plugins are packaged as zip files containing the full source of the plugin. This has some advantages in terms of being an open distribution system (anyone can see the source), in addition to avoiding problems with the source compatibility level used for compilation.
+
+As of Grails 2.0 you can pre-compile Grails plugins into regular JAR files known as "binary plugins". This has several advantages (and some disadvantages as discussed in the advantages of source plugins above) including:
+
+* Binary plugins can be published as standard JAR files to a Maven repository
+* Binary plugins can be declared like any other JAR dependency
+* Commercial plugins are more viable since the source isn't published
+* IDEs have a better understanding since binary plugins are regular JAR files containing classes
+
+h4. Packaging
+
+To package a plugin in binary form you can use the package-plugin command and the @--binary@ flag:
+
+{code}
+grails package-plugin --binary
+{code}
+
+Supported artefacts include:
+
+* Grails artifact classes such as controllers, domain classes and so on
+* I18n Message bundles
+* GSP Views, layouts and templates
+
+You can also specify the packaging in the plugin descriptor:
+
+{code}
+def packaging = "binary"
+{code}
+
+in which case the packaging will default to binary.
+
+h4. Using Binary Plugins
+
+The packaging process creates a JAR file in the @target@ directory of the plugin, for example @target/foo-plugin-0.1.jar@. There are two ways to incorporate a binary plugin into an application.
+
+One is simply placing the plugin JAR file in your application's @lib@ directory. The other is to publish the plugin JAR to a compatible Maven repository and declare it as a dependency in @grails-app/conf/BuildConfig.groovy@:
+
+{code}
+dependencies {
+    compile "mycompany:myplugin:0.1"
+}
+{code}
+
+{note}
+Since binary plugins are packaged as JAR files, they are declared as dependencies in the @dependencies@ block, _not_ in the @plugins@ block as you may be naturally inclined to do. The @plugins@ block is used for declaring traditional source plugins packaged as zip files
+{note}

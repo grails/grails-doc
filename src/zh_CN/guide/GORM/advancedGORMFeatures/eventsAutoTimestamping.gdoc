@@ -1,0 +1,258 @@
+GORM supports the registration of events as methods that get fired when certain events occurs such as deletes, inserts and updates. The following is a list of supported events:
+
+* @beforeInsert@ - Executed before an object is initially persisted to the database
+* @beforeUpdate@ - Executed before an object is updated
+* @beforeDelete@ - Executed before an object is deleted
+* @beforeValidate@ - Executed before an object is validated
+* @afterInsert@ - Executed after an object is persisted to the database
+* @afterUpdate@ - Executed after an object has been updated
+* @afterDelete@ - Executed after an object has been deleted
+* @onLoad@ - Executed when an object is loaded from the database
+
+To add an event simply register the relevant closure with your domain class.
+
+{warning}
+Do not attempt to flush the session within an event (such as with obj.save(flush:true)). Since events are fired during flushing this will cause a StackOverflowError.
+{warning}
+
+h3. Event types
+
+h4. The beforeInsert event
+
+Fired before an object is saved to the database
+
+{code:java}
+class Person {
+   Date dateCreated
+
+   def beforeInsert() {
+       dateCreated = new Date()
+   }
+}
+
+{code}
+
+h4. The beforeUpdate event
+
+Fired before an existing object is updated
+
+{code:java}
+class Person {
+   Date dateCreated
+   Date lastUpdated
+
+   def beforeInsert() {
+       dateCreated = new Date()
+   }
+   def beforeUpdate() {
+       lastUpdated = new Date()
+   }
+}
+{code}
+
+h4. The beforeDelete event
+
+Fired before an object is deleted.
+
+{code:java}
+class Person {
+   String name
+   Date dateCreated
+   Date lastUpdated
+
+   def beforeDelete() {
+      ActivityTrace.withNewSession {
+         new ActivityTrace(eventName:"Person Deleted",data:name).save()
+      }
+   }
+}
+
+{code}
+
+Notice the usage of @withNewSession@ method above. Since events are triggered whilst Hibernate is flushing using persistence methods like @save()@ and @delete()@ won't result in objects being saved unless you run your operations with a new @Session@.
+
+Fortunately the @withNewSession@ method lets you share the same transactional JDBC connection even though you're using a different underlying @Session@.
+
+h4. The beforeValidate event
+
+Fired before an object is validated.
+
+{code:java}
+class Person {
+   String name
+
+   static constraints = {
+       name size: 5..45
+   }
+
+   def beforeValidate() {
+       name = name?.trim()
+   }
+}
+{code}
+
+The @beforeValidate@ method is run before any validators are run.
+
+GORM supports an overloaded version of @beforeValidate@ which accepts a @List@ parameter which may include
+the names of the properties which are about to be validated.  This version of @beforeValidate@ will be called
+when the @validate@ method has been invoked and passed a @List@ of property names as an argument.
+
+{code:java}
+class Person {
+   String name
+   String town
+   Integer age
+
+   static constraints = {
+       name size: 5..45
+       age range: 4..99
+   }
+
+   def beforeValidate(List propertiesBeingValidated) {
+      // do pre validation work based on propertiesBeingValidated
+   }
+}
+
+def p = new Person(name: 'Jacob Brown', age: 10)
+p.validate(['age', 'name'])
+{code}
+
+{note}
+Note that when @validate@ is triggered indirectly because of a call to the @save@ method that
+the @validate@ method is being invoked with no arguments, not a @List@ that includes all of
+the property names.
+{note}
+
+Either or both versions of @beforeValidate@ may be defined in a domain class.  GORM will
+prefer the @List@ version if a @List@ is passed to @validate@ but will fall back on the
+no-arg version if the @List@ version does not exist.  Likewise, GORM will prefer the
+no-arg version if no arguments are passed to @validate@ but will fall back on the
+@List@ version if the no-arg version does not exist.  In that case, @null@ is passed to @beforeValidate@.
+
+h4. The onLoad/beforeLoad event
+
+Fired immediately before an object is loaded from the database:
+
+{code:java}
+class Person {
+   String name
+   Date dateCreated
+   Date lastUpdated
+
+   def onLoad() {
+      log.debug "Loading ${id}"
+   }
+}
+{code}
+
+@beforeLoad()@ is effectively a synonym for @onLoad()@, so only declare one or the other.
+
+h4. The afterLoad event
+
+Fired immediately after an object is loaded from the database:
+
+{code:java}
+class Person {
+   String name
+   Date dateCreated
+   Date lastUpdated
+
+   def afterLoad() {
+      name = "I'm loaded"
+   }
+}
+{code}
+
+h4. Custom Event Listeners
+
+You can also register event handler classes in an application's @grails-app/conf/spring/resources.groovy@ or in the @doWithSpring@ closure in a plugin descriptor by registering a Spring bean named @hibernateEventListeners@. This bean has one property, @listenerMap@ which specifies the listeners to register for various Hibernate events.
+
+The values of the Map are instances of classes that implement one or more Hibernate listener interfaces. You can use one class that implements all of the required interfaces, or one concrete class per interface, or any combination. The valid Map keys and corresponding interfaces are listed here:
+
+{table}
+*Name* | *Interface*
+auto-flush | [AutoFlushEventListener|api:org.hibernate.event.AutoFlushEventListener]
+merge | [MergeEventListener|api:org.hibernate.event.MergeEventListener]
+create | [PersistEventListener|api:org.hibernate.event.PersistEventListener]
+create-onflush | [PersistEventListener|api:org.hibernate.event.PersistEventListener]
+delete | [DeleteEventListener|api:org.hibernate.event.DeleteEventListener]
+dirty-check | [DirtyCheckEventListener|api:org.hibernate.event.DirtyCheckEventListener]
+evict | [EvictEventListener|api:org.hibernate.event.EvictEventListener]
+flush | [FlushEventListener|api:org.hibernate.event.FlushEventListener]
+flush-entity | [FlushEntityEventListener|api:org.hibernate.event.FlushEntityEventListener]
+load | [LoadEventListener|api:org.hibernate.event.LoadEventListener]
+load-collection | [InitializeCollectionEventListener|api:org.hibernate.event.InitializeCollectionEventListener]
+lock | [LockEventListener|api:org.hibernate.event.LockEventListener]
+refresh | [RefreshEventListener|api:org.hibernate.event.RefreshEventListener]
+replicate | [ReplicateEventListener|api:org.hibernate.event.ReplicateEventListener]
+save-update | [SaveOrUpdateEventListener|api:org.hibernate.event.SaveOrUpdateEventListener]
+save | [SaveOrUpdateEventListener|api:org.hibernate.event.SaveOrUpdateEventListener]
+update | [SaveOrUpdateEventListener|api:org.hibernate.event.SaveOrUpdateEventListener]
+pre-load | [PreLoadEventListener|api:org.hibernate.event.PreLoadEventListener]
+pre-update | [PreUpdateEventListener|api:org.hibernate.event.PreUpdateEventListener]
+pre-delete | [PreDeleteEventListener|api:org.hibernate.event.PreDeleteEventListener]
+pre-insert | [PreInsertEventListener|api:org.hibernate.event.PreInsertEventListener]
+pre-collection-recreate | [PreCollectionRecreateEventListener|api:org.hibernate.event.PreCollectionRecreateEventListener]
+pre-collection-remove | [PreCollectionRemoveEventListener|api:org.hibernate.event.PreCollectionRemoveEventListener]
+pre-collection-update | [PreCollectionUpdateEventListener|api:org.hibernate.event.PreCollectionUpdateEventListener]
+post-load | [PostLoadEventListener|api:org.hibernate.event.PostLoadEventListener]
+post-update | [PostUpdateEventListener|api:org.hibernate.event.PostUpdateEventListener]
+post-delete | [PostDeleteEventListener|api:org.hibernate.event.PostDeleteEventListener]
+post-insert | [PostInsertEventListener|api:org.hibernate.event.PostInsertEventListener]
+post-commit-update | [PostUpdateEventListener|api:org.hibernate.event.PostUpdateEventListener]
+post-commit-delete | [PostDeleteEventListener|api:org.hibernate.event.PostDeleteEventListener]
+post-commit-insert | [PostInsertEventListener|api:org.hibernate.event.PostInsertEventListener]
+post-collection-recreate | [PostCollectionRecreateEventListener|api:org.hibernate.event.PostCollectionRecreateEventListener]
+post-collection-remove | [PostCollectionRemoveEventListener|api:org.hibernate.event.PostCollectionRemoveEventListener]
+post-collection-update| [PostCollectionUpdateEventListener|api:org.hibernate.event.PostCollectionUpdateEventListener]
+{table}
+
+For example, you could register a class @AuditEventListener@ which implements @PostInsertEventListener@, @PostUpdateEventListener@, and @PostDeleteEventListener@ using the following in an application:
+
+{code}
+beans = {
+
+   auditListener(AuditEventListener)
+
+   hibernateEventListeners(HibernateEventListeners) {
+      listenerMap = ['post-insert': auditListener,
+                     'post-update': auditListener,
+                     'post-delete': auditListener]
+   }
+}
+{code}
+
+or use this in a plugin:
+
+{code}
+def doWithSpring = {
+
+   auditListener(AuditEventListener)
+
+   hibernateEventListeners(HibernateEventListeners) {
+      listenerMap = ['post-insert': auditListener,
+                     'post-update': auditListener,
+                     'post-delete': auditListener]
+   }
+}
+{code}
+
+h4. Automatic timestamping
+
+The examples above demonstrated using events to update a @lastUpdated@ and @dateCreated@ property to keep track of updates to objects. However, this is actually not necessary. By defining a @lastUpdated@ and @dateCreated@ property these will be automatically updated for you by GORM.
+
+If this is not the behaviour you want you can disable this feature with:
+
+{code:java}
+class Person {
+   Date dateCreated
+   Date lastUpdated
+   static mapping = {
+      autoTimestamp false
+   }
+}
+{code}
+
+{warning}
+If you put @nullable: false@ constraints on either @dateCreated@ or @lastUpdated@, your domain instances will fail validation - probably not what you want. Leave constraints off these properties unless you have disabled automatic timestamping.
+{warning}

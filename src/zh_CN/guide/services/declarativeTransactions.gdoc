@@ -1,0 +1,165 @@
+{hidden}h3. Default Declarative Transactions{hidden}
+
+h3. 声明式事务
+
+{hidden}
+Services are typically involved with coordinating logic between [domain classes|guide:GORM], and hence often involved with persistence that spans large operations. Given the nature of services, they frequently require transactional behaviour. You can use programmatic transactions with the [withTransaction| domainClasses] method, however this is repetitive and doesn't fully leverage the power of Spring's underlying transaction abstraction.
+{hidden}
+
+Services通常会包含这样的逻辑--需要多个[domain类|guide:GORM]之间相互配合。因此它常常会出现这样的情况:涉及到的持久化包括大量的数据库操作。这些问题使得service中经常都需要对方法进行事务管理。当然你可以用[withTransaction|domainClasses] 方法来管理事务，但是这样很繁琐，也不能充分利用Spring的强大的事务抽象能力。
+
+Grails中可以对service进行事务划分，它声明service中所有方法都是事务型的。缺省所有的service都进行了事务划分。要禁用这个配置，只需要设置transactional 属性为false：
+
+{hidden}
+Services enable transaction demarcation, which is a declarative way of defining which methods are to be made transactional. All services are transactional by default. To disable this set the @transactional@ property to @false@:
+{hidden}
+
+{code:java}
+class CountryService {
+    static transactional = false
+}
+{code}
+
+
+你也可以设置这个属性为true，以防止将来这个默认值改变后对你的应用造成影响，或者是明确声明service是事务型的。
+
+{hidden}
+You may also set this property to @true@ to make it clear that the service is intentionally transactional.
+{hidden}
+
+{warning}
+警告: [依赖注入|guide:dependencyInjectionServices]是使声明式事务工作的*唯一*途径。如果你自己用@new@操作符，比如@new BookService()@，将不能得到一个事务型的service.
+{warning}
+
+{hidden}
+{warning}
+Warning: [dependency injection|guide:dependencyInjectionServices] is the *only* way that declarative transactions work. You will not get a transactional service if you use the @new@ operator such as @new BookService()@
+{warning}
+{hidden}
+
+这样的结果是所有的方法被包装在一个事务中，在方法中有抛出@Runtime 异常@或@Error@时，将会自动回滚。事务传播级别默认是[PROPAGATION_REQUIRED|http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/transaction/TransactionDefinition.html#PROPAGATION_REQUIRED].
+
+{warning}
+Checked异常不会回滚事务. Groovy认为checked和unchecked异常非常相似，但Spring不知道这个道理并且使用默认值. 因此必须有了解checked和unchecked异常之间的差异。
+{warning}
+
+{hidden}
+The result is that all methods are wrapped in a transaction and automatic rollback occurs if a method throws a runtime exception (ie one that extends @RuntimeException@) or an @Error@. The propagation level of the transaction is by default set to [PROPAGATION_REQUIRED |http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/transaction/TransactionDefinition.html#PROPAGATION_REQUIRED].
+
+{warning}
+Checked exceptions do *not* roll back transactions. Even though Groovy blurs the distinction between checked and unchecked exceptions, Spring isn't aware of this and its default behaviour is used, so it's important to understand the distinction between checked and unchecked exceptions.
+{warning}
+{hidden}
+
+{hidden}
+h3. Custom Transaction Configuration
+
+Grails also fully supports Spring's @Transactional@ annotation for cases where you need more fine-grained control over transactions at a per-method level or need specify an alternative propagation level.
+
+{note}
+Annotating a service method with @Transactional@ disables the default Grails transactional behavior for that service (in the same way that adding @transactional=false@ does) so if you use any annotations you must annotate all methods that require transactions.
+{note}
+
+In this example @listBooks@ uses a rea​​d-only transaction, @updateBook@ uses a default read-write transaction, and @deleteBook@ is not transactional (probably not a good idea given its name).
+
+{hidden}
+
+h3. 自定事务配置
+
+当你需要更细粒度的交易控制或需要指定另类传播级别的时候，Grails也支持Spring的@ Transactional@注释。
+
+{note}
+使用@ Transactional@注释会停用Grails对该Service的默认行为。所以如果你使用任何注释，你必须注解的所有方法
+{note}
+
+在这个例子中@listBooks@只使用只读的事务，@updateBook@使用一个读写事务，@deleteBook@不是事务性的（看它的名称这可能不是一个好主意）。
+
+{code}
+import org.springframework.transaction.annotation.Transactional
+
+class BookService {
+
+    @Transactional(readOnly = true)
+    def listBooks() {
+        Book.list()
+    }
+
+    @Transactional
+    def updateBook() {
+        // …
+    }
+
+    def deleteBook() {
+        // …
+    }
+}
+
+{code}
+
+您也可以注解全程Service的交易行为然后重写每个方法的交易行为。这项Service是相当于一个没有注释的Service（因为默认值总是@ Transactional= TRUE@）：
+
+{hidden}
+You can also annotate the class to define the default transaction behavior for the whole service, and then override that default per-method. For example, this service is equivalent to one that has no annotations (since the default is implicitly @transactional=true@ ):
+{hidden}
+
+{code}
+import org.springframework.transaction.annotation.Transactional
+
+@Transactional
+class BookService {
+
+    def listBooks() {
+        Book.list()
+    }
+
+    def updateBook() {
+        // …
+    }
+
+    def deleteBook() {
+        // …
+    }
+}
+{code}
+
+为这个例子中类级别的注释保证所有方法为读写事务,但@ listBooks@方法重写为只读的交易:
+
+{hidden}
+This version defaults to all methods being read-write transactional (due to the class-level annotation), but the @listBooks@ method overrides this to use a rea​​d-only transaction:
+{hidden}
+
+{code}
+import org.springframework.transaction.annotation.Transactional
+
+@Transactional
+class BookService {
+
+    @Transactional(readOnly = true)
+    def listBooks() {
+        Book.list()
+    }
+
+    def updateBook() {
+        // …
+    }
+
+    def deleteBook() {
+        // …
+    }
+}
+{code}
+
+虽然在这个例子中@ updateBook@和@ deleteBook没有注明注释，它们继承了类级别的注释配置。
+
+如需详细资讯，请参阅Spring的用户指南[Using \@Transactional|http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/transaction.html#transaction-declarative -annotations].
+
+Grails和Spring之间不同的特点是Grails使用@ Transactional@时不需要任何先前的配置。
+
+{hidden}
+
+Although @updateBook@ and @deleteBook@ aren't annotated in this example, they inherit the configuration from the class-level annotation.
+
+For more information refer to the section of the Spring user guide on [Using \@Transactional|http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/transaction.html#transaction -declarative-annotations].
+
+Unlike Spring you do not need any prior configuration to use @Transactional@; just specify the annotation as needed and Grails will detect them up automatically.
+{hidden}

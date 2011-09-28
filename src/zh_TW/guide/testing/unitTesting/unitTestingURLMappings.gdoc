@@ -1,0 +1,73 @@
+h4. The Basics
+
+Testing URL mappings can be done with the @TestFor@ annotation testing a particular URL mappings class. For example to test the default URL mappings you can do the following:
+
+{code:java}
+@TestFor(UrlMappings)
+class UrlMappingsTests {
+
+}
+{code}
+
+{note}
+Note that since the default @UrlMappings@ class is in the default package your test must also be in the default package
+{note}
+
+With that done there are a number of useful methods that are defined by the @grails.test.mixin.web.UrlMappingsUnitTestMixin@ for testing URL mappings. These include:
+
+* @assertForwardUrlMapping@ - Asserts a URL mapping is forwarded for the given controller class (note that controller will need to be defined as a mock collaborate for this to work)
+* @assertReverseUrlMapping@ - Asserts that the given URL is produced when reverse mapping a link to a given controller and action
+* @assertUrlMapping@ - Asserts a URL mapping is valid for the given URL. This combines the @assertForwardUrlMapping@ and @assertReverseUrlMapping@ assertions
+
+h4. Asserting Forward URL Mappings
+
+You use @assertForwardUrlMapping@ to assert that a given URL maps to a given controller. For example, consider the following URL mappings:
+
+{code:java}
+static mappings = {
+    "/action1"(controller: "simple", action: "action1")
+    "/action2"(controller: "simple", action: "action2")
+}
+{code}
+
+The following test can be written to assert these URL mappings:
+
+{code:java}
+void testUrlMappings() {
+
+    assertForwardUrlMapping("/action1", controller: 'simple',
+                                        action: "action1")
+
+    assertForwardUrlMapping("/action2", controller: 'simple',
+                                        action: "action2")
+
+    shouldFail {
+        assertForwardUrlMapping("/action2", controller: 'simple',
+                                            action: "action1")
+    }
+}
+{code}
+
+h4. Assert Reverse URL Mappings
+
+You use @assertReverseUrlMapping@ to check that correct links are produced for your URL mapping when using the @link@ tag in GSP views. An example test is largely identical to the previous listing except you use @assertReverseUrlMapping@ instead of @assertForwardUrlMapping@. Note that you can combine these 2 assertions with @assertUrlMapping@.
+
+h4. Simulating Controller Mapping
+
+In addition to the assertions to check the validity of URL mappings you can also simulate mapping to a controller by using your @UrlMappings@ as a mock collaborator and the @mapURI@ method. For example:
+
+{code:java}
+@TestFor(SimpleController)
+@Mock(UrlMappings)
+class SimpleControllerTests {
+
+    void testControllerMapping() {
+
+        SimpleController controller = mapURI('/simple/list')
+        assert controller != null
+
+        def model = controller.list()
+        assert model != null
+    }
+}
+{code}

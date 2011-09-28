@@ -1,0 +1,11 @@
+A key thing to remember about Grails is that under the surface Grails is using "Hibernate":http://www.hibernate.org/ for persistence. If you are coming from a background of using "ActiveRecord":http://wiki.rubyonrails.org/rails/pages/ActiveRecord or "iBatis":http://ibatis.apache.org/, Hibernate's "session" model may feel a little strange.
+
+Grails automatically binds a Hibernate session to the currently executing request. This lets you use the [save|domainClasses] and [delete|domainClasses] methods as well as other GORM methods transparently.
+
+h4. Transactional Write-Behind
+
+A useful feature of Hibernate over direct JDBC calls and even other frameworks is that when you call [save|domainClasses] or [delete|domainClasses] it does not necessarily perform any SQL operations *at that point*. Hibernate batches up SQL statements and executes them as late as possible, often at the end of the request when flushing and closing the session. This is typically done for you automatically by Grails, which manages your Hibernate session.
+
+Hibernate caches database updates where possible, only actually pushing the changes when it knows that a flush is required, or when a flush is triggered programmatically. One common case where Hibernate will flush cached updates is when performing queries since the cached information might be included in the query results. But as long as you're doing non-conflicting saves, updates, and deletes, they'll be batched until the session is flushed. This can be a significant performance boost for applications that do a lot of database writes.
+
+Note that flushing is not the same as committing a transaction. If your actions are performed in the context of a transaction, flushing will execute SQL updates but the database will save the changes in its transaction queue and only finalize the updates when the transaction commits.

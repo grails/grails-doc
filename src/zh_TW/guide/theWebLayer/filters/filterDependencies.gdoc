@@ -1,0 +1,51 @@
+In a @Filters@ class, you can specify any other @Filters@ classes that should first be executed using the @dependsOn@ property. This is used when a @Filters@ class depends on the behavior of another @Filters@ class (e.g. setting up the environment, modifying the request/session, etc.) and is defined as an array of @Filters@ classes.
+
+Take the following example @Filters@ classes:
+
+{code:java}
+class MyFilters {
+    def dependsOn = [MyOtherFilters]
+
+    def filters = {
+        checkAwesome(uri: "/*") {
+            before = {
+                if (request.isAwesome) { // do something awesome }
+            }
+        }
+
+        checkAwesome2(uri: "/*") {
+            before = {
+                if (request.isAwesome) { // do something else awesome }
+            }
+        }
+    }
+}
+{code}
+
+{code:java}
+class MyOtherFilters {
+    def filters = {
+        makeAwesome(uri: "/*") {
+            before = {
+                request.isAwesome = true
+            }
+        }
+        doNothing(uri: "/*") {
+            before = {
+                // do nothing
+            }
+        }
+    }
+}
+{code}
+
+MyFilters specifically @dependsOn@ MyOtherFilters.  This will cause all the filters in MyOtherFilters whose scope matches the current request to be executed before those in MyFilters. For a request of "/test", which will match the scope of every filter in the example, the execution order would be as follows:
+
+* MyOtherFilters - makeAwesome
+* MyOtherFilters - doNothing
+* MyFilters - checkAwesome
+* MyFilters - checkAwesome2
+
+The filters within the MyOtherFilters class are processed in order first, followed by the filters in the MyFilters class.  Execution order between @Filters@ classes are enabled and the execution order of filters within each @Filters@ class are preserved.
+
+If any cyclical dependencies are detected, the filters with cyclical dependencies will be added to the end of the filter chain and processing will continue.  Information about any cyclical dependencies that are detected will be written to the logs.  Ensure that your root logging level is set to at least WARN or configure an appender for the Grails Filters Plugin (@org.codehaus.groovy.grails.plugins.web.filters.FiltersGrailsPlugin@) when debugging filter dependency issues.
