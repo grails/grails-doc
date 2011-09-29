@@ -1,3 +1,5 @@
+{hidden}
+
 Some deployments require that configuration be sourced from more than one place and be changeable without requiring a rebuild of the application. In order to support deployment scenarios such as these the configuration can be externalized. To do so, point Grails at the locations of the configuration files that should be used by adding a @grails.config.locations@ setting in @Config.groovy@, for example:
 
 {code:java}
@@ -7,6 +9,20 @@ grails.config.locations = [
     "file:${userHome}/.grails/${appName}-config.properties",
     "file:${userHome}/.grails/${appName}-config.groovy" ]
 {code}
+
+{hidden}
+
+Algunas implementaciones requieren que la configuración proceda de más de una ubicación y sea intercambiables sin necesidad de un redespliegue de la aplicación. Para admitir estos escenarios de despliegue puede la configuración puede ser externalizada. Para ello, señale a Grails las ubicaciones de los archivos de configuración que deben utilizarse mediante la adición de un valor de @grails.config.locations@ en @ Config.groovy@, por ejemplo:
+
+{code: java}
+Grails.config.Locations = [
+    "classpath:$ {appName}-config.properties",
+    "classpath:$ {appName}-config.groovy",
+    "file:${userHome}/.grails/${appName}-config.properties",
+    "file:${userHome}/.grails/${appName}-config.groovy"]
+{code}
+
+{hidden}
 
 In the above example we're loading configuration files (both Java Properties files and "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper configurations) from different places on the classpath and files located in @USER_HOME@.
 
@@ -18,6 +34,20 @@ grails.config.locations = [com.my.app.MyConfig]
 
 This can be useful in situations where the config is either coming from a plugin or some other part of your application. A typical use for this is re-using configuration provided by plugins across multiple applications.
 
+{hidden}
+
+En el ejemplo anterior nos estamos cargando archivos de configuración (archivos de propiedades Java y "configuraciones de ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper) de diferentes lugares de la ruta de clases y archivos ubicados en @ USER_HOME @.
+
+También es posible cargar configuración especificando una clase que es un script de configuración.
+
+{code: java}
+Grails.config.Locations = [com.my.app.MyConfig]
+{code}
+
+Esto puede resultar útil en situaciones en que la configuración es bien viniendo de un plugin o alguna otra parte de su aplicación. Un uso típico de esto reutiliza la configuración proporcionada por plugins en múltiples aplicaciones.
+
+{hidden}
+
 Ultimately all configuration files get merged into the @config@ property of the [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] object and are hence obtainable from there.
 
 Values that have the same name as previously defined values will overwrite the existing values, and the pointed to configuration sources are loaded in the order in which they are defined.
@@ -28,6 +58,25 @@ The configuration values contained in the locations described by the @grails.con
 
 This property supports the same values as the @grails.config.locations@ property (i.e. paths to config scripts, property files or classes), but the config described by @grails.config.defaults.locations@ will be loaded _before_ all other values and can therefore be overridden. Some plugins use this mechanism to supply one or more sets of default configuration that you can choose to include in your application config.
 
+{hidden}
+
+En última instancia todos los archivos de configuración se fusionaron en config @ @ propiedad del objeto [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] y son, por tanto, puede obtenerse a partir de ahí.
+
+Los valores que tienen el mismo nombre como valores definidos anteriormente sobrescribirá los valores existentes y la punta a fuentes de configuración se cargan en el orden en el que se definen.
+
+h4. Valores de configuración predeterminados
+
+Los valores de configuración contenidos en los lugares descritos por la propiedad @grails.config.locations@ va * anulación * los valores definición en el archivo de @Config.groovy@ de aplicación que no puede ser lo que quieras. Puede que desee tener un conjunto de valores _default_ ser cargado que puede ser anulado en cualquiera archivo @Config.groovy@ de la aplicación o en un lugar llamado config. Para ello puede utilizar la propiedad @grails.config.defaults.locations@.
+
+Esta propiedad es compatible con los mismos valores que la propiedad @grails.config.locations@ (es decir, caminos para secuencias de comandos de configuración, los archivos de propiedad o clases), pero la configuración descrita por @grails.config.defaults.locations@ será _before_ cargado todos los demás valores y por lo tanto, se puede reemplazar. Algunos plugins usar este mecanismo para proporcionar uno o más conjuntos de configuración por defecto que puede optar por incluir en su configuración de aplicación.
+
+{hidden}
+
 {note}
 Grails also supports the concept of property place holders and property override configurers as defined in "Spring":http://www.springframework.org. For more information on these see the section on [Grails and Spring|guide:spring]
 {note}
+{hidden}
+
+{Nota}
+Grails también apoya el concepto de propiedad lugar titulares y configurers de reemplazo de propiedad tal como se define en "Spring":http://www.springframework.org. Para obtener más información sobre estos, consulte la sección [Grails y Spring|guide:spring]
+{Nota}
