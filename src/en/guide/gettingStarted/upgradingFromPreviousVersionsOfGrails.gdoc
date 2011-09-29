@@ -94,6 +94,21 @@ h4. Criteria Queries Default to INNER JOIN
 
 The previous default of LEFT JOIN for criteria queries across associations is now INNER JOIN.
 
+h4. Invalid Constraints Now Thrown an Exception
+
+Previously if you defined a constraint on a property that doesn't exist no error would be thrown:
+
+{code}
+class Person {
+    String name
+    static constraints = {
+        bad nullable:false // invalid property, no error thrown
+    }
+}
+{code}
+
+Now the above code will result in an exception
+
 h4. Logging By Convention Changes
 
 The packages that you should use for Grails artifacts have mostly changed. In particular:
