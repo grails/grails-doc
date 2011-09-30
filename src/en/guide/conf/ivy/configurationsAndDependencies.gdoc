@@ -90,3 +90,23 @@ provided("my.org:web-service:1.0") {
 {code}
 
 If the dependency configuration is not explicitly set, the configuration named @"default"@ will be used (which is also the correct value for dependencies coming from Maven style repositories).
+
+h3. Where are the JARs?
+
+With all these declarative dependencies, you may wonder where all the JARs end up. They have to go somewhere after all. By default Grails puts them into a directory, called the dependency cache, that resides on your local file system at @user.home@/.grails/ivy-cache. You can change this either via the @settings.groovy@ file:
+
+{code}
+grails.dependency.cache.dir = "${userHome}/.my-dependency-cache"
+{code}
+
+or in the dependency DSL:
+
+{code}
+grails.project.dependency.resolution = {
+    ...
+    cacheDir "target/ivy-cache"
+    ...
+}
+{code}
+
+The @settings.groovy@ option applies to all projects, so it's the preferred approach.
