@@ -21,6 +21,19 @@ def book = Book.findOrSaveByAuthorAndTitle('Daniel Suarez', 'Daemon')
 {code}
 {hidden}
 
+h4. 全新的findOrCreate和findOrSave方法
+
+领域类现在已经支持findOrCreateWhere, findOrSaveWhere, findOrCreateBy和findOrSaveBy查询方法，这些方法除了不返回null值以外，跟findWhere和findBy方法基本类似。如果在数据库中没有找到符合条件的实例，系统将会根据查询参数创建一个全新的实例返回，不过在findOrSaveWhere 和findOrSaveBy中,实例是先保存入库再返回的。示例代码如下：
+
+{code}
+def book = Book.findOrCreateWhere(author: 'Douglas Adams', title: "The Hitchiker's Guide To The Galaxy")
+def book = Book.findOrSaveWhere(author: 'Daniel Suarez', title: 'Daemon')
+def book = Book.findOrCreateByAuthorAndTitle('Daniel Suarez', 'Daemon')
+def book = Book.findOrSaveByAuthorAndTitle('Daniel Suarez', 'Daemon')
+{code}
+
+
+{hidden}
 h4. Detached Criteria and Where Queries
 
 Grails 2.0 features support for [DetachedCriteria|guide:detachedCriteria] which are criteria queries that are not associated with any session or connection and thus can be more easily reused and composed:
@@ -42,18 +55,30 @@ def results = query.list(sort:"firstName")
 {code} 
 
 See the documentation on [DetachedCriteria|guide:detachedCriteria] and [Where Queries|guide:whereQueries] for more information.
+{hidden}
 
+h4. 分离的Criteria和Where查询
 
-h4. 全新的findOrCreate和findOrSave方法
-
-领域类现在已经支持findOrCreateWhere, findOrSaveWhere, findOrCreateBy和findOrSaveBy查询方法，这些方法除了不返回null值以外，跟findWhere和findBy方法基本类似。如果在数据库中没有找到符合条件的实例，系统将会根据查询参数创建一个全新的实例返回，不过在findOrSaveWhere 和findOrSaveBy中,实例是先保存入库再返回的。示例代码如下：
+Grails 2.0中[分离的Criteria|guide:detachedCriteria]是指条件（Criteria）查询不再跟任何数据库会话或者连接关联，因此可以很方便的复用和构造，比如：
 
 {code}
-def book = Book.findOrCreateWhere(author: 'Douglas Adams', title: "The Hitchiker's Guide To The Galaxy")
-def book = Book.findOrSaveWhere(author: 'Daniel Suarez', title: 'Daemon')
-def book = Book.findOrCreateByAuthorAndTitle('Daniel Suarez', 'Daemon')
-def book = Book.findOrSaveByAuthorAndTitle('Daniel Suarez', 'Daemon')
+def criteria = new DetachedCriteria(Person).build {
+    eq 'lastName', 'Simpson'
+}
+def results = criteria.list(max:4, sort:"firstName")
 {code}
+
+为了支持[分离的Criteria|guide:detachedCriteria]查询和减少条件查询的复杂性，一个新的@where@方法及其DSL被引入，比如：
+
+{code}
+def query = Person.where {
+    (lastName != "Simpson" && firstName != "Fred") || (firstName == "Bart" && age > 9)
+}
+def results = query.list(sort:"firstName")
+{code} 
+
+更多信息请参考本手册的[分离的Criteria|guide:detachedCriteria] and [Where Queries|guide:whereQueries]章节。
+
 
 {hidden}
 h4. Abstract Inheritance
@@ -159,19 +184,38 @@ A new [database migration plugin|http://grails.org/plugin/database-migration] ha
 
 h4. 数据库迁移（Database Migration）
 
-A new [database migration plugin|http://grails.org/plugin/database-migration] has been designed and built for Grails 2.0 allowing you to apply migrations to your database, rollback changes and diff your domain model with the current state of the database.
+新设计的[数据库迁移插件|http://grails.org/plugin/database-migration]完全是基于Grails 2.0的，有了它，你可以迁移你的数据库了，比如根据当前的数据库状态回滚所做的变化，比较领域模型。
 
+{hidden}
 h4. Database Reverse Engineering
 
 A new [database reverse engineering|http://www.grails.org/plugin/db-reverse-engineer] plugin has been designed and built for Grails 2.0 that allows you to generate a domain model from an existing database schema.
+{hidden}
 
+h4. 数据库逆向工程
+
+基于Grails 2.0的[数据库逆向工程插件|http://www.grails.org/plugin/db-reverse-engineer]可以根据已有的数据库模式（database schema），自动生成领域模型。
+
+{hidden}
 h4. Hibernate 3.6
 
 Grails 2.0 is now built on Hibernate 3.6
+{hidden}
 
+h4. Hibernate 3.6
+
+Grails 2.0现在基于Hibernate 3.6了
+
+{hidden}
 h4. Bag Collections
 
 You can now use Hibernate [Bag|http://docs.jboss.org/hibernate/stable/core/reference/en-US/html/collections.html]s for mapped collections to avoid the memory and performance issues of loading large collections to enforce @Set@ uniqueness or @List@ order.
 
 For more information see the section on [Sets, Lists and Maps|guide:sets,ListsAndMaps] in the user guide.
+{hidden}
 
+h4. Bag集合
+
+现在Hibernate的[Bag|http://docs.jboss.org/hibernate/stable/core/reference/en-US/html/collections.html]集合（Bag集合，即在集合中允许重复，可以简单的看作为Set和List的结合体－－译者注）在Grails 2.0中也得到了支持，由此也比较好的解决了加载大数据量集合转换（@Set@必须唯一或者@List@必须有序）导致的内存和性能问题。
+
+更多信息请参考本手册的[集合、列表、映射|guide:sets,ListsAndMaps]章节。
