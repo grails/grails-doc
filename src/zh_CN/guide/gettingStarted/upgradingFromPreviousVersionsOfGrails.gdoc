@@ -1,7 +1,13 @@
+{hidden}
 Although the Grails development team have tried to keep breakages to a minimum there are a number of items to consider when upgrading a Grails 1.0.x, 1.1.x, 1.2.x, or 1.3.x applications to Grails 2.0. The major changes are described in detail below.
 
-h3. Upgrading from Grails 1.3.x
+{hidden}
 
+虽然Grails的开发团队已经尽最大可能地将破坏减少到最少，但是当从1.0.x、1.1.x、1.2.x或者1.3.x升级到2.0的时候，依然有很多注意事项。下面详细地描述了这些重要变化。
+
+h3. 从Grails 1.3.x升级
+
+{hidden}
 h4. HSQLDB Has Been Replaced With H2
 
 HSQLDB is still bundled with Grails but is not configured as a default runtime dependency.  Upgrade options include replacing HSQLDB references in DataSource.groovy with H2 references or adding HSQLDB as a runtime dependency for the application.
@@ -69,6 +75,75 @@ class MyDomain {
 {code}
 
 This constraint influences schema generation, so in the above example H2 will have the @data@ column set to @BINARY(2097152)@ by Hibernate.
+{hidden}
+
+h4. H2代替HSQLDB
+
+Grails依然自带HSQLDB，但在配置中已经没有了运行时依赖。升级的选择可以是将DataSource.groovy中的HSQLDB替换为H2，或者在你的应用中增加运行时依赖。
+
+如果你想让你的应用运行在不同的Grails版本中，那么最简单的方法就是在BuildConfig.groovy中增加HSQLDB的运行时依赖，如下所示：
+
+{code:java}
+grails.project.dependency.resolution = {
+    inherits("global") {
+    }
+    repositories {
+        grailsPlugins()
+        grailsHome()
+        grailsCentral()
+    }
+
+    dependencies {
+        // Add HSQLDB as a runtime dependency
+        runtime 'hsqldb:hsqldb:1.8.0.10'
+    }
+}
+{code}
+
+缺省DataSource.groovy中H2配置如下：
+
+{code:java}
+dataSource {
+    driverClassName = "org.h2.Driver"
+    username = "sa"
+    password = ""
+}
+// environment specific settings
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop" // one of 'create', 'create-drop','update'
+            url = "jdbc:h2:mem:devDb"
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:mem:testDb"
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:prodDb"
+        }
+    }
+}
+{code}
+
+H2和HSQLDB另外一个重大差异是其对领域类 @byte\[]@ 属性的处理。HSQLDB中其BLOB已经足够大，以至于无需再设定最大值了。而H2其默认最大值是255字节，因此如果要在数据库中存储图像，其保存失败多不半是因为此限制。要解决此问题，只需在 @byte\[]@ 属性中增加一个 @maxSize@ 约束，比如：
+
+{code:java}
+class MyDomain {
+    byte[] data
+
+    static constraints = {
+        data maxSize: 1024 * 1024 * 2 // 2MB
+    }
+}
+{code}
+
+此约束会影响数据库脚本的生成，上述示例中Hibernate会将H2的 @data@ 字段设置为 @BINARY(2097152)@ 。
 
 h4. Abstract Inheritance Changes
 
