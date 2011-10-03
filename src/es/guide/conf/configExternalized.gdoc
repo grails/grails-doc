@@ -2,17 +2,9 @@
 
 Some deployments require that configuration be sourced from more than one place and be changeable without requiring a rebuild of the application. In order to support deployment scenarios such as these the configuration can be externalized. To do so, point Grails at the locations of the configuration files that should be used by adding a @grails.config.locations@ setting in @Config.groovy@, for example:
 
-{code:java}
-grails.config.locations = [
-    "classpath:${appName}-config.properties",
-    "classpath:${appName}-config.groovy",
-    "file:${userHome}/.grails/${appName}-config.properties",
-    "file:${userHome}/.grails/${appName}-config.groovy" ]
-{code}
-
 {hidden}
 
-Algunas implementaciones requieren que la configuración proceda de más de una ubicación y sea intercambiables sin necesidad de un redespliegue de la aplicación. Para admitir estos escenarios de despliegue puede la configuración puede ser externalizada. Para ello, señale a Grails las ubicaciones de los archivos de configuración que deben utilizarse mediante la adición de un valor de @grails.config.locations@ en @ Config.groovy@, por ejemplo:
+Algunas implementaciones requieren que la configuración proceda de más de una ubicación y sea intercambiables sin necesidad de un redespliegue de la aplicación. Para admitir estos escenarios de despliegue la configuración puede ser externalizada. Para ello, señale a Grails las ubicaciones de los archivos de configuración que deben utilizarse mediante la adición de un valor de @grails.config.locations@ en @Config.groovy@, por ejemplo:
 
 {code: java}
 Grails.config.Locations = [
@@ -36,7 +28,7 @@ This can be useful in situations where the config is either coming from a plugin
 
 {hidden}
 
-En el ejemplo anterior nos estamos cargando archivos de configuración (archivos de propiedades Java y "configuraciones de ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper) de diferentes lugares de la ruta de clases y archivos ubicados en @ USER_HOME @.
+En el ejemplo anterior estamos cargando archivos de configuración (archivos de propiedades Java y configuraciones de "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper) de diferentes lugares del classpath y archivos ubicados en @USER_HOME@.
 
 También es posible cargar configuración especificando una clase que es un script de configuración.
 
@@ -44,7 +36,7 @@ También es posible cargar configuración especificando una clase que es un scri
 Grails.config.Locations = [com.my.app.MyConfig]
 {code}
 
-Esto puede resultar útil en situaciones en que la configuración es bien viniendo de un plugin o alguna otra parte de su aplicación. Un uso típico de esto reutiliza la configuración proporcionada por plugins en múltiples aplicaciones.
+Esto puede resultar útil en situaciones en que la configuración viene de un plugin o de alguna otra parte de su aplicación. Un uso típico de esto es reutilizar la configuración proporcionada por plugins en múltiples aplicaciones.
 
 {hidden}
 
@@ -60,15 +52,15 @@ This property supports the same values as the @grails.config.locations@ property
 
 {hidden}
 
-En última instancia todos los archivos de configuración se fusionaron en config @ @ propiedad del objeto [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] y son, por tanto, puede obtenerse a partir de ahí.
+En última instancia todos los archivos de configuración se fusionaron en la propiedad @config@ del objeto [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] y, por tanto, puede obtenerse a partir de ahí.
 
-Los valores que tienen el mismo nombre como valores definidos anteriormente sobrescribirá los valores existentes y la punta a fuentes de configuración se cargan en el orden en el que se definen.
+Los valores que tienen el mismo nombre que otros valores definidos anteriormente sobrescribirán los valores existentes y las referencias de configuración se cargan en el orden en el que se definen.
 
 h4. Valores de configuración predeterminados
 
-Los valores de configuración contenidos en los lugares descritos por la propiedad @grails.config.locations@ va * anulación * los valores definición en el archivo de @Config.groovy@ de aplicación que no puede ser lo que quieras. Puede que desee tener un conjunto de valores _default_ ser cargado que puede ser anulado en cualquiera archivo @Config.groovy@ de la aplicación o en un lugar llamado config. Para ello puede utilizar la propiedad @grails.config.defaults.locations@.
+Los valores de configuración contenidos en los lugares descritos por la propiedad @grails.config.locations@  *sobreescribirán* los valores definidos en el archivo @Config.groovy@ de la aplicación que puede no ser lo que quiere. Puede que desee tener un conjunto de valores _por defecto_ cargados que pueden ser sobreescritos en el archivo @Config.groovy@ de la aplicación o en cualquier localización definida. Para ello puede utilizar la propiedad @grails.config.defaults.locations@.
 
-Esta propiedad es compatible con los mismos valores que la propiedad @grails.config.locations@ (es decir, caminos para secuencias de comandos de configuración, los archivos de propiedad o clases), pero la configuración descrita por @grails.config.defaults.locations@ será _before_ cargado todos los demás valores y por lo tanto, se puede reemplazar. Algunos plugins usar este mecanismo para proporcionar uno o más conjuntos de configuración por defecto que puede optar por incluir en su configuración de aplicación.
+Esta propiedad soporta los mismos valores que la propiedad @grails.config.locations@ (es decir, rutas para scripts de configuración, los archivos de propiedad o clases), pero la configuración descrita por @grails.config.defaults.locations@ será cargada _antes_ que todos los demás valores y por lo tanto, se puede reemplazar. Algunos plugins usan este mecanismo para proporcionar uno o más conjuntos de configuración por defecto que puede incluir en la configuración de su aplicación.
 
 {hidden}
 
@@ -77,6 +69,6 @@ Grails also supports the concept of property place holders and property override
 {note}
 {hidden}
 
-{Nota}
-Grails también apoya el concepto de propiedad lugar titulares y configurers de reemplazo de propiedad tal como se define en "Spring":http://www.springframework.org. Para obtener más información sobre estos, consulte la sección [Grails y Spring|guide:spring]
-{Nota}
+{note}
+Grails también soporta el concepto de titulares de la propiedad y configuradores de reemplazo de propiedad tal como se define en "Spring":http://www.springframework.org. Para obtener más información sobre estos, consulte la sección [Grails y Spring|guide:spring]
+{note}
