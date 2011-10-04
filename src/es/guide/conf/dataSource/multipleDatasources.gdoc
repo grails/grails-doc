@@ -1,8 +1,16 @@
+{hidden}
 By default all domain classes share a single @DataSource@ and a single database, but you have the option to partition your domain classes into two or more @DataSource@s.
 
 h4. Configuring Additional DataSources
 
 The default @DataSource@ configuration in @grails-app/conf/DataSource.groovy@ looks something like this:
+{hidden}
+
+Por defecto, todas las clases de dominio compartan un solo @DataSource@ y una única base de datos, pero tiene la opción de dividir las clases de dominio en dos o más @DataSource@s.
+
+h4. Configuración de orígenes de datos adicionales
+
+La configuración del @DataSource@ por defecto en @grails-app/conf/DataSource.groovy@ es algo como esto:
 
 {code}
 dataSource {
@@ -39,7 +47,11 @@ environments {
 }
 {code}
 
+{hidden}
 This configures a single @DataSource@ with the Spring bean named @dataSource@. To configure extra @DataSource@s, add another @dataSource@ block (at the top level, in an environment block, or both, just like the standard @DataSource@ definition) with a custom name, separated by an underscore. For example, this configuration adds a second @DataSource@, using MySQL in the development environment and Oracle in production:
+{hidden}
+
+Esto configura un único @DataSource@ con un bean de Spring llamado @dataSource@. Para configurar @DataSource@s adicionales, agregue otro bloque @dataSource@  (en el nivel superior, en un bloque de entorno, o ambos, al igual que la definición estándar de @DataSource@) con un nombre personalizado, separado por un guión bajo. Por ejemplo, esta configuración agrega un segundo @DataSource@, usando MySQL en el entorno de desarrollo y Oracle en producción:
 
 {code}
 environments {
@@ -80,11 +92,19 @@ environments {
 }
 {code}
 
+{hidden}
 You can use the same or different databases as long as they're supported by Hibernate.
 
 h4. Configuring Domain Classes
 
 If a domain class has no @DataSource@ configuration, it defaults to the standard @'dataSource'@. Set the @datasource@ property in the @mapping@ block to configure a non-default @DataSource@. For example, if you want to use the @ZipCode@ domain to use the @'lookup'@ @DataSource@, configure it like this;
+{hidden}
+
+Puede utilizar las mismos o diferentes bases de datos siempre y cuando esté soportadas por Hibernate.
+
+h4. Configuración de clases de dominio
+
+Si una clase de dominio no tiene ninguna configuración de @DataSource@, utiliza el @'dataSource'@ estándar. Debe establecer la propiedad @datasource@  en el @bloque@ mapping para configurar otro @DataSource@. Por ejemplo, si desea que el dominio @ZipCode@  utilice el  @DataSource@ @'lookup'@, configurelo así:
 
 {code}
 class ZipCode {
@@ -97,7 +117,11 @@ class ZipCode {
 }
 {code}
 
+{hidden}
 A domain class can also use two or more @DataSource@s. Use the @datasources@ property with a list of names to configure more than one, for example:
+{hidden}
+
+Una clase de dominio también puede utilizar dos o más @DataSource@s. Use la propiedad @datasources@ con una lista de nombres para configurar más de uno, por ejemplo:
 
 {code}
 class ZipCode {
@@ -110,7 +134,11 @@ class ZipCode {
 }
 {code}
 
+{hidden}
 If a domain class uses the default @DataSource@ and one or more others, use the special name @'DEFAULT'@ to indicate the default @DataSource@:
+{hidden}
+
+Si una clase de dominio utiliza el @DataSource@ por defecto y algún o algunos otros, utilice el nombre especial @'DEFAULT'@ para indicar el @DataSource@ por defecto:
 
 {code}
 class ZipCode {
@@ -123,7 +151,11 @@ class ZipCode {
 }
 {code}
 
+{hidden}
 If a domain class uses all configured @DataSource@s use the special value @'ALL'@:
+{hidden}
+
+Si una clase de dominio utiliza todos los @DataSource@s configurados use el valor especial @'ALL'@:
 
 {code}
 class ZipCode {
@@ -136,9 +168,16 @@ class ZipCode {
 }
 {code}
 
+{hidden}
+
 h4. Namespaces and GORM Methods
 
 If a domain class uses more than one @DataSource@ then you can use the namespace implied by each @DataSource@ name to make GORM calls for a particular @DataSource@. For example, consider this class which uses two @DataSource@s:
+{hidden}
+
+h4. Espacios de nombres y métodos GORM
+
+Si una clase de dominio utiliza más de un @DataSource@ puede utilizar el espacio de nombres que implica cada  nombre de @DataSource@ para hacer llamadas GORM para un determinado @DataSource@. Por ejemplo, esta clase que utiliza dos @DataSource@s:
 
 {code}
 class ZipCode {
@@ -151,6 +190,7 @@ class ZipCode {
 }
 {code}
 
+{hidden}
 The first @DataSource@ specified is the default when not using an explicit namespace, so in this case we default to 'lookup'. But you can call GORM methods on the 'auditing' @DataSource@ with the @DataSource@ name, for example:
 
 {code}
@@ -160,10 +200,27 @@ zipCode.auditing.save()
 {code}
 
 As you can see, you add the @DataSource@ to the method call in both the static case and the instance case.
+{hidden}
 
+El primer @DataSource@ especificado es el valor por defecto cuando no se utiliza un espacio de nombre explícito, por lo que en este caso el predeterminado es 'lookup'. Pero puede llamar a métodos GORM con el @DataSource@ con nombre del @DataSource@, por ejemplo:
+
+{code}
+def zipCode = ZipCode.auditing.get(42)
+...
+zipCode.auditing.save()
+{code}
+
+Como puede ver, agrega el @DataSource@ a la llamada de método tanto en el caso de llamada estática como en el caso de la instancia.
+
+{hidden}
 h4. Services
 
 Like Domain classes, by default Services use the default @DataSource@ and @PlatformTransactionManager@. To configure a Service to use a different @DataSource@, use the static @datasource@ property, for example:
+{hidden}
+
+h4. Servicios
+
+Como las clases de dominio, los servicios utilizan el @DataSource@ por defecto y el @PlatformTransactionManager@. Para configurar un servicio para que utilice un @DataSource@ diferente , utilice la propiedad estática @datasource@, por ejemplo:
 
 {code}
 class DataService {
@@ -176,9 +233,17 @@ class DataService {
 }
 {code}
 
+{hidden}
 A transactional service can only use a single @DataSource@, so be sure to only make changes for domain classes whose @DataSource@ is the same as the Service.
 
 h4. XA and Two-phase Commit
 
 Grails has no native support for [XA|https://secure.wikimedia.org/wikipedia/en/wiki/X/Open_XA] @DataSource@s or [two-phase commit|https://secure.wikimedia.org/wikipedia/en/wiki/Two-phase_commit], but the [Atomikos plugin|http://grails.org/plugin/atomikos] makes it easy. See the plugin documentation for the simple changes needed in your @DataSource@ definitions to reconfigure them as XA @DataSource@s.
 
+{hidden}
+
+Un servicio transaccional puede sólo utilizar un único @DataSource@, así que asegúrese de sólo hacer cambios para las clases de dominio cuyos @DataSource@ es el mismo que el del servicio.
+
+h4. XA y commit en dos fases
+
+Grails no tiene soporte nativo para  @DataSource@s [XA|https://secure.wikimedia.org/wikipedia/en/wiki/X/Open_XA] o [commit en dos fases|https://secure.wikimedia.org/wikipedia/en/wiki/Two-phase_commit], pero el [plugin Atomikos|http://grails.org/plugin/atomikos] hace que sea fácil. Consulte la documentación de plugin para conocer los cambios que debe hacer en la definición de su @DataSource@ para configurarlos como  @DataSource@s XA.
