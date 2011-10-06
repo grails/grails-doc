@@ -145,6 +145,7 @@ class MyDomain {
 
 此约束会影响数据库脚本的生成，上述示例中Hibernate会将H2的 @data@ 字段设置为 @BINARY(2097152)@ 。
 
+{hidden}
 h4. Abstract Inheritance Changes
 
 In previous versions of Grails abstract classes in @grails-app/domain@ were not treated as persistent. This is no longer the case and has a significant impact on upgrading your application. For example consider the following domain model in a Grails 1.3.x application:
@@ -164,11 +165,39 @@ You have two options when upgrading in this scenario:
 
 # Move the abstract @Sellable@ class into the src/groovy package. If the @Sellable@ class is in the @src/groovy@ directory it will no longer be regarded a persistent
 # Use the "database migration":http://grails.org/plugin/database-migration plugin to apply the appropriate changes to the database (typically renaming the table to the root abstract class of the inheritance tree)
+{hidden}
 
+h4. 抽象继承的变化
+
+在以前版本的Grails中， @grails-app/domain@ 下的抽象类并没有被持久化。现在这个情况已经不复存在，而且对升级你的应用的来说，也有着重要的影响。比如以下Grails 1.3.x应用的领域模型：
+
+{code:java}
+abstract class Sellable {
+
+}
+class Book extends Sellable {
+
+}
+{code}
+
+在Grails 1.3.x中，你将生成一个BOOK表，并且继承自 @Sellable@ 类的属性将存储在 @BOOK@ 表中。但是在Grails 1.4.x中，你将生成 @SELLABLE@ 表，并且使用缺省的单表继承（table-per-hierarchy）的继承规则的话，那么 @Book@ 中的所有属性将存储在 @SELLABLE@ 表中。
+
+这种情况下的升级，你有两种选择：
+
+# 将抽象类 @Sellable@ 移至src/groovy目录下。如果 @Sellable@ 类在 @src/groovy@ 目录下边，那么将不再被持久化。
+# 使用 "数据库迁移":http://grails.org/plugin/database-migration 插件让这些变化在数据库中生效（通常是将表名重新命名为继承树中跟抽象类的名称）
+
+{hidden}
 h4. Criteria Queries Default to INNER JOIN
 
 The previous default of LEFT JOIN for criteria queries across associations is now INNER JOIN.
+{hidden}
 
+h4. 条件查询缺省使用内连接（INNER JOIN）
+
+相比以前的左连接（LEFT JOIN），现在关联查询使用内连接了。
+
+{hidden}
 h4. Logging By Convention Changes
 
 The packages that you should use for Grails artifacts have mostly changed. In particular:
@@ -180,21 +209,55 @@ The packages that you should use for Grails artifacts have mostly changed. In pa
 * @dataSource@ -> @conf@
 
 You can find out more about logging by convention in the [main part|guide:logging] of the user guide, under "Configuring loggers". This change is a side-effect of injecting the @log@ property into artefacts at compile time.
+{hidden}
 
+h4. 日志规约的变化
+
+你使用的Grails工件包名大部分发生了改变，特别是以下几个：
+
+* @service@ -> @services@
+* @controller@ -> @controllers@
+* @tagLib@ -> @taglib@ (大小写变化)
+* @bootstrap@ -> @conf@
+* @dataSource@ -> @conf@
+
+你可以在本手册的"日志配置"部分中的 [主体部分|guide:logging] 发现更多的日志规约内容，此外这种变化的一个副作用就是将 @log@ 属性在编译时就注入到工件类中。
+
+{hidden}
 h4. jQuery Replaces Prototype
 
 The Protoype Javascript library has been removed from Grails core and now new Grails applications have the jQuery plugin configured by default. This will only impact you if you are using Prototype with the adaptive AJAX tags in your application, e.g. <g:remoteLink/> etc, because those tags will break as soon as you upgrade.
 
 To resolve this issue, simply install the [Prototype plugin|http://grails.org/plugin/prototype] in your application. You can also remove the prototype files from your @web-app/js/prototype@ directory if you want.
+{hidden}
 
+h4. jQuery替代Prototype
+
+Protoype库已经从Grails核心中移除了，取而代之的是jQuery插件。这将影响你应用中使用Prototype的AJAX标签，比如 <g:remoteLink/> 等，因为这些标签会在你升级后失效。
+
+要解决此问题，只需要在你应用中安装 [Prototype插件|http://grails.org/plugin/prototype] 即可，或者移除 @web-app/js/prototype@ 目录下的prototype文件。
+
+{hidden}
 h4. Access Control and Resources
 
 The Resources plugin is a great new feature of Grails, but you do need to be aware that it adds an extra URL at @/static@. If you have access control in your application, this may mean that the static resources require an authenticated user to load them! Make sure your access rules take account of the @/static@ URL.
+{hidden}
 
+h4. 访问控制和资源
+
+Resources插件是Grails非常棒的新特性，但前提是需要增加一个额外的 @/static@ URL地址。如果你的应用中有权限访问控制的话，这意味着这些静态资源也需要授权用户才能加载他们，因此一定要确定你的访问控制规则已经包含了 @/static@ URL地址
+
+{hidden}
 h4. Controller Public Methods
 
 As of Grails 2.0, public methods of controllers are now treated as actions in addition to actions defined as traditional Closures. If you were relying on the use of methods for privacy controls or as helper methods then this could result in unexpected behavior. To resolve this issue you should mark all methods of your application that are not to be exposed as actions as @private@ methods.
+{hidden}
 
+h4. 控制器的Public方法
+
+在Grails 2.0的控制器中，除了传统的必包动作以外，还将公共方法也视为动作。这意味着如果你将这些公共方法作为私有控制或者辅助方法的话，将会导致不可预知的结果。要解决此问题，只需要将应用中不希望暴露为动作的方法全部标记为 @private@ 方法。
+
+{hidden}
 h4. The redirect Method
 
 The [redirect|controllers] method no longer commits the response. The result of this is code that relies of this behavior will break in 1.4. For example:
@@ -216,7 +279,31 @@ if (request.redirected) {
 {code}
 
 Another side-effect of the changes to the redirect method is that it now always uses the @grails.serverURL@ configuration option if it's set. Previous versions of Grails included default values for all the environments, but when upgrading to Grails 2.0 those values more often than not break redirection. So, we recommend you remove the development and test settings for @grails.serverURL@ or replace them with something appropriate for your application.
+{hidden}
 
+h4. redirect方法
+
+ [redirect|controllers] 方法不再提交响应，因此依赖此行为的代码在1.4（Grails 1.4已经更改为2.0，下同－－译者注）中不再有效，比如：
+
+{code:java}
+redirect action: "next"
+if (response.committed) {
+    // do something
+}
+{code}
+
+在Grails 1.3.x中上述代码的 @response.committed@ 属性将返回true，并且其 @if@ 代码块将得到执行。而在Grails 1.4中，要使上述代码可以工作，需要使用 @request@ 的 @isRedirected()@  方法来替代之，如下：
+
+{code:java}
+redirect action: "next"
+if (request.redirected) {
+    // do something
+}
+{code}
+
+redirect方法此变化的一个副作用是：如果配置选项中的 @grails.serverURL@ 被设置，那么它将一直使用此值，而以前版本Grails的缺省值是应用于全部环境的，但是升级到Grails 2.0后，这些值往往不是中断重定向。因此我们推荐你移除开发和测试环境中 @grails.serverURL@ 的设置，或者将他们替换为合适的值。
+
+{hidden}
 h4. Content Negotiation
 
 As of Grails 2.0 the [withFormat|controllers] method of controllers no longer takes into account the request content type (dictated by the @CONTENT_TYPE@ header), but instead deals exclusively with the response content type (dictated by the @ACCEPT@ header or file extension). This means that if your application has code that relies on reading XML from the request using @withFormat@ this will no longer work:
@@ -248,7 +335,41 @@ def processBook() {
     }
 }
 {code}
+{hidden}
 
+h4. 内容协商（Content Negotiation）
+
+Grails 2.0的控制器方法 [withFormat|controllers] 依赖的不再是请求内容类型（通过 @CONTENT_TYPE@ 来确定），而是响应内容类型（通过 @ACCEPT@ 或者文件的扩展名来确定）。换句话说，如果你的应用代码中依赖请求的 @withFormat@ 将不再有效，比如：
+
+{code:java}
+def processBook() {
+    withFormat {
+        xml {
+            // read request XML
+        }
+        html {
+            // read request parameters
+        }
+    }
+}
+{code}
+
+这种情况，你需要明确的指定是 @request@ 的 @withFormat@ 方法，如下所示：
+
+{code:java}
+def processBook() {
+    request.withFormat {
+        xml {
+            // read request XML
+        }
+        html {
+            // read request parameters
+        }
+    }
+}
+{code}
+
+{hidden}
 h4. Command Line Output
 
 Ant output is now hidden by default to keep the noise in the terminal to a minimum. That means if you use @ant.echo@ in your scripts to communicate messages to the user, we recommend switching to an alternative mechanism.
@@ -262,21 +383,49 @@ event "StatusError",  ["Some message"]
 {code}
 
 For more control you can use the @grailsConsole@ script variable, which gives you access to an instance of [GrailsConsole|api:grails.build.logging.GrailsConsole]. In particular, you can log information messages with @log()@ or @info()@, errors and warnings with @error()@ and @warning()@, and request user input with @userInput()@.
+{hidden}
 
+h4. 命令行输出
+
+缺省情况下，为了让字符终端的干扰减少到最少，Ant的输出信息现在已经被屏蔽了。换句话说，如果你的脚本中使用 @ant.echo@ 来显示用户信息，我们推荐你使用其他机制。
+
+对跟状态相关的信息来说，你可以使用event系统，比如：
+
+{code:java}
+event "StatusUpdate", ["Some message"]
+event "StatusFinal",  ["Some message"]
+event "StatusError",  ["Some message"]
+{code}
+
+想要获得更多的控制，你可以使用 @grailsConsole@ 脚本变量，它是 [GrailsConsole|api:grails.build.logging.GrailsConsole]的一个实例。此外你还可以使用 @log()@ 或者 @info()@ 来记录日志信息，使用 @error()@ 和 @warning()@ 来记录错误和警告信息，使用 @userInput()@ 来获取用户的输入。
+
+{hidden}
 h4. Updated Underlying APIs
 
 Grails 2.0 contains updated dependencies including Servlet 3.0, Tomcat 7, Spring 3.1, Hibernate 3.6 and Groovy 1.8. This means that certain plugins and applications that that depend on earlier versions of these APIs may no longer work. For example the Servlet 3.0 @HttpServletRequest@ interface includes new methods, so if a plugin implements this interface for Servlet 2.5 but not for Servlet 3.0 then said plugin will break. The same can be said of any Spring interface.
+{hidden}
 
+h4. 更新基础API
+
+Grails 2.0的依赖现在已经更新到Servlet 3.0、Tomcat 7、Spring 3.1、Hibernate 3.6和Groovy 1.8，这对某些依赖于以前版本API的插件和应用来说，将不会再工作。比如Servlet 3.0的 @HttpServletRequest@ 接口包含的新方法，将会导致那些依赖于Servlet 2.5的插件不再有效。同理，对任何Spring接口来说，也是一样。
+
+{hidden}
 h4. Removal of release-plugin
 
 The built in @release-plugin@ command for releases plugins to the central Grails plugin repository has been removed. The new "release":http://grails.org/plugin/release plugin should be used instead which provides an equivalent @publish-plugin@ command.
+{hidden}
 
-h4. Removal of Deprecated Classes
+h4. 移除release-plugin
 
-The following deprecated classes have been removed: @grails.web.JsonBuilder@, @grails.web.OpenRicoBuilder@
+内置的用于将插件发布到Grails官方插件存储库的 @release-plugin@ 命令已经被移除了，一个全新的 "release":http://grails.org/plugin/release 插件被用于做跟 @publish-plugin@ 命令相同的工作。
 
-h3. Upgrading from Grails 1.2.x
+h4. 移除废弃类
 
+已经废弃的类有： @grails.web.JsonBuilder@ 和 @grails.web.OpenRicoBuilder@
+
+h3. 从Grails 1.2.x升级
+
+{hidden}
 h4. Plugin Repositories
 
 As of Grails 1.3, Grails no longer natively supports resolving plugins against secured SVN repositories. The plugin resolution mechanism in Grails 1.2 and below has been replaced by one built on [Ivy|http://ant.apache.org/ivy/], the upside of which is that you can now resolve Grails plugins against Maven repositories as well as regular Grails repositories.
@@ -284,9 +433,19 @@ As of Grails 1.3, Grails no longer natively supports resolving plugins against s
 Ivy supports a much richer setter of repository resolvers for resolving plugins, including support for Webdav, HTTP, SSH and FTP. See the section on [resolvers|http://ant.apache.org/ivy/history/trunk/settings/resolvers.html] in the Ivy docs for all the available options and the section of [plugin repositories|guide:repositories] in the user guide which explains how to configure additional resolvers.
 
 If you still need support for resolving plugins against secured SVN repositories then the [IvySvn|http://code.google.com/p/ivysvn/] project provides a set of resolvers for SVN repositories.
+{hidden}
 
-h3. Upgrading from Grails 1.1.x
+h4. 插件存储库
 
+在Grails 1.3中，系统不再支持原生的具有安全SVN存储库的插件解析。从Grails 1.2以来，插件的解析机制就已经被内置的 [Ivy|http://ant.apache.org/ivy/]所替代，这么做的好处是你不仅可以使用常规的Grails存储库，还可以使用Maven存储库来解析插件。
+
+对于解析插件来说，Ivy支持更丰富的存储库解析器设置，包括 Webdav、HTTP、SSH和FTP。更多有效的解析器请参考Ivy文档的 [resolvers|http://ant.apache.org/ivy/history/trunk/settings/resolvers.html] 章节，至于如何详尽的配置这些解析器，请参考本手册的 [插件存储库|guide:repositories] 
+
+如果你依旧使用安全SVN存储库，那么 [IvySvn|http://code.google.com/p/ivysvn/] 工程为SVN存储库提供了一系列的解析器。
+
+h3. 从Grails 1.1.x升级
+
+{hidden}
 h4. Plugin paths
 
 In Grails 1.1.x typically a @pluginContextPath@ variable was used to establish paths to plugin resources. For example:
@@ -308,7 +467,31 @@ Additionally the above example will no longer link to an application image from 
 {code}
 
 The same rules apply to the [javascript|tags] and [render|tags] tags.
+{hidden}
 
+h4. 插件路径
+
+在Grails 1.1.x中，通常使用 @pluginContextPath@ 变量来指定插件资源的路径，比如：
+
+{code}
+<g:resource dir="${pluginContextPath}/images" file="foo.jpg" />
+{code}
+
+在Grails 1.2的视图中，插件已经可以自动识别了，因此也就没有存在的必要了，比如：
+
+{code}
+<g:resource dir="images" file="foo.jpg" />
+{code}
+
+此外上述示例在插件视图中不会引用当前应用的图像，要想引用当前的，需要如下代码所示：
+
+{code}
+<g:resource contextPath="" dir="images" file="foo.jpg" />
+{code}
+
+此规则同样适用于 [javascript|tags] 和 [render|tags] 标签.
+
+{hidden}
 h4. Tag and Body return values
 
 Tags no longer return @java.lang.String@ instances but instead return a Grails @StreamCharBuffer@ instance. The @StreamCharBuffer@ class implements all the same methods as @String@ but doesn't extend @String@, so code like this will break:
@@ -328,7 +511,29 @@ if (foo instanceof CharSequence) {
     // do something
 }
 {code}
+{hidden}
 
+h4. 标签及代码块（Body）的返回值
+
+标签不再返回 @java.lang.String@ 类型实例了，取而代之的是Grails的 @StreamCharBuffer@ 实例。 @StreamCharBuffer@ 类没有继承自 @String@ 但实现了跟 @String@ 完全相同的方法，因此如下代码将不会如期的工作：
+
+{code}
+def foo = body()
+if (foo instanceof String) {
+    // do something
+}
+{code}
+
+在上述的代码中，你应该判断 @java.lang.CharSequence@ 接口，因为 @String@ 和 @StreamCharBuffer@ 都实现了此接口：
+
+{code}
+def foo = body()
+if (foo instanceof CharSequence) {
+    // do something
+}
+{code}
+
+{hidden}
 h4. New JSONBuilder
 
 There is a new version of @JSONBuilder@ which is semantically different from the one used in earlier versions of Grails. However, if your application depends on the older semantics you can still use the deprecated implementation by setting the following property to @true@ in Config.groovy:
@@ -336,7 +541,17 @@ There is a new version of @JSONBuilder@ which is semantically different from the
 {code}
 grails.json.legacy.builder=true
 {code}
+{hidden}
 
+h4. 新的JSONBuilder
+
+跟以前版本的Grails相比，新版本的 @JSONBuilder@ 在语法上有着显著的差异，尽管如此，如果你的应用依赖于旧有的要废弃的语法，你仍然可以通过设置Config.groovy中如下的属性为 @true@ 的方式来实现：
+
+{code}
+grails.json.legacy.builder=true
+{code}
+
+{hidden}
 h4. Validation on Flush
 
 Grails now executes validation routines when the underlying Hibernate session is flushed to ensure that no invalid objects are persisted. If one of your constraints (such as a custom validator) executes a query then this can cause an additional flush, resulting in a @StackOverflowError@. For example:
@@ -360,17 +575,55 @@ static constraints = {
     }
 }
 {code}
+{hidden}
 
-h3. Upgrading from Grails 1.0.x
+h4. Flush时校验
 
+现在Grails将在Hibernate会话被清除（Flush）的时候才进行校验检查，这样就保证了只有有效的对象才能入库。如果你的约束（比如一个自定义的校验）执行一个查询，并且此查询将导致一个额外的清除，那么系统将抛出 @StackOverflowError@ 错误，比如：
+
+{code}
+static constraints = {
+    author validator: { a ->
+        assert a != Book.findByTitle("My Book").author
+    }
+}
+{code}
+
+上述代码在Grails 1.2中将导致 @StackOverflowError@ 错误，解决之道就是在新的Hibernate @session@ 中运行查询（这也是因为Hibernate的清除导致问题所推荐的通用解决之道），比如：
+
+{code}
+static constraints = {
+    author validator: { a ->
+        Book.withNewSession {
+            assert a != Book.findByTitle("My Book").author
+        }
+    }
+}
+{code}
+
+h3. 从Grails 1.0.x升级
+
+{hidden}
 h4. Groovy 1.6
 
 Grails 1.1 and above ship with Groovy 1.6 and no longer supports code compiled against Groovy 1.5. If you have a library that was compiled with Groovy 1.5 you must recompile it against Groovy 1.6 or higher before using it with Grails 1.1.
+{hidden}
 
+h4. Groovy 1.6
+
+Grails 1.1以后的版本已经采用Groovy 1.6，并且不再支持Groovy 1.5所编译的代码。因此如果你的库是Groovy 1.5编译的，那么在使用Grails 1.1以前，你必须要在Groovy 1.6或者更高版本重新编译才行。
+
+{hidden}
 h4. Java 5.0
 
 Grails 1.1 now no longer supports JDK 1.4, if you wish to continue using Grails then it is recommended you stick to the Grails 1.0.x stream until you are able to upgrade your JDK.
+{hidden}
 
+h4. Java 5.0
+
+Grails 1.1不再对JDK 1.4提供支持，因此在不能升级你的JDK期间，要想继续使用Grails，只能推荐你继续使用Grails 1.0.x系列。
+
+{hidden}
 h4. Configuration Changes
 
 1) The setting @grails.testing.reports.destDir@ has been renamed to @grails.project.test.reports.dir@ for consistency.
@@ -391,7 +644,30 @@ grails.views.enable.jsessionid=true
 {code}
 
 5) The syntax used to configure Log4j has changed. See the user guide section on [Logging|guide:logging] for more information.
+{hidden}
 
+h4. 配置的变化
+
+1) 为了保持一致性，@grails.testing.reports.destDir@ 已经被重新命名为 @grails.project.test.reports.dir@ 
+
+2) 以下一些配置已经从 @grails-app/conf/Config.groovy@ 移到了 @grails-app/conf/BuildConfig.groovy@ 中：
+** @grails.config.base.webXml@
+** @grails.project.war.file@ (原名是 @grails.war.destFile@ )
+** @grails.war.dependencies@
+** @grails.war.copyToWebApp@
+** @grails.war.resources@
+
+3) 不再支持 @grails.war.java5.dependencies@ 选项，因为Java 5.0现在已经是最低要求了（见上描述）。
+
+4) 缺省情况下，jsessionid（被认为是有害的）用法被禁止的。如果你的应用确实需要jsessionid，那么你可以通过在@grails-app/conf/Config.groovy@ 中增加下述代码：
+
+{code}
+grails.views.enable.jsessionid=true
+{code}
+
+5) 配置Log4j的语法发生变化，详细可参考本手册的 [日志|guide:logging] 章节。
+
+{hidden}
 h4. Plugin Changes
 
 As of version 1.1, Grails no longer stores plugins inside your @PROJECT_HOME/plugins@ directory by default. This may result in compilation errors in your application unless you either re-install all your plugins or set the following property in @grails-app/conf/BuildConfig.groovy@:
@@ -399,7 +675,17 @@ As of version 1.1, Grails no longer stores plugins inside your @PROJECT_HOME/plu
 {code}
 grails.project.plugins.dir="./plugins"
 {code}
+{hidden}
 
+h4. 插件的变化
+
+在1.1版本中，Grails不再将 @PROJECT_HOME/plugins@ 目录作为缺省插件目录。这可能会导致你应用的编译错误，因此你需要将所有的插件重新安装或者在 @grails-app/conf/BuildConfig.groovy@ 中设置如下选项：
+
+{code}
+grails.project.plugins.dir="./plugins"
+{code}
+
+{hidden}
 h4. Script Changes
 
 1) If you were previously using Grails 1.0.3 or below the following syntax is no longer support for importing scripts from GRAILS_HOME:
@@ -433,7 +719,43 @@ new File("${basedir}/grails-app/conf/my-config.xml").withInputStream { stream ->
     // read the file
 }
 {code}
+{hidden}
 
+h4. 脚本的变化
+
+1) 如果你正在使用Grails 1.0.3或者更早的版本，那么如下从GRAILS_HOME中导入脚本的语法将不再被支持：
+
+{code}
+Ant.property(environment:"env")
+grailsHome = Ant.antProject.properties."env.GRAILS_HOME"
+
+includeTargets << new File("${grailsHome}/scripts/Bootstrap.groovy")
+{code}
+
+而应该使用新的 @grailsScript@ 方法来导入命名脚本：
+
+{code}
+includeTargets << grailsScript("_GrailsBootstrap")
+{code}
+
+2) 因为升级Gant的原因，所有使用 @Ant@ 的变量全部改为 @ant@ 了。
+
+3) 工程的根目录不再是classpath的一部分，因此如下方式的加载资源将不再有效：
+
+{code}
+def stream = getClass().classLoader.getResourceAsStream(
+                   "grails-app/conf/my-config.xml")
+{code}
+
+而应该采用Java File API加 @basedir@ 的方式来处理：
+
+{code}
+new File("${basedir}/grails-app/conf/my-config.xml").withInputStream { stream ->
+    // read the file
+}
+{code}
+
+{hidden}
 h4. Command Line Changes
 
 The @run-app-https@ and @run-war-https@ commands no longer exist and have been replaced by an argument to [run-app|commandLine]:
@@ -441,7 +763,17 @@ The @run-app-https@ and @run-war-https@ commands no longer exist and have been r
 {code}
 grails run-app -https
 {code}
+{hidden}
 
+h4. 命令行的变化
+
+@run-app-https@ 和 @run-war-https@ 命令不再支持，你可以通过[run-app|commandLine]加参数方式来实现：
+
+{code}
+grails run-app -https
+{code}
+
+{hidden}
 h4. Data Mapping Changes
 
 1) Enum types are now mapped using their String value rather than the ordinal value. You can revert to the old behavior by changing your mapping as follows:
@@ -453,7 +785,21 @@ static mapping = {
 {code}
 
 2) Bidirectional one-to-one associations are now mapped with a single column on the owning side and a foreign key reference. You shouldn't need to change anything; however you should drop column on the inverse side as it contains duplicate data.
+{hidden}
 
+h4. 数据映射的变化
+
+1) 枚举类型（Enum）已经被映射为字符串值，而不是数值。不过你也可以通过如下的配置恢复到以前旧有的行为：
+
+{code}
+static mapping = {
+    someEnum enumType:"ordinal"
+}
+{code}
+
+2) 双向的one-to-one关联现在已经被映射到持有者一侧的一个字段以及一个外建引用，除了将另外一侧的字段删除以外，你不需要改变任何东西。
+
+{hidden}
 h4. REST Support
 
 Incoming XML requests are now no longer automatically parsed. To enable parsing of REST requests you can do so using the @parseRequest@ argument inside a URL mapping:
@@ -463,6 +809,21 @@ Incoming XML requests are now no longer automatically parsed. To enable parsing 
 {code}
 
 Alternatively, you can use the new @resource@ argument, which enables parsing by default:
+
+{code}
+"/book"(resource:"book")
+{code}
+{hidden}
+
+h4. 支持REST
+
+输入的XML请求不再被自动地解析，为了能够解析REST请求，你需要在URL映射中增加 @parseRequest@ 参数：
+
+{code}
+"/book"(controller:"book",parseRequest:true)
+{code}
+
+或者使用新的 @resource@ 参数，其缺省情况下是解析的，如下：
 
 {code}
 "/book"(resource:"book")
