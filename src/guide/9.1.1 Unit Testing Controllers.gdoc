@@ -391,6 +391,44 @@ void testFileUpload() {
 
 The @GrailsMockMultipartFile@ constructor arguments are the name and contents of the file. It has a mock implementation of the @transferTo@ method that simply records the @targetFileLocation@ and doesn't write to disk.
 
+To test multiple calls, @clearAttributes()@ removes all added attributes from a request. For example, a controller action such as:
+
+{code:java}
+def uploadFile() {
+    MultipartFile file = request.getFile("myFile")
+    def destination = "/local/disk/myFile"
+    def count = 1
+    while (new File(destination + count).exists()){
+    	count++
+    }
+    
+    file.transferTo(new File(destination + count))
+}
+{code}
+
+can be tested as follows:
+
+{code:java}
+void testFileUpload() {
+    final file = new GrailsMockMultipartFile("myFile", "foo".bytes)
+    request.addFile(file)
+    controller.uploadFile()
+
+    assert file.targetFileLocation.path == "/local/disk/myFile1"
+    
+    controller.request.clearAttributes()
+    
+    final file2 = new GrailsMockMultipartFile("myFile", "bar".bytes)
+    request.addFile(file2)
+    controller.uploadFile()
+    assert file.targetFileLocation.path == "/local/disk/myFile2"
+}
+{code}
+
+{note} 
+The above solution is not a good way to file input 
+{note}
+
 h4. Testing Command Objects
 
 Special support exists for testing command object handling with the @mockCommandObject@ method. For example consider the following action:
