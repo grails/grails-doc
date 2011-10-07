@@ -1,3 +1,4 @@
+{hidden}
 h3. The Basics
 
 Grails uses its common configuration mechanism to provide the settings for the underlying "Log4j":http://logging.apache.org/log4j/1.2/index.html log system, so all you have to do is add a @log4j@ setting to the file @grails-app/conf/Config.groovy@.
@@ -14,7 +15,26 @@ log4j = {
 {code}
 
 This says that for loggers whose name starts with 'org.codehaus.groovy.grails.web.servlet' or 'org.codehaus.groovy.grails.web.pages', only messages logged at 'error' level and above will be shown. Loggers with names starting with 'org.apache.catalina' logger only show messages at the 'warn' level and above. What does that mean? First of all, you have to understand how levels work.
+{hidden}
 
+h3. 基础
+
+Grails利用其自身的配置机制来提供对 "Log4j":http://logging.apache.org/log4j/1.2/index.html 日志系统的配置，因此你所需要做的只是将 @log4j@ 配置添加到 @grails-app/conf/Config.groovy@ 配置文件中。
+
+那么 @log4j@ 该配置什么样子呢？下边是一个基础的示例：
+
+{code:java}
+log4j = {
+    error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+           'org.codehaus.groovy.grails.web.pages' //  GSP
+
+    warn   'org.apache.catalina'
+}
+{code}
+
+在上述示例中，那些名称以'org.codehaus.groovy.grails.web.servlet'或者'org.codehaus.groovy.grails.web.pages'开头的记录器，仅仅记录级别高于或等于'error'的信息；而名字以'org.apache.catalina'开始的记录器仅仅记录级别高于或等于'warn'的信息。要了解此中的意义，首先要知道日志级别是如何工作的。
+
+{hidden}
 h4. Logging levels
 
 The are several standard logging levels, which are listed here in order of descending priority:
@@ -37,6 +57,32 @@ warn 'org.example.domain'
 {code}
 
 then messages with a level of 'warn', 'error', or 'fatal' will be written out. Messages at other levels will be ignored.
+
+Before we go on to loggers, a quick note about those 'off' and 'all' levels. These are special in that they can only be used in the configuration; you can't log messages at these levels. So if you configure a logger with a level of 'off', then no messages will be written out. A level of 'all' means that you will see all messages. Simple.
+{hidden}
+
+h4. 日志级别
+
+以下是按照优先级降序（由高到低）排列的标准日志级别：
+
+# off
+# fatal
+# error
+# warn
+# info
+# debug
+# trace
+# all
+
+当你记录一条消息的时候，已经暗含地给此消息指定了级别，比如 @log.error(msg)@ 方法，就是使用其'error'级别，同理 @log.debug(msg)@ 指定的是'debug'。上述从'off'到'all'的级别都有一个同名对应的日志方法。
+
+日志系统使用记录器（介绍见下一节）配置的 _message_ 级别来判断此消息是否应该输出，比如你有一个'org.example.domain'记录器，其配置如下：
+
+{code:java}
+warn 'org.example.domain'
+{code}
+
+那么级别是'warn'、'error'或者'fatal'的消息都将会输出，而其他级别的都将被忽略。
 
 Before we go on to loggers, a quick note about those 'off' and 'all' levels. These are special in that they can only be used in the configuration; you can't log messages at these levels. So if you configure a logger with a level of 'off', then no messages will be written out. A level of 'all' means that you will see all messages. Simple.
 
@@ -174,7 +220,99 @@ For more information on what you can do with this @Logger@ instance, refer to th
 
 Those are the basics of logging pretty well covered and they are sufficient if you're happy to only send log messages to the console. But what if you want to send them to a file? How do you make sure that messages from a particular logger go to a file but not the console? These questions and more will be answered as we look into appenders.
 
+{hidden}
 h3. Appenders
+
+Loggers are a useful mechanism for filtering messages, but they don't physically write the messages anywhere. That's the job of the appender, of which there are various types. For example, there is the default one that writes messages to the console, another that writes them to a file, and several others. You can even create your own appender implementations\!
+
+This diagram shows how they fit into the logging pipeline:
+
+!logging.png!
+
+As you can see, a single logger may have several appenders attached to it. In a standard Grails configuration, the console appender named 'stdout' is attached to all loggers through the default root logger configuration. But that's the only one. Adding more appenders can be done within an 'appenders' block:
+
+{code:java}
+log4j = {
+    appenders {
+        rollingFile name: "myAppender",
+                    maxFileSize: 1024,
+                    file: "/tmp/logs/myApp.log"
+    }
+}
+{code}
+
+The following appenders are available by default:
+
+{table}
+ *Name* | *Class* | *Description*
+ jdbc | [JDBCAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/jdbc/JDBCAppender.html] | Logs to a JDBC connection.
+ console | [ConsoleAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/ConsoleAppender.html] | Logs to the console.
+ file | [FileAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/FileAppender.html] | Logs to a single file.
+ rollingFile | [RollingFileAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/RollingFileAppender.html] | Logs to rolling files, for example a new file each day.
+{table}
+
+Each named argument passed to an appender maps to a property of the underlying [Appender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Appender.html] implementation. So the previous example sets the @name@, @maxFileSize@ and @file@ properties of the @RollingFileAppender@ instance.
+
+You can have as many appenders as you like - just make sure that they all have unique names. You can even have multiple instances of the same appender type, for example several file appenders that log to different files.
+
+If you prefer to create the appender programmatically or if you want to use an appender implementation that's not available in the above syntax, simply declare an @appender@ entry with an instance of the appender you want:
+
+{code:java}
+import org.apache.log4j.*
+
+log4j = {
+    appenders {
+        appender new RollingFileAppender(
+                name: "myAppender",
+                maxFileSize: 1024,
+                file: "/tmp/logs/myApp.log")
+    }
+}
+{code}
+
+This approach can be used to configure @JMSAppender@, @SocketAppender@, @SMTPAppender@, and more.
+
+Once you have declared your extra appenders, you can attach them to specific loggers by passing the name as a key to one of the log level methods from the previous section:
+
+{code:java}
+error myAppender: "grails.app.controller.BookController"
+{code}
+
+This will ensure that the 'grails.app.controller.BookController' logger sends log messages to 'myAppender' as well as any appenders configured for the root logger. To add more than one appender to the logger, then add them to the same level declaration:
+
+{code:java}
+error myAppender:      "grails.app.controller.BookController",
+      myFileAppender:  ["grails.app.controller.BookController",
+                        "grails.app.service.BookService"],
+      rollingFile:     "grails.app.controller.BookController"
+{code}
+
+The above example also shows how you can configure more than one logger at a time for a given appender (@myFileAppender@) by using a list.
+
+Be aware that you can only configure a single level for a logger, so if you tried this code:
+
+{code:java}
+error myAppender:      "grails.app.controller.BookController"
+debug myFileAppender:  "grails.app.controller.BookController"
+fatal rollingFile:     "grails.app.controller.BookController"
+{code}
+
+you'd find that only 'fatal' level messages get logged for 'grails.app.controller.BookController'. That's because the last level declared for a given logger wins. What you probably want to do is limit what level of messages an appender writes.
+
+An appender that is attached to a logger configured with the 'all' level will generate a lot of logging information. That may be fine in a file, but it makes working at the console difficult. So we configure the console appender to only write out messages at 'info' level or above:
+
+{code:java}
+log4j = {
+    appenders {
+        console name: "stdout", threshold: org.apache.log4j.Level.INFO
+    }
+}
+{code}
+
+The key here is the @threshold@ argument which determines the cut-off for log messages. This argument is available for all appenders, but do note that you currently have to specify a @Level@ instance - a string such as "info" will not work.
+{hidden}
+
+h3. 输出器（Appenders）
 
 Loggers are a useful mechanism for filtering messages, but they don't physically write the messages anywhere. That's the job of the appender, of which there are various types. For example, there is the default one that writes messages to the console, another that writes them to a file, and several others. You can even create your own appender implementations\!
 
