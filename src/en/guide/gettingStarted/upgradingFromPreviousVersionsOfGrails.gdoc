@@ -94,6 +94,21 @@ h4. Criteria Queries Default to INNER JOIN
 
 The previous default of LEFT JOIN for criteria queries across associations is now INNER JOIN.
 
+h4. Invalid Constraints Now Thrown an Exception
+
+Previously if you defined a constraint on a property that doesn't exist no error would be thrown:
+
+{code}
+class Person {
+    String name
+    static constraints = {
+        bad nullable:false // invalid property, no error thrown
+    }
+}
+{code}
+
+Now the above code will result in an exception
+
 h4. Logging By Convention Changes
 
 The packages that you should use for Grails artifacts have mostly changed. In particular:
@@ -187,6 +202,16 @@ event "StatusError",  ["Some message"]
 {code}
 
 For more control you can use the @grailsConsole@ script variable, which gives you access to an instance of [GrailsConsole|api:grails.build.logging.GrailsConsole]. In particular, you can log information messages with @log()@ or @info()@, errors and warnings with @error()@ and @warning()@, and request user input with @userInput()@.
+
+h4. Ivy cache location has changed
+
+The default Ivy cache location for Grails has changed. If the thought of yet another cache of JARs on your disk horrifies you, then you can change this in your @settings.groovy@:
+
+{code}
+grails.dependency.cache.dir = "${userHome}/.ivy2/cache"
+{code}
+
+If you do this, be aware that you may run into problems running Grails 2 and earlier versions of Grails side-by-side. These problems can be avoided by excluding "xml-apis" and "commons-digester" from the inherited global dependencies in Grails 1.3 and earlier projects.
 
 h4. Updated Underlying APIs
 
