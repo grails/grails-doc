@@ -36,7 +36,7 @@ When the wildcard * character is used it denotes "any" version. The expression s
 
 h4. Controlling Load Order
 
-Using @dependsOn@ establishes a "hard" dependency in that if the dependency is not resolved, the plugin will give up and won't load.  It is possible though to have a weaker dependency using the @loadAfter@ property:
+Using @dependsOn@ establishes a "hard" dependency in that if the dependency is not resolved, the plugin will give up and won't load.  It is possible though to have a weaker dependency using the @loadAfter@ and @loadBefore@ properties:
 
 {code:java}
 def loadAfter = ['controllers']
@@ -56,6 +56,11 @@ if (manager?.hasGrailsPlugin("controllers")) {
 
 Here the Hibernate plugin will only register an @OpenSessionInViewInterceptor@ if the @controllers@ plugin has been loaded. The @manager@ variable is an instance of the [GrailsPluginManager|api:org.codehaus.groovy.grails.plugins.GrailsPluginManager] interface and it provides methods to interact with other plugins.
 
+You can also use the @loadBefore@ property to specify one or more plugins that your plugin should load before:
+
+{code:java}
+def loadBefore = ['rabbitmq']
+{code}
 
 h4. Scopes and Environments
 
