@@ -198,6 +198,38 @@ h4. 条件查询缺省使用内连接（INNER JOIN）
 相比以前的左连接（LEFT JOIN），现在关联查询使用内连接了。
 
 {hidden}
+h4. Invalid Constraints Now Thrown an Exception
+
+Previously if you defined a constraint on a property that doesn't exist no error would be thrown:
+
+{code}
+class Person {
+    String name
+    static constraints = {
+        bad nullable:false // invalid property, no error thrown
+    }
+}
+{code}
+
+Now the above code will result in an exception
+{hidden}
+
+h4. 约束无效时抛出异常
+
+在以前的版本中，如果你在约束中定义了一个不存在的属性，没有任何异常被抛出，比如：
+
+{code}
+class Person {
+    String name
+    static constraints = {
+        bad nullable:false // invalid property, no error thrown
+    }
+}
+{code}
+
+现在，上述代码将抛出一个异常了。
+
+{hidden}
 h4. Logging By Convention Changes
 
 The packages that you should use for Grails artifacts have mostly changed. In particular:
@@ -398,6 +430,28 @@ event "StatusError",  ["Some message"]
 {code}
 
 想要获得更多的控制，你可以使用 @grailsConsole@ 脚本变量，它是 [GrailsConsole|api:grails.build.logging.GrailsConsole]的一个实例。此外你还可以使用 @log()@ 或者 @info()@ 来记录日志信息，使用 @error()@ 和 @warning()@ 来记录错误和警告信息，使用 @userInput()@ 来获取用户的输入。
+
+{hidden}
+h4. Ivy cache location has changed
+
+The default Ivy cache location for Grails has changed. If the thought of yet another cache of JARs on your disk horrifies you, then you can change this in your @settings.groovy@:
+
+{code}
+grails.dependency.cache.dir = "${userHome}/.ivy2/cache"
+{code}
+
+If you do this, be aware that you may run into problems running Grails 2 and earlier versions of Grails side-by-side. These problems can be avoided by excluding "xml-apis" and "commons-digester" from the inherited global dependencies in Grails 1.3 and earlier projects.
+{hidden}
+
+h4. Ivy缓存位置变化
+
+Grails的缺省Ivy缓存位置已经改变。如果磁盘上多出来的另外一个JAR缓存让你不舒服，那你依然可以通过修改 @settings.groovy@ 来改变它，如下：
+
+{code}
+grails.dependency.cache.dir = "${userHome}/.ivy2/cache"
+{code}
+
+如果这么做了，那么你需要知道Grails 2和以前版本的Grails运行在一起，可能会导致问题。这些问题可以通过排除全局依赖中的"xml-apis"和"commons-digester"来避免，因为在Grails 1.3及其以前版本的全局依赖中，包含冲突版本。
 
 {hidden}
 h4. Updated Underlying APIs
