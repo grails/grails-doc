@@ -1,8 +1,18 @@
+{hidden}
+
 h4. Specifying Plugin JAR dependencies
 
 The way in which you specify dependencies for a [plugin|guide:plugins] is identical to how you specify dependencies in an application. When a plugin is installed into an application the application automatically inherits the dependencies of the plugin.
 
 To define a dependency that is resolved for use with the plugin but not _exported_ to the application then you can set the @export@ property of the dependency:
+
+{hidden}
+
+h4. Especificación de las dependencias JAR de un plugin
+
+La forma en que se especifican las dependencias para un [plugin|guide:plugins] es idéntica a la que permite especificar las dependencias en una aplicación. Cuando se instala un plugin en una aplicación la aplicación hereda automáticamente las dependencias del plugin.
+
+Para definir una dependencia que se resuelve para su uso con el plugin pero no _se exporta_ a la aplicación, puede definir la propiedad @export@ de la dependencia:
 
 {code}
 test('org.spockframework:spock-core:0.5-groovy-1.8') {
@@ -10,20 +20,39 @@ test('org.spockframework:spock-core:0.5-groovy-1.8') {
 }
 {code}
 
+{hidden}
+
 In this case the Spock dependency will be available only to the plugin and not resolved as an application dependency. Alternatively, if you're using the Map syntax:
+
+{hidden}
+
+En este caso la dependencia Spock estará disponibles sólo para el plugin y no será resuelta como una dependencia de la aplicación. Alternativamente, si utiliza la sintaxis de mapa:
 
 {code}
 test group: 'org.spockframework', name: 'spock-core',
      version: '0.5-groovy-1.8', export: false
 {code}
 
+{hidden}
 {note}
 You can use @exported = false@ instead of @export = false@, but we recommend the latter because it's consistent with the Map argument.
 {note}
+{hidden}
+
+{note}
+Puede utilizar @exported = false@ en lugar de @export = false@, pero recomendamos este último porque es coherente con el argumento de mapa.
+{note}
+
+{hidden}
 
 h4. Overriding Plugin JAR Dependencies in Your Application
 
 If a plugin is using a JAR which conflicts with another plugin, or an application dependency then you can override how a plugin resolves its dependencies inside an application using exclusions. For example:
+{hidden}
+
+h4. Reemplazar las dependencias JAR de un plugin en su aplicación
+
+Si un plugin está utilizando un JAR que crea conflictos con otro plugin, o con una dependencia de la aplicación, se puede modificar cómo un plugin resuelve sus dependencias dentro de una aplicación mediante las exclusiones. Por ejemplo:
 
 {code}
 plugins {
@@ -37,4 +66,9 @@ dependencies {
 }
 {code}
 
+{hidden}
+
 In this case the application explicitly declares a dependency on the "hibernate" plugin and specifies an exclusion using the @excludes@ method, effectively excluding the javassist library as a dependency.
+{hidden}
+
+En este caso la aplicación explícitamente declara una dependencia en el plugin de "hibernate" y especifica una exclusión utilizando el método @excludes@, excluyendo la biblioteca de javassist como una dependencia.
