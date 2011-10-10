@@ -1,0 +1,32 @@
+h1. schema-export
+
+h2. Purpose
+
+Uses Hibernate's SchemaExport tool to generate DDL or export the schema.
+
+h2. Examples
+
+{code:java}
+grails schema-export
+grails schema-export --datasource=lookup
+grails prod schema-export
+grails dev schema-export
+grails prod schema-export export
+grails prod schema-export export --datasource=auditing
+grails prod schema-export stdout
+{code}
+
+h2. Description
+
+Usage:
+{code:java}
+grails [environment] schema-export [action] ['stdout'] [filename] [--datasource]
+{code}
+
+Arguments:
+
+* @environment@ - The environment containing the database configuration to use (dev, prod, etc...).
+* @action@ - Either 'generate' or 'export'.  The default is 'generate'. Specifying 'export' will execute the script against the specified environment's database instead of just generating the ddl file.
+* @stdout@ - Passing 'stdout' will cause the script to dump the ddl to stdout.
+* @filename@ - The name of the file to write the ddl to.  The default is ddl.sql in the project's 'target' directory.
+* @datasource@ - The @DataSource@ name suffix; defaults to the default @DataSource@ if not specified

@@ -1,0 +1,45 @@
+h1. findOrCreateBy*
+
+h2. Purpose
+
+Dynamic method that uses the properties of the domain class to create query method expressions that return the first result of the query. This method behaves like [findBy|domainClasses] except that it will never return @null@.  If a matching instance cannot be found then a new instance will be created and returned, populated with values represented in the query parameters. The difference between this method and [findOrSaveBy|domainClasses] is that this method will not save a newly created instance where [findOrSaveBy|domainClasses] does.
+
+h2. Examples
+
+Given the domain class @Book@:
+
+{code:java}
+class Book {
+   String title
+   String author
+}
+{code}
+
+The following are all possible:
+
+{code:java}
+def b = Book.findOrCreateByTitle("The Shining")
+b = Book.findOrCreateByTitleAndAuthor("The Sum of All Fears", "Tom Clancy")
+b = Book.findByAuthorInList(["Douglas Adams", "Hunter S. Thompson"])
+{code}
+
+The following are roughly equivalent:
+
+{code:java}
+def b = Book.findOrCreateByTitle("The Shining")
+{code}
+
+{code:java}
+def b = Book.findByTitle("The Shining")
+if (!b) {
+    b = new Book(title: "The Shining")
+}
+{code}
+
+h2. Description
+
+GORM supports the notion of [Dynamic Finders|guide:finders]. The @findOrCreateBy*@ method finds the first result for the given method expression.
+
+{note}
+Because this method potentially creates a new instance and populates properties on that instance, only exact match criteria are allowed.  For example, @Book.findOrCreateByDate(dateValue)@ is valid but @Book.findOrCreateByDateGreaterThan(dateValue)@ is not.
+{note}

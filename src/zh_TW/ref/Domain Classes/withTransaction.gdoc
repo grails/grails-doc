@@ -1,0 +1,33 @@
+h1. withTransaction
+
+h2. Purpose
+
+Allows programmatic transactions using Spring's Transaction abstraction.
+
+h2. Examples
+
+{code:java}
+Account.withTransaction { status ->
+
+    def source = Account.get(params.from)
+    def dest = Account.get(params.to)
+
+    int amount = params.amount.toInteger()
+    if (source.active) {
+        source.balance -= amount
+
+        if (dest.active) {
+            dest.amount += amount
+        }
+        else {
+            status.setRollbackOnly()
+        }
+    }
+}
+{code}
+
+h2. Description
+
+The @withTransaction@ method accepts a Closure with a [TransactionStatus|api:org.springframework.transaction.TransactionStatus] argument. The @TransactionStatus@ object can be used to programmatically control rollback of the transaction.
+
+Refer to the user guide section of [Programmatic Transactions|guide:programmaticTransactions] for more information.
