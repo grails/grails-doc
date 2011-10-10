@@ -41,7 +41,7 @@ if (!opt) {
             if (!lanFile.parentFile.exists()) {
                 lanFile.parentFile.mkdirs()
             }
-            ant.copy(file:value,todir:lanFile)
+            ant.copy(file:value,tofile:lanFile)
         }else {
             println "\t${key}"
         }
