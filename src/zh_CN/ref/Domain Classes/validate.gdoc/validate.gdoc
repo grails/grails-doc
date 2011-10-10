@@ -1,0 +1,37 @@
+h1. validate
+
+h2. Purpose
+
+Validates a domain class against the applied constraints (see [Validation|guide:validation])
+
+h2. Description
+
+The @validate@ method validates a domain class based on its defined [constraints|guide:constraints]. The errors are stored in the [errors|domainClasses] property of the domain class instance.
+
+The @validate@ method accepts an optional @List@ argument which contains the names of the properties to be validated. When a @List@ of names is specified, only those properties will be validated.
+
+h2. Examples
+
+{code:java}
+def b = new Book(title: "The Shining")
+if (!b.validate()) {
+    b.errors.each {
+        println it
+    }
+}
+{code}
+
+{code:java}
+def a = new Album(artist: "Genesis", title: "Nursery Cryme", releaseDate: 1971)
+
+// only validate title and releaseDate
+if (!a.validate(["title", "releaseDate"])) {
+    a.errors.each {
+        println it
+    }
+}
+{code}
+
+Parameters:
+
+* @deepValidate@ (optional) - Whether associations of the domain instance should also be validated, i.e. whether validation cascades. This is @true@ by default; set it to @false@ to disable cascading validation.

@@ -1,0 +1,84 @@
+h1. Constraints Usage
+
+Constraints provide Grails with a declarative DSL for defining validation rules, schema generation and CRUD generation meta data. For example, consider these constraints:
+
+{code:java}
+class User {
+    ...
+
+    static constraints = {
+        login size: 5..15, blank: false, unique: true
+        password size: 5..15, blank: false
+        email email: true, blank: false
+        age min: 18
+    }
+}
+{code}
+
+Refer to the user guide topic on [Constraints|guide:constraints] for more information.
+
+h1. Global Constraints
+
+You can apply constraints globally inside @grails-app/conf/Config.groovy@ as follows:
+
+{code}
+grails.gorm.default.constraints = {
+    '*'(nullable: true, size: 1..20)
+}
+{code}
+
+The wildcard signifies that the constraints apply to all properties. You can also define shared constraints:
+
+{code}
+grails.gorm.default.constraints = {
+    myShared(nullable: true, size: 1..20)
+}
+{code}
+
+That can be reused in your class:
+
+{code:java}
+class User {
+    ...
+
+    static constraints = {
+        login(shared: "myShared")
+    }
+}
+{code}
+
+h1. Quick reference
+
+{table}
+Constraint | Description | Example
+blank | Validates that a String value is not blank | @login(blank:false)@
+creditCard | Validates that a String value is a valid credit card number | @cardNumber(creditCard: true)@
+email | Validates that a String value is a valid email address. | @homeEmail(email: true)@
+inList | Validates that a value is within a range or collection of constrained values. | @name(inList: \["Joe", "Fred", "Bob"\])@
+matches | Validates that a String value matches a given regular expression. | @login(matches: "\[a-zA-Z\]+")@
+max | Validates that a value does not exceed the given maximum value. | @age(max: new Date())@ @price(max: 999F)@
+maxSize | Validates that a value's size does not exceed the given maximum value. | @children(maxSize: 25)@
+min | Validates that a value does not fall below the given minimum value. | @age(min: new Date())@ @price(min: 0F)@
+minSize | Validates that a value's size does not fall below the given minimum value. | @children(minSize: 25)@
+notEqual | Validates that that a property is not equal to the specified value | @login(notEqual: "Bob")@
+nullable | Allows a property to be set to @null@ - defaults to @false@. | @age(nullable: true)@
+range | Uses a Groovy range to ensure that a property's value occurs within a specified range | @age(range: 18..65)@
+scale | Set to the desired scale for floating point numbers (i.e., the number of digits to the right of the decimal point). | @salary(scale: 2)@
+size | Uses a Groovy range to restrict the size of a collection or number or the length of a String. | @children(size: 5..15)@
+unique | Constrains a property as unique at the database level | @login(unique: true)@
+url | Validates that a String value is a valid URL. | @homePage(url: true)@
+validator | Adds custom validation to a field. | See documentation
+{table}
+
+h1. Scaffolding
+
+Some constraints have no impact on persistence but customize the scaffolding. It's not usually good practice to include UI information in your domain, but it's a great convenience if you use Grails' scaffolding extensively.
+
+{table}
+Constraint | Description
+display | Boolean that determines whether the property is displayed in the scaffolding views. If @true@ (the default), the property _is_ displayed.
+editable | Boolean that determines whether the property can be edited from the scaffolding views. If @false@, the associated form fields are displayed in read-only mode.
+format | Specify a display format for types that accept one, such as dates. For example, 'yyyy-MM-dd'.
+password | Boolean indicating whether this is property should be displayed with a password field. Only works on fields that would normally be displayed with a text field.
+widget | Controls what widget is used to display the property. For example, 'textArea' will force the scaffolding to use a <textArea> tag.
+{table}

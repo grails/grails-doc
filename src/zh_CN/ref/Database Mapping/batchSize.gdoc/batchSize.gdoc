@@ -1,0 +1,43 @@
+h1. batchSize
+
+h2. Purpose
+
+Customizes how many results are fetching during lazy loading.
+
+h2. Examples
+
+{code:java}
+class Book {
+    ...
+    static mapping = {
+        batchSize 10
+    }
+}
+{code}
+
+h2. Description
+
+Usage: @batchSize(integer)@
+
+Given a lazy association where an @Author@ has many @Book@s, GORM will perform one query for the @Author@ and additional queries the associated @Book@s. This is what is known as the N+1 problem and can often be worked around by using a join query. However, joins can be expensive.
+
+Batch fetching is an optimization of lazy loading so that if, for example, you set a @batchSize@ of 10 and you have an @Author@ that with 30 books, instead of 31 queries you get four (one for the @Author@ and three batches of 10):
+
+{code}
+static mapping = {
+    batchSize 10
+}
+{code}
+
+You can also configure @batchSize@ on a per association basis:
+
+{code}
+class Author {
+
+    static hasMany = [books: Book]
+
+    static mapping = {
+        books batchSize: 10
+    }
+}
+{code}
