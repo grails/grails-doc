@@ -19,9 +19,9 @@ This says that for loggers whose name starts with 'org.codehaus.groovy.grails.we
 
 h3. 基础
 
-Grails利用其自身的配置机制来提供对 "Log4j":http://logging.apache.org/log4j/1.2/index.html 日志系统的配置，因此你所需要做的只是将 @log4j@ 配置添加到 @grails-app/conf/Config.groovy@ 配置文件中。
+Grails利用其自身的配置机制来提供对 "Log4j":http://logging.apache.org/log4j/1.2/index.html 日志系统的配置，因此你所需要做的只是将@log4j@配置添加到@grails-app/conf/Config.groovy@配置文件中。
 
-那么 @log4j@ 该配置什么样子呢？下边是一个基础的示例：
+那么@log4j@该配置什么样子呢？下边是一个基础的示例：
 
 {code:java}
 log4j = {
@@ -74,7 +74,7 @@ h4. 日志级别
 # trace
 # all
 
-当你记录一条消息的时候，已经暗含地给此消息指定了级别，比如 @log.error(msg)@ 方法，就是使用其'error'级别，同理 @log.debug(msg)@ 指定的是'debug'。上述从'off'到'all'的级别都有一个同名对应的日志方法。
+当你记录一条消息的时候，已经暗含地给此消息指定了级别，比如@log.error(msg)@方法，就是使用其'error'级别，同理@log.debug(msg)@指定的是'debug'。上述从'off'到'all'的级别都有一个同名对应的日志方法。
 
 日志系统使用记录器（介绍见下一节）配置的 _message_ 级别来判断此消息是否应该输出，比如你有一个'org.example.domain'记录器，其配置如下：
 
@@ -84,8 +84,9 @@ warn 'org.example.domain'
 
 那么级别是'warn'、'error'或者'fatal'的消息都将会输出，而其他级别的都将被忽略。
 
-Before we go on to loggers, a quick note about those 'off' and 'all' levels. These are special in that they can only be used in the configuration; you can't log messages at these levels. So if you configure a logger with a level of 'off', then no messages will be written out. A level of 'all' means that you will see all messages. Simple.
+在我们继续记录器以前，我们需要对'off'和'all'的级别做一个小关注，它们都只能在配置中使用，你不能使用它们记录任何日志信息。因此如果你将级别配置为'off'，那么将不会有任何信息输出，而配置为'all'意味着你将看到所有的日志信息。
 
+{hidden}
 h4. Loggers
 
 Loggers are fundamental to the logging system, but they are a source of some confusion. For a start, what are they? Are they shared? How do you configure them?
@@ -123,7 +124,47 @@ class MyClass {
 {code}
 
 This will create a logger with the name 'org.other.MyClass' - note the lack of a 'grails.app.' prefix since the class isn't an artifact. You can also pass a name to the @getLog()@ method, such as "myLogger", but this is less common because the logging system treats names with dots ('.') in a special way.
+{hidden}
 
+h4. 记录器（Loggers）
+
+记录器是日志系统的基础，但是依然有一些根源上的困惑，比如它们是什么？可否共享？以及如何配置它们？
+
+一个记录器就是你要将信息记录进去的对象，因此@log.debug(msg)@中的@log@就是一个记录器实例（其类型是[Log|http://commons.apache.org/logging/apidocs/org/apache/commons/logging/Log.html]）. 这些记录器通过唯一的名字标识被缓存起来，因此如果两个不同的类使用同一个名字的记录器，那么这些记录器是同一个运行实例。
+
+主要有两种方法来获取一个记录器：
+
+# 使用注入到工件（比如领域类、控制器以及服务）中的@log@实例
+# 直接使用Commons Logging API。
+
+如果你使用动态的@log@属性，那么记录器的名字是'grails.app.<type>.<className>'，此处的@type@是工件的类型，比如'controller'或者'service'，而@className@则是此工件的全名，假设你有如下的一个服务：
+
+{code:java}
+package org.example
+
+class MyService {
+    ...
+}
+{code}
+
+那么上述记录器的名字是'grails.app.service.org.example.MyService'。
+
+对其他类来说，典型的方法是将记录器作为此类的一个静态常量字段，比如：
+
+{code:java}
+package org.other
+
+import org.apache.commons.logging.LogFactory
+
+class MyClass {
+    private static final log = LogFactory.getLog(this)
+    ...
+}
+{code}
+
+上述代码中将创建一个名字为'org.other.MyClass'的记录器，注意：此处并没有'grails.app.'前缀，因为此类不是一个Grails工件。你还可以一个自定义的名字（比如"myLogger"）给@getLog()@方法，但是这种用法并不常见，因为在日志系统中，名字中的点（'.'）是被特殊处理的。
+
+{hidden}
 h4. Configuring loggers
 
 You have already seen how to configure loggers in Grails:
@@ -176,8 +217,107 @@ Grails itself generates plenty of logging information and it can sometimes be he
 * @org.hibernate@ - See what Hibernate is doing
 
 So far, we've only looked at explicit configuration of loggers. But what about all those loggers that _don't_ have an explicit configuration? Are they simply ignored? The answer lies with the root logger.
+{hidden}
 
+h4. 配置记录器
+
+你已在Grails中看到如何配置记录器了，比如：
+
+{code:java}
+log4j = {
+    error  'org.codehaus.groovy.grails.web.servlet'
+}
+{code}
+
+此示例中，名字以'org.codehaus.groovy.grails.web.servlet'开始的记录器将忽略所有'warn'级别以下的消息。打住，在你的应用中真有此名字的记录器么？没有，那我们为什么要这样配置它呢？因为上述的规则将应用于任何以'org.codehaus.groovy.grails.servlet.'_开始_的记录器，比如类@org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet@和@org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest@。
+
+换句话说，记录器是分层级的，这使得用包名来配置比其他方式容易很多。
+
+在应用中，你最常记录的是控制器、服务以及其他工件的输出日志，这可以通过以前提到过的_grails.app.<artifactType>.<className>_来实现。需要注意的是类名必须是全名（包括包名），如下所示：
+
+{code:java}
+log4j = {
+    // Set level for all application artifacts
+    info "grails.app"
+
+    // Set for a specific controller in the default package
+    debug "grails.app.controllers.YourController"
+
+    // Set for a specific domain class
+    debug "grails.app.domain.org.example.Book"
+
+    // Set for all taglibs
+    info "grails.app.taglib"
+}
+{code}
+
+在日志配置中，常用的标准工件名称如下：
+
+* @conf@ - @grails-app/conf@下的任何类（过滤器除外），比如：@BootStrap.groovy@
+* @filters@ - 过滤器
+* @taglib@ - 标签库
+* @services@ - 服务类
+* @controllers@ - 控制器
+* @domain@ - 领域类
+
+Grails本身也带有大量的日志信息，有时候这些信息对我们的开发很有裨益，尤其要诊断你应用的问题的时候。以下是一些你可能使用到的内部记录器：
+
+* @org.codehaus.groovy.grails.commons@ - 核心工件信息，比如类加载等
+* @org.codehaus.groovy.grails.web@ - Grails的web请求处理
+* @org.codehaus.groovy.grails.web.mapping@ - 调试URL映射信息
+* @org.codehaus.groovy.grails.plugins@ - 记录插件的活动情况
+* @grails.spring@ - 在Grails和插件中定义的Spring的beans
+* @org.springframework@ - Spring的活动情况
+* @org.hibernate@ - Hibernate的活动情况
+
+到目前为止，我们仅仅查看了记录器的显式配置，那么其他那些_没有_明确指定的将是什么情况呢？它们是被简单的忽略了么？请看下面的根记录器小节。
+
+{hidden}
 h4. The Root Logger
+
+All logger objects inherit their configuration from the root logger, so if no explicit configuration is provided for a given logger, then any messages that go to that logger are subject to the rules defined for the root logger. In other words, the root logger provides the default configuration for the logging system.
+
+Grails automatically configures the root logger to only handle messages at 'error' level and above, and all the messages are directed to the console (stdout for those with a C background). You can customise this behaviour by specifying a 'root' section in your logging configuration like so:
+
+{code:java}
+log4j = {
+    root {
+        info()
+    }
+    ...
+}
+{code}
+
+The above example configures the root logger to log messages at 'info' level and above to the default console appender. You can also configure the root logger to log to one or more named appenders (which we'll talk more about shortly):
+
+{code:java}
+log4j = {
+    appenders {
+        file name:'file', file:'/var/logs/mylog.log'
+    }
+    root {
+        debug 'stdout', 'file'
+    }
+}
+{code}
+
+In the above example, the root logger will log to two appenders - the default 'stdout' (console) appender and a custom 'file' appender.
+
+For power users there is an alternative syntax for configuring the root logger: the root @org.apache.log4j.Logger@ instance is passed as an argument to the log4j closure. This lets you work with the logger directly:
+
+{code:java}
+log4j = { root ->
+    root.level = org.apache.log4j.Level.DEBUG
+    ...
+}
+{code}
+
+For more information on what you can do with this @Logger@ instance, refer to the Log4j API documentation.
+
+Those are the basics of logging pretty well covered and they are sufficient if you're happy to only send log messages to the console. But what if you want to send them to a file? How do you make sure that messages from a particular logger go to a file but not the console? These questions and more will be answered as we look into appenders.
+{hidden}
+
+h4. 根记录器
 
 All logger objects inherit their configuration from the root logger, so if no explicit configuration is provided for a given logger, then any messages that go to that logger are subject to the rules defined for the root logger. In other words, the root logger provides the default configuration for the logging system.
 
