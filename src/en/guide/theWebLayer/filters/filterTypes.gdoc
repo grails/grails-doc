@@ -47,11 +47,11 @@ class LoggingFilters {
             request[START_TIME_ATTRIBUTE] = start
             request[REQUEST_NUMBER_ATTRIBUTE] = currentRequestNumber
 
-            log.debug "preHandle request #$currentRequestNumber : " +
-               "'$request.servletPath'/'$request.forwardURI', " +
-               "from $request.remoteHost ($request.remoteAddr) " +
-               " at ${new Date()}, Ajax: $request.xhr, controller: $controllerName, " +
-               "action: $actionName, params: ${new TreeMap(params)}"
+            log.debug "preHandle request #\$currentRequestNumber : " +
+               "'\$request.servletPath'/'\$request.forwardURI', " +
+               "from \$request.remoteHost (\$request.remoteAddr) " +
+               " at \${new Date()}, Ajax: \$request.xhr, controller: \$controllerName, " +
+               "action: \$actionName, params: \${new TreeMap(params)}"
 
             return true
          }
@@ -64,10 +64,10 @@ class LoggingFilters {
             long end = System.currentTimeMillis()
             long requestNumber = request[REQUEST_NUMBER_ATTRIBUTE]
 
-            def msg = "postHandle request #$requestNumber: end ${new Date()}, " +
-                      "controller total time ${end - start}ms"
+            def msg = "postHandle request #\$requestNumber: end \${new Date()}, " +
+                      "controller total time \${end - start}ms"
             if (log.traceEnabled) {
-            	log.trace msg + "; model: $model"
+            	log.trace msg + "; model: \$model"
             }
             else {
             	log.debug msg
@@ -82,10 +82,10 @@ class LoggingFilters {
             long end = System.currentTimeMillis()
             long requestNumber = request[REQUEST_NUMBER_ATTRIBUTE]
 
-            def msg = "afterCompletion request #$requestNumber: " +
-                      "end ${new Date()}, total time ${end - start}ms"
+            def msg = "afterCompletion request #\$requestNumber: " +
+                      "end \${new Date()}, total time \${end - start}ms"
             if (e) {
-               log.debug "$msg \\\n\\\texception: $e.message", e
+               log.debug "\$msg \\\n\\\texception: \$e.message", e
             }
             else {
                log.debug msg
