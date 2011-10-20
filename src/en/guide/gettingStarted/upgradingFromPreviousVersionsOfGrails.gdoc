@@ -235,7 +235,7 @@ Grails 2 introduces a new unit testing framework that is simpler and behaves mor
 
 Migrating unit tests to the new approach is non-trivial, but recommended. Here are a set of mappings from the old style to the new:
 
-# Remove @extends *UnitTestCase@ and add a @\@TestFor@ annotation to the class if you're testing a core artifact (controller, tag lib, domain class, etc.) or @\@Mixin(GrailsUnitTestMixin)@ for non-core artifacts and non-artifact classes.
+# Remove @extends *UnitTestCase@ and add a @\@TestFor@ annotation to the class if you're testing a core artifact (controller, tag lib, domain class, etc.) or @\@TestMixin(GrailsUnitTestMixin)@ for non-core artifacts and non-artifact classes.
 # Add @\@Mock@ annotation for domain classes that must be mocked and use @new MyDomain().save()@ in place of @mockDomain()@.
 # Replace references to @mockRequest@, @mockResponse@ and @mockParams@ with @request@, @response@ and @params@.
 # Remove references to @renderArgs@ and use the @view@ and @model@ properties for view rendering, or @response.text@ for all others.
@@ -247,6 +247,8 @@ There are other differences, but these are the main ones. We recommend that you 
 Note that the Grails annotations don't need to be imported in your test cases to run them from the command line, but your IDE may need them. So, here are the relevant classes with packages:
 
 * @grails.test.mixin.TestFor@
+* @grails.test.mixin.TestMixin@
+* @grails.test.mixin.Mock@
 * @grails.test.mixin.support.GrailsUnitTestMixin@
 * @grails.test.mixin.domain.DomainClassUnitTestMixin@
 * @grails.test.mixin.services.ServiceUnitTestMixin@
