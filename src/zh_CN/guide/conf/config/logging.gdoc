@@ -509,7 +509,7 @@ log4j = {
 error myAppender: "grails.app.controller.BookController"
 {code}
 
-This will ensure that the 'grails.app.controller.BookController' logger sends log messages to 'myAppender' as well as any appenders configured for the root logger. To add more than one appender to the logger, then add them to the same level declaration:
+这样就可以保证记录器'grails.app.controller.BookController'将消息发送到'myAppender'中以及配置在根记录器中的任何输出器，要在记录器中增加更多的输出器，只需要将他们加入到同级别的声明即可，比如：
 
 {code:java}
 error myAppender:      "grails.app.controller.BookController",
@@ -518,9 +518,9 @@ error myAppender:      "grails.app.controller.BookController",
       rollingFile:     "grails.app.controller.BookController"
 {code}
 
-The above example also shows how you can configure more than one logger at a time for a given appender (@myFileAppender@) by using a list.
+上述示例同时也展示了在一个给定的输出器(@myFileAppender@)中如何通过列表来配置多个记录器。
 
-Be aware that you can only configure a single level for a logger, so if you tried this code:
+需要注意的是：一个记录器只能配置一个级别，如果你配置了如下的内容：
 
 {code:java}
 error myAppender:      "grails.app.controller.BookController"
@@ -528,9 +528,9 @@ debug myFileAppender:  "grails.app.controller.BookController"
 fatal rollingFile:     "grails.app.controller.BookController"
 {code}
 
-you'd find that only 'fatal' level messages get logged for 'grails.app.controller.BookController'. That's because the last level declared for a given logger wins. What you probably want to do is limit what level of messages an appender writes.
+你将会发现'grails.app.controller.BookController'记录器只记录'fatal'级别的消息，这是因为最后的级别设置将以前的覆盖掉了。你这样做的意图是想限制输出器的级别。
 
-An appender that is attached to a logger configured with the 'all' level will generate a lot of logging information. That may be fine in a file, but it makes working at the console difficult. So we configure the console appender to only write out messages at 'info' level or above:
+一个根'all'级别记录器关联的输出器将记录大量的日志信息，如果记录在文件中，也许还能忍受，但在字符终端完全是另外一回事。因此我们需要将字符终端的输出器只记录'info'及其级别以上内容：
 
 {code:java}
 log4j = {
@@ -540,7 +540,7 @@ log4j = {
 }
 {code}
 
-The key here is the @threshold@ argument which determines the cut-off for log messages. This argument is available for all appenders, but do note that you currently have to specify a @Level@ instance - a string such as "info" will not work.
+此处的@threshold@参数用以判断那些消息需要截去。此参数对所有的输出器有效，但需要注意的是你必须使用@Level@实例－"info"字符串的便利用法不能工作。
 
 h3. Custom Layouts
 
