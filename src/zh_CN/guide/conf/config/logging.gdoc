@@ -319,9 +319,9 @@ Those are the basics of logging pretty well covered and they are sufficient if y
 
 h4. 根记录器
 
-All logger objects inherit their configuration from the root logger, so if no explicit configuration is provided for a given logger, then any messages that go to that logger are subject to the rules defined for the root logger. In other words, the root logger provides the default configuration for the logging system.
+所有的记录器对象配置都是从其根记录器继承而来的，因此一个记录器如果没有明确地配置，那么此记录器的任何消息规则都使用其根记录器的定义。或者说，根记录器提供日志系统的缺省配置。
 
-Grails automatically configures the root logger to only handle messages at 'error' level and above, and all the messages are directed to the console (stdout for those with a C background). You can customise this behaviour by specifying a 'root' section in your logging configuration like so:
+Grails自动地将根记录器配置成只处理'error'级别地消息，并且将这些消息显示在命令行终端（stdout是从C语言中借鉴而来）中。你可以通过'root'来重新定义其行为，比如：
 
 {code:java}
 log4j = {
@@ -332,7 +332,7 @@ log4j = {
 }
 {code}
 
-The above example configures the root logger to log messages at 'info' level and above to the default console appender. You can also configure the root logger to log to one or more named appenders (which we'll talk more about shortly):
+上述示例将配置根记录器记录并且输出'info'级别的消息到缺省的字符输出器。你也可以配置根记录器将信息记录到一个或者多个输出器（在下小节中详细讨论）中。比如：
 
 {code:java}
 log4j = {
@@ -345,9 +345,9 @@ log4j = {
 }
 {code}
 
-In the above example, the root logger will log to two appenders - the default 'stdout' (console) appender and a custom 'file' appender.
+在上述示例中，根记录器将记录到两个输出器中：缺省的'stdout'输出器和自定义的'file'输出器。
 
-For power users there is an alternative syntax for configuring the root logger: the root @org.apache.log4j.Logger@ instance is passed as an argument to the log4j closure. This lets you work with the logger directly:
+对高级用户来说，还有另外一种配置根记录器的方式：传递给log4j闭包的参数root是@org.apache.log4j.Logger@实例，这让你可以直接操作logger：
 
 {code:java}
 log4j = { root ->
@@ -356,9 +356,9 @@ log4j = { root ->
 }
 {code}
 
-For more information on what you can do with this @Logger@ instance, refer to the Log4j API documentation.
+更多@Logger@实例的信息，请参考Log4j API文档。
 
-Those are the basics of logging pretty well covered and they are sufficient if you're happy to only send log messages to the console. But what if you want to send them to a file? How do you make sure that messages from a particular logger go to a file but not the console? These questions and more will be answered as we look into appenders.
+如果你仅仅满足于将日志信息输出到字符终端，那么目前所涉及到的基本信息已经足够用的了。但是如果你还想输出到一个文件呢？以及想将特定记录器的信息输出到一个特定文件，而不是字符终端，又该如何做呢？这些疑问将在下一节的输出器中得到解答。
 
 {hidden}
 h3. Appenders
@@ -454,13 +454,13 @@ The key here is the @threshold@ argument which determines the cut-off for log me
 
 h3. 输出器（Appenders）
 
-Loggers are a useful mechanism for filtering messages, but they don't physically write the messages anywhere. That's the job of the appender, of which there are various types. For example, there is the default one that writes messages to the console, another that writes them to a file, and several others. You can even create your own appender implementations\!
+记录器是很好的信息过滤机制，但是它们并不将信息进行任何物理的写操作，这些都是不同类型的输出器所做的事。比如缺省的一个就是将信息输出到字符终端，另外一个输出到一个文件等等，更有甚者，你还可以创建你自己的输出器！
 
-This diagram shows how they fit into the logging pipeline:
+下图展示了输出器在日志管道系统中的位置：
 
 !logging.png!
 
-As you can see, a single logger may have several appenders attached to it. In a standard Grails configuration, the console appender named 'stdout' is attached to all loggers through the default root logger configuration. But that's the only one. Adding more appenders can be done within an 'appenders' block:
+如你所见，一个记录器可以挂载多个输出器。 在一个标准的Grails配置中，所有从根记录器而来的记录器都有一个名为'stdout'并唯一的字符终端输出器。你可以通过'appenders'代码块来增加更多的输出器，比如：
 
 {code:java}
 log4j = {
@@ -472,21 +472,21 @@ log4j = {
 }
 {code}
 
-The following appenders are available by default:
+以下是缺省情况下，有效输出器的清单：
 
 {table}
- *Name* | *Class* | *Description*
- jdbc | [JDBCAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/jdbc/JDBCAppender.html] | Logs to a JDBC connection.
- console | [ConsoleAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/ConsoleAppender.html] | Logs to the console.
- file | [FileAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/FileAppender.html] | Logs to a single file.
- rollingFile | [RollingFileAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/RollingFileAppender.html] | Logs to rolling files, for example a new file each day.
+ *名称* | *类名* | *描述*
+ jdbc | [JDBCAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/jdbc/JDBCAppender.html] | 记录到JDBC连接。
+ console | [ConsoleAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/ConsoleAppender.html] | 记录到字符终端。
+ file | [FileAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/FileAppender.html] | 记录到一个文件。
+ rollingFile | [RollingFileAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/RollingFileAppender.html] | 记录到滚动文件，比如一天一个新文件。
 {table}
 
-Each named argument passed to an appender maps to a property of the underlying [Appender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Appender.html] implementation. So the previous example sets the @name@, @maxFileSize@ and @file@ properties of the @RollingFileAppender@ instance.
+传递给输出器的每一个命名参数都将映射成实现了[Appender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Appender.html]接口的属性，因此上述的@RollingFileAppender@的实例中，@name@、@maxFileSize@和@file@都是其属性而已。
 
-You can have as many appenders as you like - just make sure that they all have unique names. You can even have multiple instances of the same appender type, for example several file appenders that log to different files.
+你可以添加任意你需要的输出器，只要确保它们的名字不重复就可以了。同一类型的输出器，你甚至还可以有多个实例，比如将日志内容输出到不同的文件中。
 
-If you prefer to create the appender programmatically or if you want to use an appender implementation that's not available in the above syntax, simply declare an @appender@ entry with an instance of the appender you want:
+你如果倾向于手工创建输出器或者你需要的输出器不在上述的列表中，那么你只需简单的声明一个@appender@代码即可，比如：
 
 {code:java}
 import org.apache.log4j.*
@@ -501,9 +501,9 @@ log4j = {
 }
 {code}
 
-This approach can be used to configure @JMSAppender@, @SocketAppender@, @SMTPAppender@, and more.
+此种方法通常用来配置@JMSAppender@、@SocketAppender@和@SMTPAppender@等输出器。
 
-Once you have declared your extra appenders, you can attach them to specific loggers by passing the name as a key to one of the log level methods from the previous section:
+一旦你声明了这些额外的输出器，那么你还需要将它们跟特定的记录器进行关联，这可以通过记录器的名称和记录级别来完成，比如：
 
 {code:java}
 error myAppender: "grails.app.controller.BookController"
