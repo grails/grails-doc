@@ -5,15 +5,16 @@
  * user guide translation with another gdoc source directory. By default,
  * the translation is compared against the reference 'en' docs.
  */
-if (!args || args.size() > 2) {
+if (!args || args.size() > 3) {
     println """\
         USAGE
         
-          left_to_do LANG [LANG]
+          left_to_do LANG [LANG] [-nc]
 
         where
 
           LANG = a language code, e.g. 'en' or 'pt_BR'
+          -nc means: copy the new file if the target LANG file does not exist
 
         Compares the contents of the {hidden} blocks in the user guide for the first language
         against the entire contents of the second language. By default, the second language
@@ -40,6 +41,9 @@ if (!srcDir.exists()) {
     println "No source directory for language '${args[0]}'"
     System.exit 2
 }
+def refDir = new File("src", args.size() >= 2 ? args[1] : 'en')
+def isNc = (args.size() >= 3 && args[2]=='-nc') ? true :false
+def ant = new AntBuilder()
 
 srcDir.eachFileRecurse { f ->
     if (f.directory) {
@@ -51,13 +55,20 @@ srcDir.eachFileRecurse { f ->
         // name and relative location, and write out the contents of
         // {hidden} blocks to that target file. Note the target file
         // will include the {hidden} macros.
-        def targetFile = new File(tmpDocDir, relativePath(srcDir, f))
+        def relPathStr = relativePath(srcDir, f)
+        def targetFile = new File(refDir, relPathStr)
+        if (isNc && !targetFile.exists()) {
+            if (!targetFile.parentFile.exists()) {
+                targetFile.parentFile.mkdirs()
+            }
+            ant.copy(file:f,tofile:targetFile)
+        }
+        targetFile = new File(tmpDocDir, relPathStr)
         writeHiddenToFile f.text, targetFile
     }
 }
 
 // Now recursively diff the generated files against the reference directory.
-def refDir = new File("src", args.size() == 2 ? args[1] : 'en')
 generateDiff refDir, tmpDocDir
 
 /// End of script execution ///
