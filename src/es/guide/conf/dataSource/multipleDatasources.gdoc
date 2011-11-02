@@ -236,6 +236,10 @@ class DataService {
 {hidden}
 A transactional service can only use a single @DataSource@, so be sure to only make changes for domain classes whose @DataSource@ is the same as the Service.
 
+Note that the datasource specified in a service has no bearing on which datasources are used for domain classes; that's determined by their declared datasources in the domain classes themselves. It's used to declare which transaction manager to use.
+
+What you'll see is that if you have a Foo domain class in dataSource1 and a Bar domain class in dataSource2, and WahooService uses dataSource1, a service method that saves a new Foo and a new Bar will only be transactional for Foo since they share the datasource. The transaction won't affect the Bar instance. If you want both to be transactional you'd need to use two services and XA datasources for two-phase commit, e.g. with the Atomikos plugin.
+
 h4. XA and Two-phase Commit
 
 Grails has no native support for [XA|https://secure.wikimedia.org/wikipedia/en/wiki/X/Open_XA] @DataSource@s or [two-phase commit|https://secure.wikimedia.org/wikipedia/en/wiki/Two-phase_commit], but the [Atomikos plugin|http://grails.org/plugin/atomikos] makes it easy. See the plugin documentation for the simple changes needed in your @DataSource@ definitions to reconfigure them as XA @DataSource@s.
