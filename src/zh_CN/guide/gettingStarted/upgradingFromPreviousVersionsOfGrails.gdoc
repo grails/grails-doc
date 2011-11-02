@@ -180,7 +180,7 @@ class Book extends Sellable {
 }
 {code}
 
-在Grails 1.3.x中，你将生成一个BOOK表，并且继承自 @Sellable@ 类的属性将存储在 @BOOK@ 表中。但是在Grails 1.4.x中，你将生成 @SELLABLE@ 表，并且使用缺省的单表继承（table-per-hierarchy）的继承规则的话，那么 @Book@ 中的所有属性将存储在 @SELLABLE@ 表中。
+在Grails 1.3.x中，你将生成一个BOOK表，并且继承自 @Sellable@ 类的属性将存储在 @BOOK@ 表中。但是在Grails 2.0.x中，你将生成 @SELLABLE@ 表，并且使用缺省的单表继承（table-per-hierarchy）的继承规则的话，那么 @Book@ 中的所有属性将存储在 @SELLABLE@ 表中。
 
 这种情况下的升级，你有两种选择：
 
@@ -315,7 +315,7 @@ Another side-effect of the changes to the redirect method is that it now always 
 
 h4. redirect方法
 
- [redirect|controllers] 方法不再提交响应，因此依赖此行为的代码在1.4（Grails 1.4已经更改为2.0，下同－－译者注）中不再有效，比如：
+ [redirect|controllers] 方法不再提交响应，因此依赖此行为的代码在2.0中不再有效，比如：
 
 {code:java}
 redirect action: "next"
@@ -324,7 +324,7 @@ if (response.committed) {
 }
 {code}
 
-在Grails 1.3.x中上述代码的 @response.committed@ 属性将返回true，并且其 @if@ 代码块将得到执行。而在Grails 1.4中，要使上述代码可以工作，需要使用 @request@ 的 @isRedirected()@  方法来替代之，如下：
+在Grails 1.3.x中上述代码的 @response.committed@ 属性将返回true，并且其 @if@ 代码块将得到执行。而在Grails 2.0中，要使上述代码可以工作，需要使用 @request@ 的 @isRedirected()@  方法来替代之，如下：
 
 {code:java}
 redirect action: "next"
