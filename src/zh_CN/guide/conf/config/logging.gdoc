@@ -542,6 +542,7 @@ log4j = {
 
 此处的@threshold@参数用以判断那些消息需要截去。此参数对所有的输出器有效，但需要注意的是你必须使用@Level@实例－"info"字符串的便利用法不能工作。
 
+{hidden}
 h3. Custom Layouts
 
 By default the Log4j DSL assumes that you want to use a [PatternLayout|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html]. However, there are other layouts available including:
@@ -571,7 +572,39 @@ log4j = {
     }
 }
 {code}
+{hidden}
 
+h3. 自定义布局
+
+多数情况下，Log4j DSL使用缺省的[PatternLayout|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html]，除此之外，还有以下布局可以选择：
+
+* @xml@ - 创建一个XML日志文件
+* @html@ - 创建一个HTML日志文件
+* @simple@ - 简单的文本文件
+* @pattern@ - Pattern布局的文件
+
+你可以通过@layout@来给一个输出器自定义布局：
+
+{code:java}
+log4j = {
+    appenders {
+        console name: "customAppender",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
+    }
+}
+{code}
+
+此配置对内置的"stdout"（输出到字符终端）也有效：
+{code:java}
+log4j = {
+    appenders {
+        console name: "stdout",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
+    }
+}
+{code}
+
+{hidden}
 h3. Environment-specific configuration
 
 Since the logging configuration is inside @Config.groovy@, you can put it inside an environment-specific block. However, there is a problem with this approach: you have to provide the full logging configuration each time you define the @log4j@ setting. In other words, you cannot selectively override parts of the configuration - it's all or nothing.
@@ -609,7 +642,47 @@ log4j = {
 {code}
 
 The one place you can't put an environment block is _inside_ the @root@ definition, but you can put the @root@ definition inside an environment block.
+{hidden}
 
+h3. 特定环境的配置
+
+既然日志是配置在@Config.groovy@中，你自然也就可以将其配置在环境相关的代码块中。不过这种方式有一个小问题：每次你配置@log4j@的时候，你必须提供完整的日志配置。或者换句话说，你不能选择性的覆盖部分配置－要么全覆盖要么一点也不覆盖。
+
+为了避免此问题，日志DSL提供了自己的environment代码块配置，这样你就可以自由的配置了。
+
+{code:java}
+log4j = {
+    appenders {
+        console name: "stdout",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
+
+        environments {
+            production {
+                rollingFile name: "myAppender", maxFileSize: 1024,
+                            file: "/tmp/logs/myApp.log"
+            }
+        }
+    }
+
+    root {
+        //...
+    }
+
+    // other shared config
+    info "grails.app.controller"
+
+    environments {
+        production {
+            // Override previous setting for 'grails.app.controller'
+            error "grails.app.controller"
+        }
+    }
+}
+{code}
+
+此处需要注意的是：你不能将environment代码块放在@root@定义的_内部_，但是你可以将其放在environment代码块中。
+
+{hidden}
 h3. Full stacktraces
 
 When exceptions occur, there can be an awful lot of noise in the stacktrace from Java and Groovy internals. Grails filters these typically irrelevant details and restricts traces to non-core Grails/Groovy class packages.
@@ -644,6 +717,46 @@ log4j = {
 You can of course combine this with attaching the 'stdout' appender to the 'StackTrace' logger if you want all the output in the console.
 
 Finally, you can completely disable stacktrace filtering by setting the @grails.full.stacktrace@ VM property to @true@:
+
+{code:java}
+grails -Dgrails.full.stacktrace=true run-app
+{code}
+{hidden}
+
+h3. 完整的栈跟踪
+
+当一个异常发生时，可能有大量的来自Java和Groovy内部栈跟踪信息，这其实是很恼人的。Grails的过滤器将这些不相干的细节屏蔽了，并且将栈的跟踪信息限制非Grails/Groovy的类包范围。
+
+当异常发生时，完整的跟踪信息总是被记录到@StackTrace@记录器中，此记录器缺省将内容输出到一个名为@stacktrace.log@的文件中。跟其他的记录器配合，你还可以改变其在配置中的行为，比如你可以将栈跟踪信息输出到字符终端：
+
+{code:java}
+error stdout: "StackTrace"
+{code}
+
+此动作不会阻止Grails创建stacktrace.log文件－它只是将栈跟踪重定向了而已。此外你还可以修改'stacktrace'输出器的位置信息，比如：
+
+{code:java}
+log4j = {
+    appenders {
+        rollingFile name: "stacktrace", maxFileSize: 1024,
+                    file: "/var/tmp/logs/myApp-stacktrace.log"
+    }
+}
+{code}
+
+或者，你根本就不想输出'stacktrace'，只需要将其输出器配置为'null'即可：
+
+{code:java}
+log4j = {
+    appenders {
+        'null' name: "stacktrace"
+    }
+}
+{code}
+
+你如果想在字符终端看到所有的输出，你可以通过将'StackTrace'记录器和'stdout'输出器关联合并来实现。
+
+最后，你如果想完全禁止栈跟踪的过滤，可以通过设置VM属性：@grails.full.stacktrace@为@true@来实现，比如：
 
 {code:java}
 grails -Dgrails.full.stacktrace=true run-app
