@@ -1,6 +1,12 @@
+{hidden}
 h4. Validation Basics
+{hidden}
+h4. Basicos de Validacion
 
+{hidden}
 Call the [validate|domainClasses] method to validate a domain class instance:
+{hidden}
+Llame al metodo [validate|domainClasses] para validar la instancia de una clase de dominio:
 
 {code:java}
 def user = new User(params)
@@ -15,17 +21,29 @@ else {
 }
 {code}
 
+{hidden}
 The @errors@ property on domain classes is an instance of the Spring [Errors|api:org.springframework.validation.Errors] interface. The @Errors@ interface provides methods to navigate the validation errors and also retrieve the original values.
+{hidden}
+La propiedad @errors@ en las clases de dominio es una instancia de la interfaz [Errors|api:org.springframework.validation.Errors] de Spring. La interfaz @Errors@ provee metodos para navegar por los errores de validacion y tambien obtener los valores originales.
 
+{hidden}
 h4. Validation Phases
+{hidden}
+h4. Fases de Validacion
 
+{hidden}
 Within Grails there are two phases of validation, the first one being [data binding|guide:dataBinding] which occurs when you bind request parameters onto an instance such as:
+{hidden}
+Dentro de Grails existen dos fases de validacion, la primera siendo [data binding|guide:dataBinding] la cual ocurre cuando se ligan los parametros de la peticion dentro de una instancia tal como:
 
 {code:java}
 def user = new User(params)
 {code}
 
+{hidden}
 At this point you may already have errors in the @errors@ property due to type conversion (such as converting Strings to Dates). You can check these and obtain the original input value using the @Errors@ API:
+{hidden}
+En este punto puede ya haber errores en la propiedad @errors@ por el tipo de conversion (tal como convertir cadenas en fechas). Puede checar estos y obtener el valor original que se introdujo usando la API de @Errors@:
 
 {code:java}
 if (user.hasErrors()) {
@@ -35,7 +53,10 @@ if (user.hasErrors()) {
 }
 {code}
 
+{hidden}
 The second phase of validation happens when you call [validate|domainClasses] or [save|domainClasses]. This is when Grails will validate the bound values againts the [constraints|domainClasses] you defined. For example, by default the [save|domainClasses] method calls @validate@ before executing, allowing you to write code like:
+{hidden}
+La segunda fase de validacion ocurre cuando se llama a [validate|domainClasses] o [save|domainClasses]. Aqui es cuando Grails validara los valores obligados contra las [constraints|domainClasses] que usted definio. Por ejemplo, por defecto el metodo [save|domainClasses] llama a @validate@ antes de ejecutarlo, permitiendole escribir codigo como:
 
 {code:java}
 if (user.save()) {

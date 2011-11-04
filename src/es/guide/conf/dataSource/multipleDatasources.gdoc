@@ -240,13 +240,23 @@ Note that the datasource specified in a service has no bearing on which datasour
 
 What you'll see is that if you have a Foo domain class in dataSource1 and a Bar domain class in dataSource2, and WahooService uses dataSource1, a service method that saves a new Foo and a new Bar will only be transactional for Foo since they share the datasource. The transaction won't affect the Bar instance. If you want both to be transactional you'd need to use two services and XA datasources for two-phase commit, e.g. with the Atomikos plugin.
 
+{hidden}
+
+Un servicio transaccional puede sólo utilizar un único @DataSource@, así que asegúrese de sólo hacer cambios para las clases de dominio cuyos @DataSource@ es el mismo que el del servicio.
+
+Tenga en cuenta que la fuente de datos que se especifica en un servicio no tiene relación con las fuentes de datos que se utilizan para las clases de dominio, que son determinadas por los orígenes de datos declarados en las clases de dominio. Se utiliza para declarar que administrador de transacciones se utilizará.
+
+Lo que verá es que si usted tiene una clase de dominio Foo en un DataSource1 y una clase de dominio Bar en el dataSource2 y un servicio WahooService utiliza el DataSource1, un método del servicio que salva un nuevo Foo y un nuevo Bar sólo será transaccional para Foo, ya que comparten la fuente de datos, y la operación no afectará a la instancia de Bar. Si quieres ser transaccional para ambas instancias tendrá que utilizar dos servicios y fuentes de datos con commit en dos fases, por ejemplo, con el plugin Atomikos.
+
+{hidden}
+
 h4. XA and Two-phase Commit
 
 Grails has no native support for [XA|https://secure.wikimedia.org/wikipedia/en/wiki/X/Open_XA] @DataSource@s or [two-phase commit|https://secure.wikimedia.org/wikipedia/en/wiki/Two-phase_commit], but the [Atomikos plugin|http://grails.org/plugin/atomikos] makes it easy. See the plugin documentation for the simple changes needed in your @DataSource@ definitions to reconfigure them as XA @DataSource@s.
 
 {hidden}
 
-Un servicio transaccional puede sólo utilizar un único @DataSource@, así que asegúrese de sólo hacer cambios para las clases de dominio cuyos @DataSource@ es el mismo que el del servicio.
+
 
 h4. XA y commit en dos fases
 

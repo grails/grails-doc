@@ -762,6 +762,7 @@ log4j = {
 grails -Dgrails.full.stacktrace=true run-app
 {code}
 
+{hidden}
 h3. Masking Request Parameters From Stacktrace Logs
 
 When Grails logs a stacktrace, the log message may include the names and values of all of the request parameters for the current request.  To mask out the values of secure request parameters, specify the parameter names in the @grails.exceptionresolver.params.exclude@ config property:
@@ -775,7 +776,23 @@ Request parameter logging may be turned off altogether by setting the @grails.ex
 {code:java}
 grails.exceptionresolver.logRequestParameters=false
 {code}
+{hidden}
 
+h3. 屏蔽栈跟踪日志中的请求参数
+
+当Grails记录栈跟踪信息的时候，有可能将当前请求参数的名称和值一并包含了。为了避免隐私信息被记录，可以通过设置@grails.exceptionresolver.params.exclude@来屏蔽那些有关隐私字段的名称，比如：
+
+{code:java}
+grails.exceptionresolver.params.exclude = ['password', 'creditCard']
+{code}
+
+请求参数也可以通过设置@grails.exceptionresolver.logRequestParameters@为@false@的方式来禁止掉。其运行于“开发”模式下，缺省值是@true@，除此之外的其他模式为@false@。
+
+{code:java}
+grails.exceptionresolver.logRequestParameters=false
+{code}
+
+{hidden}
 h3. Logger inheritance
 
 Earlier, we mentioned that all loggers inherit from the root logger and that loggers are hierarchical based on '.'-separated terms. What this means is that unless you override a parent setting, a logger retains the level and the appenders configured for that parent. So with this configuration:
@@ -816,7 +833,50 @@ So when you specify a log level, add an 'additivity' named argument. Note that y
 info additivity: false, \["grails.app.controller.BookController",
                          "grails.app.service.BookService"\]
 {code}
+{hidden}
 
+h3. 记录器的继承
+
+早期，我们提到过所有的记录器都是从跟记录器继承而来的，其继承的层次是通过'.'来分割的。这意味着一个记录器将一直使用其上一级的级别和输出器配置，当然了你覆盖除外。以如下配置为例：
+
+{code:java}
+log4j = {
+    appenders {
+        file name:'file', file:'/var/logs/mylog.log'
+    }
+    root {
+        debug 'stdout', 'file'
+    }
+}
+{code}
+
+此应用的所有记录器都是'debug'级别和'file'输出。拿如果我想给'stdout'使用特定类型的记录器，该如何做呢？修改记录器的'additivity'。
+
+记录器使用'additivity'来检查是否要继承其父级配置，如果其值是false，就不再继承。缺省情况下，所有记录器都是true，即他们都继承自父级配置。那么我们该如何修改此配置呢？请看下例：
+
+{code:java}
+log4j = {
+    appenders {
+        ...
+    }
+    root {
+        ...
+    }
+
+    info additivity: false
+         stdout: \["grails.app.controller.BookController",
+                  "grails.app.service.BookService"\]
+}
+{code}
+
+当你指定记录级别的时候，增加一个名为'additivity'的参数。需要注意的是，当使用此参数时，你必须要为其分配一个输出器。如下的配置将_不会_工作：
+
+{code:java}
+info additivity: false, \["grails.app.controller.BookController",
+                         "grails.app.service.BookService"\]
+{code}
+
+{hidden}
 h3. Customizing stack trace printing and filtering
 
 Stacktraces in general and those generated when using Groovy in particular are quite verbose and contain many stack frames that aren't interesting when diagnosing problems. So Grails uses a implementation of the @org.codehaus.groovy.grails.exceptions.StackTraceFilterer@ interface to filter out irrelevant stack frames. To customize the approach used for filtering, implement that interface in a class in src/groovy or src/java and register it in @Config.groovy@:
@@ -844,7 +904,37 @@ beans = {
                                 ref('grailsResourceLocator'))
 }
 {code}
+{hidden}
 
+h3. 自定义栈跟踪的输出和过滤
+
+总的来说，Groovy生成的那些特定栈跟踪信息是比较冗余的，并且对于诊断问题也造成不少的干扰。因此Grails使用@org.codehaus.groovy.grails.exceptions.StackTraceFilterer@接口来完成对不相关信息的过滤。要完成对特定信息的过滤，只需要再src/groovy或者src/java中实现上述接口，并且在@Config.groovy@注册一下即可：
+
+{code}
+grails.logging.stackTraceFiltererClass =
+         'com.yourcompany.yourapp.MyStackTraceFilterer'
+{code}
+
+此外，Grails也可以让这些被过滤的栈信息更具有可读性，你只需要在src/groovy或者src/java下边实现@org.codehaus.groovy.grails.exceptions.StackTracePrinter@接口，并且在@Config.groovy@中注册即可：
+
+{code}
+grails.logging.stackTracePrinterClass =
+         'com.yourcompany.yourapp.MyStackTracePrinter'
+{code}
+
+最后，为了能够在错误GSP页面中渲染出错信息，需要一个生成HTML的打印输出，其缺省的实现是@org.codehaus.groovy.grails.web.errors.ErrorsViewStackTracePrinter@，并且被注册为一个Spring服务。你也可以通过实现@org.codehaus.groovy.grails.exceptions.StackTraceFilterer@接口或者定义@ErrorsViewStackTracePrinter@的子类来实现属于自己的渲染器，并且将其在@grails-app/conf/spring/resources.groovy@中注册，如下：
+
+{code}
+import com.yourcompany.yourapp.MyErrorsViewStackTracePrinter
+
+beans = {
+
+    errorsViewStackTracePrinter(MyErrorsViewStackTracePrinter,
+                                ref('grailsResourceLocator'))
+}
+{code}
+
+{hidden}
 h3. Alternative logging libraries
 
 By default, Grails uses Log4J to do its logging. For most people this is absolutely fine, and many users don't even care what logging library is used. But if you're not one of those and want to use an alternative, such as the [JDK logging package|http://download.oracle.com/javase/6/docs/api/index.html?java/util/logging/package-summary.html] or [logback|http://logback.qos.ch/], you can do so by simply excluding a couple of dependencies from the global set and adding your own:
@@ -865,3 +955,25 @@ grails.project.dependency.resolution = {
 {code}
 
 If you do this, you will get unfiltered, standard Java stacktraces in your log files and you won't be able to use the logging configuration DSL that's just been described. Instead, you will have to use the standard configuration mechanism for the library you choose.
+{hidden}
+
+h3. 替换日志框架
+
+缺省情况下，Grails使用Log4J来完成日志操作。对大多数的人来说，这绝对绰绰有余，而且很多的用户也根本就不关心使用那个日志框架。但是，如果你不是那些大多数，并且确实很想使用另外一个替代品，比如[JDK自带的日志包|http://download.oracle.com/javase/6/docs/api/index.html?java/util/logging/package-summary.html]或者[logback|http://logback.qos.ch/]。这时候，你只需要简单地全局设置中排除一些依赖，并且添加你自己地依赖即可，比如：
+
+{code}
+grails.project.dependency.resolution = {
+    inherits("global") {
+        excludes "grails-plugin-logging", "log4j"
+    }
+    ...
+    dependencies {
+        runtime "ch.qos.logback:logback-core:0.9.29"
+        ...
+    }
+    ...
+}
+
+{code}
+
+如果你这么做了，那么你将在你的日志文件中记录未过滤的、标准的Java跟踪栈，此外你也不能使用先前介绍的DSL来进行日志配置，你只能使用你选择的日志框架所提供的配置机制。
