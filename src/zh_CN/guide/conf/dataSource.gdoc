@@ -1,3 +1,4 @@
+{hidden}
 Since Grails is built on Java technology setting up a data source requires some knowledge of JDBC (the technology that doesn't stand for Java Database Connectivity).
 
 If you use a database other than H2 you need a JDBC driver. For example for MySQL you would need "Connector/J":http://www.mysql.com/downloads/connector/j/
@@ -85,7 +86,97 @@ dataSource {
     }
 }
 {code}
+{hidden}
 
+既然Grails是基于Java技术来设置数据源的，那么一些JDBC的知识是必不可少的。
+
+如果你的数据库并非H2，那么你至少还需要一个JDBC驱动。以MySQL为例，你需要下载"Connector/J":http://www.mysql.com/downloads/connector/j/
+
+驱动通常打包成JAR。如果你需要的jar在Maven的存储库中存在，那么最好是通过Ivy来解析它们，比如下面是对MySQL驱动的依赖：
+
+{code}
+grails.project.dependency.resolution = {
+    inherits("global")
+    log "warn"
+    repositories {
+        grailsPlugins()
+        grailsHome()
+        grailsCentral()
+        mavenCentral()
+    }
+    dependencies {
+        runtime 'mysql:mysql-connector-java:5.1.16'
+    }
+}
+{code}
+
+注意，此处引入了内置的@mavenCentral()@存储库，因为此jar包位于其中。
+
+如果Ivy找不到，那么只需要将JAR放到你工程的@lib@目录即可。
+
+一旦解决了JAR的问题，你需要来熟悉一下位于@grails-app/conf/DataSource.groovy@中的Grails数据源描述了。此文件包含如下所述的一些数据源的定义：
+
+* @driverClassName@ - JDBC驱动的类名
+* @username@ - 建立JDBC连接的用户名
+* @password@ - 建立JDBC连接的密码
+* @url@ - JDBC数据库的URL
+* @dbCreate@ - 是否根据领域类自动生成数据库-可以是'create-drop'、'create'、'update'或者'validate'
+* @pooled@ - 是否使用连接池（缺省是true)
+* @logSql@ - 是否将SQL输出到字符终端
+* @formatSql@ - 格式化SQL
+* @dialect@ - Hibernate用于跟数据库通讯的方言（dialect），可以是字符串或者类名。可以通过[org.hibernate.dialect|http://docs.jboss.org/hibernate/stable/core/javadocs/org/hibernate/dialect/package-summary.html]来查看所支撑的方言。
+* @readOnly@ - 如果是@true@那么此数据源就是只读的，这是通过调用连接池的@Connection@的@setReadOnly(true)@来实现的。
+* @properties@ - 设置数据源的额外属性。更多请参考[Commons DBCP的 BasicDataSource|http://commons.apache.org/dbcp/api-1.2.2/org/apache/commons/dbcp/BasicDataSource.html]文档。
+
+一个MySQL的典型配置可能如下：
+
+{code:java}
+dataSource {
+    pooled = true
+    dbCreate = "update"
+    url = "jdbc:mysql://localhost/yourDB"
+    driverClassName = "com.mysql.jdbc.Driver"
+    dialect = org.hibernate.dialect.MySQL5InnoDBDialect
+    username = "yourUser"
+    password = "yourPassword"
+}
+{code}
+
+{warning}
+在配置数据源的时候，不要在配置名前加入任何类型或者def关键字，因为Groovy将其视为一个本地变量定义而将其忽略。比如：
+{warning}
+
+{code:java}
+dataSource {
+    boolean pooled = true // type declaration results in ignored local variable
+    ...
+}
+{code}
+
+一个使用额外属性配置的高级示例如下：
+{code:java}
+dataSource {
+    pooled = true
+    dbCreate = "update"
+    url = "jdbc:mysql://localhost/yourDB"
+    driverClassName = "com.mysql.jdbc.Driver"
+    dialect = org.hibernate.dialect.MySQL5InnoDBDialect
+    username = "yourUser"
+    password = "yourPassword"
+    properties {
+        maxActive = 50
+        maxIdle = 25
+        minIdle = 5
+        initialSize = 5
+        minEvictableIdleTimeMillis = 60000
+        timeBetweenEvictionRunsMillis = 60000
+        maxWait = 10000
+        validationQuery = "/* ping */"
+    }
+}
+{code}
+
+{hidden}
 h4. More on dbCreate
 
 Hibernate can automatically create the database tables required for your domain model. You have some control over when and how it does this through the @dbCreate@ property, which can take these values:
@@ -97,3 +188,16 @@ Hibernate can automatically create the database tables required for your domain 
 * any other value - does nothing
 
 You can also remove the @dbCreate@ setting completely, which is recommended once your schema is relatively stable and definitely when your application and database are deployed in production. Database changes are then managed through proper migrations, either with SQL scripts or a migration tool like [Liquibase|http://www.liquibase.org/] (the "Database Migration":http://grails.org/plugin/database-migration plugin uses Liquibase and is tightly integrated with Grails and GORM).
+{hidden}
+
+h4. 关于dbCreate
+
+Hibernate能够根据你的领域类来自动创建数据库表。你可以通过@dbCreate@属性来进行一些控制，其可选值如下：
+
+* *create* - 在启动时候，先删除已存在的，包括表、索引等，然后创建。
+* *create-drop* - 同 *create*，不过在应用关闭的时候，也进行表删除。
+* *update* - 创建不存在的表和索引，并且在不删除表和数据的情况下更新表结构。注意此种情况于很多限制，比如你不能很好地处理重命名字段（旧有地字段依然保留）
+* *validate* - 不改变你数据库地任何信息，只是跟现有地数据库配置脚本进行比较，并且报告一个警告。
+* 其他 - 什么都不做
+
+如果你的数据库变化相对稳定或者你的应用部署于生产环境，推荐你将@dbCreate@完全移除。数据库的变更迁移可以通过SQL脚本或者迁移工具，比如[Liquibase|http://www.liquibase.org/]（"数据库迁移":http://grails.org/plugin/database-migration 插件就是通过Liquibase来跟Grails和GORM紧密集成的)来完成。
