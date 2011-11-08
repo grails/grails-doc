@@ -1,3 +1,4 @@
+{hidden}
 The @dbCreate@ property of the @DataSource@ definition is important as it dictates what Grails should do at runtime with regards to automatically generating the database tables from [GORM|guide:GORM] classes. The options are described in the [DataSource|guide:dataSource] section:
 
 * @create@
@@ -16,3 +17,23 @@ bc.
 grails install-plugin database-migration
 
 The plugin uses "Liquibase":http://www.liquibase.org/ and and provides access to all of its functionality, and also has support for GORM (for example generating a change set by comparing your domain classes to a database).
+{hidden}
+
+@DataSource@中的@dbCreate@属性是很重要的，正如其所暗示，Grails将根据此值和[GORM|guide:GORM]类在运行时来自动生成数据库表。可选项已经在[数据源|guide:dataSource]章节中介绍：
+
+* @create@
+* @create-drop@
+* @update@
+* @validate@
+* 空
+
+在[开发模式|guide:environments]下，@dbCreate@通常设置为"create-drop"，但是当开发到一定程度（更进一步要运行于生产环境），你将不会再采用这种每次启动先删除再创建的方式。
+
+当你想保留数据并且只想更新所变化的代码时，可以尝试使用@update@。不过Hibernate对更新的支撑是非常保守的。其在数据安全方面不能给你任何保证，此外它也不能自动检测到字段或者表的重命名，因此在新增的同时旧有的依然保留。
+
+Grails现在支撑Rails风格的数据库迁移了，这是通过安装和运行 "Database Migration":http://grails.org/plugin/database-migration 插件来实现的。
+
+bc.
+grails install-plugin database-migration
+
+此插件以 "Liquibase":http://www.liquibase.org/ 为基础，除了具有原来的强大功能外，其还对GORM提供了支持(比如通过领域类和数据库的比较来自动生成变化内容）。
