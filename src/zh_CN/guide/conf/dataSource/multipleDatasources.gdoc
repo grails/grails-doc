@@ -1,5 +1,10 @@
+{hidden}
 By default all domain classes share a single @DataSource@ and a single database, but you have the option to partition your domain classes into two or more @DataSource@s.
+{hidden}
 
+缺省情况下，所有的领域类共享同一个@DataSource@和数据库，但是你还是有将领域类拆分到两个甚至更多个@DataSource@的选择的。
+
+{hidden}
 h4. Configuring Additional DataSources
 
 The default @DataSource@ configuration in @grails-app/conf/DataSource.groovy@ looks something like this:
@@ -81,7 +86,91 @@ environments {
 {code}
 
 You can use the same or different databases as long as they're supported by Hibernate.
+{hidden}
 
+h4. 配置额外的数据源
+
+缺省的@DataSource@配置是位于@grails-app/conf/DataSource.groovy@中的，大体样子如下：
+
+{code}
+dataSource {
+    pooled = true
+    driverClassName = "org.h2.Driver"
+    username = "sa"
+    password = ""
+}
+hibernate {
+    cache.use_second_level_cache = true
+    cache.use_query_cache = true
+    cache.provider_class = 'net.sf.ehcache.hibernate.EhCacheProvider'
+}
+
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop"
+            url = "jdbc:h2:mem:devDb"
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:mem:testDb"
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:prodDb"
+        }
+    }
+}
+{code}
+
+上述示例配置了一个Spring bean名称为@dataSource@的@DataSource@。要配置额外的@DataSource@，需要增加另外一个自定义名称（以下划线分割）的@dataSource@（跟标准的@DataSource@类似，只不过要定义在在最外层、环境代码块或者同时两个地方）代码块即可。例如，以下代码的配置新增了第二个@DataSource@，其在开发环境下是MySQL数据库，在生产环境下是Oracle：
+
+{code}
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop"
+            url = "jdbc:h2:mem:devDb"
+        }
+        dataSource_lookup {
+            dialect = org.hibernate.dialect.MySQLInnoDBDialect
+            driverClassName = 'com.mysql.jdbc.Driver'
+            username = 'lookup'
+            password = 'secret'
+            url = 'jdbc:mysql://localhost/lookup'
+            dbCreate = 'update'
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:mem:testDb"
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:prodDb"
+        }
+        dataSource_lookup {
+            dialect = org.hibernate.dialect.Oracle10gDialect
+            driverClassName = 'oracle.jdbc.driver.OracleDriver'
+            username = 'lookup'
+            password = 'secret'
+            url = 'jdbc:oracle:thin:@localhost:1521:lookup'
+            dbCreate = 'update'
+        }
+    }
+}
+{code}
+
+你可以使用Hibernate所支持的相同和或者相异的数据库。
+
+{hidden}
 h4. Configuring Domain Classes
 
 If a domain class has no @DataSource@ configuration, it defaults to the standard @'dataSource'@. Set the @datasource@ property in the @mapping@ block to configure a non-default @DataSource@. For example, if you want to use the @ZipCode@ domain to use the @'lookup'@ @DataSource@, configure it like this;
@@ -135,7 +224,63 @@ class ZipCode {
    }
 }
 {code}
+{hidden}
 
+h4. 配置领域类
+
+如果一个领域类没有配置@DataSource@，那么其缺省使用标准的@'dataSource'@。你可以在@mapping@代码块中设置@datasource@属性来配置一个非标准的@DataSource@。例如，你希望@ZipCode@使用名为@'lookup'@的@DataSource@，其配置如下：
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasource 'lookup'
+   }
+}
+{code}
+
+一个领域类还可以有两个甚至更多个@DataSource@s。这时候，只需要将@datasources@设置为一个名称的列表即可，比如：
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasources(['lookup', 'auditing'])
+   }
+}
+{code}
+
+如果一个领域类既使用缺省的又使用多于一个的@DataSource@，可以使用名称为@'DEFAULT'@来代表缺省的@DataSource@：
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasources(['lookup', 'DEFAULT'])
+   }
+}
+{code}
+
+如果一个领域类要使用所有已经配置的@DataSource@，请使用特定名称@'ALL'@：
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasource 'ALL'
+   }
+}
+{code}
+
+{hidden}
 h4. Namespaces and GORM Methods
 
 If a domain class uses more than one @DataSource@ then you can use the namespace implied by each @DataSource@ name to make GORM calls for a particular @DataSource@. For example, consider this class which uses two @DataSource@s:
@@ -160,7 +305,34 @@ zipCode.auditing.save()
 {code}
 
 As you can see, you add the @DataSource@ to the method call in both the static case and the instance case.
+{hidden}
 
+h4. 命名空间和GORM方法
+
+如果一个领域类使用了多于一个的@DataSource@，你可以将其每个@DataSource@名称作为命名空间，并且以此命名来执行GORM的方法调用。例如，下面示例的类有两个@DataSource@：
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasources(['lookup', 'auditing'])
+   }
+}
+{code}
+
+当没有明确指定命名空间的时候，其指定的第一个@DataSource@被视为缺省，上例中其缺省命名空间是'lookup'。但是你也可以在'auditing'的@DataSource@上执行GORM方法，比如：
+
+{code}
+def zipCode = ZipCode.auditing.get(42)
+...
+zipCode.auditing.save()
+{code}
+
+如你所见，你可以在@DataSource@上进行静态和实例类型的方法调用。
+
+{hidden}
 h4. Services
 
 Like Domain classes, by default Services use the default @DataSource@ and @PlatformTransactionManager@. To configure a Service to use a different @DataSource@, use the static @datasource@ property, for example:
@@ -181,8 +353,35 @@ A transactional service can only use a single @DataSource@, so be sure to only m
 Note that the datasource specified in a service has no bearing on which datasources are used for domain classes; that's determined by their declared datasources in the domain classes themselves. It's used to declare which transaction manager to use.
 
 What you'll see is that if you have a Foo domain class in dataSource1 and a Bar domain class in dataSource2, and WahooService uses dataSource1, a service method that saves a new Foo and a new Bar will only be transactional for Foo since they share the datasource. The transaction won't affect the Bar instance. If you want both to be transactional you'd need to use two services and XA datasources for two-phase commit, e.g. with the Atomikos plugin.
+{hidden}
 
+h4. 服务类
+
+跟领域类相似，服务类也是使用缺省的@DataSource@和@PlatformTransactionManager@。要配置服务使用另外一个不同的@DataSource@，请使用静态的（static）@datasource@属性，比如：
+
+{code}
+class DataService {
+
+   static datasource = 'lookup'
+
+   void someMethod(...) {
+      ...
+   }
+}
+{code}
+
+一个支持事务的服务只能使用一个@DataSource@，因此请确保领域类的@DataSource@的名字要跟服务类中定义的一致。
+
+注意，一个服务类的datasource不对领域类的datasources产生影响，后者由其自身的声明决定。服务类的datasource多用来声明要使用哪一个事务管理器。
+
+假设你有两个数据源，领域类Foo属于dataSource1，Bar属于dataSource2，而WahooService使用dataSource1，此外还有一个方法来实现Foo和Bar的新增保存，那么只有Foo是支持事务的，因为他们共享dataSource1数据源。而Bar实例并不受事务影响。如果你想两者都支持事务，那么你需要两个服务类和支持两阶段提交的XA数据源，比如使用Atomikos插件。
+
+{hidden}
 h4. XA and Two-phase Commit
 
 Grails has no native support for [XA|https://secure.wikimedia.org/wikipedia/en/wiki/X/Open_XA] @DataSource@s or [two-phase commit|https://secure.wikimedia.org/wikipedia/en/wiki/Two-phase_commit], but the [Atomikos plugin|http://grails.org/plugin/atomikos] makes it easy. See the plugin documentation for the simple changes needed in your @DataSource@ definitions to reconfigure them as XA @DataSource@s.
+{hidden}
 
+h4. XA和两阶段（Two-phase）提交
+
+Grails并没有直接支持[XA|https://secure.wikimedia.org/wikipedia/en/wiki/X/Open_XA] @DataSource@s 或者 [两阶段提交|https://secure.wikimedia.org/wikipedia/en/wiki/Two-phase_commit]，但是[Atomikos 插件|http://grails.org/plugin/atomikos]是两者变得容易。此外插件的文档有介绍如何比较容易的将现有的@DataSource@定义重新配置为XA @DataSource@s。
