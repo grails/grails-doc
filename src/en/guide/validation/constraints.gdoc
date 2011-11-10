@@ -36,6 +36,20 @@ By default, all domain class properties are not nullable (i.e. they have an impl
 
 A complete reference for the available constraints can be found in the Quick Reference section under the Constraints heading.
 
+Note that constraints are only evaluated once which may be relevant for a constraint that relies on a value like an instance of @java.util.Date@.
+
+{code:java}
+class User {
+    ...
+
+    static constraints = {
+        // this Date object is created when the constraints are evaluated, not
+        // each time an instance of the User class is validated.
+        birthDate max: new Date()
+    }
+}
+{code}
+
 h3. A word of warning - referencing domain class properties from constraints
 
 It's very easy to attempt to reference instance variables from the static constraints block, but this isn't legal in Groovy (or Java). If you do so, you will get a @MissingPropertyException@ for your trouble. For example, you may try
