@@ -1,3 +1,4 @@
+{hidden}
 If you are having trouble getting a dependency to resolve you can enable more verbose debugging from the underlying engine using the @log@ method:
 
 {code}
@@ -18,3 +19,25 @@ grails.project.dependency.resolution = {
 {code}
 
 This is a global setting, so only use it if you have to.
+{hidden}
+
+如果你解析依赖遇到了问题的话，你可以使用基本的@log@方法来显示更多的调试信息：
+
+{code}
+// log level of Ivy resolver, either 'error', 'warn',
+// 'info', 'debug' or 'verbose'
+log "warn"
+{code}
+
+一个常见的问题是依赖的校验码跟其相应的JAR文件不匹配，这将导致Ivy不接收此依赖。此举用以保证依赖的有效性，但是由于不确定的原因，导致有些依赖在存储仓库中即使存在有效的JAR，也还是没有有效的校验码。要解决此问题，你可以禁用Ivy的依赖检测，比如：
+
+{code}
+grails.project.dependency.resolution = {
+    ...
+    log "warn"
+    checksums false
+    ...
+}
+{code}
+
+这是个全局设置，因此请在不得已的时候才使用。
