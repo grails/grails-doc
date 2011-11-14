@@ -1,4 +1,4 @@
-Criteria is a type safe, advanced way to query that uses a Groovy builder to construct potentially complex queries. It is a much better approach than building up query strings using a @StringBuffer@.
+Criteria is an advanced way to query that uses a Groovy builder to construct potentially complex queries. It is a much better approach than building up query strings using a @StringBuffer@.
 
 Criteria can be used either with the [createCriteria|domainClasses] or [withCriteria|domainClasses] methods. The builder uses Hibernate's Criteria API. The nodes on this builder map the static methods found in the [Restrictions|api:org.hibernate.criterion.Restrictions] class of the Hibernate Criteria API. For example:
 
@@ -16,13 +16,15 @@ def results = c {
 }
 {code}
 
-This criteria will select up to 10 @Account@ objects matching the following criteria:
+This criteria will select up to 10 @Account@ objects in a List matching the following criteria:
 
 * @balance@ is between 500 and 1000
 * @branch@ is 'London'
 * @holderFirstName@ starts with 'Fred' or 'Barney'
 
 The results will be sorted in descending order by @holderLastName@.
+
+If no records are found with the above criteria, an empty List is returned.
 
 h4. Conjunctions and Disjunctions
 
@@ -109,8 +111,9 @@ def numberOfBranches = c.get {
         countDistinct('branch')
     }
 }
-
 {code}
+
+When multiple fields are specified in the projection, a List of values will be returned. A single value will be returned otherwise.
 
 h4. Using SQL Restrictions
 

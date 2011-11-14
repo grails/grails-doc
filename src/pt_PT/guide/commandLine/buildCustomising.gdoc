@@ -1,21 +1,9 @@
-{hidden}
-Grails is most definitely an opinionated framework and it prefers convention to configuration, but this doesn't mean you _can't_ configure it. In this section, we look at how you can influence and modify the standard 
-Grails build.
-{hidden}
-Grails é definitivamente um framework com opinião e prefere a convenção à configuração, mas isso não quer dizer que _não o possa_ configurar. Nesta secção vamos ver como pode influenciar e modificar a construção standard de Grails.
+Grails is most definitely an opinionated framework and it prefers convention to configuration, but this doesn't mean you _can't_ configure it. In this section, we look at how you can influence and modify the standard Grails build.
 
-{hidden}
 h3. The defaults
-{hidden}
-h3. Por defeito
 
-{hidden}
-The core of the Grails build configuration is the @grails.util.BuildSettings@ class, which contains quite a bit of useful information. It controls where classes are compiled to, what dependencies the application has, 
-and other such settings.
-{hidden}
-O núcleo da configuração de construção Grails é a classe @grails.util.BuildSettings@, que contém bastante informação útil. Controla o local para onde as classes são compiladas, que dependências a aplicação tem , e outros parâmetros semelhantes.
+The core of the Grails build configuration is the @grails.util.BuildSettings@ class, which contains quite a bit of useful information. It controls where classes are compiled to, what dependencies the application has, and other such settings.
 
-{hidden}
 Here is a selection of the configuration options and their default values:
 {table}
 *Property* | *Config option* | *Default value*
@@ -29,22 +17,7 @@ projectPluginsDir | grails.project.plugins.dir | <projectWorkDir>/plugins
 globalPluginsDir | grails.global.plugins.dir | <grailsWorkDir>/global-plugins
 verboseCompile | grails.project.compile.verbose | @false@
 {table}
-{hidden}
-Aqui fica uma seleção das opções de configuração e os seus valores por defeito:
-{table}
-*Propriedade* | *Opção de configuração* | *Valor por defeito*
-grailsWorkDir | grails.work.dir | $USER_HOME/.grails/<grailsVersion>
-projectWorkDir | grails.project.work.dir | <grailsWorkDir>/projects/<baseDirName>
-classesDir | grails.project.class.dir | <projectWorkDir>/classes
-testClassesDir | grails.project.test.class.dir | <projectWorkDir>/test-classes
-testReportsDir | grails.project.test.reports.dir | <projectWorkDir>/test/reports
-resourcesDir | grails.project.resource.dir | <projectWorkDir>/resources
-projectPluginsDir | grails.project.plugins.dir | <projectWorkDir>/plugins
-globalPluginsDir | grails.global.plugins.dir | <grailsWorkDir>/global-plugins
-verboseCompile | grails.project.compile.verbose | @false@
-{table}
 
-{hidden}
 The @BuildSettings@ class has some other properties too, but they should be treated as read-only:
 {table}
 *Property* | *Description*
@@ -57,67 +30,27 @@ compileDependencies | A list of compile-time project dependencies as @File@ inst
 testDependencies | A list of test-time project dependencies as @File@ instances.
 runtimeDependencies | A list of runtime-time project dependencies as @File@ instances.
 {table}
-{hidden}
-A classe @BuildSettings@ tem também algumas outras propriedades, mas estas devem ser tratadas apenas como de leitura:
-{table}
-*Propriedade* | *Descrição*
-baseDir | Localização do projeto.
-userHome | Diretoria base do utilizador.
-grailsHome | Localização da instalação de Grails em uso (pode ser @null@).
-grailsVersion | A versão de Grails utilizada pelo projeto.
-grailsEnv | O ambiente Grails atual.
-compileDependencies | Uma lista de dependências em tempo de compilação do projeto como instâncias @File@.
-testDependencies | Uma lista de dependências em tempo de teste do projeto como instâncias @File@.
-runtimeDependencies | Uma lista de dependências em tempo de execução do projeto como instâncias @File@.
-{table}
 
-{hidden}
 Of course, these properties aren't much good if you can't get hold of them. Fortunately that's easy to do: an instance of @BuildSettings@ is available to your scripts as the @grailsSettings@ script variable. You can also access it from your code by using the @grails.util.BuildSettingsHolder@ class, but this isn't recommended.
-{hidden}
-Claro que estas propriedades não servem de muito se não as conseguir perceber. Felizmente isso é fácil de fazer: uma instÂncia de @BuildSettings@ está disponível para os seus scripts como a variável de script @grailsSettings@. Também pode aceder a ela, a partir do seu código, utilizando a classe @grails.util.BuildSettingsHolder@, mas isso não é recomendado.
 
-{hidden}
 h3. Overriding the defaults
-{hidden}
-h3. Alterando as predefinições
 
-{hidden}
-All of the properties in the first table can be overridden by a system property or a configuration option - simply use the "config option" name. For example, to change the project working directory, you could either r
-un this command:
-{hidden}
-Todas as propriedades na primeira tabela podem ser alteradas por uma propriedade de sistema ou opção de configuração - use simplesmente o nome da "opção de configuração". Por exemplo, para alterar a diretoria de trabalho do projeto, pode executar este comando:
+All of the properties in the first table can be overridden by a system property or a configuration option - simply use the "config option" name. For example, to change the project working directory, you could either run this command:
 {code}
 grails -Dgrails.project.work.dir=work compile
 {code}
-{hidden}
 or add this option to your @grails-app/conf/BuildConfig.groovy@ file:
-{hidden}
-ou adicionar esta opção ao seu ficheiro @grails-app/conf/BuildConfig.groovy@ file:
 {code}
 grails.project.work.dir = "work"
 {code}
-{hidden}
 Note that the default values take account of the property values they depend on, so setting the project working directory like this would also relocate the compiled classes, test classes, resources, and plugins.
 
-What happens if you use both a system property and a configuration option? Then the system property wins because it takes precedence over the @BuildConfig.groovy@ file, which in turn takes precedence over the default 
-values.
+What happens if you use both a system property and a configuration option? Then the system property wins because it takes precedence over the @BuildConfig.groovy@ file, which in turn takes precedence over the default values.
 
-The @BuildConfig.groovy@ file is a sibling of @grails-app/conf/Config.groovy@ - the former contains options that only affect the build, whereas the latter contains those that affect the application at runtime. It's no
-t limited to the options in the first table either: you will find build configuration options dotted around the documentation, such as ones for specifying the port that the embedded servlet container runs on or for det
-ermining what files get packaged in the WAR file.
-{hidden}
-Note que os valores pré-definidos têm em conta o valor das propriedades de que dependem, por isso alterar a diretoria de trabalho do projeto desta forma irá também mudar de local as classes compiladas, classes de teste, recursos e plugins.
+The @BuildConfig.groovy@ file is a sibling of @grails-app/conf/Config.groovy@ - the former contains options that only affect the build, whereas the latter contains those that affect the application at runtime. It's not limited to the options in the first table either: you will find build configuration options dotted around the documentation, such as ones for specifying the port that the embedded servlet container runs on or for determining what files get packaged in the WAR file.
 
-O que acontece quando utiliza tanto uma propriedade de sistema como uma opção de configuração? Neste caso ganha a propriedade de sistema porque tem precedência sobre o ficheiro @BuildConfig.groovy@, que por sua vez tem precedência sobre os valores pré-definidos.
-
-O ficheiro @BuildConfig.groovy@ é irmão de @grails-app/conf/Config.groovy@ - o primeiro contém opções que só afetam a construção, enquanto que o último contém opções que afetam a aplicação em tempo de execução. Também não está limitado às opções na primeira tabela: irá encontrar opções de configuração de construção assinaladas ao longo da documentação, tais como as que especificam o porto em que corre o contentor de servlet integrado ou para determinar que ficheiros são empacotados no ficheiro WAR.
-
-{hidden}
 h3. Available build settings
-{hidden}
-h3. Opções de configuração de construção
 
-{hidden}
 {table}
  Name | Description
  grails.server.port.http | Port to run the embedded servlet container on ("run-app" and "run-war"). Integer.
@@ -131,19 +64,4 @@ h3. Opções de configuração de construção
  grails.war.copyToWebApp | A closure containing "fileset()" entries that allows you complete control over what goes in the root of the WAR. It overrides the default behaviour of including everything under "web-app".
  grails.war.resources | A closure that takes the location of the staging directory as its first argument. You can use any Ant tasks to do anything you like. It is typically used to remove files from the staging directory before that directory is jar'd up into a WAR.
  grails.project.web.xml | The location to generate Grails' web.xml to
-{table}
-{hidden}
-{table}
- Nome | Descrição
- grails.server.port.http | Porto onde corre o contentor de servlet embebido em ("run-app" e "run-war"). Integer.
- grails.server.port.https | Porto onde corre run contentor de servlet embebido para HTTPS ("run-app \-\-https" and "run-war \-\-https"). Integer.
- grails.config.base.webXml | Caminho para um ficheiro web.xml personalizado a ser utilizado pela aplicação (alternativa ao uso do template web.xml).
- grails.compiler.dependencies | Abordagem antiga para adicionar dependências extra dependencies à classpath do compilador. Configure-a numa closure contendo entradas "fileset()". Estas entradas serão processadas por um @AntBuilder@ por isso a sintaxe é a forma Groovy dos elementos XML correspondentes num ficheiro de construção Ant, ex. @fileset(dir: "$basedir/lib", include: "\*\*/\*.class)@.
- grails.testing.patterns | Uma lista de padrões de caminho Ant que lhe permitem controlarque ficheiros são incluídos nos testes. O padrão não deverá incluir o sufixo de caso de teste, que será configurado pela próxima propriedade.
- grails.testing.nameSuffix | Por defeito, assume-se que os testes têm um sufixo de "Tests". Pode mudar para o que quiser mas mudando esta opção. Por exemplo, outro sufixo comum é "Test".
- grails.project.war.file | Uma string contendo o caminho do ficheiro WAR gerado, juntamente com o seu nome completo (incluindo extensão). Por exemplo, "target/my-app.war".
- grails.war.dependencies | Uma closure contendo entradas "fileset()" que proporcionam controlo total sobre o que é adicionado à diretoria "WEB-INF/lib" do WAR.
- grails.war.copyToWebApp | Uma closure contendo entradas "fileset()" que proporcionam controlo total sobre o que é adicionado à raiz do WAR. Modifica o comportmento padrão de incluir tudo sob "web-app".
- grails.war.resources | Uma closure que recebe a localização da diretoria "staging" como o seu primeiro argumento. Pode utilizar tarefas Ant para fazer tudo o que deseje. É usado tipicamente para remover ficheiros da diretoria "staging" antes desta ser compactada num jar e adicionada ao WAR.
- grails.project.web.xml | A localização para onde deve ser gerado web.xml de Grails
 {table}

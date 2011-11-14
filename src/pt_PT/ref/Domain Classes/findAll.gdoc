@@ -41,6 +41,16 @@ Book.findAll("from Book as b where not exists " +
 // query by example
 def example = new Book(author: "Dan Brown")
 Book.findAll(example)
+
+// Use where criteria (since Grails 2.0)
+def results = Person.findAll {
+     lastName == "Simpson"
+}
+def results = Person.findAll(sort:"firstName") {
+     lastName == "Simpson"
+}
+
+
 {code}
 
 h2. Description
@@ -69,6 +79,8 @@ Book.findAll(String query, Collection positionalParams, Map queryParams)
 Book.findAll(String query, Map namedParams)
 Book.findAll(String query, Map namedParams, Map queryParams)
 Book.findAll(Book example)
+Book.findAll(Closure whereCriteria)
+Book.findAll(Map queryParams, Closure whereCriteria)
 {code}
 
 {note}
