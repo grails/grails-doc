@@ -1,25 +1,43 @@
+{hidden}
 Grails' command line system is built on [Gant|http://gant.codehaus.org/] - a simple Groovy wrapper around [Apache Ant|http://ant.apache.org].
 
 However, Grails takes it further through the use of convention and the @grails@ command. When you type:
+{hidden}
+
+O sistema de linha de comando Grails é construído sobre [Gant|http://gant.codehaus.org/] - um invólucro Groovy simples à volta de [Apache Ant|http://ant.apache.org].  
+
+De qualquer forma, Grails leva o sistema mais além através do uso de convenções e do comando @grails@. Quando se introduz: 
 
 {code}
 grails [command name]
 {code}
 
+{hidden}
 Grails searches in the following directories for Gant scripts to execute:
+{hidden}
+
+Grails procura scripts Groovy nas seguintes directorias para os executar:
 
 * @USER_HOME/.grails/scripts@
 * @PROJECT_HOME/scripts@
 * @PROJECT_HOME/plugins/*/scripts@
 * @GRAILS_HOME/scripts@
 
-Grails will also convert command names that are in lower case form such as run-app into camel case. So typing
+{hidden}
+Grails will also convert command names that are in lower case form such as run-app into camel case. Introduzindo
+{hidden}
+
+Grails também converterá nomes de comandos que estejam na forma de minúsculas, tais como run-app, para "camel case". Introduzindo
 
 {code}
 grails run-app
 {code}
 
+{hidden}
 Results in a search for the following files:
+{hidden}
+
+Resulta na pesquisa dos seguintes ficheiros:
 
 * @USER_HOME/.grails/scripts/RunApp.groovy@
 * @PROJECT_HOME/scripts/RunApp.groovy@
@@ -27,17 +45,33 @@ Results in a search for the following files:
 * @GLOBAL_PLUGINS_HOME/*/scripts/RunApp.groovy@
 * @GRAILS_HOME/scripts/RunApp.groovy@
 
+{hidden}
 If multiple matches are found Grails will give you a choice of which one to execute.
+{hidden}
 
+Se forem encontrados múltiplos resultados Grails dará hipótese de escolha sobre qual executar 
+
+{hidden}
 When Grails executes a Gant script, it invokes the "default" target defined in that script. If there is no default, Grails will quit with an error.
+{hidden}
 
+Quando Grails executa um script Gant, invoca o target definido "pré-definido" nesse script. Se não existir pré-definição Grails terminará a execução com um erro.
+
+{hidden}
 To get a list of all commands and some help about the available commands type:
+{hidden}
+
+Para obter uma lista de todos os comandos e alguma ajuda sobre os comandos disponíveis execute:
 
 {code}
 grails help
 {code}
 
+{hidden}
 which outputs usage instructions and the list of commands Grails is aware of:
+{hidden}
+
+que irá mostrar instruções de uso e uma lista de comandos que Grails reconhece:
 
 {code}
 Usage (optionals marked with *):
@@ -55,22 +89,45 @@ grails compile
 ...
 {code}
 
+{hidden}
 {note}
 Refer to the Command Line reference in the Quick Reference menu of the reference guide for more information about individual commands
 {note}
+{hidden}
 
+{note}
+Recorra à referência da Linha de Comando no menu Referência Rápida do guia de utilização para mais informação sobre cada um dos comandos
+{note}
+
+{hidden}
 It's often useful to provide custom arguments to the JVM when running Grails commands, in particular with @run-app@ where you may for example want to set a higher maximum heap size. The Grails command will use any JVM options provided in the general @JAVA_OPTS@ environment variable, but you can also specify a Grails-specific environment variable too:
+{hidden}
+
+É por vezes útil fornecer argumentos personalizados à JVM quando se executam comandos Grails, em particular com @run-app@ onde se pode, por exemplo, desejar definir um tamanho máximo de heap. O comando Grails irá utilizar quaisquer opções JVM fornecidas pela variável de ambiente @JAVA_OPTS@, mas também se pode especificar uma variável de ambiente específica de Grails:
 
 {code}
 export GRAILS_OPTS="-Xmx1G -Xms256m -XX:MaxPermSize=256m"
 grails run-app
 {code}
 
+{hidden}
 h4. non-interactive mode
+{hidden}
 
+h4. modo não interactivo
+
+{hidden}
 When you run a script manually and it prompts you for information, you can answer the questions and continue running the script. But when you run a script as part of an automated process, for example a continuous integration build server, there's no way to "answer" the questions. So you can pass the @\-\-non-interactive@ switch to the script command to tell Grails to accept the default answer for any questions, for example whether to install a missing plugin.
+{hidden}
 
+Quando se executa um script manualmente e ele solicita informação pode responder-se às questões e continuar a executar o script.
+Mas quando se executa o script como parte de um processo automatizado, por exemplo um servidor de integração contínua, não há forma de "responder" à questão. Por isso pode passar-se o parâmetro @\-\-non-interactive@ para o script para informar Grails para aceitar os valores pré-definidos para cada uma das questões, por exemplo se deve instalar um plugin em falta. 
+
+{hidden}
 For example:
+{hidden}
+
+Por exemplo:
 
 {code}
 grails war --non-interactive
