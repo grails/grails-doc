@@ -127,6 +127,18 @@ def peopleWithShortFirstNames = c.list {
 }
 {code}
 
+SQL Restrictions may be parameterized to deal with SQL injection vulnerabilities related to dynamic restrictions.
+
+
+{code:java}
+def c = Person.createCriteria()
+
+def peopleWithShortFirstNames = c.list {
+    sqlRestriction "char_length(first_name) < ? AND char_length(first_name) > ?", [maxValue, minValue]
+}
+{code}
+
+
 {note}
 Note that the parameter there is SQL. The @first_name@ attribute referenced in the example refers to the persistence model, not the object model like in HQL queries. The @Person@ property named @firstName@ is mapped to the @first_name@ column in the database and you must refer to that in the @sqlRestriction@ string.
 
