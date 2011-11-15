@@ -1,3 +1,4 @@
+{hidden}
 h4. Remote Repositories
 
 Initially your BuildConfig.groovy does not use any remote public Maven repositories. There is a default @grailsHome()@ repository that will locate the JAR files Grails needs from your Grails installation. To use a public repository, specify it in the @repositories@ block:
@@ -33,7 +34,45 @@ repositories {
 {code}
 
 so that you can easily identify it in logs.
+{hidden}
 
+h4. 远程存储仓库
+
+刚创建的BuildConfig.groovy文件并没有使用任何远程的公共Maven存储库，在那里只有一个缺省的 @grailsHome()@用以从Grails安装目录定位所需要的JAR文件。要使用远程的公共存储库，请使用 @repositories@代码块，比如：
+
+{code}
+repositories {
+    mavenCentral()
+}
+{code}
+
+在上述示例中，指定的是Maven缺省的公共存储库。要使用SpringSource的企业包存储库，你可以使用@ebr()@方法：
+
+{code}
+repositories {
+    ebr()
+}
+{code}
+
+你还可以使用URL的方式来指定Maven存储库：
+
+{code}
+repositories {
+    mavenRepo "http://repository.codehaus.org"
+}
+{code}
+
+并且可以给其命名：
+
+{code}
+repositories {
+    mavenRepo name: "Codehaus", root: "http://repository.codehaus.org"
+}
+{code}
+
+这样你就可以在日志中轻易地辨别它们。
+
+{hidden}
 h4. Controlling Repositories Inherited from Plugins
 
 A plugin you have installed may define a reference to a remote repository just as an application can. By default your application will inherit this repository definition when you install the plugin.
@@ -47,7 +86,23 @@ repositories {
 {code}
 
 In this case your application will not inherit any repository definitions from plugins and it is down to you to provide appropriate (possibly internal) repository definitions.
+{hidden}
 
+h4. 控制插件存储库地继承
+
+通常，你安装的插件会定义一个远程的存储库，缺省情况下，而你的应用将继承你安装插件中的存储库的定义。
+
+如果你不希望继承来自插件的存储库定义，你可以禁止这种存储库的继承：
+
+{code:java}
+repositories {
+    inherit false
+}
+{code}
+
+上述示例中，应用将不继承任何插件的存储库的定义，而是仅仅依赖于你定义的存储库。
+
+{hidden}
 h4. Offline Mode
 
 There are times when it is not desirable to connect to any remote repositories (whilst working on the train for example!). In this case you can use the @offline@ flag to execute Grails commands and Grails will not connect to any remote repositories:
@@ -65,7 +120,27 @@ You can also globally configure offline mode by setting @grails.offline.mode@ to
 {code}
 grails.offline.mode=true
 {code}
+{hidden}
 
+h4. 离线模式
+
+偶尔的时候，你将不能访问任何远程的存储库（比如在火车上工作时）。此种情况下，你可以使用@offline@标志来执行Grails命令，这样Grails将不会连接任何远程存储库，比如：
+
+{code}
+grails --offline run-app
+{code}
+
+{note}
+注意：如果你本地Ivy缓存中没有所需的依赖，上述命令将会出错。
+{note}
+
+你还可以通过设置@~/.grails/settings.groovy@或者工程中@BuildConfig.groovy@文件中的@grails.offline.mode@为@true@的方式，将其配置为全局离线模式：
+
+{code}
+grails.offline.mode=true
+{code}
+
+{hidden}
 h4. Local Resolvers
 
 If you do not wish to use a public Maven repository you can specify a flat file repository:
@@ -83,6 +158,27 @@ repositories {
     mavenLocal()
 }
 {code}
+{hidden}
+
+h4. 本地解析器
+
+如果你不希望使用远程的Maven存储库，你可以指定一个平面文件（flat file）存储器：
+
+{code}
+repositories {
+    flatDir name:'myRepo', dirs:'/path/to/repo'
+}
+{code}
+
+将你本地的Maven缓存作为（@~/.m2/repository@）作为存储器，可以用下面的处理：
+
+{code}
+repositories {
+    mavenLocal()
+}
+{code}
+
+{hidden}
 h4. Custom Resolvers
 
 If all else fails since Grails builds on Apache Ivy you can specify an Ivy resolver:
@@ -144,7 +240,71 @@ grails -classpath /path/to/jsch compile|run-app|etc.
 {code}
 
 You can also add its path to the @CLASSPATH@ environment variable but be aware this it affects many Java applications. An alternative on Unix is to create an alias for @grails -classpath ...@ so that you don't have to type the extra arguments each time.
+{hidden}
 
+h4. 自定义解析器
+
+如果上述的都失败了，你还可以自定义一个Ivy解析器，因为Grails是基于Apache Ivy构建的：
+
+{code}
+/*
+ * Configure our resolver.
+ */
+def libResolver = new org.apache.ivy.plugins.resolver.URLResolver()
+['libraries', 'builds'].each {
+
+    libResolver.addArtifactPattern(
+            "http://my.repository/\${it}/" +
+            "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+
+    libResolver.addIvyPattern(
+            "http://my.repository/\${it}/" +
+            "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+}
+
+libResolver.name = "my-repository"
+libResolver.settings = ivySettings
+
+resolver libResolver
+{code}
+
+此外还可以通过SSH的方式从存储库中获取依赖。为此Ivy提供了一个专门的用于配置的解析器，在你的工程看起来可能如下：
+{code}
+import org.apache.ivy.plugins.resolver.SshResolver
+...
+repositories {
+    ...
+
+    def sshResolver = new SshResolver(
+            name: "myRepo",
+            user: "username",
+            host: "dev.x.com",
+            keyFile: new File("/home/username/.ssh/id_rsa"),
+            m2compatible: true)
+
+    sshResolver.addArtifactPattern(
+            "/home/grails/repo/[organisation]/[artifact]/" +
+            "[revision]/[artifact]-[revision].[ext]")
+
+    sshResolver.latestStrategy =
+            new org.apache.ivy.plugins.latest.LatestTimeStrategy()
+
+    sshResolver.changingPattern = ".*SNAPSHOT"
+
+    sshResolver.setCheckmodified(true)
+
+    resolver sshResolver
+}
+{code}
+
+要使用SSH解析器，先要下载[JSch|http://www.jcraft.com/jsch/]的JAR到你Grails的类路径（classpath）中，你可以通过命令行的方式来设置，比如：
+{code}
+grails -classpath /path/to/jsch compile|run-app|etc.
+{code}
+
+你也可以将路径添加到@CLASSPATH@环境变量中，不要要注意，这可能会影响很多的Java应用。在Unix下，你可以为@grails -classpath ...@创建一个别名，这样就可以不需要每次都敲额外的参数了。
+
+{hidden}
 h4. Authentication
 
 If your repository requires authentication you can configure this using a @credentials@ block:
@@ -159,6 +319,33 @@ credentials {
 {code}
 
 This can be placed in your @USER_HOME/.grails/settings.groovy@ file using the @grails.project.ivy.authentication@ setting:
+
+{code}
+grails.project.ivy.authentication = {
+    credentials {
+        realm = ".."
+        host = "localhost"
+        username = "myuser"
+        password = "mypass"
+    }
+}
+{code}
+{hidden}
+
+h4. 验证
+
+如果你的存储仓库需要验证，那么你可以通过@credentials@代码块来进行配置，比如：
+
+{code}
+credentials {
+    realm = ".."
+    host = "localhost"
+    username = "myuser"
+    password = "mypass"
+}
+{code}
+
+你也可以通过设置@USER_HOME/.grails/settings.groovy@文件中的@grails.project.ivy.authentication@来实现：
 
 {code}
 grails.project.ivy.authentication = {
