@@ -1,3 +1,4 @@
+{hidden}
 As of Grails 1.3 you can declaratively specify plugins as dependencies via the dependency DSL instead of using the [install-plugin|commandLine] command:
 
 {code}
@@ -25,7 +26,37 @@ plugins {
     runtime ':hibernate:latest.integration'
 }
 {code}
+{hidden}
 
+从Grails 1.3以来，你就可以通过依赖DSL的方式来声明插件的依赖了，而非只用[install-plugin|commandLine]命令：
+
+{code}
+grails.project.dependency.resolution = {
+    ...
+    repositories {
+        ...
+    }
+
+    plugins {
+        runtime ':hibernate:1.2.1'
+    }
+
+    dependencies {
+        ...
+    }
+    ...
+}
+{code}
+
+如果你没有指定插件的组ID，其缺省值是@org.grails.plugins@。你还可以将"latest.integration"作为版本号，这样就会自动获取最新的版本，例如：
+
+{code}
+plugins {
+    runtime ':hibernate:latest.integration'
+}
+{code}
+
+{hidden}
 h4. Integration vs. Release
 
 The "latest.integration" version label will also include resolving snapshot versions. To not include snapshot versions then use the "latest.release" label:
@@ -47,7 +78,31 @@ plugins {
     runtime 'mycompany:hibernate:latest.integration'
 }
 {code}
+{hidden}
 
+h4. 集成（Integration）和正式（Release）版本
+
+"latest.integration"的版本标签将会解析包含快照的版本，如果不想，可以使用"latest.release"标签：
+
+{code}
+plugins {
+    runtime ':hibernate:latest.release'
+}
+{code}
+
+{note}
+"latest.release"标签仅仅用于兼容Maven的存储库。如果你使用基于SVN的Grails存储库，你应该使用"latest.integration"。
+{note}
+
+当然如果你使用非缺省组ID的Maven存储库，你可以为其指定一个：
+
+{code}
+plugins {
+    runtime 'mycompany:hibernate:latest.integration'
+}
+{code}
+
+{hidden}
 h4. Plugin Exclusions
 
 You can control how plugins transitively resolves both plugin and JAR dependencies using exclusions. For example:
@@ -72,6 +127,41 @@ plugins {
 {code}
 
 You can also completely disable transitive plugin installs, in which case no transitive dependencies will be resolved:
+
+{code}
+plugins {
+    runtime(':weceem:0.8') {
+        transitive = false
+    }
+    runtime ':searchable:0.5.4' // specifies a fixed searchable version
+}
+{code}
+{hidden}
+
+h4. 插件的排除
+
+通过使用排除，你可以控制插件如何传递地解析JAR和插件的依赖，比如：
+
+{code}
+plugins {
+    runtime(':weceem:0.8') {
+        excludes "searchable"
+    }
+}
+{code}
+
+此处我们定义了一个名为"weceem"的插件，其又依赖于"searchable"插件。通过使用@excludes@方法，你可以告诉Grails _不以_ 传递的方式安装searchable插件。你可以在此种方式的基础上，另外单独安装另一个版本的插件：
+
+{code}
+plugins {
+    runtime(':weceem:0.8') {
+        excludes "searchable" // excludes most recent version
+    }
+    runtime ':searchable:0.5.4' // specifies a fixed searchable version
+}
+{code}
+
+你也可以完全禁用插件的传递安装，此时那些传递的依赖将不再解析，比如：
 
 {code}
 plugins {
