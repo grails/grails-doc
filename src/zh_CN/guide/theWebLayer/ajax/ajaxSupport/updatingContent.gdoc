@@ -1,3 +1,4 @@
+{hidden}
 This is great, but usually you provide feedback to the user about what happened:
 
 {code:java}
@@ -29,3 +30,36 @@ Delete Book
 {code}
 
 Here the @error@ div will be updated if the request failed.
+{hidden}
+
+目前都还不错，但一般来说你会提供一些信息反馈给用户，以告诉都发生过什么，比如：
+
+{code:java}
+def delete() {
+    def b = Book.get(params.id)
+    b.delete()
+    render "Book ${b.id} was deleted"
+}
+{code}
+
+GSP代码：
+
+{code:xml}
+<div id="message"></div>
+<g:remoteLink action="delete" id="1" update="message">
+Delete Book
+</g:remoteLink>
+{code}
+
+上述示例将调用@delete@操作，并且将响应内容@"Book 1 was deleted"@设置到id为@message@的@div@中，这是通过标签中的@update@属性来完成的。此外还可以用Map参数来设定失败时要更新那些，比如：
+
+{code:xml}
+<div id="message"></div>
+<div id="error"></div>
+<g:remoteLink update="[success: 'message', failure: 'error']"
+              action="delete" id="1">
+Delete Book
+</g:remoteLink>
+{code}
+
+如果请求失败，那么此处的@error@将会被更新。

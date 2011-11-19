@@ -1,3 +1,4 @@
+{hidden}
 Specific JavaScript can be called if certain events occur, all the events start with the "on" prefix and let you give feedback to the user where appropriate, or take other action:
 
 {code:xml}
@@ -19,6 +20,41 @@ The above code will execute the "showProgress()" function which may show a progr
 * @onComplete@  - The JavaScript function to call when the remote function is complete, including any updates
 
 If you need a reference to the @XmlHttpRequest@ object you can use the implicit event parameter @e@ to obtain it:
+
+{code:xml}
+<g:javascript>
+    function fireMe(e) {
+        alert("XmlHttpRequest = " + e)
+    }
+}
+</g:javascript>
+<g:remoteLink action="example"
+              update="success"
+              onSuccess="fireMe(e)">Ajax Link</g:remoteLink>
+{code}
+{hidden}
+
+当某个事件发生时，特定的JavaScript将会被调用到，所有这些事件都是以"on"为前缀，并且合适地反馈给用户或者其他处理，比如：
+
+{code:xml}
+<g:remoteLink action="show"
+              id="1"
+              update="success"
+              onLoading="showProgress()"
+              onComplete="hideProgress()">Show Book 1</g:remoteLink>
+{code}
+
+上述代码将会执行"showProgress()"函数用以显示一个进度条或者其他什么的。所有事件罗列如下：
+
+* @onSuccess@  - 成功时要调用的JavaScript函数
+* @onFailure@  - 失败时要调用的JavaScript函数
+* @on_ERROR_CODE@  - 处理特定的错误编码（比如on404="alert('not found!')"）时要调用的JavaScript函数
+* @onUninitialized@  - Ajax引擎初始化失败时要调用的JavaScript函数
+* @onLoading@  - 远程调用正在加载响应时要调用的JavaScript函数
+* @onLoaded@  - 远程调用已经加载完响应时要调用的JavaScript函数
+* @onComplete@  - 远程调用完全结束（包括更新内容）时要调用的JavaScript函数
+
+如果你需要使用@XmlHttpRequest@对象，你可以使用隐式的事件参数@e@来获取它：
 
 {code:xml}
 <g:javascript>

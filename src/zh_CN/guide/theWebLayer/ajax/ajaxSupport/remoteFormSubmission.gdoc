@@ -1,3 +1,4 @@
+{hidden}
 An HTML form can also be submitted asynchronously in one of two ways. Firstly using the [formRemote|tags] tag which expects similar attributes to those for the [remoteLink|tags] tag:
 
 {code:xml}
@@ -17,4 +18,24 @@ Or alternatively you can use the [submitToRemote|tags] tag to create a submit bu
                       update="[success: 'message', failure: 'error']" />
 </form>
 {code}
+{hidden}
 
+HTML的表单可以通过以下两种方式的一种进行异步提交。其一，使用[formRemote|tags]标签，它的属性跟[remoteLink|tags]标签类似，比如：
+
+{code:xml}
+<g:formRemote url="[controller: 'book', action: 'delete']"
+              update="[success: 'message', failure: 'error']">
+    <input type="hidden" name="id" value="1" />
+    <input type="submit" value="Delete Book!" />
+</g:formRemote >
+{code}
+
+另外一种是通过使用[submitToRemote|tags]标签来创建一个提交按钮。这将允许一些按钮执行远程提交，另外一些不需要：
+
+{code:xml}
+<form action="delete">
+    <input type="hidden" name="id" value="1" />
+    <g:submitToRemote action="delete"
+                      update="[success: 'message', failure: 'error']" />
+</form>
+{code}
