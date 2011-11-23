@@ -1,5 +1,10 @@
+{hidden}
 Grails controllers support the concept of command objects. A command object is similar to a form bean in a framework like Struts, and they are useful for populating a subset of the properties needed to update a domain class. Or where there is no domain class required for the interaction, but you need features such as [data binding|guide:dataBinding] and [validation|guide:validation].
+{hidden}
 
+Grails控制器支持命令对象（command objects）的概念。一个命令对象类似于Struts中的一个表单（form）bean，当你想要更新领域类属性的一个子集的时候，或者虽然没有领域类，你还是需要[数据绑定|guide:dataBinding]和[校验|guide:validation]特性的时候，是非常有用的，
+
+{hidden}
 h4. Declaring Command Objects
 
 Command objects are typically declared in the same source file as a controller, directly below the controller class definition. For example:
@@ -21,7 +26,31 @@ class LoginCommand {
 {code}
 
 As this example shows, you can define [constraints|guide:constraints] in command objects just like in [domain classes|guide:GORM].
+{hidden}
 
+h4. 声明命令对象
+
+命令对象通常声明在同一个控制器的源文件中，并且直接位于控制器类的下面。比如：
+
+{code:java}
+class UserController {
+    ...
+}
+
+class LoginCommand {
+    String username
+    String password
+
+    static constraints = {
+        username(blank: false, minSize: 6)
+        password(blank: false, minSize: 6)
+    }
+}
+{code}
+
+正如上例所示，你可以象[领域类|guide:GORM]那样定义命令对象的[约束|guide:constraints]。
+
+{hidden}
 h4. Using Command Objects
 
 To use command objects, controller actions may optionally specify any number of command object parameters. The parameter types must be supplied so that Grails knows what objects to create, populate and validate.
@@ -56,7 +85,44 @@ class LoginController {
     }
 }
 {code}
+{hidden}
 
+h4. 使用命令对象
+
+为了使用命令对象，控制器可以随意指定任何数目的命令对象参数。参数的类型是必需的，因为Grails需要知道什么样的对象被创建，写入和验证。
+
+在控制器的操作被执行之前，Grails将自动创建一个命令对象类的实例，用相应名字的请求参数写入到命令对象属性，并且验证它们，例如：
+
+{code:java}
+class LoginController {
+
+    def login = { LoginCommand cmd ->
+        if (cmd.hasErrors()) {
+            redirect(action: 'loginForm')
+            return
+        }
+
+        // work with the command object data
+    }
+}
+{code}
+
+当操作是用方法来定义时 ，你可以将命令对象直接作为参数，比如：
+
+{code:java}
+class LoginController {
+    def login(LoginCommand cmd) {
+        if (cmd.hasErrors()) {
+            redirect(action: 'loginForm')
+            return
+        }
+
+        // work with the command object data
+    }
+}
+{code}
+
+{hidden}
 h4. Command Objects and Dependency Injection
 
 Command objects can participate in dependency injection. This is useful if your command object has some custom validation logic uses Grails [services|guide:services]:
@@ -78,3 +144,26 @@ class LoginCommand {
 {code}
 
 In this example the command object interacts with the @loginService@ bean which is injected by name from the Spring @ApplicationContext@.
+{hidden}
+
+h4. 命令对象和依赖注入
+
+命令对象也支持依赖注入。这在你自定义校验的逻辑依赖Grails的[服务|guide:services]时，非常有用：
+
+{code}
+class LoginCommand {
+
+    def loginService
+
+    String username
+    String password
+
+    static constraints = {
+        username validator: { val, obj ->
+            obj.loginService.canLogin(obj.username, obj.password)
+        }
+    }
+}
+{code}
+
+在上述示例中，命令对象跟注入到Spring @ApplicationContext@中的@loginService@进行交互。

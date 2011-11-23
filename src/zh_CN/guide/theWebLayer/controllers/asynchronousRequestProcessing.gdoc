@@ -1,3 +1,4 @@
+{hidden}
 Grails support asynchronous request processing as provided by the Servlet 3.0 specification. To enable the async features you need to set your servlet target version to 3.0 in BuildConfig.groovy:
 
 {code}
@@ -9,7 +10,21 @@ With that done ensure you do a clean re-compile as some async features are enabl
 {note}
 With a Servlet target version of 3.0 you can only deploy on Servlet 3.0 containers such as Tomcat 7 and above.
 {note}
+{hidden}
 
+Grails支持Servlet 3.0规范的异步请求处理。要使异步功能生效，你需要在BuildConfig.groovy中设置servlet的版本为3.0：
+
+{code}
+grails.servlet.version = "3.0"
+{code}
+
+除此之外，你还需要一个干净的支持异步特性的编译环境来重新编译一下。
+
+{note}
+使用Servlet 3.0版本以后，你只能将应用部署于支持Servlet 3.0的容器中，比如Tomcat 7及其以上版本。
+{note}
+
+{hidden}
 h4. Asynchronous Rendering
 
 You can render content (templates, binary data etc.) in an asynchronous manner by calling the @startAsync@ method which returns an instance of the Servlet 3.0 @AsyncContext@. Once you have a reference to the @AsyncContext@ you can use Grails' regular render method to render content:
@@ -26,10 +41,46 @@ def index() {
 {code}
 
 Note that you must call the @complete()@ method to terminate the connection. 
+{hidden}
 
+h4. 异步渲染
+
+你可以通过调用@startAsync@方法的方式进行异步的内容渲染（比如模板、二进制数据等），此方法的返回值是Servlet 3.0 @AsyncContext@的一个实例。一旦获取到了@AsyncContext@的引用，你就可以使用Grails的render方法来渲染内容了：
+
+{code}
+def index() {
+    def ctx = startAsync()
+    ctx.start {
+        new Book(title:"The Stand").save()
+        render template:"books", model:[books:Book.list()]
+        ctx.complete()
+    }
+}
+{code}
+
+注意！你必须要调用@complete()@方法来中止此连接。
+
+{hidden}
 h4. Resuming an Async Request
 
 You resume processing of an async request (for example to delegate to view rendering) by using the @dispatch@ method of the @AsyncContext@ class:
+
+{code}
+def index() {
+    def ctx = startAsync()
+    ctx.start {
+        // do working
+        ...
+        // render view
+        ctx.dispatch()
+    }
+}
+{code}
+{hidden}
+
+h4. 恢复一个异步请求
+
+你可以通过@AsyncContext@类的@dispatch@方法来恢复一个异步请求（比如将其代理到一个视图）：
 
 {code}
 def index() {
