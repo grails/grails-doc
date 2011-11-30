@@ -1,7 +1,14 @@
+{hidden}
 Data binding is the act of "binding" incoming request parameters onto the properties of an object or an entire graph of objects. Data binding should deal with all necessary type conversion since request parameters, which are typically delivered by a form submission, are always strings whilst the properties of a Groovy or Java object may well not be.
 
 Grails uses [Spring|http://www.springframework.org]'s underlying data binding capability to perform data binding.
+{hidden}
 
+数据绑定是"绑定"输入的请求参数到一个对象的属性或者整个对象的行为。数据绑定将自动转换请求参数的类型，这些参数通常是通过表单提交来的String类型的值，而Groovy或者Java对象的属性很可能不是。
+
+Grails是使用[Spring|http://www.springframework.org]的基本数据绑定能力来完成数据绑定。
+
+{hidden}
 h4. Binding Request Data to the Model
 
 There are two ways to bind request parameters onto the properties of a domain class. The first involves using a domain classes' Map constructor:
@@ -30,7 +37,38 @@ def save() {
 {code}
 
 This has the same effect as using the implicit constructor.
+{hidden}
 
+h4. 绑定请求数据到领域模型
+
+有两种方法将请求参数绑定到一个领域类的属性上。第一个是使用领域类的构造函数，只要参数类型是Map类型即可：
+
+{code:java}
+def save() {
+    def b = new Book(params)
+    b.save()
+}
+{code}
+
+数据绑定是在@new Book(params)@代码中发生的。将参数params对象传递给到领域类的构造器时，Grails就可以自动识别你正在试图绑定来自请求中的参数。因此，假设我们有一个如下面所示的输入请求：
+
+{code:java}
+/book/save?title=The%20Stand&author=Stephen%20King
+{code}
+
+那么，@title@和@author@请求参数将自动被设置到领域类上。你也可以使用已经存在实例的[properties|domainClasses]属性来执行数据绑定：
+
+{code:java}
+def save() {
+    def b = Book.get(params.id)
+    b.properties = params
+    b.save()
+}
+{code}
+
+这与使用隐式构造函数是完全一样的
+
+{hidden}
 h4. Data binding and Single-ended Associations
 
 If you have a @one-to-one@ or @many-to-one@ association you can use Grails' data binding capability to update these relationships too. For example if you have an incoming request such as:
@@ -50,7 +88,29 @@ An association property can be set to @null@ by passing the literal @String@ "nu
 {code:java}
 /book/save?author.id=null
 {code}
+{hidden}
 
+h4. 单关联的数据绑定
+
+如果你有一个@one-to-one@或者@many-to-one@关联，你也可以利用Grails的数据绑定能力来更新它们，比如：
+
+{code:java}
+/book/save?author.id=20
+{code}
+
+Grails将自动检测后缀为@.id@请求参数，并且在数据绑定的时候，会查找指定id的@Author@实例，比如：
+
+{code:java}
+def b = new Book(params)
+{code}
+
+一个关联属性也可以被设置为@null@，只要传给的@String@类型的"null"即可。比如：
+
+{code:java}
+/book/save?author.id=null
+{code}
+
+{hidden}
 h4. Data Binding and Many-ended Associations
 
 If you have a one-to-many or many-to-many association there are different techniques for data binding depending of the association type.
@@ -131,7 +191,90 @@ Binding to a @Map@ property works the same way except that the list index in the
 {code}
 
 This would bind the selected image into the @Map@ property @images@ under a key of @"cover"@.
+{hidden}
 
+h4. 多关联的数据绑定
+
+如果你有一个one-to-many或者many-to-many的关联，那么根据关联类型的不同，将对应不同的数据绑定技术。
+
+如果你使用基于@Set@的关联（@hasMany@缺省就是此种关联），那么最简单的方法就是传递一个标识符列表。比如下边@<g:select>@的用法：
+
+{code:xml}
+<g:select name="books"
+          from="${Book.list()}"
+          size="5" multiple="yes" optionKey="id"
+          value="${author?.books}" />
+{code}
+
+这将产生一个允许选择多个值的下拉框／选择框（select box）。上例中，如果你提交表单的话，Grails根据选择框的传来的标识符来自动关联@books@。
+
+即便如此，类似的情况下，你想使用此技术来更新关联对象饿属性，将行不通。不过你可以通过下标（subscript）操作符的方式来实现，比如：
+
+{code:xml}
+<g:textField name="books[0].title" value="the Stand" />
+<g:textField name="books[1].title" value="the Shining" />
+{code}
+
+此外，基于@Set@的关联还是有一个严重问题，那就是你要更新的内容总是以同样的顺序渲染的，这是因为@Set@本来就没有顺序的概念，虽然你可以通过@books[0]@和@books[1]@来索引，但这并不能保证其关联顺序在服务器端也一致，当然你可以通过明确指定排序来比避免。
+
+如果你使用基于@List@的关联的话，这并不是问题，因为@List@已经是有序的，并且可以通过索引进行引用。基于@Map@的关联也是。
+
+还要注意的是，如果你正在绑定的关联是有大小的，最外侧的那个元素所在位置就是关联的大小：
+
+{code:xml}
+<g:textField name="books[0].title" value="the Stand" />
+<g:textField name="books[1].title" value="the Shining" />
+<g:textField name="books[2].title" value="Red Madder" />
+{code}
+
+Grails将在你定义的位置自动创建一个实例。如果你中间“跳过”一些元素，比如：
+
+{code:xml}
+<g:textField name="books[0].title" value="the Stand" />
+<g:textField name="books[1].title" value="the Shining" />
+<g:textField name="books[5].title" value="Red Madder" />
+{code}
+
+Grails将会自动创建中间跳过的实例。在上述示例中，关联的边界大小是2,Grails将在此基础上创建4个额外的实例。
+
+你也可以使用和单关联那样的@.id@语法来绑定类型是@List@且已存在的关联，比如：
+
+{code:xml}
+<g:select name="books[0].id" from="${bookList}"
+          value="${author?.books[0]?.id}" />
+
+<g:select name="books[1].id" from="${bookList}"
+          value="${author?.books[1]?.id}" />
+
+<g:select name="books[2].id" from="${bookList}"
+          value="${author?.books[2]?.id}" />
+{code}
+
+将允许@books List@中各自独立的实体分别进行选择。
+
+同样的方法也可以用来删除特定的索引元素，比如：
+
+{code:xml}
+<g:select name="books[0].id"
+          from="${Book.list()}"
+          value="${author?.books[0]?.id}"
+          noSelection="['null': '']"/>
+{code}
+
+将渲染一个可以删除关联@books[0]@的下拉框，当然只有选择项是空的时候才行。
+
+绑定到@Map@属性的工作方式也是如此，不过要将参数名称中的列表索引替换为映射（map）的键（key）：
+
+{code:xml}
+<g:select name="images[cover].id"
+          from="${Image.list()}"
+          value="${book?.images[cover]?.id}"
+          noSelection="['null': '']"/>
+{code}
+
+会将选择的图片通过键@"cover"@绑定到@Map@类型的@images@中。
+
+{hidden}
 h4. Data binding with Multiple domain classes
 
 It is possible to bind data to multiple domain objects from the [params|controllers] object.
@@ -153,7 +296,31 @@ Notice how we use the prefix before the first dot of the @book.title@ parameter 
 {code:java}
 def a = new Author(params.author)
 {code}
+{hidden}
 
+h4. 多领域类的数据绑定
+
+通过[params|controllers]对象，是有可能将将数据绑定到多个领域对象的。
+
+比如下面的输入请求：
+
+{code:java}
+ /book/save?book.title=The%20Stand&author.name=Stephen%20King
+{code}
+
+你将会注意到上述请求的差异，即每一个参数都有一个前缀，比如@author.@或者@book.@ ，它们通常用来隔离参数所属的类型。Grails的@params@对象更象是一个多维的哈希表（hash），你可以单独地只绑定参数的一个子集。
+
+{code:java}
+def b = new Book(params.book)
+{code}
+
+请注意我们是如何利用@book.title@参数的前缀（第一个点以前部分）来隔离此领域的子参数的。同样我们也可以用于领域类@Author@：
+
+{code:java}
+def a = new Author(params.author)
+{code}
+
+{hidden}
 h4. Data Binding and Action Arguments
 
 Controller action arguments are subject to request parameter data binding.  There are 2 categories of controller action arguments.  The first category is command objects.  Complex types are treated as command objects.  See the [Command Objects|guide:commandObjects] section of the user guide for details.  The other category is basic object types.  Supported types are the 8 primitives, their corresponding type wrappers and [java.lang.String|api:java.lang.String].  The default behavior is to map request parameters to action arguments by name:
@@ -191,8 +358,47 @@ class AccountingController {
    }
 }
 {code}
+{hidden}
 
+h4. 数据绑定和操作参数
 
+控制器的操作参数是绑定请求参数的主题，目前主要有2大类的操作参数。第一大类是命令对象，复杂类型的都被看作命令对象，更多详细请看本手册的[命令对象|guide:commandObjects]章节。另外一大类是基本的对象类型，所支持的类型包括8个原生类型及其对应的包装类和[java.lang.String|api:java.lang.String]。缺省情况下，从请求参数到操作参数的映射是通过名称来完成的，比如：
+
+{code:java}
+class AccountingController {
+
+   // accountNumber will be initialized with the value of params.accountNumber
+   // accountType will be initialized with params.accountType
+   def displayInvoice(String accountNumber, int accountType) {
+       // ...
+   }
+}
+{code}
+
+对于参数是原生类型和其包装类实例来说，在请求参数要绑定到操作参数以前，是要执行一个类型转换的，不过此转换是自动完成的。以上述示例为例，请求参数@params.accountType@必须要转换成@int@才行。如果此转换失败了，不管什么原因导致，此参数将根据普通的Java行为进行设置（包装类是null，布尔类型是false，数字类型是0），并且产生一个相应的错误信息到控制器的@errors@属性中。
+
+{code:java}
+/accounting/displayInvoice?accountNumber=B59786&accountType=bogusValue
+{code}
+
+因为"bogusValue"不能被转换为int，所以accountType的值为0 ，而@controller.errors.hasErrors()@将返回true，@controller.errors.errorCount@的数值是1，并且@controller.errors.getFieldError('accountType')@将包含其对应的出错信息。
+
+如果参数名称跟请求参数的名称并不匹配，那么可以使用@\@grails.web.RequestParameter@注解解决，只需要将要转换的请求参数名传递给注解即可：
+
+{code:java}
+import grails.web.RequestParameter
+
+class AccountingController {
+
+   // mainAccountNumber will be initialized with the value of params.accountNumber
+   // accountType will be initialized with params.accountType
+   def displayInvoice(@RequestParameter('accountNumber') String mainAccountNumber, int accountType) {
+       // ...
+   }
+}
+{code}
+
+{hidden}
 h4. Data binding and type conversion errors
 
 Sometimes when performing data binding it is not possible to convert a particular String into a particular target type. This results in a type conversion error. Grails will retain type conversion errors inside the [errors|domainClasses] property of a Grails domain class. For example:
@@ -232,7 +438,49 @@ Or a more specific one:
 {code:java}
 typeMismatch.Book.publisherURL=The publisher URL you specified is not a valid URL
 {code}
+{hidden}
 
+h4. 数据绑定和类型转换错误
+
+有时，在执行数据绑定时，可能不会把一个特殊的String转换到特殊的目标类型。这样，你就得到一个类型转换错误。Grails将类型转换错误保存到领域类的[errors|domainClasses]属性中。比如：：
+
+{code:java}
+class Book {
+    ...
+    URL publisherURL
+}
+{code}
+
+此处，我们拥有一个领域类@Book@，它使用了类@java.net.URL@来存储URLs。现在假设请求如下：
+
+{code:java}
+  /book/save?publisherURL=a-bad-url
+{code}
+
+要将字符串@a-bad-url@绑定到@publisherURL@属性是不可能的，因为发生了类型不匹配的错误。你可以象下面那样进行检查：
+
+{code:java}
+def b = new Book(params)
+
+if (b.hasErrors()) {
+    println "The value ${b.errors.getFieldError('publisherURL').rejectedValue}" +
+            " is not a valid URL!"
+}
+{code}
+
+虽然我们还没有涉及到错误编码（更多信息请参考[校验|guide:validation]章节），但对于类型转换错误，还是推荐你使用@grails-app/i18n/messages.properties@文件来定义错误信息。你可以使用通用的错误消息处理，比如：
+
+{code:java}
+typeMismatch.java.net.URL=The field {0} is not a valid URL
+{code}
+
+或者更准确地指定：
+
+{code:java}
+typeMismatch.Book.publisherURL=The publisher URL you specified is not a valid URL
+{code}
+
+{hidden}
 h4. Data Binding and Security concerns
 
 When batch updating properties from request parameters you need to be careful not to allow clients to bind malicious data to domain classes and be persisted in the database. You can limit what properties are bound to a given domain class using the subscript operator:
@@ -270,4 +518,44 @@ bindData(p, params, [include: ['firstName', 'lastName]])
 
 {note}
 Note that if an empty List is provided as a value for the @include@ parameter then all fields will be subject to binding if they are not explicitly excluded.
+{note}
+{hidden}
+
+h4. 数据绑定和安全
+
+当从请求参数进行批量地更新领域类地属性时，你要当心，绝不允许让用户的恶意数据绑定到领域类，并且持久化到数据库中。你可以使用下标操作符来限制那些属性可以被绑定到给定的领域类：
+
+{code:java}
+def p = Person.get(1)
+
+p.properties['firstName','lastName'] = params
+{code}
+
+此处，只有@firstName@和@lastName@属性将被绑定。
+
+另外一种方法是使用[命令对象|guide:commandObjects]来替代领域类进行数据绑定。或者使用更灵活的[bindData|controllers]方法来绑定。
+
+@bindData@方法具有同样的数据绑定能力，不过可以是任意对象：
+
+{code:java}
+def p = new Person()
+bindData(p, params)
+{code}
+
+@bindData@方法还可以排除那些你不想更新的某些参数／属性：
+
+{code:java}
+def p = new Person()
+bindData(p, params, [exclude: 'dateOfBirth'])
+{code}
+
+或者仅仅包含某些属性：
+
+{code:java}
+def p = new Person()
+bindData(p, params, [include: ['firstName', 'lastName]])
+{code}
+
+{note}
+注意！如果@include@参数值是一个空的列表，并且没有指定排除的话，那么所有的字段属性将被绑定。
 {note}

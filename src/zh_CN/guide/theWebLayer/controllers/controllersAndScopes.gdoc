@@ -1,3 +1,4 @@
+{hidden}
 h4. Available Scopes
 
 Scopes are hash-like objects where you can store variables. The following scopes are available to controllers:
@@ -7,7 +8,19 @@ Scopes are hash-like objects where you can store variables. The following scopes
 * [request|controllers] - The request object allows the storage of objects for the current request only. The request object is an instance of [HttpServletRequest|api:javax.servlet.http.HttpServletRequest]
 * [params|controllers] - Mutable map of incoming request query string or POST parameters
 * [flash|controllers] - See below
+{hidden}
 
+h4. 有效作用域
+
+作用域就像是hash对象，允许你存储变量。以下是控制器有效作用域：
+
+* [servletContext|controllers] - 也被叫做应用级别范围，它允许你共享整个web应用的状态。 servletContext对象是[ServletContext|api:javax.servlet.ServletContext]的一个实例
+* [session|controllers] - 会话（session）允许关联某个用户的状态，通常使用Cookie把会话与客户端关联起来。session对象是[HttpSession|api:javax.servlet.http.HttpSession]的一个实例
+* [request|controllers] - 请求对象仅为当前的请求存储对象。request对象是[HttpServletRequest|api:javax.servlet.http.HttpServletRequest]的一个实例
+* [params|controllers] - 带查询字串（query string）或者POST参数输入请求的可变map
+* [flash|controllers] - 见下文
+
+{hidden}
 h4. Accessing Scopes
 
 Scopes can be accessed using the variable names above in combination with Groovy's array index operator, even on classes provided by the Servlet API such as the [HttpServletRequest|api:javax.servlet.http.HttpServletRequest]:
@@ -35,7 +48,37 @@ class BookController {
 {code}
 
 This is one of the ways that Grails unifies access to the different scopes.
+{hidden}
 
+h4. 访问作用域
+
+作用域可以通过上述提到的变量名和Groovy的数组索引操作符的方式来访问，即使这些类是Servlet API的类，例如[HttpServletRequest|api:javax.servlet.http.HttpServletRequest]也可以用，比如：
+
+{code:java}
+class BookController {
+    def find() {
+        def findBy = params["findBy"]
+        def appContext = request["foo"]
+        def loggedUser = session["logged_user"]
+    }
+}
+{code}
+
+你甚至可以使用"."操作符来访问作用域的值，这样使语法更加简洁清晰：
+
+{code:java}
+class BookController {
+    def find() {
+        def findBy = params.findBy
+        def appContext = request.foo
+        def loggedUser = session.logged_user
+    }
+}
+{code}
+
+这是统一访问不同作用域的方式之一。
+
+{hidden}
 h4. Using Flash Scope
 
 Grails supports the concept of [flash|controllers] scope as a temporary store to make attributes available for this request and the next request only. Afterwards the attributes are cleared. This is useful for setting a message directly before redirecting, for example:
@@ -54,7 +97,28 @@ def delete() {
 When the @list@ action is requested, the @message@ value will be in scope and can be used to display an information message. It will be removed from the @flash@ scope after this second request.
 
 Note that the attribute name can be anything you want, and the values are often strings used to display messages, but can be any object type.
+{hidden}
 
+h4. 使用Flash作用域
+
+Grails支持[flash|controllers]作用域的概念，它只存贮本次请求和下次请求之间临时用到的属性，随后属性值将被清除。这在重定向之前，设置提示消息是非常有用的，比如：
+
+{code:java}
+def delete() {
+    def b = Book.get(params.id)
+    if (!b) {
+        flash.message = "User not found for id ${params.id}"
+        redirect(action:list)
+    }
+    ... // remaining code
+}
+{code}
+
+当@list@操作被请求时，@message@的值在此范围内有效，可以用以显示一个提示信息。在第二次请求的时候，此值将从@flash@作用域移除。
+
+注意，属性的名称可以是你期望的任何东西，其值多是用以显示信息的字符串，不过也可以是任何对象。
+
+{hidden}
 h4. Scoped Controllers
 
 By default, a new controller instance is created for each request. In fact, because the controller is @prototype@ scoped, it is thread-safe since each request happens on its own thread.
@@ -79,4 +143,31 @@ grails.controllers.defaultScope = "singleton"
 
 {note}
 Use scoped controllers wisely. For instance, we don't recommend having any properties in a singleton-scoped controller since they will be shared for _all_ requests. Setting a default scope other than @prototype@ may also lead to unexpected behaviors if you have controllers provided by installed plugins that expect that the scope is @prototype@.
+{note}
+{hidden}
+
+h4. 控制器的作用域
+
+通常，每一个请求会创建一个控制器实例。事实上，是因为控制器的作用域是@prototype@，并且每个请求都有自己的线程，所以控制器是线程安全的。
+
+不过，你还是可以在控制器内放置一个特定的作用域来改变这种行为。其支持的作用域如下：
+
+* @prototype@ （缺省） - 每一次请求创建一个新的控制器实例（当操作为必包属性时推荐使用）
+* @session@ - 在一个用户会话的作用域内只创建一个控制器实例
+* @singleton@ - 自始自终只有一个控制器实例（当操作时一个方法时推荐使用）
+
+要想使用上述的作用域，请在类内增加一个静态的@scope@属性，并且使用上述作用域之一为其赋值，比如：
+
+{code:java}
+static scope = "singleton"
+{code}
+
+你也可以在@Config.groovy@中改变@grails.controllers.defaultScope@的值来改变缺省策略，比如
+
+{code:java}
+grails.controllers.defaultScope = "singleton"
+{code}
+
+{note}
+请明智的使用控制器的作用域。比如我们不推荐singleton作用域的控制器有任何属性，因为他们将在 _所有_ 的请求共享。此外，如果你安装的插件的控制器是@prototype@的，那么修改缺省的@prototype@作用域也可能导致不可预知的行为。
 {note}
