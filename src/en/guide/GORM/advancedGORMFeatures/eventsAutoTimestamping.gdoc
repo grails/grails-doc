@@ -165,6 +165,56 @@ class Person {
 
 h4. Custom Event Listeners
 
+As of Grails 2.0 there is a new API for plugins and applications to register and listen for persistence events. This API is not tied to Hibernate and also works for other persistence plugins such as the [MongoDB plugin for GORM|http://grails.org/plugin/mongodb].
+
+To use this API you need to subclass the @org.grails.datastore.mapping.engine.event.AbstractPersistenceEventListener@ and implement a single method called @onPersistenceEvent@. The simplest possible implementation can be seen below:
+
+{code}
+@Override
+protected void onPersistenceEvent(final AbstractPersistenceEvent event) {
+    switch(event.eventType) {
+        case PreInsert:
+            println "PRE INSERT ${event.entityObject}"
+        break
+        case PostInsert:
+            println "POST INSERT ${event.entityObject}"
+        break
+        case PreUpdate:
+            println "PRE UPDATE ${event.entityObject}"
+        break;
+        case PostUpdate:
+            println "POST UPDATE ${event.entityObject}"
+        break;
+        case PreDelete:
+            println "PRE DELETE ${event.entityObject}"
+        break;
+        case PostDelete:
+            println "POST DELETE ${event.entityObject}"
+        break;
+        case PreLoad:
+            println "PRE LOAD ${event.entityObject}"
+        break;
+        case PostLoad:
+            println "POST LOAD ${event.entityObject}"
+        break;
+    }
+}
+{code}
+
+The @AbstractPersistenceEvent@ class has many subclasses (@PreInsertEvent@, @PostInsertEvent@ etc.) that provide further information specific to the event. A @cancel()@ method is also provided on the event which allows you to veto an insert, update or delete operation.
+
+Once you have created your event listener you need to register it with the @ApplicationContext@. This can be done in @BootStrap.groovy@:
+
+{code}
+def init = {
+    applicationContext.addApplicationListener(new MyPersistenceListener())
+}
+{code}
+
+h4. Hibernate Events
+
+It is generally encouraged to use the non-Hibernate specific API described above, but if you need access to more detailed Hibernate events then you can define custom Hibernate-specific event listeners.
+
 You can also register event handler classes in an application's @grails-app/conf/spring/resources.groovy@ or in the @doWithSpring@ closure in a plugin descriptor by registering a Spring bean named @hibernateEventListeners@. This bean has one property, @listenerMap@ which specifies the listeners to register for various Hibernate events.
 
 The values of the Map are instances of classes that implement one or more Hibernate listener interfaces. You can use one class that implements all of the required interfaces, or one concrete class per interface, or any combination. The valid Map keys and corresponding interfaces are listed here:
