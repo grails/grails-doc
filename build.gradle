@@ -1,6 +1,6 @@
 apply plugin: "base"
 
-version = System.getProperty("grails.version") ?: "1.4.0.BUILD-SNAPSHOT"
+version = System.getProperty("grails.version") ?: "2.0.0.RC2"
 
 archivesBaseName = "grails-docs"
 
@@ -14,20 +14,17 @@ configurations {
     publish
 }
 
-repositories {
-    mavenRepo urls: "http://repo.grails.org/grails/core"
-    mavenCentral()
-    mavenRepo urls: "http://snapshots.repository.codehaus.org/"
-}
+buildscript {
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        mavenRepo urls: "http://repo.grails.org/grails/core"
+        mavenRepo urls: "http://snapshots.repository.codehaus.org/"
+    }
 
-dependencies {
-    // Required while picking up grails-docs from dist dir.
-    publish "org.grails:grails-gdoc-engine:1.0.1", "org.codehaus.groovy:groovy:1.8.0"
-
-    publish "org.slf4j:slf4j-log4j12:1.5.8",
-            "org.xhtmlrenderer:core-renderer:R8",
-            "org.yaml:snakeyaml:1.8",
-            "commons-lang:commons-lang:2.4"
+    dependencies {
+        classpath "org.grails:grails-docs:2.0.0.RC2"
+    }
 }
 
 task fetchGrailsSource << {
@@ -51,68 +48,41 @@ task fetchGrailsSource << {
 fetchGrailsSource.onlyIf { !explicitGrailsHome }
 
 task apiDocs(type: GradleBuild, dependsOn: 'fetchGrailsSource') {
-    def deps = [":grails-docs:install"]
-    if (!System.getProperty("disable.groovydocs")) {
-        deps << 'groovydoc'
-    }
-    tasks = deps
+    tasks = ["groovydoc"]
     buildFile = "${project.grailsHome}/build.gradle"
 }
+
+apiDocs.onlyIf { !System.getProperty("disable.groovydocs") }
 
 task copyApiDocs(type: Copy) {
     from "${project.grailsHome}/doc/api"
     into "${outputDir}/api"
 }
 
-task createPublishClassLoader << {
-    // Create a class loader for the publication stuff.
-    def classpath = project.configurations.publish
-    classpath = classpath.files.collect { it.toURI().toURL() }
+task migrate(type: grails.doc.gradle.MigrateLegacyDocs)
 
-    // Add the grails-docs JAR.
-    def distDir = project.file("${project.grailsHome}/dist")
-    def grailsDocJars = distDir.listFiles({ dir, name -> name ==~ /grails-docs-.*\.jar/ } as FilenameFilter)
-    if (grailsDocJars.size() > 1) {
-        throw new RuntimeException("Found multiple grails-doc JARs in ${distDir}")
-        
-    }
-    else if (grailsDocJars.size() == 0) {
-        throw new RuntimeException("No grails-doc JAR found in ${distDir}")
+task publishGuide(type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs']) {
+    def searchDirs = project.file(project.grailsHome).listFiles().findAll {
+        new File(it, "src/main/groovy/org/codehaus/groovy/grails").exists()
+    }.collect {
+        new File(it, "src/main/groovy/org/codehaus/groovy/grails")
     }
 
-    classpath << grailsDocJars[0].toURI().toURL()
-    project.publishClassLoader = new URLClassLoader(
-            classpath as URL[],
-            buildscript.classLoader)
-}
-
-task migrate(dependsOn: ['createPublishClassLoader']) << {
-    def props = new Properties()
-    new File("${projectDir}/resources/doc.properties").withInputStream {input ->
-        props.load(input)
-    }
-    props = props.findAll { key, value -> key.startsWith("alias.") }.collectEntries { key, value -> [key[6..-1], value] }
-
-    def migrator = publishClassLoader.loadClass("grails.doc.LegacyDocMigrator").newInstance(
-            file(projectDir.path + "/src/guide"),
-            props)
-    migrator.migrate()
-}
-
-task publishGuide(type: PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs', 'createPublishClassLoader']) {
     // No language setting because we want the English guide to be
     // generated with a 'en' in the path, but the source is in 'en'
     // so that it's easy to track with git.
     sourceDir = new File(projectDir, "src/en")
+    propertiesFiles = [ new File(project.grailsHome, "build.properties") ]
+    macros = [ new grails.doc.macros.GspTagSourceMacro(searchDirs) ]
 }
 
-task publishPdf(type: PublishPdf, dependsOn: ['publishGuide'])
+task publishPdf(type: grails.doc.gradle.PublishPdf, dependsOn: ['publishGuide'])
 
 tasks.addRule("Pattern: publishGuide_<lang>") { String taskName ->
     def m = taskName =~ /publishGuide_(\w+)/
     if (m) {
         def lang = m[0][1]
-        task(taskName, type: PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs', 'createPublishClassLoader']) {
+        task(taskName, type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs']) {
             language = lang
         }
     }
@@ -122,7 +92,7 @@ tasks.addRule("Pattern: publishPdf_<lang>") { String taskName ->
     def m = taskName =~ /publishPdf_(\w+)/
     if (m) {
         def lang = m[0][1]
-        task(taskName, type: PublishPdf, dependsOn: "publishGuide_${lang}") {
+        task(taskName, type: grails.doc.gradle.PublishPdf, dependsOn: "publishGuide_${lang}") {
             language = lang
         }
     }
@@ -145,95 +115,5 @@ artifacts {
 }
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '1.0-milestone-3'
-}
-
-class PublishGuide extends DefaultTask {
-    File sourceDir = new File(project.projectDir, "src")
-    File targetDir = project.outputDir as File
-    File workDir = project.buildDir as File
-    File resourcesDir = new File(project.projectDir, "resources")
-    String language
-
-    @TaskAction
-    def publishGuide() {
-        def props = new Properties()
-        new File("${resourcesDir}/doc.properties").withInputStream {input ->
-            props.load(input)
-        }
-        new File("${project.grailsHome}/build.properties").withInputStream {input ->
-            props.load(input)
-        }
-
-        def publisher = project.publishClassLoader.loadClass("grails.doc.DocPublisher").newInstance(project.file(sourceDir), project.file(targetDir))
-        publisher.ant = ant
-        publisher.workDir = workDir
-        publisher.apiDir = "${project.outputDir}" as File
-        publisher.language = language ?: ''
-        publisher.images = project.file("${resourcesDir}/img")
-        publisher.css = project.file("${resourcesDir}/css")
-        publisher.js = project.file("${resourcesDir}/js")
-        publisher.style = project.file("${resourcesDir}/style")
-        publisher.version = props."grails.version"
-        publisher.logo = '<a href="http://grails.org" target="_blank"><img alt="Grails Logo" title="The Grails Framework" src="${path}/img/grails.png" border="0"/></a>'
-        publisher.sponsorLogo = '<a href="http://springsource.com" target="_blank"><img alt="SpringSource Logo" title="SpringSource - Weapons for the War on Java Complexity" src="${path}/img/springsource-logo.png" border="0"/></a>'
-
-        // Override doc.properties properties with their language-specific counterparts (if
-        // those are defined). You just need to add entries like es.title or pt_PT.subtitle.
-        if (language) {
-            def pos = language.size() + 1
-            def languageProps = props.findAll { k, v -> k.startsWith("${language}.") }
-            languageProps.each { k, v -> props[k[pos..-1]] = v }
-        }
-
-        // Aliases and other doc.properties entries are passed in as engine properties. This
-        // is how the doc title, subtitle, etc. are set.
-        publisher.engineProperties = props
-
-        // Add support for displaying the source code for GSP tags.
-        def sourceMacro = project.publishClassLoader.loadClass("grails.doc.macros.GspTagSourceMacro")
-        def searchDirs = project.file(project.grailsHome).listFiles().findAll {
-            new File(it, "src/main/groovy/org/codehaus/groovy/grails").exists()
-        }.collect {
-            new File(it, "src/main/groovy/org/codehaus/groovy/grails")
-        }
-
-        // {hidden} macro for enabling translations.
-        def hiddenMacro = project.publishClassLoader.loadClass("grails.doc.macros.HiddenMacro")
-
-        publisher.registerMacro(sourceMacro.newInstance(searchDirs))
-        publisher.registerMacro(hiddenMacro.newInstance())
-
-        // Radeox loads its bundles off the context class loader, which
-        // unfortunately doesn't contain the grails-docs JAR. So, we
-        // temporarily switch the DocPublisher class loader into the
-        // thread so that the Radeox bundles can be found.
-        def oldClassLoader = Thread.currentThread().contextClassLoader
-        Thread.currentThread().contextClassLoader = publisher.getClass().classLoader
-
-        publisher.publish()
-
-        // Restore the old context class loader.
-        Thread.currentThread().contextClassLoader = oldClassLoader
-    }
-}
-
-class PublishPdf extends DefaultTask {
-    String language
-
-    @TaskAction
-    def publish() {
-        try {
-            def baseDir = new File(project.outputDir, language ?: '')
-            def currFile = new File(baseDir, "guide/single.html")
-            def pdfBuilder = project.publishClassLoader.loadClass("grails.doc.PdfBuilder")
-            def xml = pdfBuilder.createXml(currFile, baseDir.absolutePath)
-            pdfBuilder.createPdf xml,
-                    new File(currFile.parentFile, currFile.name[0..-5] + "pdf"),
-                    new File(baseDir, "guide/single.html")
-        }
-        catch (Exception ex) {
-            ex.printStackTrace()
-        }
-    }
+    gradleVersion = '1.0-milestone-4'
 }
