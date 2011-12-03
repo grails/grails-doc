@@ -1,3 +1,4 @@
+{hidden}
 h4. Programmatic File Uploads
 
 Grails supports file uploads using Spring's [MultipartHttpServletRequest|api:org.springframework.web.multipart.MultipartHttpServletRequest] interface. The first step for file uploading is to create a multipart form like this:
@@ -29,7 +30,41 @@ def upload() {
 {code}
 
 This is convenient for doing transfers to other destinations and manipulating the file directly as you can obtain an @InputStream@ and so on with the [MultipartFile|api:org.springframework.web.multipart.MultipartFile] interface.
+{hidden}
 
+h4. 上传文件编程
+
+Grails通过Spring的[MultipartHttpServletRequest|api:org.springframework.web.multipart.MultipartHttpServletRequest]接口来支持文件上传。第一步就是要为文件上传创建一个multipart的表单，比如：
+
+{code:xml}
+Upload Form: <br />
+    <g:uploadForm action="upload">
+        <input type="file" name="myFile" />
+        <input type="submit" />
+    </g:uploadForm>
+{code}
+
+@uploadForm@标签在标准@<g:form>@标签的基础上添加了@enctype="multipart/form-data"@属性。
+
+此后就可以采用多种方式来处理文件上传。其一就是直接使用Spring的[MultipartFile|api:org.springframework.web.multipart.MultipartFile]：
+
+{code:java}
+def upload() {
+    def f = request.getFile('myFile')
+    if (f.empty) {
+        flash.message = 'file cannot be empty'
+        render(view: 'uploadForm')
+        return
+    }
+
+    f.transferTo(new File('/some/local/dir/myfile.txt'))
+    response.sendError(200, 'Done')
+}
+{code}
+
+此种方式适合于将文件传送到其他的目的地，直接使用获取到的@InputStream@来操作文件等，不过这都依赖于[MultipartFile|api:org.springframework.web.multipart.MultipartFile]接口。
+
+{hidden}
 h4. File Uploads through Data Binding
 
 File uploads can also be performed using data binding. Consider this @Image@ domain class:
@@ -54,6 +89,38 @@ def img = new Image(params)
 It's important that you set the [size|constraints] or [maxSize|constraints] constraints, otherwise your database may be created with a small column size that can't handle reasonably sized files. For example, both H2 and MySQL default to a blob size of 255 bytes for @byte[]@ properties.
 
 It is also possible to set the contents of the file as a string by changing the type of the @myFile@ property on the image to a String type:
+
+{code:java}
+class Image {
+   String myFile
+}
+{code}
+{hidden}
+
+h4. 文件上传和数据绑定
+
+文件上传也可以通过数据绑定来完成。假设如下的@Image@领域类：
+
+{code:java}
+class Image {
+    byte[] myFile
+
+    static constraints = {
+        // Limit upload file size to 2MB
+        myFile maxSize: 1024 * 1024 * 2
+    }
+}
+{code}
+
+如果你如下例所示那样，通过@params@的构造方法来创建一个图像（image），那么Grails将会自动地把文件内容转换为@byte[]@，并且绑定到@myFile@属性上：
+
+{code:java}
+def img = new Image(params)
+{code}
+
+非常重要地一点是你一定要设置[size|constraints]或者[maxSize|constraints]约束，否则的话，你的数据库可能会创建一个字段太少的列，这样就不能合理的处理文件。比如，对于属性类型是@byte[]@的，H2和MySQL缺省的blob大小是255字节。
+
+你也可以将@myFile@属性的类型改成字符串来保存文件的内容：
 
 {code:java}
 class Image {

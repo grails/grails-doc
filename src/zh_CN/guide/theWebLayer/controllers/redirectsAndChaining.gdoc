@@ -1,3 +1,4 @@
+{hidden}
 h4. Redirects
 
 Actions can be redirected using the [redirect|controllers] controller method:
@@ -70,7 +71,82 @@ redirect(controller: "test", action: "show", fragment: "profile")
 {code}
 
 which will (depending on the URL mappings) redirect to something like "/myapp/test/show#profile".
+{hidden}
 
+h4. 重定向
+
+操作可以使用控制器的[redirect|controllers]方法进行重定向：
+
+{code}
+class OverviewController {
+
+    def login() {}
+
+    def find() {
+        if (!session.user)
+            redirect(action: 'login')
+            return
+        }
+        ...
+    }
+}
+{code}
+
+本质上[redirect|controllers]方法是使用[HttpServletResponse|api:javax.servlet.http.HttpServletResponse]对象的@sendRedirect@方法来工作的。
+
+@redirect@方法的重定向目标用法如下：
+
+* 同一控制器类的另外一个闭包：
+
+{code}
+// Call the login action within the same class
+redirect(action: login)
+{code}
+
+* 操作的名称（如果要重定向的操作名不在同一个控制器内，还需要制定控制器名）：
+
+{code}
+// Also redirects to the index action in the home controller
+redirect(controller: 'home', action: 'index')
+{code}
+
+*  一个相对于应用上下文路径的URI
+
+{code}
+// Redirect to an explicit URI
+redirect(uri: "/login.html")
+{code}
+
+* 或者一个完整的URL：
+
+{code}
+// Redirect to a URL
+redirect(url: "http://grails.org")
+{code}
+
+从一个操作到下一个之间的参数是可选的，这可以使用此方法的@params@来实现：
+
+{code}
+redirect(action: 'myaction', params: [myparam: "myvalue"])
+{code}
+
+这些参数是有效的，因为它们是通过可以访问请求参数的[params|controllers]来实现的。如果一个参数跟请求参数同名，那么请求参数将被覆盖，控制器的参数将被优先使用。
+
+由于这个@params@对象就是一个Map，因此你可以使用它将当前的请求参数从一个操作传递到下个操作：
+
+{code}
+redirect(action: "next", params: params)
+{code}
+
+最后，你还可以在目标URI中包含片段（fragment）：
+
+{code}
+redirect(controller: "test", action: "show", fragment: "profile")
+{code}
+
+将重定向到类似于 "/myapp/test/show#profile" 的目标（依赖于URL映射）。
+
+{hidden}
 h4. Chaining
 
 Actions can also be chained. Chaining allows the model to be retained from one action to the next. For example calling the @first@ action in this action:
@@ -111,6 +187,52 @@ class ChainController {
 {code}
 
 Like the @redirect@ method you can also pass parameters to the @chain@ method:
+
+{code}
+chain(action: "action1", model: [one: 1], params: [myparam: "param1"])
+{code}
+{hidden}
+
+h4. 链（Chaining）
+
+操作同样可以作为一个链。在从一个操作传递到下个操作的时候，链一直保留着其模型。比如下面调用@first@操作的示例：
+
+{code}
+class ExampleChainController {
+
+    def first() {
+        chain(action: second, model: [one: 1])
+    }
+
+    def second () {
+        chain(action: third, model: [two: 2])
+    }
+
+    def third() {
+        [three: 3])
+    }
+}
+{code}
+
+此模型的结果是：
+
+{code}
+[one: 1, two: 2, three: 3]
+{code}
+
+此模型可以在随后控制器的操作中通过@chainModel@映射来访问。此动态属性只存在于调用@chain@方法的操作中：
+
+{code}
+class ChainController {
+
+    def nextInChain() {
+        def model = chainModel.myModel
+        ...
+    }
+}
+{code}
+
+根@redirect@方法一样，你可以传递参数给@chain@方法：
 
 {code}
 chain(action: "action1", model: [one: 1], params: [myparam: "param1"])

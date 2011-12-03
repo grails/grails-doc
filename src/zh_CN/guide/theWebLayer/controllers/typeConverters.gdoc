@@ -1,3 +1,4 @@
+{hidden}
 h3. Type Conversion Methods
 
 If you prefer to avoid the overhead of [Data Binding|guide:dataBinding] and simply want to convert incoming parameters (typically Strings) into another more appropriate type the [params|controllers] object has a number of convenience methods for each type:
@@ -15,12 +16,45 @@ def total = params.int('total', 42)
 {code}
 
 These same type conversion methods are also available on the @attrs@ parameter of GSP tags.
+{hidden}
 
+h3. 类型转换方法
+
+如果你倾向于避免[数据绑定|guide:dataBinding]的开销，而只想简单地将输入参数（通常是字符串）转换为另外更合适地类型，可以通过[params|controllers]对象提供的一些便利方法来实现：
+
+{code}
+def total = params.int('total')
+{code}
+
+上述示例使用的是@int@方法，除此之外还有@boolean@、@long@、@char@、@short@等方法。每一个方法都是空指针安全的（null-safe）和类型解析安全的，因此你也就不需要执行任何额外的参数检查了。
+
+每一个转换方法都允许将一个缺省值传递给第二个可选参数。如果映射中没有找到对应的实体或者进行转换的时候出现了错误，此缺省值将被返回。比如：
+
+{code}
+def total = params.int('total', 42)
+{code}
+
+同样的这些转换方法也适合于GSP标签的@attrs@参数。
+
+{hidden}
 h3. Handling Multi Parameters
 
 A common use case is dealing with multiple request parameters of the same name. For example you could get a query string such as @?name=Bob&name=Judy@.
 
 In this case dealing with one parameter and dealing with many has different semantics since Groovy's iteration mechanics for @String@ iterate over each character. To avoid this problem the [params|controllers] object provides a @list@ method that always returns a list:
+
+{code}
+for (name in params.list('name')) {
+    println name
+}
+{code}
+{hidden}
+
+h3. 处理多个重名参数
+
+我们会经常碰到要处理多个请求参数名相同的情况。比如得到你得到一个内容是@?name=Bob&name=Judy@的查询串
+
+这种情况下，处理一个参数和多个参数的语法是有些不同的，因为Groovy的@String@迭代是基于字符的。要避免此问题，可以使用[params|controllers]对象提供的@list@方法，此方法总是返回一个列表：
 
 {code}
 for (name in params.list('name')) {
