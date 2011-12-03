@@ -1,3 +1,4 @@
+{hidden}
 The previous section on on XML and JSON responses covered simplistic examples of rendering XML and JSON responses. Whilst the XML builder used by Grails is the standard "XmlSlurper":http://groovy.codehaus.org/Reading+XML+using+Groovy's+XmlSlurper found in Groovy, the JSON builder is a custom implementation specific to Grails.
 
 h4. JSONBuilder and Grails versions
@@ -9,7 +10,21 @@ For backwards compatibility the old @JSONBuilder@ class is used with the @render
 {code}
 grails.json.legacy.builder = false
 {code}
+{hidden}
 
+在以前关于XML和JSON响应的章节中，我们曾经简单地涉猎到渲染XML和JSON响应的例子。而Grails的XML生成器是Groovy标准的 "XmlSlurper":http://groovy.codehaus.org/Reading+XML+using+Groovy's+XmlSlurper ，JSON生成器是Grails自己实现的一个规范。
+
+h4. JSONBuilder和Grails版本
+
+JSONBuilder的行为根据你使用的Grails版本而有所不同。对于版本低于1.2，使用的是可以被废弃的[grails.web.JSONBuilder|api:grails.web.JSONBuilder]类。本节将涉及到Grails 1.2 JSONBuilder的用法。
+
+因为要兼容以前版本的原因，旧的@JSONBuilder@类被用于旧应用的@render@方法；而要使用更新更好的@JSONBuilder@类，需要在@Config.groovy@中做如下设置：
+
+{code}
+grails.json.legacy.builder = false
+{code}
+
+{hidden}
 h4. Rendering Simple Objects
 
 To render a simple JSON object just set properties within the context of the Closure:
@@ -25,7 +40,25 @@ The above will produce the JSON:
 {code}
 {"hello":"world"}
 {code}
+{hidden}
 
+h4. 渲染简单对象
+
+要渲染简单的JSON对象，只需要在闭包的上下内设置属性即可：
+
+{code}
+render(contentType: "text/json") {
+    hello = "world"
+}
+{code}
+
+上述将产生如下JSON输出：
+
+{code}
+{"hello":"world"}
+{code}
+
+{hidden}
 h4. Rendering JSON Arrays
 
 To render a list of objects simple assign a list:
@@ -71,7 +104,55 @@ The above code produces:
 {code}
 [1,2,3]
 {code}
+{hidden}
 
+h4. 渲染JSON数组
+
+要渲染一个对象的列表，只需要简单给其赋值一个列表即可：
+
+{code}
+render(contentType: "text/json") {
+    categories = ['a', 'b', 'c']
+}
+{code}
+
+这将输出：
+
+{code}
+{"categories":["a","b","c"]}
+{code}
+
+你也可以渲染复杂对象的列表，比如：
+
+{code}
+render(contentType: "text/json") {
+    categories = [ { a = "A" }, { b = "B" } ]
+}
+{code}
+
+这将输出：
+
+{code}
+{"categories":[ {"a":"A"} , {"b":"B"}] }
+{code}
+
+使用特定的@element@方法可以返回一个根范围的列表：
+
+{code}
+render(contentType: "text/json") {
+    element 1
+    element 2
+    element 3
+}
+{code}
+
+上述代码产生如下输出：
+
+{code}
+[1,2,3]
+{code}
+
+{hidden}
 h4. Rendering Complex Objects
 
 Rendering complex objects can be done with Closures. For example:
@@ -91,7 +172,29 @@ The above will produce the JSON:
 {code}
 {"categories":["a","b","c"],"title":"Hello JSON","information":{"pages":10}}
 {code}
+{hidden}
 
+h4. 渲染复杂对象
+
+渲染复杂对象要在闭包内完成，比如：
+
+{code}
+render(contentType: "text/json") {
+    categories = ['a', 'b', 'c']
+    title = "Hello JSON"
+    information = {
+        pages = 10
+    }
+}
+{code}
+
+上述将输出JSON：
+
+{code}
+{"categories":["a","b","c"],"title":"Hello JSON","information":{"pages":10}}
+{code}
+
+{hidden}
 h4. Arrays of Complex Objects
 
 As mentioned previously you can nest complex objects within arrays using Closures:
@@ -114,10 +217,58 @@ render(contentType: "text/json") {
     }
 }
 {code}
+{hidden}
 
+h4. 复杂对象数组
+
+如前面所提到的，你可以在闭包内使用嵌套的复杂对象来实现数组：
+
+{code}
+render(contentType: "text/json") {
+    categories = [ { a = "A" }, { b = "B" } ]
+}
+{code}
+
+你也可以使用@array@方法来动态地构建它们：
+
+{code}
+def results = Book.list()
+render(contentType: "text/json") {
+    books = array {
+        for (b in results) {
+            book title: b.title
+        }
+    }
+}
+{code}
+
+{hidden}
 h4. Direct JSONBuilder API Access
 
 If you don't have access to the @render@ method, but still want to produce JSON you can use the API directly:
+
+{code}
+def builder = new JSONBuilder()
+
+def result = builder.build {
+    categories = ['a', 'b', 'c']
+    title = "Hello JSON"
+    information = {
+        pages = 10
+    }
+}
+
+// prints the JSON text
+println result.toString()
+
+def sw = new StringWriter()
+result.render sw
+{code}
+{hidden}
+
+h4. 直接使用JSONBuilder API
+
+如果你不能使用@render@方法，你还是可以通过直接使用API来产生JSON的：
 
 {code}
 def builder = new JSONBuilder()
