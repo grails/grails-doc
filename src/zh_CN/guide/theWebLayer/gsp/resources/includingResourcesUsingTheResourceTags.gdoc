@@ -1,3 +1,4 @@
+{hidden}
 h4. Pulling in resources with r:require
 
 To use resources, your GSP page must indicate which resource modules it requires. For example with the [jQuery plugin|http://grails.org/plugin/jquery], which exposes a "jquery" resource module, to use jQuery in any page on your site you simply add:
@@ -35,7 +36,47 @@ You can call @r:require@ multiple times in a GSP page, and you use the "modules"
 The above may result in many JavaScript and CSS files being included, in the correct order, with some JavaScript files loading at the end of the body to improve the apparent page load time.
 
 However you cannot use r:require in isolation - as per the examples you must have the <r:layoutResources/> tag to actually perform the render.
+{hidden}
 
+h4. 使用r:require获取资源
+
+要使用资源，你的GSP页面必须要知道那些资源模块是所需要的。以[jQuery插件|http://grails.org/plugin/jquery]为例，其导出了一个"jquery"的资源模块，要在你站点的任何页面使用jQuery，你需要简单地增加如下代码：
+
+{code:xml}
+<html>
+   <head>
+      <r:require module="jquery"/>
+      <r:layoutResources/>
+   </head>
+   <body>
+      ...
+      <r:layoutResources/>
+   </body>
+</html>
+{code}
+
+这将自动地包含所有需要jQuery的资源，并且要在页面的正确位置引用它们。缺省情况下，插件将其放置到"head"，以便在页面中尽早加载。
+
+你可以在GSP页面中多次调用@r:require@，也可以使用"modules"属性提供一个模块列表：
+
+{code:xml}
+<html>
+   <head>
+      <r:require modules="jquery, main, blueprint, charting"/>
+      <r:layoutResources/>
+   </head>
+   <body>
+      ...
+      <r:layoutResources/>
+   </body>
+</html>
+{code}
+
+在上例的结果中，很多的JavaScript和CSS文件以正确的顺序被包含进来，而另外一些JavaScript文件则在body的末尾被加载，以提高页面的加载时间。
+
+不过，你还是不能单独使用r:require的－正如示例所示，你必须使用<r:layoutResources/>标签来执行实际的渲染。
+
+{hidden}
 h4. Rendering the links to resources with r:layoutResources
 
 When you have declared the resource modules that your GSP page requires, the framework needs to render the links to those resources at the correct time.
@@ -62,7 +103,36 @@ The Resources framework has the concept of a "disposition" for every resource. T
 The default disposition applied depends on the type of resource. All CSS must be rendered in <head> in HTML, so "head" is the default for all CSS, and will be rendered by the first r:layoutResources. Page load times are improved when JavaScript is loaded after the page content, so the default for JavaScript files is "defer", which means it is rendered when the second r:layoutResources is invoked.
 
 Note that both your GSP page and your Sitemesh layout (as well as any GSP template fragments) can call r:require to depend on resources. The only limitation is that you must call r:require before the r:layoutResources that should render it.
+{hidden}
 
+h4. 使用r:layoutResources渲染资源链接
+
+当在你的GSP页面中声明所需要的资源模块时，插件框架需要在正确的时间渲染那些资源的链接。
+
+要正确地处理，你必须在你的页面中引用两次r:layoutResources标签，或者更通用的方式是在你的GSP布局中处理：
+
+{code:xml}
+<html>
+   <head>
+      <g:layoutTitle/>
+      <r:layoutResources/>
+   </head>
+   <body>
+      <g:layoutBody/>
+      <r:layoutResources/>
+   </body>
+</html>
+{code}
+
+上例描绘了一个最简单的支撑资源的Sitemesh布局。
+
+资源框架的每一个资源都有“安排（disposition）”的概念。这意味着在页面合适位置，资源将被包含进来。
+
+缺省的安排依赖于资源的类型。所有的CSS必须在HTML的<head>中渲染，因此对所有的CSS来说，"head"是其缺省值，并且将被第一个r:layoutResources所渲染。当页面内容被加载完后，再加载JavaScript，那么页面的加载时间将得到很好的提高，因此对于JavaScript文件来说，其缺省值是"defer"，这意味着它们将在第二个r:layoutResources被调用的时候被渲染。
+
+注意！不管你是GSP页面还是Sitemesh布局（即任何GSP模板片段）都可以根据资源来调用r:require。此处唯一的限制就是你必须在r:layoutResources渲染之前调用r:require。
+
+{hidden}
 h4. Adding page-specific JavaScript code with r:script
 
 Grails has the [javascript|tags] tag which is adapted to defer to Resources plugin if installed, but it is recommended that you call @r:script@ directly when you need to include fragments of JavaScript code.
@@ -105,7 +175,52 @@ Given a Sitemesh layout like this:
 The default disposition is "defer", so the disposition in the latter r:script is purely included for demonstration.
 
 Note that such r:script code fragments *always* load after any modules that you have used, to ensure that any required libraries have loaded.
+{hidden}
 
+h4. 使用r:script增加特定页面的JavaScript代码
+
+在资源插件安装以后，Grails的[javascript|tags]标签将被适配到优先使用资源插件，即便如此，如果你需要直接使用JavaScript代码片段，还是推荐你直接调用@r:script@。
+
+这可以让你写一些“内联（inline）”的JavaScript，但实际 *不在* 内联时渲染，而是根据其安排，决定是在<head>或者body的结尾。
+
+假设一个Sitemesh布局如下所示：
+
+{code:xml}
+<html>
+   <head>
+      <g:layoutTitle/>
+      <r:layoutResources/>
+   </head>
+   <body>
+      <g:layoutBody/>
+      <r:layoutResources/>
+   </body>
+</html>
+{code}
+
+...在你的GSP中，你可以插入一些JavaScript代码到head或者如下面所示的页面推迟区域：
+
+{code:xml}
+<html>
+   <head>
+      <title>Testing r:script magic!</title>
+   </head>
+   <body>
+      <r:script disposition="head">
+         window.alert('This is at the end of <head>');
+      </r:script>
+      <r:script disposition="defer">
+         window.alert('This is at the end of the body, and the page has loaded.');
+      </r:script>
+   </body>
+</html>
+{code}
+
+在本演示中，其缺省的安排是"defer"，所以在后面的安排中，r:script只是单纯地被包含进来。
+
+注意！r:script的代码片段 *总是* 在你要使用的模块之后加载，因此要保证任何所依赖的都以及加载就绪。
+
+{hidden}
 h4. Linking to images with r:img
 
 This tag is used to render @<img>@ markup, using the Resources framework to process the resource on the fly (if configured to do so - e.g. make it eternally cacheable).
@@ -132,3 +247,31 @@ Note that Grails has a built-in @g:img@ tag as a shortcut for rendering @<img>@ 
 Alongside the regular Grails [resource|tags] tag attributes, this also supports the "uri" attribute for increased brevity.
 
 See [r:resource documentation|http://grails-plugins.github.com/grails-resources] for full details.
+{hidden}
+
+h4. 使用r:img链接图片
+
+此标签被用以渲染HTML的@<img>@标签，并且通过资源框架来处理那些频繁访问的资源（如果配置了的话，比如使其永久的缓存）。
+
+如果资源在以前已经被声明为一个模块的话，那么r:img会包含@<img>@标签的任何额外属性。
+
+基于此机制，你可以在声明资源模块的时候，来指定width、height以及其他任何属性，然后在需要的时候获取一下即可。
+
+比如：
+
+{code:xml}
+<html>
+   <head>
+      <title>Testing r:img</title>
+   </head>
+   <body>
+      <r:img uri="/images/logo.png"/>
+   </body>
+</html>
+{code}
+
+注意！Grails内置的@g:img@标签只是渲染静态资源@<img>@的一个快捷方式而已。Grails的[img|tags]的标签如果感知到资源插件，那么将会将其代理给@r:img@。即便如此，如果使用了资源插件的话，还是推荐直接你使用@r:img@。
+
+跟常规的Grails的[resource|tags]标签属性一样，为了增加简洁性，r:img也支撑"uri"属性。
+
+更多完整的详细信息请参考[r:resource文档|http://grails-plugins.github.com/grails-resources]。
