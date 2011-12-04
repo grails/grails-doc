@@ -1,3 +1,4 @@
+{hidden}
 A DSL is provided for declaring resources and modules. This can go either in your @Config.groovy@ in the case of application-specific resources, or more commonly in a resources artefact in @grails-app/conf@.
 
 Note that you do not need to declare all your static resources, especially images. However you must to establish dependencies or other resources-specific attributes. Any resource that is not declared is called "ad-hoc" and will still be processed using defaults for that resource type.
@@ -46,3 +47,53 @@ There is no limit to the number of modules or xxxResources.groovy artefacts you 
 To define modules like this in your application's Config.groovy, you simply assign the DSL closure to the @grails.resources.modules@ Config variable.
 
 For full details of the resource DSL please see the [resources plugin documentation|http://grails-plugins.github.com/grails-resources].
+{hidden}
+
+系统提供了一个DSL专门用于声明资源和模块。其可以位于@Config.groovy@中特定应用的资源容器，或者更常用的是@grails-app/conf@下的一个资源工件中。
+
+注意！你并不需要声明所有的静态资源，尤其是图片。但是你必须要建立所需依赖或者其他资源相关的属性。没有被声明的资源称之为"ad-hoc"，并且根据其资源类型被缺省处理。
+
+假设如下所示的@grails-app/conf/MyAppResources.groovy@资源配置文件：
+
+{code:java}
+modules = {
+    core {
+        dependsOn 'jquery, utils'
+
+        resource url: '/js/core.js', disposition: 'head'
+        resource url: '/js/ui.js'
+        resource url: '/css/main.css',
+        resource url: '/css/branding.css'
+        resource url: '/css/print.css', attrs: [media: 'print']
+    }
+
+    utils {
+        dependsOn 'jquery'
+
+        resource url: '/js/utils.js'
+    }
+
+    forms {
+        dependsOn 'core,utils'
+
+        resource url: '/css/forms.css'
+        resource url: '/js/forms.js'
+    }
+}
+{code}
+
+示例定义了三个资源模块：'core'、'utils'和'forms'。这些模块中的资源将根据模块的名称自动地打包到更少的文件中。对于每个资源，你可以使用@bundle:'someOtherName'@ 来覆盖之，或者调用模块的@defaultBundle@（更多请参考[资源插件文档|http://grails-plugins.github.com/grails-resources]）。
+
+通过@dependsOn@来声明的依赖关系，可以控制资源的加载顺序。
+
+当你在的GSP中引用@<r:require module="forms"/>@的时候，它将从'core'和'utils'还有'jquery'中获取所有的资源，并以正确的顺序加载。
+
+你将会注意到@core.js@文件中的@disposition:'head'@ 。它将告诉资源插件当所有的其他JS文件推迟到body末尾加载的时候，此文件（core.js）必须要在@<head>@加载。
+
+用于打印风格的CSS文件通过@attrs@映射选项来添加自定义属性，并且在渲染到资源链接的时候，它们将被传递给@r:external@标签，因此你可以自定义HTML的属性来生成链接。
+
+模块或者你定义的xxxResources.groovy工件的数量是没有限制的，插件也可以将资源模块暴露给应用，正如jQuery插件所做的那样。
+
+要在你应用中的Config.groovy定义模块，你可以简单地将DSL闭包赋给@grails.resources.modules@配置变量。
+
+完整的资源DSL信息请参考[资源插件文档|http://grails-plugins.github.com/grails-resources]。
