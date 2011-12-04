@@ -1,3 +1,4 @@
+{hidden}
 h4. Using the render method to output XML
 
 Grails supports a few different ways to produce XML and JSON responses. The first is the [render|controllers] method.
@@ -46,7 +47,58 @@ def list() {
 {code}
 
 This is because there is local variable @books@ which Groovy attempts to invoke as a method.
+{hidden}
 
+h4. 使用render方法输出XML
+
+Grails支持几种不同的方法来产生XML和JSON响应。第一个就是[render|controllers]方法。
+
+@render@方法可以被传递一个代码块，在代码块中，使用标签生成器来构建XML：
+
+{code}
+def list() {
+
+    def results = Book.list()
+
+    render(contentType: "text/xml") {
+        books {
+            for (b in results) {
+                book(title: b.title)
+            }
+        }
+    }
+}
+{code}
+
+这段代码的结果将会像下面这样：
+
+{code:xml}
+<books>
+    <book title="The Stand" />
+    <book title="The Shining" />
+</books>
+{code}
+
+注意！要避免根标签生成器的命名冲突。比如，下面的代码将会产生一个错误：
+
+{code}
+def list() {
+
+    def books = Book.list()  // naming conflict here
+
+    render(contentType: "text/xml") {
+        books {
+            for (b in results) {
+                book(title: b.title)
+            }
+        }
+    }
+}
+{code}
+
+这是因为Groovy的本地变量@books@试图被当作一个方法来调用。
+
+{hidden}
 h4. Using the render method to output JSON
 
 The @render@ method can also be used to output JSON:
@@ -76,7 +128,39 @@ In this case the result would be something along the lines of:
 {code}
 
 The same dangers with naming conflicts described above for XML also apply to JSON building.
+{hidden}
 
+h4. 使用render方法输出JSON
+
+@render@方法也可以被用来输出JSON：
+
+{code}
+def list() {
+
+    def results = Book.list()
+
+    render(contentType: "text/json") {
+        books = array {
+            for (b in results) {
+                book title: b.title
+            }
+        }
+    }
+}
+{code}
+
+上述示例的结果输出如下几行的所示：
+
+{code}
+[
+    {title:"The Stand"},
+    {title:"The Shining"}
+]
+{code}
+
+注意！上面XML命名冲突的危险同样适用于JSON。
+
+{hidden}
 h4. Automatic XML Marshalling
 
 Grails also supports automatic marshalling of [domain classes|guide:GORM] to XML using special converters.
@@ -117,7 +201,50 @@ render xml
 {code}
 
 For more information on XML marshalling see the section on [REST|guide:REST]
+{hidden}
 
+h4. 自动XML编组（Marshalling）
+
+Grails还支持将[领域类|guide:GORM]自动编组为XML的用法，不过要借助于特定的转换器。
+
+首先，要先在你的控制器中的导入包@grails.converters@：
+
+{code}
+import grails.converters.*
+{code}
+
+现在，你可以使用如下易读性高的语法来将领域类自动转换成XML：
+
+{code}
+render Book.list() as XML
+{code}
+
+上述的输出结果看起来如下所示：
+
+{code}
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<list>
+  <book id="1">
+    <author>Stephen King</author>
+    <title>The Stand</title>
+  </book>
+  <book id="2">
+    <author>Stephen King</author>
+    <title>The Shining</title>
+  </book>
+</list>
+{code}
+
+另外一种转换器的用法是使用Grails的[编码（codecs）|guide:codecs]功能。此功能提供了[encodeAsXML|guide:codecs]和[encodeAsJSON|guide:codecs]方法：
+
+{code}
+def xml = Book.list().encodeAsXML()
+render xml
+{code}
+
+更多关于XML编组信息请参考[REST|guide:REST]章节
+
+{hidden}
 h4. Automatic JSON Marshalling
 
 Grails also supports automatic marshalling to JSON using the same mechanism. Simply substitute @XML@ with @JSON@:
@@ -143,3 +270,30 @@ The resulting output would look something like the following:
 {code}
 
 Again as an alternative you can use the @encodeAsJSON@ to achieve the same effect.
+{hidden}
+
+h4. 自动JSON编组
+
+Grails同样也支持自动JSON编组的功能，这跟XML机制完全相同，因此只需要简单地将@XML@替换为@JSON@即可：
+
+{code}
+render Book.list() as JSON
+{code}
+
+其输出结果看起来如下所示：
+
+{code}
+[
+    {"id":1,
+     "class":"Book",
+     "author":"Stephen King",
+     "title":"The Stand"},
+    {"id":2,
+     "class":"Book",
+     "author":"Stephen King",
+     "releaseDate":new Date(1194127343161),
+     "title":"The Shining"}
+ ]
+{code}
+
+跟上面一样，你也可以使用@encodeAsJSON@来达到相同的效果。
