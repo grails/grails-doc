@@ -154,6 +154,33 @@ void testDisplay() {
 }
 {code}
 
+h4. Testing Actions Which Return A Map
+
+When a controller action returns a @java.util.Map@ that @Map@ may be inspected directly to assert that it contains the expected data:
+
+{code:java}
+class SimpleController {
+    def showBookDetails() {
+        [title: 'The Nature Of Necessity', author: 'Alvin Plantinga']
+    }
+}
+{code}
+
+{code:java}
+import grails.test.mixin.*
+
+@TestFor(SimpleController)
+class SimpleControllerTests {
+
+    void testShowBookDetails() {
+        def model = controller.showBookDetails()
+
+        assert model.author == 'Alvin Plantinga'
+    }
+}
+{code}
+
+
 h4. Testing XML and JSON Responses
 
 XML and JSON response are also written directly to the response. Grails' mocking capabilities provide some conveniences for testing XML and JSON response. For example consider the following action:
