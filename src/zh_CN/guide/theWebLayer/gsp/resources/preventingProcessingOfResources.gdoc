@@ -1,5 +1,10 @@
+{hidden}
 Sometimes you do not want a resource to be processed in a particular way, or even at all. Occasionally you may also want to disable all resource mapping.
+{hidden}
 
+有时候，你并不想以一种特别的方式处理资源，甚至根本就不想。偶尔，你还想禁止所有的资源映射。
+
+{hidden}
 h4. Preventing the application of a specific mapper to an individual resource
 
 All resource declarations support a convention of noXXXX:true where XXXX is a mapper name.
@@ -14,7 +19,24 @@ modules = {
     }
 }
 {code}
+{hidden}
 
+h4. 阻止到一个单独资源的特定映射
+
+所有的资源声明都支持noXXXX:true的用法，此处的XXXX是一个映射器的名称。
+
+因此在下例中，要阻止"hashandcache"映射器应用到一个资源（重命名，移动甚至断开JavaScript代码中的相关链接）你可以这样做：
+
+{code:java}
+modules = {
+    forms {
+        resource url: '/css/forms.css', nohashandcache: true
+        resource url: '/js/forms.js', nohashandcache: true
+    }
+}
+{code}
+
+{hidden}
 h4. Excluding/including paths and file types from specific mappers
 
 Mappers have includes/excludes Ant patterns to control whether they apply to a given resource. Mappers set sensible defaults for these based on their activity, for example the zipped-resources plugin's "zip" mapper is set to exclude images by default.
@@ -30,7 +52,25 @@ grails.resources.bundle.excludes = ['**/*.less']
 {code}
 
 There is also an "includes" inverse. Note that settings these replaces the default includes/excludes for that mapper - it is not additive.
+{hidden}
 
+h4. 从特定映射器中 排除／包含 路径和文件类型
+
+映射器的排除／包含使用Ant语法来控制是否要应用到给定的资源上。映射器会根据其活动情况来设置缺省的感知类型，以资源压缩（zipped-resources）插件为例，其"zip"映射器会缺省地排除那些镜像文件。
+
+你可以通过你的@Config.groovy@文件地映射器名称来配置相关信息，比如：
+
+{code:java}
+// We wouldn't link to .exe files using Resources but for the sake of example:
+grails.resources.zip.excludes = ['**/*.zip', '**/*.exe']
+
+// Perhaps for some reason we want to prevent bundling on "less" CSS files:
+grails.resources.bundle.excludes = ['**/*.less']
+{code}
+
+反之，你也可以使用"includes"。要注意的是，上述操作将替换映射器缺省的includes/excludes设置－而不是追加。
+
+{hidden}
 h4. Controlling what is treated as an "ad-hoc" (legacy) resource
 
 Ad-hoc resources are those undeclared, but linked to directly in your application *without* using the Grails or Resources linking tags (resource, img or external).
@@ -40,6 +80,20 @@ These may occur with some legacy plugins or code with hardcoded paths in.
 There is a Config.groovy setting *grails.resources.adhoc.patterns* which defines a list of Servlet API compliant filter URI mappings, which the Resources filter will use to detect such "ad-hoc resource" requests.
 
 By default this is set to:
+{code:java}
+grails.resources.adhoc.patterns = ['images/*', '*.js', '*.css']
+{code}
+{hidden}
+
+h4. 控制"ad-hoc"（遗留）资源
+
+Ad-hoc资源是那些未声明的，并且 *不* 使用Grails或者Resources的链接标签（resource, img or external），而是在你的应用中直接链接的资源。
+
+这可能会在那些遗留插件或者硬编码路径的时候会碰到。
+
+Config.groovy中的 *grails.resources.adhoc.patterns* 配置就是用来定义一系列Servlet API兼容的URI映射的过滤器，其资源过滤器通常用来检测那些"ad-hoc resource"请求。
+
+其缺省值如下：
 {code:java}
 grails.resources.adhoc.patterns = ['images/*', '*.js', '*.css']
 {code}
