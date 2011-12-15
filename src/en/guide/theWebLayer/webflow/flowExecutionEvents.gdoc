@@ -17,16 +17,21 @@ def shoppingCartFlow = {
 Since the @showCart@ event is a view state it will render the view @grails-app/book/shoppingCart/showCart.gsp@. Within this view you need to have components that trigger flow execution. On a form this can be done use the [submitButton|tags] tag:
 
 {code:xml}
-<g:form action="shoppingCart">
+<g:form>
     <g:submitButton name="continueShopping" value="Continue Shopping" />
     <g:submitButton name="checkout" value="Checkout" />
 </g:form>
 {code}
 
-The form must submit back to the @shoppingCart@ flow. The name attribute of each [submitButton|tags] tag signals which event will be triggered. If you don't have a form you can also trigger an event with the [link|tags] tag as follows:
+The form automatically submits back to the @shoppingCart@ flow. The name attribute of each [submitButton|tags] tag signals which event will be triggered. If you don't have a form you can also trigger an event with the [link|tags] tag as follows:
 
 {code:xml}
-<g:link action="shoppingCart" event="checkout" />{code}
+<g:link event="checkout" />{code}
+
+{note}
+Prior to 2.0.0, it was required to specify the controller and/or action in forms and links, which caused the url to change when entering a subflow state. When the controller and action are not specified,
+all url's are relative to the main flow execution url, which makes your flows reusable as subflows and prevents issues with the browser's back button.
+{note}
 
 h4. Triggering Events from an Action
 
