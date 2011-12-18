@@ -1,17 +1,38 @@
+{hidden}
 When your resources are being moved around, renamed and otherwise mutated, it can be hard to debug client-side issues. Modern browsers, especially Safari, Chrome and Firefox have excellent tools that let you view all the resources requested by a page, including the headers and other information about them.
 
 There are several debugging features built in to the Resources framework.
+{hidden}
 
+当你的资源正在移动、重命名以及其他变动的时候，要调试客户端的问题是非常困难的。现代的浏览器，尤其是Safari、Chrome和Firefox，都有非常优秀的工具来查看一个请求页面的所有资源，包括其请求头和其他的信息。
+
+除此之外，Resources框架还提供了几个内置的调试特性。
+
+{hidden}
 h4. X-Grails-Resources-Original-Src Header
 
 Every resource served in development mode will have the X-Grails-Resources-Original-Src: header added, indicating the original source file(s) that make up the response.
+{hidden}
 
+h4. X-Grails-Resources-Original-Src信息头
+
+在开发模式下，每一个用到的资源都会添加X-Grails-Resources-Original-Src的头信息，用以表示此响应对应的原始代码文件。
+
+{hidden}
 h4. Adding the debug flag
 
 If you add a query parameter *_debugResources=y* to your URL and request the page, Resources will bypass any processing so that you can see your original source files.
 
 This also adds a unique timestamp to all your resource URLs, to defeat any caching that browsers may use. This means that you should always see your very latest code when you reload the page.
+{hidden}
 
+h4. 添加调试标记
+
+如果在你的URL和请求页面的参数中增加 *_debugResources=y* 的话，Resources将会不管任何处理，而直接显示和使用原始的代码文件。
+
+此外，你资源的URLs还会添加一个唯一的时间戳，用以处理浏览器导致的缓存问题。这意味着在你重现加载页面的时候，你总是得到最新的代码。
+
+{hidden}
 h4. Turning on debug all the time
 
 You can turn on the aforementioned debug mechanism without requiring a query parameter, but turning it on in Config.groovy:
@@ -21,3 +42,14 @@ grails.resources.debug = true
 {code}
 
 You can of course set this per-environment.
+{hidden}
+
+h4. 打开调试
+
+你可以在不需要额外请求参数的情况下打开如上所述的调试机制，要如此，只要在Config.groovy中配置一下即可：
+
+{code}
+grails.resources.debug = true
+{code}
+
+当然，你也可以在每个单独的环境设置。
