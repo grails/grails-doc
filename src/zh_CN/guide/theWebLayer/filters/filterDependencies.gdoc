@@ -1,3 +1,4 @@
+{hidden}
 In a @Filters@ class, you can specify any other @Filters@ classes that should first be executed using the @dependsOn@ property. This is used when a @Filters@ class depends on the behavior of another @Filters@ class (e.g. setting up the environment, modifying the request/session, etc.) and is defined as an array of @Filters@ classes.
 
 Take the following example @Filters@ classes:
@@ -49,3 +50,56 @@ MyFilters specifically @dependsOn@ MyOtherFilters.  This will cause all the filt
 The filters within the MyOtherFilters class are processed in order first, followed by the filters in the MyFilters class.  Execution order between @Filters@ classes are enabled and the execution order of filters within each @Filters@ class are preserved.
 
 If any cyclical dependencies are detected, the filters with cyclical dependencies will be added to the end of the filter chain and processing will continue.  Information about any cyclical dependencies that are detected will be written to the logs.  Ensure that your root logging level is set to at least WARN or configure an appender for the Grails Filters Plugin (@org.codehaus.groovy.grails.plugins.web.filters.FiltersGrailsPlugin@) when debugging filter dependency issues.
+{hidden}
+
+在一个@Filters@类中，你可以使用@dependsOn@属性来指定其他任意@Filters@类先被执行。这经常用在一个@Filters@类依赖于另外一个@Filters@类的行为的时候（比如，设置环境，修改请求／会话等），并且可以定义为一个@Filters@类的数组。
+
+以如下所示的@Filters@类为例：
+
+{code:java}
+class MyFilters {
+    def dependsOn = [MyOtherFilters]
+
+    def filters = {
+        checkAwesome(uri: "/*") {
+            before = {
+                if (request.isAwesome) { // do something awesome }
+            }
+        }
+
+        checkAwesome2(uri: "/*") {
+            before = {
+                if (request.isAwesome) { // do something else awesome }
+            }
+        }
+    }
+}
+{code}
+
+{code:java}
+class MyOtherFilters {
+    def filters = {
+        makeAwesome(uri: "/*") {
+            before = {
+                request.isAwesome = true
+            }
+        }
+        doNothing(uri: "/*") {
+            before = {
+                // do nothing
+            }
+        }
+    }
+}
+{code}
+
+MyFilters指定@dependsOn@为MyOtherFilters。这将导致MyOtherFilters中符合当前请求的所有过滤器优先于MyFilters执行。对一个"/test"请求来说，示例中的每一个过滤器都会匹配到，那么其执行的顺序将如下所示：
+
+* MyOtherFilters - makeAwesome
+* MyOtherFilters - doNothing
+* MyFilters - checkAwesome
+* MyFilters - checkAwesome2
+
+MyOtherFilters类的过滤器首先被处理，接着才是MyFilters的过滤器。@Filters@类之间的执行顺序是定制的，并且每个@Filters@类内的过滤器顺序是预置的。
+
+如果任何循环依赖被检测到的话，那么循环依赖的过滤器将被加到过滤器链最后，并且处理将继续进行。任何循环依赖的信息将被记录到日志当中，不过在调试过滤器依赖问题的时候，要确保你的根日志级别至少是WARN或者为Grails的过滤器插件（@org.codehaus.groovy.grails.plugins.web.filters.FiltersGrailsPlugin@）配置一个输出器。
