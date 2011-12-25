@@ -1,3 +1,4 @@
+{hidden}
 In GSP the @<%= %>@ syntax introduced earlier is rarely used due to the support for GSP expressions. A GSP expression is similar to a JSP EL expression or a Groovy GString and takes the form @${expr}@:
 
 {code:xml}
@@ -15,3 +16,22 @@ grails.views.default.codec='html'
 {code}
 
 Other possible values are 'none' (for no default encoding) and 'base64'.
+{hidden}
+
+在GSP中，一开始所介绍的@<%= %>@语法是很少被应用于GSP表达式的。一个GSP表达式类似于JSP EL表达式或者Groovy GString，使用的是@${expr}@形式：
+
+{code:xml}
+<html>
+  <body>
+    Hello ${params.name}
+  </body>
+</html>
+{code}
+
+尽管如此，跟JSP EL不同的是，你可以在@${..}@代码块中使用任意Groovy表达式。@${..}@块中的变量缺省是 *不* 被转义的，因此变量中字符串将会直接被渲染到页面HTML。要减少这种Cross-site-scripting (XSS)攻击风险，你可以使用自动HTML转义来避免，只需要在@grails-app/conf/Config.groovy@中配置@grails.views.default.codec@即可：
+
+{code:java}
+grails.views.default.codec='html'
+{code}
+
+其他可选的值是'none' (用于没有缺省编码情况)和'base64'.
