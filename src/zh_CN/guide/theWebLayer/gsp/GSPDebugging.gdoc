@@ -1,3 +1,4 @@
+{hidden}
 h4. Viewing the generated source code
 
  * Adding "?showSource=true" or "&showSource=true" to the url shows the generated Groovy source code for the view instead of rendering it. It won't show the source code of included templates. This only works in development mode
@@ -29,3 +30,36 @@ Here is an example of comments added by debugTemplates :
 {code}
 
 Each comment block has a unique id so that you can find the start & end of each template call.
+{hidden}
+
+h4. 查看生成的源代码
+
+ * 在url中增加"?showSource=true"或者"&showSource=true"来显示生成的用于查看的Groovy源代码。它将不会显示包含模板的源代码，并且只工作于开发模式。
+ * 要保存所有生成的源代码，可以通过配置"grails.views.gsp.keepgenerateddir"（在Config.groovy中）来完成。指向的目录必须存在而且可写。
+ * 在"grails war"的gsp预编译阶段，其生成的源代码被保存在grails.project.work.dir/gspcompile中（通常位于~/.grails/(grails_version)/projects/(project name)/gspcompile中）。
+
+h4. 在调试器中调试GSP代码
+
+ * 详细请参考 "在STS中调试GSP":http://contraptionsforprogramming.blogspot.com/2010/08/debuggable-gsps-in-springsource-tool.html
+
+h4. 查看渲染成一个url的模板信息
+
+在大型的WEB应用中，GSP的模板可以通过使用@g:render@标签而得以复用。几个小模板可以被渲染到一个单独的页面中。
+在最后渲染的html中，很难区分出那些是那个GSP模板被实际渲染到那里。
+调试模板功能将会在输出中添加html注释。这些注释包含着关于gsp模板渲染的调试信息。
+
+用法也很简单：添加"?debugTemplates"或者"&debugTemplates"到url中，然后查看你浏览器中的源代码。
+"debugTemplates"仅限于开发模式，在生产环境中将无效。
+
+下面是增加了debugTemplates后的一个带有注释的示例：
+{code}
+<!-- GSP #2 START template: /home/.../views/_carousel.gsp
+     precompiled: false lastmodified: ... -->
+.
+.
+.
+<!-- GSP #2 END template: /home/.../views/_carousel.gsp
+     rendering time: 115 ms -->
+{code}
+
+每一个注释块中都有一个唯一的id，用以让你方便区分每一次模板调用的开始和结束。
