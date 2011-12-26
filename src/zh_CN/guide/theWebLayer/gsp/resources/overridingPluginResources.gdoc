@@ -1,0 +1,97 @@
+{hidden}
+Because a resource module can define the bundle groupings and other attributes of resources, you may find that the settings provided are not correct for your application.
+
+For example, you may wish to bundle jQuery and some other libraries all together in one file. There is a load-time and caching trade-off here, but often it is the case that you'd like to override some of these settings.
+
+To do this, the DSL supports an "overrides" clause, within which you can change the @defaultBundle@ setting for a module, or attributes of individual resources that have been declared with a unique id:
+
+{code:java}
+modules = {
+    core {
+        dependsOn 'jquery, utils'
+        defaultBundle 'monolith'
+
+        resource url: '/js/core.js', disposition: 'head'
+        resource url: '/js/ui.js'
+        resource url: '/css/main.css',
+        resource url: '/css/branding.css'
+        resource url: '/css/print.css', attrs: [media: 'print']
+    }
+
+    utils {
+        dependsOn 'jquery'
+        defaultBundle 'monolith'
+
+        resource url: '/js/utils.js'
+    }
+
+    forms {
+        dependsOn 'core,utils'
+        defaultBundle 'monolith'
+
+        resource url: '/css/forms.css'
+        resource url: '/js/forms.js'
+    }
+
+    overrides {
+        jquery {
+            defaultBundle 'monolith'
+        }
+    }
+}
+{code}
+
+This will put all code into a single bundle named 'monolith'. Note that this can still result in multiple files, as separate bundles are required for head and defer dispositions, and JavaScript and CSS files are bundled separately.
+
+Note that overriding individual resources requires the original declaration to have included a unique id for the resource.
+
+For full details of the resource DSL please see the [resources plugin documentation|http://grails-plugins.github.com/grails-resources].
+{hidden}
+
+因为一个资源模块定义了捆绑（bundle）组和资源的其他属性，因此你可能会发现设置所提供的并不适合你的应用。
+
+比如，你可能希望将jQuery和其他的库捆绑到一个文件中。此处就要根据加载时间和缓存做一个权衡，但是在此种情况下，你经常会想重载这些配置的一部分。
+
+这时候，DSL提供了"overrides"子句来完成此功能，子句内你可以修改一个模块的@defaultBundle@，或者每个单独资源的属性，不过每个资源必须要声明一个唯一的id:
+
+{code:java}
+modules = {
+    core {
+        dependsOn 'jquery, utils'
+        defaultBundle 'monolith'
+
+        resource url: '/js/core.js', disposition: 'head'
+        resource url: '/js/ui.js'
+        resource url: '/css/main.css',
+        resource url: '/css/branding.css'
+        resource url: '/css/print.css', attrs: [media: 'print']
+    }
+
+    utils {
+        dependsOn 'jquery'
+        defaultBundle 'monolith'
+
+        resource url: '/js/utils.js'
+    }
+
+    forms {
+        dependsOn 'core,utils'
+        defaultBundle 'monolith'
+
+        resource url: '/css/forms.css'
+        resource url: '/js/forms.js'
+    }
+
+    overrides {
+        jquery {
+            defaultBundle 'monolith'
+        }
+    }
+}
+{code}
+
+上述示例会将所有的代码放到一个单独的'monolith'捆绑束中。注意，结果依然可能分散在多个文件中，因为安排head和defer所需的捆绑束是不同的，JavaScript和CSS文件被分开捆绑的。
+
+注意重载单独的资源，需要原来的资源声明一个唯一的id。
+
+更多详细完整的资源DSL信息请参考[资源插件文档|http://grails-plugins.github.com/grails-resources]。

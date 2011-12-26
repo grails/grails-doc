@@ -1,0 +1,137 @@
+{hidden}
+The Resources framework uses "mappers" to mutate the resources into the final format served to the user.
+
+The resource mappers are applied to each static resource once, in a specific order. You can create your own resource mappers, and several plugins provide some already for zipping, caching and minifying.
+
+Out of the box, the Resources plugin provides bundling of resources into fewer files, which is achieved with a few mappers that also perform CSS re-writing to handle when your CSS files are moved into a bundle.
+{hidden}
+
+资源框架使用"映射器（mappers）"来将资源转变为最终用户所需的格式。
+
+资源映射器以一个特定的顺序将每一个静态资源处理一次。你可以创建你自己的资源映射器，有一些插件已经提供了比如压缩（zipping）、缓存（caching）和缩少（minifying）等映射。
+
+除此之外，资源插件还提供了捆绑多个资源到较少的文件功能，在将你的CSS文件移动到一个捆绑束的时候，其使用一些映射器执行重写CSS处理。
+
+{hidden}
+h4. Bundling multiple resources into fewer files
+
+The 'bundle' mapper operates by default on any resource with a "bundle" defined - or inherited from a @defaultBundle@ clause on the module. Modules have an implicit default bundle name the same as the name of the module.
+
+Files of the same kind will be aggregated into this bundle file. Bundles operate across module boundaries:
+
+{code:java}
+modules = {
+    core {
+        dependsOn 'jquery, utils'
+        defaultBundle 'common'
+
+        resource url: '/js/core.js', disposition: 'head'
+        resource url: '/js/ui.js', bundle: 'ui'
+        resource url: '/css/main.css', bundle: 'theme'
+        resource url: '/css/branding.css'
+        resource url: '/css/print.css', attrs: [media: 'print']
+    }
+
+    utils {
+        dependsOn 'jquery'
+
+        resource url: '/js/utils.js', bundle: 'common'
+    }
+
+    forms {
+        dependsOn 'core,utils'
+
+        resource url: '/css/forms.css', bundle: 'ui'
+        resource url: '/js/forms.js', bundle: 'ui'
+    }
+}
+{code}
+
+Here you see that resources are grouped into bundles; 'common', 'ui' and 'theme' - across module boundaries.
+
+Note that auto-bundling by module does *not* occur if there is only one resource in the module.
+{hidden}
+
+h4. 捆绑多个资源到较少的文件
+
+缺省情况下，'bundle'映射器会操作使用"bundle"定义的任何资源－或者继承自模块的@defaultBundle@子句。模块有一个隐含的跟模块名称相同的缺省捆绑束名。
+
+同样类型的文件将会被汇集到当前的捆绑束文件中。捆绑束是通过模块的边界来操作的：
+
+{code:java}
+modules = {
+    core {
+        dependsOn 'jquery, utils'
+        defaultBundle 'common'
+
+        resource url: '/js/core.js', disposition: 'head'
+        resource url: '/js/ui.js', bundle: 'ui'
+        resource url: '/css/main.css', bundle: 'theme'
+        resource url: '/css/branding.css'
+        resource url: '/css/print.css', attrs: [media: 'print']
+    }
+
+    utils {
+        dependsOn 'jquery'
+
+        resource url: '/js/utils.js', bundle: 'common'
+    }
+
+    forms {
+        dependsOn 'core,utils'
+
+        resource url: '/css/forms.css', bundle: 'ui'
+        resource url: '/js/forms.js', bundle: 'ui'
+    }
+}
+{code}
+
+此处你可以看到资源被分组到捆绑束：'common'、'ui'和'theme' － 通过模块边界。
+
+注意！如果模块中只有一个资源，那么根据模块自动捆绑将 *不会* 发生。
+
+{hidden}
+h4. Making resources cache "eternally" in the client browser
+
+Caching resources "eternally" in the client is only viable if the resource has a unique name that changes whenever the contents change, and requires caching headers to be set on the response.
+
+The [cached-resources|http://grails.org/plugin/cached-resources] plugin provides a mapper that achieves this by hashing your files and renaming them based on this hash. It also sets the caching headers on every response for those resources. To use, simply install the cached-resources plugin.
+
+Note that the caching headers can only be set if your resources are being served by your application. If you have another server serving the static content from your app (e.g. Apache HTTPD), configure it to send caching headers. Alternatively you can configure it to request and proxy the resources from your container.
+{hidden}
+
+h4. 让资源“永久”地缓存在客户浏览器
+
+在客户端“永久”地缓存资源只有在资源有一个唯一的名字的情况下，才切实可行，并且当资源的内容变化时，其名字也要做相应的变化，还要求在响应中设置缓存标头（caching headers）。
+
+[cached-resources|http://grails.org/plugin/cached-resources]插件提供了一个映射器来完成此功能，它是通过对你的文件做哈稀校验并根据校验值来重命名来实现的。此插件也会在每一次的响应中根据这些资源的情况来设置缓存标头。要使用它，只需要简单的安装cached-resources插件即可。
+
+注意！只有在你的应用管辖范围内的资源，才会有可能设置缓存标头.如果你有另外一个服务器专门管理你应用的静态资源（比如Apache的HTTPD），那么需要配置此服务器来发送缓存标头。或者你也可以配置它来请求和代理你容器内的资源。
+
+{hidden}
+h4. Zipping resources
+
+Returning gzipped resources is another way to reduce page load times and reduce bandwidth.
+
+The [zipped-resources|http://grails.org/plugin/zipped-resources] plugin provides a mapper that automatically compresses your content, excluding by default already compressed formats such as gif, jpeg and png.
+
+Simply install the zipped-resources plugin and it works.
+{hidden}
+
+h4. 压缩资源
+
+返回用gzip压缩过的资源是另外减少页面加载时间和带宽的方法。
+
+[zipped-resources|http://grails.org/plugin/zipped-resources]插件提供了一个映射器来自动地压缩你的资源内容。当然那些已经压缩过地除外，比如gif、jpeg和png。
+
+简单地安装zipped-resources插件后，即可工作。
+
+{hidden}
+h4. Minifying
+
+There are a number of CSS and JavaScript minifiers available to obfuscate and reduce the size of your code. At the time of writing none are publicly released but releases are imminent.
+{hidden}
+
+h4. 缩少资源
+
+已经有很多的CSS和JavaScript缩少器可以用来混淆和减少你代码的大小。这可以解决发布迫在眉睫，而现在编码时没有什么可公开发布的情况。

@@ -1,0 +1,63 @@
+{hidden}
+The [H2 database console|http://h2database.com/html/quickstart.html#h2_console] is a convenient feature of H2 that provides a web-based interface to any database that you have a JDBC driver for, and it's very useful to view the database you're developing against. It's especially useful when running against an in-memory database.
+
+You can access the console by navigating to *http://localhost:8080/appname/dbconsole* in a browser. The URI can be configured using the @grails.dbconsole.urlRoot@ attribute in Config.groovy and defaults to @'/dbconsole'@.
+
+The console is enabled by default in development mode and can be disabled or enabled in other environments by using the @grails.dbconsole.enabled@ attribute in Config.groovy. For example you could enable the console in production using
+
+{code}
+environments {
+    production {
+        grails.serverURL = "http://www.changeme.com"
+        grails.dbconsole.enabled = true
+        grails.dbconsole.urlRoot = '/admin/dbconsole'
+    }
+    development {
+        grails.serverURL = "http://localhost:8080/\${appName}"
+    }
+    test {
+        grails.serverURL = "http://localhost:8080/\${appName}"
+    }
+}
+{code}
+
+{warning}
+If you enable the console in production be sure to guard access to it using a trusted security framework.
+{warning}
+{hidden}
+
+[H2数据库管理界面|http://h2database.com/html/quickstart.html#h2_console]是在H2特性的基础上提供的一个基于WEB界面的数据库管理，用以管理任何基于JDBC的数据库，在开发阶段用来查看数据库非常有用，尤其在你的应用运行于数据库的内存模式时。
+
+你可以在浏览器中通过 *http://localhost:8080/appname/dbconsole* 来使用访问。此URI可以通过配置Config.groovy中的@grails.dbconsole.urlRoot@属性来改变，缺省是@'/dbconsole'@。
+
+此界面在开发模式下缺省是有效的，你也可以通过修改Config.groovy中的@grails.dbconsole.enabled@属性来使其在其他环境模式下失效或者生效。比如，你可以在生产环境中使其生效：
+
+{code}
+environments {
+    production {
+        grails.serverURL = "http://www.changeme.com"
+        grails.dbconsole.enabled = true
+        grails.dbconsole.urlRoot = '/admin/dbconsole'
+    }
+    development {
+        grails.serverURL = "http://localhost:8080/\${appName}"
+    }
+    test {
+        grails.serverURL = "http://localhost:8080/\${appName}"
+    }
+}
+{code}
+
+{warning}
+如果你要在生产环境中使用此功能，请确保使用安全可信的框架来保护。
+{warning}
+
+{hidden}
+h4. Configuration
+
+By default the console is configured for an H2 database which will work with the default settings if you haven't configured an external database - you just need to change the JDBC URL to @jdbc:h2:mem:devDB@. If you've configured an external database (e.g. MySQL, Oracle, etc.) then you can use the Saved Settings dropdown to choose a settings template and fill in the url and username/password information from your DataSource.groovy.
+{hidden}
+
+h4. 配置
+
+缺省情况下，如果你没有使用外部数据库，那么数据库管理界面是使用H2数据库的，其JDBC的URL配置成@jdbc:h2:mem:devDB@即可。但是如果你使用的是一个外部数据库（比如MySQL、 Oracle等），那你需要从下拉框中选择合适的JDBC配置模板，并且配置合适的url、用户名／密码，要确保跟DataSource.groovy的配置是一致的。

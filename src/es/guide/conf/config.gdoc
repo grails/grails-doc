@@ -1,3 +1,5 @@
+{hidden}
+
 For general configuration Grails provides a file called @grails-app/conf/Config.groovy@. This file uses Groovy's "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper which is very similar to Java properties files except it is pure Groovy hence you can reuse variables and use proper Java types!
 
 You can add your own configuration in here, for example:
@@ -8,11 +10,27 @@ foo.bar.hello = "world"
 
 Then later in your application you can access these settings in one of two ways. The most common is from the [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] object, which is available as a variable in controllers and tag libraries:
 
+{hidden}
+
+La configuración general Grails proporciona un archivo llamado @grails-app/conf/Config.groovy@. Este archivo utiliza el "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper de Groovy que es muy similar a los archivos de propiedades de Java excepto porque es puro Groovy, así que puede reutilizar las variables y utilizar tipos propios de Java.
+
+Puede añadir su propia configuración aquí, por ejemplo:
+
+{code}
+foo.bar.hello = "world"
+{code}
+
+Después en la aplicación puede acceder a estas opciones en alguna de estas dos maneras: La más común es el objeto [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication], que está disponible como una variable en los controladores y las bibliotecas de etiquetas:
+
 {code}
 assert "world" == grailsApplication.config.foo.bar.hello
 {code}
 
+{hidden}
 The other way involves getting a reference to the [ConfigurationHolder|api:org.codehaus.groovy.grails.commons.ConfigurationHolder] class that holds a reference to the configuration object:
+{hidden}
+
+La otra forma consiste en obtener una referencia a la clase [ConfigurationHolder|api:org.codehaus.groovy.grails.commons.ConfigurationHolder] que contiene una referencia al objeto de configuración:
 
 {code}
 import org.codehaus.groovy.grails.commons.*
@@ -21,6 +39,13 @@ def config = ConfigurationHolder.config
 assert "world" == config.foo.bar.hello
 {code}
 
+{hidden}
+
 {warning}
 ConfigurationHolder and ApplicationHolder are deprecated and will be removed in a future version of Grails, so it is highly preferable to access the @GrailsApplication@ and config from the @grailsApplication@ variable.
+{warning}
+{hidden}
+
+{warning}
+ConfigurationHolder y ApplicationHolder están deprecadas y se eliminarán en una versión futura de Grails, así que es preferible acceder al objeto @GrailsApplication@ y a la configuración desde la variable @grailsApplication@.
 {warning}

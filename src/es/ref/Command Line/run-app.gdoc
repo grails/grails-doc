@@ -1,3 +1,4 @@
+{hidden}
 h1. run-app
 
 h2. Purpose
@@ -9,6 +10,19 @@ This target is _not_ intended to be used for application deployment. There are m
 {warning}
 
 h2. Examples
+{hidden}
+
+h1. run-app
+
+h2. Propósito
+
+Ejecuta aplicaciones Grails en un contenedor de servlets enbebido.
+
+{warning}
+Este target _no_ está destinado para ser usado en el despliegue de la aplicación. Hay muchas optimizaciones implementadas al generar un fichero WAR para el despliegue que no está disponible para @run-app@ desde @run-app@ es optimizado para la productividad del desarrollador, no el rendimiento.
+{warning}
+
+h2. Ejemplos
 
 {code:java}
 grails run-app
@@ -17,13 +31,19 @@ grails test run-app
 grails -Dserver.port=8090 -Denable.jndi=true -Ddisable.auto.recompile=true run-app
 {code}
 
+{hidden}
 h2. Description
 
 Usage:
+{hidden}
+h2. Descripción
+
+Uso:
 {code:java}
 grails [env]* run-app
 {code}
 
+{hidden}
 Arguments:
 
 * @https@ - Start an HTTPS server (on port 8443 by default) alongside the main server. Just to be clear, the application will be accessible via HTTPS _and_ HTTP.
@@ -42,6 +62,26 @@ Fired Events:
 * @StatusUpdate@ - When the container is reloading
 
 This command starts Grails in an embedded servlet container that can serve HTTP requests. The default container is "Tomcat":http://tomcat.apache.org but alternative containers are supported via the plugin system. For example to run Grails with Jetty run the following two commands:
+{hidden}
+
+Argumentos:
+
+* @https@ - Inicio de HTTPS (en el puerto 8443 por defecto), junto con los servidores principales. Es decir, la aplicación será accesible a través de HTTP _y_ HTTPS.
+
+Propiedades soportadas del sistema:
+
+* @disable.auto.recompile@ - Desactiva la auto-recompilación de los recursos Java, Los cuales pueden ser procesados intensivamente (Por defecto a @false@)
+* @recompile.frequency@ - Especifica con que frecuencia (en segundos) chequea Grails para cambiar los recursos Java y Groovy en su proyecto.
+* @grails.server.port.http@/@server.port@ - Especifica el puerto HTTP para arrancar el servidor (Por defecto 8080)
+* @grails.server.port.https@ - Especifica el puerto HTTPS para arrancar el servidor (Por defecto 8443)
+* @grails.server.host@/@server.host@ - Especifica el nombre del host para arrancar el server (Por defecto localhost)
+
+Fired Events:
+
+* @StatusFinal@ - Cuando el contenedor se ha iniciado
+* @StatusUpdate@ - Cuando el contenedor es recargado
+
+Este comando inicia Grails en un contenedor de servlets incorporados que pueden servir peticiones HTTP. El contenedor por defecto es "Tomcat":http://tomcat.apache.org pero otros contenedores alternativos son soportados a través del sistema de plugin. Por ejemplo para ejecutar Grails con Jetty hay que ejecutar los siguientes dos comandos:
 
 {code}
 grails uninstall-plugin tomcat

@@ -1,0 +1,38 @@
+h1. findWhere
+
+h2. Purpose
+
+Uses named arguments corresponding to domain class property names to execute a query returning the first matching result.
+
+h2. Examples
+
+Given the domain class:
+
+{code:java}
+class Book {
+
+   String title
+   Date releaseDate
+   String author
+
+   static constraints = {
+      releaseDate nullable: true
+   }
+}
+{code}
+
+You can query in the form:
+
+{code:java}
+def book = Book.findWhere(author: "Stephen King", title: "The Stand")
+
+boolean isReleased = Book.findWhere(author: "Stephen King",
+                                    title: "The Stand",
+                                    releaseDate: null) != null
+{code}
+
+h2. Description
+
+Parameters:
+
+* @queryParams@ - A @Map@ of key/value pairs to be used in the query

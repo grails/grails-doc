@@ -1,0 +1,64 @@
+h1. cache
+
+h2. Purpose
+
+Enables the Hibernate second-level cache for the domain class.
+
+h2. Examples
+
+{code:java}
+class Book {
+    ...
+    static mapping = {
+        cache true
+    }
+}
+{code}
+
+h2. Description
+
+Usage: @cache(boolean/string/map)@
+
+Arguments:
+
+* @usage@ - The cache usage. Can be @read-only@, @read-write@, @nonstrict-read-write@ or @transactional@
+* @include@ (optional) - Whether to include non-lazy associations. Can be @all@ or @non-lazy@
+
+You enable caching per domain class, for example:
+
+{code}
+static mapping = {
+    cache true
+}
+{code}
+
+This will configure the domain class to use a 'read-write' cache, but you can configure whatever cache policy is appropriate (and supported by the cache implementation):
+
+{code}
+static mapping = {
+    cache 'transactional'
+}
+{code}
+
+or
+
+{code}
+static mapping = {
+    cache usage: 'read-only', include: 'non-lazy'
+}
+{code}
+
+You can also configure the cache policy on a per-association basis:
+
+{code}
+class Author {
+
+    static hasMany = [books: Book]
+
+    static mapping = {
+        books cache: true // or 'read-write' etc.
+    }
+}
+{code}
+
+For more information see the section on [Caching|guide:caching] in the user guide.

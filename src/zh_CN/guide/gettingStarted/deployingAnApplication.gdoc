@@ -1,0 +1,49 @@
+{hidden}
+Grails applications are deployed as Web Application Archives (WAR files), and Grails includes the [war|commandLine] command for performing this task:
+
+{code}
+grails war
+{code}
+
+This will produce a WAR file under the @target@ directory which can then be deployed as per your container's instructions.
+
+Unlike most scripts which default to the @development@ environment unless overridden, the @war@ command runs in the @production@ environment by default. You can override this like any script by specifying the environment name, for example:
+
+{code}
+grails dev war
+{code}
+
+{warning}
+NEVER deploy Grails using the [run-app|commandLine] command as this command sets Grails up for auto-reloading at runtime which has a severe performance and scalability implications
+{warning}
+
+When deploying Grails you should always run your containers JVM with the @-server@ option and with sufficient memory allocation. A good set of VM flags would be:
+
+{code}
+-server -Xmx512M -XX:MaxPermSize=256m
+{code}
+{hidden}
+
+Grails应用程序以Web应用归档（WAR）文件的形式进行部署，因此Grails提供了[war|commandLine]命令，执行如下命令：
+
+{code}
+grails war
+{code}
+
+将会在 @target@ 目录下产生一个WAR文件，可以根据不同的服务器容器进行相应地部署。
+
+跟运行在 @development@ 环境下的大多数其他命令脚本不同， @war@ 命令缺省是运行在 @production@ 环境中的，当然，你也可以通过指定环境名称的方式来覆盖任意脚本缺省环境，比如：
+
+{code}
+grails dev war
+{code}
+
+{warning}
+一定不要使用run-app命令来部署Grails，因为此命令会在运行时自动加载，这样会对服务器的性能和可扩展性有严重影响。
+{warning}
+
+部署Grails的时候，你要确保你容器的JVM总是使用 @-server@ 选项，并且还有有足够的内存。推荐的VM参数如下：
+
+{code}
+-server -Xmx512M -XX:MaxPermSize=256m
+{code}

@@ -1,0 +1,31 @@
+h4. Viewing the generated source code
+
+ * Adding "?showSource=true" or "&showSource=true" to the url shows the generated Groovy source code for the view instead of rendering it. It won't show the source code of included templates. This only works in development mode
+ * The saving of all generated source code can be activated by setting the property "grails.views.gsp.keepgenerateddir" (in Config.groovy) . It must point to a directory that exists and is writable.
+ * During "grails war" gsp pre-compilation, the generated source code is stored in grails.project.work.dir/gspcompile (usually in ~/.grails/(grails_version)/projects/(project name)/gspcompile).
+
+h4. Debugging GSP code with a debugger
+
+ * See "Debugging GSP in STS":http://contraptionsforprogramming.blogspot.com/2010/08/debuggable-gsps-in-springsource-tool.html
+
+h4. Viewing information about templates used to render a single url
+
+GSP templates are reused in large web applications by using the @g:render@ taglib. Several small templates can be used to render a single page.
+It might be hard to find out what GSP template actually renders the html seen in the result.
+The debug templates -feature adds html comments to the output. The comments contain debug information about gsp templates used to render the page.
+
+Usage is simple: append "?debugTemplates" or "&debugTemplates" to the url and view the source of the result in your browser.
+"debugTemplates" is restricted to development mode. It won't work in production.
+
+Here is an example of comments added by debugTemplates :
+{code}
+<!-- GSP #2 START template: /home/.../views/_carousel.gsp
+     precompiled: false lastmodified: ... -->
+.
+.
+.
+<!-- GSP #2 END template: /home/.../views/_carousel.gsp
+     rendering time: 115 ms -->
+{code}
+
+Each comment block has a unique id so that you can find the start & end of each template call.

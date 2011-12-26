@@ -1,0 +1,213 @@
+{hidden}
+If you use Maven to build your Grails project, you can use the standard Maven targets @mvn install@ and @mvn deploy@.
+If not, you can deploy a Grails project or plugin to a Maven repository using the [maven-publisher|http://grails.org/plugin/maven-publisher] plugin.
+
+The plugin provides the ability to publish Grails projects and plugins to local and remote Maven repositories. There are two key additional targets added by the plugin:
+
+* *maven-install* - Installs a Grails project or plugin into your local Maven cache
+* *maven-deploy* - Deploys a Grails project or plugin to a remote Maven repository
+
+By default this plugin will automatically generate a valid @pom.xml@ for you unless a @pom.xml@ is already present in the root of the project, in which case this @pom.xml@ file will be used.
+{hidden}
+
+如果你是使用Maven来构建你的Grails工程，那么你可以使用标准的Maven目标命令（target）@mvn install@和@mvn deploy@来安装部署。
+如果不是，你可以通过[maven-publisher|http://grails.org/plugin/maven-publisher]插件来将Grails工程或者插件部署到Maven存储库。
+
+此插件能够将Grails工程和插件发布到本地和远程的Maven存储库，下面是此插件额外的目标命令：
+
+* *maven-install* - 安装Grails工程或者插件到你本地的Maven缓存中
+* *maven-deploy* - 部署Grails工程或者插件到远程的Maven存储库中
+
+如果你工程的根目录下边没有@pom.xml@，此插件将为你自动生成此文件，否则系统将直接使用已经存在的@pom.xml@文件。
+
+{hidden}
+h4. maven-install
+
+The @maven-install@ command will install the Grails project or plugin artifact into your local Maven cache:
+
+{code}
+grails maven-install
+{code}
+
+In the case of plugins, the plugin zip file will be installed, whilst for application the application WAR file will be installed.
+{hidden}
+
+h4. maven-install
+
+@maven-install@命令将安装Grails工程或者插件到你本地的Maven缓存：
+
+{code}
+grails maven-install
+{code}
+
+当工程是插件时，将安装成zip文件；当是应用时，将安装成WAR文件。
+
+{hidden}
+h4. maven-deploy
+
+The @maven-deploy@ command will deploy a Grails project or plugin into a remote Maven repository:
+
+{code}
+grails maven-deploy
+{code}
+
+It is assumed that you have specified the necessary @<distributionManagement>@ configuration within a @pom.xml@ or that you specify the @id@ of the remote repository to deploy to:
+
+{code}
+grails maven-deploy --repository=myRepo
+{code}
+
+The @repository@ argument specifies the 'id' for the repository. Configure the details of the repository specified by this 'id' within your @grails-app/conf/BuildConfig.groovy@ file or in your @$USER_HOME/.grails/settings.groovy@ file:
+
+{code}
+grails.project.dependency.distribution = {
+    localRepository = "/path/to/my/local"
+    remoteRepository(id: "myRepo", url: "http://myserver/path/to/repo")
+}
+{code}
+
+The syntax for configuring remote repositories matches the syntax from the [remoteRepository|http://maven.apache.org/ant-tasks/reference.html#remoteRepository] element in the Ant Maven tasks. For example the following XML:
+
+{code}
+<remoteRepository id="myRepo" url="scp://localhost/www/repository">
+    <authentication username="..." privateKey="\${user.home}/.ssh/id_dsa"/>
+</remoteRepository>
+{code}
+
+Can be expressed as:
+
+{code}
+remoteRepository(id: "myRepo", url: "scp://localhost/www/repository") {
+    authentication username: "...", privateKey: "\${userHome}/.ssh/id_dsa"
+}
+{code}
+
+By default the plugin will try to detect the protocol to use from the URL of the repository (ie "http" from "http://.." etc.), however to specify a different protocol you can do:
+
+{code}
+grails maven-deploy --repository=myRepo --protocol=webdav
+{code}
+
+The available protocols are:
+
+* http
+* scp
+* scpexe
+* ftp
+* webdav
+{hidden}
+
+h4. maven-deploy
+
+@maven-deploy@命令将Grails工程或者插件发布到远程的Maven存储库：
+
+{code}
+grails maven-deploy
+{code}
+
+上述示例的前提是你已经配置了@pom.xml@文件的@<distributionManagement>@，或者你可以通过指定远程存储库@id@的方式，比如：
+
+{code}
+grails maven-deploy --repository=myRepo
+{code}
+
+@repository@参数是存储库的'id'，此'id'的详细配置位于@grails-app/conf/BuildConfig.groovy@或者@$USER_HOME/.grails/settings.groovy@文件中：
+
+{code}
+grails.project.dependency.distribution = {
+    localRepository = "/path/to/my/local"
+    remoteRepository(id: "myRepo", url: "http://myserver/path/to/repo")
+}
+{code}
+
+配置远程存储库的语法跟Ant Maven任务的[remoteRepository|http://maven.apache.org/ant-tasks/reference.html#remoteRepository]元素相对应，如下XML所示：
+
+{code}
+<remoteRepository id="myRepo" url="scp://localhost/www/repository">
+    <authentication username="..." privateKey="\${user.home}/.ssh/id_dsa"/>
+</remoteRepository>
+{code}
+
+可以对应为：
+
+{code}
+remoteRepository(id: "myRepo", url: "scp://localhost/www/repository") {
+    authentication username: "...", privateKey: "\${userHome}/.ssh/id_dsa"
+}
+{code}
+
+缺省条件下，此插件通过存储库的URL来自动检测协议的（比如"http://.."是"http"），不过你还是可以指定另外一个不同的协议的：
+
+{code}
+grails maven-deploy --repository=myRepo --protocol=webdav
+{code}
+
+支持的有效协议如下：
+
+* http
+* scp
+* scpexe
+* ftp
+* webdav
+
+{hidden}
+h4. Groups, Artifacts and Versions
+
+Maven defines the notion of a 'groupId', 'artifactId' and a 'version'. This plugin pulls this information from the Grails project conventions or plugin descriptor.
+
+h5. Projects
+
+For applications this plugin will use the Grails application name and version provided by Grails when generating the @pom.xml@ file. To change the version you can run the @set-version@ command:
+
+{code}
+grails set-version 0.2
+{code}
+
+The Maven @groupId@ will be the same as the project name, unless you specify a different one in Config.groovy:
+
+{code}
+grails.project.groupId="com.mycompany"
+{code}
+{hidden}
+
+h4. 组，工件和版本
+
+在Maven中，定义了'groupId'，'artifactId'和'version'概念，Maven插件会将Grails工程或者插件的描述转换为这些相应的定义。
+
+h5. 工程
+
+对于一个应用来说，当要生成@pom.xml@文件的时候，此插件会根据Grails应用提供的名称和版本进行生成。要修改版本信息，可以运行@set-version@命令来完成：
+
+{code}
+grails set-version 0.2
+{code}
+
+缺省情况下，Maven的@groupId@跟其工程名称一样，不过你可以在Config.groovy中指定，比如：
+
+{code}
+grails.project.groupId="com.mycompany"
+{code}
+
+{hidden}
+h5. Plugins
+
+With a Grails plugin the @groupId@ and @version@ are taken from the following properties in the *GrailsPlugin.groovy descriptor:
+
+{code}
+String groupId = 'myOrg'
+String version = '0.1'
+{code}
+
+The 'artifactId' is taken from the plugin name. For example if you have a plugin called @FeedsGrailsPlugin@ the @artifactId@ will be "feeds". If your plugin does not specify a @groupId@ then this defaults to "org.grails.plugins".
+{hidden}
+
+h5. 插件
+
+对于一个Grails插件来说，其@groupId@和@version@来自于*GrailsPlugin.groovy文件的描述属性：
+
+{code}
+String groupId = 'myOrg'
+String version = '0.1'
+{code}
+
+'artifactId'来自于插件的名称。比如你有一个插件是@FeedsGrailsPlugin@那么其@artifactId@是"feeds"。如果你的插件没有指定@groupId@那么其缺省值为"org.grails.plugins"。

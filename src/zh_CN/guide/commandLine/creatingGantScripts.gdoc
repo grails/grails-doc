@@ -1,0 +1,111 @@
+你可以在项目的根目录下运行 [create-script|commandLine] 命令来创建你自己的Gant脚本。例如如下命令：
+
+{code}
+grails create-script compile-sources
+{code}
+
+这将创建一个叫做 @scripts/CompileSources.groovy@ 的脚本。Gant脚本本身与规范的Groovy脚本非常相似，除了它支持“targets”的概念以及它们之间的依赖关系：
+
+{code:title=scripts/CompileSources.groovy}
+target(default:"The default target is the one that gets executed by Grails") {
+    depends(clean, compile)
+}
+
+target(clean:"Clean out things") {
+    ant.delete(dir:"output")
+}
+
+target(compile:"Compile some sources") {
+    ant.mkdir(dir:"mkdir")
+    ant.javac(srcdir:"src/java", destdir:"output")
+}
+{code}
+
+如上面的脚本所说明的，这个内置的 @ant@ 变量(一个 @groovy.util.AntBuilder@ 实例)可以访问 [Apache Ant API|http://ant.apache.org/manual/index.html] 。
+{note}
+在以前的Grails中（1.0.3和以下），这个变量是 @Ant@，即第一个字母是大写的。
+{note}
+
+你也可以依赖其他的任务，只要在 @default@ 任务中使用 @depends@  方法说明。
+
+h3. 默认任务（default）
+
+在上边的例子中，我们使用明确的名称“default”来指明一个任务。这是为一个脚本文件定义默认任务的一种方式。可选的另一种方式是使用 @setDefaultTarget()@ 方法：
+
+{code:title=scripts/CompileSources.groovy}
+target("clean-compile": "Performs a clean compilation on the app source") {
+    depends(clean, compile)
+}
+
+target(clean:"Clean out things") {
+    ant.delete(dir:"output")
+}
+
+target(compile:"Compile some sources") {
+    ant.mkdir(dir:"mkdir")
+    ant.javac(srcdir:"src/java", destdir:"output")
+}
+
+setDefaultTarget("clean-compile")
+{code}
+
+这样将允许你从其他脚本中直接调用默认的任务。另外，尽管在这个例子中我们把调用 @setDefaultTarget()@ 这一行放在了脚本文件的最后，但你可以把它放在任何位置，只要它位于它要引用的那个任务_之后_（在这个例子中这个任务就是“clean-compile”）。
+
+哪种方式更好？坦率地说，你可以使用你喜欢的那种方式——看起来这两种方式都没有什么突出的优势。我们应该讨论的一个问题是，如果你想要允许任何其他脚本都能调用你的“default”任务，那么你应该把它移动到一个没有默认任务的共享脚本文件中。关于这些内容，我们将在下一章节进行更多讨论。
+
+{hidden}
+You can create your own Gant scripts by running the [create-script|commandLine] command from the root of your project. For example the following command:
+
+{code}
+grails create-script compile-sources
+{code}
+
+Will create a script called @scripts/CompileSources.groovy@. A Gant script itself is similar to a regular Groovy script except that it supports the concept of "targets" and dependencies between them:
+
+{code:title=scripts/CompileSources.groovy}
+target(default:"The default target is the one that gets executed by Grails") {
+    depends(clean, compile)
+}
+
+target(clean:"Clean out things") {
+    ant.delete(dir:"output")
+}
+
+target(compile:"Compile some sources") {
+    ant.mkdir(dir:"mkdir")
+    ant.javac(srcdir:"src/java", destdir:"output")
+}
+{code}
+
+As demonstrated in the script above, there is an implicit @ant@ variable (an instance of @groovy.util.AntBuilder@) that allows access to the [Apache Ant API|http://ant.apache.org/manual/index.html].
+{note}
+In previous versions of Grails (1.0.3 and below), the variable was @Ant@, i.e. with a capital first letter.
+{note}
+
+You can also "depend" on other targets using the @depends@ method demonstrated in the @default@ target above.
+
+h3. The default target
+
+In the example above, we specified a target with the explicit name "default". This is one way of defining the default target for a script. An alternative approach is to use the @setDefaultTarget()@ method:
+
+{code:title=scripts/CompileSources.groovy}
+target("clean-compile": "Performs a clean compilation on the app source") {
+    depends(clean, compile)
+}
+
+target(clean:"Clean out things") {
+    ant.delete(dir:"output")
+}
+
+target(compile:"Compile some sources") {
+    ant.mkdir(dir:"mkdir")
+    ant.javac(srcdir:"src/java", destdir:"output")
+}
+
+setDefaultTarget("clean-compile")
+{code}
+
+This lets you call the default target directly from other scripts if you wish. Also, although we have put the call to @setDefaultTarget()@ at the end of the script in this example, it can go anywhere as long as it comes _after_ the target it refers to ("clean-compile" in this case).
+
+Which approach is better? To be honest, you can use whichever you prefer - there don't seem to be any major advantages in either case. One thing we would say is that if you want to allow other scripts to call your "default" target, you should move it into a shared script that doesn't have a default target at all. We'll talk some more about this in the next section.
+{hidden}

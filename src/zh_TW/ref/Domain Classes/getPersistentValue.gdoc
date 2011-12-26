@@ -1,0 +1,24 @@
+h1. getPersistentValue
+
+h2. Purpose
+
+Retrieve the original value of a field for a domain class instance.
+
+h2. Examples
+
+{code:java}
+def b = Book.get(1)
+someMethodThatMightModifyTheInstance(b)
+
+if (b.isDirty('name')) {
+    def currentName = b.name
+    def originalName = b.getPersistentValue('name')
+    if (currentName != originalName) {
+        ...
+    }
+}
+{code}
+
+h2. Description
+
+This method is useful mostly for audit logging or other work done in a *beforeUpdate* event callback. Hibernate caches the original state of all loaded instances for dirty checking during a flush and this method exposes that data so you can compare it with the current state.

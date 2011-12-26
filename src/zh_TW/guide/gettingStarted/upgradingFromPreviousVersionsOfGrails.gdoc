@@ -1,0 +1,394 @@
+Although the Grails development team have tried to keep breakages to a minimum there are a number of items to consider when upgrading a Grails 1.0.x, 1.1.x, 1.2.x, or 1.3.x applications to Grails 2.0. The major changes are described in detail below.
+
+h3. Upgrading from Grails 1.3.x
+
+h4. HSQLDB Has Been Replaced With H2
+
+HSQLDB is still bundled with Grails but is not configured as a default runtime dependency.  Upgrade options include replacing HSQLDB references in DataSource.groovy with H2 references or adding HSQLDB as a runtime dependency for the application.
+
+If you want to run an application with different versions of Grails, it's simplest to add HSQLDB as a runtime dependency, which you can do in BuildConfig.groovy:
+
+{code:java}
+grails.project.dependency.resolution = {
+    inherits("global") {
+    }
+    repositories {
+        grailsPlugins()
+        grailsHome()
+        grailsCentral()
+    }
+
+    dependencies {
+        // Add HSQLDB as a runtime dependency
+        runtime 'hsqldb:hsqldb:1.8.0.10'
+    }
+}
+{code}
+
+A default DataSource.groovy which is compatible with H2 looks like this:
+
+{code:java}
+dataSource {
+    driverClassName = "org.h2.Driver"
+    username = "sa"
+    password = ""
+}
+// environment specific settings
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop" // one of 'create', 'create-drop','update'
+            url = "jdbc:h2:mem:devDb"
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:mem:testDb"
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:prodDb"
+        }
+    }
+}
+{code}
+
+Another significant difference between H2 and HSQLDB is in the handling of @byte\[]@ domain class properties. HSQLDB's default BLOB size is large and so you typically don't need to specify a maximum size. But H2 defaults to a maximum size of 255 bytes! If you store images in the database, the saves are likely to fail because of this. The easy fix is to add a @maxSize@ constraint to the @byte\[]@ property:
+
+{code:java}
+class MyDomain {
+    byte[] data
+
+    static constraints = {
+        data maxSize: 1024 * 1024 * 2 // 2MB
+    }
+}
+{code}
+
+This constraint influences schema generation, so in the above example H2 will have the @data@ column set to @BINARY(2097152)@ by Hibernate.
+
+h4. Abstract Inheritance Changes
+
+In previous versions of Grails abstract classes in @grails-app/domain@ were not treated as persistent. This is no longer the case and has a significant impact on upgrading your application. For example consider the following domain model in a Grails 1.3.x application:
+
+{code:java}
+abstract class Sellable {
+
+}
+class Book extends Sellable {
+
+}
+{code}
+
+In Grails 1.3.x you would get a BOOK table and the properties from the @Sellable@ class would be stored within the @BOOK@ table. However, in Grails 2.0.x you will get @SELLABLE@ table and the default table-per-hierarchy inheritance rules apply with all properties of the @Book@ stored in the @SELLABLE@ table.
+
+You have two options when upgrading in this scenario:
+
+# Move the abstract @Sellable@ class into the src/groovy package. If the @Sellable@ class is in the @src/groovy@ directory it will no longer be regarded a persistent
+# Use the "database migration":http://grails.org/plugin/database-migration plugin to apply the appropriate changes to the database (typically renaming the table to the root abstract class of the inheritance tree)
+
+h4. Criteria Queries Default to INNER JOIN
+
+The previous default of LEFT JOIN for criteria queries across associations is now INNER JOIN.
+
+h4. Logging By Convention Changes
+
+The packages that you should use for Grails artifacts have mostly changed. In particular:
+
+* @service@ -> @services@
+* @controller@ -> @controllers@
+* @tagLib@ -> @taglib@ (case change)
+* @bootstrap@ -> @conf@
+* @dataSource@ -> @conf@
+
+You can find out more about logging by convention in the [main part|guide:logging] of the user guide, under "Configuring loggers". This change is a side-effect of injecting the @log@ property into artefacts at compile time.
+
+h4. jQuery Replaces Prototype
+
+The Protoype Javascript library has been removed from Grails core and now new Grails applications have the jQuery plugin configured by default. This will only impact you if you are using Prototype with the adaptive AJAX tags in your application, e.g. <g:remoteLink/> etc, because those tags will break as soon as you upgrade.
+
+To resolve this issue, simply install the [Prototype plugin|http://grails.org/plugin/prototype] in your application. You can also remove the prototype files from your @web-app/js/prototype@ directory if you want.
+
+h4. Access Control and Resources
+
+The Resources plugin is a great new feature of Grails, but you do need to be aware that it adds an extra URL at @/static@. If you have access control in your application, this may mean that the static resources require an authenticated user to load them! Make sure your access rules take account of the @/static@ URL.
+
+h4. Controller Public Methods
+
+As of Grails 2.0, public methods of controllers are now treated as actions in addition to actions defined as traditional Closures. If you were relying on the use of methods for privacy controls or as helper methods then this could result in unexpected behavior. To resolve this issue you should mark all methods of your application that are not to be exposed as actions as @private@ methods.
+
+h4. The redirect Method
+
+The [redirect|controllers] method no longer commits the response. The result of this is code that relies of this behavior will break in 2.0. For example:
+
+{code:java}
+redirect action: "next"
+if (response.committed) {
+    // do something
+}
+{code}
+
+In this case in Grails 1.3.x and below the @response.committed@ property would return true and the @if@ block will execute. In Grails 2.0 this is no longer the case and you should instead use the new @isRedirected()@ method of the @request@ object:
+
+{code:java}
+redirect action: "next"
+if (request.redirected) {
+    // do something
+}
+{code}
+
+Another side-effect of the changes to the redirect method is that it now always uses the @grails.serverURL@ configuration option if it's set. Previous versions of Grails included default values for all the environments, but when upgrading to Grails 2.0 those values more often than not break redirection. So, we recommend you remove the development and test settings for @grails.serverURL@ or replace them with something appropriate for your application.
+
+h4. Content Negotiation
+
+As of Grails 2.0 the [withFormat|controllers] method of controllers no longer takes into account the request content type (dictated by the @CONTENT_TYPE@ header), but instead deals exclusively with the response content type (dictated by the @ACCEPT@ header or file extension). This means that if your application has code that relies on reading XML from the request using @withFormat@ this will no longer work:
+
+{code:java}
+def processBook() {
+    withFormat {
+        xml {
+            // read request XML
+        }
+        html {
+            // read request parameters
+        }
+    }
+}
+{code}
+
+Instead you use the @withFormat@ method provided on the @request@ object:
+
+{code:java}
+def processBook() {
+    request.withFormat {
+        xml {
+            // read request XML
+        }
+        html {
+            // read request parameters
+        }
+    }
+}
+{code}
+
+h4. Command Line Output
+
+Ant output is now hidden by default to keep the noise in the terminal to a minimum. That means if you use @ant.echo@ in your scripts to communicate messages to the user, we recommend switching to an alternative mechanism.
+
+For status related messages, you can use the event system:
+
+{code:java}
+event "StatusUpdate", ["Some message"]
+event "StatusFinal",  ["Some message"]
+event "StatusError",  ["Some message"]
+{code}
+
+For more control you can use the @grailsConsole@ script variable, which gives you access to an instance of [GrailsConsole|api:grails.build.logging.GrailsConsole]. In particular, you can log information messages with @log()@ or @info()@, errors and warnings with @error()@ and @warning()@, and request user input with @userInput()@.
+
+h4. Updated Underlying APIs
+
+Grails 2.0 contains updated dependencies including Servlet 3.0, Tomcat 7, Spring 3.1, Hibernate 3.6 and Groovy 1.8. This means that certain plugins and applications that that depend on earlier versions of these APIs may no longer work. For example the Servlet 3.0 @HttpServletRequest@ interface includes new methods, so if a plugin implements this interface for Servlet 2.5 but not for Servlet 3.0 then said plugin will break. The same can be said of any Spring interface.
+
+h4. Removal of release-plugin
+
+The built in @release-plugin@ command for releases plugins to the central Grails plugin repository has been removed. The new "release":http://grails.org/plugin/release plugin should be used instead which provides an equivalent @publish-plugin@ command.
+
+h4. Removal of Deprecated Classes
+
+The following deprecated classes have been removed: @grails.web.JsonBuilder@, @grails.web.OpenRicoBuilder@
+
+h3. Upgrading from Grails 1.2.x
+
+h4. Plugin Repositories
+
+As of Grails 1.3, Grails no longer natively supports resolving plugins against secured SVN repositories. The plugin resolution mechanism in Grails 1.2 and below has been replaced by one built on [Ivy|http://ant.apache.org/ivy/], the upside of which is that you can now resolve Grails plugins against Maven repositories as well as regular Grails repositories.
+
+Ivy supports a much richer setter of repository resolvers for resolving plugins, including support for Webdav, HTTP, SSH and FTP. See the section on [resolvers|http://ant.apache.org/ivy/history/trunk/settings/resolvers.html] in the Ivy docs for all the available options and the section of [plugin repositories|guide:repositories] in the user guide which explains how to configure additional resolvers.
+
+If you still need support for resolving plugins against secured SVN repositories then the [IvySvn|http://code.google.com/p/ivysvn/] project provides a set of resolvers for SVN repositories.
+
+h3. Upgrading from Grails 1.1.x
+
+h4. Plugin paths
+
+In Grails 1.1.x typically a @pluginContextPath@ variable was used to establish paths to plugin resources. For example:
+
+{code}
+<g:resource dir="${pluginContextPath}/images" file="foo.jpg" />
+{code}
+
+In Grails 1.2 views have been made plugin aware and this is no longer necessary:
+
+{code}
+<g:resource dir="images" file="foo.jpg" />
+{code}
+
+Additionally the above example will no longer link to an application image from a plugin view. To do so change the above to:
+
+{code}
+<g:resource contextPath="" dir="images" file="foo.jpg" />
+{code}
+
+The same rules apply to the [javascript|tags] and [render|tags] tags.
+
+h4. Tag and Body return values
+
+Tags no longer return @java.lang.String@ instances but instead return a Grails @StreamCharBuffer@ instance. The @StreamCharBuffer@ class implements all the same methods as @String@ but doesn't extend @String@, so code like this will break:
+
+{code}
+def foo = body()
+if (foo instanceof String) {
+    // do something
+}
+{code}
+
+In these cases you should check for the @java.lang.CharSequence@ interface, which both @String@ and @StreamCharBuffer@ implement:
+
+{code}
+def foo = body()
+if (foo instanceof CharSequence) {
+    // do something
+}
+{code}
+
+h4. New JSONBuilder
+
+There is a new version of @JSONBuilder@ which is semantically different from the one used in earlier versions of Grails. However, if your application depends on the older semantics you can still use the deprecated implementation by setting the following property to @true@ in Config.groovy:
+
+{code}
+grails.json.legacy.builder=true
+{code}
+
+h4. Validation on Flush
+
+Grails now executes validation routines when the underlying Hibernate session is flushed to ensure that no invalid objects are persisted. If one of your constraints (such as a custom validator) executes a query then this can cause an additional flush, resulting in a @StackOverflowError@. For example:
+
+{code}
+static constraints = {
+    author validator: { a ->
+        assert a != Book.findByTitle("My Book").author
+    }
+}
+{code}
+
+The above code can lead to a @StackOverflowError@ in Grails 1.2. The solution is to run the query in a new Hibernate @session@ (which is recommended in general as doing Hibernate work during flushing can cause other issues):
+
+{code}
+static constraints = {
+    author validator: { a ->
+        Book.withNewSession {
+            assert a != Book.findByTitle("My Book").author
+        }
+    }
+}
+{code}
+
+h3. Upgrading from Grails 1.0.x
+
+h4. Groovy 1.6
+
+Grails 1.1 and above ship with Groovy 1.6 and no longer supports code compiled against Groovy 1.5. If you have a library that was compiled with Groovy 1.5 you must recompile it against Groovy 1.6 or higher before using it with Grails 1.1.
+
+h4. Java 5.0
+
+Grails 1.1 now no longer supports JDK 1.4, if you wish to continue using Grails then it is recommended you stick to the Grails 1.0.x stream until you are able to upgrade your JDK.
+
+h4. Configuration Changes
+
+1) The setting @grails.testing.reports.destDir@ has been renamed to @grails.project.test.reports.dir@ for consistency.
+
+2) The following settings have been moved from @grails-app/conf/Config.groovy@ to @grails-app/conf/BuildConfig.groovy@:
+** @grails.config.base.webXml@
+** @grails.project.war.file@ (renamed from @grails.war.destFile@)
+** @grails.war.dependencies@
+** @grails.war.copyToWebApp@
+** @grails.war.resources@
+
+3) The @grails.war.java5.dependencies@ option is no longer supported, since Java 5.0 is now the baseline (see above).
+
+4) The use of jsessionid (now considered harmful) is disabled by default. If your application requires jsessionid you can re-enable its usage by adding the following to @grails-app/conf/Config.groovy@:
+
+{code}
+grails.views.enable.jsessionid=true
+{code}
+
+5) The syntax used to configure Log4j has changed. See the user guide section on [Logging|guide:logging] for more information.
+
+h4. Plugin Changes
+
+As of version 1.1, Grails no longer stores plugins inside your @PROJECT_HOME/plugins@ directory by default. This may result in compilation errors in your application unless you either re-install all your plugins or set the following property in @grails-app/conf/BuildConfig.groovy@:
+
+{code}
+grails.project.plugins.dir="./plugins"
+{code}
+
+h4. Script Changes
+
+1) If you were previously using Grails 1.0.3 or below the following syntax is no longer support for importing scripts from GRAILS_HOME:
+
+{code}
+Ant.property(environment:"env")
+grailsHome = Ant.antProject.properties."env.GRAILS_HOME"
+
+includeTargets << new File("${grailsHome}/scripts/Bootstrap.groovy")
+{code}
+
+Instead you should use the new @grailsScript@ method to import a named script:
+
+{code}
+includeTargets << grailsScript("_GrailsBootstrap")
+{code}
+
+2) Due to an upgrade of Gant all references to the variable @Ant@ should be changed to @ant@.
+
+3) The root directory of the project is no longer on the classpath, so loading a resource like this will no longer work:
+
+{code}
+def stream = getClass().classLoader.getResourceAsStream(
+                   "grails-app/conf/my-config.xml")
+{code}
+
+Instead you should use the Java File APIs with the @basedir@ property:
+
+{code}
+new File("${basedir}/grails-app/conf/my-config.xml").withInputStream { stream ->
+    // read the file
+}
+{code}
+
+h4. Command Line Changes
+
+The @run-app-https@ and @run-war-https@ commands no longer exist and have been replaced by an argument to [run-app|commandLine]:
+
+{code}
+grails run-app -https
+{code}
+
+h4. Data Mapping Changes
+
+1) Enum types are now mapped using their String value rather than the ordinal value. You can revert to the old behavior by changing your mapping as follows:
+
+{code}
+static mapping = {
+    someEnum enumType:"ordinal"
+}
+{code}
+
+2) Bidirectional one-to-one associations are now mapped with a single column on the owning side and a foreign key reference. You shouldn't need to change anything; however you should drop column on the inverse side as it contains duplicate data.
+
+h4. REST Support
+
+Incoming XML requests are now no longer automatically parsed. To enable parsing of REST requests you can do so using the @parseRequest@ argument inside a URL mapping:
+
+{code}
+"/book"(controller:"book",parseRequest:true)
+{code}
+
+Alternatively, you can use the new @resource@ argument, which enables parsing by default:
+
+{code}
+"/book"(resource:"book")
+{code}

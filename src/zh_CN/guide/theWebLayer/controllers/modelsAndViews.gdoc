@@ -1,0 +1,329 @@
+{hidden}
+h4. Returning the Model
+
+A model is a Map that the view uses when rendering. The keys within that Map correspond to variable names accessible by the view. There are a couple of ways to return a model. First, you can explicitly return a Map instance:
+
+{code:java}
+def show() {
+    [book: Book.get(params.id)]
+}
+{code}
+
+{note}
+The above does _not_ reflect what you should use with the scaffolding views - see the [scaffolding section|guide:scaffolding] for more details.
+{note}
+
+If no explicit model is returned the controller's properties will be used as the model, thus allowing you to write code like this:
+
+{code:java}
+class BookController {
+
+    List books
+    List authors
+
+    def list() {
+        books = Book.list()
+        authors = Author.list()
+    }
+}
+{code}
+
+{note}
+This is possible due to the fact that controllers are prototype scoped. In other words a new controller is created for each request. Otherwise code such as the above would not be thread-safe, and all users would share the same data.
+{note}
+
+In the above example the @books@ and @authors@ properties will be available in the view.
+
+A more advanced approach is to return an instance of the Spring [ModelAndView|api:org.springframework.web.servlet.ModelAndView] class:
+
+{code:java}
+import org.springframework.web.servlet.ModelAndView
+
+def index() {
+    // get some books just for the index page, perhaps your favorites
+    def favoriteBooks = ...
+
+    // forward to the list view to show them
+    return new ModelAndView("/book/list", [ bookList : favoriteBooks ])
+}
+{code}
+
+One thing to bear in mind is that certain variable names can not be used in your model:
+
+* @attributes@
+* @application@
+
+Currently, no error will be reported if you do use them, but this will hopefully change in a future version of Grails.
+{hidden}
+
+h4. 返回模型
+
+模型是在渲染的时候给视图用的一个映射（Map）。映射的键对应于视图中的命名变量。有很多方法都可以返回一个模型。首先，你可以通过明确返回映射（Map）实例的方式：
+
+{code:java}
+def show() {
+    [book: Book.get(params.id)]
+}
+{code}
+
+{note}
+上述示例并 _不会_ 影响到脚手架的视图－更多信息请参考[脚手架章节|guide:scaffolding]。
+{note}
+
+如果没有明确指定模型，那么控制器的属性将作为模型返回给视图，象如下代码所示那样：
+
+{code:java}
+class BookController {
+
+    List books
+    List authors
+
+    def list() {
+        books = Book.list()
+        authors = Author.list()
+    }
+}
+{code}
+
+{note}
+这是可行的，因为控制器的缺省作用域是prototype。换句话说，每一个请求都将创建一个新的控制器。否则的话，上述的代码就不是线程安全的了，所有的用户将共享同样的数据。
+{note}
+
+在上述示例中，@books@和@authors@属性在视图中将是有效的。
+
+另外一个更高级的方式是返回一个Spring [ModelAndView|api:org.springframework.web.servlet.ModelAndView]类的一个实例：
+
+{code:java}
+import org.springframework.web.servlet.ModelAndView
+
+def index() {
+    // get some books just for the index page, perhaps your favorites
+    def favoriteBooks = ...
+
+    // forward to the list view to show them
+    return new ModelAndView("/book/list", [ bookList : favoriteBooks ])
+}
+{code}
+
+只有一件事情需要担心，那就是在你的模型中可能某些变量名称是不可用的：
+
+* @attributes@
+* @application@
+
+当前，如果你使用到了它们，也不会有任何错误提示报告出来，但是在将来的Grails版本中希望有所改善。
+
+{hidden}
+h4. Selecting the View
+
+In both of the previous two examples there was no code that specified which [view|guide:gsp] to render. So how does Grails know which one to pick? The answer lies in the conventions. Grails will look for a view at the location @grails-app/views/book/show.gsp@ for this @list@ action:
+
+{code:java}
+class BookController {
+    def show() {
+         [book: Book.get(params.id)]
+    }
+}
+{code}
+
+To render a different view, use the [render|controllers] method:
+
+{code:java}
+def show() {
+    def map = [book: Book.get(params.id)]
+    render(view: "display", model: map)
+}
+{code}
+
+In this case Grails will attempt to render a view at the location @grails-app/views/book/display.gsp@. Notice that Grails automatically qualifies the view location with the @book@ directory of the @grails-app/views@ directory. This is convenient, but to access shared views you need instead you can use an absolute path instead of a relative one:
+
+{code:java}
+def show() {
+    def map = [book: Book.get(params.id)]
+    render(view: "/shared/display", model: map)
+}
+{code}
+
+In this case Grails will attempt to render a view at the location @grails-app/views/shared/display.gsp@.
+
+Grails also supports JSPs as views, so if a GSP isn't found in the expected location but a JSP is, it will be used instead.
+{hidden}
+
+h4. 选择视图
+
+在前面的两个示例中，我们并没有指定要用那个视图来渲染。那么Grails是如何知道那个将被选择？答案是规约依赖。在下面的示例中，Grails将自动的寻找位于@grails-app/views/book/show.gsp@的视图：
+
+{code:java}
+class BookController {
+    def show() {
+         [book: Book.get(params.id)]
+    }
+}
+{code}
+
+要渲染另外不同的视图，需要使用[render|controllers]方法：
+
+{code:java}
+def show() {
+    def map = [book: Book.get(params.id)]
+    render(view: "display", model: map)
+}
+{code}
+
+在上述示例中，Grails将尝试使用视图@grails-app/views/book/display.gsp@来渲染。注意，Grails会根据@grails-app/views@下的@book@目录来自动地限定视图的位置。常规是这样的，但是要访问那些共享的视图，你还是需要使用绝对路径来替代相对路径：
+
+{code:java}
+def show() {
+    def map = [book: Book.get(params.id)]
+    render(view: "/shared/display", model: map)
+}
+{code}
+
+在这个示例中，Grails将尝试使用视图@grails-app/views/shared/display.gsp@来渲染。
+
+Grails也支持JSP的视图，因此如果一个预期的GSP没有找到，但是有相应的JSP，那么它将使用此JSP。
+
+{hidden}
+h4. Rendering a Response
+
+Sometimes it's easier (for example with Ajax applications) to render snippets of text or code to the response directly from the controller. For this, the highly flexible @render@ method can be used:
+
+{code:java}
+render "Hello World!"
+{code}
+
+The above code writes the text "Hello World!" to the response. Other examples include:
+
+{code}
+// write some markup
+render {
+   for (b in books) {
+      div(id: b.id, b.title)
+   }
+}
+{code}
+
+{code}
+// render a specific view
+render(view: 'show')
+{code}
+
+{code}
+// render a template for each item in a collection
+render(template: 'book_template', collection: Book.list())
+{code}
+
+{code}
+// render some text with encoding and content type
+render(text: "<xml>some xml</xml>", contentType: "text/xml", encoding: "UTF-8")
+{code}
+
+If you plan on using Groovy's @MarkupBuilder@ to generate HTML for use with the @render@ method be careful of naming clashes between HTML elements and Grails tags, for example:
+
+{code:java}
+import groovy.xml.MarkupBuilder
+...
+def login() {
+    def writer = new StringWriter()
+    def builder = new MarkupBuilder(writer)
+    builder.html {
+        head {
+            title 'Log in'
+        }
+        body {
+            h1 'Hello'
+            form {
+            }
+        }
+    }
+
+    def html = writer.toString()
+    render html
+}
+{code}
+
+This will actually [call the form tag|guide:tagsAsMethodCalls] (which will return some text that will be ignored by the @MarkupBuilder@). To correctly output a @<form>@ element, use the following:
+
+{code:java}
+def login() {
+    // ...
+    body {
+        h1 'Hello'
+        builder.form {
+        }
+    }
+    // ...
+}
+{code}
+{hidden}
+
+h4. 渲染响应
+
+有时候在控制器中直接渲染文本或者代码片段到响应是很容易的（比如Ajax的应用）。这时，就可以使用灵活性很高的@render@方法了：
+
+{code:java}
+render "Hello World!"
+{code}
+
+上述代码输出"Hello World!"文本到其响应。另外的例子还包括：
+
+{code}
+// write some markup
+render {
+   for (b in books) {
+      div(id: b.id, b.title)
+   }
+}
+{code}
+
+{code}
+// render a specific view
+render(view: 'show')
+{code}
+
+{code}
+// render a template for each item in a collection
+render(template: 'book_template', collection: Book.list())
+{code}
+
+{code}
+// render some text with encoding and content type
+render(text: "<xml>some xml</xml>", contentType: "text/xml", encoding: "UTF-8")
+{code}
+
+如果你打算使用Groovy的@MarkupBuilder@来生成HTML来供@render@方法使用，这时，你要注意HTML元素和Grails标签名字的冲突，比如：
+
+{code:java}
+import groovy.xml.MarkupBuilder
+...
+def login() {
+    def writer = new StringWriter()
+    def builder = new MarkupBuilder(writer)
+    builder.html {
+        head {
+            title 'Log in'
+        }
+        body {
+            h1 'Hello'
+            form {
+            }
+        }
+    }
+
+    def html = writer.toString()
+    render html
+}
+{code}
+
+这将实际调用[form标签|guide:tagsAsMethodCalls]（其返回的文本将被@MarkupBuilder@忽略）。要正确地输出@<form>@元素，需要使用如下的例子：
+
+{code:java}
+def login() {
+    // ...
+    body {
+        h1 'Hello'
+        builder.form {
+        }
+    }
+    // ...
+}
+{code}

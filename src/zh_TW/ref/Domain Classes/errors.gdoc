@@ -1,0 +1,47 @@
+h1. errors
+
+h2. Purpose
+
+An instance of the Spring [Errors|api:org.springframework.validation.Errors] interface containing data binding and/or validation errors.
+
+h2. Examples
+
+{code:java}
+def user = new User(params)
+
+if (user.validate()) {
+    // do something with user
+}
+else {
+    user.errors.allErrors.each {
+        println it
+    }
+}
+{code}
+
+h2. Description
+
+The @errors@ property is used by Grails during [Data Binding|guide:dataBinding] to store type conversion errors and during [Validation|guide:validation] when calling the [validate|domainClasses] or [save|domainClasses] methods.
+
+You can also add your own errors using the [reject|api:org.springframework.validation.Errors#reject(java.lang.String)] and [rejectValue|api:org.springframework.validation.Errors#rejectValue(java.lang.String,%20java.lang.String)] methods:
+
+{code:java}
+if (params.password != params.confirm_password) {
+
+    user.errors.reject(
+        'user.password.doesnotmatch',
+        ['password', 'class User'] as Object[],
+        '[Property [{0}] of class [{1}] does not match confirmation]')
+
+    // The following helps with field highlighting in your view
+    user.errors.rejectValue(
+        'password',
+        'user.password.doesnotmatch')
+
+    render(view: 'signup', model: [user: user])
+}
+{code}
+
+In the example of @reject@ above, @'user.password.doesnotmatch'@, is the error code corresponding to a value in @grails-app/i18n/message.properties@, @\['password', 'class User'\] as Object\[\]@ is a Groovy cast from a @List@ to an @Object@ array to match the expected signature, and @'\[Property \[{0}\] of class \[{1}\] does not match confirmation\]'@ is the default mapping string.
+
+In the @rejectValue@ example, @'password'@ is the field in the view to highlight using a @<g:hasErrors>@ tag and @'user.password.doesnotmatch'@ is the i18n error code.

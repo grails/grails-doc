@@ -1,33 +1,65 @@
 h1. migrate-docs
 
+{hidden}
 h2. Purpose
 
 Migrates old style gdocs in which the section numbers are in the file names to the new approach where section numbers and titles are put into a toc.yml file.
 
 h2. Examples
+{hidden}
+
+h2. Propósito
+
+Migra al viejo estulo gdocs en el que los números de sección son los nombres del archivo con el nuevo enfoque donde los numeros de las secciones y los títulos estan en el fichero toc.yml.
+
+h2. Ejemplos
 
 {code:java}
 grails migrate-docs
 {code}
 
+{hidden}
 h2. Description
 
 Originally, the source files for Grails-generated user guides included the section numbers and titles in the gdoc filenames. This made it very easy to get going, but tricky to renumber sections and change their titles since the corresponding URLs would also change. The @[doc|commandLine]@ command now allows you to specify sections in a table of contents in YAML form, so the guide can be restructured without breaking URLs.
 
 If you already have a user guide in the old style, then this command will automatically convert the source files to the new format. The gdoc files are created under the directory @src/docs/migratedGuide@ along with:
 
+{hidden}
+
+h2. Descripción
+
+Originalmente, los ficheros de código generados para las guías de usuario Grails incluian el número de sección y título en los nombres de ficheros gdoc. Esto lo hizo muy facíl de utilizar pero dificil de renombrar secciones y cambiar sus títulos desde la URL que corresponde también cambiaría. El comando @[doc|commandLine]@ ahora permite especificar secciones en una tabla de contenidos en forma YAML, por tanto la guía puede ser restructurada sin romper las URLs.
+
+Si tiene una guía de usuario con el antiguo estilo, entonces este comando convertirá automaticamente los ficheros de código al nuevo formato. Los ficheros gdoc se crean en el directorio @src/docs/migratedGuide@ junto con:
+
+{hidden}
 * @toc.yml@ - the YAML table of contents file containing the original user guide structure
 * @links.yml@ - a map of new section names to old ones (see later for more detail)
 * @rewriteRules.txt@ - a simple text file containing the mappings from old HTML filenames to new ones
 
 The gdoc files themselves are also renamed, with the section numbers removed and the titles converted into Java property notation. This automatic conversion may not always work particularly well, so be prepared to change gdoc the filenames and their corresponding entries in the above files if necessary. For example,
+{hidden}
 
+* @toc.yml@ - La tabla de contenido del fichero YALM contiene la estructura original de la guía de usuario.
+* @links.yml@ - un mapao de nombres de secciones nuevas con las antiguas (Más adelante para más detalle)
+* @rewriteRules.txt@ - un fichero de texto plano que contiene el mapeo desde los nombres de ficheros HTML antiguos a los nuevos.
+
+Los ficheros gdoc serán también renombrados, con los números de sección eliminados y los títulos convertidos en la notación de propiedad Java. Ésta conversió nautomática no siempre se realiza particularmente bien, por lo tanto debe estar preaprado para cambiar los nombres de los ficheros gdoc y sus correspondientes entradas en los fichderos anteriores si fuera necesario. Por ejemplo:
+
+{hidden}
 * 12.1 Welcome to the New World.gdoc
-
 will become
-
+{hidden}
+* 12.1 Bienvenido al Nuevo Mundo.gdoc
+Se convertirá en
 * welcomeToTheNewWorld.gdoc
 
+{hidden}
 Once the migration has finished, you can replace the @src/docs/guide@ directory with the contents of @migratedGuide@ and run the @doc@ command. This command is aware of the @links.yml@ file and will use it to add legacy links into the generated documentation so that old HTML fragment identifiers will continue to work.
 
 Of course, old URLs will break because the names of the HTML files have changed. Hence why the @rewriteRules@ file is created: you can use it to create the appropriate Apache HTTPD rewrite rules or the equivalent for your web server.
+{hidden}
+Una vez finalizada la migración, puede remplazar el directorio @src/docs/guide@ con el contenido de @migratedGuide@ y ejecutar el comando @doc@. Este comando es consciente del fichero @links.yml@ y lo usará para añadir vínculos heredados en la documentación generada por tanto los identificadores de fragmentos antiguos de HTML continuarán trabajando.
+
+

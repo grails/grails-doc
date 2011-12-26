@@ -1,4 +1,7 @@
+{hidden}
 As mentioned before a flow has a defined start and end state. A start state is the state which is entered when a user first initiates a conversation (or flow). The start state of a Grails flow is the first method call that takes a block. For example:
+{hidden}
+Como lo mencionamos antes, un flujo tiene definido un estado de inicio y final. Un estado de inicio es el estado en el cual se entra cuando un usuario primero inicia una conversacion (o un flujo). El estado de inicio de un flujo de Grails es la primera llamada al metodo que toma un bloque. Por ejemplo:
 
 {code:java}
 class BookController {
@@ -17,10 +20,22 @@ class BookController {
 }
 {code}
 
+{hidden}
 Here the @showCart@ node is the start state of the flow. Since the showCart state doesn't define an action or redirect it is assumed be a [view state|guide:actionStatesAndViewStates] that, by convention, refers to the view  @grails-app/views/book/shoppingCart/showCart.gsp@.
+{hidden}
+Aqui el nodo @showCart@ es el estado inicial del flujo. Desde que el estado showCart no define una accion o un redirect se asume que es un [view state|guide:actionStatesAndViewStates] que, por convencion, se refiera a la vista @grails-app/views/book/shoppingCart/showCart.gsp@.
 
+{hidden}
 Notice that unlike regular controller actions, the views are stored within a directory that matches the name of the flow: @grails-app/views/book/shoppingCart@.
+{hidden}
+Note que no como las acciones de un controller regular, las vistas son almacenadas dentro del directorio que empata con el nombre del flujo: @grails-app/views/book/shoppingCart@.
 
+{hidden}
 The @shoppingCart@ flow also has two possible end states. The first is @displayCatalogue@ which performs an external redirect to another controller and action, thus exiting the flow. The second is @displayInvoice@ which is an end state as it has no events at all and will simply render a view called @grails-app/views/book/shoppingCart/displayInvoice.gsp@ whilst ending the flow at the same time.
+{hidden}
+El flujo @shoppingCart@ tambien tiene dos estados finales posibles. El primero es @displayCatalogue@ el cual se encarga de un redirect externo hacia otro controller y action, asi sale del flujo. El segundo es @displayInvoice@ el cual es un estado final que no tiene ningun evento y simplemente desplegara una vista llamada @grails-app/views/book/shoppingCart/displayInvoice.gsp@ miestras que termina el flujo al mismo tiempo.
 
+{hidden}
 Once a flow has ended it can only be resumed from the start state, in this case @showCart@, and not from any other state.
+{hidden}
+Una vez que el flujo ha terminado, solo puede ser reanudado desde un estado de inicio, en este caso @showCart@, y no desde ningun otro estado.

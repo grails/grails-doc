@@ -1,0 +1,269 @@
+{hidden}
+There are a number of different ways to implement Ajax which are typically broken down into:
+
+* Content Centric Ajax - Where you just use the HTML result of a remote call to update the page
+* Data Centric Ajax - Where you actually send an XML or JSON response from the server and programmatically update the page
+* Script Centric Ajax - Where the server sends down a stream of JavaScript to be evaluated on the fly
+
+Most of the examples in the [Ajax|guide:ajax] section cover Content Centric Ajax where you are updating the page, but you may also want to use Data Centric or Script Centric. This guide covers the different styles of Ajax.
+{hidden}
+
+实现Ajax有很多种不同的方式，但大体可分为如下几类：
+
+* 内容为中心的Ajax - 使用远程调用返回的HTML结果更新页面
+* 数据为中心的Ajax - 从服务器端发送接收XML或者JSON，并且以编程的方式更新页面
+* 脚本为中心的Ajax - 接收从服务器端发出的JavaScript流，并且运行之
+
+[Ajax|guide:ajax]章节中的大部分示例都是以内容为中心的方式更新页面，不过你也可以使用数据为中心或者脚本为中心。本节将涵盖这些不同风格的Ajax。
+
+{hidden}
+h4. Content Centric Ajax
+
+Just to re-cap, content centric Ajax involves sending some HTML back from the server and is typically done by rendering a template with the [render|controllers] method:
+
+{code:java}
+def showBook() {
+    def b = Book.get(params.id)
+
+    render(template: "bookTemplate", model: [book: b])
+}
+{code}
+
+Calling this on the client involves using the [remoteLink|tags] tag:
+
+{code:xml}
+<g:remoteLink action="showBook" id="${book.id}"
+              update="book${book.id}">Update Book</g:remoteLink>
+
+<div id="book${book.id}">
+   <!--existing book mark-up -->
+</div>
+{code}
+{hidden}
+
+h4. 内容为中心的Ajax
+
+重申一下，内容为中心的Ajax主要跟从服务器端返回HTML内容相关，这些内容一般是通过使用[render|controllers]渲染模板的方式得到：：
+
+{code:java}
+def showBook() {
+    def b = Book.get(params.id)
+
+    render(template: "bookTemplate", model: [book: b])
+}
+{code}
+
+在客户端的调用一般是通过[remoteLink|tags]标签来实现：
+
+{code:xml}
+<g:remoteLink action="showBook" id="${book.id}"
+              update="book${book.id}">Update Book</g:remoteLink>
+
+<div id="book${book.id}">
+   <!--existing book mark-up -->
+</div>
+{code}
+
+{hidden}
+h4. Data Centric Ajax with JSON
+
+Data Centric Ajax typically involves evaluating the response on the client and updating programmatically. For a JSON response with Grails you would typically use Grails' [JSON marshalling|guide:xmlAndJSON] capability:
+
+{code:java}
+import grails.converters.JSON
+
+def showBook() {
+    def b = Book.get(params.id)
+
+    render b as JSON
+}
+{code}
+
+And then on the client parse the incoming JSON request using an Ajax event handler:
+
+{code:xml}
+<g:javascript>
+function updateBook(e) {
+    var book = eval("("+e.responseText+")") // evaluate the JSON
+    $("book" + book.id + "_title").innerHTML = book.title
+}
+<g:javascript>
+<g:remoteLink action="test" update="foo" onSuccess="updateBook(e)">
+    Update Book
+</g:remoteLink>
+<g:set var="bookId">book${book.id}</g:set>
+<div id="${bookId}">
+    <div id="${bookId}_title">The Stand</div>
+</div>
+{code}
+{hidden}
+
+h4. JSON实现的数据为中心的Ajax
+
+数据为中心的Ajax通常是在客户端以编程的方式处理返回结果和内容更新。在Grails中，一个JSON响应通常是使用[JSON编组（marshalling）|guide:xmlAndJSON]来处理的：
+
+{code:java}
+import grails.converters.JSON
+
+def showBook() {
+    def b = Book.get(params.id)
+
+    render b as JSON
+}
+{code}
+
+在客户端，通过Ajax的事件处理器来进行解析SON的：
+
+{code:xml}
+<g:javascript>
+function updateBook(e) {
+    var book = eval("("+e.responseText+")") // evaluate the JSON
+    $("book" + book.id + "_title").innerHTML = book.title
+}
+<g:javascript>
+<g:remoteLink action="test" update="foo" onSuccess="updateBook(e)">
+    Update Book
+</g:remoteLink>
+<g:set var="bookId">book${book.id}</g:set>
+<div id="${bookId}">
+    <div id="${bookId}_title">The Stand</div>
+</div>
+{code}
+
+{hidden}
+h4. Data Centric Ajax with XML
+
+On the server side using XML is equally simple:
+
+{code:java}
+import grails.converters.XML
+
+def showBook() {
+    def b = Book.get(params.id)
+
+    render b as XML
+}
+{code}
+
+However, since DOM is involved the client gets more complicated:
+
+{code:xml}
+<g:javascript>
+function updateBook(e) {
+    var xml = e.responseXML
+    var id = xml.getElementsByTagName("book").getAttribute("id")
+    $("book" + id + "_title") = xml.getElementsByTagName("title")[0].textContent
+}
+<g:javascript>
+<g:remoteLink action="test" update="foo" onSuccess="updateBook(e)">
+    Update Book
+</g:remoteLink>
+<g:set var="bookId">book${book.id}</g:set>
+<div id="${bookId}">
+    <div id="${bookId}_title">The Stand</div>
+</div>
+{code}
+{hidden}
+
+h4. XML实现的数据为中心的Ajax
+
+在服务器端，处理XML是很容易的：
+
+{code:java}
+import grails.converters.XML
+
+def showBook() {
+    def b = Book.get(params.id)
+
+    render b as XML
+}
+{code}
+
+但是在客户端却是要复杂很多，因为要通过DOM来实现：
+
+{code:xml}
+<g:javascript>
+function updateBook(e) {
+    var xml = e.responseXML
+    var id = xml.getElementsByTagName("book").getAttribute("id")
+    $("book" + id + "_title") = xml.getElementsByTagName("title")[0].textContent
+}
+<g:javascript>
+<g:remoteLink action="test" update="foo" onSuccess="updateBook(e)">
+    Update Book
+</g:remoteLink>
+<g:set var="bookId">book${book.id}</g:set>
+<div id="${bookId}">
+    <div id="${bookId}_title">The Stand</div>
+</div>
+{code}
+
+{hidden}
+h4. Script Centric Ajax with JavaScript
+
+Script centric Ajax involves actually sending JavaScript back that gets evaluated on the client. An example of this can be seen below:
+
+{code:java}
+def showBook() {
+    def b = Book.get(params.id)
+
+    response.contentType = "text/javascript"
+    String title = b.title.encodeAsJavascript()
+    render "\$('book${b.id}_title')='${title}'"
+}
+{code}
+
+The important thing to remember is to set the @contentType@ to @text/javascript@. If you use Prototype on the client the returned JavaScript will automatically be evaluated due to this @contentType@ setting.
+
+Obviously in this case it is critical that you have an agreed client-side API as you don't want changes on the client breaking the server. This is one of the reasons Rails has something like RJS. Although Grails does not currently have a feature such as RJS there is a [Dynamic JavaScript Plugin|http://grails.org/plugin/dynamic-javascript] that offers similar capabilities.
+{hidden}
+
+h4. JavaScript实现的脚本为中心的Ajax
+
+脚本为中心的Ajax主要在客户端处理从后台返回的JavaScript，并且运行它们。比如如下示例：
+
+{code:java}
+def showBook() {
+    def b = Book.get(params.id)
+
+    response.contentType = "text/javascript"
+    String title = b.title.encodeAsJavascript()
+    render "\$('book${b.id}_title')='${title}'"
+}
+{code}
+
+需要记住的是要设置@contentType@为@text/javascript@。如果你在客户端使用的是Prototype，它会根据@contentType@的设置而自动执行。
+
+很明显，这种情况下，有一个很严重的前提，那就是你必须认可服务器端将依赖客户端的API，这也是Rails（Grails就是受其启发而来的－－译者注）存在RJS的一个原因。尽管Grails并没有类似于RJS的功能，但是有一个[动态JavaScript插件|http://grails.org/plugin/dynamic-javascript]提供了类似的功能。
+
+{hidden}
+h4. Responding to both Ajax and non-Ajax requests
+
+It's straightforward to have the same Grails controller action handle both Ajax and non-Ajax requests. Grails adds the @isXhr()@ method to @HttpServletRequest@ which can be used to identify Ajax requests. For example you could render a page fragment using a template for Ajax requests or the full page for regular HTTP requests:
+
+{code:java}
+def listBooks() {
+    def books = Book.list(params)
+    if (request.xhr) {
+        render template: "bookTable", model: [books: books]
+    } else {
+        render view: "list", model: [books: books]
+    }
+}
+{code}
+{hidden}
+
+h4. 响应Ajax和非Ajax请求
+
+使用同一个控制器和操作来处理Ajax和非Ajax请求是非常直截了当的。Grails为@HttpServletRequest@增加了一个@isXhr()@用以标识是否为Ajax请求。比如你可以使用模板为Ajax请求渲染一个页面片段，否则就渲染一个完整的页面：
+
+{code:java}
+def listBooks() {
+    def books = Book.list(params)
+    if (request.xhr) {
+        render template: "bookTable", model: [books: books]
+    } else {
+        render view: "list", model: [books: books]
+    }
+}
+{code}

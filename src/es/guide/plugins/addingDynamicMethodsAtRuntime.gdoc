@@ -1,8 +1,20 @@
+{hidden}
 h4. The Basics
+{hidden}
 
+h4. Introducción
+
+{hidden}
 Grails plugins let you register dynamic methods with any Grails-managed or other class at runtime. This work is done in a @doWithDynamicMethods@ closure.
+{hidden}
 
+Los plugins de grails permiten registrar dinámicamente métodos en clases gestionadas por Grails o cualquier otra clase en tiempo de ejecución. Esto se consigue a través de la closure @doWithDynamicMethods@
+
+{hidden}
 For Grails-managed classes like controllers, tag libraries and so forth you can add methods, constructors etc. using the "ExpandoMetaClass":http://groovy.codehaus.org/ExpandoMetaClass mechanism by accessing each controller's [MetaClass|api:http://groovy.codehaus.org/api/groovy/lang/MetaObjectProtocol.html]:
+{hidden}
+
+Para las clases gestionadas por grails, como los controladores, librerías de tags y otras, es posible añadir métodos, constructures etc. usando el mecanismo "ExpandoMetaClass":http://groovy.codehaus.org/ExpandoMetaClass accediendo al [MetaClass|api:http://groovy.codehaus.org/api/groovy/lang/MetaObjectProtocol.html] de cada controlador.
 
 {code:java}
 class ExamplePlugin {
@@ -14,9 +26,17 @@ class ExamplePlugin {
 }
 {code}
 
+{hidden}
 In this case we use the implicit application object to get a reference to all of the controller classes' MetaClass instances and add a new method called @myNewMethod@ to each controller. If you know beforehand the class you wish the add a method to you can simply reference its @metaClass@ property.
+{hidden}
 
+En este caso, usamos el objeto implicito "application" para obtener una referencia a al atributo "metaClass" de las clases controladoras, y añadir un nuevo método llamado @myNewMethod@ a cada controlador. Conociendo de antemano la clase a la que se desea añadir el método, esto se puede hacer de manera más sencilla accediendo directamente su atributo @metaClass@
+
+{hidden}
 For example we can add a new method @swapCase@ to @java.lang.String@:
+{hidden}
+
+Por ejemplo, podríamos añadir un nuevo método @swapCase@ a @java.lang.String@:
 
 {code:java}
 class ExamplePlugin {
@@ -37,9 +57,17 @@ class ExamplePlugin {
 }
 {code}
 
+{hidden}
 h4. Interacting with the ApplicationContext
+{hidden}
 
+h4. Interaccionando con el ApplicationContext
+
+{hidden}
 The @doWithDynamicMethods@ closure gets passed the Spring @ApplicationContext@ instance. This is useful as it lets you interact with objects within it. For example if you were implementing a method to interact with Hibernate you could use the @SessionFactory@ instance in combination with a @HibernateTemplate@:
+{hidden}
+
+La closure @doWithDynamicMethods@ recibe como parámetro la intancia del @ApplicationContext@ de Spring. Esto es muy útil porque permite interactuar con los objetos que contiene. Por ejemplo, si se está implementando un método para interacturar con Hibernate se podría usar la instancia del @SessionFactory@ en combinación con un @HibernateTemplate@
 
 {code:java}
 import org.springframework.orm.hibernate3.HibernateTemplate
@@ -59,7 +87,11 @@ class ExampleHibernatePlugin {
    }
 }{code}
 
+{hidden}
 Also because of the autowiring and dependency injection capability of the Spring container you can implement more powerful dynamic constructors that use the application context to wire dependencies into your object at runtime:
+{hidden}
+
+También es importante destacar que gracias a las capacidades de autowiring e inyección de dependencias de Spring, es posible implementar potentes constructores usando el application context para enlazar dependencias en tus objetos en tiempo de ejecución.
 
 {code:java}
 class MyConstructorPlugin {
@@ -73,4 +105,8 @@ class MyConstructorPlugin {
     }
 }{code}
 
+{hidden}
 Here we actually replace the default constructor with one that looks up prototyped Spring beans instead!
+{hidden}
+
+En el ejemplo de hecho se está remplazando el constructor por defecto por otro que devuelve un objeto definido en Spring tipo "prototype" en lugar de crear una clase nueva.

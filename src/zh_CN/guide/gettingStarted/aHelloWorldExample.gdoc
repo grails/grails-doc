@@ -1,0 +1,97 @@
+{hidden}
+To implement the typical "hello world!" example @cd@ into the  directory created in the previous section and activate interactive mode:
+
+{code}
+$ cd helloworld
+$ grails
+{code}
+
+Grails' interactive mode will be activated and you should see a prompt that looks like the following:
+
+!interactive-helloworld.png!
+
+Now run the [create-controller|commandLine] command:
+
+bc.
+grails> create-controller hello
+
+This will create a new controller (Refer to the section on [Controllers|guide:controllers] for more information) in the @grails-app/controllers@ directory called @helloworld/HelloController.groovy@.
+
+{note}
+If no package is specified with create-controller script, Grails automatically uses the application name as the package name. This default is configurable with the @grails.project.groupId@ attribute in Config.groovy.
+{note}
+
+Controllers are capable of dealing with web requests and to fulfil the "hello world!" use case our implementation needs to look like the following:
+
+{code:java}
+package helloworld
+
+class HelloController {
+
+    def world() {
+        render "Hello World!"
+    }
+}
+{code}
+
+Job done. Now start-up the container with another new command called [run-app|commandLine]:
+
+bc.
+grails> run-app
+
+This will start-up a server on port 8080 and you should now be able to access your application with the URL: @http://localhost:8080/helloworld@
+
+The result will look something like the following screenshot:
+
+!intropage.png!
+
+This is the Grails intro page which is rendered by the @web-app/index.gsp@ file. You will note it has a detected the presence of your controller and clicking on the link to our controller we can see the text "Hello World!" printed to the browser window.
+{hidden}
+
+为了完成这个经典的“hello world!”示例，我们需要先 @cd@ 到上一节所创建的"helloworld"目录下，并且激活交互模式，指令如下：
+
+{code}
+$ cd helloworld
+$ grails
+{code}
+
+上述命令将Grails的交互模式激活，你将会看到类似于下图所示的截图：
+
+!interactive-helloworld.png!
+
+现在再来运行如下所示的 [create-controller|commandLine] 命令：
+
+bc.
+grails> create-controller hello
+
+运行该命令后，将会在@grails-app/controllers@目录下边创建一个名字为 @helloworld/HelloController.groovy@ 的控制器（更多信息请参考[控制器|guide:controllers]章节）。
+
+{note}
+如果在create-controller命令中没有指定包名，那么Grails自动地将应用的名称作为包名.这个缺省配置是通过Config.groovy文件中地 @grails.project.groupId@ 属性来指定地。
+{note}
+
+控制器主要用来完成对Web请求的处理，为了能够实现"hello world!"示例，我们的实现代码如下：
+
+{code:java}
+package helloworld
+
+class HelloController {
+
+    def world() {
+        render "Hello World!"
+    }
+}
+{code}
+
+大功告成！现在则需要运行另外一个[run-app|commandLine]命令来启动容器：
+
+bc.
+grails> run-app
+
+命令完成后，服务器将监听8080端口，因此你可以通过 @http://localhost:8080/helloworld@ 来访问应用。
+
+其显示结果如下图所示：
+
+!intropage.png!
+
+上图是Grails的 @web-app/index.gsp@ 文件所生成的简介页面，你还会看到系统自动检测到的现有控制器，点击它，你将会看到"Hello World!"显示在浏览器窗口。

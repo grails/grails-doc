@@ -1,0 +1,50 @@
+Grails has no default mechanism for authentication as it is possible to implement authentication in many different ways. It is however, easy to implement a simple authentication mechanism using either [interceptors|guide:interceptors] or [filters|guide:filters]. This is sufficient for simple use cases but it's highly preferable to use an established security framework, for example by using the [Spring Security|guide:springSecurity] or the [Shiro|guide:shiro] plugin.
+
+Filters let you apply authentication across all controllers or across a URI space. For example you can create a new set of filters in a class called @grails-app/conf/SecurityFilters.groovy@ by running:
+
+{code}
+grails create-filters security
+{code}
+
+and implement your interception logic there:
+
+{code:java}
+class SecurityFilters {
+    def filters = {
+        loginCheck(controller: '*', action: '*') {
+            before = {
+                if (!session.user && actionName != "login") {
+                    redirect(controller: "user", action: "login")
+                    return false
+                }
+            }
+        }
+    }
+}
+{code}
+
+Here the @loginCheck@ filter intercepts execution _before_ all actions except @login@ are executed, and if there is no user in the session then redirect to the @login@ action.
+
+The @login@ action itself is simple too:
+
+{code:java}
+def login() {
+    if (request.get) {
+        return // render the login view
+    }
+
+    def u = User.findByLogin(params.login)
+    if (u) {
+        if (u.password == params.password) {
+            session.user = u
+            redirect(action: "home")
+        }
+        else {
+            render(view: "login", model: [message: "Password incorrect"])
+        }
+    }
+    else {
+        render(view: "login", model: [message: "User not found"])
+    }
+}
+{code}

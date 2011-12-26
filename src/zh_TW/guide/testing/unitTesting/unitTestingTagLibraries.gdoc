@@ -1,0 +1,90 @@
+h4. The Basics
+
+Tag libraries and GSP pages can be tested with the @grails.test.mixin.web.GroovyPageUnitTestMixin@ mixin. To use the mixin declare which tag library is under test with the @TestFor@ annotation:
+
+{code:java}
+@TestFor(SimpleTagLib)
+class SimpleTagLibTests {
+
+}
+{code}
+
+Note that if you are testing invocation of a custom tag from a controller you can combine the @ControllerUnitTestMixin@ and the @GroovyPageUnitTestMixin@ using the @Mock@ annotation:
+
+{code:java}
+@TestFor(SimpleController)
+@Mock(SimpleTagLib)
+class GroovyPageUnitTestMixinTests {
+
+}
+{code}
+
+h4. Testing Custom Tags
+
+The core Grails tags don't need to be enabled during testing, however custom tag libraries do. The @GroovyPageUnitTestMixin@ class provides a @mockTagLib()@ method that you can use to mock a custom tag library. For example consider the following tag library:
+
+{code:java}
+class SimpleTagLib {
+
+    static namespace = 's'
+
+    def hello = { attrs, body ->
+        out << "Hello ${attrs.name ?: 'World'}"
+    }
+}
+{code}
+
+You can test this tag library by using @TestFor@ and supplying the name of the tag library:
+
+{code:java}
+@TestFor(SimpleTagLib)
+class SimpleTagLibTests {
+    void testHelloTag() {
+        assert applyTemplate('<s:hello />') == 'Hello World'
+        assert applyTemplate('<s:hello name="Fred" />') == 'Hello Fred'
+    }
+}
+{code}
+
+Alternatively, you can use the @TestMixin@ annotation and mock multiple tag libraries using the @mockTagLib()@ method:
+
+{code:java}
+@grails.test.mixin.TestMixin(GroovyPageUnitTestMixin)
+class MultipleTagLibraryTests {
+
+    @Test
+    void testMuliple() {
+        mockTagLib(FirstTagLib)
+        mockTagLib(SecondTagLib)
+
+        ...
+    }
+}
+{code}
+
+The @GroovyPageUnitTestMixin@ provides convenience methods for asserting that the template output equals or matches an expected value.
+
+{code:java}
+@grails.test.mixin.TestMixin(GroovyPageUnitTestMixin)
+class MultipleTagLibraryTests {
+
+    @Test
+    void testMuliple() {
+        mockTagLib(FirstTagLib)
+        mockTagLib(SecondTagLib)
+        assertOutputEquals ('Hello World', '<s:hello />')
+        assertOutputMatches (/.*Fred.*/, '<s:hello name="Fred" />')
+    }
+}
+{code}
+
+h4. Testing View and Template Rendering
+
+You can test rendering of views and templates in @grails-app/views@ via the @render(Map)@ method provided by @GroovyPageUnitTestMixin@ :
+
+{code:java}
+def result = render(template: "/simple/hello")
+assert result == "Hello World"
+{code}
+
+This will attempt to render a template found at the location @grails-app/views/simple/_hello.gsp@. Note that if the template depends on any custom tag libraries you need to call @mockTagLib@ as described in the previous section.

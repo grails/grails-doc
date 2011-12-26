@@ -67,10 +67,30 @@ Once you have a copy of the original guide, you can use the `{hidden}` macro to 
 
 Because the English text remains in your gdoc files, 'diff' will show differences on the English lines. You can then use the output of 'diff' to see which bits of your translation need updating. On top of that, the `{hidden}` macro ensures that the text inside it is not displayed in the browser, although you can display it by adding this URL as a bookmark: `javascript:toggleHidden();` (requires you to build the user guide with Grails 2.0 M2 or later).
 
+Even better, you can use the `left_to_do.groovy` script in the root of the project to see what still needs translating. You run it like so:
+
+    ./left_to_do.groovy es
+
+This will then print out a recursive diff of the given translation against the reference English user guide. Anything in {hidden} blocks that hasn't changed since being translated will _not_ appear in the diff output. In other words, all you will see is content that hasn't been translated yet and content that has changed since it was translated. Note that {code} blocks are ignored, so you _don't_ need to include them inside {hidden} macros.
+
+To provide translations for the headers, such as the user guide title and subtitle, just add language specific entries in the `resources/doc.properties` file like so:
+
+    es.title=El Grails Framework
+    es.subtitle=...
+
+For each language translation, properties beginning '<lang>.' will override the standard ones. In the above example, the user guide title will be El Grails Framework for the Spanish translation. Also, translators can be credited by adding a '<lang>.translators' property:
+
+    fr.translators=Stéphane Maldini
+
+This should be a comma-separated list of names (or the native language equivalent) and it will be displayed as a "Translated by" header in the user guide itself.
+
 You can build specific translations very easily using the `publishGuide_*` and `publishPdf_*` tasks. For example, to build both the French HTML and PDF user guides, simply execute
 
     ./gradlew publishPdf_fr
 
 Each translation is generated in its own directory, so for example the French guide will end up in `build/docs/fr`. You can then view the translated guide by opening `build/docs/<lang>/index.html`.
 
+All translations are created as part of the [Hudson CI build for the grails-doc][2] project, so you can easily see what the current state is without having to build the docs yourself.
+
 [1]: http://grails.org/doc/2.0.0.M1/guide/conf.html#docengine
+[2]: http://hudson.grails.org/job/grails_docs_2.0.x/lastSuccessfulBuild/artifact/build/docs/

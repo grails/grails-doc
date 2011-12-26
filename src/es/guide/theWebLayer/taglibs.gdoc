@@ -1,6 +1,12 @@
+{hidden}
 Like "Java Server Pages":http://www.oracle.com/technetwork/java/javaee/jsp/index.html (JSP), GSP supports the concept of custom tag libraries. Unlike JSP, Grails' tag library mechanism is simple, elegant and completely reloadable at runtime.
+{hidden}
+Como "Java Server Pages":http://www.oracle.com/technetwork/java/javaee/jsp/index.html (JSP), GSP soporta el concepto de librerias de etiquetas personalizadas. No como JSP, el mecanismo de la libreria de etiquetas de Grails es simple, elegante y completamente recargable en tiempo de ejecucion.
 
+{hidden}
 Quite simply, to create a tag library create a Groovy class that ends with the convention @TagLib@ and place it within the @grails-app/taglib@ directory:
+{hidden}
+Simplemente, para crear una libreria de etiquetas, crea una clase de Groovy que termine con la convencion @TagLib@ y coloquela dentro del directorio @grails-app/taglib@: 
 
 {code:java}
 class SimpleTagLib {
@@ -8,7 +14,10 @@ class SimpleTagLib {
 }
 {code}
 
+{hidden}
 Now to create a tag create a Closure property that takes two arguments: the tag attributes and the body content:
+{hidden}
+Ahora para crear una etiqueta, crea un Closure de propiedad que tome dos argumentos: los atributos de la etiqueta y el contenido del cuerpo:
 
 {code:java}
 class SimpleTagLib {
@@ -18,7 +27,10 @@ class SimpleTagLib {
 }
 {code}
 
+{hidden}
 The @attrs@ argument is a Map of the attributes of the tag, whilst the @body@ argument is a Closure that returns the body content when invoked:
+{hidden}
+El argumento @attrs@ es un Map de los atributos de la etiqueta, mientras que el argumento @body@ es un Closure que regresa el contenido del cuerpo cuando es invocado:
 
 {code:java}
 class SimpleTagLib {
@@ -28,16 +40,25 @@ class SimpleTagLib {
 }
 {code}
 
+{hidden}
 As demonstrated above there is an implicit @out@ variable that refers to the output @Writer@ which you can use to append content to the response. Then you can reference the tag inside your GSP; no imports are necessary:
+{hidden}
+Como se demostro arriba, existe una variable implicita @out@ que se refiere al output @Writer@ el cual puede usar para agregar contenido a la respuesta. Entonces puede referenciar la etiqueta dentro de su GSP; no son necesarios los imports:
 
 {code:xml}
 <g:emoticon happy="true">Hi John</g:emoticon>
 {code}
 
 {note}
+{hidden}
 To help IDEs like SpringSource Tool Suite (STS) and others autocomplete tag attributes, you should add Javadoc comments to your tag closures with @\@attr@ descriptions. Since taglibs use Groovy code it can be difficult to reliably detect all usable attributes.
+{hidden}
+Para ayudar a los IDEs como SpringSource Tool Suite (STS) y otros para autocompletar los atributos de la etiqueta, deberia de agregar comentarios Javadoc a los closures de su etiqueta con las descripciones @\@attr@. Desde que las taglibs usan codigo de Groovy puede ser dificil detectar de forma viable todos los atributos usables.
 
+{hidden}
 For example:
+{hidden}
+Por ejemplo:
 
 {code:java}
 class SimpleTagLib {
@@ -54,7 +75,10 @@ class SimpleTagLib {
 }
 {code}
 
+{hidden}
 and any mandatory attributes should include the REQUIRED keyword, e.g.
+{hidden}
+y cualquier atributo mandatorio debe de incluir la palabra reservada REQUIRED, por ejemplo:
 
 {code:java}
 class SimpleTagLib {

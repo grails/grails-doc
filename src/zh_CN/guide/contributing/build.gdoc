@@ -1,0 +1,78 @@
+In order to build Grails from source and run the tests, you need to first have the following pre-requisites.
+* JDK (1.6+)
+* Git client
+
+Once you have all the pre-requisite packages installed, the next step is to download the Grails source code. The source code is hosted at [GitHub|http://github.com] in several different git repositories owned by the ["grails" GitHub user|http://github.com/grails].
+
+To download the source using git, use the "git clone" command followed by the public URL of the repository you want to clone (download). For example, to clone the "grails-core" repository, run the following:
+{code}
+git clone http://github.com/grails/grails-core.git
+{code}
+
+The above will create a "grails-core" directory in your current working directory populated with the project source and the git repository.
+
+h3. Create the required jars
+{code}
+./gradlew libs
+{code}
+
+This will create everything you need to run Grails. This target also skips running the extensive collection of Grails test classes (Grails' 1000+ tests can bring a single core processor to a grinding halt for some time).
+
+Once the jars have been built, simply set GRAILS_HOME to the checkout directory and add the "bin" directory to your path.
+
+h3. Run the test suite
+
+All you have to do to run the full suite of tests is:
+{code}
+./gradlew test
+{code}
+
+These will take a while (15-30 mins), so consider running individual tests using the command line. For example, to run the tests in src/test/org/codehaus/groovy/grails/orm/hibernate/MappingDslTests.groovy, run the following command:
+{code}
+./gradlew -Dtest.single=MappingDslTest grails-test-suite-persistence:test
+{code}
+
+You need to give it the specific test suite that the test exists in, just using the "test" target won't work.
+
+h3. Developing in IntelliJ IDEA
+
+You need to run the following gradle task:
+{code}
+./gradlew idea
+{code}
+
+Then open the project file which is generated in IDEA. Simple!
+
+h3. Developing in STS / Eclipse
+
+You need to run the following gradle task:
+{code}
+./gradlew cleanEclipse eclipse
+{code}
+
+Before importing projects to STS do the following action:
+* Edit grails-scripts/.classpath and remove the line "<classpathentry kind="src" path="../scripts"/>".
+
+Use "Import->General->Existing Projects into Workspace" to import all projects to STS. There will be a few build errors. To fix them do the following actions:
+* Add "~/.gradle/cache/com.springsource.springloaded/springloaded-core/jars/springloaded-core-XXXX.jar" to grails-core's classpath.
+* Remove "src/test/groovy" from grails-plugin-testing's source path GRECLIPSE-1067
+* Add "~/.gradle/cache/javax.servlet.jsp/jsp-api/jars/jsp-api-2.1.jar" to the classpath of grails-web
+* Fix the source path of grails-scripts. Add linked source folder linking to "../scripts". If you get build errors in grails-scripts, do "../gradlew cleanEclipse eclipse" in that directory and edit the .classpath file again (remove the line "<classpathentry kind="src" path="../scripts"/>"). Remove possible empty "scripts" directory under grails-scripts if you are not able to add the linked folder.
+* Do a clean build for the whole workspace.
+* To use Eclipse GIT scm team provider: Select all projects (except "Servers") in the navigation and right click -> Team -> Share project (not "Share projects"). Choose "Git". Then check "Use or create repository in parent folder of project" and click "Finish".
+* Get the recommended code style settings from the [mailing list thread|http://grails.1312388.n4.nabble.com/Grails-development-code-style-IDE-formatting-settings-tp3854216p3854216.html] (final style not decided yet, currently [profile.xml|http://grails.1312388.n4.nabble.com/attachment/3854262/0/profile.xml]). Import the code style xml file to STS in Window->Preferences->Java->Code Style->Formatter->Import . Grails code uses spaces instead of tabs for indenting.
+
+h3. Debug
+
+To debug Grails run the Grails application using:
+{code}
+grails-debug <command>
+{code}
+
+and then connect to it remotely via the IDE. There should be an option for "remote debugging". Unless you modify the "grails-debug" script, you should connect to port 5005.
+
+If you need to debug stuff that happens during application start-up, then you should modify the "grails-debug" script and change the "suspend" option from 'n' to 'y'.
+
+You can read more about the JPDA Connection settings here: [http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#Invocation|http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#Invocation]
+
+It's also possible to get Eclipse to wait for incoming debugger connections and instead of using "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005" you could use this "-Xrunjdwp:transport=dt_socket,server=n,address=8000" (which assumes the Eclipse default port for remote java applications) Inside eclipse you create a new "Remote Java Application" launch configuration and change the connection type to "Standard (Socket Listen)" and click debug. This allows you to start a debugger session in eclipse and just leave it running and you're free to debug anything without having to keep remembering to relaunch a "Socket Attach" launch configuration. You might find it handy to have 2 scripts, one called "grails-debug", and another called "grails-debug-attach"

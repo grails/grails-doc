@@ -6,3 +6,15 @@ If you are having trouble getting a dependency to resolve you can enable more ve
 log "warn"
 {code}
 
+A common issue is that the checksums for a dependency don't match the associated JAR file, and so Ivy rejects the dependency. This helps ensure that the dependencies are valid. But for a variety of reasons some dependencies simply don't have valid checksums in the repositories, even if they are valid JARs. To get round this, you can disable Ivy's dependency checks like so:
+
+{code}
+grails.project.dependency.resolution = {
+    ...
+    log "warn"
+    checksums false
+    ...
+}
+{code}
+
+This is a global setting, so only use it if you have to.

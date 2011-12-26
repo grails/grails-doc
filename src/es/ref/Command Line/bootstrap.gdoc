@@ -1,5 +1,6 @@
 h1. bootstrap
 
+{hidden}
 h2. Purpose
 
 The [bootstrap|commandLine] command is mainly intended to be used by other scripts and enables the ability to bootstrap a Grails application instance outside of the container for usage in tools that require a reference to Grails' @ApplicationContext@.
@@ -10,23 +11,49 @@ h2. Examples
 
 Add this to the top of your Gant script to use this as an include:
 
+{hidden}
+
+h2. Propósito
+
+El comando [bootstrap|commandLine] se destina a ser utilizado por otros scripts y permite la capacidad de arranque de una instancia de la aplicación Grails fuera del contenedor para usar herramientas que requieren referencias para Grails @ApplicationContext@.
+
+Ejemplos de esto es el uso en Grails [shell|commandLine] y [console|commandLine]
+
+h2. Ejemplos
+
+Añade esto en la cabecera de su script Gant para usar esto como un include:
+ 
 {code:java}
 includeTargets << grailsScript("_GrailsBootstrap")
 {code}
 
+{hidden}
 Once this is in place you can bootstrap Grails using either of these methods:
 
 * @loadApp@ - Loads and creates the @GrailsApplication@ instance
 * @configureApp@ - Loads all plugins and creates the Spring @ApplicationContext@
 
 After running @loadApp@ the @GrailsApplication@ instance will be available as the @grailsApp@ variable:
+{hidden}
+
+Una vez que esto esté en su sitio, puede arrancarlo usando uno de estos métodos:
+
+* @loadApp@ - Carga y crea una instancia de @GrailsApplication@
+* @configureApp@ - Carga todos los plugins y crea el @ApplicationContext@ de Spring
+
+Después de la ejecución @loadApp@ la instancia @GrailsApplication@ estará disponible como la variable @grailsApp@: 
 
 {code:java}
 loadApp()
 for (grailsClass in grailsApp.allClasses) { println grailsClass }
 {code}
 
+
+{hidden}
 After running @configureApp@ the [GrailsPluginManager|api:org.codehaus.groovy.grails.plugins.GrailsPluginManager] instance will be available as the @pluginManager@ variable and the Spring @ApplicationContext@ instance will be available as the @appCtx@ variable:
+{hiddenç
+
+Tras la ejecución de @configureApp@ la instancia [GrailsPluginManager|api:org.codehaus.groovy.grails.plugins.GrailsPluginManager] estará disponible como la variable @pluginManager@ y la instancia @ApplicationContext@ de Spring estará disponible como la variable @appCtx@.
 
 {code:java}
 configureApp()
@@ -34,9 +61,15 @@ Connection c = appCtx.getBean('dataSource').getConnection()
 // do something with connection
 {code}
 
+{hidden}
 h2. Description
 
 Usage:
+{hidden}
+
+h2. Descripción
+
+Uso:
 {code:java}
 grails bootstrap
 {code}

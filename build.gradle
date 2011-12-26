@@ -73,12 +73,11 @@ task createPublishClassLoader << {
     def distDir = project.file("${project.grailsHome}/dist")
     def grailsDocJars = distDir.listFiles({ dir, name -> name ==~ /grails-docs-.*\.jar/ } as FilenameFilter)
     if (grailsDocJars.size() > 1) {
-        log.error "Found multiple grails-doc JARs in ${distDir}"
-        return 1
+        throw new RuntimeException("Found multiple grails-doc JARs in ${distDir}")
+        
     }
     else if (grailsDocJars.size() == 0) {
-        log.error "No grails-doc JAR found in ${distDir}"
-        return 2
+        throw new RuntimeException("No grails-doc JAR found in ${distDir}")
     }
 
     classpath << grailsDocJars[0].toURI().toURL()
@@ -175,13 +174,20 @@ class PublishGuide extends DefaultTask {
         publisher.css = project.file("${resourcesDir}/css")
         publisher.js = project.file("${resourcesDir}/js")
         publisher.style = project.file("${resourcesDir}/style")
-        publisher.title = props.title
         publisher.version = props."grails.version"
-        publisher.authors = props.authors
-        publisher.copyright = props.copyright
-        publisher.footer = props.footer
         publisher.logo = '<a href="http://grails.org" target="_blank"><img alt="Grails Logo" title="The Grails Framework" src="${path}/img/grails.png" border="0"/></a>'
         publisher.sponsorLogo = '<a href="http://springsource.com" target="_blank"><img alt="SpringSource Logo" title="SpringSource - Weapons for the War on Java Complexity" src="${path}/img/springsource-logo.png" border="0"/></a>'
+
+        // Override doc.properties properties with their language-specific counterparts (if
+        // those are defined). You just need to add entries like es.title or pt_PT.subtitle.
+        if (language) {
+            def pos = language.size() + 1
+            def languageProps = props.findAll { k, v -> k.startsWith("${language}.") }
+            languageProps.each { k, v -> props[k[pos..-1]] = v }
+        }
+
+        // Aliases and other doc.properties entries are passed in as engine properties. This
+        // is how the doc title, subtitle, etc. are set.
         publisher.engineProperties = props
 
         // Add support for displaying the source code for GSP tags.

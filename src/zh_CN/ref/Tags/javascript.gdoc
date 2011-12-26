@@ -1,0 +1,38 @@
+h1. javascript
+
+h2. Purpose
+
+Includes JavaScript libraries and scripts as well as providing a shorthand for inline JavaScript. Specifying a library indicates to the Ajax tags which JavaScript provider to use.
+
+This tag is [Resources plugin|http://grails.org/plugin/resources] aware, and will defer to the plugin to generate links to JavaScript as appropriate. It does this by including a resource module with the same name as the library you specify.
+
+h2. Examples
+
+{code:xml}
+// actually imports '/app/js/myscript.js'
+<g:javascript src="myscript.js" />
+
+// imports all the necessary js for the scriptaculous library
+<g:javascript library="scriptaculous" />
+
+<g:javascript>alert('hello')</g:javascript>
+{code}
+
+h2. Description
+
+If you do not include a "library" or "src" attribute but instead provide a body, the result is an inline script.
+
+If you use this tag to render inline JavaScript code, it is recommended that you use the Resources plugin's <r:script> tag to produce inline script that is included at the end of the body, or in the head if necessary - rather than inline. For more control use the Resources plugin's "<r:script>":http://grails-plugins.github.com/grails-resources/ref/Tags/script.html tag directly.
+
+Attributes
+
+* @contextPath@ (optional) - the context path to use (relative to the application context path). Defaults to "" or path to the plugin for a plugin view or template.
+* @library@ (optional) - The name of the library to include. Typical values include "jquery", "prototype", "scriptaculous", "yahoo" or "dojo" but plugins can contribute new providers. If the Resources plugin is installed, no link to the library will be rendered immediately. Rather, it will include the resource module with the same name as the library and let Resources do the rest. This means you must have a resource module declared with the same name, as if you had used an @<r:use module="jquery"/>@ tag.
+* @src@ (optional) - The name of the JavaScript file to import. Will look in /appname/js directory
+* @base@ (optional) - specifies the full base url to prepend to the library name
+* @plugin@ (optional) - The plugin to look for the JavaScript in
+
+h2. Source
+
+{source:tag=JavascriptTagLib.javascript}
+{source}

@@ -1,0 +1,167 @@
+{hidden}
+Often it is useful to intercept processing based on either request, session or application state. This can be achieved with action interceptors. There are currently two types of interceptors: before and after.
+
+{note}
+If your interceptor is likely to apply to more than one controller, you are almost certainly better off writing a [Filter|guide:filters]. Filters can be applied to multiple controllers or URIs without the need to change the logic of each controller
+{note}
+{hidden}
+
+通常情况下，拦截处理请求、会话或者应用的状态数据是非常有用的。这个可以通过操作的拦截器来完成。当前有两种类型的拦截器:before和after。
+
+{note}
+如果你的拦截可能用于一个以上控制器的话，你最好写一个[过滤器|guide:filters]。过滤器可以在不需要改变每个控制器逻辑的情况下，应用于多个控制器或者URI。
+{note}
+
+{hidden}
+h4. Before Interception
+
+The @beforeInterceptor@ intercepts processing before the action is executed. If it returns @false@ then the intercepted action will not be executed. The interceptor can be defined for all actions in a controller as follows:
+
+{code:java}
+def beforeInterceptor = {
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+The above is declared inside the body of the controller definition.  It will be executed before all actions and does not interfere with processing. A common use case is very simplistic authentication:
+
+{code:java}
+def beforeInterceptor = [action: this.&auth, except: 'login']
+
+// defined with private scope, so it's not considered an action
+private auth() {
+    if (!session.user) {
+        redirect(action: 'login')
+        return false
+    }
+}
+
+def login() {
+    // display login page
+}
+{code}
+
+The above code defines a method called @auth@. A private method is used so that it is not exposed as an action to the outside world. The @beforeInterceptor@ then defines an interceptor that is used on all actions _except_ the login action and it executes the @auth@ method. The @auth@ method is referenced using Groovy's method pointer syntax. Within the method it detects whether there is a user in the session, and if not it redirects to the @login@ action and returns @false@, causing the intercepted action to not be processed.
+{hidden}
+
+h4. 前拦截
+
+@beforeInterceptor@在操作被执行以前进行拦截处理。如果其返回值是@false@，那么被拦截的操作将得不到执行。拦截对控制器的所有操作进行定义，如下所示：
+
+{code:java}
+def beforeInterceptor = {
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+上述代码被声明于控制器定义的主体内。它将在每一个操作执行之前被调用，在此处并不做任何干涉。一个通用的用例就是简单地身份验证：
+
+{code:java}
+def beforeInterceptor = [action: this.&auth, except: 'login']
+
+// defined with private scope, so it's not considered an action
+private auth() {
+    if (!session.user) {
+        redirect(action: 'login')
+        return false
+    }
+}
+
+def login() {
+    // display login page
+}
+{code}
+
+上述代码定义了一个@auth@方法。这个私有方法通常用于避免被暴露为一个操作，从而也就不会被从外面访问到。接着@beforeInterceptor@定义了一个应用于所有操作的拦截器，login操作除外，此拦截器将先执行@auth@方法。@auth@方法的引用是Groovy方法的指针语法。此方法检查一个用户是否存在于会话中，如果不存在，那么将重定向到@login@操作并且返回@false@，这样那些被拦截过的操作也就不会被处理。
+
+{hidden}
+h4. After Interception
+
+Use the @afterInterceptor@ property to define an interceptor that is executed after an action:
+
+{code:java}
+def afterInterceptor = { model ->
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+The after interceptor takes the resulting model as an argument and can hence manipulate the model or response.
+
+An after interceptor may also modify the Spring MVC [ModelAndView|api:org.springframework.web.servlet.ModelAndView] object prior to rendering. In this case, the above example becomes:
+
+{code:java}
+def afterInterceptor = { model, modelAndView ->
+    println "Current view is ${modelAndView.viewName}"
+    if (model.someVar) modelAndView.viewName = "/mycontroller/someotherview"
+    println "View is now ${modelAndView.viewName}"
+}
+{code}
+
+This allows the view to be changed based on the model returned by the current action. Note that the @modelAndView@ may be @null@ if the action being intercepted called @redirect@ or @render@.
+{hidden}
+
+h4. 后拦截
+
+使用@afterInterceptor@属性可以定义一个操作执行之后的拦截器：
+
+{code:java}
+def afterInterceptor = { model ->
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+后拦截器使用一个返回结果的model作为参数，因此也就可以操作模型和响应。
+
+一个后拦截器可以在渲染之前修改Spring MVC的[ModelAndView|api:org.springframework.web.servlet.ModelAndView]对象。此种情况下，上述的示例将变为：
+
+{code:java}
+def afterInterceptor = { model, modelAndView ->
+    println "Current view is ${modelAndView.viewName}"
+    if (model.someVar) modelAndView.viewName = "/mycontroller/someotherview"
+    println "View is now ${modelAndView.viewName}"
+}
+{code}
+
+上述示例中，允许当前操作返回之前，可以根据模型来修改视图。不过要注意的是：如果被拦截的操作调用了@redirect@或者@render@，其@modelAndView@可能是@null@。
+
+{hidden}
+h4. Interception Conditions
+
+Rails users will be familiar with the authentication example and how the 'except' condition was used when executing the interceptor (interceptors are called 'filters' in Rails; this terminology conflicts with Servlet filter terminology in Java):
+
+{code:java}
+def beforeInterceptor = [action: this.&auth, except: 'login']
+{code}
+
+This executes the interceptor for all actions except the specified action. A list of actions can also be defined as follows:
+
+{code:java}
+def beforeInterceptor = [action: this.&auth, except: ['login', 'register']]
+{code}
+
+The other supported condition is 'only', this executes the interceptor for only the specified action(s):
+
+{code:java}
+def beforeInterceptor = [action: this.&auth, only: ['secure']]
+{code}
+{hidden}
+
+h4. 拦截条件
+
+Rails用户将很熟悉验证的示例以及在执行拦截的时候如何使用'except'条件（在Rails中，拦截器被称为‘过滤器’；这个术语跟Java中Servlet的过滤器冲突）：
+
+{code:java}
+def beforeInterceptor = [action: this.&auth, except: 'login']
+{code}
+
+除了给定的操作之外，这将在所有操作之前执行拦截。操作的列表也可以被定义为如下所示：
+
+{code:java}
+def beforeInterceptor = [action: this.&auth, except: ['login', 'register']]
+{code}
+
+另外所支持的条件是‘only’，它将仅为特定的操作执行拦截：
+
+{code:java}
+def beforeInterceptor = [action: this.&auth, only: ['secure']]
+{code}

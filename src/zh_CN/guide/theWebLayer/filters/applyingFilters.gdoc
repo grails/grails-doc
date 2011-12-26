@@ -1,0 +1,171 @@
+{hidden}
+To create a filter create a class that ends with the convention @Filters@ in the @grails-app/conf@ directory. Within this class define a code block called @filters@ that contains the filter definitions:
+
+{code:java}
+class ExampleFilters {
+   def filters = {
+        // your filters here
+   }
+}
+{code}
+
+Each filter you define within the @filters@ block has a name and a scope. The name is the method name and the scope is defined using named arguments. For example to define a filter that applies to all controllers and all actions you can use wildcards:
+
+{code:java}
+sampleFilter(controller:'*', action:'*') {
+  // interceptor definitions
+}
+{code}
+
+The scope of the filter can be one of the following things:
+
+* A controller and/or action name pairing with optional wildcards
+* A URI, with Ant path matching syntax
+
+Filter rule attributes:
+* @controller@ - controller matching pattern, by default \* is replaced with .\* and a regex is compiled
+* @controllerExclude@ - controller exclusion pattern, by default \* is replaced with .\* and a regex is compiled
+* @action@ - action matching pattern, by default \* is replaced with .\* and a regex is compiled
+* @actionExclude@ - action exclusion pattern, by default \* is replaced with .\* and a regex is compiled
+* @regex@ (@true@/@false@) - use regex syntax (don't replace '\*' with '.\*')
+* @uri@ - a uri to match, expressed with as Ant style path (e.g. /book/\*\*)
+* @uriExclude@ - a uri pattern to exclude, expressed with as Ant style path (e.g. /book/\*\*)
+* @find@ (@true@/@false@) - rule matches with partial match (see @java.util.regex.Matcher.find()@)
+* @invert@ (@true@/@false@) - invert the rule (NOT rule)
+
+Some examples of filters include:
+
+* All controllers and actions
+{code:java}
+all(controller: '*', action: '*') {
+
+}
+{code}
+* Only for the @BookController@
+{code:java}
+justBook(controller: 'book', action: '*') {
+
+}
+{code}
+* All controllers except the @BookController@
+{code:java}
+notBook(controller: 'book', invert: true) {
+
+}
+{code}
+* All actions containing 'save' in the action name
+{code:java}
+saveInActionName(action: '*save*', find: true) {
+
+}
+{code}
+* All actions starting with the letter 'b' except for actions beginning with the phrase 'bad*'
+{code:java}
+actionBeginningWithBButNotBad(action: 'b*', actionExclude: 'bad*', find: true) {
+
+}
+{code}
+* Applied to a URI space
+{code:java}
+someURIs(uri: '/book/**') {
+
+}
+{code}
+* Applied to all URIs
+{code:java}
+allURIs(uri: '/**') {
+
+}
+{code}
+
+In addition, the order in which you define the filters within the @filters@ code block dictates the order in which they are executed.  To control the order of execution between @Filters@ classes, you can use the @dependsOn@ property discussed in [filter dependencies|guide:filterDependencies] section.
+
+{note}
+Note: When exclude patterns are used they take precedence over the matching patterns.  For example, if action is 'b\*' and actionExclude is 'bad\*' then actions like 'best' and 'bien' will have that filter applied but actions like 'bad' and 'badlands' will not.
+{note}
+{hidden}
+
+要创建一个过滤器，只需要在@grails-app/conf@目录下创建一个符合规约以@Filters@结尾的类即可。在此类中，定义一个名为@filters@的代码块，用以包含过滤器的定义：
+
+{code:java}
+class ExampleFilters {
+   def filters = {
+        // your filters here
+   }
+}
+{code}
+
+@filters@代码块内的每一个过滤器有一个名称和作用域。名称就是其方法名，作用域是通过命名参数定义的。比如，要定义一个应用于所有控制器和操作的过滤器，你可以使用通配符：
+
+{code:java}
+sampleFilter(controller:'*', action:'*') {
+  // interceptor definitions
+}
+{code}
+
+过滤器的作用域可以是如下内容：
+
+* 一个控制器或者操作名称，支持可选的通配符
+* 一个URI，符合Ant路径（path）匹配语法
+
+过滤器的常规属性如下：
+* @controller@ - 控制器匹配模式，缺省情况下，其用\*可以替代.\*，并且被编译为一个正则表达式
+* @controllerExclude@ - 控制器的排除模式，缺省情况下，其用\*可以替代.\*，并且被编译为一个正则表达式
+* @action@ - 操作匹配模式，缺省情况下，其用\*可以替代.\*，并且被编译为一个正则表达式
+* @actionExclude@ - 操作排除模式，缺省情况下，其用\*可以替代.\*，并且被编译为一个正则表达式
+* @regex@ (@true@/@false@) - 使用正则表达式语法（不使用'\*'代替'.\*'）
+* @uri@ - 一个uri匹配，使用Ant风格的路径（path）（比如 /book/\*\*）
+* @uriExclude@ - 一个uri排除匹配，使用Ant风格的路径（path）（比如 /book/\*\*）
+* @find@ (@true@/@false@) - 符合部分匹配的规则匹配（更多请参考@java.util.regex.Matcher.find()@）
+* @invert@ (@true@/@false@) - 反转规则（不符合此规则的条件）
+
+一些过滤器的示例如下：
+
+* 匹配所有的控制器和操作
+{code:java}
+all(controller: '*', action: '*') {
+
+}
+{code}
+* 仅仅匹配@BookController@
+{code:java}
+justBook(controller: 'book', action: '*') {
+
+}
+{code}
+* 匹配所有的控制器，除了@BookController@
+{code:java}
+notBook(controller: 'book', invert: true) {
+
+}
+{code}
+* 匹配所有操作名包含'save'的操作
+{code:java}
+saveInActionName(action: '*save*', find: true) {
+
+}
+{code}
+* 匹配所有操作字母以'b'开头的操作，不过'bad*'除外
+{code:java}
+actionBeginningWithBButNotBad(action: 'b*', actionExclude: 'bad*', find: true) {
+
+}
+{code}
+* 应用于一个URI
+{code:java}
+someURIs(uri: '/book/**') {
+
+}
+{code}
+* 应用于所有的URIs
+{code:java}
+allURIs(uri: '/**') {
+
+}
+{code}
+
+此外，你在@filters@代码块中定义的过滤器顺序就是它们被执行的顺序。要控制@Filters@类之间的执行顺序，你可以使用@dependsOn@属性，更多信息将在[过滤器的依赖|guide:filterDependencies]章节讨论。
+
+{note}
+注意：当使用排除模式的时候，其优先级将高于其他的匹配模式。比如一个作用域，其action是'b\*'而actionExclude是'bad\*'，那么操作名称是'best'和'bien'将应用于此过滤器，而操作名是'bad'和'badlands'却没有。
+{note}

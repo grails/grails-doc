@@ -1,20 +1,38 @@
+{hidden}
 Regular Grails plugins are packaged as zip files containing the full source of the plugin. This has some advantages in terms of being an open distribution system (anyone can see the source), in addition to avoiding problems with the source compatibility level used for compilation.
+{hidden}
+Normalmente los plugins de Grails se empaquetan como ficheros zip junto con el código fuente de los mismos. Esto tiene varias ventajas en lo referente a la distribución libre (cualquiera puede ver el código), además de evitar problemas con en nivel de compatibilidad de código usado para compilar.
 
+{hidden}
 As of Grails 2.0 you can pre-compile Grails plugins into regular JAR files known as "binary plugins". This has several advantages (and some disadvantages as discussed in the advantages of source plugins above) including:
 
 * Binary plugins can be published as standard JAR files to a Maven repository
 * Binary plugins can be declared like any other JAR dependency
 * Commercial plugins are more viable since the source isn't published
 * IDEs have a better understanding since binary plugins are regular JAR files containing classes
+{hidden}
 
+En Grails 2.0 es posible pre-compilar los plugins en un fichero JAR estandar conocido como "plugin binarios". Esto tiene varias ventajas (y algúnas desventajas como hemos visto con los plugins empaquetados junto al código fuente) como por ejemplo:
+
+* Los plugins binarios pueden ser publicados como jars estandar en un repositorio Maven
+* Los plugins binarios pueden ser declarados como cualquier otra dependencia a otro jar
+* Los plugins comerciales son más viables dado que el código fuente no se publica.
+* Los IDEs de desarrollo los gestionan mejor dado que los plugins binarios son ficheros JARs normales que contienen clases
+
+{hidden}
 h4. Packaging
 
 To package a plugin in binary form you can use the package-plugin command and the @--binary@ flag:
+{hidden}
 
+h4. Empaquetamiento
+
+Para empaquetar un plugin en forma binaria se usa el comando package-plugin command y el flag @--binary@:
 {code}
 grails package-plugin --binary
 {code}
 
+{hidden}
 Supported artefacts include:
 
 * Grails artifact classes such as controllers, domain classes and so on
@@ -22,18 +40,38 @@ Supported artefacts include:
 * GSP Views, layouts and templates
 
 You can also specify the packaging in the plugin descriptor:
+{hidden}
+
+Entre los artefactos soportados se incluyen:
+
+* Los artefactos de Grails como los controladores, las clases de dominio y otros
+* I18n Message bundles
+* Vistas GSP Views, layouts y plantillas
+
+También se puede especificar el tipo de empaquetamiento en el descriptor del plugin
 
 {code}
 def packaging = "binary"
 {code}
 
+{hidden}
 in which case the packaging will default to binary.
+{hidden}
+en este caso el empaquetamiento por defecto será binario
 
+{hidden}
 h4. Using Binary Plugins
 
 The packaging process creates a JAR file in the @target@ directory of the plugin, for example @target/foo-plugin-0.1.jar@. There are two ways to incorporate a binary plugin into an application.
 
 One is simply placing the plugin JAR file in your application's @lib@ directory. The other is to publish the plugin JAR to a compatible Maven repository and declare it as a dependency in @grails-app/conf/BuildConfig.groovy@:
+{hidden}
+
+h4. Usando los plugins binarios
+
+El proceso de empaquetamiento crea un fichero JAR en el directorio @target@ del plugin, por ejemplo @target/foo-plugin-0.1.jar@. Existen dos maneras para incorporar un plugin binario en una aplicación.
+
+Una consiste simplemente en colocar el JAR del plugin en el directorio @lib@ de la aplicacion. La otra consiste en publicar el JAR en un repositorio compatible con Maven y declararlo como dependencia en @grails-app/conf/BuildConfig.groovy@:
 
 {code}
 dependencies {
@@ -41,6 +79,13 @@ dependencies {
 }
 {code}
 
+{hidden}
 {note}
 Since binary plugins are packaged as JAR files, they are declared as dependencies in the @dependencies@ block, _not_ in the @plugins@ block as you may be naturally inclined to do. The @plugins@ block is used for declaring traditional source plugins packaged as zip files
 {note}
+{hidden}
+
+{note}
+Como los plugins son empaquetados como ficheros JAR, son declarados como dependencias en el bloque @dependencies@, _no_ en el bloque @plugins@ como parece más natural. El bloque @plugins@ es usado para declarar los plugins clasicos empaquetados con el código fuente en los ficheros zip.
+{note}
+

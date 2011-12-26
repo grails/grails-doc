@@ -1,0 +1,57 @@
+{hidden}
+Grails has built-in support for handling duplicate form submissions using the "Synchronizer Token Pattern". To get started you define a token on the [form|tags] tag:
+
+{code:xml}
+<g:form useToken="true" ...>
+{code}
+
+Then in your controller code you can use the [withForm|controllers] method to handle valid and invalid requests:
+
+{code:java}
+withForm {
+   // good request
+}.invalidToken {
+   // bad request
+}
+{code}
+
+If you only provide the [withForm|controllers] method and not the chained @invalidToken@ method then by default Grails will store the invalid token in a @flash.invalidToken@ variable and redirect the request back to the original page. This can then be checked in the view:
+
+{code:xml}
+<g:if test="${flash.invalidToken}">
+  Don't click the button twice!
+</g:if>
+{code}
+
+{warning}
+The [withForm|controllers] tag makes use of the [session|controllers] and hence requires session affinity or clustered sessions if used in a cluster.
+{warning}
+{hidden}
+
+Grails内置了对表单重复提交的处理，其使用的模式是“同步标志模式（Synchronizer Token Pattern）”。作为开始，你需要先在[form|tags]标签中定义一个标志：
+
+{code:xml}
+<g:form useToken="true" ...>
+{code}
+
+然后在你的控制器代码中使用[withForm|controllers]方法来处理那些有效和无效的请求：
+
+{code:java}
+withForm {
+   // good request
+}.invalidToken {
+   // bad request
+}
+{code}
+
+如果你只是使用[withForm|controllers]方法而没有连到@invalidToken@方法的话，Grails将缺省地存储无效的标志到@flash.invalidToken@变量中，并且将请求重定向到上一个原始页面。这样就可以在视图中检查了：
+
+{code:xml}
+<g:if test="${flash.invalidToken}">
+  Don't click the button twice!
+</g:if>
+{code}
+
+{warning}
+[withForm|controllers]标签使用的是[session|controllers]，因此要求是兼容会话的或者支持集群的会话－如果在集群中使用的话。
+{warning}

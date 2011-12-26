@@ -1,0 +1,33 @@
+h1. hasMany
+
+h2. Purpose
+
+Defines a one-to-many association between two classes.
+
+h2. Examples
+
+{code:java}
+class Author {
+
+    String name
+
+    static hasMany = [books: Book]
+}
+{code}
+
+In this example we define a one-to-many relationship between the @Author@ and @Book@ classes (one @Author@ has many @Book@s)
+
+h2. Description
+
+By default GORM will create a property of type @java.util.Set@ using the key inside the definition of the @hasMany@ map. For example consider this definition:
+
+{code}
+static hasMany = [books: Book]
+{code}
+
+Here a property of type @java.util.Set@ called @books@ will be created within the defining class. These can then be iterated over and manipulated:
+
+{code:java}
+def a = Author.get(1)
+for (book in a.books) { println book.title }
+{code}

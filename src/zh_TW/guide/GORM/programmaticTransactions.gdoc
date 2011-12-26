@@ -1,0 +1,29 @@
+Grails is built on Spring and uses Spring's Transaction abstraction for dealing with programmatic transactions. However, GORM classes have been enhanced to make this simpler with the [withTransaction|domainClasses] method. This method has a single parameter, a Closure, which has a single parameter which is a Spring [TransactionStatus|api:org.springframework.transaction.TransactionStatus] instance.
+
+Here's an example of using @withTransaction@ in a controller methods:
+
+{code:java}
+def transferFunds() {
+    Account.withTransaction { status ->
+        def source = Account.get(params.from)
+        def dest = Account.get(params.to)
+
+        def amount = params.amount.toInteger()
+        if (source.active) {
+            if (dest.active) {
+                source.balance -= amount
+                dest.amount += amount
+            }
+            else {
+                status.setRollbackOnly()
+            }
+        }
+    }
+}
+{code}
+
+In this example we rollback the transaction if the destination account is not active. Also, if an unchecked @Exception@ or @Error@ (but not a checked @Exception@, even though Groovy doesn't require that you catch checked exceptions) is thrown during the process the transaction will automatically be rolled back.
+
+You can also use "save points" to rollback a transaction to a particular point in time if you don't want to rollback the entire transaction. This can be achieved through the use of Spring's [SavePointManager|api:org.springframework.transaction.SavepointManager] interface.
+
+The @withTransaction@ method deals with the begin/commit/rollback logic for you within the scope of the block.

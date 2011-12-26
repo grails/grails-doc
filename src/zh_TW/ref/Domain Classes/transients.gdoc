@@ -1,0 +1,18 @@
+h1. transients
+
+h2. Purpose
+
+Defines a list of property names that should not be persisted to the database. This is often useful if you have read-only accessor methods ("getters") that are helper methods but get confused as being persistence-related.
+
+h2. Examples
+
+{code:java}
+class Author {
+   String name
+   String getUpperCaseName() { name.toUpperCase() }
+
+   static transients = ['upperCaseName']
+}
+{code}
+
+Here we have an accessor that takes the @name@ and converts it to uppercase. It doesn't make sense to persist this derived value, so we mark it as transient adding its JavaBean property name to the @transients@ list.

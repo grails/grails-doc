@@ -1,0 +1,135 @@
+Grails提供了钩住脚本事件的能力。这里指的是当Grails的任务和插件脚本执行的时候能触发的一些事件。
+
+这个机制是故意简单化和松散的规定的。可能的事件列表是不会以任何方式固定的，所以可以钩住那些被插件脚本触发的事件，在核心目标脚本中没有类似的事件。
+
+h4. 定义事件处理器
+
+事件处理器是定义在称为 @_Events.groovy@ 的脚本文件中。Grails会在以下位置搜索这些脚本：
+
+* @USER_HOME/.grails/scripts@ - 用户特定的事件处理器
+* @PROJECT_HOME/scripts@ - 应用程序特定的事件处理器
+* @PLUGINS_HOME/*/scripts@ - 插件特定的事件处理器
+* @GLOBAL_PLUGINS_HOME/*/scripts@ - 由全局插件提供的事件处理器
+
+无论事件在何时被激发， _所有_ 已经注册到该事件的处理器都会被执行。需要注意的是处理器的注册工作会由Grails自动进行，你只需要在相关的 @_Events.groovy@ 文件中声明即可。
+
+事件处理器是分块定义在 @_Events.groovy@ 文件中，使用“event”作为名称的开头部分。下边的例子可以被放在你的 /scripts 目录中来展示这个特性：
+
+{code}
+eventCreatedArtefact = { type, name ->
+   println "Created $type $name"
+}
+
+eventStatusUpdate = { msg ->
+   println msg
+}
+
+eventStatusFinal = { msg ->
+   println msg
+}
+{code}
+
+你可以看到这儿有三个处理器分别是：@eventCreatedArtefact@, @eventStatusUpdate@, @eventStatusFinal@。Grails提供了一些标准的事件，它们在命令行参考指南中有描述。例如[compile|commandLine]命令会激发下列事件：
+
+* @CompileStart@  - 当编译过程开始时，针对这几种类型的编译——源文件和测试文件
+* @CompileEnd@ - 当编译过程完成时，针对这几种类型的编译——源文件和测试文件
+
+h4. 触发事件
+
+要简单地触发一个包含Init.groovy脚本的事件并调用event()闭包：
+
+{code}
+includeTargets << grailsScript("_GrailsEvents")
+
+event("StatusFinal", ["Super duper plugin action complete!"])
+{code}
+
+h4. 公共事件
+
+下表是一些可以被利用的公共事件：
+
+{table}
+事件 | 参数 | 描述
+ StatusUpdate | message | 传入一个标志当前脚本状态或进展的字符串
+ StatusError | message | 传入一个标志来自当前脚本的错误信息的字符串
+ StatusFinal | message | 传入一个标志最终脚本状态消息的字符串，例如：当编译一个任务时，即使任务还没有退出脚本环境
+ CreatedArtefact | artefactType,artefactName | 当一个 create-xxxx 脚本已执行完成并创建了一个工件时调用
+ CreatedFile | fileName | 当一个项目的源码文件被创建时调用，但不包括那些由Grails管理的固定文件
+ Exiting | returnCode | 当脚本环境即将正常的退出时调用
+ PluginInstalled | pluginName |在一个插件被安装之后调用
+ CompileStart | kind | 当编译过程开始时调用，针对这几种类型的编译——源文件和测试文件
+ CompileEnd | kind | 当编译过程完成时调用，针对这几种类型的编译——源文件和测试文件
+ DocStart | kind | 当生成文档过程即将开始时调用——生成javadoc或groovydoc时
+ DocEnd | kind | 当生成文档过程已经结束时调用——生成javadoc或groovydoc时
+ SetClasspath | rootLoader | 在classpath初始化时调用以便插件可以通过 rootLoader.addURL(...)来扩大classpath。注意这种扩大classpath是在事件脚本被加载*之后*进行的，因此你不能使用这种方式来加载你的事件脚本需要导入的类，即使你可以通过名称来加载类。
+ PackagingEnd | none | 当打包结束时调用（这个调用是在Tomcat服务器被启动之前并在web.xml文件被生成之后）
+{table}
+
+{hidden}
+Grails provides the ability to hook into scripting events. These are events triggered during execution of Grails target and plugin scripts.
+
+The mechanism is deliberately simple and loosely specified. The list of possible events is not fixed in any way, so it is possible to hook into events triggered by plugin scripts, for which there is no equivalent event in the core target scripts.
+
+h4. Defining event handlers
+
+Event handlers are defined in scripts called @_Events.groovy@. Grails searches for these scripts in the following locations:
+
+* @USER_HOME/.grails/scripts@ - user-specific event handlers
+* @PROJECT_HOME/scripts@ - applicaton-specific event handlers
+* @PLUGINS_HOME/*/scripts@ - plugin-specific event handlers
+* @GLOBAL_PLUGINS_HOME/*/scripts@ - event handlers provided by global plugins
+
+Whenever an event is fired, _all_ the registered handlers for that event are executed. Note that the registration of handlers is performed automatically by Grails, so you just need to declare them in the relevant @_Events.groovy@ file.
+
+Event handlers are blocks defined in @_Events.groovy@, with a name beginning with "event". The following example can be put in your /scripts directory to demonstrate the feature:
+
+{code}
+eventCreatedArtefact = { type, name ->
+   println "Created $type $name"
+}
+
+eventStatusUpdate = { msg ->
+   println msg
+}
+
+eventStatusFinal = { msg ->
+   println msg
+}
+{code}
+
+You can see here the three handlers @eventCreatedArtefact@, @eventStatusUpdate@, @eventStatusFinal@. Grails provides some standard events, which are documented in the command line reference guide. For example the [compile|commandLine] command fires the following events:
+
+* @CompileStart@  - Called when compilation starts, passing the kind of compile - source or tests
+* @CompileEnd@ - Called when compilation is finished, passing the kind of compile - source or tests
+
+h4. Triggering events
+
+To trigger an event simply include the Init.groovy script and call the event() closure:
+
+{code}
+includeTargets << grailsScript("_GrailsEvents")
+
+event("StatusFinal", ["Super duper plugin action complete!"])
+{code}
+
+h4. Common Events
+
+Below is a table of some of the common events that can be leveraged:
+
+{table}
+Event | Parameters | Description
+ StatusUpdate | message | Passed a string indicating current script status/progress
+ StatusError | message | Passed a string indicating an error message from the current script
+ StatusFinal | message | Passed a string indicating the final script status message, i.e. when completing a target, even if the target does not exit the scripting environment
+ CreatedArtefact | artefactType,artefactName | Called when a create-xxxx script has completed and created an artefact
+ CreatedFile | fileName | Called whenever a project source filed is created, not including files constantly managed by Grails
+ Exiting | returnCode | Called when the scripting environment is about to exit cleanly
+ PluginInstalled | pluginName | Called after a plugin has been installed
+ CompileStart | kind | Called when compilation starts, passing the kind of compile - source or tests
+ CompileEnd | kind | Called when compilation is finished, passing the kind of compile - source or tests
+ DocStart | kind | Called when documentation generation is about to start - javadoc or groovydoc
+ DocEnd | kind | Called when documentation generation has ended - javadoc or groovydoc
+ SetClasspath | rootLoader | Called during classpath initialization so plugins can augment the classpath with rootLoader.addURL(...). Note that this augments the classpath *after* event scripts are loaded so you cannot use this to load a class that your event script needs to import, although you can do this if you load the class by name.
+ PackagingEnd | none | Called at the end of packaging (which is called prior to the Tomcat server being started and after web.xml is generated)
+{table}
+{hidden}

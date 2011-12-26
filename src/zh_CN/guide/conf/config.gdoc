@@ -1,0 +1,55 @@
+{hidden}
+For general configuration Grails provides a file called @grails-app/conf/Config.groovy@. This file uses Groovy's "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper which is very similar to Java properties files except it is pure Groovy hence you can reuse variables and use proper Java types!
+
+You can add your own configuration in here, for example:
+
+{code}
+foo.bar.hello = "world"
+{code}
+
+Then later in your application you can access these settings in one of two ways. The most common is from the [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] object, which is available as a variable in controllers and tag libraries:
+
+{code}
+assert "world" == grailsApplication.config.foo.bar.hello
+{code}
+
+The other way involves getting a reference to the [ConfigurationHolder|api:org.codehaus.groovy.grails.commons.ConfigurationHolder] class that holds a reference to the configuration object:
+
+{code}
+import org.codehaus.groovy.grails.commons.*
+...
+def config = ConfigurationHolder.config
+assert "world" == config.foo.bar.hello
+{code}
+
+{warning}
+ConfigurationHolder and ApplicationHolder are deprecated and will be removed in a future version of Grails, so it is highly preferable to access the @GrailsApplication@ and config from the @grailsApplication@ variable.
+{warning}
+{hidden}
+
+Grails提供了一个 @grails-app/conf/Config.groovy@ 配置文件，用来完成通用的配置。此文件除了是Groovy的"ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper 之外，其他非常类似于Java属性文件，这样就既可以重用变量又可以使用合适的Java类！
+
+你可以添加属于你自己的配置信息，例如：
+
+{code}
+foo.bar.hello = "world"
+{code}
+
+在你随后的应用中，你可以使用以下两种方法中的一种来访问这些配置。最常用的就是 [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] 对象，不过此对象仅在控制器和标签库中有效。比如：
+
+{code}
+assert "world" == grailsApplication.config.foo.bar.hello
+{code}
+
+另外一种方法是获取 [ConfigurationHolder|api:org.codehaus.groovy.grails.commons.ConfigurationHolder] 类的一个引用，此类中包含着配置对象，比如：
+
+{code}
+import org.codehaus.groovy.grails.commons.*
+...
+def config = ConfigurationHolder.config
+assert "world" == config.foo.bar.hello
+{code}
+
+{warning}
+ConfigurationHolder和ApplicationHolder现在已经被废弃，并且将在Grails的未来版本中移除，因此强烈推荐采用 @GrailsApplication@ 的实例变量 @grailsApplication@ 方式来访问配置对象。
+{warning}

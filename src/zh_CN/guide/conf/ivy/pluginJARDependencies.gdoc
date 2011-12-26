@@ -1,0 +1,85 @@
+{hidden}
+h4. Specifying Plugin JAR dependencies
+
+The way in which you specify dependencies for a [plugin|guide:plugins] is identical to how you specify dependencies in an application. When a plugin is installed into an application the application automatically inherits the dependencies of the plugin.
+
+To define a dependency that is resolved for use with the plugin but not _exported_ to the application then you can set the @export@ property of the dependency:
+
+{code}
+test('org.spockframework:spock-core:0.5-groovy-1.8') {
+    export = false
+}
+{code}
+
+In this case the Spock dependency will be available only to the plugin and not resolved as an application dependency. Alternatively, if you're using the Map syntax:
+
+{code}
+test group: 'org.spockframework', name: 'spock-core',
+     version: '0.5-groovy-1.8', export: false
+{code}
+
+{note}
+You can use @exported = false@ instead of @export = false@, but we recommend the latter because it's consistent with the Map argument.
+{note}
+{hidden}
+
+h4. 指定插件的JAR依赖
+
+为一个[插件|guide:plugins]指定依赖的方式跟你为一个应用的方式一致。当一个插件被安装以后，此应用将自动继承插件的依赖。
+
+如果希望插件的依赖 _不要导出_ 到应用中，可以通过设置@export@属性来完成：
+
+{code}
+test('org.spockframework:spock-core:0.5-groovy-1.8') {
+    export = false
+}
+{code}
+
+上述示例，所依赖的Spock只在插件中有效，在应用中将不会被解析。你也可以使用Map的语法来设置：
+
+{code}
+test group: 'org.spockframework', name: 'spock-core',
+     version: '0.5-groovy-1.8', export: false
+{code}
+
+{note}
+你也可以使用@exported = false@来替代@export = false@，但是我们推荐你使用后者，因为这样可以跟Map参数保持一致。
+{note}
+
+{hidden}
+h4. Overriding Plugin JAR Dependencies in Your Application
+
+If a plugin is using a JAR which conflicts with another plugin, or an application dependency then you can override how a plugin resolves its dependencies inside an application using exclusions. For example:
+
+{code}
+plugins {
+    compile("\:hibernate\:\$grailsVersion") {
+        excludes "javassist"
+    }
+}
+
+dependencies {
+    runtime "javassist:javassist:3.4.GA"
+}
+{code}
+
+In this case the application explicitly declares a dependency on the "hibernate" plugin and specifies an exclusion using the @excludes@ method, effectively excluding the javassist library as a dependency.
+{hidden}
+
+h4. 在应用中覆盖插件依赖
+
+如果一个插件使用到的JAR依赖跟另外一个插件或者应用的依赖相冲突，你可以使用排除加覆盖的方式来解决，比如：
+
+{code}
+plugins {
+    compile("\:hibernate\:\$grailsVersion") {
+        excludes "javassist"
+    }
+}
+
+dependencies {
+    runtime "javassist:javassist:3.4.GA"
+}
+{code}
+
+在上述依赖"hibernate"插件的应用中，你可以通过@excludes@方法排除掉javassist框架，而后另外声明其依赖。

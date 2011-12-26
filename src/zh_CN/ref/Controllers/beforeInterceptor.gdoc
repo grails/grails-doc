@@ -1,0 +1,65 @@
+h1. beforeInterceptor
+
+h2. Purpose
+
+Allows the interception of an action before it is executed. A @beforeInterceptor@ can optionally halt execution of the action.
+
+h2. Examples
+
+Simple tracing interceptor:
+
+{code}
+static beforeInterceptor = {
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+A trivial security interceptor to implement login functionality:
+
+{code}
+static beforeInterceptor = [action: this.&auth, except: 'login']
+
+// defined with private scope, so it's not considered an action
+private auth() {
+    if (!session.user) {
+        redirect(action: 'login')
+        return false
+    }
+}
+
+def login() {
+    // display login page
+}
+{code}
+
+h2. Description
+
+The @beforeInterceptor@ intercepts processing before the action is executed. If it returns @false@ then the action will not be executed. The interceptor can be defined for all actions in a controller as follows:
+
+{code}
+static beforeInterceptor = {
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+This declaration must be a class-scope Closure in the controller class. It will execute before all actions and does not interfere with processing since it returns no value. A common use case however is for simple authentication (although a [security plugin|http://grails.org/plugin/spring-security-core] is preferred):
+
+{code}
+static beforeInterceptor = [action: this.&auth, except: 'login']
+
+// defined with private scope, so it's not considered an action
+private auth() {
+    if (!session.user) {
+        redirect(action: 'login')
+        return false
+    }
+}
+
+def login() {
+    // display login page
+}
+{code}
+
+This defines a method called @auth@. It is declared as a private method so it is not exposed as a controller action. The @beforeInterceptor@ then defines an interceptor that is used on all actions except the @login@ action and is configured using Groovy's method pointer syntax to execute the @auth@ method. The @auth@ method will redirect to another page if it doesn't find a user in the session, and it signifies that it has handled the response and that the requested action should not be processed by returning @false@.
+
+This example limited the intercepted actions using the @except@ argument but the @only@ argument can also be used to list the actions to be intercepted, rather than those to not intercept.

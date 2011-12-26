@@ -1,0 +1,57 @@
+{hidden}
+Groovy Servers Pages (or GSP for short) is Grails' view technology. It is designed to be familiar for users of technologies such as ASP and JSP, but to be far more flexible and intuitive.
+
+GSPs live in the @grails-app/views@ directory and are typically rendered automatically (by convention) or with the [render|controllers] method such as:
+
+{code:java}
+render(view: "index")
+{code}
+
+A GSP is typically a mix of mark-up and GSP tags which aid in view rendering.
+
+{note}
+Although it is possible to have Groovy logic embedded in your GSP and doing this will be covered in this document, the practice is strongly discouraged. Mixing mark-up and code is a *bad* thing and most GSP pages contain no code and needn't do so.
+{note}
+
+A GSP typically has a "model" which is a set of variables that are used for view rendering. The model is passed to the GSP view from a controller. For example consider the following controller action:
+
+{code:java}
+def show() {
+    [book: Book.get(params.id)]
+}
+{code}
+
+This action will look up a @Book@ instance and create a model that contains a key called @book@. This key can then be referenced within the GSP view using the name @book@:
+
+{code}
+${book.title}
+{code}
+{hidden}
+
+Groovy服务器页面（或者简称为GSP）是Grails的视图技术。它是专为熟悉ASP和JSP技术的用户而设计，不过更加灵活和直观。
+
+GSPs位于@grails-app/views@目录下边，通常情况下是自动渲染的（基于规约）或者通过[render|controllers]方法，比如：
+
+{code:java}
+render(view: "index")
+{code}
+
+GSP混合使用HTML标记（mark-up）和GSP标签技术来辅助视图渲染。
+
+{note}
+虽然在你的GSP中可以使用内嵌的Groovy逻辑（本文档将会涉及），但是作为最佳实践，是非常不鼓励这么做的。混合使用标记和代码是一件很 *不好* 的事情，而且大多数的GSP页面无需也不必包含代码。
+{note}
+
+GSP通常都会有一个用以视图渲染所需的变量集合"模型（model）"，此模型是从控制器传递到GSP视图的。以如下的控制器操作为例：
+
+{code:java}
+def show() {
+    [book: Book.get(params.id)]
+}
+{code}
+
+此操作将会查找一个@Book@实例，并且创建一个包含键@book@的模型。 此键在GSP视图中可以通过名字@book@来引用：
+
+{code}
+${book.title}
+{code}

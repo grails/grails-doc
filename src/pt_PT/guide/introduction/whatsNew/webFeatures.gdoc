@@ -124,3 +124,50 @@ There is a new HTML5-based scaffolding UI:
 h4. jQuery by Default
 
 The jQuery plugin is now the default JavaScript library installed into a Grails application. For backwards compatibility a [Prototype plugin|http://grails.org/plugin/prototype] is available. Refer to the [documentation|http://grails.org/plugin/prototype] on the Prototype plugin for installation instructions.
+
+h4. Easy Date Parsing
+
+A new @date@ method has been added to the @params@ object to allow easy, null-safe parsing of dates:
+
+{code}
+def val = params.date('myDate', 'dd-MM-yyyy')
+
+// or a list for formats
+def val = params.date('myDate', ['yyyy-MM-dd', 'yyyyMMdd', 'yyMMdd'])
+
+// or the format read from messages.properties via the key 'date.myDate.format'
+def val = params.date('myDate')
+{code}
+
+h4. Customizable URL Formats
+
+The default URL Mapping mechanism supports camel case names in the URLs.  The default URL for accessing an action named @addNumbers@ in a controller named @MathHelperController@ would be something like @/mathHelper/addNumbers@.  Grails allows for the customization of this pattern and provides an implementation which replaces the camel case convention with a hyphenated convention that would support URLs like @/math-helper/add-numbers@.  To enable hyphenated URLs assign a value of "hyphenated" to the @grails.web.url.converter@ property in @grails-app/conf/Config.groovy@.
+
+{code:java}
+// grails-app/conf/Config.groovy
+
+grails.web.url.converter = 'hyphenated'
+{code}
+
+Arbitrary strategies may be plugged in by providing a class which implements the [UrlConverter|api:grails.web.UrlConverter] interface and adding an instance of that class to the Spring application context with the bean name of @grails.web.UrlConverter.BEAN_NAME@.  If Grails finds a bean in the context with that name, it will be used as the default converter and there is no need to assign a value to the @grails.web.url.converter@ config property.
+
+{code:java}
+// src/groovy/com/myapplication/MyUrlConverterImpl.groovy
+
+package com.myapplication
+
+class MyUrlConverterImpl implements grails.web.UrlConverter {
+
+    String toUrlElement(String propertyOrClassName) {
+        // return some representation of a property or class name that should be used in URLs...
+    }
+}
+{code}
+
+{code:java}
+// grails-app/conf/spring/resources.groovy
+
+beans = {
+    "${grails.web.UrlConverter.BEAN_NAME}"(com.myapplication.MyUrlConverterImpl)
+}
+{code}

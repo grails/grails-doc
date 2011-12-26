@@ -1,0 +1,33 @@
+{hidden}
+Grails provides the following GORM configuration options:
+
+* @grails.gorm.failOnError@  - If set to @true@, causes the @save()@ method on domain classes to throw a @grails.validation.ValidationException@ if [validation|guide:validation] fails during a save.  This option may also be assigned a list of Strings representing package names.  If the value is a list of Strings then the failOnError behavior will only be applied to domain classes in those packages (including sub-packages).  See the [save|domainClasses] method docs for more information.
+
+For example, to enable failOnError for all domain classes:
+{code:java}
+grails.gorm.failOnError=true
+{code}
+
+and to enable failOnError for domain classes by package:
+{code:java}
+grails.gorm.failOnError = ['com.companyname.somepackage',
+                           'com.companyname.someotherpackage']
+{code}
+* @grails.gorm.autoFlush@ = If set to @true@, causes the [merge|domainClasses], [save|domainClasses] and [delete|domainClasses] methods to flush the session, replacing the need to explicitly flush using @save(flush: true)@.
+{hidden}
+
+Grails提供了如下的GORM配置选项：
+
+* @grails.gorm.failOnError@  - 如果此选项值为 @true@ 并且在保存的时候 [校验|guide:validation] 失败，那么此领域类的 @save()@ 方法将抛出一个  @grails.validation.ValidationException@ 异常。此选项的值还可以是代表包名的字符串列表。如果是字符串列表的话，那么failOnError仅仅作用于属于这些包名（包括子包名）的领域类。更多详细信息请参考 [save|domainClasses] 方法
+
+例如要使所有的领域类都能够failOnError，配置如下：
+{code:java}
+grails.gorm.failOnError=true
+{code}
+
+要使特定包名的领域类能够failOnError，代码如下：
+{code:java}
+grails.gorm.failOnError = ['com.companyname.somepackage',
+                           'com.companyname.someotherpackage']
+{code}
+* @grails.gorm.autoFlush@ = 如果此选项值为 @true@，那么将导致 [merge|domainClasses]、 [save|domainClasses] 和 [delete|domainClasses] 方法不需要明确地指定flush参数（比如 @save(flush: true)@ ）而清除会话的行为。

@@ -112,7 +112,8 @@ log4j = {
 
 The standard artifact names used in the logging configuration are:
 
-* @conf@ - For anything under @grails-app/conf@ such as @BootStrap.groovy@ and filters
+* @conf@ - For anything under @grails-app/conf@ such as @BootStrap.groovy@ (but excluding filters)
+* @filters@ - For filters
 * @taglib@ - For tag libraries
 * @services@ - For service classes
 * @controllers@ - For controllers
@@ -227,16 +228,16 @@ This approach can be used to configure @JMSAppender@, @SocketAppender@, @SMTPApp
 Once you have declared your extra appenders, you can attach them to specific loggers by passing the name as a key to one of the log level methods from the previous section:
 
 {code:java}
-error myAppender: "grails.app.controller.BookController"
+error myAppender: "grails.app.controllers.BookController"
 {code}
 
 This will ensure that the 'grails.app.controller.BookController' logger sends log messages to 'myAppender' as well as any appenders configured for the root logger. To add more than one appender to the logger, then add them to the same level declaration:
 
 {code:java}
-error myAppender:      "grails.app.controller.BookController",
-      myFileAppender:  ["grails.app.controller.BookController",
-                        "grails.app.service.BookService"],
-      rollingFile:     "grails.app.controller.BookController"
+error myAppender:      "grails.app.controllers.BookController",
+      myFileAppender:  ["grails.app.controllers.BookController",
+                        "grails.app.services.BookService"],
+      rollingFile:     "grails.app.controllers.BookController"
 {code}
 
 The above example also shows how you can configure more than one logger at a time for a given appender (@myFileAppender@) by using a list.
@@ -244,9 +245,9 @@ The above example also shows how you can configure more than one logger at a tim
 Be aware that you can only configure a single level for a logger, so if you tried this code:
 
 {code:java}
-error myAppender:      "grails.app.controller.BookController"
-debug myFileAppender:  "grails.app.controller.BookController"
-fatal rollingFile:     "grails.app.controller.BookController"
+error myAppender:      "grails.app.controllers.BookController"
+debug myFileAppender:  "grails.app.controllers.BookController"
+fatal rollingFile:     "grails.app.controllers.BookController"
 {code}
 
 you'd find that only 'fatal' level messages get logged for 'grails.app.controller.BookController'. That's because the last level declared for a given logger wins. What you probably want to do is limit what level of messages an appender writes.
@@ -323,7 +324,7 @@ log4j = {
     environments {
         production {
             // Override previous setting for 'grails.app.controller'
-            error "grails.app.controller"
+            error "grails.app.controllers"
         }
     }
 }
@@ -413,16 +414,16 @@ log4j = {
     }
 
     info additivity: false
-         stdout: \["grails.app.controller.BookController",
-                  "grails.app.service.BookService"\]
+         stdout: \["grails.app.controllers.BookController",
+                  "grails.app.services.BookService"\]
 }
 {code}
 
 So when you specify a log level, add an 'additivity' named argument. Note that you when you specify the additivity, you must configure the loggers for a named appender. The following syntax will _not_ work:
 
 {code:java}
-info additivity: false, \["grails.app.controller.BookController",
-                         "grails.app.service.BookService"\]
+info additivity: false, \["grails.app.controllers.BookController",
+                         "grails.app.services.BookService"\]
 {code}
 
 h3. Customizing stack trace printing and filtering
@@ -452,3 +453,24 @@ beans = {
                                 ref('grailsResourceLocator'))
 }
 {code}
+
+h3. Alternative logging libraries
+
+By default, Grails uses Log4J to do its logging. For most people this is absolutely fine, and many users don't even care what logging library is used. But if you're not one of those and want to use an alternative, such as the [JDK logging package|http://download.oracle.com/javase/6/docs/api/index.html?java/util/logging/package-summary.html] or [logback|http://logback.qos.ch/], you can do so by simply excluding a couple of dependencies from the global set and adding your own:
+
+{code}
+grails.project.dependency.resolution = {
+    inherits("global") {
+        excludes "grails-plugin-logging", "log4j"
+    }
+    ...
+    dependencies {
+        runtime "ch.qos.logback:logback-core:0.9.29"
+        ...
+    }
+    ...
+}
+
+{code}
+
+If you do this, you will get unfiltered, standard Java stacktraces in your log files and you won't be able to use the logging configuration DSL that's just been described. Instead, you will have to use the standard configuration mechanism for the library you choose.
