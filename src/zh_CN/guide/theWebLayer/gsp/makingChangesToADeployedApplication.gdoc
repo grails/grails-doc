@@ -1,3 +1,4 @@
+{hidden}
 One of the main issues with deploying a Grails application (or typically any servlet-based one) is that any change to the views requires that you redeploy your whole application. If all you want to do is fix a typo on a page, or change an image link, it can seem like a lot of unnecessary work. For such simple requirements, Grails does have a solution: the  @grails.gsp.view.dir@  configuration setting.
 
 How does this work? The first step is to decide where the GSP files should go. Let's say we want to keep them unpacked in a  @/var/www/grails/my-app@  directory. We add these two lines to  @grails-app/conf/Config.groovy@ :
@@ -31,3 +32,38 @@ grails.gsp.reload.granularity | the number of milliseconds leeway to give before
 {table}
 
 GSP reloading is supported for precompiled GSPs since Grails 1.3.5 .
+{hidden}
+
+部署一个Grails应用（或者任意基于servlet的应用）的一个主要问题是视图的任何修改都需要重新再部署你的整个应用。假如你只是想修复一个页面的打字错误或者修改一个图像链接，那么这种再部署像是比较多余的工作。对于这种比较简单的需求，Grails提供了一个解决方案：配置@grails.gsp.view.dir@属性。
+
+那么它是如何工作的呢？第一步就是要确定GSP文件位于什么地方。假设我们想让这些文件解压缩到@/var/www/grails/my-app@目录，那么我们需要在@grails-app/conf/Config.groovy@增加如下两行：
+{code}
+grails.gsp.enable.reload = true
+grails.gsp.view.dir = "/var/www/grails/my-app/"
+{code}
+第一行告诉Grails在运行期间允许重新加载那些修改过的GSP文件。如果你没有设置此值，那在没有重新启动的情况下，你修改的再多也不会在当前运行的应用中生效 。第二行告诉Grails到哪里去加载视图和布局。
+
+{note}
+@grails.gsp.view.dir@值的最后一个反斜杠是很重要的！没有它，Grails将会在其上一级目录寻找视图。
+{note}
+
+"grails.gsp.view.dir"的值是可选的。如果没有设置，你可以直接更新部署在应用服务器的war目录下的文件。这些文件可能会在应用服务器重新启动的时候被覆盖，不过这是跟服务器相关的。在这个时候，大部分的应用服务器所支持的“war额外加载部署（exploded war deployment）”模式是值得推荐的。
+
+所有这些设置完毕以后，你所需要做的就是从你的web应用中拷贝视图文件到外部的目录中。在一个Unix类的系统中，这可能看起来如下所示：
+{code}
+mkdir -p /var/www/grails/my-app/grails-app/views
+cp -R grails-app/views/* /var/www/grails/my-app/grails-app/views
+{code}
+此处的关键点是你必须要保留视图的目录结构，包括@grails-app/views@本身。因此你的路径是@/var/www/grails/my-app/grails-app/views/...@的形式。
+
+使用此技术，要牢记的一件事情是在你每一次修改GSP文件的时候，会增加permgen的内存空间。因此最终你将会碰到"permgen内存空间益"的错误，当然你可以通过重新启动服务器来解决。所以，此技术不推荐应用于视图被频繁或者大量修改的情况。
+
+此外还有一些系统级的属性配置来控制GSP的重新加载：
+{table}
+*名称* | *描述* | *缺省值*
+grails.gsp.enable.reload | 在不修改Config.groovy的情况下，通过系统设置变量来启动GSP重栽模式 |
+grails.gsp.reload.interval | 轮询gsp源文件最后修改时间的时间间隔，单位是毫秒 | 5000
+grails.gsp.reload.granularity | 在一个文件超时以前预留的毫秒数，此项是需要的，因为最后修改时间精度会导致1000毫秒的误差 | 1000
+{table}
+
+自从Grails 1.3.5以来，GSP的重栽就支持预编译了。
