@@ -1,8 +1,16 @@
+{hidden}
 Another important thing to note about errors in Grails is that error messages are not hard coded anywhere. The [FieldError|api:org.springframework.validation.FieldError] class in Spring resolves messages from message bundles using Grails' [i18n|guide:i18n] support.
+{hidden}
+
+สิ่งสำคัญอีกอย่างนึงที่น่าจดจำไว้คือ ข้อความที่แสดงต่างๆใน Grails ไม่ได้ถูกกำหนดตายตัวไว้ในโค๊ดที่ไหน แต่คลาส [FieldError|api:org.springframework.validation.FieldError] ในสปริงเป็นตัวเรียกข้อความนั้นๆมาจาก message bundles โดยใช้ การสนับสนุนของ Grails' [i18n|guide:i18n]
 
 h4. Constraints and Message Codes
 
+{hidden}
 The codes themselves are dictated by a convention. For example consider the constraints we looked at earlier:
+{hidden}
+
+โดยโค๊ดนั้นถูกกำหนดไว้อยู่แล้ว เช่นจากตัวอย่างด้านล่างโดยมองจาก constraints แล้ว
 
 {code:java}
 package com.mycompany.myapp
@@ -19,25 +27,45 @@ class User {
 }
 {code}
 
+{hidden}
 If a constraint is violated Grails will by convention look for a message code of the form:
+{hidden}
+
+ถ้า constraint ไม่เป็นไปตามกฏ Grails ก็จะเรียกข้อความมาจาก
 
 {code:java}
 [Class Name].[Property Name].[Constraint Code]
 {code}
 
+{hidden}
 In the case of the @blank@ constraint this would be @user.login.blank@ so you would need a message such as the following in your @grails-app/i18n/messages.properties@ file:
+{hidden}
+
+โดยในตัวอย่างนี้ @blank@ constraint ก็จะเป็น @user.login.blank@ โดยคุณก็จะต้องมีค่านี้ในไฟล์ @grails-app/i18n/messages.properties@ ด้วย
 
 {code:java}
 user.login.blank=Your login name must be specified!
 {code}
 
+{hidden}
 The class name is looked for both with and without a package, with the packaged version taking precedence. So for example, com.mycompany.myapp.User.login.blank will be used before user.login.blank. This allows for cases where your domain class message codes clash with a plugin's.
+{hidden}
 
+โดยชื่อของคลาสจะถูกค้นหาโดยมีแพกเกจหรือไม่มีแพกเกจก็ได้ แต่ ถ้ามีแพกเกจ Grails จะให้ความสำคัญมากกว่า เช่น com.mycompany.myapp.User.login.blank ก็จะถูกเรียกก่อน user.login.blank ทั้งนี้ทั้งนั้นเพื่อในกรณีที่ คลาสโดเมนมีชื่อตรงกับคลาสใดๆในปลั๊กอิน
+
+{hidden}
 For a reference on what codes are for which constraints refer to the reference guide for each constraint.
+{hidden}
+
+สำหรับการอ้างอิงว่าค่าใดใช้สำหรับ constraints ใดสามารถอ้างอิงได้จาก reference guide สำหรับแต่ล่ะ constraint
 
 h4. Displaying Messages
 
+{hidden}
 The [renderErrors|tags] tag will automatically look up messages for you using the [message|tags] tag. If you need more control of rendering you can handle this yourself:
+{hidden}
+
+[renderErrors|tags] tag นี้ก็จะมองหา [message|tags] tag ก่อนถ้าคุณต้องการความยืดหยุ่นมากกว่านั้นก็อาจจะกำหนดได้เองโดยตัวอย่างด้านล่าง
 
 {code:xml}
 <g:hasErrors bean="${user}">
@@ -49,5 +77,8 @@ The [renderErrors|tags] tag will automatically look up messages for you using th
 </g:hasErrors>
 {code}
 
+{hidden}
 In this example within the body of the [eachError|tags] tag we use the [message|tags] tag in combination with its @error@ argument to read the message for the given error.
+{hidden}
 
+ในตัวอย่างนี้ในบอดี้ของ  [eachError|tags] เราใช้ [message|tags] tag และผสมผสานกับค่า @error@ เพื่ออ่านข้อความสำหรับแต่ล่ะข้อผิดพลาด

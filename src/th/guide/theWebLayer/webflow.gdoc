@@ -1,18 +1,40 @@
 h4. Overview
 
+{hidden}
 Grails supports the creation of web flows built on the "Spring Web Flow":http://www.springsource.org/webflow project. A web flow is a conversation that spans multiple requests and retains state for the scope of the flow. A web flow also has a defined start and end state.
+{hidden}
 
+Grails สนับสนุนการสร้าง web flows โดยมีพื้นฐานมาจาก "Spring Web Flow":http://www.springsource.org/webflow web flow เป็นการสื่อสารที่ครอบคลุมระหว่าง request หลายคำร้องขอ และยังรักษา state สำหรับแต่ล่ะเส้นทางไว้ด้วย โดย web flow จะมีจุดเริ่มต้นและจุดสิ้นสุดที่แน่นอน
+
+{hidden}
 Web flows don't require an HTTP session, but instead store their state in a serialized form, which is then restored using a flow execution key that Grails passes around as a request parameter. This makes flows far more scalable than other forms of stateful application that use the HttpSession and its inherit memory and clustering concerns.
+{hidden}
 
+Web flows ไม่ต้องการ HTTP session แต่ต้องการที่จะจัดเก็บสถานะไว้ในแบบ serialized และจะถูกนำกลับมาใช้อีกครั้งในการส่งผ่าน request parameter แบบนี้จะทำให้ web flow นั่นสามารถขยายออกไปได้เรื่อยๆมากกว่า stateful application ที่ใช้ HttpSession
+
+{hidden}
 Web flow is essentially an advanced state machine that manages the "flow" of execution from one state to the next. Since the state is managed for you, you don't have to be concerned with ensuring that users enter an action in the middle of some multi step flow, as web flow manages that for you. This makes web flow perfect for use cases such as shopping carts, hotel booking and any application that has multi page work flows.
+{hidden}
 
+Web flows นั่นเป็น state machine ที่จัดการสิ่งที่เรียกว่า "flow" โดยการส่งผ่านจากสถานะหนึ่งไปอีกสถานะหนึ่ง และจากการที่ state นั่นถูกจัดการโดยผู้ใช้เอง ผู้ใช้ไม่จำเป็นที่จะต้องแน่ใจว่าผู้ใช้ต้องจะต้องจัดการ action ใน flow หลายๆ flow เพราะว่า web flow จะเป็นตัวจัดการเอง เพราะเหตุนี้นั่นเองทำให้ web flow นั่นเหมาะกับเวปขายของ, การจองโรงแรม, และ application อีกมากที่มี flow มากๆ
+
+{hidden}
 {note}
 From Grails 1.2 onwards Webflow is no longer in Grails core, so you must install the Webflow plugin to use this feature: @grails install-plugin webflow@
+{note}
+{hidden}
+
+{note}
+จาก Grails 1.2 เป็นต้นไป Webflow จะไม่อยู่ใน Grails core อีกต่อไป โดยคุณจะต้องติดตั้ง Webflow plugin โดยใช้คำสั่งนี้ @grails install-plugin webflow@
 {note}
 
 h4. Creating a Flow
 
+{hidden}
 To create a flow create a regular Grails controller and add an action that ends with the convention @Flow@. For example:
+{hidden}
+
+การสร้าง flow จาก Grails controller และการใส่ action จะจบลงด้วย @Flow@ โดยมองจากตัวอย่าง
 
 {code:java}
 class BookController {
@@ -27,4 +49,8 @@ class BookController {
 }
 {code}
 
+{hidden}
 Notice when redirecting or referring to the flow as an action we omit the @Flow@ suffix. In other words the name of the action of the above flow is @shoppingCart@.
+{hidden}
+
+จะเห็นได้ว่าเมื่อมีการ redirect หรือ refer ถึง flow จะละ @Flow@ suffix ไป โดยในอีกนัยหนึ่งชื่อของ action นั่นจะเป็น @shoppingCart@
