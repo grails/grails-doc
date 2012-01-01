@@ -1,3 +1,4 @@
+{hidden}
 If you have collections of objects you often need to sort and filter them. Use the [findAll|tags] and [grep|tags] tags for these tasks:
 
 {code:xml}
@@ -24,3 +25,31 @@ Or using a regular expression:
 {code}
 
 The above example is also interesting due to its usage of GPath. GPath is an XPath-like language in Groovy. The @books@ variable is a collection of @Book@ instances. Since each @Book@ has a @title@, you can obtain a list of Book titles using the expression @books.title@. Groovy will auto-magically iterate the collection, obtain each title, and return a new list!
+{hidden}
+
+如果你的对象是集合，那么你经常需要排序和过滤。使用[findAll|tags]和[grep|tags]标签可以完成这些任务：
+
+{code:xml}
+Stephen King's Books:
+<g:findAll in="${books}" expr="it.author == 'Stephen King'">
+     <p>Title: ${it.title}</p>
+</g:findAll>
+{code}
+
+@expr@属性使用一个Groovy表达式来作为过滤器。[grep|tags]标签完成类似的任务，比如要过滤对象类：
+
+{code:xml}
+<g:grep in="${books}" filter="NonFictionBooks.class">
+     <p>Title: ${it.title}</p>
+</g:grep>
+{code}
+
+或者使用一个正则表达式：
+
+{code:xml}
+<g:grep in="${books.title}" filter="~/.*?Groovy.*?/">
+     <p>Title: ${it}</p>
+</g:grep>
+{code}
+
+上述示例也展示了GPath用法。Groovy的GPath跟XPath类似。@books@变量是一个@Book@实例的集合。因为每一个@Book@都有@title@，你可以使用表达式@books.title@来获取Book标题的列表。Groovy将会自动地对集合迭代，获取每一个标题，最终返回一个新的列表。

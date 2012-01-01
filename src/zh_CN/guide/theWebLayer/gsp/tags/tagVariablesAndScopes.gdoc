@@ -1,3 +1,4 @@
+{hidden}
 Variables can be defined within a GSP using the [set|tags] tag:
 
 {code:xml}
@@ -21,6 +22,35 @@ Variables can also be placed in one of the following scopes:
 * @application@ - Application-wide scope.
 
 To specify the scope, use the @scope@ attribute:
+
+{code:xml}
+<g:set var="now" value="${new Date()}" scope="request" />
+{code}
+{hidden}
+
+在GSP中，可以通过[set|tags]标签来定义变量：
+
+{code:xml}
+<g:set var="now" value="${new Date()}" />
+{code}
+
+此处，我们将一个GSP表达式（只是简单地构造一个@java.util.Date@实例）的结果赋值给@now@变量。你也可以使用@<g:set>@标签的主体来定义一个变量：
+
+{code:xml}
+<g:set var="myHTML">
+   Some re-usable code on: ${new Date()}
+</g:set>
+{code}
+
+变量也可以被置于如下的作用域之一：
+
+* @page@ - 作用于当前页面（缺省）
+* @request@ - 作用于当前请求
+* @flash@ - 置于[flash|controllers]作用域内，因此在下一个请求中是有效的
+* @session@ - 作用于用户会话
+* @application@ - 应用级别的作用域
+
+要指定作用域，要使用@scope@属性：
 
 {code:xml}
 <g:set var="now" value="${new Date()}" scope="request" />

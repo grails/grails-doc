@@ -1,3 +1,4 @@
+{hidden}
 One major different between GSP tags and other tagging technologies is that GSP tags can be called as either regular tags or as method calls from [controllers|guide:controllers], [tag libraries|guide:taglibs] or GSP views.
 
 h4. Tags as method calls from GSPs
@@ -19,7 +20,31 @@ In view technologies that don't support this feature you have to nest tags withi
 {code:xml}
 <img src="<g:createLinkTo dir="images" file="logo.jpg" />" />
 {code}
+{hidden}
 
+One major different between GSP tags and other tagging technologies is that GSP tags can be called as either regular tags or as method calls from [controllers|guide:controllers], [tag libraries|guide:taglibs] or GSP views.
+
+h4. 在GSP中以方法调用标签
+
+当标签以方法的方式调用时，其返回一个类似String（一个@StreamCharBuffer@，有着跟String完全相同的方法）的对象，而不是直接写回到响应器。比如：
+
+{code:xml}
+Static Resource: ${createLinkTo(dir: "images", file: "logo.jpg")}
+{code}
+
+这在一个属性内使用标签的时候特别有用：
+
+{code:xml}
+<img src="${createLinkTo(dir: 'images', file: 'logo.jpg')}" />
+{code}
+
+在视图技术中，标签内嵌套标签是不被支持的，因为那将会很快导致混乱，而且像Dreamweaver这样所见即所得（WYSWIG）的工具产生不利的效果，因为那会破坏标签的结构良好性：
+
+{code:xml}
+<img src="<g:createLinkTo dir="images" file="logo.jpg" />" />
+{code}
+
+{hidden}
 h4. Tags as method calls from Controllers and Tag Libraries
 
 You can also invoke tags from controllers and tag libraries. Tags within the default @g:@ [namespace|guide:namespaces] can be invoked without the prefix and a @StreamCharBuffer@ result is returned:
@@ -35,6 +60,27 @@ def imageLocation = g.createLinkTo(dir:"images", file:"logo.jpg").toString()
 {code}
 
 For tags that use a [custom namespace|guide:namespaces], use that prefix for the method call. For example (from the [FCK Editor plugin|http://grails.org/plugin/fckeditor]):
+
+{code:java}
+def editor = fckeditor.editor(name: "text", width: "100%", height: "400")
+{code}
+{hidden}
+
+h4. 在控制器和标签库中的以方法调用标签
+
+你可以可以在控制器和标签库中调用标签。[命名空间|guide:namespaces]是@g:@的标签调用可以忽略其前缀，并且一个@StreamCharBuffer@类型的结果被返回：
+
+{code:java}
+def imageLocation = createLinkTo(dir:"images", file:"logo.jpg").toString()
+{code}
+
+命名空间前缀是用以避免名称冲突的：
+
+{code:java}
+def imageLocation = g.createLinkTo(dir:"images", file:"logo.jpg").toString()
+{code}
+
+对于那些使用[自定义命名空间|guide:namespaces]的标签，在以方法调用时要使用其前缀。比如（来自[FCK 编辑器插件|http://grails.org/plugin/fckeditor]）：
 
 {code:java}
 def editor = fckeditor.editor(name: "text", width: "100%", height: "400")
