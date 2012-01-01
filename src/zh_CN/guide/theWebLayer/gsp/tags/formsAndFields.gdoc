@@ -1,3 +1,4 @@
+{hidden}
 h4. Form Basics
 
 GSP supports many different tags for working with HTML forms and fields, the most basic of which is the [form|tags] tag. This is a controller/action aware version of the regular HTML form tag. The @url@ attribute lets you specify which controller and action to map to:
@@ -7,7 +8,19 @@ GSP supports many different tags for working with HTML forms and fields, the mos
 {code}
 
 In this case we create a form called @myForm@ that submits to the @BookController@'s @list@ action. Beyond that all of the usual HTML attributes apply.
+{hidden}
 
+h4. 表单基础
+
+GSP有很多不同的标签来支持HTML表单和字段，不过最基础的还是[form|tags]标签。常规的HTML表单标签支持controller/action属性，而@url@属性让你以映射（map）的方式来指定controller和action：
+
+{code:xml}
+<g:form name="myForm" url="[controller:'book',action:'list']">...</g:form>
+{code}
+
+在这个示例中，我们创建了一个@myForm@表单，它将会提交到@BookController@控制器的@list@操作。此外HTML的所有通用属性都可以使用。
+
+{hidden}
 h4. Form Fields
 
 In addition to easy construction of forms, GSP supports custom tags for dealing with different types of fields, including:
@@ -26,10 +39,40 @@ Each of these allows GSP expressions for the value:
 {code}
 
 GSP also contains extended helper versions of the above tags such as [radioGroup|tags] (for creating groups of [radio|tags] tags), [localeSelect|tags], [currencySelect|tags] and [timeZoneSelect|tags] (for selecting locales, currencies and time zones respectively).
+{hidden}
 
+h4. 表单字段
+
+除了轻松地构造表单之外，GSP自定义的标签支持不同的字段类型，包括：
+
+* [textField|tags] - 针对类型是'text'的输入字段
+* [passwordField|tags] - 针对类型是'password'的输入字段
+* [checkBox|tags] - 针对类型是'checkbox'的输入字段
+* [radio|tags] - 针对类型是'radio'的输入字段
+* [hiddenField|tags] - 针对类型是'hidden'的输入字段
+* [select|tags] - 针对HTML的下拉框（select boxes）
+
+这些标签的value属性都允许使用GSP表达式：
+
+{code:xml}
+<g:textField name="myField" value="${myValue}" />
+{code}
+
+GSP还包含上述标签扩展的助手版本，比如[radioGroup|tags]（用于创建一组[radio|tags]标签）、[localeSelect|tags]、[currencySelect|tags]和[timeZoneSelect|tags]（用于选择区域、货币和时区）。
+
+{hidden}
 h4. Multiple Submit Buttons
 
 The age old problem of dealing with multiple submit buttons is also handled elegantly with Grails using the [actionSubmit|tags] tag. It is just like a regular submit, but lets you specify an alternative action to submit to:
+
+{code:xml}
+<g:actionSubmit value="Some update label" action="update" />
+{code}
+{hidden}
+
+h4. 多个提交按钮
+
+处理多个提交按钮这一个古老的问题，也得到优雅的解决，那就是使用Grails的[actionSubmit|tags]标签。跟常规的提交类似，只不过你可以指定另外一个操作来提交：
 
 {code:xml}
 <g:actionSubmit value="Some update label" action="update" />

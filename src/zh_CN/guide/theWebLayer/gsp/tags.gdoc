@@ -1,3 +1,4 @@
+{hidden}
 Now that the less attractive JSP heritage has been set aside, the following sections cover GSP's built-in tags, which are the preferred way to define GSP pages.
 
 {note}
@@ -43,3 +44,50 @@ Note that within the values of attributes you must use single quotes for Strings
 {code}
 
 With the basic syntax out the way, the next sections look at the tags that are built into Grails by default.
+{hidden}
+
+现在没有吸引力的JSP遗留部分已经被废除了，那么接下来的章节，我们将讨论GSP的内置标签，它们是定义GSP页面非常有力的方法。
+
+{note}
+[标签库|guide:taglibs]章节讨论的是如何添加你自己定制的标签库
+{note}
+
+所有内置的GSP标签都是以前缀@g:@开始的。跟JSP不同的是，你不需要指定任何的标签库导入。如果一个标签以@g:@开头，那么将会自动地被当作GSP标签看待。一个GSP的标签的样子如下所示：
+
+{code:xml}
+<g:example />
+{code}
+
+GSP标签还可以有一个主体（body），比如：
+
+{code:xml}
+<g:example>
+   Hello world
+</g:example>
+{code}
+
+GSP标签的属性可以使用Groovy表达式，而如果没有明确指定的话，其缺省为一个字符串值：
+
+{code:xml}
+<g:example attr="${new Date()}">
+   Hello world
+</g:example>
+{code}
+
+Map类型也可以作为GSP标签的属性，其一般被用作命名参数风格的语法：
+
+{code:xml}
+<g:example attr="${new Date()}" attr2="[one:1, two:2, three:3]">
+   Hello world
+</g:example>
+{code}
+
+注意！属性里边的字符串值你必须使用单引号：
+
+{code:xml}
+<g:example attr="${new Date()}" attr2="[one:'one', two:'two']">
+   Hello world
+</g:example>
+{code}
+
+基本的语法已经介绍完毕，接下来的章节将是Grails自带的缺省标签了。
