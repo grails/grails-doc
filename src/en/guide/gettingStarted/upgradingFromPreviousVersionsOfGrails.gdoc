@@ -42,6 +42,20 @@ Although the Grails development team have tried to keep breakages to a minimum t
 
 h3. Upgrading from Grails 1.3.x
 
+h4. Changes to web.xml template
+
+If you have customized the web.xml provided by @grails install-templates@ then you will need to update this customized template with the latest version provided by Grails. Failing to do so will lead to a ClassNotFoundException for the @org.codehaus.groovy.grails.web.util.Log4jConfigListener@ class.
+
+h4. Groovy 1.8 Changes
+
+Groovy 1.8 is a little stricter in terms of compilation so you may be required to fix compilation errors in your application that didn't occur under Grails 1.3.x.
+
+Groovy 1.8 also requires that you update many of the libraries that you may be using in your application. Libraries known to require an upgrade include:
+
+* Spock
+* Geb
+* GMock (upgrade unavailable as of this writing)
+
 h4. HSQLDB Has Been Replaced With H2
 
 HSQLDB is still bundled with Grails but is not configured as a default runtime dependency.  Upgrade options include replacing HSQLDB references in DataSource.groovy with H2 references or adding HSQLDB as a runtime dependency for the application.
