@@ -1,3 +1,4 @@
+{hidden}
 Iterative tags are easy too, since you can invoke the body multiple times:
 
 {code:java}
@@ -52,3 +53,59 @@ Now we can change the usage of the tag as follows:
 {code}
 
 Notice how we use the @var@ attribute to define the name of the variable @j@ and then we are able to reference that variable within the body of the tag.
+{hidden}
+
+因为你可以多次调用主体（body），所以迭代标签也是很容易的：
+
+{code:java}
+def repeat = { attrs, body ->
+    attrs.times?.toInteger()?.times { num ->
+        out << body(num)
+    }
+}
+{code}
+
+在此例中，我们检查标签的@times@属性，如果存在呢，就将其转换为一个数字，然后使用Groovy的@times@方法来迭代给定的次数：
+
+{code:xml}
+<g:repeat times="3">
+<p>Repeat this 3 times! Current repeat = ${it}</p>
+</g:repeat>
+{code}
+
+注意示例中，我们是如何使用隐式的@it@变量来引用当前的数字。此种方式是有效的，因为在迭代内部，我们将当前值传给了正在调用的主体（body）：
+
+{code:java}
+    out << body(num)
+{code}
+
+然后那个值作为缺省@it@变量传给了标签。但是，如果你有嵌套的标签的话，那么这将会导致冲突，因此你应该给给调用的主体变量命名：
+
+{code:java}
+def repeat = { attrs, body ->
+    def var = attrs.var ?: "num"
+    attrs.times?.toInteger()?.times { num ->
+        out << body((var):num)
+    }
+}
+{code}
+
+此处我们检查是否存在一个@var@属性，如果有，那么将使用其值作为变量名称传递给正在调用的主体，如下所示：
+
+{code:java}
+    out << body((var):num)
+{code}
+
+{note}
+注意！变量名称两边的括号。如果你忽略它们，那么Groovy将会认为你正在使用一个String类型的键，而不是变量本身。
+{note}
+
+现在你可以修改标签的使用方法了，如下所示：
+
+{code:xml}
+<g:repeat times="3" var="j">
+<p>Repeat this 3 times! Current repeat = ${j}</p>
+</g:repeat>
+{code}
+
+请注意我们是如何使用@var@属性来将变量名称定义为@j@，然后就可以在标签的主体内来引用此变量了。 tag.

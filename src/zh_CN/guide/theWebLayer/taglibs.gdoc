@@ -1,3 +1,4 @@
+{hidden}
 Like "Java Server Pages":http://www.oracle.com/technetwork/java/javaee/jsp/index.html (JSP), GSP supports the concept of custom tag libraries. Unlike JSP, Grails' tag library mechanism is simple, elegant and completely reloadable at runtime.
 
 Quite simply, to create a tag library create a Groovy class that ends with the convention @TagLib@ and place it within the @grails-app/taglib@ directory:
@@ -55,6 +56,83 @@ class SimpleTagLib {
 {code}
 
 and any mandatory attributes should include the REQUIRED keyword, e.g.
+
+{code:java}
+class SimpleTagLib {
+
+    /**
+     * Creates a new password field.
+     *
+     * @attr name REQUIRED the field name
+     * @attr value the field value
+     */
+    def passwordField = { attrs ->
+        attrs.type = "password"
+        attrs.tagName = "passwordField"
+        fieldImpl(out, attrs)
+    }
+}
+{code}
+{note}
+{hidden}
+
+跟"Java Server Pages":http://www.oracle.com/technetwork/java/javaee/jsp/index.html (JSP)类似，GSP支持自定义标签库的概念。而跟JSP不同的是，Grails的标签库机制是简单而优雅的，并且完全可以在运行时重新加载。
+
+要创建一个标签库是很简单的，只需要根据规约创建一个以@TagLib@结尾的Groovy类，并且放到@grails-app/taglib@下边就好了：
+
+{code:java}
+class SimpleTagLib {
+
+}
+{code}
+
+现在，要创建一个标签，只需要创建一个有两个参数（标签属性和主体内容）的闭包属性：
+
+{code:java}
+class SimpleTagLib {
+    def simple = { attrs, body ->
+
+    }
+}
+{code}
+
+@attrs@参数是此标签的属性，类型为映射（Map），而@body@参数是一个闭包，它在被调用的时候将返回一个主体内容：
+
+{code:java}
+class SimpleTagLib {
+    def emoticon = { attrs, body ->
+       out << body() << (attrs.happy == 'true' ? " :-)" : " :-(")
+    }
+}
+{code}
+
+如上述示例所示，隐式的@out@变量将引用@Writer@输出器，用以往响应中追加内容。因此，你可以在不导入任何东西的情况下，于你的GSP内使用标签：
+
+{code:xml}
+<g:emoticon happy="true">Hi John</g:emoticon>
+{code}
+
+{note}
+为了有助于像SpringSource Tool Suite (STS)这样的IDE来自动补齐标签属性，你应该在Javadoc注释中增加标签闭包的@\@attr@描述。因为标签库也是Groovy代码，因此不能保证检测到的所有属性都是准确可靠的。
+
+比如：
+
+{code:java}
+class SimpleTagLib {
+
+    /**
+     * Renders the body with an emoticon.
+     *
+     * @attr happy whether to show a happy emoticon ('true') or
+     * a sad emoticon ('false')
+     */
+    def emoticon = { attrs, body ->
+       out << body() << (attrs.happy == 'true' ? " :-)" : " :-(")
+    }
+}
+{code}
+
+并且，任何必须的属性都应该包含REQUIRED关键字，比如：
 
 {code:java}
 class SimpleTagLib {
