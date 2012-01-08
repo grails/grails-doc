@@ -1,3 +1,4 @@
+{hidden}
 You can also create logical tags where the body of the tag is only output once a set of conditions have been met. An example of this may be a set of security tags:
 
 {code:java}
@@ -10,6 +11,26 @@ def isAdmin = { attrs, body ->
 {code}
 
 The tag above checks if the user is an administrator and only outputs the body content if he/she has the correct set of access privileges:
+
+{code:xml}
+<g:isAdmin user="${myUser}">
+    // some restricted content
+</g:isAdmin>
+{code}
+{hidden}
+
+你也可以创建一个逻辑标签，一旦一组条件表达式满足，就输出标签的主体。一组安全标签的示例如下：
+
+{code:java}
+def isAdmin = { attrs, body ->
+    def user = attrs.user
+    if (user && checkUserPrivs(user)) {
+        out << body()
+    }
+}
+{code}
+
+上述标签将检查用户是否为一个管理员，并且只有他／她有正确的访问权限的时候，才可以输出主体内容：
 
 {code:xml}
 <g:isAdmin user="${myUser}">
