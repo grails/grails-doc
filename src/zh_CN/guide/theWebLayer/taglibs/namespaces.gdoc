@@ -1,3 +1,4 @@
+{hidden}
 By default, tags are added to the default Grails namespace and are used with the @g:@ prefix in GSP pages. However, you can specify a different namespace by adding a static property to your @TagLib@ class:
 
 {code:java}
@@ -25,3 +26,32 @@ out << my.example(name:"foo")
 {code}
 
 This works from GSP, controllers or tag libraries
+{hidden}
+
+一般情况下，标签使用Grails的缺省命名空间，并且在GSP页面中使用@g:@前缀。但是你也可以通过在@TagLib@类中增加一个静态属性来指定另外一个命名空间：
+
+{code:java}
+class SimpleTagLib {
+    static namespace = "my"
+
+    def example = { attrs ->
+        ...
+    }
+}
+{code}
+
+此处我们将@namespace@指定为@my@，因此此标签库的标签在GSP页面中必须像如下所示那样引用：
+
+{code:xml}
+<my:example name="..." />
+{code}
+
+前缀部分跟静态属性@namespace@的值是一样的。命名空间对插件来说特别有用。
+
+带命名空间的标签也可以以方法的方式调用，需要将其命名空间作为前缀赋给方法调用：
+
+{code:java}
+out << my.example(name:"foo")
+{code}
+
+这将在GSP、控制器或者标签库中有效

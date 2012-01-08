@@ -1,3 +1,4 @@
+{hidden}
 As demonstrated it the previous example it is easy to write simple tags that have no body and just output content. Another example is a @dateFormat@ style tag:
 
 {code:java}
@@ -31,3 +32,38 @@ def formatBook = { attrs, body ->
 {code}
 
 And then have a separate GSP template that does the actual rendering.
+{hidden}
+
+正如以前示例所演示的那样，要写一个只输出内容而没有主体（body）的标签是很容易的。另外的一个示例是@dateFormat@风格的标签：
+
+{code:java}
+def dateFormat = { attrs, body ->
+    out << new java.text.SimpleDateFormat(attrs.format).format(attrs.date)
+}
+{code}
+
+在上例中，使用了Java的@SimpleDateFormat@类来格式化一个日期，并且将它写回到响应中。然后标签就可以在GSP中像下面所示那样使用：
+
+{code:xml}
+<g:dateFormat format="dd-MM-yyyy" date="${new Date()}" />
+{code}
+
+在简单标签中，有时候需要你将HTML标记内容写回响应。一种方法是直接将内容内嵌到标签中：
+
+{code:java}
+def formatBook = { attrs, body ->
+    out << "<div id=\"${attrs.book.id}\">"
+    out << "Title : ${attrs.book.title}"
+    out << "</div>"
+}
+{code}
+
+虽然此种方式很直接诱人，但是很不简洁。更好的一种方式是复用[render|tags]标签：
+
+{code:java}
+def formatBook = { attrs, body ->
+    out << render(template: "bookTemplate", model: [book: attrs.book])
+}
+{code}
+
+这样就分离出一个GSP模板来处理真正的渲染。
