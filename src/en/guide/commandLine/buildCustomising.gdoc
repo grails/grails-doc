@@ -66,3 +66,7 @@ h3. Available build settings
  grails.war.resources | A closure that takes the location of the staging directory as its first argument. You can use any Ant tasks to do anything you like. It is typically used to remove files from the staging directory before that directory is jar'd up into a WAR.
  grails.project.web.xml | The location to generate Grails' web.xml to
 {table}
+
+h3. Reloading Agent Cache Directory
+
+Grails uses an agent based reloading system in the development environment that allows source code changes to be picked up while the application is running.  This reloading agent caches information needed to carry out the reloading efficiently.  By default this information is stored under @\<USER_HOME_DIR\>\/.grails\/.slcache\/@.  The @GRAILS_AGENT_CACHE_DIR@ environment variable may be assigned a value to cause this cache information to be stored somewhere else.  Note that this is an operating system environment variable, not a JVM system property or a property which may be defined in @BuildConfig.groovy@.  This setting must be defined as an environment variable because the agent cache directory must be configured very early in the JVM startup process, before any Grails code is executed.
