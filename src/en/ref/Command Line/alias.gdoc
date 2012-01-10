@@ -94,6 +94,13 @@ Example:
 grails alias --delete=rit
 {code}
 
+h3. Limitations
+
+Alias definitions may include parameters such as the "unit:" argument in "grails alias rut test-app unit:" but may not include command line switches that begin with a "\-" or "\-\-" as those will be consumed by the alias command itself.  For example the command "grails alias up upgrade \-\-non-interactive" creates an alias named "up" which will execute "upgrade" not "upgrade --non-interactive".  The "\-\-non-interactive" switch in the original alias command is applied to the alias command itself, not the alias being defined.  When aliases are invoked, additional switches may be applied like "grails up \-\-non-interactive".
+
+Alias definitions may not refer to other aliases.
+
+
 
 
 
