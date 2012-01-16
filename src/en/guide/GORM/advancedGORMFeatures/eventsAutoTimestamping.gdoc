@@ -93,6 +93,10 @@ class Person {
 
 The @beforeValidate@ method is run before any validators are run.
 
+{note}
+Validation may run more often than you think. It is triggered by the @validate()@ and @save()@ methods as you'd expect, but it is also typically triggered just before the view is rendered as well. So when writing @beforeValidate()@ implementations, make sure that they can handle being called multiple times with the same property values.
+{note}
+
 GORM supports an overloaded version of @beforeValidate@ which accepts a @List@ parameter which may include
 the names of the properties which are about to be validated.  This version of @beforeValidate@ will be called
 when the @validate@ method has been invoked and passed a @List@ of property names as an argument.
