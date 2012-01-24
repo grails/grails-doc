@@ -30,3 +30,20 @@ assert "world" == config.foo.bar.hello
 {warning}
 ConfigurationHolder and ApplicationHolder are deprecated and will be removed in a future version of Grails, so it is highly preferable to access the @GrailsApplication@ and config from the @grailsApplication@ variable.
 {warning}
+
+Within @Config.groovy@ you can access several variables:
+
+{table}
+*Variable* | *Description*
+userHome | Location of the home directory for the account that is running the Grails application.
+appName | The application name as it appears in application.properties.
+appVersion | The application version as it appears in application.properties.
+grailsApplication | The @GrailsApplication@ instance.
+{table}
+
+So if you want to include the application name and version in a mail footer for example, you could do it like this:
+
+{code}
+mail.footer = "Sent from \${appName} \${appVersion}"
+{code}
+
