@@ -1,14 +1,11 @@
-Grails controllers support the concept of command objects. A command object is similar to a form bean in a framework like Struts, and they are useful for populating a subset of the properties needed to update a domain class. Or where there is no domain class required for the interaction, but you need features such as [data binding|guide:dataBinding] and [validation|guide:validation].
+Grails controllers support the concept of command objects. A command object is similar to a form bean in a framework like Struts.  They are useful for grouping a subset of request parameters into a single object using [data binding|guide:dataBinding].
 
 h4. Declaring Command Objects
 
-Command objects are typically declared in the same source file as a controller, directly below the controller class definition. For example:
+Command object classes are defined just like any other class.
 
 {code:java}
-class UserController {
-    ...
-}
-
+@grails.validation.Validateable
 class LoginCommand {
     String username
     String password
@@ -20,32 +17,17 @@ class LoginCommand {
 }
 {code}
 
-As this example shows, you can define [constraints|guide:constraints] in command objects just like in [domain classes|guide:GORM].
+As this example shows, since the command object class is marked with @Validateable you can define [constraints|guide:constraints] in command objects just like in [domain classes|guide:GORM].  It is not required that command object classes be marked with @Validateable.
 
 h4. Using Command Objects
 
-To use command objects, controller actions may optionally specify any number of command object parameters. The parameter types must be supplied so that Grails knows what objects to create, populate and validate.
+To use command objects, controller actions may optionally specify any number of command object parameters. The parameter types must be supplied so that Grails knows what objects to create and initialize.
 
-Before the controller action is executed Grails will automatically create an instance of the command object class, populate its properties with by binding the request parameters, and validate the command object. For example:
-
-{code:java}
-class LoginController {
-
-    def login = { LoginCommand cmd ->
-        if (cmd.hasErrors()) {
-            redirect(action: 'loginForm')
-            return
-        }
-
-        // work with the command object data
-    }
-}
-{code}
-
-When using methods instead of Closures for actions, you can specify command objects in arguments:
+Before the controller action is executed Grails will automatically create an instance of the command object class and populate its properties by binding the request parameters.  If the command object class is marked with @Validateable then the command object will be validated. For example:
 
 {code:java}
 class LoginController {
+
     def login(LoginCommand cmd) {
         if (cmd.hasErrors()) {
             redirect(action: 'loginForm')
@@ -59,9 +41,10 @@ class LoginController {
 
 h4. Command Objects and Dependency Injection
 
-Command objects can participate in dependency injection. This is useful if your command object has some custom validation logic uses Grails [services|guide:services]:
+Command objects can participate in dependency injection. This is useful if your command object has some custom validation logic which uses a Grails [service|guide:services]:
 
 {code}
+@grails.validation.Validateable
 class LoginCommand {
 
     def loginService
