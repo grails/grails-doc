@@ -9,7 +9,13 @@ foo.bar.hello = "world"
 Then later in your application you can access these settings in one of two ways. The most common is from the [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] object, which is available as a variable in controllers and tag libraries:
 
 {code}
-assert "world" == grailsApplication.config.foo.bar.hello
+class MyController {
+    def hello() {
+        def recipient = grailsApplication.config.foo.bar.hello
+
+        render "Hello ${recipient}"
+    }
+}
 {code}
 
 The other way involves getting a reference to the [ConfigurationHolder|api:org.codehaus.groovy.grails.commons.ConfigurationHolder] class that holds a reference to the configuration object:
@@ -24,3 +30,20 @@ assert "world" == config.foo.bar.hello
 {warning}
 ConfigurationHolder and ApplicationHolder are deprecated and will be removed in a future version of Grails, so it is highly preferable to access the @GrailsApplication@ and config from the @grailsApplication@ variable.
 {warning}
+
+Within @Config.groovy@ you can access several variables:
+
+{table}
+*Variable* | *Description*
+userHome | Location of the home directory for the account that is running the Grails application.
+appName | The application name as it appears in application.properties.
+appVersion | The application version as it appears in application.properties.
+grailsApplication | The @GrailsApplication@ instance.
+{table}
+
+So if you want to include the application name and version in a mail footer for example, you could do it like this:
+
+{code}
+mail.footer = "Sent from \${appName} \${appVersion}"
+{code}
+
