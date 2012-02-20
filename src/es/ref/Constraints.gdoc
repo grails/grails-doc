@@ -1,6 +1,12 @@
+{hidden}
 h1. Constraints Usage
 
 Constraints provide Grails with a declarative DSL for defining validation rules, schema generation and CRUD generation meta data. For example, consider these constraints:
+{hidden}
+
+h1. Uso de Restricciones (Constraints)
+
+Los constraints le proporcionan a Grails un _Lenguaje específico de dominio_ (DSL) para definir las reglas de validación, generación de esquema y generación de mata datos CRUD. Por ejemplo, considere estos constraints:
 
 {code:java}
 class User {
@@ -15,11 +21,21 @@ class User {
 }
 {code}
 
+{hidden}
 Refer to the user guide topic on [Constraints|guide:constraints] for more information.
+{hidden}
 
+Consulte el tema [Constraints|guide:constraints] en la guia del usuario para mayor información.
+
+{hidden}
 h1. Global Constraints
 
 You can apply constraints globally inside @grails-app/conf/Config.groovy@ as follows:
+{hidden}
+
+h1. Constraints Globales
+
+Tu puedes aplicar contrainst globales en @grails-app/conf/Config.groovy@ de esta manera:
 
 {code}
 grails.gorm.default.constraints = {
@@ -27,7 +43,11 @@ grails.gorm.default.constraints = {
 }
 {code}
 
+{hiden}
 The wildcard signifies that the constraints apply to all properties. You can also define shared constraints:
+{hiden}
+
+El asterisco significa que el constraint aplica a todas las propiedades. Tambien puedes definir constraints comunes:
 
 {code}
 grails.gorm.default.constraints = {
@@ -35,7 +55,11 @@ grails.gorm.default.constraints = {
 }
 {code}
 
+{hiden}
 That can be reused in your class:
+{hiden}
+
+Que pueden ser reutilizados en tu calse:
 
 {code:java}
 class User {
@@ -47,8 +71,13 @@ class User {
 }
 {code}
 
+{hiden}
 h1. Quick reference
+{hiden}
 
+h1. Referencia rapida
+
+{hiden}
 {table}
 Constraint | Description | Example
 blank | Validates that a String value is not blank | @login(blank:false)@
@@ -69,7 +98,30 @@ unique | Constrains a property as unique at the database level | @login(unique: 
 url | Validates that a String value is a valid URL. | @homePage(url: true)@
 validator | Adds custom validation to a field. | See documentation
 {table}
+{hiden}
 
+{table}
+Constraint | Descripción | Ejemplo
+blank | Valida que el valor de un String no sea blanco. | @login(blank:false)@
+creditCard | Valida que el valor de un String sea un numero de tarjeta de credito valido. | @cardNumber(creditCard: true)@
+email | Valida que el valor de un String sea un email valido. | @homeEmail(email: true)@
+inList | Valida que el valor este dentro de un rango o lista de valores definidos. | @name(inList: \["Joe", "Fred", "Bob"\])@
+matches | Valida que el valor de un String coincida con una expresión regular. | @login(matches: "\[a-zA-Z\]+")@
+max | Valida que un valor no exceda del valor máximo especificado. | @age(max: new Date())@ @price(max: 999F)@
+maxSize | Validates that a value's size does not exceed the given maximum value. | @children(maxSize: 25)@
+min | Valida que un valor no sea inferior al valor mínimo especificado. | @age(min: new Date())@ @price(min: 0F)@
+minSize | Valida que el tamaño de un valor no sea inferior al valor mínimo especificado. | @children(minSize: 25)@
+notEqual | Valida que una propiedad no sea igual al valor especificado. | @login(notEqual: "Bob")@
+nullable | Permite que una propiedad sea @null@ - por defecto @false@. | @age(nullable: true)@
+range | Utiliza un rango de Groovy para asegurar que el valor de una propiedad se establece dentro de un rango especificado. | @age(range: 18..65)@
+scale | Establece la escala deseada para los números de punto flotante (el número de dígitos a la derecha del punto decimal). | @salary(scale: 2)@
+size | Utiliza un rango de Groovy para limitar el tamaño de una colección o la longitud de un Sting. | @children(size: 5..15)@
+unique | Restringe una propiedad como única a nivel de base de datos. | @login(unique: true)@
+url | Valida que el valor de un String es un URL valido. | @homePage(url: true)@
+validator | Agregar un validación personalizada a un campo. | See documentation
+{table}
+
+{hiden}
 h1. Scaffolding
 
 Some constraints have no impact on persistence but customize the scaffolding. It's not usually good practice to include UI information in your domain, but it's a great convenience if you use Grails' scaffolding extensively.
@@ -81,4 +133,18 @@ editable | Boolean that determines whether the property can be edited from the s
 format | Specify a display format for types that accept one, such as dates. For example, 'yyyy-MM-dd'.
 password | Boolean indicating whether this is property should be displayed with a password field. Only works on fields that would normally be displayed with a text field.
 widget | Controls what widget is used to display the property. For example, 'textArea' will force the scaffolding to use a <textArea> tag.
+{table}
+{hiden}
+
+h1. Scaffolding
+
+Algunos constraints no tienen impacto have no impact sobre la persistencia pero personalizar la autogeneración. Usualmente, no es una buena práctica incluir la información de interfaz de usuario en el dominio, pero es de gran conveniencia si se utiliza la autogeneración de Grails ampliamente.
+
+{table}
+Constraint | Descripción
+display | Booleano que determina si la propiedad es mostrado en las vistas autogeneradas. Si es @true@ (por defecto), la propiedad _es_ mostrada.
+editable | Booleano que determina si la propiedad puede ser editada desde las vista autogeneradas. Si es @false@, the associated form fields are displayed in read-only mode.
+format | Especifica un formato de visualización para los tipos que aceptan uno, como las fechas. Por ejemplo, 'yyyy-MM-dd'.
+password | Booleano que indica si esta propiedad se debe mostrar con un campo de contraseña. Sólo funciona en los campos que normalmente se muestran con un campo de texto.
+widget | Controla qué widget se utiliza para mostrar la propiedad. Por ejemplo, 'textArea' obligará a la autogeneración a utilizar una etiqueta <textarea>.
 {table}
