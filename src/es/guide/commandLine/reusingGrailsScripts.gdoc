@@ -78,30 +78,30 @@ La sintaxis del método @grailsScript()@  es bastante sencilla: simplemente pas 
  \_GrailsRun | Provides all you need to run the application in the configured servlet container, either normally (@runApp@/@runAppHttps@) or from a WAR file (@runWar@/@runWarHttps@).
  {table}
 
-There are many more scripts provided by Grails, so it is worth digging into the scripts themselves to find out what kind of targets are available. Anything that starts with an "_" is designed for reuse.
+There are many more scripts provided by Grails, so it is worth digging into the scripts themselves to find out what kind of targets are available. Anything that starts with an "\_" is designed for reuse.
 
 h3. Script architecture
 
 {hidden}
 
 {table}
- * Script * | * Descripción *
+ *Script* | *Descripción*
  \_GrailsSettings | ¡Realmente debería usar esto! Afortunadamente, se usa automáticamente por todos los scripts de Grails excepto \_GrailsProxy, por lo que normalmente no tiene que usarlo explícitamente.
  \_GrailsEvents | Use esto para desencadenar eventos. Agrega un método @event(String eventName, List args)@. Una vez más, usada por casi todos los otros scripts de Grails.
  \_GrailsClasspath | Configura el classpath de la compilación, pruebas y tiempo de ejecución. Si desea usarlos o jugar con ellos, use este script. Una vez más, usado por casi todos los otros scripts de Grails.
-\_GrailsProxy | Si no tiene acceso directo a internet y utilizar a un proxy, use esta secuencia de comandos para configurar el acceso a través de proxy.
+ \_GrailsProxy | Si no tiene acceso directo a internet y utilizar a un proxy, use esta secuencia de comandos para configurar el acceso a través de proxy.
  \_GrailsArgParsing | Proporciona un target @parseArguments@ que analiza los argumentos proporcionados por el usuario cuando ejecuta el script. Agrega a la propiedad @argsMap@.
  \_GrailsTest | Contiene todo el código compartido de prueba. Es útil si desea agregar cualquier prueba adicional.
- \_GrailsRun | Ofrece todo que lo necesario para ejecutar la aplicación en el contenedor de servlet configurado, ya sea normalmente (@runApp@/@runAppHttp @) o desde un fichero WAR (@runWar@/@runWarHttps@).
+ \_GrailsRun | Ofrece todo que lo necesario para ejecutar la aplicación en el contenedor de servlet configurado, ya sea normalmente (@runApp@/@runAppHttps@) o desde un fichero WAR (@runWar@/@runWarHttps@).
 {table}
 
-Hay muchos scripts más proporcionados por Grails, por lo que es merece la pena bucear en los scripts mismos para averiguar qué tipo de objetivos están disponibles. Cualquier cosa que comienza con un "_" está diseñado para su reutilización.
+Hay muchos scripts más proporcionados por Grails, por lo que es merece la pena bucear en los scripts mismos para averiguar qué tipo de objetivos están disponibles. Cualquier cosa que comienza con un "\_" está diseñado para su reutilización.
 
 h3. Arquitectura un script
 
 {hidden}
 
-You maybe wondering what those underscores are doing in the names of the Grails scripts. That is Grails' way of determining that a script is _internal_, or in other words that it has not corresponding "command". So you can't run "grails _grails-settings" for example. That is also why they don't have a default target.
+You maybe wondering what those underscores are doing in the names of the Grails scripts. That is Grails' way of determining that a script is _internal_, or in other words that it has not corresponding "command". So you can't run "grails \_grails-settings" for example. That is also why they don't have a default target.
 
 Internal scripts are all about code sharing and reuse. In fact, we recommend you take a similar approach in your own scripts: put all your targets into an internal script that can be easily shared, and provide simple command scripts that parse any command line arguments and delegate to the targets in the internal script. For example if you have a script that runs some functional tests, you can split it like this:
 
