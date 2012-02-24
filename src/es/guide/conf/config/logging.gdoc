@@ -120,13 +120,13 @@ class MyService {
 
 {hidden}
 
-then the name of the logger will be 'grails.app.service.org.example.MyService'.
+then the name of the logger will be 'grails.app.services.org.example.MyService'.
 
 For other classes, the typical approach is to store a logger based on the class name in a constant static field:
 
 {hidden}
 
-el nombre del logger será 'grails.app.service.org.example.MyService'.
+el nombre del logger será 'grails.app.services.org.example.MyService'.
 
 Para otras clases, el enfoque típico es almacenar un logger basado en el nombre de clase en un campo estático constante:
 
@@ -404,10 +404,10 @@ This approach can be used to configure @JMSAppender@, @SocketAppender@, @SMTPApp
 Once you have declared your extra appenders, you can attach them to specific loggers by passing the name as a key to one of the log level methods from the previous section:
 
 {code:java}
-error myAppender: "grails.app.controller.BookController"
+error myAppender: "grails.app.controllers.BookController"
 {code}
 
-This will ensure that the 'grails.app.controller.BookController' logger sends log messages to 'myAppender' as well as any appenders configured for the root logger. To add more than one appender to the logger, then add them to the same level declaration:
+This will ensure that the 'grails.app.controllers.BookController' logger sends log messages to 'myAppender' as well as any appenders configured for the root logger. To add more than one appender to the logger, then add them to the same level declaration:
 {hidden}
 
 Este enfoque puede utilizarse para configurar @JMSAppender@, @SocketAppender@, @SMTPAppender@ y muchos más.
@@ -415,16 +415,16 @@ Este enfoque puede utilizarse para configurar @JMSAppender@, @SocketAppender@, @
 Una vez que ha declarado sus appenders adicionales, puede conectarlos a loggers específicos pasando el nombre como clave a uno de los métodos de registro de niveles de la sección anterior:
 
 {code:java}
-error myAppender: "grails.app.controller.BookController"
+error myAppender: "grails.app.controllers.BookController"
 {code}
 
-Esto asegurará que el logger de 'grails.app.controller.BookController' envía mensajes de registro a 'myAppender', así como cualquier appender configurado para el logger raíz. Para agregar más de un appender al logger agreguelos a la misma declaración de nivel:
+Esto asegurará que el logger de 'grails.app.controllers.BookController' envía mensajes de registro a 'myAppender', así como cualquier appender configurado para el logger raíz. Para agregar más de un appender al logger agreguelos a la misma declaración de nivel:
 
 {code:java}
-error myAppender:      "grails.app.controller.BookController",
-      myFileAppender:  ["grails.app.controller.BookController",
-                        "grails.app.service.BookService"],
-      rollingFile:     "grails.app.controller.BookController"
+error myAppender:      "grails.app.controllers.BookController",
+      myFileAppender:  ["grails.app.controllers.BookController",
+                        "grails.app.services.BookService"],
+      rollingFile:     "grails.app.controllers.BookController"
 {code}
 
 {hidden}
@@ -437,24 +437,24 @@ El ejemplo anterior muestra cómo puede configurar más de un logger para un det
 Be aware that you can only configure a single level for a logger, so if you tried this code:
 
 {code:java}
-error myAppender:      "grails.app.controller.BookController"
-debug myFileAppender:  "grails.app.controller.BookController"
-fatal rollingFile:     "grails.app.controller.BookController"
+error myAppender:      "grails.app.controllers.BookController"
+debug myFileAppender:  "grails.app.controllers.BookController"
+fatal rollingFile:     "grails.app.controllers.BookController"
 {code}
 
-you'd find that only 'fatal' level messages get logged for 'grails.app.controller.BookController'. That's because the last level declared for a given logger wins. What you probably want to do is limit what level of messages an appender writes.
+you'd find that only 'fatal' level messages get logged for 'grails.app.controllers.BookController'. That's because the last level declared for a given logger wins. What you probably want to do is limit what level of messages an appender writes.
 
 {hidden}
 
 Tenga en cuenta que sólo se puede configurar un único nivel de un logger, así que si has probado este código:
 
 {code:java}
-error myAppender:      "grails.app.controller.BookController"
-debug myFileAppender:  "grails.app.controller.BookController"
-fatal rollingFile:     "grails.app.controller.BookController"
+error myAppender:      "grails.app.controllers.BookController"
+debug myFileAppender:  "grails.app.controllers.BookController"
+fatal rollingFile:     "grails.app.controllers.BookController"
 {code}
 
-encontrará que se registran los mensajes de niveles sólo 'fatal' para 'grails.app.controller.BookController'. Eso es porque el último nivel declarado para un logger dado es el que se asigna. Lo que probablemente desea hacer es limitar el nivel de mensajes que un appender escribe.
+encontrará que se registran los mensajes de niveles sólo 'fatal' para 'grails.app.controllers.BookController'. Eso es porque el último nivel declarado para un logger dado es el que se asigna. Lo que probablemente desea hacer es limitar el nivel de mensajes que un appender escribe.
 
 {hidden}
 
@@ -726,8 +726,8 @@ log4j = {
     }
 
     info additivity: false
-         stdout: \["grails.app.controller.BookController",
-                  "grails.app.service.BookService"\]
+         stdout: \["grails.app.controllers.BookController",
+                  "grails.app.services.BookService"\]
 }
 {code}
 
@@ -736,8 +736,8 @@ log4j = {
 So when you specify a log level, add an 'additivity' named argument. Note that you when you specify the additivity, you must configure the loggers for a named appender. The following syntax will _not_ work:
 
 {code:java}
-info additivity: false, \["grails.app.controller.BookController",
-                         "grails.app.service.BookService"\]
+info additivity: false, \["grails.app.controllers.BookController",
+                         "grails.app.services.BookService"\]
 {code}
 
 h3. Customizing stack trace printing and filtering
@@ -747,8 +747,8 @@ h3. Customizing stack trace printing and filtering
 Así que cuando se especifica un nivel de registro, agregue un argumento 'additivity'. Tenga en cuenta que cuando se especifica la 'additivity', debe configurar los loggers para un appender con nombre. La siguiente sintaxis _no_ funcionará:
 
 {code:java}
-info additivity: false, \["grails.app.controller.BookController",
-                         "grails.app.service.BookService"\]
+info additivity: false, \["grails.app.controllers.BookController",
+                         "grails.app.services.BookService"\]
 {code}
 
 h3. Personalización de impresión y filtro de stacktraces
