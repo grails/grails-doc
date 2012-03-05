@@ -1,4 +1,7 @@
+{hidden}
 A one-to-many relationship is when one class, example @Author@, has many instances of a another class, example @Book@. With Grails you define such a relationship with the @hasMany@ setting:
+{hidden}
+Una relación uno-a-varios es cuando una clase, por ejemplo @Author@, tiene varias instancias de otra clase, por ejemplo @Book@. En Grails se establece este tipo de relación utilizando @hasMany@:
 
 {code}
 class Author {
@@ -14,13 +17,22 @@ class Book {
 }
 {code}
 
+{hidden}
 In this case we have a unidirectional one-to-many. Grails will, by default, map this kind of relationship with a join table.
+{hidden}
+En este caso tenemos una relación unidireccional uno-a-varios. De manera predeterminada, Grails mapeara este tipo de relación mediante una tabla de unión.
 
 {note}
+{hidden}
 The [ORM DSL|guide:ormdsl] allows mapping unidirectional relationships using a foreign key association instead
+{hidden}
+El [DSL ORM|guide:ormdsl] permite mapear relaciones unidireccionales mediante el uso de una clave externa.
 {note}
 
+{hidden}
 Grails will automatically inject a property of type @java.util.Set@ into the domain class based on the @hasMany@ setting. This can be used to iterate over the collection:
+{hidden}
+Grails inyectara automáticamente una propiedad de tipo @java.util.Set@ en la clase de dominio basándose en @hasMany@. Esta propiedad puede ser usada para iterar sobre la colección: 
 
 {code}
 def a = Author.get(1)
@@ -31,12 +43,21 @@ for (book in a.books) {
 {code}
 
 {note}
+{hidden}
 The default fetch strategy used by Grails is "lazy", which means that the collection will be lazily initialized on first access. This can lead to the [n+1 problem|http://www.javalobby.org/java/forums/t20533.html] if you are not careful.
+{hidden}
+De manera predeterminada Grails utilizara una estrategia de recuperación "lazy", lo que significa que la colección sera inicializada hasta que se accede por primera vez. Esto puede provocar que se incurra en el [problema n+1|http://www.javalobby.org/java/forums/t20533.html] si usted no es cuidadoso. 
 
+{hidden}
 If you need "eager" fetching you can use the [ORM DSL|guide:ormdsl] or specify eager fetching as part of a [query|guide:querying]
+{hidden}
+Si necesita recuperación "eager" puede utilizar el [DSL ORM|guide:ormdsl] o puede especificar la recuperación "eager" como parte de una [consulta|guide:querying]
 {note}
 
+{hidden}
 The default cascading behaviour is to cascade saves and updates, but not deletes unless a @belongsTo@ is also specified:
+{hidden}
+El comportamiento predeterminado de la cascada es guardar y actualizar, pero no eliminar a menos que también se especifique @belongsTo@:
 
 {code}
 class Author {
@@ -53,7 +74,10 @@ class Book {
 }
 {code}
 
+{hidden}
 If you have two properties of the same type on the many side of a one-to-many you have to use @mappedBy@ to specify which the collection is mapped:
+{hidden}
+Si usted tiene dos propiedades del mismo tipo en el lado varios de uno-a-varios, deberá utilizar @mappedBy@ para especificar la colección a mapear:
 
 {code}
 class Airport {
@@ -69,7 +93,10 @@ class Flight {
 }
 {code}
 
+{hidden}
 This is also true if you have multiple collections that map to different properties on the many side:
+{hidden}
+Esto también sera válido si tiene varias colecciones que mapean a diferentes propiedades en el lado varios: 
 
 {code}
 class Airport {
