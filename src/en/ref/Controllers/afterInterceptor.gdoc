@@ -9,7 +9,7 @@ h2. Examples
 Using a block:
 {code}
 class BookController {
-    static afterInterceptor = { model ->
+    def afterInterceptor = { model ->
         model.foo = "bar"
     }
 }
@@ -20,7 +20,7 @@ In this example we use a more fine-grained approach, using a Groovy method point
 {code}
 class BookController {
 
-    static afterInterceptor = [action: this.&invokeMe, only: ['list']]
+    def afterInterceptor = [action: this.&invokeMe, only: ['list']]
 
     private invokeMe(model) {
         model.foo = "bar"
@@ -39,7 +39,7 @@ h2. Description
 To define an interceptor that is executed after an action use the @afterInterceptor@ property:
 
 {code}
-static afterInterceptor = { model ->
+def afterInterceptor = { model ->
     println "Tracing action ${actionUri}"
 }
 {code}
@@ -49,7 +49,7 @@ The first argument of the @Closure@ is the model @Map@ that resulted from the ac
 An @afterInterceptor@ may also inspect or modify the Spring MVC @ModelAndView@ object prior to rendering. In this case, the example becomes:
 
 {code}
-static afterInterceptor = { model, modelAndView ->
+def afterInterceptor = { model, modelAndView ->
     println "Current view is ${modelAndView.viewName}"
     if (model.someVar) {
         modelAndView.viewName = "/mycontroller/someotherview"
