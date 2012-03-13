@@ -1,4 +1,7 @@
+{hidden}
 GORM supports inheritance both from abstract base classes and concrete persistent GORM entities. For example:
+{hidden}
+GORM soporta herencia de clases base abstractas y de entidades GORM persistentes concretas: Por ejemplo:
 
 {code}
 class Content {
@@ -24,23 +27,52 @@ class PodCast extends Content {
 }
 {code}
 
+{hidden}
 In the above example we have a parent @Content@ class and then various child classes with more specific behaviour.
+{hidden}
+En el ejemplo anterior tenemos una clase padre @Content@ y varias clases hijo con un comportamiento más específico.
 
+{hidden}
 h4. Considerations
+{hidden}
+h4. Consideraciones
 
+{hidden}
 At the database level Grails by default uses table-per-hierarchy mapping with a discriminator column called @class@ so the parent class (@Content@) and its subclasses (@BlogEntry@, @Book@ etc.), share the *same* table.
+{hidden}
+A nivel de la base de datos, Grails mapeara una tabla-por-jerarquía e incluirá una columna discriminador llamada @class@, de esta forma la clase padre (@Content@) y las subclases (@BlogEntry@, @Book@ etc.), comparten la *misma* tabla.
 
+{hidden}
 Table-per-hierarchy mapping has a down side in that you *cannot* have non-nullable properties with inheritance mapping. An alternative is to use table-per-subclass which can be enabled with the [ORM DSL|guide:ormdsl]
+{hidden}
+El mapeado de tabla-por-jerarquía tiene la desventaja de que *no permite* definir propiedades no nulas. Una alternativa es utilizar una tabla-por-subclase que puede habilitarse mediante el [DSL ORM|guide:ormdsl]
 
+{hidden}
 However, excessive use of inheritance and table-per-subclass can result in poor query performance due to the use of outer join queries. In general our advice is if you're going to use inheritance, don't abuse it and don't make your inheritance hierarchy too deep.
+{hidden}
+Sin embargo, el uso excesivo de herencia y de tabla-por-subclase, pueden dar lugar a un rendimiento deficiente de las consultas debido a la utilización de combinaciones externas en ellas. Nuestro consejo seria, si va a utilizar la herencia, no abusar de ella y no hacer la jerarquía de la herencia demasiado profunda.
 
+{hidden}
 h4. Polymorphic Queries
+{hidden}
+h4. Consultas polimórficas
 
+{hidden}
 The upshot of inheritance is that you get the ability to polymorphically query. For example using the [list|domainClasses] method on the @Content@ super class will return all subclasses of @Content@:
+{hidden}
+Como resultado de la herencia se obtiene la capacidad de realizar una consulta polimórfica. Por ejemplo, al utilizar el método [list|domainClasses] de la super clase @Content@ este devolverá todas las subclases de @Content@:
 
+{hidden}
 {code}
 def content = Content.list() // list all blog entries, books and podcasts
 content = Content.findAllByAuthor('Joe Bloggs') // find all by author
 
 def podCasts = PodCast.list() // list only podcasts
+{code}
+{hidden}
+{code}
+def content = Content.list() // lista todas las entradas de blog, books y podcasts
+content = Content.findAllByAuthor('Joe Bloggs') // encontrar todo por author
+
+def podCasts = PodCast.list() // lista únicamente los podcasts
 {code}
