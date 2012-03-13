@@ -1,4 +1,7 @@
+{hidden}
 Grails supports many-to-many relationships by defining a @hasMany@ on both sides of the relationship and having a @belongsTo@ on the owned side of the relationship:
+{hidden}
+Grails tiene soporte para relaciones varios-a-varios mediante la inclusión de @hasMany@ en ambos lados de la relación y del lado que expresa ser la propiedad se incluye @belongsTo@:
 
 {code}
 class Book {
@@ -15,9 +18,15 @@ class Author {
 }
 {code}
 
+{hidden}
 Grails maps a many-to-many using a join table at the database level. The owning side of the relationship, in this case @Author@, takes responsibility for persisting the relationship and is the only side that can cascade saves across.
+{hidden}
+A nivel de la base de datos Grails mapea una relación varios-a-varios mediante una tabla de unión. El lado propietario de la relación, en este caso @Author@, asume la responsabilidad de la persistencia de la relación y es el único que puede propagar la actualización.
 
+{hidden}
 For example this will work and cascade saves:
+{hidden}
+Por ejemplo, esto propagaría la creación de manera correcta:
 
 {code}
 new Author(name:"Stephen King")
@@ -26,7 +35,10 @@ new Author(name:"Stephen King")
         .save()
 {code}
 
+{hidden}
 However this will only save the @Book@ and not the authors!
+{hidden}
+Sin embargo, esto sólo guardaría a @Book@ y no a los autores!
 
 {code}
 new Book(name:"Groovy in Action")
@@ -35,8 +47,14 @@ new Book(name:"Groovy in Action")
         .save()
 {code}
 
+{hidden}
 This is the expected behaviour as, just like Hibernate, only one side of a many-to-many can take responsibility for managing the relationship.
+{hidden}
+Este es el comportamiento esperado, al igual que en Hibernate, sólo un lado de la relación varios-a-varios puede asumir la responsabilidad de la gestión.
 
 {warning}
+{hidden}
 Grails' [Scaffolding|guide:scaffolding] feature *does not* currently support many-to-many relationship and hence you must write the code to manage the relationship yourself
+{hidden}
+Actualmente el [Scaffolding|guide:scaffolding] de Grails *no es* compatible con relaciones del tipo varios-a-varios, y por lo tanto, usted deberá escribir el código para manejar este tipo de relación.
 {warning}
