@@ -1,6 +1,12 @@
+{hidden}
 h4. Sets of Objects
+{hidden}
+h4. Conjuntos de objetos
 
+{hidden}
 By default when you define a relationship with GORM it is a @java.util.Set@ which is an unordered collection that cannot contain duplicates. In other words when you have:
+{hidden}
+Al definir una relación con GORM, de manera predeterminada sera un @java.util.Set@, una colección sin orden y que no puede contener duplicados. En otras palabras, cuando usted tiene: 
 
 {code}
 class Author {
@@ -8,7 +14,10 @@ class Author {
 }
 {code}
 
+{hidden}
 The books property that GORM injects is a @java.util.Set@. Sets guarantee uniquenes but not order, which may not be what you want. To have custom ordering you configure the Set as a @SortedSet@:
+{hidden}
+La propiedad books que GORM inyecta es un @java.util.Set@. El cual garantiza la unicidad de los elementos pero no el orden, lo cual puede no ser lo que usted quiere. Para personalizar el orden de los elementos establezca el conjunto como un @SortedSet@:
 
 {code}
 class Author {
@@ -19,7 +28,10 @@ class Author {
 }
 {code}
 
+{hidden}
 In this case a @java.util.SortedSet@ implementation is used which means you must implement @java.lang.Comparable@ in your Book class:
+{hidden}
+En este caso, se hace uso de la implementación @java.util.SortedSet@, esto significa que la clase Book debe implementar @java.lang.Comparable@:
 
 {code}
 class Book implements Comparable {
@@ -33,11 +45,19 @@ class Book implements Comparable {
 }
 {code}
 
+{hidden}
 The result of the above class is that the Book instances in the books collection of the Author class will be ordered by their release date.
-
+{hidden}
+Como resultado de esta clase, las instancias Book en la colección books perteneciente a la clase Author, serán ordenadas por su fecha de publicación.
+{hidden}
 h4. Lists of Objects
+{hidden}
+h4. Listas de objetos
 
+{hidden}
 To keep objects in the order which they were added and to be able to reference them by index like an array you can define your collection type as a @List@:
+{hidden}
+Para mantener los objetos en el orden que se han añadido y poder hacer referencia a ellos por medio del índice como en un arreglo, se debe definir el tipo de colección como un @List@: 
 
 {code}
 class Author {
@@ -48,33 +68,74 @@ class Author {
 }
 {code}
 
+{hidden}
 In this case when you add new elements to the books collection the order is retained in a sequential list indexed from 0 so you can do:
+{hidden}
+En este caso, cuando se añaden nuevos elementos a la colección books, el orden se mantiene en una lista secuencial, son indexados desde 0 y es posible hacer lo siguiente:
 
+{hidden}
 {code}
 author.books[0] // get the first book
 {code}
+{hidden}
+{code}
+author.books[0] // obtener el primer book
+{code}
 
+{hidden}
 The way this works at the database level is Hibernate creates a @books_idx@ column where it saves the index of the elements in the collection to retain this order at the database level.
+{hidden}
+A nivel de la base de datos, Hibernate crea una columna @books_idx@ donde guarda el índice de los elementos en la colección y de esta manera conserva el orden en la base de datos
 
+{hidden}
 When using a @List@, elements must be added to the collection before being saved, otherwise Hibernate will throw an exception (@org.hibernate.HibernateException@: null index column for collection):
+{hidden}
+Cuando se utiliza un @List@, los elementos se deben añadir a la colección antes de realizar el guardado, de lo contrario Hibernate arrojara una excepción (@org.hibernate.HibernateException@: null index column for collection):
 
+{hidden}
 {code}
 // This won't work!
 def book = new Book(title: 'The Shining')
 book.save()
 author.addToBooks(book)
+{code}
+{hidden}
+{code}
+// Esto no funcionara
+def book = new Book(title: 'The Shining')
+book.save()
+author.addToBooks(book)
+{code}
 
+{hidden}
+{code}
 // Do it this way instead.
 def book = new Book(title: 'Misery')
 author.addToBooks(book)
 author.save()
 {code}
+{hidden}
+{code}
+// Debe realizarse de esta forma.
+def book = new Book(title: 'Misery')
+author.addToBooks(book)
+author.save()
+{code}
 
+{hidden}
 h4. Bags of Objects
+{hidden}
+h4. Bags de objetos
 
+{hidden}
 If ordering and uniqueness aren't a concern (or if you manage these explicitly) then you can use the Hibernate [Bag|http://docs.jboss.org/hibernate/stable/core/reference/en-US/html/collections.html] type to represent mapped collections.
+{hidden}
+Si el orden y la unicidad no son de importancia (o si usted realiza la gestión de manera explicita), entonces puede utilizar el tipo [Bag|http://docs.jboss.org/hibernate/stable/core/reference/en-US/html/collections.html] de Hibernate para representar las colecciones mapeadas.
 
+{hidden}
 The only change required for this is to define the collection type as a @Collection@:
+{hidden}
+El único cambio requerido para esto, es definir el tipo de una colección utilizando @Collection@:
 
 {code}
 class Author {
@@ -85,12 +146,22 @@ class Author {
 }
 {code}
 
+{hidden}
 Since uniqueness and order aren't managed by Hibernate, adding to or removing from collections mapped as a Bag don't trigger a load of all existing instances from the database, so this approach will perform better and require less memory than using a @Set@ or a @List@.
+{hidden}
+Debido a que la unicidad y el orden no son gestionados por Hibernate, añadir o eliminar elementos de una colección mapeada como Bag, no desencadenara la carga de las demás instancias desde la base de datos, por lo tanto, este método obtendrá un mejor desempeño y requiere un menor uso de memoria que cuando se usa un @Set@ o un @List@.
 
+{hidden}
 h4. Maps of Objects
+{hidden}
+h4. Mapas de objetos
 
+{hidden}
 If you want a simple map of string/value pairs GORM can map this with the following:
+{hidden}
+Si lo que desea es un simple mapa de pares cadena-de-texto/valor, GORM puede realizar este mapeo de la siguiente manera:
 
+{hidden}
 {code}
 class Author {
     Map books // map of ISBN:book names
@@ -100,9 +171,25 @@ def a = new Author()
 a.books = ["1590597583":"Grails Book"]
 a.save()
 {code}
-In this case the key and value of the map MUST be strings.
+{hidden}
+{code}
+class Author {
+    Map books // mapa de ISBN:título
+}
 
+def a = new Author()
+a.books = ["1590597583":"Grails Book"]
+a.save()
+{code}
+{hidden}
+In this case the key and value of the map MUST be strings.
+{hidden}
+En este caso, la clave y el valor del mapa DEBEN ser cadenas de texto.
+
+{hidden}
 If you want a Map of objects then you can do this:
+{hidden}
+Si lo que quiere es un mapa de objetos, entonces puede hacer lo siguiente:
 
 {code}
 class Book {
@@ -119,13 +206,25 @@ book.authors = [stephen:a]
 book.save()
 {code}
 
+{hidden}
 The static @hasMany@ property defines the type of the elements within the Map. The keys for the map *must* be strings.
+{hidden}
+La propiedad estática @hasMany@ define el tipo de elementos que contendrá el mapa. Las claves del mapa *deben* ser cadenas de texto.
 
+{hidden}
 h4. A Note on Collection Types and Performance
+{hidden}
+h4. Acerca de los tipos de colecciones y el desempeño
 
+{hidden}
 The Java @Set@ type doesn't allow duplicates. To ensure uniqueness when adding an entry to a @Set@ association Hibernate has to load the entire associations from the database. If you have a large numbers of entries in the association this can be costly in terms of performance.
+{hidden}
+El tipo @Set@ de Java no permite duplicados. Para garantizar la unicidad cuando se añade una entrada en una asociación @Set@, Hibernate debe cargar la asociación completa de la base de datos. Si la asociación contiene una gran cantidad de elementos, esto podría resultar costoso en términos de rendimiento.
 
+{hidden}
 The same behavior is required for @List@ types, since Hibernate needs to load the entire association to maintain order. Therefore it is recommended that if you anticipate a large numbers of records in the association that you make the association bidirectional so that the link can be created on the inverse side. For example consider the following code:
+{hidden}
+El mismo funcionamiento aplica para el tipo @List@ debido a que para mantener el orden de los elementos, Hibernate necesita cargar la asociación entera. Por lo tanto, si espera una gran cantidad de registros en la asociación, es recomendable definirla de manera bidireccional, así el enlace puede ser creado en el lado contrario:
 
 {code:java}
 def book = new Book(title:"New Grails Book")
@@ -134,7 +233,10 @@ book.author = author
 book.save()
 {code}
 
+{hidden}
 In this example the association link is being created by the child (Book) and hence it is not necessary to manipulate the collection directly resulting in fewer queries and more efficient code. Given an @Author@ with a large number of associated @Book@ instances if you were to write code like the following you would see an impact on performance:
+{hidden}
+En este ejemplo, se crea la asociación por el elemento hijo (Book) y por lo tanto, no es necesario operar directamente sobre la colección, el resultado es un menor numero de consultas y el código es más eficiente. Teniendo en cuenta un @Author@ con una gran cantidad de instancias @Book@ asociadas, si tuviera que escribir código como el siguiente notaria el resultado en el rendimiento:
 
 {code:java}
 def book = new Book(title:"New Grails Book")
@@ -143,4 +245,7 @@ author.addToBooks(book)
 author.save()
 {code}
 
+{hidden}
 You could also model the collection as a Hibernate Bag as described above.
+{hidden}
+También podría modelar la colección utilizando un Bag de Hibernate como se describió anteriormente. 
