@@ -25,3 +25,14 @@ To specify the scope, use the @scope@ attribute:
 {code:xml}
 <g:set var="now" value="${new Date()}" scope="request" />
 {code}
+
+The [inject|tags] tag is a variant of the [set|tags] tag. It injects a spring bean by name or by type:
+{code:xml}
+<g:inject beanName="myService" scope="request"/>
+${myService.invoke()}
+{code}
+
+The variable name defaults to the bean name. When injecting a bean by type, the variable name must be specified:
+{code:xml}
+<g:inject beanType="${com.acme.MyService}" var="service"/>
+{code}
