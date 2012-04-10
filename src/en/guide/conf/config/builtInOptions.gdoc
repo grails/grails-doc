@@ -1,13 +1,34 @@
-Grails also provides the following configuration options:
+Grails has a set of core settings that are worth knowing about. Their defaults are suitable for most projects, but it's important to understand what they do because you may need one or more of them later.
 
-* @grails.config.locations@  - The location of properties files or addition Grails Config files that should be merged with main configuration
-* @grails.enable.native2ascii@ - Set this to false if you do not require native2ascii conversion of Grails i18n properties files
+h3. Build settings
+
+Let's start with some important build settings. Although Grails requires JDK 6 when developing your applications, it is possible to deploy those applications to JDK 5 containers. Simply set the following in @BuildConfig.groovy@:
+
+{code}
+grails.project.source.level = "1.5"
+grails.project.target.level = "1.5"
+{code}
+
+Note that source and target levels are different to the standard public version of JDKs, so JDK 5 -> 1.5, JDK 6 -> 1.6, and JDK 7 -> 1.7.
+
+In addition, Grails supports Servlet versions 2.5 and above but defaults to 2.5. If you wish to use newer features of the Servlet API (such as 3.0 async support) you should configure the @grails.servlet.version@ setting appropriately:
+
+{code}
+grails.servlet.version = "3.0"
+{code}
+
+h3. Runtime settings
+
+On the runtime front, i.e. @Config.groovy@, there are quite a few more core settings:
+
+* @grails.config.locations@  - The location of properties files or addition Grails Config files that should be merged with main configuration. See the [section on externalised config|guide:configExternalized].
+* @grails.enable.native2ascii@ - Set this to false if you do not require native2ascii conversion of Grails i18n properties files (default: true).
 * @grails.views.default.codec@ - Sets the default encoding regime for GSPs - can be one of 'none', 'html', or 'base64' (default: 'none'). To reduce risk of XSS attacks, set this to 'html'.
-* @grails.views.gsp.encoding@ - The file encoding used for GSP source files (default is 'utf-8')
-* @grails.mime.file.extensions@ - Whether to use the file extension to dictate the mime type in [Content Negotiation|guide:contentNegotiation]
-* @grails.mime.types@ - A map of supported mime types used for [Content Negotiation|guide:contentNegotiation]
-* @grails.serverURL@ - A string specifying the server URL portion of absolute links, including server name e.g. grails.serverURL="http://my.yourportal.com". See [createLink|Tags].
-* @grails.views.gsp.sitemesh.preprocess@ - Whether SiteMesh parses the output coming from GSP for the head, meta, title and body tags.
+* @grails.views.gsp.encoding@ - The file encoding used for GSP source files (default: 'utf-8').
+* @grails.mime.file.extensions@ - Whether to use the file extension to dictate the mime type in [Content Negotiation|guide:contentNegotiation] (default: true).
+* @grails.mime.types@ - A map of supported mime types used for [Content Negotiation|guide:contentNegotiation].
+* @grails.serverURL@ - A string specifying the server URL portion of absolute links, including server name e.g. grails.serverURL="http://my.yourportal.com". See [createLink|Tags]. Also used by redirects.
+* @grails.views.gsp.sitemesh.preprocess@ - Determines whether SiteMesh preprocessing happens. Disabling this slows down page rendering, but if you need SiteMesh to parse the generated HTML from a GSP view then disabling it is the right option. Don't worry if you don't understand this advanced property: leave it set to true.
 
 h3. War generation
 
