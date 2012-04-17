@@ -46,6 +46,8 @@ It is also important to ensure that all data values rendered into views are esca
 
 You must also avoid the use of request parameters or data fields for determining the next URL to redirect the user to. If you use a @successURL@ parameter for example to determine where to redirect a user to after a successful login, attackers can imitate your login procedure using your own site, and then redirect the user back to their own site once logged in, potentially allowing JavaScript code to then exploit the logged-in account on the site.
 
+You can also reduce the risk of XSS security vulnerabilities by preventing the browser from allowing scripts to access information stored in cookies. In Tomcat, the use of the httpOnly flag on a cookie is controlled by a Context element called useHttpOnly. When this is enabled, it prevents client-side scripts from accessing Session IDs in cookies. By default, the cross-site script protection is turned on in Tomcat 7 (useHttpOnly is set to true). Further, as it is part of the Servlet 3.0 specification, you can mark any cookie with the useHttpOnly setting, and not just session cookies. For more information on setting this element and others, see the [Apache Tomcat 7 Configuration Reference on the Context Container|http://tomcat.apache.org/tomcat-7.0-doc/config/context.html#Common_Attributes] or this blog post on [Tomcat Expert|http://www.tomcatexpert.com/blog/2011/01/26/cross-site-scripting-xss-prevention-tomcat-7].
+
 h4. Cross-site request forgery
 
 CSRF involves unauthorized commands being transmitted from a user that a website trusts. A typical example would be another website embedding a link to perform an action on your website if the user is still authenticated.
