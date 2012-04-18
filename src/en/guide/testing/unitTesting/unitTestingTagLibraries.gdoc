@@ -31,6 +31,10 @@ class SimpleTagLib {
     def hello = { attrs, body ->
         out << "Hello ${attrs.name ?: 'World'}"
     }
+    
+    def bye = { attrs, body ->
+        out << "Bye ${attrs.author.name ?: 'World'}"
+    }
 }
 {code}
 
@@ -42,6 +46,7 @@ class SimpleTagLibTests {
     void testHelloTag() {
         assert applyTemplate('<s:hello />') == 'Hello World'
         assert applyTemplate('<s:hello name="Fred" />') == 'Hello Fred'
+        assert applyTemplate('<s:bye author="${author}" />', [author: new Author(name: 'Fred')]) == 'Bye Fred'
     }
 }
 {code}
