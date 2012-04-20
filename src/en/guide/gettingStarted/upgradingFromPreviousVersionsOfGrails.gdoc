@@ -44,6 +44,8 @@ Although the Grails development team have tried to keep breakages to a minimum t
 
 * The following deprecated classes have been removed: @grails.web.JsonBuilder@ and @grails.web.OpenRicoBuilder@.
 
+* The ignoreCase() method on criteria queries has been removed.
+
 h3. Upgrading from Grails 1.3.x
 
 h4. Changes to web.xml template
@@ -267,7 +269,7 @@ Migrating unit tests to the new approach is non-trivial, but recommended. Here a
 
 # Remove @extends *UnitTestCase@ and add a @\@TestFor@ annotation to the class if you're testing a core artifact (controller, tag lib, domain class, etc.) or @\@TestMixin(GrailsUnitTestMixin)@ for non-core artifacts and non-artifact classes.
 # Add @\@Mock@ annotation for domain classes that must be mocked and use @new MyDomain().save()@ in place of @mockDomain()@.
-# Replace references to @mockRequest@, @mockResponse@ and @mockParams@ with @request@, @response@ and @params@.
+# Replace references to @mockRequest@, @mockResponse@, @mockSession@ and @mockParams@ with @request@, @response@, @session@ and @params@.
 # Remove references to @renderArgs@ and use the @view@ and @model@ properties for view rendering, or @response.text@ for all others.
 # Replace references to @redirectArgs@ with @response.redirectedUrl@. The latter takes into account the URL mappings as is a string URL rather than a map of @redirect()@ arguments.
 # The @mockCommandObject()@ method is no longer needed as Grails automatically detects whether an action requires a command object or not.
@@ -335,6 +337,19 @@ The built in @release-plugin@ command for releases plugins to the central Grails
 h4. Removal of Deprecated Classes
 
 The following deprecated classes have been removed: @grails.web.JsonBuilder@, @grails.web.OpenRicoBuilder@
+
+h4. Removal of methods on Criteria
+
+The ignoreCase() method has been removed. Where previously it was possible to do:
+{code}
+order(sortIndex, sortOrder).ignoreCase()
+{code}
+
+This no longer works, and has been replaced by:
+{code}
+def order = ascending ? Order.asc(sortedColumn) : Order.desc(sortedColumn)
+query.order(order.ignoreCase())
+{code}
 
 h3. Upgrading from Grails 1.2.x
 
