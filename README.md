@@ -39,6 +39,10 @@ Again, this can save a significant amount of time and memory.
 
 The main English user guide is generated in the `build/docs` directory, with the `guide` sub-directory containing the user guide part and the `ref` folder containing the reference material. To view the user guide, simply open `build/docs/index.html`.
 
+If you want to disable building of translations, you can use:
+
+    ./gradlew -Den.only=true docs
+
 Contributing Documentation
 --------------------------
 
