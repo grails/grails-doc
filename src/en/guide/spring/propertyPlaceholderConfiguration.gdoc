@@ -1,6 +1,6 @@
 Grails supports the notion of property placeholder configuration through an extended version of Spring's [PropertyPlaceholderConfigurer|api:org.springframework.beans.factory.config.PropertyPlaceholderConfigurer], which is typically useful in combination with [externalized configuration|guide:configExternalized].
 
-Settings defined in either "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper scripts or Java properties files can be used as placeholder values for Spring configuration in @grails-app/conf/spring/resources.xml@. For example given the following entries in @grails-app/conf/Config.groovy@ (or an externalized config):
+Settings defined in either "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper scripts or Java properties files can be used as placeholder values for Spring configuration in @grails-app/conf/spring/resources.xml@ and @grails-app/conf/spring/resources.groovy@. For example given the following entries in @grails-app/conf/Config.groovy@ (or an externalized config):
 
 {code:java}
 database.driver="com.mysql.jdbc.Driver"
@@ -20,3 +20,25 @@ You can then specify placeholders in @resources.xml@ as follows using the famili
     </property>
  </bean>
 {code}
+
+To specify placeholders in @resources.groovy@ you need to use single quotes:
+
+{code:java}
+dataSource(org.springframework.jdbc.datasource.DriverManagerDataSource) {
+    driverClassName = '${database.driver}'
+    url = 'jdbc:${database.dbname}'
+}
+{code}
+
+This sets the property value to a literal string which is later resolved against the config by Spring's PropertyPlaceholderConfigurer.
+
+A better option for @resources.groovy@ is to access properties through the @grailsApplication@ variable:
+
+{code:java}
+dataSource(org.springframework.jdbc.datasource.DriverManagerDataSource) {
+    driverClassName = grailsApplication.config.database.driver
+    url = "jdbc\:${grailsApplication.config.database.dbname}"
+}
+{code}
+
+Using this approach will keep the types as defined in your config.
