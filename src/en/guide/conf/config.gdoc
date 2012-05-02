@@ -1,12 +1,98 @@
-For general configuration Grails provides a file called @grails-app/conf/Config.groovy@. This file uses Groovy's "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper which is very similar to Java properties files except it is pure Groovy hence you can reuse variables and use proper Java types!
+For general configuration Grails provides two files:
 
-You can add your own configuration in here, for example:
+* @grails-app/conf/BuildConfig.groovy@
+* @grails-app/conf/Config.groovy@
+
+Both of them use Groovy's "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper syntax. The first, @BuildConfig.groovy@, is for settings that are used when running Grails commands, such as @compile@, @doc@, etc. The second file, @Config.groovy@, is for settings that are used when your application is running. This means that @Config.groovy@ is packaged with your application, but @BuildConfig.groovy@ is not. Don't worry if you're not clear on the distinction: the guide will tell you which file to put a particular setting in.
+
+The most basic syntax is similar to that of Java properties files with dot notation on the left-hand side:
 
 {code}
 foo.bar.hello = "world"
 {code}
 
-Then later in your application you can access these settings in one of two ways. The most common is from the [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] object, which is available as a variable in controllers and tag libraries:
+Note that the value is a Groovy string literal! Those quotes around 'world' are important. In fact, this highlights one of the advantages of the ConfigSlurper syntax over properties files: the property values can be any valid Groovy type, such as strings, integers, or arbitrary objects!
+
+Things become more interesting when you have multiple settings with the same base. For example, you could have the two settings
+
+{code}
+foo.bar.hello = "world"
+foo.bar.good = "bye"
+{code}
+
+both of which have the same base: @foo.bar@. The above syntax works but it's quite repetitive and verbose. You can remove some of that verbosity by nesting properties at the dots:
+
+{code}
+foo {
+    bar {
+        hello = "world"
+        good = "bye"
+    }
+}
+{code}
+
+or by only partially nesting them:
+
+{code}
+foo {
+    bar.hello = "world"
+    bar.good = "bye"
+}
+{code}
+
+However, you can't nest after using the dot notation. In other words, this *won't* work:
+
+{code}
+// Won't work!
+foo.bar {
+    hello = "world"
+    good = "bye"
+}
+{code}
+
+Within both @BuildConfig.groovy@ and @Config.groovy@ you can access several implicit variables from configuration values:
+
+{table}
+*Variable* | *Description*
+userHome | Location of the home directory for the account that is running the Grails application.
+grailsHome | Location of the home directory for the account that is running the Grails application.
+appName | The application name as it appears in application.properties.
+appVersion | The application version as it appears in application.properties.
+{table}
+
+For example:
+
+{code}
+my.tmp.dir = "\${userHome}/.grails/tmp"
+{code}
+
+In addition, @BuildConfig.groovy@ has
+
+{table}
+*Variable* | *Description*
+grailsVersion | The version of Grails used to build the project.
+grailsSettings | An object containing various build related settings, such as @baseDir@. It's of type [@BuildSettings@|api:grails.util.BuildSettings].
+{table}
+
+and @Config.groovy@ has
+
+{table}
+*Variable* | *Description*
+grailsApplication | The [@GrailsApplication@|api:org.codehaus.groovy.grails.commons.GrailsApplication] instance.
+{table}
+
+Those are the basics of adding settings to the configuration file, but how do you access those settings from your own application? That depends on which config you want to read.
+
+The settings in @BuildConfig.groovy@ are only available from [command scripts|guide:creatingGantScripts] and can be accessed via the @grailsSettings.config@ property like so:
+
+{code}
+target(default: "Example command") {
+    def maxIterations = grailsSettings.config.myapp.iterations.max
+    ...
+}
+{code}
+
+If you want to read runtime configuration settings, i.e. those defined in @Config.groovy@, use the [@grailsApplication@|api:org.codehaus.groovy.grails.commons.GrailsApplication] object, which is available as a variable in controllers and tag libraries:
 
 {code}
 class MyController {
@@ -18,32 +104,17 @@ class MyController {
 }
 {code}
 
-The other way involves getting a reference to the [ConfigurationHolder|api:org.codehaus.groovy.grails.commons.ConfigurationHolder] class that holds a reference to the configuration object:
+and can be easily injected into services and other Grails artifacts:
 
 {code}
-import org.codehaus.groovy.grails.commons.*
-...
-def config = ConfigurationHolder.config
-assert "world" == config.foo.bar.hello
+class MyService {
+    def grailsApplication
+
+    String greeting() {
+        def recipient = grailsApplication.config.foo.bar.hello
+        return "Hello ${recipient}"
+    }
+}
 {code}
 
-{warning}
-ConfigurationHolder and ApplicationHolder are deprecated and will be removed in a future version of Grails, so it is highly preferable to access the @GrailsApplication@ and config from the @grailsApplication@ variable.
-{warning}
-
-Within @Config.groovy@ you can access several variables:
-
-{table}
-*Variable* | *Description*
-userHome | Location of the home directory for the account that is running the Grails application.
-appName | The application name as it appears in application.properties.
-appVersion | The application version as it appears in application.properties.
-grailsApplication | The @GrailsApplication@ instance.
-{table}
-
-So if you want to include the application name and version in a mail footer for example, you could do it like this:
-
-{code}
-mail.footer = "Sent from \${appName} \${appVersion}"
-{code}
-
+As you can see, when accessing configuration settings you use the same dot notation as when you define them.
