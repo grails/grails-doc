@@ -1,0 +1,27 @@
+The Grails Wrapper allows a Grails application to built without having to install Grails and configure a GRAILS_HOME environment variable.  The wrapper includes a small shell script and a couple of small bootstrap jar files that typically would be checked in to source code control along with the rest of the project.  The first time the wrapper is executed it will download and configure a Grails installation.  This wrapper makes it more simple to setup a development environment, configure CI and manage upgrades to future versions of Grails.  When the application is upgraded to the next version of Grails, the wrapper is updated and checked in to the source code control system and the next time developers update their workspace and run the wrapper, they will automatically be using the correct version of Grails.
+
+h4. Generating The Wrapper
+
+The [wrapper|commandLine] command can be used to generate the wrapper shell scripts and supporting jar files.  Execute the wrapper command at the top of an existing Grails project.
+
+{code}
+grails wrapper
+{code}
+
+In order to do this of course Grails must be installed and configured.  This is only a requirement for bootstrapping the wrapper.  Once the wrapper is generated there is no need to have a Grails installation configured in order to use the wrapper.
+
+See the [wrapper|commandLine] command documentation for details about command line arguments.
+
+By default the wrapper command will generate a @grailsw@ shell script and @grailsw.bat@ batch file at the top of the project.  In addition to those, a @wrapper/@ directory (the name of the directory is configurable via command line options) is generated which contains some support files which are necessary to run the wrapper.  All of these files should be checked into the source code control system along with the rest of the project.  This allows developers to check the project out of source code control and immediately start using the wrapper to execute Grails commands without having to install and configure Grails.
+
+h4. Using The Wrapper
+
+The wrapper scripts except all of the same arguments the normal grails command supports.
+
+{code}
+./grailsw create-domain-class com.demo.Person
+./grailsw run-app
+./grailsw test-app unit:
+
+etc...
+{code}
