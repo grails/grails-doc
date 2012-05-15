@@ -16,8 +16,24 @@ The Maven plugin now resolves plugins as well as jars dependencies (previously j
 
 There is also a new Grails @create-multi-project-build@ script which features initial support for Maven (Gradle coming in a future release). This script can be run from a parent directory containing Grails applications and plugins and it will generate a Maven multi-module build.
 
-Finally, the Maven plugin now features a forked execution mode so that Grails executions are forked into a separate JVM reducing memory strain on the Maven process.
+Enabling Maven in a project has been made easier with the inclusion of the @create-pom@ command:
 
+{code}
+grails create-app myapp
+cd myapp
+grails create-pom com.mycompany
+mvn package
+{code}
+
+To create a multi-module Maven build follow these steps:
+
+{code}
+grails create-app myapp
+grails create-plugin plugin-a
+grails create-plugin plugin-b
+grails create-multi-project-build com.mycompany:parent:1.0-SNAPSHOT
+mvn install
+{code}
 
 h4. Grails Wrapper
 
