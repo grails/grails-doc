@@ -23,13 +23,18 @@ Fired before an object is saved to the database
 
 {code:java}
 class Person {
-   Date dateCreated
+   private static final Date NULL_DATE = new Date(0)
+
+   String firstName
+   String lastName
+   Date signupDate = NULL_DATE
 
    def beforeInsert() {
-       dateCreated = new Date()
+      if (signupDate == NULL_DATE) {
+         signupDate = new Date()
+      }
    }
 }
-
 {code}
 
 h4. The beforeUpdate event
@@ -38,14 +43,19 @@ Fired before an existing object is updated
 
 {code:java}
 class Person {
-   Date dateCreated
-   Date lastUpdated
 
-   def beforeInsert() {
-       dateCreated = new Date()
+   def securityService
+
+   String firstName
+   String lastName
+   String lastUpdatedBy
+
+   static constraints = {
+      lastUpdatedBy nullable: true
    }
+
    def beforeUpdate() {
-       lastUpdated = new Date()
+      lastUpdatedBy = securityService.currentAuthenticatedUsername()
    }
 }
 {code}
@@ -57,16 +67,13 @@ Fired before an object is deleted.
 {code:java}
 class Person {
    String name
-   Date dateCreated
-   Date lastUpdated
 
    def beforeDelete() {
       ActivityTrace.withNewSession {
-         new ActivityTrace(eventName:"Person Deleted",data:name).save()
+         new ActivityTrace(eventName: "Person Deleted", data: name).save()
       }
    }
 }
-
 {code}
 
 Notice the usage of @withNewSession@ method above. Since events are triggered whilst Hibernate is flushing using persistence methods like @save()@ and @delete()@ won't result in objects being saved unless you run your operations with a new @Session@.
@@ -293,7 +300,7 @@ def doWithSpring = {
 
 h4. Automatic timestamping
 
-The examples above demonstrated using events to update a @lastUpdated@ and @dateCreated@ property to keep track of updates to objects. However, this is actually not necessary. By defining a @lastUpdated@ and @dateCreated@ property these will be automatically updated for you by GORM.
+If you define a @dateCreated@ property it will be set to the current date for you when you create new instances. Likewise, if you define a @lastUpdated@ property it will be automatically be updated for you when you change persistent instances.
 
 If this is not the behaviour you want you can disable this feature with:
 
@@ -308,5 +315,5 @@ class Person {
 {code}
 
 {warning}
-If you put @nullable: false@ constraints on either @dateCreated@ or @lastUpdated@, your domain instances will fail validation - probably not what you want. Leave constraints off these properties unless you have disabled automatic timestamping.
+If you have @nullable: false@ constraints on either @dateCreated@ or @lastUpdated@, your domain instances will fail validation - probably not what you want. Omit constraints from these properties unless you disable automatic timestamping.
 {warning}
