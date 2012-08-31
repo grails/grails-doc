@@ -178,9 +178,13 @@ h4. Custom Event Listeners
 
 As of Grails 2.0 there is a new API for plugins and applications to register and listen for persistence events. This API is not tied to Hibernate and also works for other persistence plugins such as the [MongoDB plugin for GORM|http://grails.org/plugin/mongodb].
 
-To use this API you need to subclass @AbstractPersistenceEventListener@ (in package _org.grails.datastore.mapping.engine.event_) and implement a single method called @onPersistenceEvent@. The simplest possible implementation can be seen below:
+To use this API you need to subclass @AbstractPersistenceEventListener@ (in package _org.grails.datastore.mapping.engine.event_) and implement the methods @onPersistenceEvent@ and @supportsEventType@. You also must provide a reference to the datastore to the listener.  The simplest possible implementation can be seen below:
 
 {code}
+public MyPersistenceListener(final Datastore datastore) {
+    super(datastore)
+}
+
 @Override
 protected void onPersistenceEvent(final AbstractPersistenceEvent event) {
     switch(event.eventType) {
@@ -210,6 +214,11 @@ protected void onPersistenceEvent(final AbstractPersistenceEvent event) {
         break;
     }
 }
+
+@Override
+public boolean supportsEventType(Class<? extends ApplicationEvent> eventType) {
+    return true
+}
 {code}
 
 The @AbstractPersistenceEvent@ class has many subclasses (@PreInsertEvent@, @PostInsertEvent@ etc.) that provide further information specific to the event. A @cancel()@ method is also provided on the event which allows you to veto an insert, update or delete operation.
@@ -218,7 +227,19 @@ Once you have created your event listener you need to register it with the @Appl
 
 {code}
 def init = {
-    applicationContext.addApplicationListener(new MyPersistenceListener())
+    application.mainContext.eventTriggeringInterceptor.datastores.each { k, datastore ->
+        applicationContext.addApplicationListener new MyPersistenceListener(datastore)
+    }
+}
+{code}
+
+or use this in a plugin:
+
+{code}
+def doWithApplicationContext = { applicationContext ->
+    application.mainContext.eventTriggeringInterceptor.datastores.each { k, datastore ->
+        applicationContext.addApplicationListener new MyPersistenceListener(datastore)
+    }
 }
 {code}
 
