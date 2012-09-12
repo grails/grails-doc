@@ -1,0 +1,48 @@
+h4. Forked Tomcat Execution
+
+Grails 2.2 and above support forked JVM execution of the Tomcat container in development mode. This has several benefits including:
+
+* Reduced memory consumption, since the Grails build system can exit
+* Isolation of the build classpath from the runtime classpath
+* The ability to deploy other Grails/Spring applications in parallels without conflicting dependencies
+
+To enable forked execution you can set the @grails.project.fork.run@ property to @true@:
+
+{code}
+grails.project.fork.run=true
+{code}
+
+Then just us the regular @run-app@ command as per normal. Note that in forked mode the @grails@ process will exit and leave the container running in the background. To stop the server there is a new @stop-app@ command:
+
+{code}
+grails stop-app
+{code}
+
+To customize the JVM arguments passed to the forked JVM you can specify a map instead:
+
+{code}
+grails.project.fork.run= [maxMemory:1024, minMemory:64, debug:false, maxPerm:256, jvmArgs: '..arbitrary JVM arguments..']
+{code}
+
+h4. Auto-deploying additional WAR files in Forked Mode
+
+Since forked execution isolates classpaths more effectively than embedded execution you can deploy additional WAR files (such as other Grails or Spring applications) to the container.
+
+The easiest way to do so is to drop the WAR files into the @src/autodeploy@ directory (if it doesn't exist you can create it).
+
+You can customize the location of the autodeploy directory by specifying an alternative location in @BuildConfig.groovy@:
+
+{code}
+grails.project.autodeploy.dir="/path/to/my/war/files"
+{code}
+
+h4. Customizing the Forked Tomcat instance
+
+If you want to programmatically customize the forked [Tomcat|http://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/catalina/startup/Tomcat.html] instance you can do so by implementing a class named @org.grails.plugins.tomcat.ForkedTomcatCustomizer@ which provides a method with the following signature:
+
+{code}
+void customize(Tomcat tomcat) {
+ // your code here
+}
+{code}
+
