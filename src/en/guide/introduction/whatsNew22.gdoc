@@ -60,6 +60,23 @@ Grails 2.2 supports forked JVM execution of the Tomcat container in development 
 
 See the [documentation|guide:forkedMode] on using forked mode for more information.
 
+h4. SQL Projections In Criteria Queries
+
+Grails 2.2 adds new functionality to criteria queries to provide access to Hibernate's SQL projection API.
+
+{code:java}
+// Use SQL projections to retrieve the perimeter and area of all of the Box instances...
+def c = Box.createCriteria()
+
+def results = c.list {
+    projections {
+      sqlProjection '(2 * (width + height)) as perimiter, (width * height) as area', ['perimeter', 'area'], [INTEGER, INTEGER]
+    }
+}
+{code}
+
+See the [Criteria|guide:criteria] section for more information.
+
 h4. Groovy 2
 
 Grails 2.2 ships with Groovy 2.0, which has a [bunch of new features|http://www.infoq.com/articles/new-groovy-20] itself.
