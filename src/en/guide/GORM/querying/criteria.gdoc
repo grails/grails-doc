@@ -115,6 +115,97 @@ def numberOfBranches = c.get {
 
 When multiple fields are specified in the projection, a List of values will be returned. A single value will be returned otherwise.
 
+h4. SQL Projections
+
+The criteria DSL provides access to Hibernate's SQL projection API.
+
+{code:java}
+// Box is a domain class...
+class Box {
+    int width
+    int height
+}
+{code}
+
+{code:java}
+// Use SQL projections to retrieve the perimeter and area of all of the Box instances...
+def c = Box.createCriteria()
+
+def results = c.list {
+    projections {
+      sqlProjection '(2 * (width + height)) as perimiter, (width * height) as area', ['perimeter', 'area'], [INTEGER, INTEGER]
+    }
+}
+{code}
+
+The first argument to the @sqlProjection@ method is the SQL which defines the projections.  The second argument is a list of
+Strings which represent column aliases corresponding to the projected values expressed in the SQL.  The third argument
+is a list of @org.hibernate.type.Type@ instances which correspond to the projected values expressed in the SQL.  The API
+supports all @org.hibernate.type.Type@ objects but constants like INTEGER, LONG, FLOAT etc. are provided by the DSL which
+correspond to all of the types defined in @org.hibernate.type.StandardBasicTypes@.
+
+Consider that the following table represents the data in the
+@BOX@ table.
+{table}
+width | height
+2 | 7 
+2 | 8 
+2 | 9 
+4 | 9 
+{table}
+
+The query above would return results like this:
+
+{code}
+[[18, 14], [20, 16], [22, 18], [26, 36]]
+{code}
+
+Each of the inner lists contains the 2 projected values for each @Box@, perimiter and area.
+
+{note}
+Note that if there are other references in scope wherever your criteria query is expressed that have names that conflict 
+with any of the type constants described above, the code in your criteria will refer to those references, not the type
+constants provided by the DSL.  In the unlikely event of that happening you can disambiguate the conflict by referring
+to the fully qualified Hibernate type.  For example @StandardBasicTypes.INTEGER@ instead of @INTEGER@.
+{note}
+
+If only 1 value is being projected, the alias and the type do not need to be included in a list.
+
+{code:java}
+def results = c.list {
+    projections {
+      sqlProjection 'sum(width * height) as totalArea', 'totalArea', INTEGER
+    }
+}
+{code}
+
+That query would return a single result with the value of 84 as the total area of all of the @Box@ instances.
+
+The DSL supports grouped projections with the @sqlGroupProjection@ method.
+
+{code:java}
+def results = c.list {
+    projections {
+        sqlGroupProjection 'width, sum(height) as combinedHeightsForThisWidth', 'width', ['width', 'combinedHeightsForThisWidth'], [INTEGER, INTEGER]
+    }
+}
+{code}
+
+The first argument to the @sqlProjection@ method is the SQL which defines the projections.  The second argument represents the
+group by clause that should be part of the query.  That string may be single column name or a comma separated list of column
+names.  The third argument is a list of
+Strings which represent column aliases corresponding to the projected values expressed in the SQL.  The fourth argument
+is a list of @org.hibernate.type.Type@ instances which correspond to the projected values expressed in the SQL.
+
+The query above is projecting the combined heights of boxes grouped by width and would return results that look like this:
+
+{code}
+[[2, 24], [4, 9]]
+{code}
+
+Each of the inner lists contains 2 values.  The first value is a box width and the second value is the sum of the heights
+of all of the boxes which have that width.
+
 h4. Using SQL Restrictions
 
 You can access Hibernate's SQL Restrictions capabilities.
