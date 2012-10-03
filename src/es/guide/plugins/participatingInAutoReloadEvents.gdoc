@@ -1,6 +1,11 @@
+{hidden}
 h4. Monitoring Resources for Changes
 
 Often it is valuable to monitor resources for changes and perform some action when they occur. This is how Grails implements advanced reloading of application state at runtime. For example, consider this simplified snippet from the Grails @ServicesPlugin@:
+{hidden}
+h4. Monitozando cambios en recursos
+
+En determinadas ocasiones es necesario monitorizar los recursos para realizar alguna acción sobre ellos cuando se produce algún cambio. Esta es la forma utilizada por Grails para implementar la recarga avanzada del estado de la aplicación en tiempo de ejecución. Por ejemmplo, si consideramos el siguiente fracmento de código del plugin de Grails @ServicesPlugin@:
 
 {code:java}
 class ServicesGrailsPlugin {
@@ -26,6 +31,7 @@ class ServicesGrailsPlugin {
     }
 }
 {code}
+{hidden}
 
 First it defines @watchedResources@ as either a String or a List of strings that contain either the references or patterns of the resources to watch. If the watched resources specify a Groovy file, when it is changed it will automatically be reloaded and passed into the @onChange@ closure in the @event@ object.
 
@@ -38,7 +44,21 @@ The @event@ object defines a number of useful properties:
 * @event.manager@ - The @GrailsPluginManager@ instance
 
 These objects are available to help you apply the appropriate changes based on what changed. In the "Services" example above, a new service bean is re-registered with the @ApplicationContext@ when one of the service classes changes.
+{hidden}
 
+Lo primero se define un @watchedResources@ como un String o como una lista de Strings que contengan las referencias o patrones de los recursos que queremos monitorizar. Si el recurso monitorizado apunta a un fichero Ǵroovy, este será automáticamente recargado cuando cambia y pasado a la closure @onChange@ en el objeto @event@.
+
+El objeto @event@ define una serie de propiedades muy utiles:
+
+* @event.source@ - La fuente del evento, puede ser el @Class@ recargado o un @Resource@ de Spring
+* @event.ctx@ - La instancia del objeto @ApplicationContext@ de Spring
+* @event.plugin@ - El plugin que gestiona el recurso (normalmente @this@)
+* @event.application@ - La instancia de @GrailsApplication@
+* @event.manager@ - La instancia de @GrailsPluginManager@
+
+Estos objetos estan disponibles para ayudar a realizar los cambios apropiados dependiendo de lo que haya cambiado. En el ejemplo @Services@ mostrado anteriormente, un nuevo bean de servicio es registrado en el @ApplicationContext@ cuando alguna clase de servicio cambia.
+
+{hidden}
 h4. Influencing Other Plugins
 
 In addition to reacting to changes, sometimes a plugin needs to "influence" another.
@@ -46,25 +66,48 @@ In addition to reacting to changes, sometimes a plugin needs to "influence" anot
 Take for example the Services and Controllers plugins. When a service is reloaded, unless you reload the controllers too, problems will occur when you try to auto-wire the reloaded service into an older controller Class.
 
 To get around this, you can specify which plugins another plugin "influences". This means that when one plugin detects a change, it will reload itself and then reload its influenced plugins. For example consider this snippet from the @ServicesGrailsPlugin@:
+{hidden}
+
+h4. Influenciando en otros plugins
+
+Además de reaccionar ante cambios, en algunas ocasiones un plugin necesita "influenciar" en otro plugin.
+
+Un ejemplo es el plugin de Servicios y Controladores. Cuando un servicio es recargado hay que recargar también los controladores, puesto podrían ocurrir problemas al tratar de inyectar los nuevos servicios en los controladores antiguos.
+
+Para solucionar esto, es posible especificar que plugins tienen "influencias" en otros. Esto implica que cuando un plugin detecta un cambio, se recargará el mismo y despues pedirá a los plugins que influencia que se recargen también. Un ejemplo se puede ver en el siguiente fragmento de código de @ServicesGrailsPlugin@:
+
 
 {code:java}
 def influences = ['controllers']
 {code}
 
+{hidden}
 h4. Observing other plugins
 
 If there is a particular plugin that you would like to observe for changes but not necessary watch the resources that it monitors you can use the "observe" property:
+{hidden}
+
+h4. Observando otros plugins
+
+Si un plugin necesita observar cambios pero que no necesita acceder a los recursos en los que se producen dichos cambios, es posible usar la propiedad "observe"
 
 {code:java}
 def observe = ["controllers"]
 {code}
 
+{hidden}
 In this case when a controller is changed you will also receive the event chained from the controllers plugin.
 
 It is also possible for a plugin to observe all loaded plugins by using a wildcard:
+{hidden}
+En este caso, cuando un controlador cambia se recibirá el evento del plugin de los controladores
+
+También es posible para un plugin observar todos los plugins utilizados usando expresiones:
 
 {code:java}
 def observe = ["*"]
 {code}
-
+{hidden}
 The Logging plugin does exactly this so that it can add the @log@ property back to _any_ artefact that changes while the application is running.
+{hidden}
+El plugin de Loggin hace exactamente esto para poder añadir la propiedad @log@ de nuevo a cualquier artectacto que cambie mientras la aplicación esta funcionando. 
