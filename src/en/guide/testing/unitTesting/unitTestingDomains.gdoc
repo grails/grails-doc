@@ -164,15 +164,15 @@ class BookTests {
         def book = new Book()
 
         assert !book.validate()
-        assert "nullable" == book.errors["title"]
-        assert "nullable" == book.errors["author"]
+        assert "nullable" == book.errors["title"].code
+        assert "nullable" == book.errors["author"].code
 
         // So let's demonstrate the unique and minSize constraints
 
         book = new Book(title: "Misery", author: "JK")
         assert !book.validate()
-        assert "unique" == book.errors["title"]
-        assert "minSize" == book.errors["author"]
+        assert "unique" == book.errors["title"].code
+        assert "minSize" == book.errors["author"].code
 
         // Validation should pass!
         book = new Book(title: "The Shining", author: "Stephen King")
