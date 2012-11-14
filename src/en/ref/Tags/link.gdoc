@@ -2,11 +2,13 @@ h1. link
 
 h2. Purpose
 
-Creates an html anchor tag with the @href@ set based on the specified parameters.
+Creates an html anchor tag with the @href@ set based on the specified parameters. The context path is handled transparently by the tag, so it works whether the application is running in the root context or an application-specific one.
+
+The anchor URL generated depends on both the parameters of the tag and the application's URL mappings. When a controller and/or action is given, the most specific URL mapping is selected and the resulting URL constructed based on that mapping.
 
 h2. Examples
 
-Example controller for an application called "shop":
+Example controller for an application called "shop", i.e. the context path is "/shop":
 
 {code:java}
 class BookController {
@@ -25,22 +27,43 @@ Example usages for above controller:
 {code:xml}
 <g:link action="show" id="1">Book 1</g:link>
 
+   becomes =>  <a href="/shop/book/show/1">Book 1</a>  based on default mapping.
+
+
 <g:link action="show" id="${currentBook.id}">${currentBook.name}</g:link>
+
 
 <g:link controller="book">Book Home</g:link>
 
+           =>  <a href="/shop/book/">Book 1</a>
+
+
 <g:link controller="book" action="list">Book List</g:link>
+
 
 <g:link url="[action:'list',controller:'book']">Book List</g:link>
 
-<g:link action="list" params="[sort: 'title', order: 'asc',
-                               author: currentBook.author]">
+
+<g:link action="list" params="[sort: 'title', order: 'asc']">
      Book List
 </g:link>
 
+           =>  <a href="/shop/book/list?sort=title&order=asc">Book List</a>
+
+
 <g:link controller="book" absolute="true">Book Home</g:link>
 
-<g:link controller="book" base="http://admin.mygreatsite.com">Book Home</g:link>
+      e.g. =>  <a href="http://localhost:8080/shop/book/">Book Home</a>
+
+
+<g:link controller="book" base="http://my.company.com">Book Home</g:link>
+
+           =>  <a href="http://my.company.com/book/">Book Home</a>
+
+
+<g:link uri="/books">Book Home</g:link>
+
+           =>  <a href="/shop/books">Book List</a>
 {code}
 
 Example as a method call in GSP only:
@@ -63,8 +86,9 @@ Attributes
 * @controller@ (optional) - the name of the controller to use in the link; if not specified the current controller will be linked
 * @elementId@ (optional) - this value will be used to populate the @id@ attribute of the generated href
 * @id@ (optional) - the id to use in the link
-* @fragment@ (optional) - The link fragment (often called anchor tag) to use
-* @mapping@ (optional) - The [named URL mapping|guide:namedMappings] to use to rewrite the link
+* @fragment@ (optional) - the link fragment (often called anchor tag, prefixed by #) to use
+* @uri@ (optional) - a URI relative to the context path; used in place of controller and action. The generated URL simply consists of the context path + the given URI.
+* @mapping@ (optional) - the [named URL mapping|guide:namedMappings] to use to rewrite the link
 * @params@ (optional) - a Map of request parameters
 * @url@ (optional) - a Map containing the action, controller, id etc.
 * @absolute@ (optional) - If @true@ will prefix the link target address with the value of the @grails.serverURL@ property from @Config.groovy@, or http://localhost:<port> if there is no setting in @Config.groovy@ and not running in production.
