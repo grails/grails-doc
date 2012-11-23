@@ -338,3 +338,24 @@ Method | Description
 *listDistinct* | If subqueries or associations are used, one may end up with the same row multiple times in the result set, this allows listing only distinct entities and is equivalent to @DISTINCT_ROOT_ENTITY@ of the [CriteriaSpecification|api:org.hibernate.criterion.CriteriaSpecification] class.
 *count* | Returns the number of matching rows.
 {table}
+
+h4. Combining Criteria
+
+You can combine multiple criteria closures in the following way:
+
+{code:java}
+def emeaCriteria = {
+    eq "region", "EMEA"
+}
+
+def results = Airport.withCriteria {
+    emeaCriteria.delegate = delegate
+    emeaCriteria()
+    flights {
+        like "number", "BA%"
+    }
+}
+{code}
+
+This technique requires that each criteria must refer to the same domain class (i.e. @Airport@).
+A more flexible approach is to use Detached Criteria, as described in the following section.
