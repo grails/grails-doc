@@ -21,6 +21,30 @@ The last part of a demand is a closure representing the implementation of the mo
 
 Call @mockControl.createMock()@ to get an actual mock instance of the class that you are mocking. You can call this multiple times to create as many mock instances as you need. And once you have executed the test method, call @mockControl.verify()@ to check that the expected methods were called.
 
+Grails mocks also provide a @demandExplicit@ method that can be used in place of demand.  This will check the mocked class's metaClass and throw an ExplicitDemandException if a method with that name and signature doesn't exist. For example, given the service:
+
+{code:java}
+class MyService {
+    def someMethod(String s) { ... }
+}
+{code}
+
+The following mocking works the same as demand
+{code:java}
+def strictControl = mockFor(MyService)
+//Works just like the demand method since method signature exists on the class
+strictControl.demandExplicit.someMethod(1) { String arg1  }
+{code}
+
+While this mocking throws an ExplicitDemandException when the test is run.
+{code:java}
+def strictControl = mockFor(MyService)
+//Throws ExplicitDemandException because method signature doesn't exist
+strictControl.demandExplicit.someMethod(1) { String arg1, String arg2  }
+{code}
+
+Using demandExplicit should be the preferred method for mocking as it is more likely to catch issues when changing method signatures.  Use demand when the method to be mocked is added dynamically, otherwise use demandExplicit.
+
 Lastly, the call:
 
 {code:java}
