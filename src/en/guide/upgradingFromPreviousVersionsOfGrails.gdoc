@@ -1,5 +1,7 @@
 Although the Grails development team have tried to keep breakages to a minimum there are a number of items to consider when upgrading a Grails 1.0.x, 1.1.x, 1.2.x, or 1.3.x applications to Grails 2.0. The major changes are described in more detail below, but here's a brief summary of what you might encounter when upgrading from Grails 1.3.x:
 
+* Dependency resolution has been changed to *only* use data from the POMs to resolve, this can impact plugins and you may need to republish a plugin with corrected dependency data
+
 * @environment@ bean added by Spring 3.1, which will be auto-wired into properties of the same name.
 
 * Logging by convention packages have changed, so you may not see the logging output you expect. Update your logging configuration as described below.
@@ -43,6 +45,31 @@ Although the Grails development team have tried to keep breakages to a minimum t
 * With new versions of various dependencies, some APIs (such as the Servlet API) may have changed. If you have code that implements any of those APIs, you will need to update it. Problems will typically manifest as compilation errors.
 
 * The following deprecated classes have been removed: @grails.web.JsonBuilder@ and @grails.web.OpenRicoBuilder@.
+
+h3. Upgrading to 2.2 from 2.1 or 2.0
+
+h4. Groovy 2.0
+
+Grails 2.2 ships with Groovy 2.0 which has some language level changes that may require changes to your code or plugins that you use.
+
+h4. Dependency resolution
+
+Grails 2.2 no longer uses the BuildConfig of the plugin for dependency resolution and *only* uses data provided by POMs, this may impact some plugins that had previously incorrectly 
+specified dependency information.
+
+If you don't want to immediately deal with the changes necessary to upgrade, then you can open @BuildConfig@ and set the @legacyResolve@ settings to true:
+
+{code}
+grails.project.dependency.resolution = {    
+    ...
+    legacyResolve false 
+    ...
+}
+{code}
+
+This is not recommended however, as it will re-enable the previous behavior of using both POM data and BuildConfig to resolve dependencies. The most commmon problem you will face is with plugins that express their dependencies in a scope that is not valid inside a POM (example: "build" scope).
+
+Plugins like this will need to be re-publish with a corrected scope of "compile". If you then specify the plugin as "build" scope in your application, transitive compile and runtime scoped dependencies will be converted to "build" scope as well.
 
 h3. Upgrading from Grails 1.3.x
 
