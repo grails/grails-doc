@@ -47,3 +47,12 @@ static mapping = {
     }
 }
 {code}
+
+Note that if you have a static method that is the same name as one of your properties you are trying to configure or you use the same property name as one of the static GORM methods this can lead to conflicts. To avoid this scenario scope the mapping configuration using the @delegate@ property:
+
+
+{code:java}
+static mapping = {
+    delegate.currency column: "currency", sqlType: "char", length: 3
+}
+{code}
