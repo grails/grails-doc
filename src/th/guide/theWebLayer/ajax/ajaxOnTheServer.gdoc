@@ -47,12 +47,11 @@ And then on the client parse the incoming JSON request using an Ajax event handl
 
 {code:xml}
 <g:javascript>
-function updateBook(e) {
-    var book = eval("("+e.responseText+")") // evaluate the JSON
-    $("book" + book.id + "_title").innerHTML = book.title
+function updateBook(data) {
+    $("#book" + data.id + "_title").html( data.title );
 }
-<g:javascript>
-<g:remoteLink action="test" update="foo" onSuccess="updateBook(e)">
+</g:javascript>
+<g:remoteLink action="showBook" id="${book.id}" onSuccess="updateBook(data)">
     Update Book
 </g:remoteLink>
 <g:set var="bookId">book${book.id}</g:set>
@@ -79,13 +78,12 @@ However, since DOM is involved the client gets more complicated:
 
 {code:xml}
 <g:javascript>
-function updateBook(e) {
-    var xml = e.responseXML
-    var id = xml.getElementsByTagName("book").getAttribute("id")
-    $("book" + id + "_title") = xml.getElementsByTagName("title")[0].textContent
+function updateBook(data) {
+    var id = $(data).find("book").attr("id");
+    $("#book" + id + "_title").html( $(data).find("title").text() );
 }
-<g:javascript>
-<g:remoteLink action="test" update="foo" onSuccess="updateBook(e)">
+</g:javascript>
+<g:remoteLink action="showBook" id="${book.id}" onSuccess="updateBook(data)">
     Update Book
 </g:remoteLink>
 <g:set var="bookId">book${book.id}</g:set>
@@ -103,8 +101,8 @@ def showBook() {
     def b = Book.get(params.id)
 
     response.contentType = "text/javascript"
-    String title = b.title.encodeAsJavascript()
-    render "\$('book${b.id}_title')='${title}'"
+    String title = b.title.encodeAsJavaScript()
+    render "\$('#book${b.id}_title').html('${title}');"
 }
 {code}
 
