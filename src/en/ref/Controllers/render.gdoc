@@ -59,6 +59,9 @@ import grails.converters.*
 render Book.list(params) as JSON
 render Book.get(params.id) as XML
 
+// render a file
+render(file: new File(absolutePath), fileName: "book.pdf")
+
 {code}
 
 h2. Description
@@ -74,7 +77,7 @@ Parameters:
 * @template@ (optional) - The template to render. A template is usually an HTML snippet and the file starts with an underscore ("_"). This is used mostly in AJAX requests.
 * @layout@ (optional) - The layout to use for the response
 * @var@ (optional) - The name of the variable to be passed into a template, defaults to the Groovy default argument 'it' if not specified
-* @bean@ (optional) - The beanto use in rendering
+* @bean@ (optional) - The bean to use in rendering
 * @model@ (optional) - The model to use in rendering
 * @collection@ (optional) - For rendering a template against each item in a collection
 * @contentType@ (optional) - The contentType of the response
@@ -82,3 +85,5 @@ Parameters:
 * @converter@ (as single non-named first parameter) - A Converter that should be rendered as Response
 * @plugin@ (optional) - The plugin to look for the template in
 * @status@ (optional) - The HTTP status code to use
+* @file@ (optional) - The byte[], java.io.File, or inputStream you wish to send with the response
+* @fileName@ (optional) - For specifying an attachment file name while rendering a file.
