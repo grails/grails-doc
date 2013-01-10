@@ -8,13 +8,7 @@ repositories {
 }
 {code}
 
-In this case the default public Maven repository is specified. To use the SpringSource Enterprise Bundle Repository you can use the @ebr()@ method:
-
-{code}
-repositories {
-    ebr()
-}
-{code}
+In this case the default public Maven repository is specified. 
 
 You can also specify a specific Maven repository to use by URL:
 
@@ -76,6 +70,10 @@ repositories {
 }
 {code}
 
+{warning}
+Aether does not support the @flatDir@ resolver or any custom file system resolvers. The above feature works only if you are using the Ivy dependency manager.
+{warning}
+
 To specify your local Maven cache (@~/.m2/repository@) as a repository:
 
 {code}
@@ -83,9 +81,10 @@ repositories {
     mavenLocal()
 }
 {code}
+
 h4. Custom Resolvers
 
-If all else fails since Grails builds on Apache Ivy you can specify an Ivy resolver:
+If you are using the Ivy dependency manager (Aether does not support custom resolvers), then you can explicitly specify an Ivy resolver:
 
 {code}
 /*

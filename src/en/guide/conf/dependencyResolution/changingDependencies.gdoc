@@ -1,3 +1,5 @@
+h4. Configuration Changing dependencies
+
 Typically, dependencies are constant. That is, for a given combination of @group@, @name@ and @version@ the jar (or plugin) that it refers to will never change. The Grails dependency management system uses this fact to cache dependencies in order to avoid having to download them from the source repository each time. Sometimes this is not desirable. For example, many developers use the convention of a _snapshot_ (i.e. a dependency with a version number ending in “-SNAPSHOT”) that can change from time to time while still retaining the same version number. We call this a "changing dependency".
 
 Whenever you have a changing dependency, Grails will always check the remote repository for a new version. More specifically, when a changing dependency is encountered during dependency resolution its last modified timestamp in the local cache is compared against the last modified timestamp in the dependency repositories. If the version on the remote server is deemed to be newer than the version in the local cache, the new version will be downloaded and used.
@@ -6,7 +8,7 @@ Whenever you have a changing dependency, Grails will always check the remote rep
 Be sure to read the next section on “Dependency Resolution Caching” in addition to this one as it affects changing dependencies.
 {info}
 
-All dependencies (jars and plugins) with a version number ending in @-SNAPSHOT@ are *implicitly* considered to be changing by Grails. You can also explicitly specify that a dependency is changing by setting the changing flag in the dependency DSL:
+All dependencies (jars and plugins) with a version number ending in @-SNAPSHOT@ are *implicitly* considered to be changing by Grails. You can also explicitly specify that a dependency is changing by setting the changing flag in the dependency DSL (This is only required for Ivy, Aether does not support the 'changing' flag and treats dependencies that end with -SNAPSHOT as changing):
 
 {code}
 runtime ('org.my:lib:1.2.3') {
@@ -14,7 +16,9 @@ runtime ('org.my:lib:1.2.3') {
 }
 {code}
 
-There is a caveat to the support for changing dependencies that you should be aware of. Grails will stop looking for newer versions of a dependency once it finds a remote repository that has the dependency.
+h4. Ivy and Changing dependencies
+
+For those used to Maven snapshot handling, if you use Aether dependency management you can expect the same semantics as Maven. If you choose to use Ivy there is a caveat to the support for changing dependencies that you should be aware of. Ivy will stop looking for newer versions of a dependency once it finds a remote repository that has the dependency.
 
 Consider the following setup:
 
@@ -29,7 +33,7 @@ grails.project.dependency.resolution = {
     }
 {code}
 
-In this example we are using the local maven repository and a remote network maven repository. Assuming that the local Grails dependency and the local Maven cache do not contain the dependency but the remote repository does, when we perform dependency resolution the following actions will occur:
+In this example we are using the local maven repository and a remote network maven repository. Assuming that the local OI dependency and the local Maven cache do not contain the dependency but the remote repository does, when we perform dependency resolution the following actions will occur:
 
 * maven local repository is searched, dependency not found
 * maven network repository is searched, dependency is downloaded to the cache and used
@@ -62,7 +66,7 @@ Later on, a new version of @mylib 1.0-SNAPSHOT@ is published changing the versio
 
 This is likely to not be the desired outcome. We are now out of sync with the latest published snapshot and will continue to keep using the version from the local maven repository.
 
-The rule to remember is this: when resolving a dependency, Grails will stop searching as soon as it finds a repository that has the dependency at the specified version number. It will *not* continue searching all repositories trying to find a more recently modified instance.
+The rule to remember is this: when resolving a dependency, Ivy will stop searching as soon as it finds a repository that has the dependency at the specified version number. It will *not* continue searching all repositories trying to find a more recently modified instance.
 
 To remedy this situation (i.e. build against the _newer_ version of @mylib 1.0-SNAPSHOT@ in the remote repository), you can either:
 
@@ -72,5 +76,5 @@ To remedy this situation (i.e. build against the _newer_ version of @mylib 1.0-S
 Where possible, prefer deleting the version from the local maven repository. In general, when you have finished building against a locally built SNAPSHOT always try to clear it from the local maven repository.
 
 {note}
-This changing dependency behaviour is an unmodifiable characteristic of the underlying dependency management system that Grails uses, Apache Ivy. It is currently not possible to have Ivy search all repositories to look for newer versions (in terms of modification date) of the same dependency (i.e. the same combination of @group@, @name@ and @version@).
+This changing dependency behaviour is an unmodifiable characteristic of the underlying dependency management system Apache Ivy. It is currently not possible to have Ivy search all repositories to look for newer versions (in terms of modification date) of the same dependency (i.e. the same combination of @group@, @name@ and @version@). If you want this behavior consider switching to Aether as the dependency manager.
 {note}
