@@ -1,0 +1,89 @@
+{hidden}
+h1. params
+
+h2. Purpose
+
+A mutable multi-dimensional map (hash) of request (CGI) parameters.
+
+h2. Examples
+
+To obtain a request parameter called @id@:
+{code}
+class BookController {
+    def show() {
+        def book = Book.get(params.id)
+    }
+}
+{code}
+
+To perform data binding (see [Data Binding|guide:dataBinding] in the user guide):
+
+{code}
+def save() {
+    def book = new Book(params) // bind request parameters onto properties of book
+}
+{code}
+
+h2. Description
+
+The standard Servlet API provides access to parameters with the @HttpServletRequest@ object. Although Grails provides the same capability through the [request|controllers] object, it goes a bit further by providing a mutable map of request parameters called @params@.
+
+The @params@ object can be indexed into using the array index operator or de-reference operator, so given so given the URL @/hello?foo=bar@ you can access @foo@ with
+
+bc.
+println params.foo
+
+The params object can also be used to bind request parameters onto the properties of a domain class using either the constructor or the [properties|domainClasses] property:
+
+{code}
+def book = new Book(params)
+book = Book.get(1)
+book.properties = params
+{code}
+
+For further reading see [Data Binding|guide:dataBinding] in the user guide.
+{hidden}
+
+h1. params
+
+h2. Propósito
+
+Um mapa mutável multi-dimensional (hash) de solicitação (CGI) de parâmetros.
+
+h2. Exemplos
+
+Para obter um parâmetro de requisição chamado @id@:
+{code}
+class BookController {
+    def show() {
+        def book = Book.get(params.id)
+    }
+}
+{code}
+
+Para executar a ligação de dados (ver [Data Binding|guide:dataBinding] no guia do usuário):
+
+{code}
+def save() {
+    def book = new Book(params) // bind request parameters onto properties of book
+}
+{code}
+
+h2. Descrição
+
+A API Servlet padrão fornece acesso aos parâmetros com o objeto @HttpServletRequest@. Embora Grails forneça a mesma capacidade por meio do objeto [request|controllers], ele vai um pouco mais longe, fornecendo um mapa mutável de parâmetros de solicitação chamado @params@.
+
+O objeto @params@ pode ser indexado usando o operador de índice de matriz ou de-referência do operador, dando assim a URL @/hello?foo=bar@ você pode acessar @foo@ com
+
+bc.
+println params.foo
+
+O objeto params também pode ser usado para ligar os parâmetros de solicitação para as propriedades de uma classe de domínio utilizando o construtor ou a propriedade [properties|domainClasses]:
+
+{code}
+def book = new Book(params)
+book = Book.get(1)
+book.properties = params
+{code}
+
+Para saber mais ver [Data Binding|guide:dataBinding] no guia do usuário.
