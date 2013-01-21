@@ -1,0 +1,133 @@
+﻿{hidden}
+h1. beforeInterceptor
+
+h2. Purpose
+
+Allows the interception of an action before it is executed. A @beforeInterceptor@ can optionally halt execution of the action.
+
+h2. Examples
+
+Simple tracing interceptor:
+
+{code}
+def beforeInterceptor = {
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+A trivial security interceptor to implement login functionality:
+
+{code}
+def beforeInterceptor = [action: this.&auth, except: 'login']
+
+// defined with private scope, so it's not considered an action
+private auth() {
+    if (!session.user) {
+        redirect(action: 'login')
+        return false
+    }
+}
+
+def login() {
+    // display login page
+}
+{code}
+
+h2. Description
+
+The @beforeInterceptor@ intercepts processing before the action is executed. If it returns @false@ then the action will not be executed. The interceptor can be defined for all actions in a controller as follows:
+
+{code}
+def beforeInterceptor = {
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+This declaration must be a class-scope Closure in the controller class. It will execute before all actions and does not interfere with processing since it returns no value. A common use case however is for simple authentication (although a [security plugin|http://grails.org/plugin/spring-security-core] is preferred):
+
+{code}
+def beforeInterceptor = [action: this.&auth, except: 'login']
+
+// defined with private scope, so it's not considered an action
+private auth() {
+    if (!session.user) {
+        redirect(action: 'login')
+        return false
+    }
+}
+
+def login() {
+    // display login page
+}
+{code}
+
+This defines a method called @auth@. It is declared as a private method so it is not exposed as a controller action. The @beforeInterceptor@ then defines an interceptor that is used on all actions except the @login@ action and is configured using Groovy's method pointer syntax to execute the @auth@ method. The @auth@ method will redirect to another page if it doesn't find a user in the session, and it signifies that it has handled the response and that the requested action should not be processed by returning @false@.
+
+This example limited the intercepted actions using the @except@ argument but the @only@ argument can also be used to list the actions to be intercepted, rather than those to not intercept.
+{hidden}
+
+h1. beforeInterceptor
+
+h2. Propósito
+
+Permite interceptar uma ação antes de ela ser executada. Um @beforeInterceptor@ pode opcionalmente parar a execução da ação.
+
+h2. Exemplos
+
+Simples interceptador rastreador:
+
+{code}
+def beforeInterceptor = {
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+Um interceptador trivial de segurança para implementar a funcionalidade de login:
+
+{code}
+def beforeInterceptor = [action: this.&auth, except: 'login']
+
+// defined with private scope, so it's not considered an action
+private auth() {
+    if (!session.user) {
+        redirect(action: 'login')
+        return false
+    }
+}
+
+def login() {
+    // display login page
+}
+{code}
+
+h2. Descrição
+
+O @beforeInterceptor@ intercepta o processamento antes de a ação ser executada. Se o retorno for @false@ então a ação não será executada. O interceptador pode ser definido por todas as ações do controller, como mostra a seguir:
+
+{code}
+def beforeInterceptor = {
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+Essa declaração precisa ser um Closure com escopo de classe na classe do controller. Isso vai executar antes de todas as ações e não vai interferir com o processamento já que não retorna nenhum valor. Um caso de uso comum é para simples autenticações(embora uma [security plugin|http://grails.org/plugin/spring-security-core] seja melhor):
+
+{code}
+def beforeInterceptor = [action: this.&auth, except: 'login']
+
+// definida com escopo privado, então não é considerada uma ação
+private auth() {
+    if (!session.user) {
+        redirect(action: 'login')
+        return false
+    }
+}
+
+def login() {
+    // display login page
+}
+{code}
+
+Isso define o método chamado @auth@. É declarado como um método privado, então não é mostrado como uma ação do controller. O @beforeInterceptor@ então define um interceptador que é usado em todas as ações, com exceção da ação @login@, e é configurado usando a sintaxe dos métodos apontados de Groovy para executar o método @auth@. O método @auth@ vai redirecionar para outra pagina se ele não encontrar um usuário na sessão, e isso significa que ele lida com a resposta e que a ação requisitada pode não ser processada retornando @false@.
+
+Esse exemplo limitou as ações interceptadas usando o argumento @except@, mas o argumento @only@ pode também ser usado para listar as ações que devem ser interceptadas, ao invés das que não devem ser. 

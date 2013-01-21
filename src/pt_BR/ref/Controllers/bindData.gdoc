@@ -1,0 +1,85 @@
+﻿{hidden}
+h1. bindData
+
+h2. Purpose
+
+Allows fine-grained control of binding request parameters from strings onto objects and the necessary types (data binding).
+
+h2. Examples
+
+{code}
+// binds request parameters to a target object
+bindData(target, params)
+
+// exclude firstName and lastName
+bindData(target, params, [exclude: ['firstName', 'lastName']])
+
+// only use parameters starting with "author." e.g. author.email
+bindData(target, params, "author")
+bindData(target, params, [exclude: ['firstName', 'lastName']], "author")
+
+// using inclusive map
+bindData(target, params, [include: ['firstName', 'lastName']], "author")
+{code}
+
+h2. Description
+
+Usage: @bindData(target, params, includesExcludes*, prefix*)@
+
+Arguments:
+
+* @target@ - The target object to bind to
+* @params@ - A @Map@ of source parameters, often the [params|controllers] object when used in a controller
+* @includesExcludes@ - (Optional) A map with 'include' and/or 'exclude' lists containing the names of properties to either include or exclude.
+* @prefix@ - (Optional) A string representing a prefix to use to filter parameters. The method will automatically append a '.' when matching the prefix to parameters, so you can use 'author' to filter for parameters such as 'author.name'.
+
+{note}
+Note that if an empty List or no List is provided as a value for the @include@ parameter then all statically typed instance properties will be subject to binding if they are not explicitly excluded. See the [bindable|constraints] constraint documentation for more information on how to control what is bindable and what is not.
+{note}
+
+The underlying implementation uses Spring's Data Binding framework. If the target is a domain class, type conversion errors are stored in the @errors@ property of the domain class.
+
+Refer to the section on [Data Binding|guide:dataBinding] in the user guide for more information.
+{hidden}
+
+h1. bindData
+
+h2. Propósito
+
+Permite controle refinado de ligação de parâmetros de strings em objetos, e os tipos necessários (ligação de dados).
+
+h2. Exemplos
+
+{code}
+// liga os parametros requisitados ao objeto target
+bindData(target, params)
+
+// exclui firstName e lastName
+bindData(target, params, [exclude: ['firstName', 'lastName']])
+
+// só usa parametros que começam com "author." e.g. author.email
+bindData(target, params, "author")
+bindData(target, params, [exclude: ['firstName', 'lastName']], "author")
+
+// usando um map internamente
+bindData(target, params, [include: ['firstName', 'lastName']], "author")
+{code}
+
+h2. Descrição
+
+Uso: @bindData(target, params, includesExcludes*, prefix*)@
+
+Argumentos:
+
+* @target@ - O objeto que sofrerá a ligação
+* @params@ - Um @Map@ de parâmetros fontes, geralmente o objeto [params|controllers] quando usado num controller
+* @includesExcludes@ - (Opcional) Um map com uma lista de 'include' e/ou 'exclude' contendo os nomes das propriedades que serão inclusas ou exclusas.
+* @prefix@ - (Opcional) Uma string representando um prefixo para filtrar parâmetros. O método ira automaticamente incluir um '.' quando for comparar o prefixo com os parâmetros, então você pode usar 'author' para filtrar parâmetros como 'author.name'.
+
+{note}
+Note que se uma List vazia ou nenhuma List é fornecida como valor para o parâmetro @include@ então todas as propriedades de instancias estaticamente tipadas vão ser submetidas à ligação se elas não forem explicitamente excluídas. Veja a documentação de restricao [bindable|constraints] para mais informações sobre como controlar o que é ligado e o que não é.
+{note}
+
+A implementação fornecida usa o framework Spring's Data Biding. Se o 'target' for uma classe dominante, erros de conversão de tipos são adicionadas na propriedade @errors@ da classe de domínio. 
+
+Referencia para a seção em [Data Binding|guide:dataBinding] no guia do usuário para mais informações.
