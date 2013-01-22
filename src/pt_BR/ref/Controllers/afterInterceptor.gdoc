@@ -1,0 +1,129 @@
+﻿{hidden}
+h1. afterInterceptor
+
+h2. Purpose
+
+Allows interception of actions after they have executed, but before the view is rendered.
+
+h2. Examples
+
+Using a block:
+{code}
+class BookController {
+    def afterInterceptor = { model ->
+        model.foo = "bar"
+    }
+}
+{code}
+
+In this example we use a more fine-grained approach, using a Groovy method pointer to specify a helper method to use and a list of action names to be intercepted:
+
+{code}
+class BookController {
+
+    def afterInterceptor = [action: this.&invokeMe, only: ['list']]
+
+    private invokeMe(model) {
+        model.foo = "bar"
+    }
+
+    def list() {
+        [bookList: Book.list()]
+    }
+}
+{code}
+
+In this example we use the Map syntax to constraint the @afterInterceptor@ to execute *only* for the @list@ action.
+
+h2. Description
+
+To define an interceptor that is executed after an action use the @afterInterceptor@ property:
+
+{code}
+def afterInterceptor = { model ->
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+The first argument of the @Closure@ is the model @Map@ that resulted from the action that executed and will be passed to the view. This lets you manipulate the model before rendering the view. The model might be empty but will not be @null@.
+
+An @afterInterceptor@ may also inspect or modify the Spring MVC @ModelAndView@ object prior to rendering. In this case, the example becomes:
+
+{code}
+def afterInterceptor = { model, modelAndView ->
+    println "Current view is ${modelAndView.viewName}"
+    if (model.someVar) {
+        modelAndView.viewName = "/mycontroller/someotherview"
+    }
+    println "View is now ${modelAndView.viewName}"
+}
+{code}
+
+This allows the view to be changed based on the model returned by the current action. Note that the @modelAndView@ may be @null@ if the action being intercepted called @redirect@ or @render@.
+
+This example limited the intercepted actions using the @only@ argument but the @except@ argument can also be used to list the actions to not intercept, rather than those to intercept.
+{hidden}
+
+h1. afterInterceptor
+
+h2. Propósito
+
+Permite interceptar ações após elas já terem sido executadas, mas antes de serem renderizadas na view.
+
+h2. Exemplos
+
+Usando um closure:
+{code}
+class BookController {
+    def afterInterceptor = { model ->
+        model.foo = "bar"
+    }
+}
+{code}
+
+Nesse exemplo, nós usamos um modo mais refinado, usando um apontador para um método de Groovy para especificar um método auxiliar à ser usado e uma lista de nomes ativos para serem interceptados:
+
+{code}
+class BookController {
+
+    def afterInterceptor = [action: this.&invokeMe, only: ['list']]
+
+    private invokeMe(model) {
+        model.foo = "bar"
+    }
+
+    def list() {
+        [bookList: Book.list()]
+    }
+}
+{code}
+
+Neste exemplo nós usamos a sintaxe do Map para forçar o @afterInreceptor@ a executar SOMENTE para a @list@ action.
+
+h2. Descrição
+
+Para definir um interceptador que é executado após uma ação use a propriedade @afterInterceptor@:
+
+{code}
+def afterInterceptor = { model ->
+    println "Tracing action ${actionUri}"
+}
+{code}
+
+O priemiro argumendo do @Closure@ é o model @Map@ que resultou da ação que foi executada e será passada para a view. Isso leva você a manipular o modelo antes de renderizar a view. O model pode estar vazio mas não pode ser @null@.
+
+Um @afterInterceptor@ pode tambem inspecionar ou modificar o obejeto Spring MVC @ModelAndView@ antes de renderizar. Nesse caso, o exemplo se torna esse:
+
+{code}
+def afterInterceptor = { model, modelAndView ->
+    println "Current view is ${modelAndView.viewName}"
+    if (model.someVar) {
+        modelAndView.viewName = "/mycontroller/someotherview"
+    }
+    println "View is now ${modelAndView.viewName}"
+}
+{code}
+
+Isso permite a view a se modificar baseando-se no model retornado pela ação corrente. Note que o @modelAndView@ pode ser @null@ se a ação interceptada for @redirect@ ou @render@.
+
+Esse exemplo limitou as ações interceptadas usando o argumento @only@ mas o argumento @except@ pode tambem ser usando para listar as ações que não seram interceptadas, ao invés das que devem ser interceptadas.
