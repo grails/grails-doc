@@ -1,0 +1,92 @@
+﻿{hidden}
+h1. chain
+
+h2. Purpose
+
+Uses "flash":flash.html storage to implicitly retain the model following an HTTP redirect from one action to another.
+
+h2. Examples
+
+{code:java}
+def shawshankRedemption = new Book(title: 'The Shawshank Redemption')
+chain(action: "details", model: [book: shawshankRedemption])
+{code}
+
+h2. Description
+
+Usage:
+
+{code:java}
+chain(controller*, action, id*, model, params*)
+{code}
+
+Arguments:
+
+* @uri@ - The full uri to redirect to (example /book/list, book/show/2)
+* @controller@ (optional) - The controller to redirect to; defaults to the current controller if not specified
+* @action@ - The action to redirect to, either a string name or a reference to an action within the current controller
+* @id@ (optional) - The id to use in redirection
+* @model@ - The model to chain to the next action
+* @params@ (optional) - Parameters to pass to the action chained to.
+
+The chain method stores the passed model in flash scope and then performs an HTTP redirect. The model is then restored for the next request. The model that will eventually be passed to the view will be created by starting with the model that was passed to the chain method and then adding to that all of the data that is in the model returned by the next action, which may replace some of the data that was in the model originally passed to the chain method. For example:
+
+{code:java}
+def one() {
+    chain action: 'two', model: [name: 'Tony', town: 'Birmingham']
+}
+
+def two() {
+    [name: 'Anthony', country: 'England']
+}
+{code}
+
+If a request is sent to the @one@ action, that action chains to the @two@ action which returns a model.  The model that is passed to the view would contain @\[name: 'Anthony', town: 'Birmingham', country: 'England'\]@
+
+The chain method requires either a URI to redirect to *or* a controller/action/id name combination
+{hidden}
+
+h1. chain
+
+h2. Propósito
+
+Usa armazenamento "flash":flash.html para reter implicitamente o model após um redirecionamento HTTP de uma ação para outra.
+
+h2. Exemplos
+
+{code:java}
+def shawshankRedemption = new Book(title: 'The Shawshank Redemption')
+chain(action: "details", model: [book: shawshankRedemption])
+{code}
+
+h2. Descrição
+
+Uso:
+
+{code:java}
+chain(controller*, action, id*, model, params*)
+{code}
+
+Argumentos:
+
+* @uri@ - A uri completa que será redirecionada para (exemplo /book/list, book/show/2)
+* @controller@ (opcional) - O controller para qual será redirecionado; por padrão o controller atual, se nada for especificado
+* @action@ - A ação para qual será redirecionada, pode ser uma string ou uma referencia para uma ação definida no controller atual
+* @id@ (optional) - O id usado no redirecionamento
+* @model@ - O model que encadeará a proxima ação
+* @params@ (optional) - Parâmetros a serem passados à ação encadeada.
+
+O método chain armazena o model passado em escopo flash e depois realiza um redirecionamento HTTP. O model é então rearmazenado para próximas requisições. O model que eventualmente ira ser passado para a view será criado ao iniciar com o model que foi passado para o método chain e depois se adiciona toda a data que esta no model retornado pela ação seguinte, que pode acabar sobrescrevendo alguns dados que eram do model original, que foi passado para o método chain. Por exemplo:
+
+{code:java}
+def one() {
+    chain action: 'two', model: [name: 'Tony', town: 'Birmingham']
+}
+
+def two() {
+    [name: 'Anthony', country: 'England']
+}
+{code}
+Se um requerimento é enviado à ação @one@, aquela ação chain para a ação @two@ que retorna um model. O model que é passado para a view vai conter @\[name: 'Anthony', town: 'Birmingham', country: 'England'\]@
+
+O metódo chain requer ou uma URI para redirecionar para, ou uma combinação de controller/ação/id
