@@ -1,0 +1,49 @@
+{hidden}
+Grails applications are deployed as Web Application Archives (WAR files), and Grails includes the [war|commandLine] command for performing this task:
+
+{code}
+grails war
+{code}
+
+This will produce a WAR file under the @target@ directory which can then be deployed as per your container's instructions.
+
+Unlike most scripts which default to the @development@ environment unless overridden, the @war@ command runs in the @production@ environment by default. You can override this like any script by specifying the environment name, for example:
+
+{code}
+grails dev war
+{code}
+
+{warning}
+NEVER deploy Grails using the [run-app|commandLine] command as this command sets Grails up for auto-reloading at runtime which has a severe performance and scalability implications
+{warning}
+
+When deploying Grails you should always run your containers JVM with the @-server@ option and with sufficient memory allocation. A good set of VM flags would be:
+
+{code}
+-server -Xmx512M -XX:MaxPermSize=256m
+{code}
+{hidden}
+
+O deploy das aplicações Grails é feito através de Web Application Archives (arquivo WAR), e Grails possui o comando [war|commandLine] para fazer essa tarefe:
+
+{code}
+grails war
+{code}
+
+Isso irá produzir um arquivo WAR no diretório @target@ em que pode ser feito o deploy de acordo com o seu container.
+
+Diferente da maioria dos scripts executam por padrão a versão de desenvolvimento, o comando @war@ roda a versão de produção por padrão. Você pode sobrescrever isso especificando o environment, por exemplo:
+
+{code}
+grails dev war
+{code}
+
+{warning}
+NUNCA faça deploy usando o comando [run-app|commandLine], já que esse comando executa o Grails com auto-reloading em tempo de execução, o que implica em sérios problemas de performance e escalabilidade
+{warning}
+
+Ao fazer deploy você deve sempre executar seu container da JVM com a opção @-server@ e deve alocar um espaço de memória suficiente. Uma boa escolha de flags seria:
+
+{code}
+-server -Xmx512M -XX:MaxPermSize=256m
+{code}
