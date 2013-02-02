@@ -20,7 +20,45 @@ grails.mime.types = [ xml: ['text/xml', 'application/xml'],
 
 The above bit of configuration allows Grails to detect to format of a request containing either the 'text/xml' or 'application/xml' media types as simply 'xml'. You can add your own types by simply adding new entries into the map.
 
-h4. Content Negotiation using the Accept header
+h4. Content Negotiation using the format parameter
+
+Let's say a controller action can return a resource in a variety of formats: HTML, XML, and JSON. What format will the client get? The easiest and most reliable way for the client to control this is through a @format@ URL parameter.
+
+So if you, as a browser or some other client, want a resource as XML, you can use a URL like this:
+
+{code:java}
+http://my.domain.org/books?format=xml
+{code}
+
+The result of this on the server side is a @format@ property on the @response@ object with the value @xml@ . You could code your controller action to return XML based on this property, but you can also make use of the controller-specific @withFormat()@ method:
+
+{code:java}
+import grails.converters.JSON
+import grails.converters.XML
+
+class BookController {
+
+    def list() {
+        def books = Book.list()
+
+        withFormat {
+            html bookList: books
+            json { render books as JSON }
+            xml { render books as XML }
+        }
+    }
+}
+{code}
+
+In this example, Grails will only execute the block inside @withFormat()@ that matches the requested content type. So if the preferred format is @html@ then Grails will execute the @html()@ call only. Each 'block' can either be a map model for the corresponding view (as we are doing for 'html' in the above example) or a closure. The closure can contain any standard action code, for example it can return a model or render content directly.
+
+There is a special format, "all", that is handled differently from the explicit formats. If "all" is specified (normally this happens through the Accept header - see below), then the first block of @withFormat()@ is executed. You should not add an explicit "all" block. In the above example, a format of "all" will trigger the @html@ handler.
+
+{note}
+When using [withFormat|controllers] make sure it is the last call in your controller action as the return value of the @withFormat@ method is used by the action to dictate what happens next.
+{note}
+
+h4. Using the Accept header
 
 Every incoming HTTP request has a special [Accept|http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html] header that defines what media types (or mime types) a client can "accept". In older browsers this is typically:
 
@@ -28,49 +66,31 @@ Every incoming HTTP request has a special [Accept|http://www.w3.org/Protocols/rf
 */*
 {code}
 
-Which simply means anything. However, on newer browser something all together more useful is sent such as (an example of a Firefox @Accept@ header):
+which simply means anything. However, newer browsers send more interesting values such as this one sent by Firefox 3:
 
 {code}
-text/xml, application/xml, application/xhtml+xml, text/html;q=0.9,
-text/plain;q=0.8, image/png, */*;q=0.5
+text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, \
+    text/plain;q=0.8, image/png, */*;q=0.5
 {code}
 
-Grails parses this incoming format and adds a @property@ to the [response|servletAPI] object that outlines the preferred response format. For the above example the following assertion would pass:
+This particular accept header is unhelpful because it indicates that XML is the preferred response format whereas the user is really expecting HTML. That's why Grails ignores the accept header by default. However, non-browser clients are typically more specific in their requirements and can send accept headers such as
 
-{code:java}
-assert 'html' == response.format
+{code}
+application/json
 {code}
 
-Why? The @text/html@ media type has the highest "quality" rating of 0.9, therefore is the highest priority. If you have an older browser as mentioned previously the result is slightly different:
+If you want to support such clients and their accept headers, then simply add (or change) the @grails.mime.use.accept.header@ setting in @Config.groovy@ :
 
-{code:java}
-assert 'all' == response.format
+{code}
+grails.mime.use.accept.header = true
 {code}
 
-In this case 'all' possible formats are accepted by the client. To deal with different kinds of requests from [Controllers|guide:controllers] you can use the [withFormat|controllers] method that acts as kind of a switch statement:
+With this setting, Grails parses the incoming accept header and sets the appropriate value for the @format@ response property. For example, if it sees the accept header above ('application/json') it will set @format@ to @json@ as you'd expect. And of course this works with the @withFormat()@ method in just the same way as when the @format@ URL parameter is set (although the URL parameter takes precedence).
 
-{code:java}
-import grails.converters.XML
-
-class BookController {
-
-    def list() {
-        def books = Book.list()
-        withFormat {
-            html bookList: books
-            js { render "alert('hello')" }
-            xml { render books as XML }
-        }
-    }
-}
-{code}
-
-If the preferred format is @html@ then Grails will execute the @html()@ call only. This causes Grails to look for a view called either @grails-app/views/books/list.html.gsp@ or @grails-app/views/books/list.gsp@. If the format is @xml@ then the closure will be invoked and an XML response rendered.
-
-How do we handle the "all" format? Simply order the content-types within your @withFormat@ block so that whichever one you want executed comes first. So in the above example, "all" will trigger the @html@ handler.
+An accept header of '\*/\*' results in a value of @all@ for the @format@ property.
 
 {note}
-When using [withFormat|controllers] make sure it is the last call in your controller action as the return value of the @withFormat@ method is used by the action to dictate what happens next.
+If you enable accept header parsing, it's usually best to handle XML and JSON responses in a different action from the HTML ones due to the problems with various browsers. You can then use @withFormat()@ exclusively for the REST interface and avoid it for actions that render the normal HTML pages.
 {note}
 
 h4. Request format vs. Response format
