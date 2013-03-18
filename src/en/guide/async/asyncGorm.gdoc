@@ -38,7 +38,7 @@ h3. Async and the Session
 
 When using GORM async each promise is executed in a different thread. Since the Hibernate session is not concurrency safe, a new session is bound per thread.
 
-This is an important consideration when using GORM async (particularily with Hibernate as the persistence engine). The objects returned from asynchronous queries will be detached entities.
+This is an important consideration when using GORM async (particularly with Hibernate as the persistence engine). The objects returned from asynchronous queries will be detached entities.
 
 This means you cannot save objects returned from asynchronous queries without first merging them back into session. For example the following will not work:
 
@@ -58,7 +58,7 @@ person.merge()
 person.firstName = "Bart"
 {code}
 
-Note that @merge()@ is called first because it may refresh the object from the cache or database, which would result in the change being lost. In general it is not recommended to read and write objects in different threads and you should avoid this technique unless absolutely necessariy.
+Note that @merge()@ is called first because it may refresh the object from the cache or database, which would result in the change being lost. In general it is not recommended to read and write objects in different threads and you should avoid this technique unless absolutely necessary.
 
 Finally, another issue with detached objects is that association lazy loading *will not* work and you will encounter @LazyInitializationException@ errors if you do so. If you plan to access the associated objects of those returned from asynchronous queries you should use eager queries (which is recommended anyway to avoid N+1 problems).
 
