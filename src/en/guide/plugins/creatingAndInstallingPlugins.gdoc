@@ -108,6 +108,30 @@ Although the [create-plugin|commandLine] command creates certain files for you s
 
 If you need artefacts within @WEB-INF@ it is recommended you use the @_Install.groovy@ script (covered later), which is executed when a plugin is installed, to provide such artefacts. In addition, although @UrlMappings.groovy@ is excluded you are allowed to include a @UrlMappings@ definition with a different name, such as @MyPluginUrlMappings.groovy@.
 
+h4. Customizing the plugin contents
+
+You can specify what to exclude in addition to the default excludes by adding elements to the @pluginExcludes@ descriptor property (described below). In addition, there are two ways to configure the contents of the plugin ZIP or JAR file.
+
+One is to create an event handler for the @CreatePluginArchiveStart@ event, which is fired after all of the plugin files have been copied to the staging directory. By adding an event handler you can add, modify, or delete files as needed. Add the handler to @_Events.groovy@ in the @scripts@ directory, for example
+
+{code}
+eventCreatePluginArchiveStart = { stagingDir ->
+   // update staging directory contents here
+}
+{code}
+
+You can customize the location of the staging directory with the @grails.project.plugin.staging.dir@ attribute in @BuildConfig.groovy@ or as  as system property. 
+
+Note that there is also a @CreatePluginArchiveEnd@ event which is fired after the ZIP or JAR is packaged.
+
+You can also do this work in a Closure in @BuildConfig.groovy@ with the property @grails.plugin.resources@ which is analogous to the @grails.war.resources@ property, e.g.
+
+{code}
+grails.plugin.resources = { stagingDir ->
+   // update staging directory contents here
+}
+{code}
+
 h4. Specifying Plugin Locations
 
 An application can load plugins from anywhere on the file system, even if they have not been installed. Specify the location of the (unpacked) plugin in the application's @grails-app/conf/BuildConfig.groovy@ file:
