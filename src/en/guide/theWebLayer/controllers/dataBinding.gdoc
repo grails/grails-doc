@@ -237,6 +237,31 @@ Or a more specific one:
 typeMismatch.Book.publisherURL=The publisher URL you specified is not a valid URL
 {code}
 
+h4. Customizing Data Binding
+
+The [org.grails.databinding.BindUsing|api:org.grails.databinding.BindingUsing] annotation may be used to define a custom binding mechanism for a particular field in a class.  Any time data binding is being applied to the field the closure value of the annotation will be invoked with 2 arguments.  The first argument is the object that data binding is being applied to and the second argument is a @Map@ which is the data source for the data binding.  The value returned from the closure will be bound to the property.  The following example would result in the upper case version of the @name@ value in the source being applied to the @name@ field during data binding.
+
+{code:java}
+class SomeClass {
+    @BindUsing({
+        obj, source -> source['name']?.toUpperCase()
+    })
+    String name
+}
+{code}
+
+The [org.grails.databinding.BindUsing|api:org.grails.databinding.BindingUsing] annotation may be used to define a custom binding mechanism for all of the fields on a particular class. When the annotation is applied to a class, the value assigned to the annotation should be a class which implements the [org.grails.databinding.BindingHelper|api:org.grails.databinding.BindingHelper] interface.  An instance of that class will be used any time a value is bound to a property in the class that this annotation has been applied to. 
+
+{code:java}
+@BindUsing(SomeClassWhichImplementsBindingHelper)
+class SomeClass {
+    String someProperty
+    Integer someOtherProperty
+}
+{code}
+
+TODO - document data binding customization by defining closures in Config.groovy and adding beans to the application context...
+
 h4. Data Binding and Security concerns
 
 When batch updating properties from request parameters you need to be careful not to allow clients to bind malicious data to domain classes and be persisted in the database. You can limit what properties are bound to a given domain class using the subscript operator:
