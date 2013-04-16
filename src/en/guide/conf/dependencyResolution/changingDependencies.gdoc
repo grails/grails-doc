@@ -4,9 +4,9 @@ Typically, dependencies are constant. That is, for a given combination of @group
 
 Whenever you have a changing dependency, Grails will always check the remote repository for a new version. More specifically, when a changing dependency is encountered during dependency resolution its last modified timestamp in the local cache is compared against the last modified timestamp in the dependency repositories. If the version on the remote server is deemed to be newer than the version in the local cache, the new version will be downloaded and used.
 
-{info}
+{note}
 Be sure to read the next section on “Dependency Resolution Caching” in addition to this one as it affects changing dependencies.
-{info}
+{note}
 
 All dependencies (jars and plugins) with a version number ending in @-SNAPSHOT@ are *implicitly* considered to be changing by Grails. You can also explicitly specify that a dependency is changing by setting the changing flag in the dependency DSL (This is only required for Ivy, Aether does not support the 'changing' flag and treats dependencies that end with -SNAPSHOT as changing):
 
@@ -15,6 +15,27 @@ runtime ('org.my:lib:1.2.3') {
     changing = true
 }
 {code}
+
+h4. Aether and SNAPSHOT dependencies
+
+The semantics for handling snapshots when using Aether in Grails are the same as those when using the Maven build tool. The default snapshot check policy is to check once a day for a new version of the dependency. This means that if a new snapshot is published during the day to a remote repository you may not see that change unless you manually clear out your local snapshot.
+
+If you wish to change the snapshot update policy you can do so by configuring an @updatePolicy@ for the repository where the snapshot was resolved from, for example:
+
+{code}
+repositories {
+    mavenCentral {
+        updatePolicy "interval:1"
+    }
+}
+{code}
+
+The above example configures an update policy that checks once a minute for changes. Note that that an @updatePolicy@ like the above will seriously impact performance of dependency resolution. The possibly configuration values for @updatePolicy@ are as follows:
+
+* @never@ - Never check for new snapshots
+* @always@ - Always check for new snapshots
+* @daily@ - Check once a day for new snapshots (the default)
+* @interval:x@ - Check once every x minutes for new snapshots
 
 h4. Ivy and Changing dependencies
 
