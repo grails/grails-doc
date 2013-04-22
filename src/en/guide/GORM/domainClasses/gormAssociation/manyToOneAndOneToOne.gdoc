@@ -13,7 +13,7 @@ class Nose {
 }
 {code}
 
-In this case we have a unidirectional many-to-one relationship from @Face@ to @Nose@. To make this relationship bidirectional define the other side as follows:
+In this case we have a unidirectional many-to-one relationship from @Face@ to @Nose@. To make this relationship bidirectional define the other side as follows (and see the section on controlling the ends of the association just below):
 
 h5. Example B
 
@@ -83,3 +83,41 @@ class Nose {
     Face face
 }
 {code}
+
+h5. Controlling the ends of the association
+
+Occasionally you may find yourself with domain classes that have multiple properties of the same type. They may even be self-referential, i.e. the association property has the same type as the domain class it's in. Such situations can cause problems because Grails may guess incorrectly the type of the association. Consider this simple class:
+
+{code}
+class Person {
+    String name
+    Person parent
+
+    static belongsTo = [ supervisor: Person ]
+
+    static constraints = { supervisor nullable: true }
+}
+{code}
+
+As far as Grails is concerned, the @parent@ and @supervisor@ properties are two directions of the same association. So when you set the @parent@ property on a @Person@ instance, Grails will automatically set the @supervisor@ property on the other @Person@ instance. This may be what you want, but if you look at the class, what we in fact have are two unidirectional relationships.
+
+To guide Grails to the correct mapping, you can tell it that a particular association is unidirectional through the @mappedBy@ property:
+
+{code}
+class Person {
+    String name
+    Person parent
+
+    static belongsTo = [ supervisor: Person ]
+
+    static mappedBy = [ supervisor: "none", parent: "none" ]
+
+    static constraints = { supervisor nullable: true }
+}
+{code}
+
+You can also replace "none" with any property name of the target class. And of course this works for normal domain classes too, not just self-referential ones. Nor is the @mappedBy@ property limited to many-to-one and one-to-one associations: it also works for one-to-many and many-to-many associations as you'll see in the next section.
+
+{warning}
+If you have a property called "none" on your domain class, this approach won't work currently! The "none" property will be treated as the reverse direction of the association (or the "back reference"). Fortunately, "none" is not a common domain class property name.
+{warning}
