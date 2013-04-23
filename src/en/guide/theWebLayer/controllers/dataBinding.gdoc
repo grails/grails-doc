@@ -260,6 +260,64 @@ class SomeClass {
 }
 {code}
 
+h4. Custom Data Converters
+
+The binder will do a lot of type conversion automatically.  Some applications may want to define their own mechanism for converting values and a simple way to do this is to write a class which implements [ValueConverter|api:org.grails.databinding.converters.ValueConverter] and register an instance of that class as a bean in the Spring application context.
+
+{code:java}
+package com.myapp.converters
+
+import org.grails.databinding.converters.ValueConverter
+
+/**
+ * A custom converter which will convert String of the
+ * form 'city:state' into an Address object.
+ */
+class AddressValueConverter implements ValueConverter {
+
+    def convert(value) {
+        def pieces = value.split(':')
+        new com.myapp.Address(city: pieces[0], state: pieces[1])
+    }
+
+    Class<?> getTargetType() {
+        com.myapp.Address
+    }
+}
+{code}
+
+An instance of that class needs to be registered as a bean in the Spring application context.  The bean name is not important.  All beans that implemented ValueConverter will be automatically plugged in to the data binding process.
+
+{code:java}
+// grails-app/conf/spring/resources.groovy
+
+beans = {
+
+    addressConverter com.myapp.converters.AddressValueConverter
+
+    // ...
+
+}
+{code}
+
+{code}
+class Person {
+    String firstName
+    Address homeAddress
+}
+
+class Address {
+    String city
+    String state
+}
+
+def person = new Person()
+person.properties = [firstName: 'Jeff', homeAddress: "O'Fallon:Missouri"]
+assert person.firstName == 'Jeff'
+assert person.homeAddress.city = "O'Fallon"
+assert person.homeAddress.state = 'Missouri'
+{code}
+
 h4. Date Formats For Data Binding
 
 A custom date format may be specified to be used when binding a String to a Date value by applying the [BindingFormat|api:org.grails.databinding.BindingFormat] annotation to a Date field.
