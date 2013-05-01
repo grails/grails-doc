@@ -146,6 +146,18 @@ Binding to a @Map@ property works the same way except that the list index in the
 
 This would bind the selected image into the @Map@ property @images@ under a key of @"cover"@.
 
+When binding to Maps, Arrays and Collections the data binder will automatically grow the size of the collections as necessary.  The default limit to how large the binder will grow a collection is 256.  If the data binder encounters an entry that requires the collection be grown beyond that limit, the entry is ignored.  The limit may be configured by assigning a value to the @grails.databinding.autoGrowCollectionLimit@ property in @Config.groovy@.
+
+{code:java}
+// grails-app/conf/Config.groovy
+
+// the default value is 256
+grails.databinding.autoGrowCollectionLimit = 128
+
+// ...
+
+{code}
+
 h4. Data binding with Multiple domain classes
 
 It is possible to bind data to multiple domain objects from the [params|controllers] object.
