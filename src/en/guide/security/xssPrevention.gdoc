@@ -1,0 +1,148 @@
+Cross Site Scripting (XSS) attacks are a common attack vector for web applications. They typically involve submitting HTML or Javascript code in a form such that when that code is displayed, the browser does something nasty. It could be as simple as popping up an alert box, or it could be much worse. The solution is to escape all untrusted user input when it is displayed in a page. For example,
+
+{code}
+    <script>alert('Got ya!');</script>
+{code}    
+
+will become
+
+{code}
+    &lt;script&gt;alert('Got ya!');&lt;/script&gt;
+{code}    
+
+when rendered, nullifying the effects of the malicious input.
+
+By default, Grails plays it safe and escapes all content in @${}@ expressions in GSPs. All the standard GSP tags are also safe by default, escaping any relevant attribute values.
+
+So what happens when you want to stop Grails from escaping some content? There are valid use cases for putting HTML into the database and rendering it as-is, as long as that content is *trusted*. In such cases, you can tell Grails that the content is safe as should be rendered raw, i.e. without any escaping:
+
+{code}
+    <section>${raw(page.content)}</section>
+{code}
+
+The @raw()@ method you see here is available from controllers, tag libraries and GSP pages.
+
+{warning}Although Grails plays it safe by default, that is no guarantee that your application will be invulnerable to an XSS-style attack. Such an attack is less likely to succeed than would otherwise be the case, but developers should always be conscious of potential attack vectors and attempt to uncover vulnerabilities in the application during testing. It's also easy to switch to an unsafe default, thereby increasing the risk of a vulnerability being introduced.{warning}
+
+It's difficult to make a solution that works for everyone, and so Grails provides a lot of flexibility with regard to fine-tuning how escaping works, allowing you to keep most of your application safe while switching off default escaping or changing the codec used for pages, tags, page fragments, and more.
+
+h4. Configuration
+
+It is recommended that you review the configuration of a newly created Grails application to garner an understanding of XSS prevention works in Grails.
+
+GSP features the ability to automatically HTML encode GSP expressions, and as of Grails 2.3 this is the default configuration.  The default configuration (found in @Config.groovy@) for a newly created Grails application can be seen below:
+
+{code}
+    grails {
+        views {
+            gsp {
+                encoding = 'UTF-8'
+                htmlcodec = 'xml' // use xml escaping instead of HTML4 escaping
+                codecs {
+                    expression = 'html' // escapes values inside ${}
+                    scriptlet = 'html' // escapes output from scriptlets in GSPs
+                    taglib = 'none' // escapes output from taglibs
+                    staticparts = 'none' // escapes output from static template parts
+                }
+            }
+            // escapes all not-encoded output at final stage of outputting
+            filteringCodecForContentType {
+                //'text/html' = 'html'
+            }
+        }
+    }
+{code}
+
+GSP features several codecs that it uses when writing the page to the response. The codecs are configured in the @codecs@ block and are described below:
+
+* @expression@ - The expression codec is used to encode any code found within ${..} expressions. The default for newly created application is @html@ encoding.
+* @scriptlet@ - Used for output from GSP scriplets (<% %>, <%= %> blocks). The default for newly created applications is @html@ encoding
+* @taglib@ - Used to encode output from GSP tag libraries. The default is @none@ for new applications, as typically it is the responsibility of the tag author to define the encoding of a given tag and by specifying @none@ Grails remains backwards compatible with older tag libraries.
+* @staticparts@ - Used to encode the raw markup output by a GSP page. The default is @none@.
+
+h4. Double Encoding Prevention
+
+Versions of Grails prior to 2.3, included the ability to set the default codec to @html@, however enabling this setting sometimes proved problematic when using existing plugins due to encoding being applied twice (once by the @html@ codec and then again if the plugin manually called @encodeAsHTML@).
+
+Grails 2.3 includes double encoding prevention so that when an expression is evaluated, it will not encode if the data has already been encoded (Example @${foo.encodeAsHTML()}@).
+
+h4. Raw Output
+
+If you are 100% sure that the value you wish to present on the page has not been received from user input, and you do not wish the value to be encoded then you can use the @raw@ method:
+
+{code}
+    ${raw(book.title)}
+{code}
+
+The 'raw' method is available in tag libraries, controllers and GSP pages.
+
+h4. Per Plugin Encoding
+
+Grails also features the ability to control the codecs used on a per plugin basis. For example if you have a plugin named @foo@ installed, then placing the following configuration in your application's @Config.groovy@ will disable encoding for only the @foo@ plugin
+
+{code}
+    foo.grails.views.gsp.codecs.expression = "none"
+{code}    
+
+h4. Per Page Encoding
+
+You can also control the various codecs used to render a GSP page on a per page basis, using a page directive:
+
+{code}
+    <%@page expressionCodec="none" %>
+{code}    
+
+h4. Per Tag Library Encoding
+
+Each tag library created has the opportunity to specify a default codec used to encode output from the tag library using the "defaultEncodeAs" property:
+
+{code}
+    static defaultEncodeAs = 'html'
+{code}    
+
+Encoding can also be specified on a per tag basis using "encodeAsForTags":
+
+{code}
+    static encodeAsForTags = [tagName: 'raw']
+{code}    
+
+h4. Context Sensitive Encoding Switching
+
+Certain tags require certain encodings and Grails features the ability to enable a codec only a certain part of a tag's execution using the "withCodec" method. Consider for example the "<g:javascript>"" tag which allows you to embed JavaScript code in the page. This tag requires JavaScript encoding, not HTML coding for the execution of the body of the tag (but not for the markup that is output): 
+
+{code}
+    out.println '<script type="text/javascript">'
+    withCodec("JavaScript") {
+        out << body()
+    }
+    out.println()
+    out.println '</script>'
+{code}
+
+h4. Forced Encoding for Tags
+
+If a tag specifies a default encoding that differs from your requirements you can force the encoding for any tag by passing the optional 'encodeAs' attribute:
+
+{code}
+    <g:message code="foo.bar" encodeAs="JavaScript" />
+{code}    
+
+h4. Default Encoding for All Output
+
+The default configuration for new applications is fine for most use cases, and backwards compatible with existing plugins and tag libraries. However, you can also make your application even more secure by configuring Grails to always encode all output at the end of a response. This is done using the @filteringCodecForContentType@ configuration in @Config.groovy@:
+
+{code}
+    grails.views.gsp.filteringCodecForContentType.'text/html' = 'html'
+{code}    
+
+Note that, if activated, the @staticparts@ codec typically needs to be set to @raw@ so that static markup is not encoded:
+
+{code}
+    codecs {
+        expression = 'html' // escapes values inside ${}
+        scriptlet = 'html' // escapes output from scriptlets in GSPs
+        taglib = 'none' // escapes output from taglibs
+        staticparts = 'raw' // escapes output from static template parts
+    }
+{code}
+
