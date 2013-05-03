@@ -18,14 +18,26 @@ which prints extra information about it, such as its description, who wrote, etc
 If you have created a Grails plugin and want it to be hosted in the central repository, you'll find instructions for getting an account on [this wiki page|http://grails.org/Creating+Plugins].
 {note}
 
-When you have access to the Grails Plugin repository, install the [Release Plugin|http://grails-plugins.github.com/grails-release/docs/index.html] and execute the @publish-plugin@ command to release your plugin:
+When you have access to the Grails Plugin repository, install the [Release Plugin|http://grails-plugins.github.com/grails-release/docs/index.html] by declaring it as a 'build' scoped dependency in @grails-app/conf/BuildConfig.groovy@ file:
 
 {code:java}
-grails install-plugin release
+grails.project.dependency.resolution = {
+    ...
+    plugins {
+        build ":release:3.0.0"
+    }
+}
+
+{code}
+
+And execute the @publish-plugin@ command to release your plugin:
+
+{code:java}
 grails publish-plugin
 {code}
 
-This will automatically commit any remaining source code changes to your SCM provider and then publish the plugin to the central repository. If the command is successful, it will immediately be available on the plugin portal at http://grails.org/plugin/<pluginName>. You can find out more about the Release plugin and its other features in [its user guide|http://grails-plugins.github.com/grails-release/docs/index.html].
+
+This will automatically publish the plugin to the central repository. If the command is successful, it will immediately be available on the plugin portal at http://grails.org/plugin/<pluginName>. You can find out more about the Release plugin and its other features in [its user guide|http://grails-plugins.github.com/grails-release/docs/index.html].
 
 h4. Configuring Additional Repositories
 
@@ -71,41 +83,9 @@ repositories {
 }
 {code}
 
-All of the above examples use HTTP; however you can specify any [Ivy resolver|http://ant.apache.org/ivy/history/latest-milestone/settings/resolvers.html] to resolve plugins with. Below is an example that uses an SSH resolver:
-
-{code}
-def sshResolver = new SshResolver(user:"myuser", host:"myhost.com")
-sshResolver.addArtifactPattern(
-        "/path/to/repo/grails-[artifact]/tags/" +
-        "LATEST_RELEASE/grails-[artifact]-[revision].[ext]")
-sshResolver.latestStrategy =
-        new org.apache.ivy.plugins.latest.LatestTimeStrategy()
-
-sshResolver.changingPattern = ".*SNAPSHOT"
-sshResolver.setCheckmodified(true)
-{code}
-
-The above example defines an artifact pattern which tells Ivy how to resolve a plugin zip file. For a more detailed explanation on Ivy patterns see the [relevant section|http://ant.apache.org/ivy/history/2.1.0/concept.html#patterns] in the Ivy user guide.
 
 h4. Publishing to Maven Compatible Repositories
 
-In general it is recommended for Grails 1.3 and above to use standard Maven-style repositories to self host plugins. The benefits of doing so include the ability for existing tooling and repository managers to interpret the structure of a Maven repository. In addition Maven compatible repositories are not tied to SVN as Grails repositories are.
+In general it is recommended for Grails 1.3 and above to use standard Maven-style repositories to self host plugins. The benefits of doing so include the ability for existing tooling and repository managers to interpret the structure of a Maven repository. 
 
-You use the Maven publisher plugin to publish a plugin to a Maven repository. Please refer to the section of the [Maven deployment|guide:mavendeploy] user guide on the subject.
-
-h4. Publishing to Grails Compatible Repositories
-
-Specify the @grails.plugin.repos.distribution.myRepository@ setting within the grails-app/conf/BuildConfig.groovy file to publish a Grails plugin to a Grails-compatible repository:
-
-{code}
-grails.plugin.repos.distribution.myRepository =
-        "https://svn.codehaus.org/grails/trunk/grails-test-plugin-repo"
-{code}
-
-You can also provide this settings in the \$USER_HOME/.grails/settings.groovy file if you prefer to share the same settings across multiple projects.
-
-Once this is done use the @repository@ argument of the @release-plugin@ command to specify the repository to release the plugin into:
-
-{code}
-grails release-plugin -repository = myRepository
-{code}
+You use the Release plugin to publish a plugin to a Maven repository. Please refer to the section of the [Maven deployment|guide:mavendeploy] user guide on the subject.
