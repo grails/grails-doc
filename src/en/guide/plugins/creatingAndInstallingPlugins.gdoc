@@ -69,27 +69,20 @@ via Spring, but is made simpler by the coding by convention paradigm.\\\
 }
 {code}
 
-h4. Installing and Distributing Plugins
+h4. Installing Local Plugins
 
-To distribute a plugin you navigate to its root directory in a console and run:
-
-{code:java}
-grails package-plugin
-{code}
-
-This will create a zip file of the plugin starting with @grails-@ then the plugin name and version. For example with the example plugin created earlier this would be @grails-example-0.1.zip@. The @package-plugin@ command will also generate a @plugin.xml@ file which contains machine-readable information about plugin's name, version, author, and so on.
-
-Once you have a plugin distribution file you can navigate to a Grails project and run:
+To make your plugin available for use in a Grails application run the @maven-install@ command:
 
 {code:java}
-grails install-plugin /path/to/grails-example-0.1.zip
+grails maven-install
 {code}
 
-If the plugin is hosted on an HTTP server you can install it with:
+This will install the plugin into your local Maven cache. Then to use the plugin within an application declare a dependency on the plugin in your @grails-app/conf/BuildConfig.groovy@ file:
 
 {code:java}
-grails install-plugin http://myserver.com/plugins/grails-example-0.1.zip
+compile ":quartz:0.1"
 {code}
+
 
 h4. Notes on excluded Artefacts
 
@@ -155,12 +148,3 @@ This is particularly useful in two cases:
 The Artifactory repository for Grails now includes all the dependencies for published plugins. So, if you are using inline plugins that have dependencies, it is necessary to do a secondary resolve because these dependencies might not be in the repository. Therefore, you should set @legacyResolve@ to @true@ in your @BuildConfig.groovy@ if you are using inline plugins with dependencies.
 {note}
 
-h4. Global plugins
-
-Plugins can also be installed globally for all applications for a particular version of Grails using the @\-global@ flag, for example:
-
-{code}
-grails install-plugin webtest -global
-{code}
-
-The default location is \$USER_HOME/.grails/<grailsVersion>/global-plugins but this can be customized with the @grails.global.plugins.dir@ setting in @BuildConfig.groovy@.
