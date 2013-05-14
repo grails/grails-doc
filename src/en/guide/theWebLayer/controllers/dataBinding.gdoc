@@ -1,6 +1,196 @@
 Data binding is the act of "binding" incoming request parameters onto the properties of an object or an entire graph of objects. Data binding should deal with all necessary type conversion since request parameters, which are typically delivered by a form submission, are always strings whilst the properties of a Groovy or Java object may well not be.
 
+h4. Map Based Binding
+
+The data binder is capable of converting and assigning values in a Map to properties of an object.  The binder will associate entries in the Map to properties of the object using the keys in the Map that have values which correspond to property names on the object.  The following code demonstrates the basics:
+
+{code:java}
+// grails-app/domain/Person.groovy
+class Person {
+    String firstName
+    String lastName
+    Integer age
+}
+{code}
+
+{code:java}
+def bindingMap = [firstName: 'Peter', lastName: 'Gabriel', age: 63]
+
+def person = new Person(bindingMap)
+
+assert person.firstName == 'Peter'
+assert person.lastNaem == 'Gabriel'
+assert person.age == 63
+{code}
+
+To update properties of a domain object you may assign a Map to the @properties@ property of the domain class:
+
+{code:java}
+def bindingMap = [firstName: 'Peter', lastName: 'Gabriel', age: 63]
+
+def person = Person.get(someId)
+person.properties = bindingMap
+
+assert person.firstName == 'Peter'
+assert person.lastNaem == 'Gabriel'
+assert person.age == 63
+{code}
+
+The binder can populate a full graph of objects using Maps of Maps.
+
+{code:java}
+class Person {
+    String firstName
+    String lastName
+    Integer age
+    Address homeAddress
+}
+
+class Address {
+    String county
+    String country
+}
+{code}
+
+{code:java}
+def bindingMap = [firstName: 'Peter', lastName: 'Gabriel', age: 63, homeAddress: [county: 'Surrey', country: 'England'] ]
+
+def person = new Person(bindingMap)
+
+assert person.firstName == 'Peter'
+assert person.lastNaem == 'Gabriel'
+assert person.age == 63
+assert person.homeAddress.county == 'Surrey'
+assert person.homeAddress.country == 'England'
+{code}
+
+h4. Binding To Collections And Maps
+
+The data binder can populate and update Collections and Maps.  The following code shows a simple example of populating a @List@ of objects in a domain class:
+
+{code:java}
+class Band {
+    String name
+    static hasMany = [albums: Album]
+    List albums
+}
+
+class Album {
+    String title
+    Integer numberOfTracks
+}
+{code}
+
+{code:java}
+def bindingMap = [name: 'Genesis', 
+                  'albums[0]': [title: 'Foxtrot', numberOfTracks: 6], 
+                  'albums[1]': [title: 'Nursery Cryme', numberOfTracks: 7]]
+
+def band = new Band(bindingMap)
+
+assert band.name == 'Genesis'
+assert band.albums.size() == 2
+assert band.albums[0].title == 'Foxtrot'
+assert band.albums[0].numberOfTracks == 6
+assert band.albums[1].title == 'Nursery Cryme'
+assert band.albums[1].numberOfTracks == 7
+{code}
+
+That code would work in the same way if @albums@ were an array instead of a @List@.
+
+Note that when binding to a @Set@ the structure of the @Map@ being bound to the @Set@ is the same as that of a @Map@ being bound to a @List@ but since a @Set@ is unordered, the indexes don't necessarily correspond to the order of elements in the @Set@.  In the code example above, if @albums@ were a @Set@ instead of a @List@, the @bindingMap@ could look exactly the same but 'Foxtrot' might be the first album in the @Set@ or it might be the second.  When updating existing elements in a @Set@ the @Map@ being assigned to the @Set@ must have @id@ elements in it which represent the element in the @Set@ being updated, as in the following example:
+
+{code}
+/*
+ * The value of the indexes 0 and 1 in albums[0] and albums[1] are arbitrary
+ * values that can be anything as long as they are unique within the Map.
+ * They do not correspond to the order of elements in albums because albums
+ * is a Set.
+ */
+def bindingMap = ['albums[0]': [id: 9, title: 'The Lamb Lies Down On Broadway']
+                  'albums[1]': [id: 4, title: 'Selling England By The Pound']]
+
+def band = Band.get(someBandId)
+
+/*
+ * This will find the Album in albums that has an id of 9 and will set its title
+ * to 'The Lamb Lies Down On Broadway' and will find the Album in albums that has
+ * an id of 4 and set its title to 'Selling England By The Pound'.  In both 
+ * cases if the Album cannot be found in albums then the album will be retrieved
+ * from the database by id, the Album will be added to albums and will be updated 
+ * with the values described above.  If a Album with the specified id cannot be
+ * found in the database, then a binding error will be created and associated
+ * with the band object.  More on binding errors later.
+ */
+band.properties = bindingMap
+{code}
+
+When binding to a @Map@ the structure of the binding @Map@ is the same as the structore of a @Map@ used for binding to a @List@ or a @Set@ and the index inside of square brackets corresponds to the key in the @Map@ being bound to.  See the following code:
+
+{code:java}
+class Album {
+    String title
+    static hasMany = [players: Player]
+    Map players
+}
+
+class Player {
+    String name
+}
+{code}
+
+{code}
+def bindingMap = [title: 'The Lamb Lies Down On Broadway',
+                  'players[guitar]': [name: 'Steve Hacket'],
+                  'players[vocals]': [name: 'Peter Gabriel']
+                  'players[keyboards]': [name: 'Tony Banks']]
+
+def album = new Album(bindingMap)
+
+assert album.title == 'The Lamb Lies Down On Broadway'
+assert album.players.size() == 3
+assert album.players.guitar == 'Steve Hacket'
+assert album.players.vocals == 'Peter Gabriel'
+assert album.players.keyboards == 'Tony Banks'
+{code}
+  
+When updating an exisiting @Map@, if the key specified in the binding @Map@ does not exist in the @Map@ being bound to then a new value will be created and added to the @Map@ with the specified key as in the following example:
+
+
+{code}
+def bindingMap = [title: 'The Lamb Lies Down On Broadway',
+                  'players[guitar]': [name: 'Steve Hacket'],
+                  'players[vocals]': [name: 'Peter Gabriel']
+                  'players[keyboards]': [name: 'Tony Banks']]
+
+def album = new Album(bindingMap)
+
+assert album.title == 'The Lamb Lies Down On Broadway'
+assert album.players.size() == 3
+assert album.players.guitar == 'Steve Hacket'
+assert album.players.vocals == 'Peter Gabriel'
+assert album.players.keyboards == 'Tony Banks'
+
+def updatedBindingMap = ['players[drums]': [name: 'Phil Collins'],
+                         'players[keyboards]': [name: 'Anthony George Banks']]
+
+album.properties = updatedBindingMap
+
+assert album.title == 'The Lamb Lies Down On Broadway'
+assert album.players.size() == 4
+assert album.players.guitar == 'Steve Hacket'
+assert album.players.vocals == 'Peter Gabriel'
+assert album.players.keyboards == 'Anthony George Banks'
+assert album.players.drums == 'Phil Collins'
+{code}
+
 h4. Binding Request Data to the Model
+
+The [params|controllers] object that is available in a controller has special behavior that helps convert dotted request parameter names into nested Maps that the data binder can work with.  For example, if a request includes request parameters named @person.homeAddress.country@ and @person.homeAddress.city@ with values 'USA' and 'St. Louis' respectively, @params@ would include entries like these:
+
+{code}
+[person: [homeAddress: [country: 'USA', city: 'St. Louis']]]
+{code}
 
 There are two ways to bind request parameters onto the properties of a domain class. The first involves using a domain classes' Map constructor:
 
@@ -29,7 +219,7 @@ def save() {
 
 This has the same effect as using the implicit constructor.
 
-When binding an empty String (a String with no characters in it, not even spaces) to a constrained property which has been configured as nullable, the data binder will convert the empty String to null.  This simplifies the most common case where the intent is to treat an empty form field as having the value null since there isn't a way to actually submit a null as a request parameter.  When this behavior is not desireable the application may assign the value directly.
+When binding an empty String (a String with no characters in it, not even spaces), the data binder will convert the empty String to null.  This simplifies the most common case where the intent is to treat an empty form field as having the value null since there isn't a way to actually submit a null as a request parameter.  When this behavior is not desireable the application may assign the value directly.
 
 The mass property binding mechanism will by default automatically trim all Strings at binding time.  To disable this behavior set the @grails.databinding.trimStrings@ property to false in @grails-app/conf/Config.groovy@.
 
