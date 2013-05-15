@@ -412,8 +412,10 @@ import org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerToken
 ...
 
 void testValidFormSubmission() {
-    def token = SynchronizerToken.store(session)
-    params[SynchronizerToken.KEY] = token.currentToken.toString()
+    def tokenHolder = SynchronizerTokensHolder.store(session)
+
+    params[SynchronizerTokensHolder.TOKEN_URI] = '/controller/handleForm'
+    params[SynchronizerTokensHolder.TOKEN_KEY] = tokenHolder.generateToken(params[SynchronizerTokensHolder.TOKEN_URI])
 
     controller.handleForm()
     assert "Good" == response.text
