@@ -1,0 +1,122 @@
+Since Grails 2.3, it possible to create RESTful URL mappings that map onto controllers by convention. The syntax to do so is as follows:
+
+{code}
+"/books"(resources:'book')
+{code}
+
+You define a base URI and the name of the controller to map to using the @resources@ parameter. The above mapping will result in the following URLs:
+
+
+{table}
+ HTTP Method | URI           | Grails Action 
+ GET         |/books         | index            
+ GET         |/books/create  | create              
+ POST        |/books         | save            
+ GET         |/books/${id}       | show              
+ GET         |/books/${id}/edit  | edit              
+ PUT         |/books/${id}       | update           
+ DELETE      |/books/${id}       | delete        
+{table}
+
+If you wish to include or exclude any of the generated URL mappings you can do so with the @include@ or @exclude@ parameter, which accepts the name of the Grails action to include or exclude:
+
+{code}
+"/books"(resources:'book', exclude:['delete', 'update'])
+
+or 
+
+"/books"(resources:'book', include:['index', 'show'])
+{code}
+
+h4. Single resources
+
+A single resource is a resource for which there is only one (possibly per user) in the system. You can create a single resource using the @resource@ parameter (as oppose to @resources@):
+
+{code}
+"/book"(resource:'book')
+{code}
+
+This results in the following URL mappings:
+
+{table}
+ HTTP Method | URI           | Grails Action 
+ GET         |/book          | index            
+ GET         |/book/create   | create              
+ POST        |/book          | save            
+ GET         |/book          | show              
+ GET         |/book/edit     | edit              
+ PUT         |/book          | update           
+ DELETE      |/book          | delete        
+{table}
+
+The main difference is that the id is not included in the URL mapping.
+
+h4. Nested Resources
+
+You can nest resource mappings to generate child resources. For example:
+
+{code}
+"/books"(resources:'book') {
+  "/authors"(resources:"author")
+}
+{code}
+
+The above will result in the following URL mappings:
+
+{table}
+HTTP Method | URL                                  | Grails Action 
+GET         | /books/${bookId}/authors             | index            
+GET         | /books/${bookId}/authors/create      | create              
+POST        | /books/${bookId}/authors             | save            
+GET         | /books/${bookId}/authors/${id}       | show              
+GET         | /books/${bookId}/authors/edit/${id}  | edit              
+PUT         | /books/${bookId}/authors/${id}       | update           
+DELETE      | /books/${bookId}/authors/${id}       | delete        
+{table}
+
+You can also nest regular URL mappings within a resource mapping:
+
+{code}
+"/books"(resources: "book") {
+    "/publisher"(controller:"publisher")
+}
+{code}
+
+This will result in the following URL being available:
+
+{table}
+HTTP Method | URL                      | Grails Action 
+GET         | /books/1/publisher       | index               
+{table}
+
+h4. Linking to RESTful Mappings
+
+You can link to any URL mapping created with the @g:link@ tag provided by Grails simply by referencing the controller and action to link to:
+
+{code}
+<g:link controller="book" action="index">My Link</g:link>
+{code}
+
+The same applies with nested resource. For example given the nested resources:
+
+{code}
+"/books"(resources:'book') {
+  "/authors"(resources:"author")
+}
+{code}
+
+If you wished to link to the @show@ action of the @author@ controller, you would write:
+
+{code}
+// Results in /books/1/authors/2
+<g:link controller="author" action="show" method="GET" params="[bookId:1]" id="2">The Author</g:link>
+{code}
+
+However, to make this more concise there is a @resource@ attribute to the link tag which can be used instead:
+
+{code}
+// Results in /books/1/authors/2
+<g:link resource="book/author" action="show" bookId="1" id="2">My Link</g:link>
+{code}
+
+The resource attribute accepts a path to the resource separated by a slash (in this case "book/author"). The attributes of the tag can be used to specify the necessary @bookId@ parameter.
