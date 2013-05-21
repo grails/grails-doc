@@ -75,6 +75,62 @@ h4. Hibernate 3 and 4 support
 
 The GORM for Hibernate 3 support for Grails has been extracted into a separate project, allowing new support for Hibernate 4 as a separate plugin.
 
+h4. Namespaced Controllers
+
+Controllers may now be defined in a namespace which allows for multiple controllers to be defined with the same name in different packages.
+
+{code}
+// grails-app/controllers/com/app/reporting/AdminController.groovy
+package com.app.reporting
+
+class AdminController {
+
+    static namespace = 'reports'
+
+    // ...
+}
+{code}
+
+{code}
+// grails-app/controllers/com/app/security/AdminController.groovy
+package com.app.security
+
+class AdminController {
+
+    static namespace = 'users'
+
+    // ...
+}
+{code}
+
+
+{code}
+// grails-app/conf/UrlMappings.groovy
+class UrlMappings {
+
+    static mappings = {
+        '/userAdmin' {
+            controller = 'admin'
+            controllerNamespace = 'users'
+        }
+
+        '/reportAdmin' {
+            controller = 'admin'
+            controllerNamespace = 'reports'
+        }
+
+        "/$controllerNamepsace/$controller/$action?"()
+    }
+}
+{code}
+
+{code}
+<g:link controller="admin" controllerNamespace="reports">Click For Report Admin</g:link>
+<g:link controller="admin" controllerNamespace="users">Click For User Admin</g:link>
+{code}
+
+See the [namespaced controllers|guide:namespacedControllers] docs for more information.
+
 h4. Command Line
 
 The @create-app@ command will now by default generate the command line grailsw wrapper for newly created applications.  The @--skip-wrapper@ switch may be used to prevent the wrapper from being generated.
