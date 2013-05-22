@@ -29,7 +29,7 @@ class AdminController {
 {code}
 
 When defining url mappings which should be associated with a namespaced
-controller, the @controllerNamespace@ variable needs to be part of the URL mapping.
+controller, the @namespace@ variable needs to be part of the URL mapping.
 
 {code}
 // grails-app/conf/UrlMappings.groovy
@@ -38,12 +38,12 @@ class UrlMappings {
     static mappings = {
         '/userAdmin' {
             controller = 'admin'
-            controllerNamespace = 'users'
+            namespace = 'users'
         }
 
         '/reportAdmin' {
             controller = 'admin'
-            controllerNamespace = 'reports'
+            namespace = 'reports'
         }
 
         "/$controllerNamepsace/$controller/$action?"()
@@ -51,15 +51,15 @@ class UrlMappings {
 }
 {code}
 
-Reverse URL mappings also require that the @controllerNamespace@ be specified.
+Reverse URL mappings also require that the @namespace@ be specified.
 
 {code}
-<g:link controller="admin" controllerNamespace="reports">Click For Report Admin</g:link>
-<g:link controller="admin" controllerNamespace="users">Click For User Admin</g:link>
+<g:link controller="admin" namespace="reports">Click For Report Admin</g:link>
+<g:link controller="admin" namespace="users">Click For User Admin</g:link>
 {code}
 
 When resolving a URL mapping (forward or reverse) to a namespaced controller,
-a mapping will only match if the @controllerNamespace@ has been provided.  If
+a mapping will only match if the @namespace@ has been provided.  If
 the application provides several controllers with the same name in different
 packages, at most 1 of them may be defined without a @namespace@ property.  If
 there are multiple controllers with the same name that do not define a
