@@ -43,6 +43,8 @@ class LoginController {
 }
 {code}
 
+If the command object's type is that of a domain class and there is an @id@ request parameter then instead of invoking the domain class constructor to create a new instance a call will be made to the static @get@ method on the domain class and the value of the @id@ parameter will be passed as an argument.  Whatever is returned from that call to @get@ is what will be passed into the controller action.  This means that if there is an @id@ request parameter and no corresponding record is found in the database then the value of the command object will be @null@.
+
 h4. Command Objects and Dependency Injection
 
 Command objects can participate in dependency injection. This is useful if your command object has some custom validation logic which uses a Grails [service|guide:services]:
