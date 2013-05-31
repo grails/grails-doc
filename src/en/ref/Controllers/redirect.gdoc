@@ -11,6 +11,8 @@ redirect(action: "show")
 
 redirect(controller: "book", action: "list")
 
+redirect(controller: "book", action: "list", namespace: "publishing")
+
 redirect(controller: "book", action: "list", plugin: "publishingUtils")
 
 redirect(action: "show", id: 4, params: [author: "Stephen King"])
@@ -24,7 +26,18 @@ redirect(url: "http://www.blogjava.net/BlueSUN")
 
 h2. Description
 
-Redirects the current action to another action, optionally passing parameters and/or errors.
+Redirects the current action to another action, optionally passing parameters and/or errors.  When issuing a redirect from a namespaced controller, the namespace for the target controller is implied to be that of the controller initiating the redirect.  To issue a redirect from a namespaced controller to a controller that is not in a namespace, the namespace must be explicitly specified with a value of @null@ as shown below.
+
+{code:java}
+class SomeController {
+    static namespace = 'someNamespace'
+
+    def index() {
+        // issue a redirect to PersonController which does not define a namespace
+        redirect action: 'list', controller: 'person', namespace: null
+    }
+}
+{code}
 
 h4. Parameters
 
