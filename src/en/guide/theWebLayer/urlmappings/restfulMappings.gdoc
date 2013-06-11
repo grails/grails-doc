@@ -8,10 +8,10 @@ You define a base URI and the name of the controller to map to using the @resour
 
 
 {table}
- HTTP Method | URI           | Grails Action 
- GET         |/books         | index            
- GET         |/books/create  | create              
- POST        |/books         | save            
+ HTTP Method | URI              | Grails Action 
+ GET         |/books            | index            
+ GET         |/books/create     | create              
+ POST        |/books             | save            
  GET         |/books/${id}       | show              
  GET         |/books/${id}/edit  | edit              
  PUT         |/books/${id}       | update           
@@ -97,7 +97,16 @@ You can link to any URL mapping created with the @g:link@ tag provided by Grails
 <g:link controller="book" action="index">My Link</g:link>
 {code}
 
-The same applies with nested resource. For example given the nested resources:
+As a convenience you  can also pass a domain instance to the @resource@ attribute of the @link@ tag:
+
+{code}
+<g:link resource="${book}">My Link</g:link>
+{code}
+
+This will automatically produce the correct link (in this case "/books/1" for an id of "1").
+
+
+The case of nested resources is a little different as they typically required two identifiers (the id of the resource and the one it is nested within). For example given the nested resources:
 
 {code}
 "/books"(resources:'book') {

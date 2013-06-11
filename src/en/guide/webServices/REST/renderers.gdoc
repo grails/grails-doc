@@ -1,0 +1,78 @@
+There are several ways to customize response rendering in Grails, for a more global option we'll first look at implementing custom @Renderer@ instances
+
+h4. Implementing a Custom Renderer
+
+As mentioned previously, Grails maintains a registry of @grails.rest.render.Renderer@ instances. There are some default configured renderers and the ability to register or override renderers for a given domain class or even for a collection of domain classes.
+
+For example below is a simple implementation that customizes the rendering of the @Book@ class:
+
+{code}
+package myapp
+import grails.rest.render.*
+import org.codehaus.groovy.grails.web.mime.MimeType
+
+class BookXmlRenderer extends AbstractRenderer<Book> {
+    BookXmlRenderer() {
+        super(Book, [MimeType.XML,MimeType.TEXT_XML] as MimeType[])
+    }
+
+    void render(Book object, RenderContext context) {
+        context.contentType = MimeType.XML.name
+
+        def xml = new groovy.xml.MarkupBuilder(context.writer)
+        xml.book(id: object.id, title:object.title)
+    }
+}
+{code}
+
+The @AbstractRenderer@ super class has a constructor that takes the class that it renders and the @MimeType@(s) that are accepted (via the ACCEPT header or file extension) for the renderer.
+
+To configure this renderer, simply add it is a bean to @grails-app/conf/spring/resources.groovy@:
+
+{code}
+beans = {
+    bookRenderer(myapp.BookXmlRenderer)
+}
+{code}
+
+The result will be that all @Book@ instances will be rendered in the following format:
+
+{code}
+<book id="1" title="The Stand"/>
+{code}
+
+TODO: Link rendering to binding!!!!!!
+
+h4. Container Renderers
+
+A @grails.rest.render.ContainerRenderer@ is a renderer that renders responses for containers of objects (lists, maps, collections etc.). The interface is largely the same as the @Renderer@ interface except for the addition of the @getComponentType()@ method, which should return the "contained" type. For example:
+
+{code}
+class BookListRenderer implements ContainerRenderer<List, Book> {
+    Class<List> getTargetType() { List }
+    Class<Book> getComponentType() { Book }
+    MimeType[] getMimeTypes() { [ MimeType.XML] as MimeType[] }
+    void render(List object, RenderContext context) {
+        ....
+    }
+}
+{code}
+
+h4. Using GSP to customize rendering
+
+You can also customize rendering on a per action basis. For example given the @show@ action mentioned previously:
+
+{code}
+def show(Book book) {
+    respond book
+}
+{code}
+
+You could supply a @show.xml.gsp@ file to customize the rendering:
+
+{code}
+<%@page contentType="application/xml"%>
+<book id="${book.id}" title="${book.title}"/>
+{code}
+
+

@@ -1,0 +1,116 @@
+The easiest way to create a RESTful API is Grails is to expose a domain classes as a REST resource. This can be done by adding the @grails.rest.Resource@ transformation to any domain class:
+
+{code}
+import grails.rest.*
+
+@Resource(uri='/books')
+class Book {
+
+    String title
+
+    static constraints = {
+        title blank:false
+    }
+}
+{code}
+
+Simply by adding the @Resource@ transformation and specifying a URI your domain class will automatically be available as a REST resource in either XML or JSON formats. The transformation will automatically register the necessary [RESTful URL mapping|guide:restfulMappings] and create a controller called @BookController@.
+
+You can try it out by adding some test data to @BootStrap.groovy@:
+
+{code}
+    def init = { servletContext ->
+
+        new Book(title:"The Stand").save()
+        new Book(title:"The Shining").save()
+    }
+{code}
+
+And then hitting the URL http://localhost:8080/myapp/books/1, which will render response like:
+
+{code}
+<?xml version="1.0" encoding="UTF-8"?>
+<book id="1">
+    <title>The Stand</title>
+</book>
+{code}
+
+If you change the URL to @http://localhost:8080/myapp/books/1.json@ you will get a JSON response such as:
+
+
+{code}
+{"id":1,"title":"The Stand"}
+{code}
+
+If you wish to change the default to return JSON instead of XML then can you do by setting the @formats@ attribute of the @Resource@ transformation:
+
+ {code}
+import grails.rest.*
+
+@Resource(uri='/books', formats=['json', 'xml'])
+class Book {
+    ...
+}
+{code}
+
+With the above example JSON will be prioritized. The list that is passed should contain the names of the formats that the resource should expose. The names of formats are defined in the @grails.mime.types@ setting of @Config.groovy@:
+
+{code}
+grails.mime.types = [
+    ...
+    json:          ['application/json', 'text/json'],
+    ...
+    xml:           ['text/xml', 'application/xml']
+]
+{code}
+
+See the section on [Configuring Mime Types|guide:contentNegotiation] in the user guide for more information.
+
+Instead of using the file extension in the URI, you can also obtain a JSON response using the ACCEPT header. For example using the Unix @curl@ tool:
+
+{code}
+$ curl -i -H "Accept: application/json" localhost:8080/myapp/books/1
+{"id":1,"title":"The Stand"}
+{code}
+
+This works thanks to Grails' [Content Negotiation|guide:contentNegotiation] features.
+
+You can create a new resource by issuing a @POST@ request:
+
+{code}
+$ curl -i -X POST -H "Content-Type: application/json" -d '{"title":"Along Came A Spider"}' localhost:8080/myapp/books
+HTTP/1.1 201 Created
+Server: Apache-Coyote/1.1
+...
+{code}
+
+Updating can be done with a @PUT@ request:
+
+{code}
+$ curl -i -X PUT -H "Content-Type: application/json" -d '{"title":"Along Came A Spider"}' localhost:8080/myapp/books/1
+HTTP/1.1 200 OK
+Server: Apache-Coyote/1.1
+...
+{code}
+
+Finally a resource can be deleted with @DELETE@ request:
+
+{code}
+$ curl -i -X DELETE localhost:8080/myapp/books/1
+HTTP/1.1 204 No Content
+Server: Apache-Coyote/1.1
+...
+{code}
+
+As you can see the @Resource@ transformation enables all of the HTTP method verbs on the resource. You can enable only read-only capability by setting the @readOnly@ attribute to true:
+
+{code}
+import grails.rest.*
+
+@Resource(uri='/books', readOnly=true)
+class Book {
+    ...
+}
+{code}
+
+In this case POST, PUT and DELETE requests will be forbidden.
