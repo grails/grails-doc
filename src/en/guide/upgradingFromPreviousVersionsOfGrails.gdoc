@@ -12,7 +12,38 @@ Although dependency resolution using Ivy is still supported, the default for Gra
 grails.project.dependency.resolver = "maven" // or ivy
 {code}
 
+h4. Dependency Metadata Changes
+
 In addition, the POM and dependency metadata for Grails 2.3 has been re-arranged so that only direct dependencies are specified for an application. This means that existing excludes may no longer work and may need adjusting when upgrading. Run the [dependency-report|commandLine] to see the new dependency metadata and make adjustments accordingly.
+
+A common error that may occur when upgrading is:
+
+{code}
+| Configuring classpath
+:: problems summary ::
+:::: WARNINGS
+    ::::::::::::::::::::::::::::::::::::::::::::::
+    ::          UNRESOLVED DEPENDENCIES         ::
+    ::::::::::::::::::::::::::::::::::::::::::::::
+    :: org.springframework#spring-test;3.2.2.RELEASE: configuration not found in org.springframework#spring-test;3.2.2.RELEASE: 'compile'. It was required from org.grails#grails-plugin-testing;2.3.0.BUILD-SNAPSHOT compile
+    ::::::::::::::::::::::::::::::::::::::::::::::
+{code}
+
+This is caused by a plugin that depends on an old version of @spring-test@ (for example the [Mail plugin|http://grails.org/plugins/mail]). To correct this run @grails dependency-report@ and search for plugins that have a transitive dependency on @spring-test@ and exclude them. For example:
+
+{code}
+plugins {
+  compile ":mail:1.0", {
+    excludes "spring-test"
+  }  
+}
+{code}
+
+However, longer term to solve problems like this we recommend that users move away from Ivy and use Aether instead for dependency resolution:
+
+{code}
+grails.project.dependency.resolver="maven"
+{code}
 
 h4. No initial offline mode with Aether
 
