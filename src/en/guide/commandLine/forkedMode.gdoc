@@ -5,12 +5,11 @@ Since Grails 2.3, the @run-app@, @run-war@, @test-app@ and @console@ commands ar
 Forked execution is configured via the @grails-app/conf/BuildConfig.groovy@ file. The following is the default configuration:
 
 {code}
-forkConfig = [maxMemory: 1024, minMemory: 64, debug: false, maxPerm: 256]
 grails.project.fork = [
-   test: forkConfig, // configure settings for the test-app JVM
-   run: forkConfig, // configure settings for the run-app JVM
-   war: forkConfig, // configure settings for the run-war JVM
-   console: forkConfig // configure settings for the Swing console JVM
+   test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true], // configure settings for the test-app JVM
+   run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256], // configure settings for the run-app JVM
+   war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256], // configure settings for the run-war JVM
+   console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]// configure settings for the Console UI JVM
 ]
 {code}
 
@@ -40,6 +39,45 @@ grails.project.fork = [
    ...
 ]
 {code}
+
+h4. Using the Test Runnner Deamon to Speed-up Test Execution
+
+The defaut configuration for the testing is to activate a daemon to run tests using the @daemon@ argument:
+
+{code}
+grails.project.fork = [
+   test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true], // configure settings for the test-app JVM
+   ...
+{code}
+
+This only works in interactive mode, so if you start Grails with the 'grails' command and then using @test-app@ the daemon will be used:
+
+{code}
+$ grails
+$ grails> test-app
+{code}
+
+This has the effect of speeding-up test executions times. You can disable the daemon by setting @daemon@ to @false@. If the @daemon@ becomes unresponsive you can restart it with @restart-daemon@:
+
+{code}
+$ grails> restart-daemon
+{code}
+ 
+
+h4. Debugging and Forked Execution (--debug vs --debug-fork)
+
+An important consideration when using forked execution is that the @debug@ argument will allow a remote debugger to be attached to the build JVM but not the JVM that your application is running in. To debug your application you should use the @debug-fork@ argument:
+
+{code}
+grails test-app --debug-fork
+{code}
+
+Or for run-app:
+
+{code}
+grails run-app --debug-fork
+{code}
+
 
 h4. Forked Tomcat Execution
 

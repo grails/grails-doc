@@ -20,6 +20,18 @@ Aether does not support resolving dependencies from a flat file system. This mea
 
 If however you do not have the necessary jars in your local Maven repository, then the only way to get offline execution is to enable Ivy via BuildConfig (see above).
 
+h4. Scaffolding moved to a plugin and rewritten
+
+If you have dynamically scaffolded controllers in your application then you will need to configure the 1.0 version of the [Scaffolding plugin|http://grails.org/plugin/scaffolding] in BuildConfig:
+
+{code}
+plugins {
+  compile ":scaffolding:1.0"
+}
+{code}
+
+By default for new applications the 2.0 version of the scaffolding plugin is used, which is not backwards compatible with 1.0.
+
 h4. Forked Execution for Testing
 
 Tests are now by default executed in a forked JVM (although this can be disabled). One implication of this is that tests will be slower to execute when using:
@@ -85,7 +97,7 @@ Core plugins like @tomcat@ and @hibernate@ are no longer versioned the same as t
 {code}
     plugins {
         // plugins for the build system only
-        build ':tomcat:7.0.39'
+        build ':tomcat:7.0.40'
 
         // plugins needed at runtime but not for compilation
         runtime ':hibernate:3.6.10.M3' 
