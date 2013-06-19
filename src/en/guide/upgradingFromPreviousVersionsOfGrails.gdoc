@@ -119,7 +119,14 @@ grails.project.fork = [
 
 h4. Forked Execution and Remote Debugging
 
-The @grails-debug@ command will no longer work with Grails for remote debugging sessions. The reason is the command enabled debugging for the build system JVM, but not the JVM used in forked execution. The solution is set the @debug@ setting to @true@ in @BuildConfig@ and use the regular @grails@ command to execute:
+The @grails-debug@ command will no longer work with Grails for remote debugging sessions. The reason is the command enabled debugging for the build system JVM, but not the JVM used in forked execution. The solution to this is to use the @debug-fork@ command line argument:
+
+{code}
+grails --debug-fork run-app
+{code}
+
+
+Alternatively you can set the @debug@ setting to @true@ in @BuildConfig@ and use the regular @grails@ command to execute:
 
 {code}
 forkConfig = [maxMemory: 1024, minMemory: 64, debug: true, maxPerm: 256]
@@ -135,7 +142,7 @@ Core plugins like @tomcat@ and @hibernate@ are no longer versioned the same as t
 {code}
     plugins {
         // plugins for the build system only
-        build ':tomcat:7.0.40'
+        build ':tomcat:7.0.40.1'
 
         // plugins needed at runtime but not for compilation
         runtime ':hibernate:3.6.10.M3' 
