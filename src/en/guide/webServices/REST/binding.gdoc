@@ -132,7 +132,7 @@ interface DataBindingSourceCreator {
 
 [AbstractRequestBodyDataBindingSourceCreator|api:org.grails.databinding.bindingsource.AbstractRequestbodyDataBindingSourceCreator]
 is an abstract class designed to be extended to simplify writing custom @DataBindingSourceCreator@ classes.  Classes which
-extend @AbstractRequestbodyDatabindingSourceHelper@ need to implement a method named @createBindingSource@
+extend @AbstractRequestbodyDatabindingSourceCreator@ need to implement a method named @createBindingSource@
 which accepts an @InputStream@ as an argument and returns a @DataBindingSource@ as well as implementing the @getMimeTypes@
 method described in the @DataBindingSourceCreator@ interface above.  The @InputStream@ argument to @createBindingSource@
 provides access to the body of the request.
@@ -190,18 +190,18 @@ class MyCustomDataBindingSourceCreator extends AbstractRequestBodyDataBindingSou
 }
 {code}
 
-An instance of @MyCustomDataSourceHelper@ needs to be registered in the spring application context.
+An instance of @MyCustomDataSourceCreator@ needs to be registered in the spring application context.
 
 {code:java}
 // grails-app/conf/spring/resources.groovy
 beans = {
 
-    myCustomHelper com.demo.myapp.databinding.MyCustomDataBindingSourceCreator
+    myCustomCreator com.demo.myapp.databinding.MyCustomDataBindingSourceCreator
 
     // ...
 }
 {code}
 
 
-With that in place the framework will use the @myCustomHelper@ bean any time a @DataBindingSourceCreator@ is needed
+With that in place the framework will use the @myCustomCreator@ bean any time a @DataBindingSourceCreator@ is needed
 to deal with a request which has a @contentType@ of "text/custom+demo+csv".
