@@ -77,25 +77,25 @@ class BookController {
 {code}
 
 The data binding depends on an instance of the [DataBindingSource|api:org.grails.databinding.DataBindingSource] interface created by an
-instance of the [DataBindingSourceHelper|api:org.grails.databinding.bindingsource.DataBindingSourceHelper] interface.  The specific
-implementation of @DataBindingSourceHelper@ will be selected based on the @contentType@ of the request.  Several implementations 
+instance of the [DataBindingSourceCreator|api:org.grails.databinding.bindingsource.DataBindingSourceCreator] interface.  The specific
+implementation of @DataBindingSourceCreator@ will be selected based on the @contentType@ of the request.  Several implementations 
 are provided to handle common content types.  The default implementations will be fine for most use cases.  The following table 
-lists the content types which are supported by the core framework and which @DataBindingSourceHelper@ implementations are used for each.
+lists the content types which are supported by the core framework and which @DataBindingSourceCreator@ implementations are used for each.
 
 {table}
- Content Type(s)             | Bean Name                      | DataBindingSourceHelper Impl.
- application/xml, text/xml   | xmlDataBindingSourceHelper     | org.codehaus.groovy.grails.web.binding.bindingsource.XmlDataBindingSourceHelper
- application/json, text/json | jsonDataBindingSourceHelper    | org.codehaus.groovy.grails.web.binding.bindingsource.JsonDataBindingSourceHelper
- application/hal+json        | halJsonDataBindingSourceHelper |org.codehaus.groovy.grails.web.binding.bindingsource.HalJsonDataBindingSourceHelper
+ Content Type(s)             | Bean Name                      | DataBindingSourceCreator Impl.
+ application/xml, text/xml   | xmlDataBindingSourceCreator     | org.codehaus.groovy.grails.web.binding.bindingsource.XmlDataBindingSourceCreator
+ application/json, text/json | jsonDataBindingSourceCreator    | org.codehaus.groovy.grails.web.binding.bindingsource.JsonDataBindingSourceCreator
+ application/hal+json        | halJsonDataBindingSourceCreator |org.codehaus.groovy.grails.web.binding.bindingsource.HalJsonDataBindingSourceCreator
 {table}
 
-In order provide your own @DataBindingSourceHelper@ for any of those content types, write a class which implements
-@DataBindingSourceHelper@ and register an instance of that class in the Spring application context.  If you
+In order provide your own @DataBindingSourceCreator@ for any of those content types, write a class which implements
+@DataBindingSourceCreator@ and register an instance of that class in the Spring application context.  If you
 are replacing one of the existing helpers, use the corresponding bean name from above.  If you are providing a
 helper for a content type other than those accounted for by the core framework, the bean name may be anything that
 you like but you should take care not to conflict with one of the bean names above.
 
-The @DataBindingSourceHelper@ interface defines just 2 methods:
+The @DataBindingSourceCreator@ interface defines just 2 methods:
 
 {code:java}
 package org.grails.databinding.bindingsource
@@ -111,7 +111,7 @@ import org.grails.databinding.DataBindingSource
  * @see DataBindingSource
  *
  */
-interface DataBindingSourceHelper {
+interface DataBindingSourceCreator {
     
     /**
      * @return All of the {@link MimeType} supported by this helper
@@ -130,33 +130,33 @@ interface DataBindingSourceHelper {
 }
 {code}
 
-[AbstractRequestBodyDataBindingSourceHelper|api:org.grails.databinding.bindingsource.AbstractRequestbodyDataBindingSourceHelper]
-is an abstract class designed to be extended to simplify writing custom @DataBindingSourceHelper@ classes.  Classes which
+[AbstractRequestBodyDataBindingSourceCreator|api:org.grails.databinding.bindingsource.AbstractRequestbodyDataBindingSourceCreator]
+is an abstract class designed to be extended to simplify writing custom @DataBindingSourceCreator@ classes.  Classes which
 extend @AbstractRequestbodyDatabindingSourceHelper@ need to implement a method named @createBindingSource@
 which accepts an @InputStream@ as an argument and returns a @DataBindingSource@ as well as implementing the @getMimeTypes@
-method described in the @DataBindingSourceHelper@ interface above.  The @InputStream@ argument to @createBindingSource@
+method described in the @DataBindingSourceCreator@ interface above.  The @InputStream@ argument to @createBindingSource@
 provides access to the body of the request.
 
 The code below shows a simple implementation.
 
 
 {code:java}
-// src/groovy/com/demo/myapp/databinding/MyCustomDataBindingSourceHelper.groovy
+// src/groovy/com/demo/myapp/databinding/MyCustomDataBindingSourceCreator.groovy
 package com.demo.myapp.databinding
 
 import org.codehaus.groovy.grails.web.mime.MimeType
 import org.grails.databinding.DataBindingSource
 import org.grails.databinding.SimpleMapDataBindingSource
-import org.grails.databinding.bindingsource.AbstractRequestBodyDataBindingSourceHelper
+import org.grails.databinding.bindingsource.AbstractRequestBodyDataBindingSourceCreator
 
 /**
- * A custom DataBindingSourceHelper capable of parsing key value pairs out of
+ * A custom DataBindingSourceCreator capable of parsing key value pairs out of
  * a request body containing a comma separated list of key:value pairs like:
  *
  * name:Herman,age:99,town:STL
  *
  */
-class MyCustomDataBindingSourceHelper extends AbstractRequestBodyDataBindingSourceHelper {
+class MyCustomDataBindingSourceCreator extends AbstractRequestBodyDataBindingSourceCreator {
 
     @Override
     public MimeType[] getMimeTypes() {
@@ -196,12 +196,12 @@ An instance of @MyCustomDataSourceHelper@ needs to be registered in the spring a
 // grails-app/conf/spring/resources.groovy
 beans = {
 
-    myCustomHelper com.demo.myapp.databinding.MyCustomDataBindingSourceHelper
+    myCustomHelper com.demo.myapp.databinding.MyCustomDataBindingSourceCreator
 
     // ...
 }
 {code}
 
 
-With that in place the framework will use the @myCustomHelper@ bean any time a @DataBindingSourceHelper@ is needed
+With that in place the framework will use the @myCustomHelper@ bean any time a @DataBindingSourceCreator@ is needed
 to deal with a request which has a @contentType@ of "text/custom+demo+csv".
