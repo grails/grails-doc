@@ -561,6 +561,19 @@ class Person {
 }
 {code}
 
+A global setting may be configured in @Config.groovy@ to define date formats which will be used application wide when binding to Date.
+
+{code:java}
+// grails-app/conf/Config.groovy
+
+grails.databinding.dateFormats = ['MMddyyyy', 'yyyy-MM-dd HH:mm:ss.S', "yyyy-MM-dd'T'hh:mm:ss'Z'"]
+
+{code}
+
+The formats specified in @grails.databinding.dateFormats@ will be attempted in the order in which they are included in the List.  If a property is marked with \@BindingFormat, the \@BindingFormat will take precedence over the values specified in @grails.databinding.dateFormats@.
+
+The default formats that are used are "yyyy-MM-dd HH:mm:ss.S" and "yyyy-MM-dd'T'hh:mm:ss'Z'".
+
 h4. Custom Formatted Converters
 
 You may supply your own handler for the [BindingFormat|api:org.grails.databinding.BindingFormat] annotation by writing a class which implements the [FormattedValueConverter|api:org.grails.databinding.converters.FormattedValueConverter] interface and regiserting an instance of that class as a bean in the Spring application context.  Below is an example of a trivial custom String formatter that might convert the case of a String based on the value assigned to the BindingFormat annotation.
