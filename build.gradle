@@ -47,6 +47,7 @@ fetchGrailsSource.onlyIf { !explicitGrailsHome }
 task apiDocs(type: GradleBuild, dependsOn: 'fetchGrailsSource') {
     tasks = ["groovydoc"]
     buildFile = "${project.grailsHome}/build.gradle"
+    startParameter.excludedTaskNames = ['compileGroovy']
 }
 
 apiDocs.onlyIf { !System.getProperty("disable.groovydocs") }
