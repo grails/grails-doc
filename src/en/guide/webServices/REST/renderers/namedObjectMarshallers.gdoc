@@ -1,0 +1,30 @@
+It is also possible to register named configurations. For example:
+
+{code}
+XML.createNamedConfig('publicApi') {
+  it.registerObjectMarshaller(Book) { Book book, XML xml ->
+    // do public API
+  }
+}
+XML.createNamedConfig('adminApi') {
+  it.registerObjectMarshaller(Book) { Book book, XML xml ->
+    // do admin API
+  }
+}
+{code}
+
+Then when you use either the render or response methods you can wrap the call in a named configuration if necessary to customize rendering per request:
+
+{code}
+XML.use( isAdmin ? 'adminApi' : 'publicApi') {
+    render book as XML
+}
+{code}
+
+or
+
+{code}
+XML.use( isAdmin ? 'adminApi' : 'publicApi') {
+    respond book 
+}
+{code}
