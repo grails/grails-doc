@@ -1,0 +1,55 @@
+Grails' Converters feature the notion of an [ObjectMarshaller|api:org.codehaus.groovy.grails.web.converters.marshaller.ObjectMarshaller], and each type can have a registered @ObjectMarshaller@. You can register custom @ObjectMarshaller@ instances to completely customize response rendering. For example you can define the following in @BootStrap.init@:
+
+{code}
+XML.registerObjectMarshaller Book, { Book book, XML xml ->
+  xml.attribute 'id', book.id
+  xml.build {
+    title(book.title)
+  }
+}
+{code}
+
+You can customize the formatting of an indvidual value this way too. For example the [JodaTime plugin|http://grails.org/plugin/jodatime] does the following to support rendering of JodaTime dates in JSON output:
+
+{code}
+JSON.registerObjectMarshaller(DateTime) {
+    return it?.toString("yyyy-MM-dd'T'HH:mm:ss'Z'")
+}
+{code}
+
+In the case of JSON it often simple to use a map to customize output:
+
+{code}
+JSON.registerObjectMarshaller(Book) {
+  def map= [:]
+  map['titl'] = it.title
+  map['auth'] = it.author
+  return map 
+}
+{code}
+
+h4. Registering Custom Marshallers via Spring
+
+Note that if you have many custom marshallers it is recommended you split the registration of these into a separate class:
+
+{code}
+class CustomMarshallerRegistrar {
+
+    @javax.annotation.PostConstruct
+    void registerMarshallers() {
+        JSON.registerObjectMarshaller(DateTime) {
+            return it?.toString("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        }        
+    }
+}
+{code}
+
+Then define this class as Spring bean in @grails-app/conf/spring/resources.groovy@:
+
+{code}
+beans = {
+    myCustomMarshallerRegistrar(CustomMarshallerRegistrar)
+}
+{code}
+
+The @PostConstruct@ annotation will get triggered on startup of your application.
