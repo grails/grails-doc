@@ -630,6 +630,31 @@ class Person {
 }
 {code}
 
+
+h4. Localized Binding Formats
+
+The @BindingFormat@ annotation supports localized format strings by using the optional @code@ attribute.  If a value is assigned to the code attribute that value will be used as the message code to retrieve the binding format string from the @messageSource@ bean in the Spring application context and that lookup will be localized.
+
+{code:java}
+import org.grails.databinding.BindingFormat
+
+class Person {
+    @BindingFormat(code='date.formats.birthdays')
+    Date birthDate
+}
+{code}
+
+
+{code}
+# grails-app/conf/i18n/messages.properties
+date.formats.birthdays=MMddyyyy
+{code}
+
+{code}
+# grails-app/conf/i18n/messages_es.properties
+date.formats.birthdays=ddMMyyyy
+{code}
+
 h4. Data Binding and Security concerns
 
 When batch updating properties from request parameters you need to be careful not to allow clients to bind malicious data to domain classes and be persisted in the database. You can limit what properties are bound to a given domain class using the subscript operator:
