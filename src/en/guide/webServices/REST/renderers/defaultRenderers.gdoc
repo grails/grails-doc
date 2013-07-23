@@ -1,4 +1,4 @@
-The default renderers for XML and JSON can be found in the @grails.rest.renderer.xml@ and @grails.rest.renderer.json@ packages respectively. These use the Grails converters (@grails.converters.XML@ and @grails.converters.JSON@) by default for response rendering. 
+The default renderers for XML and JSON can be found in the @grails.rest.render.xml@ and @grails.rest.render.json@ packages respectively. These use the Grails converters (@grails.converters.XML@ and @grails.converters.JSON@) by default for response rendering. 
 
 You can easily customize response rendering using these default renderers. A common change you may want to make is to include or exclude certain properties from rendering. 
 
@@ -7,7 +7,7 @@ h4. Including or Excluding Properties from Rendering
 As mentioned previously, Grails maintains a registry of @grails.rest.render.Renderer@ instances. There are some default configured renderers and the ability to register or override renderers for a given domain class or even for a collection of domain classes. To include a particular property from rendering you need to register a custom renderer by defining a bean in @grails-app/conf/spring/resources.groovy@:
 
 {code}
-import grails.rest.renderer.xml.*
+import grails.rest.render.xml.*
 
 beans = {
     bookRenderer(XmlRenderer, Book) {
@@ -24,7 +24,7 @@ The bean name is not important (Grails will scan the application context for all
 To exclude a property, the @excludes@ property of the @XmlRenderer@ class can be used:
 
 {code}
-import grails.rest.renderer.xml.*
+import grails.rest.render.xml.*
 
 beans = {
     bookRenderer(XmlRenderer, Book) {
