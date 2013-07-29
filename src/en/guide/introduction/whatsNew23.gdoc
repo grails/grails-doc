@@ -68,6 +68,24 @@ h4. New Scaffolding 2.0 Plugin
 
 Grails' Scaffolding feature has been split into a [separate plugin|http://grails.org/plugin/scaffolding]. Version 2.0 of the plugin includes support for generating REST controllers, Async controllers, and Spock unit tests.
 
+h4. URL Mappings May Specify A Redirect
+
+URL Mappings may now specify that a redirect should be triggered when the mapping matches an incoming request:
+
+{code:java}
+class UrlMappings {
+    static mappings = {
+        "/viewBooks"(redirect: '/books/list')
+        "/viewAuthors"(redirect: [controller: 'author', action: 'list'])
+        "/viewPublishers"(redirect: [controller: 'publisher', action: 'list', permanent: true])
+
+        // ...
+    }
+}
+{code}
+
+See the [user guide|guide:redirectMappings] for more information.
+
 h4. Async support
 
 Grails 2.3 features new [Asynchronous Programming APIs|guide:async] that allow for asynchronous processing of requests and integrate seamlessly with GORM. Example:
