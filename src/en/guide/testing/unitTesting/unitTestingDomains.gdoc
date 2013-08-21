@@ -397,5 +397,7 @@ class BookSpec extends Specification {
 }
 {code}
 
+Note that the @mockForConstraintsTests@ method changes the behavior of the errors object such that something like @book.errors['author']@ will evaluate to the name of the failed constraint, not a @org.springframework.validation.FieldError@ object.  This is convenient for unit tests.  If your unit test really does want a reference to the @org.springframework.validation.FieldError@ object use something like @book.errors.getFieldError('author')@.
+
 That's it for testing constraints. One final thing we would like to say is that testing the constraints in this way catches a common error: typos in the "constraints" property name which is a mistake that is easy to make and equally easy to overlook. A unit test for your constraints will highlight the problem straight away.
 
