@@ -655,7 +655,58 @@ date.formats.birthdays=MMddyyyy
 date.formats.birthdays=ddMMyyyy
 {code}
 
-h4. Data Binding and Security concerns
+h4. Using The Data Binder Directly
+
+There are situations where an application may want to use the data binder directly.  For example, to do binding in a Service on some arbitrary object which is not a domain class.  The following will not work because the @properties@ property is read only.
+
+{code:java}
+// src/groovy/bindingdemo/Widget.groovy
+package bindingdemo
+
+class Widget {
+    String name
+    Integer size
+}
+{code}
+
+{code:java}
+// grails-app/services/bindingdemo/WidgetService.groovy
+package bindingdemo
+
+class WidgetService {
+
+    def updateWidget(Widget widget, Map data) {
+        // this will throw an exception because
+        // properties is read-only
+        widget.properties = data
+    }
+}
+{code}
+
+An instance of the data binder is in the Spring application context with a bean name of @grailsWebDataBinder@.  That bean implements the [DataBinder|api:org.grails.databinding.DataBinder] interface.  The following code demonstrates using the data binder directly.
+
+{code:java}
+// grails-app/services/bindingdmeo/WidgetService
+package bindingdemo
+
+import org.grails.databinding.SimpleMapDataBindingSource
+
+class WidgetService {
+
+    // this bean will be autowired into the service
+    def grailsWebDataBinder
+
+    def updateWidget(Widget widget, Map data) {
+        grailsWebDataBinder.bind widget, data as SimpleMapDataBindingSource
+    }
+
+}
+{code}
+
+See the [DataBinder|api:org.grails.databinding.DataBinder] documentation for more information about overloaded versions
+of the @bind@ method.
+
+h4. Data Binding and Security Concerns
 
 When batch updating properties from request parameters you need to be careful not to allow clients to bind malicious data to domain classes and be persisted in the database. You can limit what properties are bound to a given domain class using the subscript operator:
 
