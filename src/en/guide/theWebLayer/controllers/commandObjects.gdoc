@@ -67,3 +67,33 @@ class LoginCommand {
 {code}
 
 In this example the command object interacts with the @loginService@ bean which is injected by name from the Spring @ApplicationContext@.
+
+h4. Binding The Request Body To Command Objects
+
+When a request is made to a controller action which accepts a command object and the request contains a body, Grails will attempt to parse the body of the request based on the request content type and use the body to do data binding on the command object.  See the following example.
+
+{code:java}
+// grails-app/controllers/bindingdemo/DemoController.groovy
+package bindingdemo
+
+class DemoController {
+
+    def createWidget(Widget w) { 
+        render "Name: ${w?.name}, Size: ${w?.size}"
+    }
+}
+
+class Widget {
+    String name
+    Integer size
+}
+{code}
+
+{code}
+$ curl -H "Content-Type: application/json" -d '{"name":"Some Widget","size":"42"}' localhost:8080/myapp/demo/createWidget
+ Name: Some Widget, Size: 42
+~ $ 
+$ curl -H "Content-Type: application/xml" -d '<widget><name>Some Other Widget</name><size>2112</size></widget>' localhost:8080/bodybind/demo/createWidget
+ Name: Some Other Widget, Size: 2112
+~ $ 
+{code}
