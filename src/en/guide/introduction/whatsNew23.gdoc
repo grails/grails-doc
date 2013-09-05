@@ -119,6 +119,36 @@ h4. Hibernate 3 and 4 support
 
 The GORM for Hibernate 3 support for Grails has been extracted into a separate project, allowing new support for Hibernate 4 as a separate plugin.
 
+h4. Controller Exception Handling
+
+Controllers may define exception handler methods which will automatically be invoked any time an action in that controller throws an exception.
+
+{code:java}
+// grails-app/controllers/demo/DemoController.groovy
+package demo
+
+class DemoController {
+
+    def someAction() {
+        // do some work
+    }
+
+    def handleSQLException(SQLException e) {
+        render 'A SQLException Was Handled'
+    }
+
+    def handleBatchUpdateException(BatchUpdateException e) {
+        redirect controller: 'logging', action: 'batchProblem'
+    }
+
+    def handleNumberFormatException(NumberFormatException nfe) {
+        [problemDescription: 'A Number Was Invalid']
+    }
+}
+{code}
+
+See the [controller exception handling|guide:controllerExceptionHandling] docs for more information.
+
 h4. Namespaced Controllers
 
 Controllers may now be defined in a namespace which allows for multiple controllers to be defined with the same name in different packages.
