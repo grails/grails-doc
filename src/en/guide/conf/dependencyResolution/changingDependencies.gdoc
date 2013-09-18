@@ -5,7 +5,7 @@ Typically, dependencies are constant. That is, for a given combination of @group
 Whenever you have a changing dependency, Grails will always check the remote repository for a new version. More specifically, when a changing dependency is encountered during dependency resolution its last modified timestamp in the local cache is compared against the last modified timestamp in the dependency repositories. If the version on the remote server is deemed to be newer than the version in the local cache, the new version will be downloaded and used.
 
 {note}
-Be sure to read the next section on “Dependency Resolution Caching” in addition to this one as it affects changing dependencies.
+Be sure to read the next section on "Dependency Resolution Caching" in addition to this one as it affects changing dependencies.
 {note}
 
 All dependencies (jars and plugins) with a version number ending in @-SNAPSHOT@ are *implicitly* considered to be changing by Grails. You can also explicitly specify that a dependency is changing by setting the changing flag in the dependency DSL (This is only required for Ivy, Aether does not support the 'changing' flag and treats dependencies that end with -SNAPSHOT as changing):
@@ -64,7 +64,7 @@ Note that the repositories are checked in the order they are defined in the @Bui
 If we perform dependency resolution again without the dependency changing on the remote server, the following will happen:
 
 * maven local repository is searched, dependency not found
-* maven network repository is searched, dependency is found to be the same “age” as the version in the cache so will not be updated (i.e. downloaded)
+* maven network repository is searched, dependency is found to be the same "age" as the version in the cache so will not be updated (i.e. downloaded)
 
 Later on, a new version of @mylib 1.0-SNAPSHOT@ is published changing the version on the server. The next time we perform dependency resolution, the following will happen:
 
@@ -82,7 +82,7 @@ This is what we wanted to occur.
 
 Later on, a new version of @mylib 1.0-SNAPSHOT@ is published changing the version on the server. The next time we perform dependency resolution, the following will happen:
 
-* maven local repository is searched, dependency is found to be the same “age” as the version in the cache so will not be updated (i.e. downloaded)
+* maven local repository is searched, dependency is found to be the same "age" as the version in the cache so will not be updated (i.e. downloaded)
 * maven network repository is NOT searched as we've already found the dependency
 
 This is likely to not be the desired outcome. We are now out of sync with the latest published snapshot and will continue to keep using the version from the local maven repository.
