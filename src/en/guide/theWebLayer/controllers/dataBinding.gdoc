@@ -1,8 +1,196 @@
 Data binding is the act of "binding" incoming request parameters onto the properties of an object or an entire graph of objects. Data binding should deal with all necessary type conversion since request parameters, which are typically delivered by a form submission, are always strings whilst the properties of a Groovy or Java object may well not be.
 
-Grails uses [Spring|http://www.springframework.org]'s underlying data binding capability to perform data binding.
+h4. Map Based Binding
+
+The data binder is capable of converting and assigning values in a Map to properties of an object.  The binder will associate entries in the Map to properties of the object using the keys in the Map that have values which correspond to property names on the object.  The following code demonstrates the basics:
+
+{code:java}
+// grails-app/domain/Person.groovy
+class Person {
+    String firstName
+    String lastName
+    Integer age
+}
+{code}
+
+{code:java}
+def bindingMap = [firstName: 'Peter', lastName: 'Gabriel', age: 63]
+
+def person = new Person(bindingMap)
+
+assert person.firstName == 'Peter'
+assert person.lastNaem == 'Gabriel'
+assert person.age == 63
+{code}
+
+To update properties of a domain object you may assign a Map to the @properties@ property of the domain class:
+
+{code:java}
+def bindingMap = [firstName: 'Peter', lastName: 'Gabriel', age: 63]
+
+def person = Person.get(someId)
+person.properties = bindingMap
+
+assert person.firstName == 'Peter'
+assert person.lastNaem == 'Gabriel'
+assert person.age == 63
+{code}
+
+The binder can populate a full graph of objects using Maps of Maps.
+
+{code:java}
+class Person {
+    String firstName
+    String lastName
+    Integer age
+    Address homeAddress
+}
+
+class Address {
+    String county
+    String country
+}
+{code}
+
+{code:java}
+def bindingMap = [firstName: 'Peter', lastName: 'Gabriel', age: 63, homeAddress: [county: 'Surrey', country: 'England'] ]
+
+def person = new Person(bindingMap)
+
+assert person.firstName == 'Peter'
+assert person.lastNaem == 'Gabriel'
+assert person.age == 63
+assert person.homeAddress.county == 'Surrey'
+assert person.homeAddress.country == 'England'
+{code}
+
+h4. Binding To Collections And Maps
+
+The data binder can populate and update Collections and Maps.  The following code shows a simple example of populating a @List@ of objects in a domain class:
+
+{code:java}
+class Band {
+    String name
+    static hasMany = [albums: Album]
+    List albums
+}
+
+class Album {
+    String title
+    Integer numberOfTracks
+}
+{code}
+
+{code:java}
+def bindingMap = [name: 'Genesis', 
+                  'albums[0]': [title: 'Foxtrot', numberOfTracks: 6], 
+                  'albums[1]': [title: 'Nursery Cryme', numberOfTracks: 7]]
+
+def band = new Band(bindingMap)
+
+assert band.name == 'Genesis'
+assert band.albums.size() == 2
+assert band.albums[0].title == 'Foxtrot'
+assert band.albums[0].numberOfTracks == 6
+assert band.albums[1].title == 'Nursery Cryme'
+assert band.albums[1].numberOfTracks == 7
+{code}
+
+That code would work in the same way if @albums@ were an array instead of a @List@.
+
+Note that when binding to a @Set@ the structure of the @Map@ being bound to the @Set@ is the same as that of a @Map@ being bound to a @List@ but since a @Set@ is unordered, the indexes don't necessarily correspond to the order of elements in the @Set@.  In the code example above, if @albums@ were a @Set@ instead of a @List@, the @bindingMap@ could look exactly the same but 'Foxtrot' might be the first album in the @Set@ or it might be the second.  When updating existing elements in a @Set@ the @Map@ being assigned to the @Set@ must have @id@ elements in it which represent the element in the @Set@ being updated, as in the following example:
+
+{code}
+/*
+ * The value of the indexes 0 and 1 in albums[0] and albums[1] are arbitrary
+ * values that can be anything as long as they are unique within the Map.
+ * They do not correspond to the order of elements in albums because albums
+ * is a Set.
+ */
+def bindingMap = ['albums[0]': [id: 9, title: 'The Lamb Lies Down On Broadway']
+                  'albums[1]': [id: 4, title: 'Selling England By The Pound']]
+
+def band = Band.get(someBandId)
+
+/*
+ * This will find the Album in albums that has an id of 9 and will set its title
+ * to 'The Lamb Lies Down On Broadway' and will find the Album in albums that has
+ * an id of 4 and set its title to 'Selling England By The Pound'.  In both 
+ * cases if the Album cannot be found in albums then the album will be retrieved
+ * from the database by id, the Album will be added to albums and will be updated 
+ * with the values described above.  If a Album with the specified id cannot be
+ * found in the database, then a binding error will be created and associated
+ * with the band object.  More on binding errors later.
+ */
+band.properties = bindingMap
+{code}
+
+When binding to a @Map@ the structure of the binding @Map@ is the same as the structore of a @Map@ used for binding to a @List@ or a @Set@ and the index inside of square brackets corresponds to the key in the @Map@ being bound to.  See the following code:
+
+{code:java}
+class Album {
+    String title
+    static hasMany = [players: Player]
+    Map players
+}
+
+class Player {
+    String name
+}
+{code}
+
+{code}
+def bindingMap = [title: 'The Lamb Lies Down On Broadway',
+                  'players[guitar]': [name: 'Steve Hacket'],
+                  'players[vocals]': [name: 'Peter Gabriel']
+                  'players[keyboards]': [name: 'Tony Banks']]
+
+def album = new Album(bindingMap)
+
+assert album.title == 'The Lamb Lies Down On Broadway'
+assert album.players.size() == 3
+assert album.players.guitar == 'Steve Hacket'
+assert album.players.vocals == 'Peter Gabriel'
+assert album.players.keyboards == 'Tony Banks'
+{code}
+  
+When updating an exisiting @Map@, if the key specified in the binding @Map@ does not exist in the @Map@ being bound to then a new value will be created and added to the @Map@ with the specified key as in the following example:
+
+
+{code}
+def bindingMap = [title: 'The Lamb Lies Down On Broadway',
+                  'players[guitar]': [name: 'Steve Hacket'],
+                  'players[vocals]': [name: 'Peter Gabriel']
+                  'players[keyboards]': [name: 'Tony Banks']]
+
+def album = new Album(bindingMap)
+
+assert album.title == 'The Lamb Lies Down On Broadway'
+assert album.players.size() == 3
+assert album.players.guitar == 'Steve Hacket'
+assert album.players.vocals == 'Peter Gabriel'
+assert album.players.keyboards == 'Tony Banks'
+
+def updatedBindingMap = ['players[drums]': [name: 'Phil Collins'],
+                         'players[keyboards]': [name: 'Anthony George Banks']]
+
+album.properties = updatedBindingMap
+
+assert album.title == 'The Lamb Lies Down On Broadway'
+assert album.players.size() == 4
+assert album.players.guitar == 'Steve Hacket'
+assert album.players.vocals == 'Peter Gabriel'
+assert album.players.keyboards == 'Anthony George Banks'
+assert album.players.drums == 'Phil Collins'
+{code}
 
 h4. Binding Request Data to the Model
+
+The [params|controllers] object that is available in a controller has special behavior that helps convert dotted request parameter names into nested Maps that the data binder can work with.  For example, if a request includes request parameters named @person.homeAddress.country@ and @person.homeAddress.city@ with values 'USA' and 'St. Louis' respectively, @params@ would include entries like these:
+
+{code}
+[person: [homeAddress: [country: 'USA', city: 'St. Louis']]]
+{code}
 
 There are two ways to bind request parameters onto the properties of a domain class. The first involves using a domain classes' Map constructor:
 
@@ -31,7 +219,29 @@ def save() {
 
 This has the same effect as using the implicit constructor.
 
-When binding an empty String (a String with no characters in it, not even spaces) to a constrained property which has been configured as nullable, the data binder will convert the empty String to null.  This simplifies the most common case where the intent is to treat an empty form field as having the value null since there isn't a way to actually submit a null as a request parameter.  When this behavior is not desireable the application may assign the value directly.
+When binding an empty String (a String with no characters in it, not even spaces), the data binder will convert the empty String to null.  This simplifies the most common case where the intent is to treat an empty form field as having the value null since there isn't a way to actually submit a null as a request parameter.  When this behavior is not desireable the application may assign the value directly.
+
+The mass property binding mechanism will by default automatically trim all Strings at binding time.  To disable this behavior set the @grails.databinding.trimStrings@ property to false in @grails-app/conf/Config.groovy@.
+
+{code:java}
+// the default value is true
+grails.databinding.trimStrings = false
+
+// ...
+
+{code}
+
+The mass property binding mechanism will by default automatically convert all empty Strings to null at binding time.  To disable this behavior set the @grails.databinding.convertEmptyStringsToNull@ property to false in @grials-app/conf/Config.groovy@.
+
+{code:java}
+// the default value is true
+grails.databinding.convertEmptyStringsToNull = false
+
+// ...
+
+{code}
+
+The order of events is that the String trimming happens and then null conversion happens so if @trimStrings@ is @true@ and @convertEmptyStringsToNull@ is @true@, not only will empty Strings be converted to null but also blank Strings.  A blank String is any String such that the @trim()@ method returns an empty String.
 
 {warning}
 These forms of data binding in Grails are very convenient, but also indiscriminate. In other words, they will bind _all_ non-transient, typed instance properties of the target object, including ones that you may not want bound. Just because the form in your UI doesn't submit all the properties, an attacker can still send malign data via a raw HTTP request. Fortunately, Grails also makes it easy to protect against such attacks - see the section titled "Data Binding and Security concerns" for more information.
@@ -138,6 +348,18 @@ Binding to a @Map@ property works the same way except that the list index in the
 
 This would bind the selected image into the @Map@ property @images@ under a key of @"cover"@.
 
+When binding to Maps, Arrays and Collections the data binder will automatically grow the size of the collections as necessary.  The default limit to how large the binder will grow a collection is 256.  If the data binder encounters an entry that requires the collection be grown beyond that limit, the entry is ignored.  The limit may be configured by assigning a value to the @grails.databinding.autoGrowCollectionLimit@ property in @Config.groovy@.
+
+{code:java}
+// grails-app/conf/Config.groovy
+
+// the default value is 256
+grails.databinding.autoGrowCollectionLimit = 128
+
+// ...
+
+{code}
+
 h4. Data binding with Multiple domain classes
 
 It is possible to bind data to multiple domain objects from the [params|controllers] object.
@@ -239,7 +461,252 @@ Or a more specific one:
 typeMismatch.Book.publisherURL=The publisher URL you specified is not a valid URL
 {code}
 
-h4. Data Binding and Security concerns
+h4. The BindUsing Annotation
+
+The [BindUsing|api:org.grails.databinding.BindUsing] annotation may be used to define a custom binding mechanism for a particular field in a class.  Any time data binding is being applied to the field the closure value of the annotation will be invoked with 2 arguments.  The first argument is the object that data binding is being applied to and the second argument is a @Map@ which is the data source for the data binding.  The value returned from the closure will be bound to the property.  The following example would result in the upper case version of the @name@ value in the source being applied to the @name@ field during data binding.
+
+{code:java}
+import org.grails.databinding.BindUsing
+
+class SomeClass {
+    @BindUsing({
+        obj, source -> source['name']?.toUpperCase()
+    })
+    String name
+}
+{code}
+
+The [BindUsing|api:org.grails.databinding.BindUsing] annotation may be used to define a custom binding mechanism for all of the fields on a particular class. When the annotation is applied to a class, the value assigned to the annotation should be a class which implements the [BindingHelper|api:org.grails.databinding.BindingHelper] interface.  An instance of that class will be used any time a value is bound to a property in the class that this annotation has been applied to. 
+
+{code:java}
+@BindUsing(SomeClassWhichImplementsBindingHelper)
+class SomeClass {
+    String someProperty
+    Integer someOtherProperty
+}
+{code}
+
+h4. Custom Data Converters
+
+The binder will do a lot of type conversion automatically.  Some applications may want to define their own mechanism for converting values and a simple way to do this is to write a class which implements [ValueConverter|api:org.grails.databinding.converters.ValueConverter] and register an instance of that class as a bean in the Spring application context.
+
+{code:java}
+package com.myapp.converters
+
+import org.grails.databinding.converters.ValueConverter
+
+/**
+ * A custom converter which will convert String of the
+ * form 'city:state' into an Address object.
+ */
+class AddressValueConverter implements ValueConverter {
+
+    boolean canConvert(value) {
+        value instanceof String
+    }
+
+    def convert(value) {
+        def pieces = value.split(':')
+        new com.myapp.Address(city: pieces[0], state: pieces[1])
+    }
+
+    Class<?> getTargetType() {
+        com.myapp.Address
+    }
+}
+{code}
+
+An instance of that class needs to be registered as a bean in the Spring application context.  The bean name is not important.  All beans that implemented ValueConverter will be automatically plugged in to the data binding process.
+
+{code:java}
+// grails-app/conf/spring/resources.groovy
+
+beans = {
+
+    addressConverter com.myapp.converters.AddressValueConverter
+
+    // ...
+
+}
+{code}
+
+{code}
+class Person {
+    String firstName
+    Address homeAddress
+}
+
+class Address {
+    String city
+    String state
+}
+
+def person = new Person()
+person.properties = [firstName: 'Jeff', homeAddress: "O'Fallon:Missouri"]
+assert person.firstName == 'Jeff'
+assert person.homeAddress.city = "O'Fallon"
+assert person.homeAddress.state = 'Missouri'
+{code}
+
+h4. Date Formats For Data Binding
+
+A custom date format may be specified to be used when binding a String to a Date value by applying the [BindingFormat|api:org.grails.databinding.BindingFormat] annotation to a Date field.
+
+{code:java}
+import org.grails.databinding.BindingFormat
+
+class Person {
+    @BindingFormat('MMddyyyy')
+    Date birthDate
+}
+{code}
+
+A global setting may be configured in @Config.groovy@ to define date formats which will be used application wide when binding to Date.
+
+{code:java}
+// grails-app/conf/Config.groovy
+
+grails.databinding.dateFormats = ['MMddyyyy', 'yyyy-MM-dd HH:mm:ss.S', "yyyy-MM-dd'T'hh:mm:ss'Z'"]
+
+{code}
+
+The formats specified in @grails.databinding.dateFormats@ will be attempted in the order in which they are included in the List.  If a property is marked with \@BindingFormat, the \@BindingFormat will take precedence over the values specified in @grails.databinding.dateFormats@.
+
+The default formats that are used are "yyyy-MM-dd HH:mm:ss.S" and "yyyy-MM-dd'T'hh:mm:ss'Z'".
+
+h4. Custom Formatted Converters
+
+You may supply your own handler for the [BindingFormat|api:org.grails.databinding.BindingFormat] annotation by writing a class which implements the [FormattedValueConverter|api:org.grails.databinding.converters.FormattedValueConverter] interface and regiserting an instance of that class as a bean in the Spring application context.  Below is an example of a trivial custom String formatter that might convert the case of a String based on the value assigned to the BindingFormat annotation.
+
+{code:java}
+package com.myapp.converters
+
+import org.grails.databinding.converters.FormattedValueConverter
+
+class FormattedStringValueConverter implements FormattedValueConverter {
+    def convert(value, String format) {
+        if('UPPERCASE' == format) {
+            value = value.toUpperCase()
+        } else if('LOWERCASE' == format) {
+            value = value.toLowerCase()
+        }
+        value
+    }
+
+    Class getTargetType() {
+        // specifies the type to which this converter may be applied
+        String
+    }
+}
+{code}
+
+An instance of that class needs to be registered as a bean in the Spring application context.  The bean name is not important.  All beans that implemented FormattedValueConverter will be automatically plugged in to the data binding process.
+
+{code:java}
+// grails-app/conf/spring/resources.groovy
+
+beans = {
+
+    formattedStringConverter com.myapp.converters.FormattedStringValueConverter
+
+    // ...
+
+}
+{code}
+
+With that in place the @BindingFormat@ annotation may be applied to String fields to inform the data binder to take advantage of the custom converter.
+
+{code:java}
+import org.grails.databinding.BindingFormat
+
+class Person {
+    @BindingFormat('UPPERCASE')
+    String someUpperCaseString
+
+    @BindingFormat('LOWERCASE')
+    String someLowerCaseString
+
+    String someOtherString
+}
+{code}
+
+
+h4. Localized Binding Formats
+
+The @BindingFormat@ annotation supports localized format strings by using the optional @code@ attribute.  If a value is assigned to the code attribute that value will be used as the message code to retrieve the binding format string from the @messageSource@ bean in the Spring application context and that lookup will be localized.
+
+{code:java}
+import org.grails.databinding.BindingFormat
+
+class Person {
+    @BindingFormat(code='date.formats.birthdays')
+    Date birthDate
+}
+{code}
+
+
+{code}
+# grails-app/conf/i18n/messages.properties
+date.formats.birthdays=MMddyyyy
+{code}
+
+{code}
+# grails-app/conf/i18n/messages_es.properties
+date.formats.birthdays=ddMMyyyy
+{code}
+
+h4. Using The Data Binder Directly
+
+There are situations where an application may want to use the data binder directly.  For example, to do binding in a Service on some arbitrary object which is not a domain class.  The following will not work because the @properties@ property is read only.
+
+{code:java}
+// src/groovy/bindingdemo/Widget.groovy
+package bindingdemo
+
+class Widget {
+    String name
+    Integer size
+}
+{code}
+
+{code:java}
+// grails-app/services/bindingdemo/WidgetService.groovy
+package bindingdemo
+
+class WidgetService {
+
+    def updateWidget(Widget widget, Map data) {
+        // this will throw an exception because
+        // properties is read-only
+        widget.properties = data
+    }
+}
+{code}
+
+An instance of the data binder is in the Spring application context with a bean name of @grailsWebDataBinder@.  That bean implements the [DataBinder|api:org.grails.databinding.DataBinder] interface.  The following code demonstrates using the data binder directly.
+
+{code:java}
+// grails-app/services/bindingdmeo/WidgetService
+package bindingdemo
+
+import org.grails.databinding.SimpleMapDataBindingSource
+
+class WidgetService {
+
+    // this bean will be autowired into the service
+    def grailsWebDataBinder
+
+    def updateWidget(Widget widget, Map data) {
+        grailsWebDataBinder.bind widget, data as SimpleMapDataBindingSource
+    }
+
+}
+{code}
+
+See the [DataBinder|api:org.grails.databinding.DataBinder] documentation for more information about overloaded versions
+of the @bind@ method.
+
+h4. Data Binding and Security Concerns
 
 When batch updating properties from request parameters you need to be careful not to allow clients to bind malicious data to domain classes and be persisted in the database. You can limit what properties are bound to a given domain class using the subscript operator:
 

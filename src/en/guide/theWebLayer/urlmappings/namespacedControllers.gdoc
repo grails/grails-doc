@@ -1,9 +1,74 @@
-An application is not allowed to define multiple controllers with the same
-name, even if they are defined in separate packages.  For example an
-application may not contain @com.accounting.ReportingController@ and
-@com.humanresources.ReportingController@.  However it is allowed for
-an application to use a plugin which provides a controller with the
-same name as a controller provided by the application as long as the
+If an application defines multiple controllers with the same name
+in different packages, the controllers must be defined in a
+namespace.  The way to define a namespace for a controller is to 
+define a static property named @namespace@ in the controller and 
+assign a String to the property that represents the namespace.
+
+{code}
+// grails-app/controllers/com/app/reporting/AdminController.groovy
+package com.app.reporting
+
+class AdminController {
+
+    static namespace = 'reports'
+
+    // ...
+}
+{code}
+
+{code}
+// grails-app/controllers/com/app/security/AdminController.groovy
+package com.app.security
+
+class AdminController {
+
+    static namespace = 'users'
+
+    // ...
+}
+{code}
+
+When defining url mappings which should be associated with a namespaced
+controller, the @namespace@ variable needs to be part of the URL mapping.
+
+{code}
+// grails-app/conf/UrlMappings.groovy
+class UrlMappings {
+
+    static mappings = {
+        '/userAdmin' {
+            controller = 'admin'
+            namespace = 'users'
+        }
+
+        '/reportAdmin' {
+            controller = 'admin'
+            namespace = 'reports'
+        }
+
+        "/$namespace/$controller/$action?"()
+    }
+}
+{code}
+
+Reverse URL mappings also require that the @namespace@ be specified.
+
+{code}
+<g:link controller="admin" namespace="reports">Click For Report Admin</g:link>
+<g:link controller="admin" namespace="users">Click For User Admin</g:link>
+{code}
+
+When resolving a URL mapping (forward or reverse) to a namespaced controller,
+a mapping will only match if the @namespace@ has been provided.  If
+the application provides several controllers with the same name in different
+packages, at most 1 of them may be defined without a @namespace@ property.  If
+there are multiple controllers with the same name that do not define a
+@namespace@ property, the framework will not know how to distinguish between
+them for forward or reverse mapping resolutions.
+
+It is allowed for an application to use a plugin which provides a controller
+with the same name as a controller provided by the application and for neither
+of the controllers to define a @namespace@ property as long as the
 controllers are in separate packages.  For example, an application
 may include a controller named @com.accounting.ReportingController@
 and the application may use a plugin which provides a controller
@@ -52,6 +117,6 @@ static mappings = {
 {code}
 
 It is best practice to be explicit about the fact that the controller
-is being provided by a plugin though.
+is being provided by a plugin.
 
 

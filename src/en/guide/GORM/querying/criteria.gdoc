@@ -191,7 +191,7 @@ def results = c.list {
 }
 {code}
 
-The first argument to the @sqlProjection@ method is the SQL which defines the projections.  The second argument represents the
+The first argument to the @sqlGroupProjection@ method is the SQL which defines the projections.  The second argument represents the
 group by clause that should be part of the query.  That string may be single column name or a comma separated list of column
 names.  The third argument is a list of
 Strings which represent column aliases corresponding to the projected values expressed in the SQL.  The fourth argument
@@ -338,3 +338,24 @@ Method | Description
 *listDistinct* | If subqueries or associations are used, one may end up with the same row multiple times in the result set, this allows listing only distinct entities and is equivalent to @DISTINCT_ROOT_ENTITY@ of the [CriteriaSpecification|api:org.hibernate.criterion.CriteriaSpecification] class.
 *count* | Returns the number of matching rows.
 {table}
+
+h4. Combining Criteria
+
+You can combine multiple criteria closures in the following way:
+
+{code:java}
+def emeaCriteria = {
+    eq "region", "EMEA"
+}
+
+def results = Airport.withCriteria {
+    emeaCriteria.delegate = delegate
+    emeaCriteria()
+    flights {
+        like "number", "BA%"
+    }
+}
+{code}
+
+This technique requires that each criteria must refer to the same domain class (i.e. @Airport@).
+A more flexible approach is to use Detached Criteria, as described in the following section.

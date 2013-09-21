@@ -1,7 +1,19 @@
-Scaffolding lets you auto-generate a whole application for a given domain class including:
+Scaffolding lets you generate some basic CRUD interfaces for a domain class, including:
 
 * The necessary [views|guide:gsp]
 * Controller actions for create/read/update/delete (CRUD) operations
+
+As of Grails 2.3, the scaffolding feature has been moved to a plugin. By default this is configured for installation in new applications, but if you are upgrading from a previous version of Grails you will need to add the following configuration to your @BuildConfig.groovy@ file:
+
+{code}
+    plugins {
+        ...
+        compile ":scaffolding:2.0.0"
+        ...
+    }
+{code}
+
+Version 1.0.0 of the plugin provides the same scaffolding seen in Grails 2.2.x and below. Version 2.0.x of the scaffolding plugin includes different scaffolding templates that are aligned with the new REST APIs introcued in Grails 2.3 and above.
 
 h4. Dynamic Scaffolding
 
@@ -23,7 +35,7 @@ class SomeController {
 
 With this configured, when you start your application the actions and views will be auto-generated at runtime. The following actions are dynamically implemented by default by the runtime scaffolding mechanism:
 
-* list
+* index
 * show
 * edit
 * delete
@@ -61,7 +73,7 @@ class BookController {
     static scaffold = Book
 
     // overrides scaffolded action to return both authors and books
-    def list() {
+    def index() {
         [bookInstanceList: Book.list(),
          bookInstanceTotal: Book.count(),
          authorInstanceList: Author.list()]

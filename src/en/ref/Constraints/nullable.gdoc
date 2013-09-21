@@ -19,5 +19,15 @@ This constraint influences [schema generation|guide:gormConstraints].
 Error Code: @className.propertyName.nullable@
 
 {note}
-Web requests resulting from form submissions will have blank strings, not @null@, for properties that have no value. Keep this in mind when doing mass property binding to properties that have been marked with @nullable: true@.  A blank string will validate for @nullable:true@ since the data binder will convert blank strings to null when binding to a constrained property which has been marked with @nullable: true@.
+Web requests resulting from form submissions will have blank strings, not @null@, for input fields that have no value. Keep this in mind when doing mass property binding to properties that are not nullable.  The default behavior is such that a blank string will not validate for @nullable: false@ since the data binder will convert blank strings to null.  This includes empty strings and blank strings.  A blank string is any string such that the @trim()@ method returns an empty string.  To turn off the conversion of empty strings to null set the @grails.databinding.convertEmptyStringsToNull@ property to @false@ in @Config.groovy@. See the [data binding|guide:dataBinding] section for more details on data binding.
 {note}
+
+{code:java}
+// grails-app/conf/Config.groovy
+
+// the default value for this property is true
+grails.databinding.convertEmptyStringsToNull = false
+
+// ...
+
+{code}
