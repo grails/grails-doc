@@ -12,6 +12,14 @@ Although dependency resolution using Ivy is still supported, the default for Gra
 grails.project.dependency.resolver = "maven" // or ivy
 {code}
 
+If you need to authenticate to a maven repository, you will want to change the definition of that repository like so:
+
+{code}
+mavenRepo("http://artifactory.mycompany.com/repo") {
+    authentication(username: "myusername", password: "secret")
+}
+{code}
+
 h4. Dependency Metadata Changes
 
 In addition, the POM and dependency metadata for Grails 2.3 has been re-arranged and cleaned up so that only direct dependencies are specified for an application and all other dependencies are inherited transitvely. This has implications to the upgrade since, for example, Ehcache is now a transitive dependency of the Hibernate plugin, whilst before it was a direct dependency. If get a compilation error related to Ehcache, it is most likely that you don't have the Hibernate plugin installed and need to directly declare the Ehcache dependency:
@@ -19,7 +27,6 @@ In addition, the POM and dependency metadata for Grails 2.3 has been re-arranged
 {code}
 compile "net.sf.ehcache:ehcache-core:2.4.6"
 {code}
-
 
 In addition, excludes may no longer work and may need adjusting when upgrading due to how the metadata has changed. Run the [dependency-report|commandLine] to see the new dependency metadata and make adjustments accordingly.
 
