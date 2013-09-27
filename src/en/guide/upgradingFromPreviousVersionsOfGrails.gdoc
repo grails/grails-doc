@@ -149,10 +149,10 @@ Core plugins like @tomcat@ and @hibernate@ are no longer versioned the same as t
 {code}
     plugins {
         // plugins for the build system only
-        build ':tomcat:7.0.40.1'
+        build ':tomcat:7.0.42'
 
         // plugins needed at runtime but not for compilation
-        runtime ':hibernate:3.6.10.M3' 
+        runtime ':hibernate:3.6.10.1' 
     }
 {code}
 
@@ -162,8 +162,14 @@ h4. Encoding / Escaping (XSS) Changes
 
 Grails 2.3 includes new features to help prevent XSS attacks. These are enabled by default for new applications, but older applications will require manual intervention. See the section on [Cross Site Scripting (XSS) prevention|guide:xssPrevention] for how to appropriately configure XSS prevention.
 
+h4. Dependency Injection for Integration Tests
 
+In order to support alternate JUnit4 test runners, Grails 2.3 no longer uses a special test runner to run tests and integration tests should no longer extend @GroovyTestCase@.
 
+This change requires that any JUnit integration tests that require dependency injection now need to be annotated with:
 
+{code}
+@TestMixin(IntegrationTestMixin)
+{code}
 
-
+For Spock integration tests, extending @IntegrationSpec@ also works.
