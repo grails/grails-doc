@@ -65,9 +65,9 @@ class StockController {
     def stock(String ticker) {
        task {
            ticker = ticker ?: 'GOOG'
-           def url = new URL("http://download.finance.yahoo.com/d/quotes.csv?s=${ticker}&f=nsl1op&e=.csv")
+           def url = new URL("http://download.finance.yahoo.com/d/quotes.csv?s=\${ticker}&f=nsl1op&e=.csv")
            Double price = url.text.split(',')[-1] as Double
-           render "ticker: $ticker, price: $price"
+           render "ticker: \$ticker, price: \$price"
        }
     }
 }
