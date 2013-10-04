@@ -1,8 +1,26 @@
-A number of changes need to considered when upgrading your application from Grails 2.2, including:
+A number of changes need to considered when upgrading your application from Grails 2.2, some of them breaking. Here's a quick list with more detail on each item following after:
+
+* New improved data binding (no Spring property editors)
+* Much improved XSS prevention with default HTML encoding
+* A new dependency resolution engine
+* Must be online to fetch Grails dependencies
+* Grails core dependencies rearranged
+* Tomcat and Hibernate plugins independently versioned now (breaking!)
+* Scaffolding is now a separate plugin
+* Spock included by default - don't us
+* Dependency injection does not work in integration tests by default 
+* Forked execution for tests
+* Reloading in @run-app@ won't work by default on upgraded apps
+* @grails-debug@ doesn't work for forked execution
+
 
 h4. New Data Binder
 
 There is a new data binding mechanism written from the ground up to meet Grails' needs. If you wish to continue using Spring for data binding then you must set the @grails.databinding.useSpringBinder@ property to @true@ in @grails-app/conf/Config.groovy@
+
+h4. Encoding / Escaping (XSS) Changes
+
+Grails 2.3 includes new features to help prevent XSS attacks. These are enabled by default for new applications, but older applications will require manual intervention. See the section on [Cross Site Scripting (XSS) prevention|guide:xssPrevention] for how to appropriately configure XSS prevention.
 
 h4. Dependency Resolution changes
 
@@ -65,6 +83,22 @@ Aether does not support resolving dependencies from a flat file system. This mea
 
 If however you do not have the necessary jars in your local Maven repository, then the only way to get offline execution is to enable Ivy via BuildConfig (see above).
 
+h4. Changes to Core plugin versioning schemes and the Upgrade command
+
+Core plugins like @tomcat@ and @hibernate@ are no longer versioned the same as the Grails version, instead they are versioned according to the Tomcat and Hibernate version they target. If you are upgrading from Grails 2.2 you need to manually configure the correct Tomcat and Hibernate plugins in @BuildConfig@. The @upgrade@ command will not do this for you!
+
+{code}
+    plugins {
+        // plugins for the build system only
+        build ':tomcat:7.0.42'
+
+        // plugins needed at runtime but not for compilation
+        runtime ':hibernate:3.6.10.1' 
+    }
+{code}
+
+Note that the @upgrade@ command will be deprecated in 2.3 and replaced with a command named @use-current-grails-version@, which will make no attempts to automatically upgrade Grails applications.
+
 h4. Scaffolding moved to a plugin and rewritten
 
 If you have dynamically scaffolded controllers in your application then you will need to configure the 1.0 version of the [Scaffolding plugin|http://grails.org/plugin/scaffolding] in BuildConfig:
@@ -76,6 +110,22 @@ plugins {
 {code}
 
 By default for new applications the 2.0 version of the scaffolding plugin is used, which is not backwards compatible with 1.0.
+
+h4. Spock included by default
+
+You no longer need to add the Spock plugin to your projects. Simply create Spock specifications as before and they will be run as unit tests. In fact, don't install the Spock plugin, otherwise your specifications will run twice and potentially fail. This also means that the @spock@ test type no longer exists. Specifications and JUnit tests run as the same type now.
+
+h4. Dependency Injection for Integration Tests
+
+In order to support alternate JUnit4 test runners, Grails 2.3 no longer uses a special test runner to run tests and integration tests should no longer extend @GroovyTestCase@.
+
+This change requires that any JUnit integration tests that require dependency injection now need to be annotated with:
+
+{code}
+\@TestMixin(IntegrationTestMixin)
+{code}
+
+For Spock integration tests, extending @IntegrationSpec@ also works.
 
 h4. Forked Execution for Testing
 
@@ -141,35 +191,3 @@ grails.project.fork = [
    run: forkConfig, // configure settings for the run-app JVM
    ...
 {code}
-
-h4. Changes to Core plugin versioning schemes and the Upgrade command
-
-Core plugins like @tomcat@ and @hibernate@ are no longer versioned the same as the Grails version, instead they are versioned according to the Tomcat and Hibernate version they target. If you are upgrading from Grails 2.2 you need to manually configure the correct Tomcat and Hibernate plugins in @BuildConfig@. The @upgrade@ command will not do this for you!
-
-{code}
-    plugins {
-        // plugins for the build system only
-        build ':tomcat:7.0.42'
-
-        // plugins needed at runtime but not for compilation
-        runtime ':hibernate:3.6.10.1' 
-    }
-{code}
-
-Note that the @upgrade@ command will be deprecated in 2.3 and replaced with a command named @use-current-grails-version@, which will make no attempts to automatically upgrade Grails applications.
-
-h4. Encoding / Escaping (XSS) Changes
-
-Grails 2.3 includes new features to help prevent XSS attacks. These are enabled by default for new applications, but older applications will require manual intervention. See the section on [Cross Site Scripting (XSS) prevention|guide:xssPrevention] for how to appropriately configure XSS prevention.
-
-h4. Dependency Injection for Integration Tests
-
-In order to support alternate JUnit4 test runners, Grails 2.3 no longer uses a special test runner to run tests and integration tests should no longer extend @GroovyTestCase@.
-
-This change requires that any JUnit integration tests that require dependency injection now need to be annotated with:
-
-{code}
-\@TestMixin(IntegrationTestMixin)
-{code}
-
-For Spock integration tests, extending @IntegrationSpec@ also works.
