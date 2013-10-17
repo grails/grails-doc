@@ -84,6 +84,137 @@ beans = {
 }
 {code}
 
+h4. Rendering Collections Using HAL
+
+To return HAL instead of regular JSON for a list of resources you can simply override the renderer in @grails-app/conf/spring/resources.groovy@ with an instance of @grails.rest.render.hal.HalJsonCollectionRenderer@:
+
+{code}
+import grails.rest.render.hal.*
+beans = {
+    halBookCollectionRenderer(HalCollectionJsonRenderer, rest.test.Book)
+}
+{code}
+
+With the bean in place requesting the HAL content type will return HAL:
+
+{code}
+$ curl -i -H "Accept: application/hal+json" http://localhost:8080/myapp/books
+HTTP/1.1 200 OK
+Server: Apache-Coyote/1.1
+Content-Type: application/hal+json;charset=UTF-8
+Transfer-Encoding: chunked
+Date: Thu, 17 Oct 2013 02:34:14 GMT
+
+{
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/myapp/books",
+      "hreflang": "en",
+      "type": "application/hal+json"
+    }
+  },
+  "_embedded": {
+    "book": [
+      {
+        "_links": {
+          "self": {
+            "href": "http://localhost:8080/myapp/books/1",
+            "hreflang": "en",
+            "type": "application/hal+json"
+          }
+        },
+        "title": "The Stand"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "http://localhost:8080/myapp/books/2",
+            "hreflang": "en",
+            "type": "application/hal+json"
+          }
+        },
+        "title": "Infinite Jest"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "http://localhost:8080/myapp/books/3",
+            "hreflang": "en",
+            "type": "application/hal+json"
+          }
+        },
+        "title": "Walden"
+      }
+    ]
+  }
+}
+{code}
+
+Notice that the key associated with the list of @Book@ objects in the rendered JSON is @book@ which is derived from the type of objects in the collecion, namely @Book@.  In order to customize the value of this key assign a value to the @collectionName@ property on the @HalJsonCollectionRenderer@ bean as shown below:
+
+{code}
+import grails.rest.render.hal.*
+beans = {
+    halBookCollectionRenderer(HalCollectionJsonRenderer, rest.test.Book) {
+        collectionName = 'publications'
+    }
+}
+{code}
+
+With that in place the rendered HAL will look like the following:
+
+{code}
+$ curl -i -H "Accept: application/hal+json" http://localhost:8080/myapp/books
+HTTP/1.1 200 OK
+Server: Apache-Coyote/1.1
+Content-Type: application/hal+json;charset=UTF-8
+Transfer-Encoding: chunked
+Date: Thu, 17 Oct 2013 02:34:14 GMT
+
+{
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/myapp/books",
+      "hreflang": "en",
+      "type": "application/hal+json"
+    }
+  },
+  "_embedded": {
+    "publications": [
+      {
+        "_links": {
+          "self": {
+            "href": "http://localhost:8080/myapp/books/1",
+            "hreflang": "en",
+            "type": "application/hal+json"
+          }
+        },
+        "title": "The Stand"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "http://localhost:8080/myapp/books/2",
+            "hreflang": "en",
+            "type": "application/hal+json"
+          }
+        },
+        "title": "Infinite Jest"
+      },
+      {
+        "_links": {
+          "self": {
+            "href": "http://localhost:8080/myapp/books/3",
+            "hreflang": "en",
+            "type": "application/hal+json"
+          }
+        },
+        "title": "Walden"
+      }
+    ]
+  }
+}
+{code}
 
 h4. Using Custom Media / Mime Types
 
