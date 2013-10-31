@@ -93,7 +93,7 @@ Core plugins like @tomcat@ and @hibernate@ are no longer versioned the same as t
         build ':tomcat:7.0.42'
 
         // plugins needed at runtime but not for compilation
-        runtime ':hibernate:3.6.10.1' 
+        runtime ':hibernate:3.6.10.2' 
     }
 {code}
 
@@ -191,3 +191,7 @@ grails.project.fork = [
    run: forkConfig, // configure settings for the run-app JVM
    ...
 {code}
+
+h4. Forked Execution and Functional Test plugins
+
+Some existing plugins (Cucumber plugin for example) do not work with 2.3.x forked execution because they expect the tests to be running in the same JVM as the application under tests. For example it is not possible to setup fixture / test data using GORM inside a functional test and have that data visible to the application under test since the application under test is in a separate JVM. The solution to this is to provide the necessary fixture data in the @BootStrap@ of the application (only for the test environment of course).

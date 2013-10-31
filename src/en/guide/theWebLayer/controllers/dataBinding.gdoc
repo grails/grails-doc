@@ -655,6 +655,101 @@ date.formats.birthdays=MMddyyyy
 date.formats.birthdays=ddMMyyyy
 {code}
 
+h4. Data Binding Event Listeners
+
+The [DataBindingListener|api:org.grails.databinding.events.DataBindingListener] interface provides a mechanism for listeners to be notified of data binding events.  The interface looks like this:
+
+{code}
+package org.grails.databinding.events;
+
+import org.grails.databinding.errors.BindingError;
+
+public interface DataBindingListener {
+
+    /**
+     * @return true if the listener is interested in events for the specified type.
+     */
+    boolean supports(Class<?> clazz);
+
+    /**
+     * Called when data binding is about to start.
+     * 
+     * @param target The object data binding is being imposed upon
+     * @param errors the Spring Errors instance (a org.springframework.validation.BindingResult)
+     * @return true if data binding should continue
+     */
+    Boolean beforeBinding(Object target, Object errors);
+
+    /**
+     * Called when data binding is about to imposed on a property
+     *
+     * @param target The object data binding is being imposed upon
+     * @param propertyName The name of the property being bound to
+     * @param value The value of the property being bound
+     * @param errors the Spring Errors instance (a org.springframework.validation.BindingResult)
+     * @return true if data binding should continue, otherwise return false
+     */
+    Boolean beforeBinding(Object target, String propertyName, Object value, Object errors);
+
+    /**
+     * Called after data binding has been imposed on a property
+     *
+     * @param target The object data binding is being imposed upon
+     * @param propertyName The name of the property that was bound to
+     * @param errors the Spring Errors instance (a org.springframework.validation.BindingResult)
+     */
+    void afterBinding(Object target, String propertyName, Object errors);
+
+    /**
+     * Called after data binding has finished.
+     *  
+     * @param target The object data binding is being imposed upon
+     * @param errors the Spring Errors instance (a org.springframework.validation.BindingResult)
+     */
+    void afterBinding(Object target, Object errors);
+
+    /**
+     * Called when an error occurs binding to a property
+     * @param error encapsulates information about the binding error
+     * @param errors the Spring Errors instance (a org.springframework.validation.BindingResult)
+     * @see BindingError
+     */
+    void bindingError(BindingError error, Object errors);
+}
+{code}
+
+Any bean in the Spring application context which implements that interface will automatically be registered with the data binder.  The [DataBindingListenerAdapter|api:org.grails.databinding.events.DataBindingListenerAdapter] class implements the @DataBindingListener@ interface and provides default implementations for all of the methods in the interface so this class is well suited for subclassing so your listener class only needs to provide implementations for the methods your listener is interested in.
+
+The Grails data binder has limited support for the older [BindEventListener|api:org.codehaus.groovy.grails.web.binding.BindEventListener] style listeners.  @BindEventListener@ looks like this:
+
+{code}
+package org.codehaus.groovy.grails.web.binding;
+
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.TypeConverter;
+
+public interface BindEventListener {
+
+    /**
+     * @param target The target to bind to
+     * @param source The source of the binding, typically a Map
+     * @param typeConverter The type converter to be used
+     */
+    void doBind(Object target, MutablePropertyValues source, TypeConverter typeConverter);
+}
+{code}
+
+Support for @BindEventListener@ is disabled by default.  To enable support assign a value of @true@ to the @grails.databinding.enableSpringEventAdapter@ property in @grails-app/conf/Config.groovy@.
+
+{code}
+// grails-app/conf/Config.groovy
+grails.databinding.enableSpringEventAdapter=true
+
+...
+{code}
+
+With @enableSpringEventAdapter@ set to @true@ instances of @BindEventListener@ which are in the Spring application context will automatically be registered with the data binder.  Notice that the @MutablePropertyValues@ and @TypeConverter@ arguments to the @doBind@ method in @BindEventListener@ are Spring specific classes and are not relevant to the current data binder.  The event adapter will pass @null@ values for those arguments.  The only real value passed into the @doBind@ method will be the object being bound to.  This limited support is provided for backward compatibility and will be useful for a subset of scenarios.  Developers are encouraged to migrate their @BindEventListener@ beans to the newer @DataBindingListener@ model.
+
 h4. Using The Data Binder Directly
 
 There are situations where an application may want to use the data binder directly.  For example, to do binding in a Service on some arbitrary object which is not a domain class.  The following will not work because the @properties@ property is read only.
