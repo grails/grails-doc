@@ -24,7 +24,11 @@ Checked exceptions do *not* roll back transactions. Even though Groovy blurs the
 
 h3. Custom Transaction Configuration
 
-Grails also fully supports Spring's @Transactional@ annotation for cases where you need more fine-grained control over transactions at a per-method level or need specify an alternative propagation level.
+Grails also provides @\@Transactional@ and @\@NotTransactional@ annotations for cases where you need more fine-grained control over transactions at a per-method level or need to specify an alternative propagation level. For example, the @\@NotTransactional@ annotation can be used to mark a particular method to be skipped when a class is annotated with @\@Transactional@.
+
+{note}
+The @grails.transaction.Transactional@ annotation was first introduced in Grails 2.3. Prior to 2.3, Spring's @Transactional annotation was used.
+{note}
 
 {note}
 Annotating a service method with @Transactional@ disables the default Grails transactional behavior for that service (in the same way that adding @transactional=false@ does) so if you use any annotations you must annotate all methods that require transactions.
