@@ -655,6 +655,95 @@ date.formats.birthdays=MMddyyyy
 date.formats.birthdays=ddMMyyyy
 {code}
 
+h4. Structured Data Binding Editors
+
+A structured data binding editor is a helper class which can bind structured request parameters to a property.  The common use case for structured binding is binding to a @Date@ object which might be constructed from several smaller pieces of information contained in several request parameters with names like @birthday_month@, @birthday_date@ and @birthday_year@.  The structured editor would retrieve all of those individual pieces of information and use them to construct a @Date@.
+
+The framework provides a structured editor for binding to @Date@ objects.  An application may register its own structured editors for whatever types are appropriate.  Consider the following classes:
+
+{code}
+// src/groovy/databinding/Gadget.groovy
+package databinding
+
+class Gadget {
+    Shape expandedShape
+    Shape compressedShape
+}
+{code}
+
+{code}
+// src/groovy/databinding/Shape.groovy
+package databinding
+
+class Shape {
+    int area
+}
+{code}
+
+A @Gadget@ has 2 @Shape@ fields.  A @Shape@ has an @area@ property.  It may be that the application wants to accept request parameters like @width@ and @height@ and use those to calculate the @area@ of a @Shape@ at binding time.  A structured binding editor is well suited for that.
+
+The way to register a structured editor with the data binding process is to add an instance of the [org.grails.databinding.TypedStructuredBindingEditor|api:org.grails.databinding.TypedStructuredBindingEditor] interface to the Spring application context.  The easiest way to implement the @TypedStructuredBindingEditor@ interface is to extend the [org.grails.databinding.converters.AbstractStructuredBindingEditor|api:org.grails.databinding.converters.AbstractStructuredBindingEditor] abstract class and override the @getPropertyValue@ method as shown below:
+
+{code}
+// src/groovy/databinding/converters/StructuredShapeEditor.groovy
+package databinding.converters
+
+import databinding.Shape
+
+import org.grails.databinding.converters.AbstractStructuredBindingEditor
+
+class StructuredShapeEditor extends AbstractStructuredBindingEditor<Shape> {
+
+    public Shape getPropertyValue(Map values) {
+        // retrieve the individual values from the Map
+        def width = values.width as int
+        def height = values.height as int
+
+        // use the values to calculate the area of the Shape
+        def area = width * height
+
+        // create and return a Shape with the appropriate area
+        new Shape(area: area)
+    }
+}
+{code}
+
+An instance of that class needs to be registered with the Spring application context:
+
+{code}
+// grails-app/conf/spring/resources.groovy
+beans = {
+    shapeEditor databinding.converters.StructuredShapeEditor
+
+    // ...
+}
+{code}
+
+When the data binder binds to an instance of the @Gadget@ class it will check to see if there are request parameters with names @compressedShape@ and @expandedShape@ which have a value of "struct" and if they do exist, that will trigger the use of the @StructuredShapeEditor@.  The individual components of the structure need to have parameter names of the form propertyName_structuredElementName.  In the case of the @Gadget@ class above that would mean that the @compressedShape@ request parameter should have a value of "struct" and the @compressedShape_width@ and @compressedShape_height@ parameters should have values which represent the width and the height of the compressed @Shape@.  Similarly, the @expandedShape@ request parameter should have a value of "struct" and the @expandedShape_width@ and @expandedShape_height@ parameters should have values which represent the width and the hight of the expanded @Shape@.
+
+{code}
+// grails-app/controllers/demo/DemoController.groovy
+class DemoController {
+
+    def createGadget(Gadget gadget) {
+        /*
+
+        /demo/createGadget?expandedShape=struct&expandedShape_width=80&expandedShape_height=30
+                          &compressedShape=struct&compressedShape_width=10&compressedShape_height=3
+
+        */
+
+        // with the request parameters shown above gadget.expandedShape.area would be 2400
+        // and gadget.compressedShape.area would be 30
+
+        // ...
+
+    }
+}
+{code}
+
+Typically the request parameters with "struct" as their value would be represented by hidden form fields.
+
 h4. Data Binding Event Listeners
 
 The [DataBindingListener|api:org.grails.databinding.events.DataBindingListener] interface provides a mechanism for listeners to be notified of data binding events.  The interface looks like this:
