@@ -5,13 +5,13 @@ h4. Configuring Mime Types
 Before you can start dealing with content negotiation you need to tell Grails what content types you wish to support. By default Grails comes configured with a number of different content types within @grails-app/conf/Config.groovy@ using the @grails.mime.types@ setting:
 
 {code:java}
-grails.mime.types = [
+grails.mime.types = [ // the first one is the default format
+    html:          ['text/html','application/xhtml+xml'],
     all:           '*/*',
     atom:          'application/atom+xml',
     css:           'text/css',
     csv:           'text/csv',
     form:          'application/x-www-form-urlencoded',
-    html:          ['text/html','application/xhtml+xml'],
     js:            'text/javascript',
     json:          ['application/json', 'text/json'],
     multipartForm: 'multipart/form-data',
@@ -23,6 +23,7 @@ grails.mime.types = [
 {code}
 
 The above bit of configuration allows Grails to detect to format of a request containing either the 'text/xml' or 'application/xml' media types as simply 'xml'. You can add your own types by simply adding new entries into the map.
+The first one is the default format.
 
 h4. Content Negotiation using the format parameter
 
