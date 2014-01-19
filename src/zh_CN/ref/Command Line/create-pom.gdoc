@@ -1,0 +1,27 @@
+h1. create-pom
+
+h2. Purpose
+
+The @create-pom@ creates a POM file for the current application allowing it to be built with Maven.
+
+h2. Examples
+
+bc.
+grails create-pom org.mycompany
+
+h2. Description
+
+The @create-pom@ command will generate a @pom.xml@ file usable by Maven for the current Grails application. 
+
+Running @mvn package@ will build the project. To enable the 'grails' command to read the POM you can modify @BuildConfig.groovy@ to use the POM and resolve dependencies from your Maven local cache:
+
+{code}
+grails.project.dependency.resolution = {
+    ...
+    pom true
+    repositories {
+        ...
+        mavenLocal()    
+    }
+}
+{code}

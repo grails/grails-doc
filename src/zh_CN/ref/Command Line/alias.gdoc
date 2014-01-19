@@ -1,0 +1,106 @@
+h1. alias
+
+h2. Purpose
+
+Configures Grails command aliases.
+
+h2. Examples
+
+{code:java}
+grails alias ra run-app
+grails alias rft test-app functional:
+grails alias --list
+grails alias rft
+grails alias --delete=ra
+{code}
+
+h2. Description
+
+Aliases can be defined to associate names with commands.  The alias may be considerably shorter and/or more expressive than the corresponding command.  For example, the command to run all of the integration tests in an application is usually something like this:
+
+{code:java}
+grails test-app integration:
+{code}
+
+An alias named run-integration-tests could be configured to do the same thing:
+
+{code:java}
+grails alias run-integration-tests test-app integration:
+{code}
+
+After defining that alias the integration tests may be run with this:
+
+{code:java}
+grails run-integration-tests
+{code}
+
+A shorter version of that alias might look something like this:
+
+{code:java}
+grails alias rit test-app integration:
+{code}
+
+After defining that alias the integration tests may be run with this:
+
+{code:java}
+grails rit
+{code}
+
+Usage:
+{code:java}
+    grails alias [--delete=alias] [--list] [alias [command]]
+{code}
+
+To configure a new alias or to update an existing alias:
+
+{code:java}
+grails alias [alias command]
+{code}
+
+@alias@ is the name of the alias and @command@ is the command to be associated with that alias.  For example, the following creates an alias named @rit@ that will run all of the integration tests in an application:
+
+{code:java}
+grails alias rit test-app integration:
+{code}
+
+To display the value of an existing alias:
+
+{code:java}
+grails alias [alias]
+{code}
+
+Example:
+
+{code:java}
+grails alias rit
+rit = test-app integration:
+{code}
+
+To list all configured aliases:
+
+{code:java}
+grails alias --list
+{code}
+
+To delete an alias:
+
+{code:java}
+grails alias --delete=<alias>
+{code}
+
+Example:
+
+{code:java}
+grails alias --delete=rit
+{code}
+
+h3. Limitations
+
+Alias definitions may include parameters such as the "unit:" argument in "grails alias rut test-app unit:" but may not include command line switches that begin with a "\-" or "\-\-" as those will be consumed by the alias command itself.  For example the command "grails alias up upgrade \-\-non-interactive" creates an alias named "up" which will execute "upgrade" not "upgrade --non-interactive".  The "\-\-non-interactive" switch in the original alias command is applied to the alias command itself, not the alias being defined.  When aliases are invoked, additional switches may be applied like "grails up \-\-non-interactive".
+
+Alias definitions may not refer to other aliases.
+
+
+
+
+

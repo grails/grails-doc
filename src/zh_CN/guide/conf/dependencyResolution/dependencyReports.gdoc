@@ -1,0 +1,33 @@
+As mentioned in the previous section a Grails application consists of dependencies inherited from the framework, the plugins installed and the application dependencies itself.
+
+To obtain a report of an application's dependencies you can run the [dependency-report|commandLine] command:
+
+{code}
+grails dependency-report
+{code}
+
+By default this will generate reports in the @target/dependency-report@ directory. You can specify which configuration (scope) you want a report for by passing an argument containing the configuration name:
+
+{code}
+grails dependency-report runtime
+{code}
+
+As of Grails 2.3 the @dependency-report@ command will also output to the console a graph of the dependencies of an application. Example output it shown below:
+
+{code}
+compile - Dependencies placed on the classpath for compilation (total: 73)
++--- org.codehaus.groovy:groovy-all:2.0.6
++--- org.grails:grails-plugin-codecs:2.3.0
+|    \--- org.grails:grails-web:2.3.0
+|         \--- commons-fileupload:commons-fileupload:1.2.2
+|         \--- xpp3:xpp3_min:1.1.4c
+|         \--- commons-el:commons-el:1.0
+|         \--- opensymphony:sitemesh:2.4
+|         \--- org.springframework:spring-webmvc:3.1.2.RELEASE
+|    \--- commons-codec:commons-codec:1.5
+|    \--- org.slf4j:slf4j-api:1.7.2
++--- org.grails:grails-plugin-controllers:2.3.0
+|    \--- commons-beanutils:commons-beanutils:1.8.3
+|    \--- org.grails:grails-core:2.3.0
+...
+{code}

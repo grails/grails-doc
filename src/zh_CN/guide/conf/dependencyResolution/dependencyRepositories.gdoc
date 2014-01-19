@@ -8,13 +8,7 @@ repositories {
 }
 {code}
 
-In this case the default public Maven repository is specified. To use the SpringSource Enterprise Bundle Repository you can use the @ebr()@ method:
-
-{code}
-repositories {
-    ebr()
-}
-{code}
+In this case the default public Maven repository is specified. 
 
 You can also specify a specific Maven repository to use by URL:
 
@@ -23,6 +17,16 @@ repositories {
     mavenRepo "http://repository.codehaus.org"
 }
 {code}
+
+and even give it a name:
+
+{code}
+repositories {
+    mavenRepo name: "Codehaus", root: "http://repository.codehaus.org"
+}
+{code}
+
+so that you can easily identify it in logs.
 
 h4. Controlling Repositories Inherited from Plugins
 
@@ -38,6 +42,24 @@ repositories {
 
 In this case your application will not inherit any repository definitions from plugins and it is down to you to provide appropriate (possibly internal) repository definitions.
 
+h4. Offline Mode
+
+There are times when it is not desirable to connect to any remote repositories (whilst working on the train for example!). In this case you can use the @offline@ flag to execute Grails commands and Grails will not connect to any remote repositories:
+
+{code}
+grails --offline run-app
+{code}
+
+{note}
+Note that this command will fail if you do not have the necessary dependencies in your local Ivy cache
+{note}
+
+You can also globally configure offline mode by setting @grails.offline.mode@ to @true@ in @~/.grails/settings.groovy@ or in your project's @BuildConfig.groovy@ file:
+
+{code}
+grails.offline.mode=true
+{code}
+
 h4. Local Resolvers
 
 If you do not wish to use a public Maven repository you can specify a flat file repository:
@@ -48,6 +70,10 @@ repositories {
 }
 {code}
 
+{warning}
+Aether does not support the @flatDir@ resolver or any custom file system resolvers. The above feature works only if you are using the Ivy dependency manager.
+{warning}
+
 To specify your local Maven cache (@~/.m2/repository@) as a repository:
 
 {code}
@@ -55,9 +81,10 @@ repositories {
     mavenLocal()
 }
 {code}
+
 h4. Custom Resolvers
 
-If all else fails since Grails builds on Apache Ivy you can specify an Ivy resolver:
+If you are using the Ivy dependency manager (Aether does not support custom resolvers), then you can explicitly specify an Ivy resolver:
 
 {code}
 /*
