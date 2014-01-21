@@ -13,24 +13,7 @@ def index = {
 
 }
 {code}
-{hidden}
 
-h4. 使用函数方法来定义控制器的动作
-
-以前Grails的动作只能通过闭包来定义，现在通过一般的函数方法也可以定义了，实际上这也是优先推荐的方式，比如：
-
-{code}
-// action as a method
-def index() {
-
-}
-// action as a closure
-def index = {
-
-}
-{code}
-
-{hidden}
 h4. Binding Primitive Method Action Arguments
 
 It is now possible to bind form parameters to action arguments where the name of the form element matches the argument name. For example given the following form:
@@ -49,38 +32,11 @@ def save(String name, int age) {
     // remaining
 }
 {code}
-{hidden}
 
-h4. 自动绑定带参数的动作方法
-
-现在可以将表单（form）参数跟动作参数进行自动匹配了，只要表单下边子元素的名称名字跟参数名称一致即可，以如下的表单为例：
-
-{code:xml}
-<g:form name="myForm" action="save">
-    <input name="name" />
-    <input name="age" />
-</g:form>
-{code}
-
-你可以定义其动作参数为每一个输入元素的名字，系统会自动将参数值转换为其响应的类型，如以下代码所示：
-
-{code}
-def save(String name, int age) {
-    // remaining
-}
-{code}
-
-{hidden}
 h4. Static Resource Abstraction
 
 A new [static resource abstraction|guide:resources] is included that allows declarative handling of JavaScript, CSS and image resources including automatic ordering, compression, caching and gzip handling.
-{hidden}
 
-h4. 静态资源
-
-新引入的[静态资源|guide:resources]抽象，可以声明式地处理JavaScript、CSS以及图像资源的自动排序、压缩、缓存.
-
-{hidden}
 h4. Servlet 3.0 Async Features
 
 Grails now supports Servlet 3.0 including the Asynchronous programming model defined by the specification:
@@ -95,24 +51,7 @@ def index() {
     }
 }
 {code}
-{hidden}
 
-h4. Servlet 3.0 的异步特性
-
-Grails现在已经支持Servlet 3.0了，且包含了其规范中定义的异步编程模型，比如：
-
-{code}
-def index() {
-    def ctx = startAsync()
-    ctx.start {
-        new Book(title:"The Stand").save()
-        render template:"books", model:[books:Book.list()]
-        ctx.complete()
-    }
-}
-{code}
-
-{hidden}
 h4. Link Generation API
 
 A general purpose @LinkGenerator@ class is now available that is usable anywhere within a Grails application and not just within the context of a controller. For example if you need to generate links in a service or an asynchronous background job outside the scope of a request:
@@ -124,21 +63,7 @@ def generateLink() {
     grailsLinkGenerator.link(controller:"book", action:"list")
 }
 {code}
-{hidden}
 
-h4. 生成超链接的API
-
-在Grails应用，新增的通用@LinkGenerator@类，可以在任何地方生成超链接了，不像以前，只能局限于控制器的上下文中。比如，你要在一个服务或者异步的后台任务等超出web请求范围内使用，可以参考如下代码：
-
-{code}
-LinkGenerator grailsLinkGenerator
-
-def generateLink() {
-    grailsLinkGenerator.link(controller:"book", action:"list")
-}
-{code}
-
-{hidden}
 h4. Page Rendering API
 
 Like the @LinkGenerator@ the new @PageRenderer@ can be used to render GSP pages outside the scope of a web request, such as in a scheduled job or web service. The @PageRenderer@ class features a very similar API to the @render@ method found within controllers:
@@ -162,7 +87,165 @@ new File("/path/to/welcome.html").withWriter { w ->
     groovyPageRenderer.renderTo(view:"/page/content", w)
 }
 {code}
+
+h4. Filter Exclusions
+
+Filters may now express controller, action and uri exclusions to offer more options for expressing to which requests a particular filter should be applied.
+
+{code}
+
+filter1(actionExclude: 'log*') {
+    before = {
+        // …
+    }
+}
+filter2(controllerExclude: 'auth') {
+    before = {
+        // …
+    }
+}
+
+filter3(uriExclude: '/secure*') {
+    before = {
+        // …
+    }
+}
+{code}
+
+h4. Performance Improvements
+
+Performance of GSP page rendering has once again been improved by optimizing the GSP compiler to inline method calls where possible.
+
+h4. HTML5 Scaffolding
+
+There is a new HTML5-based scaffolding UI:
+
+!scaffolding-ui.png!
+
+h4. jQuery by Default
+
+The jQuery plugin is now the default JavaScript library installed into a Grails application. For backwards compatibility a [Prototype plugin|http://grails.org/plugin/prototype] is available. Refer to the [documentation|http://grails.org/plugin/prototype] on the Prototype plugin for installation instructions.
+
+h4. Easy Date Parsing
+
+A new @date@ method has been added to the @params@ object to allow easy, null-safe parsing of dates:
+
+{code}
+def val = params.date('myDate', 'dd-MM-yyyy')
+
+// or a list for formats
+def val = params.date('myDate', ['yyyy-MM-dd', 'yyyyMMdd', 'yyMMdd'])
+
+// or the format read from messages.properties via the key 'date.myDate.format'
+def val = params.date('myDate')
+{code}
+
+h4. Customizable URL Formats
+
+The default URL Mapping mechanism supports camel case names in the URLs.  The default URL for accessing an action named @addNumbers@ in a controller named @MathHelperController@ would be something like @/mathHelper/addNumbers@.  Grails allows for the customization of this pattern and provides an implementation which replaces the camel case convention with a hyphenated convention that would support URLs like @/math-helper/add-numbers@.  To enable hyphenated URLs assign a value of "hyphenated" to the @grails.web.url.converter@ property in @grails-app/conf/Config.groovy@.
+
+{code:java}
+// grails-app/conf/Config.groovy
+
+grails.web.url.converter = 'hyphenated'
+{code}
+
+Arbitrary strategies may be plugged in by providing a class which implements the [UrlConverter|api:grails.web.UrlConverter] interface and adding an instance of that class to the Spring application context with the bean name of @grails.web.UrlConverter.BEAN_NAME@.  If Grails finds a bean in the context with that name, it will be used as the default converter and there is no need to assign a value to the @grails.web.url.converter@ config property.
+
+{code:java}
+// src/groovy/com/myapplication/MyUrlConverterImpl.groovy
+
+package com.myapplication
+
+class MyUrlConverterImpl implements grails.web.UrlConverter {
+
+    String toUrlElement(String propertyOrClassName) {
+        // return some representation of a property or class name that should be used in URLs...
+    }
+}
+{code}
+
+{code:java}
+// grails-app/conf/spring/resources.groovy
+
+beans = {
+    "\${grails.web.UrlConverter.BEAN_NAME}"(com.myapplication.MyUrlConverterImpl)
+}
+{code}
+
+h4. Web Flow input and output
+It is now possible to provide input arguments when calling a subflow. Flows can also return output values that can be used in a calling flow.
 {hidden}
+
+h4. 使用函数方法来定义控制器的动作
+
+以前Grails的动作只能通过闭包来定义，现在通过一般的函数方法也可以定义了，实际上这也是优先推荐的方式，比如：
+
+{code}
+// action as a method
+def index() {
+
+}
+// action as a closure
+def index = {
+
+}
+{code}
+
+
+h4. 自动绑定带参数的动作方法
+
+现在可以将表单（form）参数跟动作参数进行自动匹配了，只要表单下边子元素的名称名字跟参数名称一致即可，以如下的表单为例：
+
+{code:xml}
+<g:form name="myForm" action="save">
+    <input name="name" />
+    <input name="age" />
+</g:form>
+{code}
+
+你可以定义其动作参数为每一个输入元素的名字，系统会自动将参数值转换为其响应的类型，如以下代码所示：
+
+{code}
+def save(String name, int age) {
+    // remaining
+}
+{code}
+
+
+h4. 静态资源
+
+新引入的[静态资源|guide:resources]抽象，可以声明式地处理JavaScript、CSS以及图像资源的自动排序、压缩、缓存.
+
+
+h4. Servlet 3.0 的异步特性
+
+Grails现在已经支持Servlet 3.0了，且包含了其规范中定义的异步编程模型，比如：
+
+{code}
+def index() {
+    def ctx = startAsync()
+    ctx.start {
+        new Book(title:"The Stand").save()
+        render template:"books", model:[books:Book.list()]
+        ctx.complete()
+    }
+}
+{code}
+
+
+h4. 生成超链接的API
+
+在Grails应用，新增的通用@LinkGenerator@类，可以在任何地方生成超链接了，不像以前，只能局限于控制器的上下文中。比如，你要在一个服务或者异步的后台任务等超出web请求范围内使用，可以参考如下代码：
+
+{code}
+LinkGenerator grailsLinkGenerator
+
+def generateLink() {
+    grailsLinkGenerator.link(controller:"book", action:"list")
+}
+{code}
+
 
 h4. 页面渲染API
 
@@ -188,31 +271,6 @@ new File("/path/to/welcome.html").withWriter { w ->
 }
 {code}
 
-{hidden}
-h4. Filter Exclusions
-
-Filters may now express controller, action and uri exclusions to offer more options for expressing to which requests a particular filter should be applied.
-
-{code}
-
-filter1(actionExclude: 'log*') {
-    before = {
-        // …
-    }
-}
-filter2(controllerExclude: 'auth') {
-    before = {
-        // …
-    }
-}
-
-filter3(uriExclude: '/secure*') {
-    before = {
-        // …
-    }
-}
-{code}
-{hidden}
 
 h4. 过滤器的排除
 
@@ -238,24 +296,11 @@ filter3(uriExclude: '/secure*') {
 }
 {code}
 
-{hidden}
-h4. Performance Improvements
-
-Performance of GSP page rendering has once again been improved by optimizing the GSP compiler to inline method calls where possible.
-{hidden}
 
 h4. 性能的提升
 
 通过将GSP编译器优化成内联方法，使得GSP的页面渲染性能又一次得到提升。
 
-{hidden}
-h4. HTML5 Scaffolding
-
-There is a new HTML5-based scaffolding UI:
-
-!scaffolding-ui.png!
-
-{hidden}
 
 h4. HTML5脚手架
 
@@ -264,32 +309,11 @@ h4. HTML5脚手架
 !scaffolding-ui.png!
 
 
-{hidden}
-h4. jQuery by Default
-
-The jQuery plugin is now the default JavaScript library installed into a Grails application. For backwards compatibility a [Prototype plugin|http://grails.org/plugin/prototype] is available. Refer to the [documentation|http://grails.org/plugin/prototype] on the Prototype plugin for installation instructions.
-
-{hidden}
 
 h4. jQuery作为缺省JavaScript库
 
 jQuery插件已经作为一个缺省的JavaScript库被安装到Grails应用当中。因为向后兼容的原因，[Prototype插件|http://grails.org/plugin/prototype]依然是有效的，其安装指令请参考[Prototype插件官方文档|http://grails.org/plugin/prototype]。
 
-{hidden}
-h4. Easy Date Parsing
-
-A new @date@ method has been added to the @params@ object to allow easy, null-safe parsing of dates:
-
-{code}
-def val = params.date('myDate', 'dd-MM-yyyy')
-
-// or a list for formats
-def val = params.date('myDate', ['yyyy-MM-dd', 'yyyyMMdd', 'yyMMdd'])
-
-// or the format read from messages.properties via the key 'date.myDate.format'
-def val = params.date('myDate')
-{code}
-{hidden}
 
 h4. 易用的日期解析
 

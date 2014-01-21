@@ -161,6 +161,40 @@ zipCode.auditing.save()
 
 As you can see, you add the @DataSource@ to the method call in both the static case and the instance case.
 
+h4. Hibernate Mapped Domain Classes
+
+You can also partition annotated Java classes into separate datasources. Classes using the default datasource are registered in @grails-app/conf/hibernate/hibernate.cfg.xml@. To specify that an annotated class uses a non-default datasource, create a @hibernate.cfg.xml@ file for that datasource with the file name prefixed with the datasource name.
+
+For example if the @Book@ class is in the default datasource, you would register that in @grails-app/conf/hibernate/hibernate.cfg.xml@:
+
+{code:xml}
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          '-//Hibernate/Hibernate Configuration DTD 3.0//EN'
+          'http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd'>
+<hibernate-configuration>
+   <session-factory>
+      <mapping class='org.example.Book'/>
+   </session-factory>
+</hibernate-configuration>
+{code}
+
+and if the @Library@ class is in the "ds2" datasource, you would register that in @grails-app/conf/hibernate/ds2_hibernate.cfg.xml@:
+
+{code:xml}
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          '-//Hibernate/Hibernate Configuration DTD 3.0//EN'
+          'http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd'>
+<hibernate-configuration>
+   <session-factory>
+      <mapping class='org.example.Library'/>
+   </session-factory>
+</hibernate-configuration>
+{code}
+
+The process is the same for classes mapped with hbm.xml files - just list them in the appropriate hibernate.cfg.xml file.
+
 h4. Services
 
 Like Domain classes, by default Services use the default @DataSource@ and @PlatformTransactionManager@. To configure a Service to use a different @DataSource@, use the static @datasource@ property, for example:
