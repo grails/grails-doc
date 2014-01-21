@@ -97,6 +97,8 @@ class BookControllerTests {
 Alternatively you can also use the @DomainClassUnitTestMixin@ directly with the @TestMixin@ annotation:
 
 {code:java}
+import grails.test.mixin.domain.DomainClassUnitTestMixin
+
 @TestFor(BookController)
 @TestMixin(DomainClassUnitTestMixin)
 class BookControllerTests {
@@ -126,59 +128,276 @@ void testSave() {
 
 h4. Testing Constraints
 
-Your constraints contain logic and that logic is highly susceptible to bugs - the kind of bugs that can be tricky to track down (particularly as by default @save()@ doesn't throw an exception when it fails). If your answer is that it's too hard or fiddly, that is no longer an excuse. Enter the @mockForConstraintsTests()@ method.
+There are 4 types of validateable classes:
 
-This method is like a much reduced version of the @mockDomain()@ method that simply adds a @validate()@ method to a given domain class. All you have to do is mock the class, create an instance with populated data, and then call @validate()@. You can then access the @errors@ property to determine if validation failed. So if all we are doing is mocking the @validate()@ method, why the optional list of test instances? That is so that we can test the @unique@ constraint as you will soon see.
+# Domain classes
+# Classes marked with the @Validateable@ annotation
+# Command Objects which have been made validateable automatically
+# Classes configured to be validateable via the @grails.validateable.classes@ property in @Config.groovy@
 
-So, suppose we have a simple domain class:
+The first 3 are easily testable in a unit test with no special configuration necessary as long as the test method is marked with @TestFor@ or explicitly applies the @GrailsUnitTestMixin@ using @TestMixin@.  See the examples below.
 
 {code:java}
-class Book {
+// src/groovy/com/demo/MyValidateable.groovy
+package com.demo
 
+@grails.validation.Validateable
+class MyValidateable {
+    String name
+    Integer age
+    
+    static constraints = {
+        name matches: /[A-Z].*/
+        age range: 1..99
+    }
+}
+{code}
+
+{code:java}
+// grails-app/domain/com/demo/Person.groovy
+package com.demo
+
+class Person {
+    String name
+
+    static constraints = {
+        name matches: /[A-Z].*/
+    }
+}
+{code}
+
+{code:java}
+// grails-app/controllers/com/demo/DemoController.groovy
+package com.demo
+
+class DemoController {
+
+    def addItems(MyCommandObject co) {
+        if(co.hasErrors()) {
+            render 'something went wrong'
+        } else {
+            render 'items have been added'
+        }
+    }
+}
+
+class MyCommandObject {
+    Integer numberOfItems
+
+    static constraints = {
+        numberOfItems range: 1..10
+    }
+}
+{code}
+
+{code:java}
+// test/unit/com/demo/PersonSpec.groovy
+package com.demo
+
+import grails.test.mixin.TestFor
+import spock.lang.Specification
+
+@TestFor(Person)
+class PersonSpec extends Specification {
+
+    void "Test that name must begin with an upper case letter"() {
+        when: 'the name begins with a lower letter'
+        def p = new Person(name: 'jeff')
+
+        then: 'validation should fail'
+        !p.validate()
+
+        when: 'the name begins with an upper case letter'
+        p = new Person(name: 'Jeff')
+
+        then: 'validation should pass'
+        p.validate()
+    }
+}
+{code}
+
+{code:java}
+// test/unit/com/demo/DemoControllerSpec.groovy
+package com.demo
+
+import grails.test.mixin.TestFor
+import spock.lang.Specification
+
+@TestFor(DemoController)
+class DemoControllerSpec extends Specification {
+
+    void 'Test an invalid number of items'() {
+        when:
+        params.numberOfItems = 42
+        controller.addItems()
+
+        then:
+        response.text == 'something went wrong'
+    }
+
+    void 'Test a valid number of items'() {
+        when:
+        params.numberOfItems = 8
+        controller.addItems()
+
+        then:
+        response.text == 'items have been added'
+    }
+}
+{code}
+
+{code:java}
+// test/unit/com/demo/MyValidateableSpec.groovy
+package com.demo
+
+import grails.test.mixin.TestMixin
+import grails.test.mixin.support.GrailsUnitTestMixin
+import spock.lang.Specification
+
+
+@TestMixin(GrailsUnitTestMixin)
+class MyValidateableSpec extends Specification {
+
+    void 'Test validate can be invoked in a unit test with no special configuration'() {
+        when: 'an object is valid'
+        def validateable = new MyValidateable(name: 'Kirk', age: 47)
+        
+        then: 'validate() returns true and there are no errors'
+        validateable.validate()
+        !validateable.hasErrors()
+        validateable.errors.errorCount == 0
+
+        when: 'an object is invalid'
+        validateable.name = 'kirk'
+        
+        then: 'validate() returns false and the appropriate error is created'
+        !validateable.validate()
+        validateable.hasErrors()
+        validateable.errors.errorCount == 1
+        validateable.errors['name'].code == 'matches.invalid'
+        
+        when: 'the clearErrors() is called'
+        validateable.clearErrors()
+        
+        then: 'the errors are gone'
+        !validateable.hasErrors()
+        validateable.errors.errorCount == 0
+        
+        when: 'the object is put back in a valid state'
+        validateable.name = 'Kirk'
+        
+        then: 'validate() returns true and there are no errors'
+        validateable.validate()
+        !validateable.hasErrors()
+        validateable.errors.errorCount == 0
+    }
+}
+{code}
+
+{code:java}
+// test/unit/com/demo/MyCommandObjectSpec.groovy
+package com.demo
+
+import grails.test.mixin.TestMixin
+import grails.test.mixin.support.GrailsUnitTestMixin
+import spock.lang.Specification
+
+@TestMixin(GrailsUnitTestMixin)
+class MyCommandObjectSpec extends Specification {
+
+    void 'Test that numberOfItems must be between 1 and 10'() {
+        when: 'numberOfItems is less than 1'
+        def co = new MyCommandObject()
+        co.numberOfItems = 0
+
+        then: 'validation fails'
+        !co.validate()
+        co.hasErrors()
+        co.errors['numberOfItems'].code == 'range.toosmall'
+        
+        when: 'numberOfItems is greater than 10'
+        co.numberOfItems = 11
+
+        then: 'validation fails'
+        !co.validate()
+        co.hasErrors()
+        co.errors['numberOfItems'].code == 'range.toobig'
+        
+        when: 'numberOfItems is greater than 1'
+        co.numberOfItems = 1
+
+        then: 'validation succeeds'
+        co.validate()
+        !co.hasErrors()
+        
+        when: 'numberOfItems is greater than 10'
+        co.numberOfItems = 10
+
+        then: 'validation succeeds'
+        co.validate()
+        !co.hasErrors()
+    }
+}
+{code}
+
+For validateable classes which are not one of the first 3 types listed above but are configured with the @grails.validateable.classes@ property in @Config.groovy@, one additional step is required to test validation.  @GrailsUnitTestMixin@ provides a method named @mockForConstraintsTests@ that will mock validation support for these classes.  See the example below.
+
+{code:java}
+// src/groovy/com/demo/Book.groovy
+package com.demo
+
+class Book {
     String title
     String author
 
     static constraints = {
-        title blank: false, unique: true
-        author blank: false, minSize: 5
+        author minSize: 5
     }
 }
 {code}
-
-Don't worry about whether the constraints are sensible (they're not!), they are for demonstration only. To test these constraints we can do the following:
 
 {code:java}
-@TestFor(Book)
-class BookTests {
-    void testConstraints() {
+// grails-app/conf/Config.groovy
+grails.validateable.classes = [com.demo.Book]
 
-        def existingBook = new Book(
-                title: "Misery",
-                author: "Stephen King")
+// ...
+{code}
 
-        mockForConstraintsTests(Book, [existingBook])
+{code:java}
+// test/unit/com/demo/BookSpec.groovy
+package com.demo
 
-        // validation should fail if both properties are null
+import grails.test.mixin.TestMixin
+import grails.test.mixin.support.GrailsUnitTestMixin
+import spock.lang.Specification
+
+@TestMixin(GrailsUnitTestMixin)
+class BookSpec extends Specification {
+
+    void 'Test validation'() {
+        given:
+        mockForConstraintsTests Book
+
+        when: 'the author name has only 4 characters'
         def book = new Book()
+        book.author = 'Jeff'
 
-        assert !book.validate()
-        assert "nullable" == book.errors["title"]
-        assert "nullable" == book.errors["author"]
+        then: 'validation should fail'
+        !book.validate()
+        book.hasErrors()
+        book.errors['author'] == 'minSize'
 
-        // So let's demonstrate the unique and minSize constraints
+        when: 'the author name has 5 characters'
+        book.author = 'Jacob'
 
-        book = new Book(title: "Misery", author: "JK")
-        assert !book.validate()
-        assert "unique" == book.errors["title"]
-        assert "minSize" == book.errors["author"]
-
-        // Validation should pass!
-        book = new Book(title: "The Shining", author: "Stephen King")
-        assert book.validate()
+        then: 'validation should pass'
+        book.validate()
+        !book.hasErrors()
     }
 }
 {code}
 
-You can probably look at that code and work out what's happening without any further explanation. The one thing we will explain is the way the @errors@ property is used. First, is a real Spring @Errors@ instance, so you can access all the properties and methods you would normally expect. Second, this particular @Errors@ object also has map/property access as shown. Simply specify the name of the field you are interested in and the map/property access will return the name of the constraint that was violated. Note that it is the constraint name, not the message code (as you might expect).
+Note that the @mockForConstraintsTests@ method changes the behavior of the errors object such that something like @book.errors['author']@ will evaluate to the name of the failed constraint, not a @org.springframework.validation.FieldError@ object.  This is convenient for unit tests.  If your unit test really does want a reference to the @org.springframework.validation.FieldError@ object use something like @book.errors.getFieldError('author')@.
 
-That's it for testing constraints. One final thing we would like to say is that testing the constraints in this way catches a common error: typos in the "constraints" property name! It is currently one of the hardest bugs to track down normally, and yet a unit test for your constraints will highlight the problem straight away.
+That's it for testing constraints. One final thing we would like to say is that testing the constraints in this way catches a common error: typos in the "constraints" property name which is a mistake that is easy to make and equally easy to overlook. A unit test for your constraints will highlight the problem straight away.
+

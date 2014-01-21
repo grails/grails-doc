@@ -38,9 +38,9 @@ void testHello() {
 }
 {code}
 
-The @response@ object is an instance of @org.codehaus.groovy.grails.plugins.testing.GrailsMockHttpServletResponse@ which extends Spring's @org.springframework.mock.web.MockHttpServletResponse@ and has a number of useful methods for inspecting the state of the response.
+The @response@ object is an instance of @GrailsMockHttpServletResponse@ (from the package @org.codehaus.groovy.grails.plugins.testing@) which extends Spring's @MockHttpServletResponse@ class and has a number of useful methods for inspecting the state of the response.
 
-For example to test a redirect you can use the @redirectUrl@ property:
+For example to test a redirect you can use the @redirectedUrl@ property:
 
 {code:java}
 // Test class
@@ -59,6 +59,42 @@ void testIndex() {
     assert response.redirectedUrl == '/simple/hello'
 }
 {code}
+
+Many actions make use of the parameter data associated with the request. For example, the 'sort', 'max', and 'offset' parameters are quite common. Providing these in the test is as simple as adding appropriate values to a special @params@ variable:
+
+{code:java}
+void testList() {
+    params.sort = "name"
+    params.max = 20
+    params.offset = 0
+
+    controller.list()
+    ...
+}
+{code}
+
+You can even control what type of request the controller action sees by setting the @method@ property of the mock request:
+
+{code:java}
+void testSave() {
+    request.method = "POST"
+    controller.save()
+    ...
+}
+{code}
+
+This is particularly important if your actions do different things depending on the type of the request. Finally, you can mark a request as AJAX like so:
+
+{code:java}
+void testGetPage() {
+    request.method = "POST"
+    request.makeAjaxRequest()
+    controller.getPage()
+    ...
+}
+{code}
+
+You only need to do this though if the code under test uses the @xhr@ property on the request.
 
 h4. Testing View Rendering
 
@@ -82,6 +118,8 @@ void testIndex() {
     assert model.title == "Hello World"
 }
 {code}
+
+Note that the view string is the absolute view path, so it starts with a '/' and will include path elements, such as the directory named after the action's controller.
 
 h4. Testing Template Rendering
 
@@ -115,6 +153,33 @@ void testDisplay() {
     assert response.text == 'mock contents'
 }
 {code}
+
+h4. Testing Actions Which Return A Map
+
+When a controller action returns a @java.util.Map@ that @Map@ may be inspected directly to assert that it contains the expected data:
+
+{code:java}
+class SimpleController {
+    def showBookDetails() {
+        [title: 'The Nature Of Necessity', author: 'Alvin Plantinga']
+    }
+}
+{code}
+
+{code:java}
+import grails.test.mixin.*
+
+@TestFor(SimpleController)
+class SimpleControllerTests {
+
+    void testShowBookDetails() {
+        def model = controller.showBookDetails()
+
+        assert model.author == 'Alvin Plantinga'
+    }
+}
+{code}
+
 
 h4. Testing XML and JSON Responses
 
@@ -347,8 +412,10 @@ import org.codehaus.groovy.grails.web.servlet.mvc.SynchronizerToken
 ...
 
 void testValidFormSubmission() {
-    def token = SynchronizerToken.store(session)
-    params[SynchronizerToken.KEY] = token.currentToken.toString()
+    def tokenHolder = SynchronizerTokensHolder.store(session)
+
+    params[SynchronizerTokensHolder.TOKEN_URI] = '/controller/handleForm'
+    params[SynchronizerTokensHolder.TOKEN_KEY] = tokenHolder.generateToken(params[SynchronizerTokensHolder.TOKEN_URI])
 
     controller.handleForm()
     assert "Good" == response.text

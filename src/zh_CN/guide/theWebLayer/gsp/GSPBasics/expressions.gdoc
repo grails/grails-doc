@@ -8,10 +8,8 @@ In GSP the @<%= %>@ syntax introduced earlier is rarely used due to the support 
 </html>
 {code}
 
-However, unlike JSP EL you can have any Groovy expression within the @${..}@ block. Variables within the @${..}@ block are *not* escaped by default, so any HTML in the variable's string is rendered directly to the page. To reduce the risk of Cross-site-scripting (XSS) attacks, you can enable automatic HTML escaping with the @grails.views.default.codec@ setting in @grails-app/conf/Config.groovy@:
+However, unlike JSP EL you can have any Groovy expression within the @${..}@ block. 
 
-{code:java}
-grails.views.default.codec='html'
-{code}
-
-Other possible values are 'none' (for no default encoding) and 'base64'.
+{warning}
+Embedding data received from user input has the risk of making your application vulnerable to an Cross Site Scripting (XSS) attack. Please read the documentation on [XSS prevention|guide:xssPrevention] for information on how to prevent XSS attacks.
+{warning}
