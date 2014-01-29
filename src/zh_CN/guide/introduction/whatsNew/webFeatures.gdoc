@@ -176,26 +176,24 @@ beans = {
 h4. Web Flow input and output
 It is now possible to provide input arguments when calling a subflow. Flows can also return output values that can be used in a calling flow.
 {hidden}
+h4. 使用方法定义控制器动作
 
-h4. 使用函数方法来定义控制器的动作
-
-以前Grails的动作只能通过闭包来定义，现在通过一般的函数方法也可以定义了，实际上这也是优先推荐的方式，比如：
+现在可以把控制器动作定义为方法而不是像以前的Grails版本使用闭包来定义。实际上这也是表示控制器动作优先推荐的方式，比如：
 
 {code}
-// action as a method
+// 使用方法作为动作
 def index() {
 
 }
-// action as a closure
+// 使用闭包作为动作
 def index = {
 
 }
 {code}
 
+h4. 绑定动作方法中原始类型的参数
 
-h4. 自动绑定带参数的动作方法
-
-现在可以将表单（form）参数跟动作参数进行自动匹配了，只要表单下边子元素的名称名字跟参数名称一致即可，以如下的表单为例：
+现在可以将表单参数跟动作方法参数进行绑定，只要表单元素的名字跟动作方法参数的名字一致即可，以如下的表单为例：
 
 {code:xml}
 <g:form name="myForm" action="save">
@@ -204,7 +202,7 @@ h4. 自动绑定带参数的动作方法
 </g:form>
 {code}
 
-你可以定义其动作参数为每一个输入元素的名字，系统会自动将参数值转换为其响应的类型，如以下代码所示：
+你可以定义一个动作方法为每一个输入数据声明对应的参数则会自动将输入参数转换为合适的类型：
 
 {code}
 def save(String name, int age) {
@@ -212,15 +210,13 @@ def save(String name, int age) {
 }
 {code}
 
+h4. 静态资源抽象
 
-h4. 静态资源
-
-新引入的[静态资源|guide:resources]抽象，可以声明式地处理JavaScript、CSS以及图像资源的自动排序、压缩、缓存.
-
+新引入的[静态资源抽象|guide:resources]功能允许声明式地对JavaScript、CSS以及图像资源进行自动排序、压缩、缓存和gzip处理。
 
 h4. Servlet 3.0 的异步特性
 
-Grails现在已经支持Servlet 3.0了，且包含了其规范中定义的异步编程模型，比如：
+Grails现在已经支持Servlet 3.0，这包含规范中定义的异步编程模型：
 
 {code}
 def index() {
@@ -233,10 +229,9 @@ def index() {
 }
 {code}
 
+h4. 超链接生成API
 
-h4. 生成超链接的API
-
-在Grails应用，新增的通用@LinkGenerator@类，可以在任何地方生成超链接了，不像以前，只能局限于控制器的上下文中。比如，你要在一个服务或者异步的后台任务等超出web请求范围内使用，可以参考如下代码：
+现在有了一个通用的@LinkGenerator@类，可以在Grails应用程序的任何地方使用而不是仅仅在控制器中使用。例如，如果你在请求的作用域外，需要在一个服务组件或者异步运行的后台任务中生成链接：
 
 {code}
 LinkGenerator grailsLinkGenerator
@@ -246,10 +241,9 @@ def generateLink() {
 }
 {code}
 
+h4. 页面显示API
 
-h4. 页面渲染API
-
-跟@LinkGenerator@类似，新增的@PageRenderer@能够在超出web请求范围之外的任何地方渲染GSP页面，比如被调度的任务或者WEB服务接口中。@PageRenderer@ 类的API跟在控制器中使用的@render@方法很类似，比如：
+跟@LinkGenerator@类似，新增的@PageRenderer@能够在web请求的作用域之外的任何地方显示GSP页面，比如被调度的任务或者Web服务中。@PageRenderer@ 类的API跟在控制器中使用的@render@方法非常相似：
 
 {code}
 grails.gsp.PageRenderer groovyPageRenderer
@@ -263,7 +257,7 @@ void welcomeUser(User user) {
 }
 {code}
 
-@PageRenderer@服务还允许你将GSP页面预处理成为HTML模板：
+@PageRenderer@服务组件还允许你将GSP页面预处理成为HTML模板：
 
 {code}
 new File("/path/to/welcome.html").withWriter { w ->
@@ -271,10 +265,9 @@ new File("/path/to/welcome.html").withWriter { w ->
 }
 {code}
 
-
 h4. 过滤器的排除
 
-过滤器现在可以明确的指定是排除控制器、动作、还是URI，这为特定请求的过滤器提供了更多选项。
+过滤器现在可以表示其排除应用到的控制器、动作和URI，这为一个特定的过滤器可以应用到的请求提供了更多选项。
 
 {code}
 
@@ -296,35 +289,30 @@ filter3(uriExclude: '/secure*') {
 }
 {code}
 
+h4. 性能改进
 
-h4. 性能的提升
-
-通过将GSP编译器优化成内联方法，使得GSP的页面渲染性能又一次得到提升。
-
+通过将GSP编译器在可能的地方进行内联方法调用的优化，使得GSP页面显示性能又一次得到改进。
 
 h4. HTML5脚手架
 
-新增的基于HTML5的脚手架界面如下：
+新增的基于HTML5的脚手架用户界面如下：
 
 !scaffolding-ui.png!
 
+h4. 缺省采用jQuery
 
-
-h4. jQuery作为缺省JavaScript库
-
-jQuery插件已经作为一个缺省的JavaScript库被安装到Grails应用当中。因为向后兼容的原因，[Prototype插件|http://grails.org/plugin/prototype]依然是有效的，其安装指令请参考[Prototype插件官方文档|http://grails.org/plugin/prototype]。
-
+jQuery插件已经作为一个缺省的JavaScript库被安装到Grails应用程序中。为了向后兼容，[Prototype插件|http://grails.org/plugin/prototype]仍然可用，其安装指令请参考[Prototype插件文档|http://grails.org/plugin/prototype]。
 
 h4. 易用的日期解析
 
-@params@对象新增了一个@date@方法，用以轻松地、空指针安全地解析日期，比如：
+@params@对象新增了一个@date@方法允许容易地、空指针安全地解析日期：
 
 {code}
 def val = params.date('myDate', 'dd-MM-yyyy')
 
-// or a list for formats
+// 或者为日期格式的列表
 def val = params.date('myDate', ['yyyy-MM-dd', 'yyyyMMdd', 'yyMMdd'])
 
-// or the format read from messages.properties via the key 'date.myDate.format'
+// 或者是从messages.properties读取的键为'date.myDate.format'的格式
 def val = params.date('myDate')
 {code}

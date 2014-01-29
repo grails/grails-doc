@@ -1,3 +1,4 @@
+{hidden}
 h4. Maven Improvements / Multi Module Build Support
 
 Grails' Maven support has been improved in a number of significant ways. Firstly it is now possible to specify plugins within your @pom.xml@ file:
@@ -71,3 +72,76 @@ h4. New GORM Methods
 
 In Grails 2.1.1 domain classes now have static methods named @first@ and @last@ to retrieve the first and last instances from the datastore.  See the [first|domainClasses] and [last|domainClasses] documentation for details.
 
+{hidden}
+h4. Maven改进和多模块构建支持
+
+Grails的Maven支持已经在许多方面有了重大改进。这是Grails首次能够在@pom.xml@文件中指定插件：
+
+{code}
+<dependency>
+    <groupId>org.grails.plugins</groupId>
+    <artifactId>hibernate</artifactId>
+    <version>2.1.0</version>
+    <type>zip</type>
+    <scope>compile</scope>
+</dependency>
+{code}
+
+Grails Maven插件现在对插件依赖和jar依赖一样进行解析（以前jar依赖由Maven解析而插件由Ivy解析）。Ivy已经完全被禁用，所有的依赖解析由Maven完成，确保依赖剔除按期望的方式工作。
+
+Grails还有一个新的@create-multi-project-build@脚本使其首次支持Maven(在未来的版本中将支持Gradle）。这个脚本可以从包含Grails应用程序和插件的父目录运行并且将会生成一个支持Maven多模块构建的文件。
+
+随着@create-pom@命令的引入，在项目中启用Maven已经变得更容易了：
+
+{code}
+grails create-app myapp
+cd myapp
+grails create-pom com.mycompany
+mvn package
+{code}
+
+按下列步骤创建一个多模块的Maven构建：
+
+{code}
+grails create-app myapp
+grails create-plugin plugin-a
+grails create-plugin plugin-b
+grails create-multi-project-build com.mycompany:parent:1.0-SNAPSHOT
+mvn install
+{code}
+
+h4. Grails封装程序
+
+Grails封装程序允许在没有安装Grails并配置GRAILS_HOME环境变量的情况下进行Grails应用程序的构建。 封装程序包含一个小的外壳脚本和一组小的引导jar文件，通常情况下他们会和项目的其余文件被签入到源代码控制系统中。封装程序第一次执行时会下载和配置Grails。封装程序使开发环境的设置、CI的配置和管理Grails未来版本的更新变得更加简单。当应用程序升级到下一个版本的Grails时，封装程序也被升级并被签入源代码控制系统中，当开发人员下一次更新他们的工作区并运行封装程序时，他们将会自动使用正确版本的Grails。
+
+查看[封装程序文档|guide:wrapper]了解更多的细节。
+
+h4. 调试选项
+
+@grails@现在支持@-debug@选项，使用该选项将会启动远程调试代理。 过去@grails-debug@命令提供这种行为。  @grails-debug@命令仍然可用但是不再推荐使用并且可能在未来的版本中会被删除。
+
+{code}
+grails -debug run-app
+{code}
+
+h4. Grails命令别名
+
+@alias@命令可以用于为grails命令定义别名。
+
+下面的命令创建了一个别名@rit@(代表"run integration tests"):
+
+{code}
+grails alias rit test-app integration:
+{code}
+
+查看[alias|commandLine]的文档了解更多信息。
+
+h4. Cache插件
+
+Grails 2.1默认安装[cache插件|http://grails.org/plugin/cache]。Cache插件为应用程序和插件提供了强大易用的缓存功能。Cache主插件提供基本的基于map的缓存支持。如果需要更健壮的缓存选项，可以安装和配置其他的实现插件。查看[cache-redis文档|http://grails-plugins.github.com/grails-cache-redis/]和[cache-ehcache文档|http://grails-plugins.github.com/grails-cache-ehcache/]了解更多的细节。
+
+查看[Cache主插件文档|http://grails-plugins.github.com/grails-cache/]了解有关如何配置和使用的细节。
+
+h4. 新增的GORM方法
+
+Grails 2.1.1中的领域类现在有了名为@first@的@last@的静态方法用于从数据存储获取第一个和最后一个实例。查看[first|domainClasses]的[last|domainClasses]的文档了解详细内容。
