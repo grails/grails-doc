@@ -5,8 +5,8 @@ h4. Configuring Mime Types
 Before you can start dealing with content negotiation you need to tell Grails what content types you wish to support. By default Grails comes configured with a number of different content types within @grails-app/conf/Config.groovy@ using the @grails.mime.types@ setting:
 
 {code:java}
-grails.mime.types = [
-    all:           '*/*',
+grails.mime.types = [ // the first one is the default format
+    all:           '*/*', // 'all' maps to '*' or the first available format in withFormat
     atom:          'application/atom+xml',
     css:           'text/css',
     csv:           'text/csv',
@@ -23,6 +23,7 @@ grails.mime.types = [
 {code}
 
 The above bit of configuration allows Grails to detect to format of a request containing either the 'text/xml' or 'application/xml' media types as simply 'xml'. You can add your own types by simply adding new entries into the map.
+The first one is the default format.
 
 h4. Content Negotiation using the format parameter
 
@@ -49,6 +50,7 @@ class BookController {
             html bookList: books
             json { render books as JSON }
             xml { render books as XML }
+            * { render books as JSON }
         }
     }
 }
@@ -56,7 +58,18 @@ class BookController {
 
 In this example, Grails will only execute the block inside @withFormat()@ that matches the requested content type. So if the preferred format is @html@ then Grails will execute the @html()@ call only. Each 'block' can either be a map model for the corresponding view (as we are doing for 'html' in the above example) or a closure. The closure can contain any standard action code, for example it can return a model or render content directly.
 
-There is a special format, "all", that is handled differently from the explicit formats. If "all" is specified (normally this happens through the Accept header - see below), then the first block of @withFormat()@ is executed. You should not add an explicit "all" block. In the above example, a format of "all" will trigger the @html@ handler.
+When no format matches explicitly, a @*@ (wildcard) block can be used to handle all other formats. 
+
+There is a special format, "all", that is handled differently from the explicit formats. If "all" is specified (normally this happens through the Accept header - see below), then the first block of @withFormat()@ is executed when there isn't a @*@ (wildcard) block available.  
+
+You should not add an explicit "all" block. In this example, a format of "all" will trigger the @html@ handler (@html@ is the first block and there is no @*@ block).
+{code}
+        withFormat {
+            html bookList: books
+            json { render books as JSON }
+            xml { render books as XML }
+        }
+{code}
 
 {note}
 When using [withFormat|controllers] make sure it is the last call in your controller action as the return value of the @withFormat@ method is used by the action to dictate what happens next.
@@ -138,7 +151,7 @@ Grails also supports content negotiation using URI extensions. For example given
 This works as a result of the default URL Mapping definition which is:
 
 {code:java}
-"/$controller/$action?/$id?(.${format})?"{
+"/$controller/$action?/$id?(.$format)?"{
 {code}
 
 Note the inclusion of the @format@ variable in the path. If you do not wish to use content negotiation via the file extension then simply remove this part of the URL mapping:
