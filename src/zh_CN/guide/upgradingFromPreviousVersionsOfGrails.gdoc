@@ -1,3 +1,4 @@
+{hidden}
 A number of changes need to considered when upgrading your application from Grails 2.2, some of them breaking. Here's a quick list with more detail on each item following after:
 
 * New improved data binding (no Spring property editors)
@@ -195,3 +196,199 @@ grails.project.fork = [
 h4. Forked Execution and Functional Test plugins
 
 Some existing plugins (Cucumber plugin for example) do not work with 2.3.x forked execution because they expect the tests to be running in the same JVM as the application under tests. For example it is not possible to setup fixture / test data using GORM inside a functional test and have that data visible to the application under test since the application under test is in a separate JVM. The solution to this is to provide the necessary fixture data in the @BootStrap@ of the application (only for the test environment of course).
+{hidden}
+把你的应用程序从Grails 2.2进行升级需要考虑到许多变更，其中的某些变更是破坏性的。下面是简要的列表，每个项目更多的细节在后面说明：
+
+* 新的改进的数据绑定（不使用Spring属性编辑器）
+* 使用默认HTML编码的大大改进的XSS攻击防御
+* 一个新的依赖解析引擎
+* 获取Grails依赖时必须联网
+* 重新调整的Grails核心依赖
+* Tomcat插件和Hibernate插件的版本现在互相独立（破坏性！）
+* 脚手架现在成为独立的插件
+* 默认包含Spock
+* 集成测试中依赖注入默认不起作用
+* 测试运行时的分叉执行
+* 对升级后的应用程序@run-app@默认不进行重新加载
+* @grails-debug@不会分叉执行
+
+h4. 新的数据绑定器
+
+为了满足Grails的需要重头编写了新的数据绑定机制。如果你希望继续使用Spring的数据绑定技术，那么你必须在@grails-app/conf/Config.groovy@中把@grails.databinding.useSpringBinder@ 属性设置为@true@
+
+h4. 编码/转义(XSS)等的变更
+
+Grails包含了帮助防止XSS攻击的新功能。这些新功能对新创建的应用程序默认启用，但是旧应用程序将需要手工干预。参考有关[防止XSS攻击|guide:xssPrevention]的章节了解如何合适地配置XSS防御。
+
+h4. 依赖解析的变更
+
+尽管仍然支持使用Ivy进行依赖解析，Grails 2.3默认使用Aether并且以后不会对Ivy支持进行改进。你可能希望对你现有的应用程序使用Aether，方法是在@grails-app/conf/BuildConfig.groovy@中进行如下的设置：
+
+{code}
+grails.project.dependency.resolver = "maven" // or ivy
+{code}
+
+如果你需要向一个Maven仓库进行认证，你要按如下方式改变仓库的定义：
+
+{code}
+mavenRepo("http://artifactory.mycompany.com/repo") {
+    authentication(username: "myusername", password: "secret")
+}
+{code}
+
+h4. 依赖元数据的变更
+
+此外，Grails中POM和依赖元数据也已经重新调整和清理过使得只要指定直接依赖并且所有其他的依赖被传递地继承。这会对升级产生影响，因为例如Ehcache现在是Hibernate插件的传递依赖，而之前它是一个直接依赖。如果你得到一个有关于Ehcache的编译错误，最可能的原因是你没有安装Hibernate插件，因此需要直接声明Ehcache依赖：
+
+{code}
+compile "net.sf.ehcache:ehcache-core:2.4.6"
+{code}
+
+此外，由于元数据已经变更，依赖排除可能会不起作用并且可能需要进行调整。运行[dependency-report|commandLine]来查看新的依赖元数据并据此进行调整。
+
+升级时常发生的常见错误是：
+
+{code}
+| Configuring classpath
+:: problems summary ::
+:::: WARNINGS
+    ::::::::::::::::::::::::::::::::::::::::::::::
+    ::          UNRESOLVED DEPENDENCIES         ::
+    ::::::::::::::::::::::::::::::::::::::::::::::
+    :: org.springframework#spring-test;3.2.2.RELEASE: configuration not found in org.springframework#spring-test;3.2.2.RELEASE: 'compile'. It was required from org.grails#grails-plugin-testing;2.3.0.BUILD-SNAPSHOT compile
+    ::::::::::::::::::::::::::::::::::::::::::::::
+{code}
+
+这是由一个依赖@spring-test@老版本的插件（例如[邮件插件|http://grails.org/plugins/mail]）引起的。为了更正这个错误运行@grails dependency-report@命令并搜索对@spring-test@有传递依赖的插件并且排除他们，例如：
+
+{code}
+plugins {
+  compile ':mail:1.0', {
+    excludes 'spring-test'
+  }  
+}
+{code}
+
+但是，更长远的解决类似问题的方式是我们推荐用户从Ivy转移至Aether进行依赖解析：
+
+{code}
+grails.project.dependency.resolver="maven"
+{code}
+
+h4. 使用Aether时不再是初始的离线模式
+
+Aether不支持从扁平文件系统对依赖解析。这意味着与Grails一同发布的GRAILS_HOME/lib下的jar文件不再用于第一次的依赖解析，取而代之的是从Maven中央仓库得到jar文件。在从Maven中央仓库得到jar文件后Aether可以在离线模式下运行良好。
+
+如果你还是不需要本地Maven仓库中必要的jar文件的话，那么离线执行的唯一方式是在BuildConfig中启用Ivy（见上面的说明）。
+
+h4. 核心插件版本管理方案的变更和upgrade命令
+
+像@tomcat@和@hibernate@这样的核心插件不再和Grails使用相同的版本号，取而代之的是他们按照他们针对的Tomcat或Hibernate的版本定义版本号。如果你正在从Grails 2.2进行升级的话你需要在@BuildConfig@中手工配置正确的Tomcat和Hibernate插件版本。@upgrade@命令不会帮你完整这件事！
+
+{code}
+    plugins {
+        // 仅构建系统需要的插件
+        build ':tomcat:7.0.42'
+
+        // 运行时需要但编译时不需要的插件
+        runtime ':hibernate:3.6.10.2' 
+    }
+{code}
+
+注意在Grails 2.3中@upgrade@命令不被推荐使用并且使用名为@use-current-grails-version@的命令代替它，该命令不再试图自动升级Grails应用程序。
+
+h4. 脚手架变为一个插件并且被重新改写
+
+如果在你的应用程序中你有动态脚手架化的控制器，那么你需要在BuildConfig配置1.0版本的[脚手架插件|http://grails.org/plugin/scaffolding]：
+
+{code}
+plugins {
+  compile ':scaffolding:1.0.0'
+}
+{code}
+
+默认新创建的应用程序使用2.0版本的脚手架插件，其与1.0版本不向后兼容。
+
+h4. 默认包含Spock
+
+你不再需要添加Spock插件到你的项目中了。只要像以前一样创建Spock规格说明它们就可以作为单元测试运行。事实上，不要安装spock插件，否则你的规格说明将会运行两次而且有失败的可能性。这也意味着@spock@测试类型不再存在。现在规格说明和JUnit测试以相同的类型运行。
+
+h4. 用于集成测试的依赖注入
+
+为了支持其他的JUnit4测试运行器，Grails 2.3不再使用一个特殊的测试运行器运行测试并且集成测试将不再派生自@GroovyTestCase@类。
+
+这个变更要求任何使用依赖注入的集成测试现在需要使用下面的注解进行声明：
+
+{code}
+\@TestMixin(IntegrationTestMixin)
+{code}
+
+对于Spock集成测试，派生自@IntegrationSpec@也行。
+
+h4. 测试的分叉执行
+
+现在测试默认在分叉出的JVM中执行（尽管可以禁用分叉执行）。这样的影响是使用下面的方法测试将会执行得更慢：
+
+{code}
+grails test-app
+{code}
+
+原因是这样做需要加载独立的JVM执行测试。为了缓解这个问题Grails交互模式已经进行了更新，加载一个可以被继续执行的后台JVM。如果你执行：
+
+{code}
+$ grails // 载入交互模式
+$ grails -> test-app
+$ grails -> test-app
+{code}
+
+测试执行将会显著变快而且这是在Grails中运行测试的推荐方法。在不包括多核的较老的硬件上（运行多个独立的JVM）推荐你为测试禁用分叉执行以取得更快的测试执行时间：
+
+{code}
+forkConfig = [maxMemory: 1024, minMemory: 64, debug: false, maxPerm: 256]
+grails.project.fork = [
+   test: false, // 为test-app禁用分叉执行
+   run: forkConfig, // 用于run-app的JVM的配置设定
+   ...
+]
+{code}
+
+h4. 分叉执行和重新加载代理
+
+在Grails 2.3中重新加载代理不再位于构建系统的路径里，除非你把@-reloading@标志传递到@grails@命令：
+
+{code}
+grails -reloading run-app
+{code}
+
+这样做的原因是因为Grails 2.3中默认在分叉出的JVM中加载Grails应用程序并且对分叉出的JVM启用了这个代理。如果你不愿意使用分叉出的JVM的话，那么你必须确保使用@-reloading@标志运行Grails。你也可以在@BuildConfig@中使用下面的配置启用分叉执行：
+
+{code}
+forkConfig = [maxMemory: 1024, minMemory: 64, debug: false, maxPerm: 256]
+grails.project.fork = [
+   test: forkConfig, // test-app JVM的配置设定
+   run: forkConfig, // run-app JVM的配置设定
+   war: forkConfig, // run-war JVM的配置设定
+   console: forkConfig // Swing控制台JVM的配置设定
+]
+{code}
+
+h4. 分叉执行和远程调试
+
+@grails-debug@不再用于Grails的远程调试会话。原因是这个命令对构建系统JVM启用了调试，而不是对分叉执行的JVM。解决方法是使用@debug-fork@命令行参数：
+
+{code}
+grails --debug-fork run-app
+{code}
+
+你也可以@BuildConfig@在中设置@debug@为@true@并使用通常的@grails@命令执行：
+
+{code}
+forkConfig = [maxMemory: 1024, minMemory: 64, debug: true, maxPerm: 256]
+grails.project.fork = [
+   run: forkConfig, // run-app JVM的配置设定
+   ...
+{code}
+
+h4. 分叉执行和功能测试插件
+
+某些现有的插件（例如Cucumber插件）不能和2.3.x的分叉执行一起工作，因为它们期望测试和测试的应用程序运行在系统的JVM中。例如，不能在功能测试中使用GORM设置Fixture数据或测试数据并且让这些数据在测试中的应用程序可见，因为测试中的应用程序运行于一个独立的JVM中。这个问题的解决方法是在应用程序的@BootStrap@中提供必要的Fixture数据（当然是只针对测试环境）。
