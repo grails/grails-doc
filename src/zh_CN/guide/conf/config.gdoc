@@ -25,23 +25,23 @@ assert "world" == config.foo.bar.hello
 {warning}
 ConfigurationHolder and ApplicationHolder are deprecated and will be removed in a future version of Grails, so it is highly preferable to access the @GrailsApplication@ and config from the @grailsApplication@ variable.
 {warning}
+
 {hidden}
+Grails提供了一个名为 @grails-app/conf/Config.groovy@的配置文件用于通用的配置。其使用Groovy的"ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper ，这非常类似于Java属性文件，不过它是只使用了Groovy，这样就可以重用变量和合适的Java类型！
 
-Grails提供了一个 @grails-app/conf/Config.groovy@ 配置文件，用来完成通用的配置。此文件除了是Groovy的"ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper 之外，其他非常类似于Java属性文件，这样就既可以重用变量又可以使用合适的Java类！
-
-你可以添加属于你自己的配置信息，例如：
+你可以添加自己的配置信息，例如：
 
 {code}
 foo.bar.hello = "world"
 {code}
 
-在你随后的应用中，你可以使用以下两种方法中的一种来访问这些配置。最常用的就是 [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] 对象，不过此对象仅在控制器和标签库中有效。比如：
+以后在你的应用程序中，你可以使用以下两种方法中的一种来访问这些配置。最常用的就是 [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] 对象，此对象仅在控制器和标签库中可用。比如：
 
 {code}
 assert "world" == grailsApplication.config.foo.bar.hello
 {code}
 
-另外一种方法是获取 [ConfigurationHolder|api:org.codehaus.groovy.grails.commons.ConfigurationHolder] 类的一个引用，此类中包含着配置对象，比如：
+另外一种方法是获取 [ConfigurationHolder|api:org.codehaus.groovy.grails.commons.ConfigurationHolder] 的一个引用，这个类型持有配置对象的一个引用：
 
 {code}
 import org.codehaus.groovy.grails.commons.*
@@ -51,5 +51,5 @@ assert "world" == config.foo.bar.hello
 {code}
 
 {warning}
-ConfigurationHolder和ApplicationHolder现在已经被废弃，并且将在Grails的未来版本中移除，因此强烈推荐采用 @GrailsApplication@ 的实例变量 @grailsApplication@ 方式来访问配置对象。
+ConfigurationHolder和ApplicationHolder现在已经被废弃，并且将在Grails的未来版本中移除，因此强烈推荐从@grailsApplication@变量访问@GrailsApplication@类和配置。
 {warning}

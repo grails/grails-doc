@@ -1,3 +1,4 @@
+{hidden}
 The @dbCreate@ property of the @DataSource@ definition is important as it dictates what Grails should do at runtime with regards to automatically generating the database tables from [GORM|guide:GORM] classes. The options are described in the [DataSource|guide:dataSource] section:
 
 * @create@
@@ -22,3 +23,28 @@ grails.project.dependency.resolution = {
 {code}
 
 The plugin uses "Liquibase":http://www.liquibase.org/ and provides access to all of its functionality, and also has support for GORM (for example generating a change set by comparing your domain classes to a database).
+{hidden}
+@DataSource@定义中的@dbCreate@属性之所以重要的原因是它控制着运行时从[GORM|guide:GORM]类型自动生成数据库表时的处理。该属性的选项在[DataSource|guide:dataSource]的一节进行了描述：
+
+* @create@
+* @create-drop@
+* @update@
+* @validate@
+* 没有值
+
+[development|guide:environments]模式下@dbCreate@属性默认设置为"create-drop"，但是在开发中的某个时间点（并且可以肯定地是，一旦你进入到生产模式）在每次你启动你的服务器时，你将需要停止删除并重新创建数据库。
+
+当你的代码变更时，切换到@update@以便你可以保留现有的数据并且只更新数据库模式的选择很有诱惑性，但是Hibernate的更新支持是非常保守的。它不会做出导致数据丢失的任何变更，并且不能探测到列和表的重命名，因此你会看老的也会看到新的名字。
+
+Grails通过"数据库迁移":http://grails.org/plugin/database-migration 插件支持数据迁移，安装这个插件可以通过在@grails-app/conf/BuildConfig.groovy@中声明该插件完成：
+
+{code:java}
+grails.project.dependency.resolution = {
+    ...
+    plugins {
+        runtime ':database-migration:1.3.1'
+    }
+}
+{code}
+
+这个插件使用了"Liquibase":http://www.liquibase.org/ 并且提供对其所有功能的访问，而且还支持GORM（例如通过比较领域类与数据库生成变更集）。

@@ -1,3 +1,4 @@
+{hidden}
 The actual @dataSource@ bean is wrapped in a transaction-aware proxy so you will be given the connection that's being used by the current transaction or Hibernate @Session@ if one is active.
 
 If this were not the case, then retrieving a connection from the @dataSource@ would be a new connection, and you wouldn't be able to see changes that haven't been committed yet (assuming you have a sensible transaction isolation setting, e.g. @READ_COMMITTED@ or better).
@@ -15,6 +16,28 @@ class MyService {
 {code}
 
 or by pulling it from the @ApplicationContext@:
+
+{code}
+def dataSourceUnproxied = ctx.dataSourceUnproxied
+{code}
+{hidden}
+实际的@dataSource@组件被封装在一个事务感知的代理中，因此你所得到的是正被当前事务或Hibernate @Session@使用的连接（如果它们是活动的话）。
+
+如果不是上述的情况，那么从@dataSource@获取一个连接将会是一个新的连接，并且你不能看到还没有被提交的变更（假定你有一个合理的事务隔离设置，例如@READ_COMMITED@或更高的设置）。
+
+真实的未经代理的@dataSource@仍然是可用的，如果你需要访问它，它的组件名是@dataSourceUnproxied@。
+
+你可以像任何其他Spring组件一样访问这个组件，也就是使用依赖注入：
+
+{code}
+class MyService {
+
+   def dataSourceUnproxied
+   ...
+}
+{code}
+
+或者从@ApplicationContext@获取：
 
 {code}
 def dataSourceUnproxied = ctx.dataSourceUnproxied

@@ -41,23 +41,44 @@ h3. War generation
 
 For more information on using these options, see the section on [deployment|guide:deployment]
 {hidden}
+Grails有一组核心设置值得去熟悉。它们的默认值适用于大多数项目，但是理解它们的作用是重要的，原因是你以后可能会需要对它们中的一个或多个进行设置。
 
-Grails同样提供了如下配置选项：
+h3. 构建设置
 
-* @grails.config.locations@  - 配置文件的位置，包括属性文件或者其他需要合并到主配置的Grails配置文件
-* @grails.enable.native2ascii@ - 如果不需要native2ascii来转化Grails i18n属性文件的话，将该选项设为false
-* @grails.views.default.codec@ - 设置GSP的默认编码制式，可以是：'none', 'html', 或者 'base64' (缺省为'none'). 为了减少XSS攻击的风险，建议设置成'html'.
-* @grails.views.gsp.encoding@ - GSP源文件的字符编码（缺省是'utf-8'）
-* @grails.mime.file.extensions@ - 是否使用文件的扩展名表示[内容协商|guide:contentNegotiation]中的媒体类型(mime type)
-* @grails.mime.types@ - [内容协商|guide:contentNegotiation]所支持的媒体类型
-* @grails.serverURL@ - 一个指向服务器URL的绝对地址，包括服务器名称，比如grails.serverURL="http://my.yourportal.com". 详细请看[createLink|Tags]。
+让我们从以下重要的构建设置开始。尽管Grails在开发应用程序时要求JDK 6，但是把这些应用程序部署至JDK 5容器是可能的。只要在@BuildConfig.groovy@进行如下的设置：
 
+{code}
+grails.project.source.level = "1.5"
+grails.project.target.level = "1.5"
+{code}
 
-h3.  War生成选项
+注意source和target的级别不同于JDK的公开版本，也就是JDK 5 -> 1.5, JDK 6 -> 1.6和JDK 7 -> 1.7。
 
-* @grails.project.war.file@ - 设置 [war|commandLine] 命令生成WAR文件的名称和位置
-* @grails.war.dependencies@ - 符合Ant生成器语法的闭包或者JAR文件的列表,让你可以定制WAR文件所需要的依赖库。
-* @grails.war.copyToWebApp@ - 完成Ant拷贝且满足其生成器语法的闭包，比如"fileset()"。让你控制"web-app"目录下那些资源可以被打包到WAR文件中。
-* @grails.war.resources@ - 符合Ant生成器语法的闭包，运行应用在构建最终的WAR文件前做任何其他的预处理
+此外，Grails支持Servlet 2.5及以上版本，但默认是2.5版本。如果你想使用Servlet API（例如3.0版本中的async支持）的新功能的话，你应该对@grails.servlet.version@属性进行合适的配置：
 
-这些选项的更多信息，请参考 [部署|guide:deployment] 章节。
+{code}
+grails.servlet.version = "3.0"
+{code}
+
+h3. 运行时设置
+
+运行时设置，也就是@Config.groovy@中有许多核心设置：
+
+* @grails.config.locations@  - 属性文件或者其他需要合并到主配置的Grails配置文件。查看有关[配置外部化|guide:configExternalized]的章节。
+* @grails.enable.native2ascii@ - 如果不需要native2ascii来转换Grails i18n属性文件的话，将该选项设为false（默认值：true）。
+* @grails.views.default.codec@ - 设置GSP的默认编码方法，可以是：'none', 'html', 或者 'base64' (默认值：'none')。 为了降低XSS攻击的风险，将其设置成'html'。
+* @grails.views.gsp.encoding@ - GSP源文件的文件编码（默认值：'utf-8'）
+* @grails.mime.file.extensions@ - 是否使用文件的扩展名确定[内容协商|guide:contentNegotiation]中的MIME类型（默认值：true）。
+* @grails.mime.types@ - 用于[内容协商|guide:contentNegotiation]的所支持的媒体类型的映射。
+* @grails.serverURL@ - 指向服务器URL的绝对地址的字符串，包括服务器名称，比如grails.serverURL="http://my.yourportal.com"。详细请看[createLink|Tags]。也用于重定向。
+* @grails.views.gsp.sitemesh.preprocess@ - 确定是否发生SiteMesh预处理。禁用此设置会减慢页面的显示，但是如果你需要SiteMesh解析从GSP视图生成的HTML的话，禁用此设置是正确的选择。如果你不理解这个高级属性请不要担心：设置为true就行了。
+* @grails.reload.excludes@和@grails.reload.includes@ - 对这些指令进行配置确定项目中特定的源文件的重新加载行为。每个指令的值是字符串的列表，当使用@run-app@命令在开发中运行应用程序时，每个字符串是项目源代码文件中应该从重载行为中排除或加载的类名。如果配置了 @grails.reload.includes@指令, 只有列表中的类将会重新加载。
+
+h3.  War生成
+
+* @grails.project.war.file@ - 设置[war|commandLine]命令生成的WAR文件的名称和位置
+* @grails.war.dependencies@ - 包含Ant构建器语法的闭包或者JAR文件的列表,让你定制包含在WAR文件中的依赖库。
+* @grails.war.copyToWebApp@ - 在Ant拷贝任务中合法的包含Ant构建器语法的闭包，比如"fileset()"。让你控制"web-app"目录下哪些文件可以被打包到WAR文件中。
+* @grails.war.resources@ - 包含Ant构建器语法的闭包。允许应用程序在构建最终的WAR文件前做任何其他的处理
+
+有关使用这些选项的更多信息，查看有关[部署|guide:deployment]的章节。
