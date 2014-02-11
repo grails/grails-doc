@@ -1,3 +1,4 @@
+{hidden}
 As a performance optimisation, when using Ivy (this does not apply to Aether), Grails does not resolve dependencies for every command invocation. Even with all the necessary dependencies downloaded and cached, resolution may take a second or two. To minimise this cost, Grails caches the result of dependency resolution (i.e. the location on the local file system of all of the declared dependencies, typically inside the dependency cache) and reuses this result for subsequent commands when it can reasonably expect that nothing has changed.
 
 Grails only performs dependency resolution under the following circumstances:
@@ -25,3 +26,31 @@ To ensure you have the correct version of a _changing_ or _dynamic_ dependency i
 * make a change to @BuildConfig.groovy@
 
 If you have your CI builds configured to not perform clean builds, it may be worth adding the @\-\-refresh-dependencies@ switch to the command you use to build your projects.
+
+{hidden}
+
+作为一种性能优化，当使用Ivy时（这不适用于Aether），Grails不会对每个命令调用对依赖解析。即使所有必要的依赖已经下载和缓存了，依赖解析可能会花去一两秒。为了最小化这个成本，Grails缓存依赖解析的结果（也就是本地文件系统上所有声明的依赖的位置，通常位于依赖缓存里面）并为随后的命令在有根据地预测到不会发生变化的时候重用这个结果。
+
+Grails只在下面的情况下执行依赖解析：
+
+* 项目是干净的(也就是刚刚检出或运行@grails clean@以后)
+* @BuildConfig.groovy@文件从上次命令运行后已经发生变化
+* 为命令（任何命令）提供了@\-\-refresh-dependencies@命令行开关
+* 执行的是@refresh-dependencies@命令
+
+通常，这个策略工作得很好并且你可以忽略依赖解析缓存的存在。每次你可以改动依赖（即修改@BuildConfig.groovy@）时，Grails将会做正确的事情并且对新的依赖解析。
+
+但是，当你有 _不断变化的_ 或 _动态的_ 依赖的时候，你不得不考虑依赖解析缓存。
+
+{note}
+一个 _不断变化的_ 依赖是一个版本号不发生变化，但是其内容会发生变化（如SNAPSHOT依赖)的依赖。一个 _动态的_ 依赖是一个定义为许多可能选项之一（比如一个使用版本范围的依赖或像@latest.integration@这样的符号化版本号）的依赖。
+{note}
+
+_不断变化的_ 和 _动态的_ 依赖两者都受环境的影响。当依赖解析缓存启用时，任何对环境的变动事实上会被忽略。例如，你的项目可能不会自动地获取使用@latest.integration@版本号的依赖的最新的版本。或者，如果你声明了一个@SNAPSHOT@依赖，你可能不会自动地得到服务器上最新可用的版本。
+
+要确保你的项目中有 _不断变化的_ 或 _动态的_依赖的正确版本，你可以这样：
+
+* 清理项目
+* 运行@refresh-dependencies@命令
+* 使用@\-\-refresh-dependencies@开关运行任何命令；或者
+* 修改@BuildConfig.groovy@

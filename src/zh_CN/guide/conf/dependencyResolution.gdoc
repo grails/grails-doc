@@ -1,3 +1,4 @@
+{hidden}
 Grails features a dependency resolution DSL that lets you control how plugins and JAR dependencies are resolved.
 
 You can choose to use Aether (since Grails 2.3) or Apache Ivy as the dependency resolution engine. Aether is the dependency resolution library used by the Maven build tool, so if you are looking for Maven-like behavior then Aether is the better choise. Ivy allows more flexibility if you wish to resolve jars from flat file systems or none HTTP repositories. Aether is the default dependency resolution engine for Grails applications since Grails 2.3. 
@@ -80,3 +81,85 @@ grails.project.dependency.resolution = {
 
 The details of the above will be explained in the next few sections.
 
+{hidden}
+Grails的依赖解析DSL功能可以让你控制插件和JAR依赖如何解析。
+
+你可以选择使用Aether（从Grails 2.3开始）或Apache Ivy作为依赖解析引擎。Aether是Maven构建工具使用的依赖解析库，因此如果希望类似Maven的行为那么Aether是更好的选择。如果你希望从扁平文件系统或者非HTTP仓库中解析jar文件那么Ivy允许更多的灵活性。从Grails 2.3开始，Aether是Grails应用程序的默认依赖解析引擎。
+
+为了配置使用哪一个依赖解析引擎，你可以在@grails-app/conf/BuildConfig.groovy@中指定@grails.project.dependency.resolver@设置。默认的设置如下所示：
+
+{code}
+grails.project.dependency.resolver = "maven" // 或者 ivy
+{code}
+
+你可以在@grails-app/conf/BuildConfig.groovy@文件里指定@grails.project.dependency.resolution@属性来配置依赖如何解析：
+
+{code}
+grails.project.dependency.resolution = {
+   // 这里是配置
+}
+{code}
+
+默认的配置如下所示：
+
+{code}
+grails.servlet.version = "3.0" // 根据目标容器标准符合性进行修改(2.5 或 3.0)
+grails.project.class.dir = "target/classes"
+grails.project.test.class.dir = "target/test-classes"
+grails.project.test.reports.dir = "target/test-reports"
+grails.project.work.dir = "target/work"
+grails.project.target.level = 1.6
+grails.project.source.level = 1.6
+//grails.project.war.file = "target/\${appName}-\${appVersion}.war"
+
+grails.project.fork = [
+    // 编译JVM的配置设定, 注意，如果你改动了Groovy版本的话，必须使用分叉编译
+    //  compile: [maxMemory: 256, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
+
+    // test-app JVM的配置设定, 默认使用daemon模式
+    test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true],
+    // run-app JVM的配置设定
+    run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
+    // run-war JVM的配置设定
+    war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, forkReserve:false],
+    // Console UI JVM的配置设定
+    console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]
+]
+
+grails.project.dependency.resolver = "maven" // 或者 ivy
+grails.project.dependency.resolution = {
+    // 继承Grails的默认依赖
+    inherits("global") {
+        // 这里指定要排除的依赖；例如，取消如下的注释可以禁用ehcache:
+        // excludes 'ehcache'
+    }
+    log "error" // Ivy解析器的日志级别，值为'error', 'warn', 'info', 'debug' 或 'verbose'中的一个
+    checksums true // 解析时是否验证校验和
+    legacyResolve false // 是否对插件安装进行二次解析, 不建议使用并且这是为了向后兼容
+
+    repositories {
+        inherits true // 是否继承来自插件的仓库定义
+
+        grailsPlugins()
+        grailsHome()
+        mavenLocal()
+        grailsCentral()
+        mavenCentral()
+        // 取消这些注释以启用对公开Maven仓库的远程依赖解析
+        //mavenRepo "http://repository.codehaus.org"
+        //mavenRepo "http://download.java.net/maven/2/"
+    }
+
+    dependencies {
+        // 这里指定依赖，作用域为'build', 'compile', 'runtime', 'test' or 'provided'等
+        runtime 'mysql:mysql-connector-java:5.1.24'
+        compile 'org.springframework.integration:spring-integration-core:2.2.5.RELEASE'
+    }
+
+    plugins {
+        // 仅用于构建系统的插件
+    }
+}
+{code}
+
+上述配置的细节将在下面的几个小节中进行解释。

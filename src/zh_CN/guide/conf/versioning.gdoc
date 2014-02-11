@@ -1,3 +1,4 @@
+{hidden}
 h4. Versioning Basics
 
 Grails has built in support for application versioning. The version of the application is set to @0.1@ when you first create an application with the [create-app|commandLine] command. The version is stored in the application meta data file @application.properties@ in the root of the project.
@@ -25,6 +26,41 @@ def grailsVersion = grailsApplication.metadata['app.grails.version']
 {code}
 
 or the @GrailsUtil@ class:
+
+{code:java}
+import grails.util.GrailsUtil
+...
+def grailsVersion = GrailsUtil.grailsVersion
+{code}
+
+{hidden}
+h4. 版本管理基础
+
+Grails内置支持应用程序版本管理。当你第一次使用[create-app|commandLine]命令创建一个应用程序时其版本设置为@0.1@。版本号保存在项目根目录下的应用程序元数据文件@application.properties@中。
+
+为了修改你的应用程序的版本号，你可以手工编辑这个文件，或者运行[set-version|commandLine]命令：
+
+{code:java}
+grails set-version 0.2
+{code}
+
+版本号在多个命令中被用到，包括[war|commandLine]命令在内，它将在创建的WAR文件名的最后追加应用程序的版本号。
+
+h4. 在运行时检测版本号
+
+你可以使用Grails对应用程序元数据的支持检测应用程序的版本号，方法是使用[GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication]类。例如在[控制器|guide:controllers]中可以使用隐式的[grailsApplication|controllers]变量：
+
+{code:java}
+def version = grailsApplication.metadata['app.version']
+{code}
+
+你可以使用下面的方式获取正在运行的Grails的版本号：
+
+{code:java}
+def grailsVersion = grailsApplication.metadata['app.grails.version']
+{code}
+
+或者使用@GrailsUtil@类：
 
 {code:java}
 import grails.util.GrailsUtil

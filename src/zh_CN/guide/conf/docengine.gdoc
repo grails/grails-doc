@@ -1,3 +1,4 @@
+{hidden}
 Since Grails 1.2, the documentation engine that powers the creation of this documentation has been available for your own Grails projects.
 
 The documentation engine uses a variation on the [Textile|http://textile.sitemonks.com/] syntax to automatically create project documentation with smart linking, formatting etc.
@@ -248,6 +249,268 @@ This is a note!
 {code}
 
 Warning:
+
+{warning}
+This is a warning!
+{warning}
+
+{code}
+\{warning\}
+This is a warning!
+\{warning\}
+{code}
+
+{hidden}
+从Grails 1.2版本开始，支持创建本文档的文档引擎就可以用于你自己的应用程序了。
+
+文档引擎使用修改过的[Textile|http://textile.sitemonks.com/]语法自动创建项目文档，支持智能链接，格式化等等。
+
+h4. 创建项目文档
+
+为了使用文档引擎你需要遵循几个约定。首先，你需要创建@src/docs/guide@目录，在其中存放你的文档源文件。然后，你需要创建文档源代码自身。每章应该有自己的gdoc文件，每个带编号的小节也是这样。你最终会得到类似下面的结果：
+
+{code}
++ src/docs/guide/introduction.gdoc
++ src/docs/guide/introduction/changes.gdoc
++ src/docs/guide/gettingStarted.gdoc
++ src/docs/guide/configuration.gdoc
++ src/docs/guide/configuration/build.gdoc
++ src/docs/guide/configuration/build/controllers.gdoc
+{code}
+
+注意，如果你愿意的话你可以把所有的gdoc文件放在顶层目录，但是你也可以把小节放置于按照上级小节名字命名的子目录中 - 正如上面的例子所演示的那样。
+
+一旦你有了源文件，你仍然需要告诉文档引擎你的用户指南的结构是什么样的。为了指定结构，你添加一个包含结构和每节标题的@src/docs/guide/toc.yml@文件。这个文件的格式是[YAML|http://www.yaml.org/]并且基本上以树形的形式表示用户指南的目录结构。例如，上面的文件可以表示为：
+
+{code:yaml}
+introduction:
+  title: Introduction
+  changes: Change Log
+gettingStarted: Getting Started
+configuration:
+  title: Configuration
+  build:
+    title: Build Config
+    controllers: Specifying Controllers
+{code}
+
+这样的格式非常简洁。任何有下级的章节使用对应的文件名（减去.gdoc后缀）后跟冒号表示。紧接着下一行包含@title:@加上最终用户会看到的该章节的标题。然后每个子节在标题之后有自己对应的行说明。叶节点，也就是没有下级小节的节点，在与小节名字相同的行上但是在冒号之后声明它们的标题。
+
+就这么多了。你可以在@toc.yml@里很容易地添加，删除和移动章节来重新组织要生成的用户指南。你也应该确保所有的章节名字也就是gdoc文件名的唯一性，因为它们被用于创建内部链接和生成的HTMl文件名。但是也别担心，文档引擎将会对重复的章节名字发出警告。
+
+h4. 创建参考条目
+
+参考条目出现在文档的快速参考章节。每个参考条目属于一个类别，每个类别是一个位于@src/docs/ref@下的目录。例如，假定你定义了一个叫做@renderPDF@的控制器方法。它属于@Controllers@类别，所以你将在下面的位置创建一个gdoc文本文件：
+
+{code}
++ src/docs/ref/Controllers/renderPDF.gdoc
+{code}
+
+h4. 配置输出属性
+
+在@grails-app/conf/Config.groovy@文件中你可以设置多个不同的属性来定制文档的输出，例如：
+
+* *grails.doc.title* - 文档的标题
+* *grails.doc.subtitle* - 文档的子标题
+* *grails.doc.authors* - 文档的作者
+* *grails.doc.license* - 软件的许可协议
+* *grails.doc.copyright* - 要显示的版权信息
+* *grails.doc.footer* - 要使用的页脚
+
+其他的属性例如版本号从项目自身取得。如果没有指定标题，应用程序的名字将被用作标题。
+
+你也可以定制文档的外观和提供图像文件，方法是设置下面几个其他的选项：
+
+* *grails.doc.css* - 一个包含定制CSS文件的目录位置(类型是@java.io.File@)
+* *grails.doc.js* - 一个包含定制JavaScript文件的目录位置(类型是@java.io.File@)
+* *grails.doc.style* - 一个包含用于用户指南的定制HTML模板的目录位置(类型是@java.io.File@)
+* *grails.doc.images* - 包含用于样式单模板和文档页面自身的图像文件的目录位置(类型是@java.io.File@)
+
+一个最简单地定制所生成的用户指南外观的方法是为@grails.doc.css@提供一个值，然后将custom.css文件放到对应的目录下。Grails将自动地在用户指南中包含这个CSS文件。你也可以在那个目录中放置一个custom-pdf.css文件。这允许你覆盖用于PDF版本的用户指南的样式。
+
+h4. 生成文档
+
+一旦你创建了文档（参考下一节的语法指南）你使用下面的命令可以生成HTML版本的文档：
+
+{code}
+grails doc
+{code}
+
+这个命令将会输出一个@docs/manual/index.html@，可以在浏览器中打开它来查看你的文档。
+
+h4. 文档语法
+
+如同前面提到过的，文档语法大体上类似于Textile或Confluence风格的wiki标记语法。下面的各小节带领你浏览基础的语法。
+
+h5. 基本的格式化
+
+等宽字体: @等宽字体@
+{code}
+\@等宽字体\@
+{code}
+
+斜体: _斜体_
+{code}
+\_斜体\_
+{code}
+
+粗体: *粗体*
+{code}
+*粗体*
+{code}
+
+图像文件:
+!http://grails.org/images/new/grailslogo_topNav.png!
+
+{code:xml}
+\!http://grails.org/images/new/grailslogo_topNav.png\!
+{code}
+
+你也可以链接到内部的图像文件，如下所示：
+
+{code:xml}
+\!someFolder/my_diagram.png\!
+{code}
+
+这将链接到存放在你项目本地的一个图像文件。现在没有针对文档图像文件的默认位置，但是你可以在Config.groovy中使用@grails.doc.images@设置指定一个，方法如下：
+
+{code}
+grails.doc.images = new File("src/docs/images")
+{code}
+
+在这个例子中，你将把my_diagram.png文件放到'src/docs/images/someFolder'目录下。
+
+h5. 链接
+
+使用文档生成器创建链接有多个方法。一个基本的外部链接可以使用Confluence或者Textile风格的标记定义：
+
+{code}
+[SpringSource|http://www.springsource.com/]
+{code}
+
+或者
+
+{code}
+"SpringSource":http://www.springsource.com/
+{code}
+
+对于用户指南中其他章节的链接，你可以使用@guide:@前缀结合你要链接到的章节的名字：
+
+{code}
+[Intro|guide:introduction]
+{code}
+
+章节名字来自于对应的gdco文件名。如果任何到用户指南中章节的链接失效的话，文档引擎会对你发出警告。
+
+要链接到参考条目的话，你可以使用下面特殊的语法：
+
+{code}
+[controllers|renderPDF]
+{code}
+
+在这个例子中参考条目的类别在 | 的左手边而参考条目的名字在右手边。
+
+最后， 要链接到外部的API，你可以使用@api:@前缀。例如：
+
+{code}
+[String|api:java.lang.String]
+{code}
+
+在这种情况下文档引擎将自动地创建合适的Javadoc链接。为了向文档引擎添加额外的API你可以在@grails-app/conf/Config.groovy@中配置它们。例如：
+
+{code}
+grails.doc.api.org.hibernate=
+            "http://docs.jboss.org/hibernate/stable/core/javadocs"
+{code}
+
+上面的例子配置位于@org.hibernate@包内的类链接到Hibernate网站的API文档。
+
+h5. 列表和标题
+
+标题可以通过指定字母'h'后跟一个数字和一个点的方法创建：
+
+{code}
+h3.<space>Heading3
+h4.<space>Heading4
+{code}
+
+无序列表可以使用*字符定义：
+
+{code}
+* item 1
+** subitem 1
+** subitem 2
+* item 2
+{code}
+
+有序列表可以使用#字符定义：
+
+{code}
+# item 1
+{code}
+
+表格可以使用@table@宏创建：
+
+{table}
+ *Name* | *Number*
+ Albert | 46
+ Wilma | 1348
+ James | 12
+{table}
+
+{code}
+\{table}
+ *Name* | *Number*
+ Albert | 46
+ Wilma | 1348
+ James | 12
+\{table}
+{code}
+
+h5. 代码和注解
+
+你可以使用@code@宏定义代码块：
+
+{code}
+class Book {
+    String title
+}
+{code}
+
+{code}
+\{code\}
+class Book {
+    String title
+}
+\{code\}
+{code}
+
+上面的示例为Java和Groovy代码提供语法高亮显示，但是你也可以高亮显示XML标记：
+
+{code:xml}
+<hello>world</hello>
+{code}
+
+{code}
+\{code:xml\}
+<hello>world</hello>
+\{code\}
+{code}
+
+还有几个宏用于显示注解和警告：
+
+注解:
+{note}
+This is a note!
+{note}
+
+{code}
+\{note\}
+This is a note!
+\{note\}
+{code}
+
+警告:
 
 {warning}
 This is a warning!
