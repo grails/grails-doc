@@ -1,3 +1,4 @@
+{hidden}
 Grails is most definitely an opinionated framework and it prefers convention to configuration, but this doesn't mean you _can't_ configure it. In this section, we look at how you can influence and modify the standard Grails build.
 
 h3. The defaults
@@ -70,3 +71,77 @@ h3. Available build settings
 h3. Reloading Agent Cache Directory
 
 Grails uses an agent based reloading system in the development environment that allows source code changes to be picked up while the application is running.  This reloading agent caches information needed to carry out the reloading efficiently.  By default this information is stored under @\<USER_HOME_DIR\>\/.grails\/.slcache\/@.  The @GRAILS_AGENT_CACHE_DIR@ environment variable may be assigned a value to cause this cache information to be stored somewhere else.  Note that this is an operating system environment variable, not a JVM system property or a property which may be defined in @BuildConfig.groovy@.  This setting must be defined as an environment variable because the agent cache directory must be configured very early in the JVM startup process, before any Grails code is executed.
+
+{hidden}
+Grails毫无疑问是一个自以为是的框架并且倾向于约定优于配置，但是这不意味着你 _不能_ 配置它。在这一节中，我们来看看你如何影响并修改标准的Grails构建系统。
+
+h3. 默认值
+
+Grails构建配置的核心是@grails.util.BuildSettings@类，它包含了相当多的有用的信息。它控制着类编译到的位置，应用程序有什么依赖，和其他诸如此类的设置。
+
+这里是主要的配置选项和它们的默认值：
+{table}
+*属性* | *配置选项* | *默认值*
+grailsWorkDir | grails.work.dir | $USER_HOME/.grails/<grailsVersion>
+projectWorkDir | grails.project.work.dir | <grailsWorkDir>/projects/<baseDirName>
+classesDir | grails.project.class.dir | <projectWorkDir>/classes
+testClassesDir | grails.project.test.class.dir | <projectWorkDir>/test-classes
+testReportsDir | grails.project.test.reports.dir | <projectWorkDir>/test/reports
+resourcesDir | grails.project.resource.dir | <projectWorkDir>/resources
+projectPluginsDir | grails.project.plugins.dir | <projectWorkDir>/plugins
+globalPluginsDir | grails.global.plugins.dir | <grailsWorkDir>/global-plugins
+verboseCompile | grails.project.compile.verbose | @false@
+{table}
+
+@BuildSettings@类还有一些其他的属性，但是它们应该只被读取：
+{table}
+*属性* | *描述*
+baseDir | 项目的位置。
+userHome | 用户的主目录。
+grailsHome | Grails的安装位置(可能是@null@)。
+grailsVersion | 项目使用的Grails版本。
+grailsEnv | 当前的Grails环境。
+config | 项目的@BuildConfig.groovy@文件中的配置设定。用访问运行时设置的相同方法访问这些属性: @grailsSettings.config.foo.bar.hello@.
+compileDependencies | 编译时项目依赖对应的@File@实例的列表。
+testDependencies | 测试时项目依赖对应的@File@实例的列表。
+runtimeDependencies | 运行时项目依赖对应的@File@实例的列表。
+{table}
+
+当然，如果你不能获取它们，这些属性就没有用了。幸运的是这很容易做到：你的脚本中有一个@BuildSettings@实例以@grailsSettings@脚本变量的方式可以使用。你也可以从代码中使用@grails.util.BuildSettingsHolder@类来访问它，但是这样做并不推荐。
+
+h3. 覆盖默认值
+
+在第一个表格中的所有属性可以通过系统属性或配置选项来修改 - 仅需使用"配置选项"列中的名字即可。例如，要改变项目的工作目录，你可以运行下面的命令：
+{code}
+grails -Dgrails.project.work.dir=work compile
+{code}
+或者添加这个选项到@grails-app/conf/BuildConfig.groovy@文件中：
+{code}
+grails.project.work.dir = "work"
+{code}
+要注意的是默认值会考虑它们所依赖的属性的值。所以，像这样设置项目工作目录会重新定位编译的类，测试类，资源和插件等属性。
+
+如果你同时使用了系统属性和配置选项，会发生什么呢？结果是系统属性会胜出因为它的优先级高于@BuildConfig.groovy@文件，而它的优先级则高于默认值。
+
+@BuildConfig.groovy@文件是@grails-app/conf/Config.groovy@的兄弟 - 前者只包含影响构建的选项，而后者包含在运行时影响应用程序的那些选项。它也不只限于第一个表格中的选项：你会发现构建配置选项分散在文档的各个地方，例如指定嵌入式Servlet容器的端口或者哪些文件被打包进WAR文件的选项。
+
+h3. 可用的构建设置
+
+{table}
+ 名字 | 描述
+ grails.server.port.http | 运行嵌入式Servlet容器的端口("run-app" 和 "run-war")。 整数。
+ grails.server.port.https | 运行嵌入式Servlet容器的HTTPS端口("run-app \-\-https" 和 "run-war \-\-https")。整数。
+ grails.config.base.webXml | 自定义web.xml文件的路径(一种替代web.xml模板的方法)。
+ grails.compiler.dependencies | 添加额外的依赖到编译器类路径的遗留方法。把它设置为一个包含"fileset()"条目的闭包。 这些条目将会被@AntBuilder@处理，所以语法使用的是Ant构建文件中对应的XML元素的Groovy语法形式。例如， @fileset(dir: "$basedir/lib", includes: "\*\*/\*.class")@.
+ grails.testing.patterns | Ant路径模式的列表，让你控制哪些文件包含在测试中。模式不应该包含测试用例后缀，后缀由下一个属性设置。
+ grails.testing.nameSuffix | 默认情况下，假定测试有"Tests"后缀。你可以通过这个选项把它修改为任何你想要的设置。例如，另一个常用的后缀是"Test"。
+ grails.project.war.file | 包含生成后的WAR文件路径的字符串，使用的是全名（包含扩展名）。例如，"target/my-app.war"。
+ grails.war.dependencies | 包含"fileset()"条目的闭包，允许你完全控制WAR文件中"WEB-INF/lib"目录下有什么。
+ grails.war.copyToWebApp | 包含"fileset()"条目的闭包，允许你完全控制WAR文件中根目录下有什么。这个选项覆盖了包含"web-app"目录下所有内容的默认行为。
+ grails.war.resources | 接受中转目录位置作为第一个参数的一个闭包。你可以使用任意的Ant任务做任何你想做的事情。通常用于在中转目录被归档至WAR之前从中转目录中移除文件。
+ grails.project.web.xml | 生成Grails的web.xml文件所在的位置。
+{table}
+
+h3. 重新加载代理的缓存目录
+
+Grails在开发环境中使用基于代理的重新加载系统，这允许源代码的改动在应用程序运行时可以获取。这个重新加载代理对高效执行重新加载所需的信息进行缓存。默认这个信息保存在@\<USER_HOME_DIR\>\/.grails\/.slcache\/@。修改@GRAILS_AGENT_CACHE_DIR@环境变量的值可以把这个缓存信息保存在其他的地方。要注意这是操作系统环境变量，不是JVM系统属性或在@BuildConfig.groovy@中定义的属性。这个设置必须定义成环境变量，因为代理缓存目录必须在JVM启动过程很早的时候，在任何Grails代码执行之前配置。

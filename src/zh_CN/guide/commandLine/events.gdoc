@@ -1,3 +1,4 @@
+{hidden}
 Grails provides the ability to hook into scripting events. These are events triggered during execution of Grails target and plugin scripts.
 
 The mechanism is deliberately simple and loosely specified. The list of possible events is not fixed in any way, so it is possible to hook into events triggered by plugin scripts, for which there is no equivalent event in the core target scripts.
@@ -63,4 +64,69 @@ Event | Parameters | Description
  DocEnd | kind | Called when documentation generation has ended - javadoc or groovydoc
  SetClasspath | rootLoader | Called during classpath initialization so plugins can augment the classpath with rootLoader.addURL(...). Note that this augments the classpath *after* event scripts are loaded so you cannot use this to load a class that your event script needs to import, although you can do this if you load the class by name.
  PackagingEnd | none | Called at the end of packaging (which is called prior to the Tomcat server being started and after web.xml is generated)
+{table}
+{hidden}
+Grails提供接入脚本事件的能力。这些事件在Grails目标和插件脚本运行中被触发。
+
+经过周详的考虑，这种机制的设计是简单且松散的。总之可能事件的列表是不固定的，因此可以接入由插件脚本触发的事件，而在核心目标脚本中没有与之等价的事件。
+
+h4. 定义事件处理程序
+
+事件处理程序在名为@_Events.groovy@的脚本中定义。Grails在下列位置中搜索这些脚本：
+
+* @USER_HOME/.grails/scripts@ - 用户自定义的事件处理程序
+* @PROJECT_HOME/scripts@ - 应用程序自定义的事件处理程序
+* @PLUGINS_HOME/*/scripts@ - 插件自定义的事件处理程序
+* @GLOBAL_PLUGINS_HOME/*/scripts@ - 全局插件提供的事件处理程序
+
+无论何时事件被触发，_所有_ 对该事件注册的处理程序会被执行。要注意的是处理程序的注册是由Grails自动完成的，所以你只需要在相关的@_Events.groovy@文件中声明它们即可。
+
+事件处理程序是定义在@_Events.groovy@里面的代码块，它使用了"event"开头的名字。下面的例子可以被放到/script目录下用于演示该功能：
+
+{code}
+eventCreatedArtefact = { type, name ->
+   println "Created $type $name"
+}
+
+eventStatusUpdate = { msg ->
+   println msg
+}
+
+eventStatusFinal = { msg ->
+   println msg
+}
+{code}
+
+在这里你可以看到三个处理程序@eventCreatedArtefact@，@eventStatusUpdate@，@eventStatusFinal@。Grails提供了一些标准的事件，它们在命令行参考指南中进行说明。例如[compile|commandLine]命令会触发下面的事件：
+
+* @CompileStart@  - 当编译开始时被调用，传递编译的类型 - source 或 tests
+* @CompileEnd@ - 当编译完成时被调用，传递编译的类型 - source 或 tests
+
+h4. 触发事件
+
+要触发事件仅需包含Init.groovy脚本并调用event()闭包：
+
+{code}
+includeTargets << grailsScript("\_GrailsEvents")
+
+event("StatusFinal", ["Super duper plugin action complete!"])
+{code}
+
+h4. 常用事件
+
+{table}
+事件 | 参数 | 描述
+ StatusUpdate | message | 传递一个字符串代表当前脚本的状态/进度
+ StatusError | message | 传递一个字符串代表当前脚本中的错误信息
+ StatusFinal | message | 传递一个字符串代表最终的脚本状态信息，也就是，完成一个目标的时候，即使该目标没有退出脚本环境
+ CreatedArtefact | artefactType,artefactName | 当create-xxxx脚本已经完成并且创建了工件时被调用
+ CreatedFile | fileName | 当项目源文件被创建时调用，不包括Grails一直管理的文件
+ Exiting | returnCode | 当脚本环境要成功退出时被调用
+ PluginInstalled | pluginName | 在插件安装后被调用
+ CompileStart | kind | 当编译开始时被调用，传递编译的类型 - source 或 tests
+ CompileEnd | kind | 当编译完成时被调用，传递编译的类型 - source 或 tests
+ DocStart | kind | 当文档生成要开始时被调用 - javadoc 或 groovydoc
+ DocEnd | kind | 当文档生成已经结束时被调用 - javadoc 或 groovydoc
+ SetClasspath | rootLoader | 当类路径初始化时被调用，所以插件可以使用rootLoader.addURL(...)扩充类路径。注意对类路径的扩充发生在事件脚本加载 _以后_ ，因此你不能使用它来加载你的事件脚本需要导入的类，尽管你可以通过类名进行加载。
+ PackagingEnd | none | 在打包结束时被调用 (调用发生在Tomcat服务器被启动之前并且在web.xml文件生成之后)
 {table}
