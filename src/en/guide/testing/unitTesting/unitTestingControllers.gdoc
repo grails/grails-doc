@@ -356,14 +356,15 @@ void testAutowiringViaNew() {
 
 h4. Testing Mime Type Handling
 
-You can test mime type handling and the @withFormat@ method quite simply by setting the response's @format@ attribute:
+You can test mime type handling and the @withFormat@ method quite simply by setting the request's @contentType@ attribute:
 
 {code:java}
 // controller action
 def sayHello() {
     def data = [Hello:"World"]
-    withFormat {
-        xml { render data as XML }
+    request.withFormat {
+        xml { render data as grails.converters.XML }
+        json { render data as grails.converters.JSON }
         html data
     }
 }
@@ -371,16 +372,61 @@ def sayHello() {
 
 {code:java}
 // test
-void testSayHello() {
-    response.format = 'xml'
+void testSayHelloJson() {
+    request.contentType = 'application/json'
     controller.sayHello()
+    String expected = '{"Hello":"World"}'
 
-    String expected = '<?xml version="1.0" encoding="UTF-8"?>' +
-                      '<map><entry key="Hello">World</entry></map>'
+    assert expected == response.text
+}
+
+void testSayHelloXml() {
+    request.contentType = 'application/xml'
+    controller.sayHello()
+    String expected = '<?xml version="1.0" encoding="UTF-8"?><map><entry key="Hello">World</entry></map>'
 
     assert expected == response.text
 }
 {code}
+
+There are constants provided by @ControllerUnitTestMixin@ for all of the common common content types as shown below:
+
+{code:java}
+// test
+void testSayHelloJson() {
+    request.contentType = JSON_CONTENT_TYPE
+    controller.sayHello()
+    String expected = '{"Hello":"World"}'
+
+    assert expected == response.text
+}
+
+void testSayHelloXml() {
+    request.contentType = XML_CONTENT_TYPE
+    controller.sayHello()
+    String expected = '<?xml version="1.0" encoding="UTF-8"?><map><entry key="Hello">World</entry></map>'
+
+    assert expected == response.text
+}
+{code}
+
+The defined constants are listed below:
+
+{table}
+*Constant* | *Value*
+ALL_CONTENT_TYPE | \*/\*
+FORM_CONTENT_TYPE | application/x-www-form-urlencoded
+MULTIPART_FORM_CONTENT_TYPE | multipart/form-data
+HTML_CONTENT_TYPE | text/html
+XHTML_CONTENT_TYPE | application/xhtml+xml
+XML_CONTENT_TYPE | application/xml
+JSON_CONTENT_TYPE | application/json
+TEXT_XML_CONTENT_TYPE | text/xml
+TEXT_JSON_CONTENT_TYPE | text/json
+HAL_JSON_CONTENT_TYPE | application/hal+json
+HAL_XML_CONTENT_TYPE | application/hal+xml
+ATOM_XML_CONTENT_TYPE | application/atom+xml
+{table}
 
 h4. Testing Duplicate Form Submissions
 
