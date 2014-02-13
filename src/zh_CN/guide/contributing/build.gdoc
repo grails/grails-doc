@@ -1,3 +1,4 @@
+{hidden}
 If you're interested in contributing fixes and features to the core framework, you will have to learn how to get hold of the project's source, build it and test it with your own applications. Before you start, make sure you have:
 
 * A JDK (1.6 or above)
@@ -82,3 +83,92 @@ In previous versions of Grails there was a @grails-debug@ command.  The command 
 If you need to debug stuff that happens during application startup, then you should modify the "grails-debug" script and change the "suspend" option from 'n' to 'y'. You can read more about the JPDA connection settings TODO here: [http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#Invocation|http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#Invocation].
 
 It's also possible to get Eclipse to wait for incoming debugger connections and instead of using "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005" you could use this "-Xrunjdwp:transport=dt_socket,server=n,address=8000" (which assumes the Eclipse default port for remote java applications) Inside eclipse you create a new "Remote Java Application" launch configuration and change the connection type to "Standard (Socket Listen)" and click debug. This allows you to start a debugger session in eclipse and just leave it running and you're free to debug anything without having to keep remembering to relaunch a "Socket Attach" launch configuration. You might find it handy to have 2 scripts, one called "grails-debug", and another called "grails-debug-attach"
+
+{hidden}
+如果你对向核心框架贡献问题修复和新功能感兴趣的话，你必须掌握怎样获得项目的源代码，怎样进行构建和使用你自己的应用程序对其测试。但开始之前，确保你已经有了：
+
+* JDK (1.6及以上版本)
+* git客户端
+
+一旦你安装了全部必备的软件包，下一步是下载Grails源代码，它托管在[GitHub|http://github.com]的数个仓库中，所有者是[GitHub用户"grails"|http://github.com/grails]。剩下的就是Clone你感兴趣的仓库了。例如，要获得核心框架，可以运行：
+
+{code}
+git clone http://github.com/grails/grails-core.git
+{code}
+
+这会在你当前的工作目录下创建一个"grails-core"目录，其中包含了所有的项目源文件。下一步是从源代码得到Grails安装目录。
+
+h3. 创建Grails安装目录
+
+如果你浏览项目的结构，你会看到它看起来不像一个标准的@GRAILS_HOME@安装目录。但是，把它变成那样是非常简单的。只要从项目的根目录下运行如下的命令即可：
+
+{code}
+./gradlew install
+{code}
+
+这将会获取所有Grails必须的标准依赖，然后构建一个@GRAILS_HOME@安装目录。要注意的是这个目标跳过了Grails里面大量的测试类，它们需要花不少时间来完成运行。
+
+一旦上述命令执行结束，只需把@GRAILS_HOME@环境变量设置为检出源代码的目录并添加其中的'bin'目录到你的路径中即可。当你下一次运行@grails@命令的时候，你就会使用刚刚构建的版本。
+
+h3. 运行测试套件
+
+要运行全部的测试套件你所需要做的是：
+
+{code}
+./gradlew test
+{code}
+
+这些可能花去一些时间（15-30分钟），因此可以考虑使用命令运行单个的测试。例如，要运行测试规范@BinaryPluginSpec@，仅需执行下面的命令：
+{code}
+./gradlew :grails-core:test --tests *.BinaryPluginSpec
+{code}
+
+注意，你需要指定测试用例所在的子项目，因为顶层的"test"目标不会起作用。。。
+
+h3. 在IntelliJ IDEA中进行开发
+
+你需要运行如下的gradle任务：
+{code}
+./gradlew idea
+{code}
+
+然后再IDEA中打开生成的项目文件。简单！
+
+h3. 在STS/Eclispe中进行开发
+
+你需要运行下面的gradle任务：
+{code}
+./gradlew cleanEclipse eclipse
+{code}
+
+在导入项目到STS之前完成下面的动作：
+
+* 编辑grails-scripts/.classpath并删除"<classpathentry kind="src" path="../scripts"/>"所在的行。
+
+使用"Import->General->Existing Projects into Workspace"导入所有的项目到STS中。会产生几个构建错误。要修复它们需要完成如下的操作：
+
+* 添加$GRAILS_HOME/lib/com.springsource.springloaded/springloaded-core/jars下面的springloaded-core JAR文件到grails-core项目的类路径中
+* 从grails-plugin-testing的源代码路径中删除 "src/test/groovy" GRECLIPSE-1067
+* 添加$GRAILS_HOME/lib/javax.servlet.jsp/jsp-api/jars下面的jsp-api文件到grails-web的类路径中
+* 修正grails-scripts项目的源代码路径。添加链接源代码文件夹链接到"../scripts"。如果你在grails-scripts项目里有构建错误，在其所在的目录运行"../gradlew cleanEclipse eclipse"然后再次编辑类路径（删除"<classpathentry kind="src" path="../scripts"/>"一行）如果你不能添加链接文件夹，要删除在grials-scripts项目下可能为空的"scripts"目录。
+* 对整个工作区执行clean build
+* 要使用Eclipse GIT源代码管理团队提供程序：在navigation视图中选择全部项目（除了"Servers"）然后右击 -> Team -> Share project (不是"Share projects")。选择"Git"。然后勾选"Use or create repository in parent folder of project"并点击"Finish"。
+* 从[mailing list thread|http://grails.1312388.n4.nabble.com/Grails-development-code-style-IDE-formatting-settings-tp3854216p3854216.html]得到推荐的代码风格设置 (最终的风格还为确定，目前使用[profile.xml|http://grails.1312388.n4.nabble.com/attachment/3854262/0/profile.xml])。使用Window->Preferences->Java->Code Style->Formatter->Import将代码风格Xml文件导入到STS。Grails源代码使用空格而不是Tab字符进行缩进。
+
+h3. 调试Grails或者Grails应用程序
+
+要启用调试，可以运行：
+{code}
+grails -debug <command>
+{code}
+
+然后通过IDE（“远程调试”）使用端口5005远程连接到JVM。如果你修改@startGrails@脚本使用一个不同的端口号，你当然需要使用那个端口连接。
+
+{note}
+在以前的Grails版本中有一个@grails-debug@命令。这个命令依然包含在发行包中但已经废弃，建议使用标准@grails@命令的@-debug@开关。
+{note}
+
+如果你需要调试应用程序启动中发生的处理，那么你需要修改"grails-debug"脚本并把"suspend"选项的值从'n'修改为'y'。你可以阅读关于JPDA连接设置的更多信息[http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#Invocation|http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#Invocation]。
+
+不使用"-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"，而是使用"-Xrunjdwp:transport=dt_socket,server=n,address=8000"，你也可以让Eclipse接受外部的调试器链接，（这是用于远程Java应用程序的Eclipse默认端口）。在Eclipse
+中你可以创建一个新的"Remote Java Applicatio"启动配置并修改连接类型为"Standard (Socket Listen)"，然后单击debug。这允许你在Eclipse中启动调试器会话并使其一直运行，并且不需要记住重启"Socket Attach"启动配置，你就可以自由地调试任何程序。你可能会发现有两个脚本更方便，一个是"grails-debug"，另一个是"grails-debug-attach"。

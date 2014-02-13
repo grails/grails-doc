@@ -1,3 +1,4 @@
+{hidden}
 Contributing to the documentation is simpler for the core framework because there is a public fork of the [http://github.com/grails/grails-doc|http://github.com/grails/grails-doc] project that anyone can request commit access to. So, if you want to submit patches to the documentation, simply request commit access to the following repository [http://github.com/pledbrook/grails-doc|http://github.com/pledbrook/grails-doc] by sending a GitHub message to 'pledbrook' and then commit your patches just as you would to any other GitHub repository.
 
 h3. Building the Guide
@@ -93,3 +94,104 @@ You can build specific translations very easily using the @publishGuide_\*@ and 
 Each translation is generated in its own directory, so for example the French guide will end up in @build/docs/fr@. You can then view the translated guide by opening @build/docs/<lang>/index.html@.
 
 All translations are created as part of the [Hudson CI build for the grails-doc|http://hudson.grails.org/job/grails_docs_2.0.x/lastSuccessfulBuild/artifact/build/docs/] project, so you can easily see what the current state is without having to build the docs yourself.
+
+{hidden}
+对比核心框架对文档做贡献要简单地多，因为有一个[http://github.com/grails/grails-doc|http://github.com/grails/grails-doc]项目，任何人可以请求它的提交权限。如果你想为文档添加补丁，仅需请求[http://github.com/pledbrook/grails-doc|http://github.com/pledbrook/grails-doc]仓库的提交权限，方法是发送GitHub信息给'pledbrook'，然后就可以像你对任何其他仓库所做的一样提交补丁了。
+
+h3. 构建文档
+
+要构建文档，仅需输入：
+
+{code}
+./gradlew docs
+{code}
+
+注意：这个命令需要一段时间才能完成，并且你可能需要增加你的Gradle内存设置，方法是设置@GRADLE_OPTS@环境变量的值，如下所示：
+{code}
+export GRADLE_OPTS="-Xmx512m -XX:MaxPermSize=384m"
+{code}
+
+幸运的是，你可以使用几个有用的选项减少总的构建时间。第一个选项是允许你指定Grails源代码的位置：
+
+{code}
+./gradlew -Dgrails.home=/home/user/projects/grails-core docs 
+{code}
+
+
+之所以要求Grails源代码是因为文档中包含到Grails API文档的链接并且构建过程需要保证生成它们。如果你没有指定@grails.home@属性，那么构建时将会获取Grails的源代码 - 一个几十MB的下载。然后它必须编译Grails的源代码，这也会花一段时间。
+
+此外你可以创建一个local.properties文件，在里面设置这个变量：
+{code}
+grails.home=/home/user/projects/grails-core
+{code}
+或
+{code}
+grails.home=../grails-core
+{code}
+
+另一个有用的选项允许你禁用API文档的生成，因为你只需生成一次API文档：
+{code}
+./gradlew -Ddisable.groovydocs=true docs
+{code}
+
+这也会节省大量的时间和内存。
+
+英文的帮助文档生成在@build/docs@下面，其中@guide@子目录包含用户指南部分，@ref@文件夹包含参考资料。要查看帮助文档，只需打开@build/docs/index.html@。
+
+h3. 发布
+
+用于帮助文档的发布系统与[Grails项目使用的|http://grails.org/doc/2.0.0.M1/guide/conf.html#docengine]是相同的。你使用gdoc维基格式编写章节内容，然后转换成最终帮助文档里的HTML。每一章是一个@src/<lang>/guide@目录下的gdoc文件。小节和子小节位于所在章次的gdoc文件名省去后缀为名字的目录中。
+
+用户指南的结构在@src/<lang>/guide/toc.yml@文件中定义，这是个YAML文件。这个文件也定义了章节的（特定语言的）标题。如果你添加或删除gdoc文件，你也必须更新TOC！
+
+@src/<lang>/ref@ 目录包含参考边栏的源代码。每个目录是类别的名字，它也位于docs目录里面。因此这些目录需要对不同的语言使用不同的名字。在这些目录里是gdoc文件，它们的名字匹配方法名、命令名、属性名或这些文件所所描述东西的名字。
+
+h3. 翻译
+
+这个项目容纳了用户指南的多种翻译，@src/en@是主要的语言版本。要添加另一种，仅需在@src@下面创建一个新的语言目录并复制@src/en@下的所有文件到它里面。剩下的事情由构建系统处理。
+
+一旦你有了最初指南的副本，你可以使用@\{hidden\}@来包住你已经替换的英文文本，而不是删除它。这使得对你的翻译与英文指南变动的比较更容易些。例如：
+
+{code}
+\{hidden\}
+When you create a Grails application with the [create-app|commandLine] command,
+Grails doesn't automatically create an Ant @build.xml@ file but you can generate
+one with the [integrate-with|commandLine] command:
+\{hidden\}
+
+Quando crias uma aplicação Grails com o comando [create-app|commandLine], Grails
+não cria automaticamente um ficheiro de construção Ant @build.xml@ mas podes gerar
+um com o comando [integrate-with|commandLine]:
+{code}
+
+因为英文文本仍旧在gdoc文件中，@diff@将会显示有关英文的不同之处。你然后可以使用@diff@的输出来了解哪些翻译需要更新。在这之上，@\{hidden\}@宏确保其中的文本在浏览器中不显示出来，尽管你可以通过添加URL @javascript:toggleHidden();@（要求你使用Grails 2.0 M2及以后版本）作为书签来显示它。
+
+更好的方法是，你可以使用项目根目录下的 @left_to_do.groovy@脚本来了解还有什么需要翻译的。你可以像下面这样运行它：
+{code}
+./left_to_do.groovy es
+{code}
+
+这会以英文用户指南做参考输出给定翻译的全部不同之处。任何自从翻译后未发生变化的@\{hidden\}@块将 _不会_ 出现在差别输出中。换句话说，你所看到的是还没有被翻译的内容和已经翻译但发生变化的内容。注意@\{code\}@块会被忽略，所以你 _不需要_ 把它们包含在@\{hidden\}@内部。
+
+要为页首提供翻译，例如用户指南的标题和子标题，仅需在'resources/doc.properties'文件中添加特定语言的条目，如下所示：
+{code}
+es.title=El Grails Framework
+es.subtitle=...
+{code}
+
+对每种语言的翻译，以@<lang>@.开始的属性会覆盖对应的标准属性。在上面的例子中，用户指南的标题对于西班牙语的翻译而言将会是El Grails Framework。同样地，翻译人员的工作通过添加'<lang>.translators'来署名。
+{code}
+fr.translators=Stéphane Maldini
+{code}
+
+这是个逗号分隔的姓名（或者对应的本地语言中的名字）的列表，并且在用户指南中以"Translated by"标题进行显示。
+
+你可以非常容易地使用@publishGuide_\*@和@publishPdf_\*@任务构建特定语言的翻译。例如，要构建法语版本的HTML和PDF格式的用户指南，仅需执行：
+
+{code}
+./gradlew publishPdf_fr
+{code}
+
+每种翻译生成在自己的目录中，例如，法语版的帮助文档会出现在@build/docs/fr@下面。然后你就可以通过打开@build/docs/<lang>/index.html@查看翻译的帮助文档。
+
+全部的翻译作为[grails-doc Hudson CI构建|http://hudson.grails.org/job/grails_docs_2.0.x/lastSuccessfulBuild/artifact/build/docs/]项目的一部分会被创建，所以，不必亲自构建文档，你就可以很容易地查看它们的当前状态。

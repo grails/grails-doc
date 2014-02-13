@@ -1,3 +1,4 @@
+{hidden}
 If you want to submit patches to the project, you simply need to fork the repository on GitHub rather than clone it directly. Then you will commit your changes to your fork and send a pull request for a core team member to review.
 
 h3. Forking and Pull Requests
@@ -56,3 +57,65 @@ You're now ready to send the pull request from the GitHub user interface.
 h4. Say what your pull request is for
 
 A pull request can contain any number of commits and it may be related to any number of issues. In the pull request message, please specify the IDs of all issues that the request relates to. Also give a brief description of the work you have done, such as: "I refactored the data binder and added support for custom number editors (GRAILS-xxxx)".
+{hidden}
+如果你想为Grails项目提交补丁，你仅需在GitHub上对仓库应用分叉而不是直接进行克隆。然后提交你的修改到你的分叉仓库并向一个核心团队成员发送Pull请求进行评审。
+
+h3. 分叉和Pull请求
+
+[GitHub|http://github.com]的一个优点是你可以通过对[仓库分叉|http://help.github.com/fork-a-repo/]很容易地向一个项目做贡献并且为你的改动[发送Pull请求|http://help.github.com/send-pull-requests/]。
+
+下面的内容是帮助确保你的Pull请求能够尽快得到处理和提供我们所需信息的一些指导原则。它们也会使你的工作更加容易！
+
+h4. 为你的本地修改创建本地分支
+
+如果为你的修改创建一个本地分支，你的工作将会大大简化。例如，分叉仓库并在本地克隆以后立即执行：
+{code}
+git checkout -b mine
+{code}
+
+这会基于"master"分支创建一个新的本地分支"mine"。你当然可以给这个分支起你喜欢的名字 - 你不必使用"mine"。
+
+h4. 为稍大些的修改创建JIRA
+
+对于稍大些的修改，要在不存在的情况下提交一个对应的JIRA问题报告。这样会帮助我们跟踪每个新版本的Grails中包含的改动。
+
+h4. 在提交信息中包含JIRA问题报告ID
+
+这可能看起来不是特别重要，但是在提交信息中的JIRA问题报告ID意味着以后我们可以找到为什么做出这个改动。一定要在任何和所有有关该问题报告的提交中包含其ID。如果一个提交与问题报告无关，则没有必要包含问题报告ID。
+
+h4. 确保你的分叉仓库是最新的
+
+因为核心开发人员必须合并你的提交至主仓库，在你发送Pull请求之前，如果你在GitHub上的分叉是最新的，则会使他们的工作更加容易。
+
+比如你把主仓库设置为一个名为"upstream"的远程仓库，并且你想提交一个Pull请求。所有你的改动目前都发生在本地"mine"分支上但是没有出现在"master"分支上。第一步是拖取你最后一次获取和合并以后主仓库的所有修改：
+{code}
+git checkout master
+git pull upstream
+{code}
+
+上述命令应该不会有任何问题和冲突就能完成。接下来，对现在最新的master分支rebase你的本地分支：
+{code}
+git checkout mine
+git rebase master
+{code}
+
+这些命令完成的操作是重新组织提交使得所有你的修改出现于master最新的修改之后。可以想象成把一些纸牌添加到一副牌的顶端而不是对它们进行洗牌。
+
+你现在能够完成从本地分支到master分支的干净合并了：
+
+{code}
+git checkout master
+git merge mine
+{code}
+
+最后，你必须推送你的修改至GitHub上的远程仓库，否则核心开发人员将不能获得它们：
+
+{code}
+git push
+{code}
+
+现在你已经准备好了，可以从GitHub用户接口发送Pull请求了。
+
+h4. 解释你的Pull请求
+
+Pull请求可能包含任意数量的提交并且可能与任意数量的问题报告有关。在Pull请求的信息中，请指定有关的所有问题报告的ID。还要对你做的工作给出简要的描述，类似："I refactored the data binder and added support for custom number editors (GRAILS-xxxx)"。
