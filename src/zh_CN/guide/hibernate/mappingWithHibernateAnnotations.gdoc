@@ -1,3 +1,4 @@
+{hidden}
 To map a domain class with annotations, create a new class in @src/java@ and use the annotations defined as part of the EJB 3.0 spec (for more info on this see the [Hibernate Annotations Docs|http://annotations.hibernate.org/]):
 
 {code:java}
@@ -57,3 +58,64 @@ Then register the class with the Hibernate @sessionFactory@ by adding relevant e
 See the previous section for more information on the @hibernate.cfg.xml@ file.
 
 When Grails loads it will register the necessary dynamic methods with the class. To see what else you can do with a Hibernate domain class see the section on [Scaffolding|guide:scaffolding].
+
+{hidden}
+要使用注解映射领域类，在@src/java@文件中创建一个新的类并使用EJB 3.0部分规范中定义的注解进行描述（有关的信息请看[Hibernate注解文档|http://annotations.hibernate.org/]）：
+
+{code:java}
+package com.books;
+
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+
+@Entity
+public class Book {
+    private Long id;
+    private String title;
+    private String description;
+    private Date date;
+
+    @Id
+    @GeneratedValue
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+}
+{code}
+
+然后通过在@grails-app/conf/hibernate/hibernate.cfg.xml@文件中使用Hibernate @sessionFactory@注册这个类，如下所示：
+
+{code:xml}
+<!DOCTYPE hibernate-configuration SYSTEM
+  "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <mapping package="com.books" />
+        <mapping class="com.books.Book" />
+    </session-factory>
+</hibernate-configuration>
+{code}
+有关@hibernate.cfg.xml@文件的更多信息请看上一节的内容。
+
+当Grails加载时，它将对这个类注册必要的动态方法。要了解对Hibernate领域类的更多操作可以查看有关[脚手架|guide:scaffolding]的章节。
