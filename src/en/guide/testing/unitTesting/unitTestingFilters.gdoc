@@ -16,9 +16,14 @@ class CancellingFilters {
 This filter interceptors the @list@ action of the @simple@ controller and redirects to the @book@ controller. To test this filter you start off with a test that targets the @SimpleController@ class and add the @CancellingFilters@ as a mock collaborator:
 
 {code:java}
+import grails.test.mixin.TestFor
+import spock.lang.Specification
+
 @TestFor(SimpleController)
 @Mock(CancellingFilters)
-class SimpleControllerTests {
+class SimpleControllerSpec extends Specification {
+
+    // ...
 
 }
 {code}
@@ -26,11 +31,22 @@ class SimpleControllerTests {
 You can then implement a test that uses the @withFilters@ method to wrap the call to an action in filter execution:
 
 {code:java}
-void testInvocationOfListActionIsFiltered() {
-    withFilters(action:"list") {
-        controller.list()
+import grails.test.mixin.TestFor
+import spock.lang.Specification
+
+@TestFor(SimpleController)
+@Mock(CancellingFilters)
+class SimpleControllerSpec extends Specification {
+
+    void "test list action is filtered"() {
+        when:
+        withFilters(action:"list") {
+            controller.list()
+        }
+
+        then:
+        response.redirectedUrl == '/book'
     }
-    assert response.redirectedUrl == '/book'
 }
 {code}
 
