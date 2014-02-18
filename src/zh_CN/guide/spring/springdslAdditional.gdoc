@@ -1,3 +1,4 @@
+{hidden}
 h4. Using the Spring Bean DSL
 
 You can easily register new (or override existing) beans by configuring them in @grails-app/conf/spring/resources.groovy@ which uses the Grails [Spring DSL|guide:springdsl]. Beans are defined inside a @beans@ property (a Closure):
@@ -171,3 +172,175 @@ class MyBeanImpl {
 Using @ref@ (in XML or the DSL) is very powerful since it configures a runtime reference, so the referenced bean doesn't have to exist yet. As long as it's in place when the final application context configuration occurs, everything will be resolved correctly.
 
 For a full reference of the available beans see the plugin reference in the reference guide.
+{hidden}
+h4. 使用Spring组件DSL
+
+通过在@grails-app/conf/spring/resources.groovy@中使用Grails [Spring DSL|guide:springdsl]进行配置，你可以很容易地注册新的（或覆盖现有的）组件。组件在@beans@属性（是一个闭包）内部定义。
+
+{code:java}
+beans = {
+    // 这里是组件
+}
+{code}
+
+作为一个简单的例子，你可以使用下面的语法配置一个组件：
+
+{code:java}
+import my.company.MyBeanImpl
+
+beans = {
+    myBean(MyBeanImpl) {
+        someProperty = 42
+        otherProperty = "blue"
+    }
+}
+{code}
+
+一旦配置完成，该组件可以被自动组接到Grails工件中或其他支持依赖注入的类（例如@BootStrap.groovy@和集成测试）中，方法是声明一个公开的字段，其名字是你的组件的名字（本例中的@myBean@）；
+
+{code:java}
+class ExampleController {
+
+     def myBean
+     ...
+}
+{code}
+
+使用DSL的优势在于你可以把组件声明和逻辑混合在一起，例如可以根据[环境|guide:environments]进行配置：
+
+{code:java}
+import grails.util.Environment
+import my.company.mock.MockImpl
+import my.company.MyBeanImpl
+
+beans = {
+    switch(Environment.current) {
+        case Environment.PRODUCTION:
+            myBean(MyBeanImpl) {
+                someProperty = 42
+                otherProperty = "blue"
+            }
+            break
+
+        case Environment.DEVELOPMENT:
+            myBean(MockImpl) {
+                someProperty = 42
+                otherProperty = "blue"
+            }
+            break
+    }
+}
+{code}
+
+@GrailsApplication@对象可以使用@application@变量进行访问并且可以用于访问Grails的配置（和其他内容）：
+
+{code:java}
+import grails.util.Environment
+import my.company.mock.MockImpl
+import my.company.MyBeanImpl
+
+beans = {
+    if (application.config.my.company.mockService) {
+        myBean(MockImpl) {
+            someProperty = 42
+            otherProperty = "blue"
+        }
+    } else {
+        myBean(MyBeanImpl) {
+            someProperty = 42
+            otherProperty = "blue"
+        }
+    }
+}
+{code}
+
+{note}
+如果你在@resources.groovy@里使用一个以前已经被Grails或已安装插件注册过的组件的名字来定义组件，你的组件将会替换掉以前的注册。这是一个不借助于编辑插件代码或其他影响可维护性的方法进行定制的便利方法。
+{note}
+
+h4. 使用XML
+
+也可以使用@grails-app/conf/spring/resources.xml@配置组件。在稍早版本的Grails中这个文件在运行@run-app@脚本时会被自动生成，但是在@resources.groovy@里使用DSL是现在推荐使用的方法，所以这个文件现在不再自动生成了。但是，仍然支持这个文件 - 你只是需要自己创建它而已。
+
+这个文件是典型的Spring XML文件，而且Spring文档中对如何配置Spring组件有非常[优秀的参考文档|http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/beans.html#beans-basics]。
+
+我们使用DSL配置的@myBean@组件可以在XML文件使用其语法进行配置：
+
+{code:xml}
+<bean id="myBean" class="my.company.MyBeanImpl">
+    <property name="someProperty" value="42" />
+    <property name="otherProperty" value="blue" />
+</bean>
+{code}
+
+像其他的组件一样，它可以被自动组接到任何支持依赖注入的类中：
+
+{code:java}
+class ExampleController {
+
+     def myBean
+}
+{code}
+
+h4. 引用现有的组件
+
+声明在@resources.groovy@或@resources.xml@中的组件可以通过约定引用其他的组件。例如，如果你有一个@BookService@类，它的Spring组件名将会是@bookService@，所以你的组件在DSL里会像这样引用它：
+
+{code:java}
+beans = {
+    myBean(MyBeanImpl) {
+        someProperty = 42
+        otherProperty = "blue"
+        bookService = ref("bookService")
+    }
+}
+{code}
+
+或者，在XML中像这样引用它：
+
+{code:xml}
+<bean id="myBean" class="my.company.MyBeanImpl">
+    <property name="someProperty" value="42" />
+    <property name="otherProperty" value="blue" />
+    <property name="bookService" ref="bookService" />
+</bean>
+{code}
+
+这个组件对组件的引用需要有一个公开的设置方法（和两个简单的属性），使用Groovy定义的话会像这样：
+
+{code:java}
+package my.company
+
+class MyBeanImpl {
+    Integer someProperty
+    String otherProperty
+    BookService bookService // 或者只需使用 "def bookService"
+}
+{code}
+
+或者使用Java像这样定义：
+
+{code}
+class MyBeanImpl {
+
+    private BookService bookService;
+    private Integer someProperty;
+    private String otherProperty;
+
+    public void setBookService(BookService theBookService) {
+        this.bookService = theBookService;
+    }
+
+    public void setSomeProperty(Integer someProperty) {
+        this.someProperty = someProperty;
+    }
+
+    public void setOtherProperty(String otherProperty) {
+        this.otherProperty = otherProperty;
+    }
+}
+{code}
+
+@ref@（在XML或DSL中）的功能是非常强大的，因为它配置了运行时的引用，所有被引用的组件不必已经存在。只要最终的应用程序环境配置发生时它存在的话，所有的组件都可以正常地解析。
+
+关于可用组件的完整参考，可以参考参考指南中插件的参考文档。

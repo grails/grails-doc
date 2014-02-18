@@ -1,3 +1,4 @@
+{hidden}
 Grails supports the notion of property placeholder configuration through an extended version of Spring's [PropertyPlaceholderConfigurer|api:org.springframework.beans.factory.config.PropertyPlaceholderConfigurer], which is typically useful in combination with [externalized configuration|guide:configExternalized].
 
 Settings defined in either "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper scripts or Java properties files can be used as placeholder values for Spring configuration in @grails-app/conf/spring/resources.xml@ and @grails-app/conf/spring/resources.groovy@. For example given the following entries in @grails-app/conf/Config.groovy@ (or an externalized config):
@@ -42,3 +43,48 @@ dataSource(org.springframework.jdbc.datasource.DriverManagerDataSource) {
 {code}
 
 Using this approach will keep the types as defined in your config.
+{hidden}
+Grails通过Spring [PropertyPlaceholderConfigurer|api:org.springframework.beans.factory.config.PropertyPlaceholderConfigurer]的一个扩展版本支持属性占位符配置的概念，这在与[外部配置|guide:configExternalized]组合使用时常常很有用。
+
+定义于 "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper 脚本或Java属性文件中的设置可以在@grails-app/conf/spring/resources.xml@文件和@grails-app/conf/spring/resources.groovy@文件中用作Spring配置时占位符的值。例如，给定如下的@grails-app/conf/Config.groovy@（或一个外部的配置文件）中的配置项：
+
+{code:java}
+database.driver="com.mysql.jdbc.Driver"
+database.dbname="mysql:mydb"
+{code}
+
+你可以在@resources.xml@中使用如下熟悉的${..}语法指定占位符：
+
+{code:xml}
+<bean id="dataSource"
+      class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+    <property name="driverClassName">
+        <value>${database.driver}</value>
+    </property>
+    <property name="url">
+        <value>jdbc:${database.dbname}</value>
+    </property>
+ </bean>
+{code}
+
+要在@resources.groovy@中指定占位符，你需要使用单引号：
+
+{code:java}
+dataSource(org.springframework.jdbc.datasource.DriverManagerDataSource) {
+    driverClassName = '${database.driver}'
+    url = 'jdbc:${database.dbname}'
+}
+{code}
+
+这样就设置属性的值为字符串常量，后面它们会被Spring的PropertyPlaceholderConfigurer针对配置进行解析。
+
+对@resources.groovy@而言，访问属性的一个更好的选择是通过@grailsApplication@变量：
+
+{code:java}
+dataSource(org.springframework.jdbc.datasource.DriverManagerDataSource) {
+    driverClassName = grailsApplication.config.database.driver
+    url = "jdbc\:${grailsApplication.config.database.dbname}"
+}
+{code}
+
+使用这个方法会保持配置中的类型。

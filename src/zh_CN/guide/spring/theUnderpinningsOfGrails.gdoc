@@ -1,3 +1,4 @@
+{hidden}
 Grails is actually a [Spring MVC|http://www.springframework.org/docs/MVC-step-by-step/Spring-MVC-step-by-step.html] application in disguise. Spring MVC is the Spring framework's built-in MVC web application framework. Although Spring MVC suffers from some of the same difficulties as frameworks like Struts in terms of its ease of use, it is superbly designed and architected and was, for Grails, the perfect framework to build another framework on top of.
 
 Grails leverages Spring MVC in the following areas:
@@ -19,3 +20,25 @@ Spring developers are often keen to understand how the Grails @ApplicationContex
 h4. Configured Spring Beans
 
 Most of Grails' configuration happens at runtime. Each [plugin|guide:plugins] may configure Spring beans that are registered in the @ApplicationContext@. For a reference as to which beans are configured, refer to the reference guide which describes each of the Grails plugins and which beans they configure.
+{hidden}
+Grails实际上是一个[Spring MVC|http://www.springframework.org/docs/MVC-step-by-step/Spring-MVC-step-by-step.html]应用程序。Spring MVC是Spring框架内置的MVC Web应用程序框架。尽管Spring MVC和Struts类似的框架都有易用性方面的某些问题，但是它的设计和架构都是非常好，对于Grails而言，这是在上面构建另一个框架的完美框架。
+
+Grails在下面这些地方利用到Spring MVC：
+
+* 基础的控制器逻辑 - Grails派生了Spring的[DispatcherServlet|api:org.springframework.web.servlet.DispatcherServlet]类并且使用它委派到Grails[控制器|guide:controllers]
+* 数据绑定和数据验证 - Grails的[数据验证|guide:validation]和[数据绑定|guide:dataBinding]功能构建于Spring的对应功能之上
+* 运行时配置 - Grails中运行时基于约定的系统完全通过Spring [ApplicationContext|api:org.springframework.context.ApplicationContext]进行组接
+* 事务 - Grails在[GORM|guide:GORM]中使用了Spring的事务管理功能
+
+换句话说，Grails使用内嵌的Spring运行它的全部功能。
+
+h4. Grails ApplicationContext
+
+Spring开发人员常常想了解Grails @ApplicationContext@是怎样被构建出来的。其中的基础环节如下所示：
+
+* Grails从@web-app/WEB-INF/applicationContext.xml@文件构建一个父级@ApplicationContext@，该@ApplicationContext@中配置了[GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication]实例和[GrailsPluginManager|api:org.codehaus.groovy.grails.plugins.GrailsPluginManager]。
+* 使用这个父级@ApplicationContext@Grails使用@GrailsApplication@实例分析各种约定并构建一个子@ApplicationContext@，其用作Web应用程序的根@ApplicationContext@。
+
+h4. 已配置的Spring组件
+
+大多数Grails的配置发生在运行时。每个[插件|guide:plugins]可以配置在@ApplicationContext@中注册的Spring组件。关于哪些组件已经配置的参考信息，可以查看描述每个Grails插件及其配置的组件的参考指南。

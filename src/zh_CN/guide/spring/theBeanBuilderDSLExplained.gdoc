@@ -1,3 +1,4 @@
+{hidden}
 h4. Using Constructor Arguments
 
 Constructor arguments can be defined using parameters to each bean-defining method. Put them after the first argument (the Class):
@@ -300,6 +301,329 @@ class BirthdayCardSender {
 {code}
 
 You can define an aspect that uses a pointcut to detect whenever the @birthday()@ method is called:
+
+{code:java}
+xmlns aop:"http://www.springframework.org/schema/aop"
+
+fred(Person) {
+    name = "Fred"
+    age = 45
+}
+
+birthdayCardSenderAspect(BirthdayCardSender)
+
+aop {
+    config("proxy-target-class": true) {
+        aspect(id: "sendBirthdayCard", ref: "birthdayCardSenderAspect") {
+            after method: "onBirthday",
+            pointcut: "execution(void ..Person.birthday()) and this(person)"
+        }
+    }
+}
+{code}
+{hidden}
+h4. 使用构造方法参数
+
+构造方法实参可以使用每个定义组件的方法的参数定义。把它们放到第一个实参（即类型）的后面：
+{code:java}
+bb.beans {
+    exampleBean(MyExampleBean, "firstArgument", 2) {
+        someProperty = [1, 2, 3]
+    }
+}
+{code}
+
+这个配置对应于@MyExampleBean@类包含了类似下面的构造方法：
+
+{code:java}
+MyExampleBean(String foo, int bar) {
+   ...
+}
+{code}
+
+h4. 配置BeanDefinition（使用工厂方法）
+
+闭包的第一个参数是一个组件配置实例的引用，你可以使用它配置工厂方法并且调用[AbstractBeanDefinition|api:org.springframework.beans.factory.support.AbstractBeanDefinition]类的任何方法：
+
+{code:java}
+bb.beans {
+    exampleBean(MyExampleBean) { bean ->
+        bean.factoryMethod = "getInstance"
+        bean.singleton = false
+        someProperty = [1, 2, 3]
+    }
+}
+{code}
+
+另外一种方法是你可以使用组件定义方法的返回值配置组件：
+
+{code:java}
+bb.beans {
+    def example = exampleBean(MyExampleBean) {
+        someProperty = [1, 2, 3]
+    }
+    example.factoryMethod = "getInstance"
+}
+{code}
+
+h4. 使用工厂组件
+
+Spring定义了工厂组件的概念，而且组件经常不是从一个类的实例创建的，而是从这些工厂组件创建的。在这种情况下创建组件没有使用Class实参，取而代之的是你必须传递工厂组件的名字给组件定义方法：
+
+{code:java}
+bb.beans {
+
+    myFactory(ExampleFactoryBean) {
+        someProperty = [1, 2, 3]
+    }
+
+    myBean(myFactory) {
+        name = "blah"
+    }
+}
+{code}
+
+另一个常见的方法是指定在工厂组件上调用的工厂方法的名字。这可以通过使用Groovy的命名参数语法完成：
+
+{code:java}
+bb.beans {
+
+    myFactory(ExampleFactoryBean) {
+        someProperty = [1, 2, 3]
+    }
+
+    myBean(myFactory: "getInstance") {
+        name = "blah"
+    }
+}
+{code}
+
+这里会调用@ExampleFactoryBean@组件的@getInstance@方法来创建@myBean@组件。
+
+h4. 运行时创建组件引用
+
+有时候直到运行时才知道要创建的组件的名字。在这种情况下你可以使用字符串插值的方法来动态地调用组件定义方法：
+
+{code:java}
+def beanName = "example"
+bb.beans {
+    "${beanName}Bean"(MyExampleBean) {
+        someProperty = [1, 2, 3]
+    }
+}
+{code}
+
+在调用组件定义方法时，本例中使用了在前面定义的@beanName@变量。这个例子中是一个硬编码的值，但是换成一个根据配置、系统属性等编程生成值的名字也一样可以工作。
+
+此外，因为有时直到运行时才知道组件的名字，你可能需要在和其他组件组接时通过名字引用它们，在这种情况下要使用@ref@方法：
+
+{code:java}
+def beanName = "example"
+bb.beans {
+
+    "${beanName}Bean"(MyExampleBean) {
+        someProperty = [1, 2, 3]
+    }
+
+    anotherBean(AnotherBean) {
+        example = ref("${beanName}Bean")
+    }
+}
+{code}
+
+这里@AnotherBean@的example属性使用运行时@exampleBean@的引用进行设置。@ref@方法也可以从一个父级@ApplicationContext@中引用组件，这可以通过@BeanBuilder@的构造方法参数指定：
+
+{code:java}
+ApplicationContext parent = ...//
+der bb = new BeanBuilder(parent)
+bb.beans {
+    anotherBean(AnotherBean) {
+        example = ref("${beanName}Bean", true)
+    }
+}
+{code}
+
+这里第二个参数@true@指的是组件引用将会在父级环境中进行组件查找。
+
+h4. 使用匿名（内部）组件
+
+你可以使用匿名内部组件，方法是设置组件的属性为一个代码块，它接受一个组件类型作为参数：
+
+{code:java}
+bb.beans {
+
+    marge(Person) {
+        name = "Marge"
+        husband = { Person p ->
+            name = "Homer"
+            age = 45
+            props = [overweight: true, height: "1.8m"]
+        }
+        children = [bart, lisa]
+    }
+
+    bart(Person) {
+        name = "Bart"
+        age = 11
+    }
+
+    lisa(Person) {
+        name = "Lisa"
+        age = 9
+    }
+}
+{code}
+
+上面的例子中，我们设置@marge@组件的husband属性为一个代码块，它创建了内部组件引用。另外，如果你有一个工厂组件，你可以省略组件类型且仅需使用指定的组件定义来设置工厂属性：
+
+{code:java}
+bb.beans {
+
+    personFactory(PersonFactory)
+
+    marge(Person) {
+        name = "Marge"
+        husband = { bean ->
+            bean.factoryBean = "personFactory"
+            bean.factoryMethod = "newInstance"
+            name = "Homer"
+            age = 45
+            props = [overweight: true, height: "1.8m"]
+        }
+        children = [bart, lisa]
+    }
+}
+{code}
+
+h4. 抽象组件和父组件定义
+
+要创建一个抽象组件定义，不使用@Class@参数定义组件即可：
+
+{code:java}
+class HolyGrailQuest {
+    def start() { println "lets begin" }
+}
+{code}
+
+{code:java}
+class KnightOfTheRoundTable {
+
+    String name
+    String leader
+    HolyGrailQuest quest
+
+    KnightOfTheRoundTable(String name) {
+        this.name = name
+    }
+
+    def embarkOnQuest() {
+        quest.start()
+    }
+}
+{code}
+
+{code:java}
+import grails.spring.BeanBuilder
+
+def bb = new BeanBuilder()
+bb.beans {
+    abstractBean {
+        leader = "Lancelot"
+    }
+    ...
+}
+{code}
+
+这里我们定义了一个抽象组件，它有一个值为@"Lancelot"@的@leader@属性。要使用这个抽象组件，则要把它设置为子组件的父组件：
+
+{code:java}
+bb.beans {
+    ...
+    quest(HolyGrailQuest)
+
+    knights(KnightOfTheRoundTable, "Camelot") { bean ->
+        bean.parent = abstractBean
+        quest = ref('quest')
+    }
+}
+{code}
+
+{note}
+当使用父组件时，你必须在设置任何其他属性之前在子组件上设置其parent属性！
+{note}
+
+如果你想使用指定了@Class@的抽象组件的话，可以这样做：
+
+{code:java}
+import grails.spring.BeanBuilder
+
+def bb = new BeanBuilder()
+bb.beans {
+
+    abstractBean(KnightOfTheRoundTable) { bean ->
+        bean.'abstract' = true
+        leader = "Lancelot"
+    }
+
+    quest(HolyGrailQuest)
+
+    knights("Camelot") { bean ->
+        bean.parent = abstractBean
+        quest = quest
+    }
+}
+{code}
+
+在本例中，我们创建了类型为@KnightOfTheRoundTable@的抽象组件，并使用bean参数设置其为抽象组件。后面我们定义了knights组件，它没有定义使用的@Class@，但是从父组件继承了@Class@。
+
+h4. 使用Spring名字空间
+
+自从Spring 2.0开始，Spring用户借助于XML名字空间可以更容易地访问Spring的主要功能。你可以在BeanBuilder里面使用Spring名字空间，方法是在声明时使用这个语法：
+
+{code:java}
+xmlns context:"http://www.springframework.org/schema/context"
+{code}
+
+然后调用匹配Spring名字空间标签名字及其关联属性的方法：
+
+{code:java}
+context.'component-scan'('base-package': "my.company.domain")
+{code}
+
+你可以使用Spring名字空间完成一些有用的处理，例如查找JNDI资源：
+
+{code:java}
+xmlns jee:"http://www.springframework.org/schema/jee"
+
+jee.'jndi-lookup'(id: "dataSource", 'jndi-name': "java:comp/env/myDataSource")
+{code}
+
+通过对指定的JNDI名字执行JNDI查找，这个示例将会使用标识符@dataSource@创建一个Spring组件。使用Spring名字空间，你获得了从BeanBuilder对Spring中强大的AOP支持的完全的访问。例如对下列给出的两个类：
+
+{code:java}
+class Person {
+
+    int age
+    String name
+
+    void birthday() {
+        ++age;
+    }
+}
+{code}
+
+{code:java}
+class BirthdayCardSender {
+
+    List peopleSentCards = []
+
+    void onBirthday(Person person) {
+        peopleSentCards << person
+    }
+}
+{code}
+
+你可以定义一个Aspect，它使用Pointcut来检测何时@birthday()@方法被调用了：
 
 {code:java}
 xmlns aop:"http://www.springframework.org/schema/aop"
