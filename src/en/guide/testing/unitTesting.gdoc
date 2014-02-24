@@ -22,7 +22,7 @@ You won't normally have to import any of the testing classes because Grails does
 * @grails.test.mixin.web.UrlMappingsUnitTestMixin@
 * @grails.test.mixin.webflow/WebFlowUnitTestMixin@
 
-Note that you're only ever likely to use the first two explicitly. The rest are there for reference. 
+Note that you're only ever likely to use the first two explicitly. The rest are there for reference.
 
 h4. Test Mixin Basics
 
@@ -39,14 +39,25 @@ The @Mock@ annotation creates mock version of any collaborators. There is an in-
 
 
 {code}
-void testSearch() {
-      def control = mockFor(SearchService)
-      control.demand.searchWeb { String q -> ['mock results'] }
-      control.demand.static.logResults { List results ->  }
-      controller.searchService = control.createMock()
-      controller.search()
-      
-      assert controller.response.text.contains "Found 1 results"
-}
+import grails.test.mixin.TestFor
+import spock.lang.Specification
 
+@TestFor(BookController)
+@Mock(Book)
+class BookControllerSpec extends Specification {
+
+    void "test search"() {
+        given:
+        def searchMock = mockFor(SearchService)
+        searchMock.demand.searchWeb { String q -> ['first result', 'second result'] }
+        searchMock.demand.static.logResults { List results ->  }
+        controller.searchService = searchMock.createMock()
+
+        when:
+        controller.search()
+
+        then:
+        controller.response.text.contains "Found 2 results"
+    }
+}
 {code}
