@@ -36,3 +36,58 @@ Easily add your assets to your GSP files:
 {code}
 
 Enjoy developing with on the fly asset processing, asset compiling on WAR, and much more.  See the [docs](http://bertramdev.github.com/asset-pipeline) for more info.
+
+h4. Static Compilation
+
+Groovy is a dynamically dispatched, dynamically typed language by default but also has great support for static type checking and static compilation.  See [these notes on Groovy static compilation|http://docs.codehaus.org/display/GroovyJSR/GEP+10+-+Static+compilation].  In general Grails supports Groovy's static compilation but there are a lot of special situations which are common in a Grails app which cannot be statically compiled.  For example, if a method marked with @\@CompileStatic@ contains code which invokes a GORM dynamic finder the code will not compile because the Groovy compiler cannot verify that the dynamic finder is valid.  Grails 2.4 improves on this by allowing code to be staticaly compiled and still do things like invoke GORM dynamic finders.
+
+The [grails.compiler.GrailsCompileStatic|api:grails.compiler.GrailsCompileStatic] annotation behaves much like the [groovy.transform.CompileStatic|api:groovy.transform.CompileStatic] annotation and provides special handling to recognize Grails specific constructs.
+
+The following controller is marked with @\@GrailsCompileStatic@.  All of the code that can be statically compiled will be statically compiled.  When the compiler encounters code which can not be statically validated, normally that would result in a compile error.  The Grails compiler will allow certain things to be considered valid and dynamically dispatch those instructions.
+
+{code:java}
+// grails-app/controllers/com/demo/PersonController.groovy
+package com.demo
+
+import grails.compiler.GrailsCompileStatic
+
+@GrailsCompileStatic
+class PersonController {
+
+    def showKids() {
+        def kids = Person.findAllByAgeLessThan(16)
+
+        // ...
+    }
+}
+{code}
+
+There may be situations where most of the code in a class should be statically compiled but a specific method should be left to dynamic compilation.  See the following example.
+
+{code:java}
+import grails.compiler.GrailsCompileStatic
+import groovy.transform.TypeCheckingMode
+
+@GrailsCompileStatic
+class SomeClass {
+
+    def update() {
+        // this method will be statically compiled
+    }
+
+    @GrailsCompileStatic(TypeCheckingMode.SKIP)
+    def save() {
+        // this method will not be statically compiled
+    }
+
+    def delete() {
+        // this method will be statically compiled
+    }
+}
+{code}
+
+Care must be taken when deciding to statically compile code.  There are benefits associated with static compilation but in order to take advantage of those benefits you are giving up the power and flexibility of dynamic dispatch.  For example if code is statically compiled it cannot take advantage of runtime metaprogramming enhancements which may be provided by plugins.
+
+{note}
+More notes on static compilation to be provided before the release of 2.4.0 final.
+{note}
