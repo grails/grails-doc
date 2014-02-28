@@ -44,7 +44,7 @@ class BookController extends RestfulController {
     }
 
     @Override
-    Book queryForResource(Serializable id) {
+    protected Book queryForResource(Serializable id) {
         Book.where {
             id == id && author.id = params.authorId
         }.find()
@@ -53,6 +53,6 @@ class BookController extends RestfulController {
 }
 {code}
 
-The example above subclasses @RestfulController@ and overrides the @queryForResource@ method to customize the query for the resource to take into account the parent resource.
+The example above subclasses @RestfulController@ and overrides the protected @queryForResource@ method to customize the query for the resource to take into account the parent resource.
 
 
