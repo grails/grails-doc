@@ -1,3 +1,4 @@
+{hidden}
 Mapping your domain classes with XML is pretty straightforward. Simply create a @hibernate.cfg.xml@ file in your project's @grails-app/conf/hibernate@ directory, either manually or with the [create-hibernate-cfg-xml|commandLine] command, that contains the following:
 
 {code:xml}
@@ -14,7 +15,7 @@ Mapping your domain classes with XML is pretty straightforward. Simply create a 
 </hibernate-configuration>
 {code}
 
-The individual mapping files, like 'org.example.Book.hbm.xml' in the above example, also go into the @grails-app/conf/hibernate@ directory. To find out how to map domain classes with XML, check out the [Hibernate manual|http://docs.jboss.org/hibernate/core/3.3/reference/en/html/mapping.html].
+The individual mapping files, like 'org.example.Book.hbm.xml' in the above example, also go into the @grails-app/conf/hibernate@ directory. To find out how to map domain classes with XML, check out the [Hibernate manual|http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/mapping.html].
 
 If the default location of the @hibernate.cfg.xml@ file doesn't suit you, you can change it by specifying an alternative location in @grails-app/conf/DataSource.groovy@:
 
@@ -34,3 +35,41 @@ hibernate {
 {code}
 
 Grails also lets you write your domain model in Java or reuse an existing one that already has Hibernate mapping files. Simply place the mapping files into @grails-app/conf/hibernate@ and either put the Java files in @src/java@ or the classes in the project's @lib@ directory if the domain model is packaged as a JAR. You still need the @hibernate.cfg.xml@ though!
+
+{hidden}
+使用XML映射你的领域类是相当直接的。仅需在你项目的@grails-app/conf/hibernate@目录下创建一个@hibernate.cfg.xml@文件即可，可以手工创建也可以使用[create-hibernate-cfg-xml|commandLine]命令创建，该文件中包含下面的内容：
+
+{code:xml}
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+    <session-factory>
+        <!-- Example mapping file inclusion -->
+        <mapping resource="org.example.Book.hbm.xml"/>
+        ...
+    </session-factory>
+</hibernate-configuration>
+{code}
+
+单独的映射文件，就像在上面例子中出现的'org.example.Book.hbm.xml'，也要放到@grails-app/conf/hibernate@目录下。要了解如何使用XML映射领域类，可以查看[Hibernate帮助手册|http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/mapping.html]。
+
+如果@hibernate.cfg.xml@文件的默认位置不满足你的要求，你可以通过在@grails-app/conf/DataSource.groovy@文件中指定一个别的位置改变它：
+
+{code}
+hibernate {
+    config.location = "file:/path/to/my/hibernate.cfg.xml"
+}
+{code}
+
+或者指定配置文件位置的列表：
+
+{code}
+hibernate {
+    config.location = ["file:/path/to/one/hibernate.cfg.xml",
+                       "file:/path/to/two/hibernate.cfg.xml"]
+}
+{code}
+
+Grails也支持你使用Java编写你的领域模型或者重用现有的已经使用Hibernate映射文件的Java领域模型。只需把这些映射文件放到@grails-app/conf/hibernate@里并且把对应的Java文件放到@src/java@里或者如果领域模型打包为JAR文件的话，把它放到项目的@lib@目录下。不过你仍将需要@hibernate.cfg.xml@文件！

@@ -1,0 +1,159 @@
+{hidden}
+h4. Namespace Support
+
+Grails 2.2 includes improved support for managing naming conflicts between artifacts provided by an application and its plugins.
+
+Bean names for Service artifacts provided by a plugin are now prefixed with the plugin name.  For example, if a Service named @com.publishing.AuthorService@ is provided by
+a plugin named @PublishingUtilities@ and another Service named @com.bookutils.AuthorService@ is provided by a plugin named @BookUtilities@, the bean names for those services
+will be @publishingUtilitiesAuthorService@ and @bookUtilitiesAuthorService@ respectively.  If a plugin provides a Service that does not have a name which conflicts with any
+other Service, then a bean alias will automatically be created that does not contain the prefix and the alias will refer to the bean referenced by the prefixed name.  Service
+artifacts provided directly by the application will have no prefix added to the relevant bean name. See the [dependency injection and services|guide:dependencyInjectionServices] docs. 
+
+Domain classes provided by a plugin will have their default database table name prefixed with the plugin name if the @grails.gorm.table.prefix.enabled@ config property is
+set to @true@. For example, if the @PublishingUtilities@ plugin provides a domain class named @Book@, the default table name for that domain class will be
+@PUBLISHING_UTILITIES_BOOK@ if the @grails.gorm.table.prefix.enabled@ config property is set to @true@.
+
+URL Mappings may now include a @plugin@ attribute to indicate that the controller referenced in the mapping is provided by a particular plugin.
+
+{code:java}
+static mappings = {
+
+    // requests to /bookAuthors will be handled by the
+    // AuthorController provided by the BookUtilities plugin
+    "/bookAuthors" {
+        controller = 'author'
+        plugin = 'bookUtilities'
+    }
+
+    // requests to /publishingAuthors will be handled by the
+    // AuthorController provided by the Publishing plugin
+    "/publishingAuthors" {
+        controller = 'author'
+        plugin = 'publishing'
+    }
+}
+{code}
+
+See the [namespaced controllers|guide:namespacedControllers] docs for more information.
+
+Controller methods and GSP Tags which accept a controller name as a paramater now support an optional parameter indicating 
+that the controller is provided by a specific plugin.
+
+{code:java}
+<g:link controller="user" plugin="springSecurity">Manage Users</g:link>
+{code}
+
+{code:java}
+class DemoController {
+    def index() {
+        redirect controller: 'user', action: 'list', plugin: 'springSecurity'
+    }
+}
+{code}
+
+h4. Forked Tomcat Execution
+
+Grails 2.2 supports forked JVM execution of the Tomcat container in development mode. This has several benefits including:
+
+* Reduced memory consumption, since the Grails build system can exit
+* Isolation of the build classpath from the runtime classpath
+* The ability to deploy other Grails/Spring applications in parallel without conflicting dependencies
+
+See the [documentation|guide:forkedMode] on using forked mode for more information.
+
+h4. SQL Projections In Criteria Queries
+
+Grails 2.2 adds new functionality to criteria queries to provide access to Hibernate's SQL projection API.
+
+{code:java}
+// Use SQL projections to retrieve the perimeter and area of all of the Box instances...
+def c = Box.createCriteria()
+
+def results = c.list {
+    projections {
+      sqlProjection '(2 * (width + height)) as perimiter, (width * height) as area', ['perimeter', 'area'], [INTEGER, INTEGER]
+    }
+}
+{code}
+
+See the [Criteria|guide:criteria] section for more information.
+
+h4. Groovy 2
+
+Grails 2.2 ships with Groovy 2.0, which has a [bunch of new features|http://www.infoq.com/articles/new-groovy-20] itself.
+{hidden}
+h4. 名字空间支持
+
+Grails 2.2包括了对管理工件之间命名冲突支持的改进，这些工件可由应用程序及其插件提供。
+
+由插件提供的服务层工件的组件名字现在以插件名字为前缀。例如，如果由名为@PublishingUtilities@的插件提供的服务组件的名字为@com.publishing.AuthorService@，而另一个由名为@BookUtilities@的插件提供的服务组件的名字为@com.bookutils.AuthorService@，那么这些服务组件的名字分别为@publishingUtilitiesAuthorService@和@bookUtilitiesAuthorService@。如果插件提供的服务层组件的名字不和任何其他的服务层组件名字冲突，那么将会创建一个不包含插件名字前缀的组件别名，而且该别名将引用带插件名字前缀的相同组件。由应用程序直接提供的服务层工件不会将任何前缀添加至相关的组件名字。查看[依赖注入和服务|guide:dependencyInjectionServices]的有关文档了解更多内容。
+
+如果@grails.gorm.table.prefix.enabled@配置属性的值设置为@true@，插件提供的领域类的默认数据库表名以插件的名字为前缀。例如，如果@PublishingUtilities@提供了名为@Book@的领域类, 当@grails.gorm.table.prefix.enabled@配置属性的值设置为@true@时，则该领域类的默认表名是@PUBLISHING_UTILITIES_BOOK@。
+
+URL映射现在可以包含一个@plugin@属性，用来指定映射中引用的控制器由一个特定的插件提供。
+
+{code:java}
+static mappings = {
+
+    // 到/bookAuthors的请求将由
+    // BookUtilities插件提供的AuthorController处理
+    "/bookAuthors" {
+        controller = 'author'
+        plugin = 'bookUtilities'
+    }
+
+    // 到/publishingAuthors的请求将由
+    // Publishing插件提供的AuthorController处理
+    "/publishingAuthors" {
+        controller = 'author'
+        plugin = 'publishing'
+    }
+}
+{code}
+
+查看[名字空间中的控制器|guide:namespacedControllers]的文档了解更多的信息。
+
+接受控制器名字作为参数的控制器方法和GSP标签现在支持一个可选的参数用于指定该控制器由特定的插件提供。
+
+{code:java}
+<g:link controller="user" plugin="springSecurity">Manage Users</g:link>
+{code}
+
+{code:java}
+class DemoController {
+    def index() {
+        redirect controller: 'user', action: 'list', plugin: 'springSecurity'
+    }
+}
+{code}
+
+h4. Tomcat分叉执行
+
+Grails 2.2在开发模式下支持从分叉出的JVM中运行Tomcat容器。这会带来如下的几个优势：
+
+* 因为Grails构建系统可以退出，所以减少了内存消耗
+* 构建类路径与运行时类类路径的隔离
+* 与其他Grails/Spring应用程序并行部署的能力且没有引发冲突的依赖
+
+查看有关分叉模式的[文档|guide:forkedMode]了解更多信息。
+
+h4. 标准查询中的SQL投影运算支持
+
+Grails 2.2在标准查询中增加了对Hibernate SQL投影API支持的新功能。
+
+{code:java}
+// 使用SQL投影检索所有Box实例的周长和面积。。。
+def c = Box.createCriteria()
+
+def results = c.list {
+    projections {
+      sqlProjection '(2 * (width + height)) as perimiter, (width * height) as area', ['perimeter', 'area'], [INTEGER, INTEGER]
+    }
+}
+{code}
+
+查看[标准查询|guide:criteria]的章节了解更多信息。
+
+h4. Groovy 2
+
+Grails 2.2搭载了Groovy 2.0, Groovy 2.0自身拥有[众多的新功能|http://www.infoq.com/articles/new-groovy-20]。

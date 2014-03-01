@@ -1,3 +1,4 @@
+{hidden}
 Interactive mode is the a feature of the Grails command line which keeps the JVM running and allows for quicker execution of commands. To activate interactive mode type 'grails' at the command line and then use TAB completion to get a list of commands:
 
 !interactive-output.png!
@@ -6,10 +7,42 @@ If you need to open a file whilst within interactive mode you can use the @open@
 
 !interactive-open-cmd.png!
 
+Even better, the @open@ command understands the logical aliases 'test-report' and 'dep-report', which will open the most recent test and dependency reports respectively. In other words, to open the test report in a browser simply execute @open test-report@. You can even open multiple files at once: @open test-report test/unit/MyTests.groovy@ will open the HTML test report in your browser and the @MyTests.groovy@ source file in your text editor.
+
 TAB completion also works for class names after the @create-*@ commands:
 
-!interactive-comlete-class.png!
+!interactive-complete-class.png!
 
 If you need to run an external process whilst interactive mode is running you can do so by starting the command with a !:
 
 !interactive-run-external.png!
+
+Note that with \! (bang) commands, you get file path auto completion - ideal for external commands that operate on the file system such as 'ls', 'cat', 'git', etc.
+
+The @stop-app@ command will stop an application that has been run with the @run-app@ command.
+
+To exit interactive mode enter the @exit@ command.  Note that if the Grails application has been run with @run-app@ normally it will terminate when the interactive mode console exits because the JVM will be terminated. An exception to this would be if the application were running in forked mode which means the application is running in a different JVM.  In that case the application will be left running afer the interactive mode console terminates.  If you want to exit interactive mode and stop an application that is running in forked mode, use the @quit@ command.  The @quit@ command will stop the running application and then close interactive mode.
+{hidden}
+交互模式是Grails命令行的一个功能，其保持JVM一直运行并且允许命令更快速地执行。要激活交互模式，在命令行输入‘grails’，然后使用TAB补全功能来得到命令的列表：
+
+!interactive-output.png!
+
+当在交互模式时，如果你需要打开一个文件，你可以使用@open@命令，它可以对文件路径进行TAB补全处理：
+
+!interactive-open-cmd.png!
+
+还有更好的，@open@理解'test-report'和'dep-report'两个逻辑别名，它们将会分别打开最近的测试报告和依赖报告。换言之，要在浏览器中打开测试报告，仅仅执行@open test-report@就行了。你甚至可以一次打开多个文件：@open test-report test/unit/MyTests.groovy@将会在浏览器中打开HTML格式的测试报告并在你的文本编辑器中打开@MyTests.groovy@源文件。
+
+TAB补全也对@create-*@命令之后的类名有效：
+
+!interactive-complete-class.png!
+
+当在交互模式运行时，如果你需要运行一个外部的程序，你可以通过使用！启动程序来完成：
+
+!interactive-run-external.png!
+
+注意，使用\!命令时，你能使用文件路径自动完成功能 - 这对于处理文件系统的外部命令例如'ls'、'cat'、'git'等非常理想。
+
+@stop-app@命令将会停止使用@run-app@命令运行的应用程序。
+
+要退出交互模式，输入@exit@命令。注意，如果Grails应用程序已经使用@run-app@命令正常运行了，当交互模式控制台退出时它会终止运行，因为JVM将会被终止。这种情形的一个例外是，如果应用程序在分叉模式中运行，这意味着应用程序运行在一个不同的JVM里。在这种情况下，应用程序在交互模式控制台终止以后将会处于运行状态。如果你想退出交互模式并且停止以分叉模式运行的应用程序，使用@quit@命令。@quit@命令将会停止正在运行的应用程序然后关闭交互模式。

@@ -1,22 +1,42 @@
-There are several plugins that add SOAP support to Grails depending on your preferred approach. For Contract First SOAP services there is a [Spring WS|http://grails.org/plugin/springws] plugin, whilst if you want to generate a SOAP API from Grails services there are several plugins that do this including:
+Grails does not feature SOAP support out-of-the-box, but there are several plugins that can help for both producing SOAP servers and calling SOAP web services.
 
-* "CXF":http://grails.org/plugin/cxf/ plugin which uses the "CXF":http://cxf.apache.org/ SOAP stack
-* "Axis2":http://grails.org/plugin/axis2 plugin which uses "Axis2":http://ws.apache.org/axis2/
-* "Metro":https://jax-ws-commons.dev.java.net/grails/ plugin which uses the "Metro":https://jax-ws-commons.dev.java.net/grails/ framework (and can also be used for [Contract First|http://docs.codehaus.org/pages/viewpage.action?pageId=88342530])
+h4. SOAP Clients
 
-Most of the SOAP integrations integrate with Grails [services|guide:services] via the @exposes@ static property. This example is taken from the CXF plugin:
+To call SOAP web services there are generally 2 approaches taken, one is to use a tool to generate client stubs, the other is to manually construct the SOAP calls. The former can be easier to use, but the latter provides more flexibility / control.
 
-{code:java}
-class BookService {
+The [CXF client plugin|http://grails.org/plugin/cxf-client] uses the CXF framework, which includes a @wsdl2java@ tool for generating a client. There is nothing Groovy/Grails specific here in the generated code as it simply provides a Java API which you can invoke to call SOAP web services.
 
-    static expose = ['cxf']
+See the documentation on the [CXF client plugin|https://github.com/ctoestreich/cxf-client] for further information.
 
-    Book[] getBooks() {
-        Book.list() as Book[]
+Alternatively, if you prefer more control over your SOAP calls the [WS-Lite library|https://github.com/jwagenleitner/groovy-wslite] is an excellent choice and features a [Grails plugin|http://grails.org/plugin/wslite]. You have more control over the SOAP requests sent, and since Groovy has fantastic support for building and parsing XML it can be very productive approach. 
+
+Below is an example of a SOAP call with wslite:
+
+{code}
+withSoap(serviceURL: 'http://www.holidaywebservice.com/Holidays/US/Dates/USHolidayDates.asmx') {
+    def response = send {
+        body {
+            GetMothersDay(xmlns: 'http://www.27seconds.com/Holidays/US/Dates/') {
+                year(2011)
+            }
+        }
     }
+    println response.GetMothersDayResponse.GetMothersDayResult.text()
 }
 {code}
 
-The WSDL can then be accessed at the location: @http://127.0.0.1:8080/your_grails_app/services/book?wsdl@
+It is not recommended that you use the [GroovyWS|http://groovy.codehaus.org/GroovyWS] library, it pulls in many dependencies which increases the likelihood of conflicts. The WSlite library provides a far simpler and easier to use solution.
 
-For more information on the CXF plugin refer to [the documentation|http://grails.org/plugin/cxf] on the wiki.
+h4. SOAP Servers
+
+Again, Grails does not have direct support for exposing SOAP web services, however if you wish to expose a SOAP service from your application then the [CXF plugin|http://grails.org/plugin/cxf] (not to be confused with the cxf-client plugin), provides an easy way to do so.
+
+Typically it involves taking a Grails service and adding 'expose'-style configuration, such as the below:
+
+{code}
+  static expose = EndpointType.JAX_WS_WSDL
+  //your path (preferred) or url to wsdl
+  static wsdl = 'org/grails/cxf/test/soap/CustomerService.wsdl' 
+{code}
+
+Please refer to the [documentation of the plugin|https://github.com/thorstadt/grails-cxf#soap] for more information.

@@ -1,3 +1,4 @@
+{hidden}
 Grails ships with a lot of command line functionality out of the box that you may find useful in your own scripts (See the command line reference in the reference guide for info on all the commands). Of particular use are the [compile|commandLine], [package|commandLine] and [bootstrap|commandLine] scripts.
 
 The [bootstrap|commandLine] script for example lets you bootstrap a Spring [ApplicationContext|api:org.springframework.context.ApplicationContext] instance to get access to the data source and so on (the integration tests use this):
@@ -45,11 +46,11 @@ The syntax for the @grailsScript()@ method is pretty straightforward: simply pas
  \_GrailsRun | Provides all you need to run the application in the configured servlet container, either normally (@runApp@/@runAppHttps@) or from a WAR file (@runWar@/@runWarHttps@).
  {table}
 
-There are many more scripts provided by Grails, so it is worth digging into the scripts themselves to find out what kind of targets are available. Anything that starts with an "_" is designed for reuse.
+There are many more scripts provided by Grails, so it is worth digging into the scripts themselves to find out what kind of targets are available. Anything that starts with an "\_" is designed for reuse.
 
 h3. Script architecture
 
-You maybe wondering what those underscores are doing in the names of the Grails scripts. That is Grails' way of determining that a script is _internal_, or in other words that it has not corresponding "command". So you can't run "grails _grails-settings" for example. That is also why they don't have a default target.
+You maybe wondering what those underscores are doing in the names of the Grails scripts. That is Grails' way of determining that a script is _internal_, or in other words that it has not corresponding "command". So you can't run "grails \_grails-settings" for example. That is also why they don't have a default target.
 
 Internal scripts are all about code sharing and reuse. In fact, we recommend you take a similar approach in your own scripts: put all your targets into an internal script that can be easily shared, and provide simple command scripts that parse any command line arguments and delegate to the targets in the internal script. For example if you have a script that runs some functional tests, you can split it like this:
 {code}
@@ -78,3 +79,86 @@ Here are a few general guidelines on writing scripts:
 * Put argument parsing into the "command" script.
 * To pass arguments to a target, create some script variables and initialise them before calling the target.
 * Avoid name clashes by using closures assigned to script variables instead of targets. You can then pass arguments direct to the closures.
+
+{hidden}
+Grails附带了许多开箱即用的命令行功能，你可能发现在你自己的脚本中它们很有用（查看参考指南中的命令行参考了解所有命令的信息）。其中特别有用的是 [compile|commandLine]、[package|commandLine]和[bootstrap|commandLine]的脚本。
+
+例如，[bootstrap|commandLine]脚本可以让你启动一个Spring [ApplicationContext|api:org.springframework.context.ApplicationContext]实例以获得对数据源等等的访问（集成测试用到了它）：
+
+{code}
+
+includeTargets << grailsScript("_GrailsBootstrap")
+
+target ('default': "Database stuff") {
+    depends(configureProxy, packageApp, classpath, loadApp, configureApp)
+
+    Connection c
+    try {
+        c = appCtx.getBean('dataSource').getConnection()
+        // 对数据库连接进行编程
+    }
+    finally {
+        c?.close()
+    }
+}
+{code}
+
+h3. 从其他脚本获得目标
+
+Gant可以让你另一个Gant脚本中获得其所有的目标（“default”除外）。然后你可以依赖这些目标或者调用这些目标，就像它们在当前的脚本中被定义了一样。实现的机制是@includeTargets@属性。仅仅向这个属性使用左移位运算符"追加"一个文件或类即可：
+{code}
+includeTargets << new File("/path/to/my/script.groovy")
+includeTargets << gant.tools.Ivy
+{code}
+对使用类的语法不要太担心，它非常特殊。如果你感兴趣的话，查看Gant的文档。
+
+h3. 核心Grails目标
+
+正如你在本节开始示例中看到的，当包含核心Grails目标时，你对@includeTargets@既没有使用基于文件语法也没有使用基于类的语法。取而代之的是，你应该使用由Grails命令启动程序提供的特殊的@grailsScript()@方法（要注意的是这在普通的Gant脚本中不可用，只有Grails脚本可以使用）。 
+
+@grailsScript()@方法的语法非常简洁：只要传递要包含的Grails脚本的名字即可，没有任何路径信息。这里是你可以重用的Grails脚本的列表：
+{table}
+*脚本* | *描述*
+ \_GrailsSettings | 你真得应该包含这个脚本！幸运的是，通过除\_GrailsProxy外所有其他脚本它会被自动包含，所以你通常不必显式地包含它。
+ \_GrailsEvents | 包含这个脚本用于触发事件。它添加了一个@event(String eventName, List args)@ 方法。再说一次, 该脚本被几乎所有其他脚本包含。
+ \_GrailsClasspath | 配置编译时、测试时和运行时的类路径。如果想使用或者处理它们，包含这个脚本。同上，该脚本被几乎所有其他脚本包含。
+ \_GrailsProxy | 如果你不能直接访问Internet并且使用了代理，包含这个脚本配置访问时的代理设置。
+ \_GrailsArgParsing | 提供了@parseArguments@目标，它完成其名字所对应的处理：解析用户运行你的脚本时提供的参数。把它们添加到@argsMap@属性里。
+ \_GrailsTest | 包含全部测试共享的代码。在你想添加任何额外的测试时很有用。
+ \_GrailsRun | 提供在已配置的Servlet容器中运行应用程序所有你所需要的东西，正常情况下是(@runApp@/@runAppHttps@)或者从WAR文件运行时是(@runWar@/@runWarHttps@)。
+ {table}
+
+ Grails提供了更多的脚本，所以深入这些脚本来发现什么目标可用是值得的。任何以"\_"开始的脚本都被设计成可以重用。
+
+ h3. 脚本架构
+
+ 你可能想知道Grails脚本名字中的下划线是做什么用的。那是Grails判断一个脚本是 _内部_ 的方法，或者换言之，它没有对应的“命令”。因此你不能运行"grails \_grails-settings"。那也是为什么它们没有一个默认目标的原因。
+
+ 内部的脚本只用于代码共享和重用。事实上，我们推荐你在你自己的脚本中采用类似的方法：将所有的目标放到一个内部脚本中，这样可以很容易地共享，并且提供简单的命令脚本解析命令行参数后委派到内部脚本中的目标处理。例如，如果你有一个脚本运行一些功能测试，你可以把它分成下面这样：
+
+ {code}
+./scripts/FunctionalTests.groovy:
+
+includeTargets << new File("${basedir}/scripts/_FunctionalTests.groovy")
+
+target(default: "Runs the functional tests for this project.") {
+    depends(runFunctionalTests)
+}
+
+./scripts/_FunctionalTests.groovy:
+
+includeTargets << grailsScript("_GrailsTest")
+
+target(runFunctionalTests: "Run functional tests.") {
+    depends(...)
+    ...
+}
+{code}
+
+这里是一些有关编写脚本的一般性指导原则：
+
+* 把脚本分成一个"命令"脚本和一个内部脚本。
+* 把大量的实现放进内部脚本中
+* 把参数处理放到“命令”脚本中。
+* 要向目标传递参数，创建一些脚本变量并在调用目标前初始化它们。
+* 通过使用闭包向脚本变量而不是目标赋值以避免名字冲突。然后你就可以直接传递参数到闭包中。

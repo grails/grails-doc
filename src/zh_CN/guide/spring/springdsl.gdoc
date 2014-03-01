@@ -1,3 +1,4 @@
+{hidden}
 This Bean builder in Grails aims to provide a simplified way of wiring together dependencies that uses Spring at its core.
 
 In addition, Spring's regular way of configuration (via XML and annotations) is static and difficult to modify and configure at runtime, other than programmatic XML creation which is both error prone and verbose. Grails' [BeanBuilder|api:grails.spring.BeanBuilder] changes all that by making it possible to programmatically wire together components at runtime, allowing you to adapt the logic based on system properties or environment variables.
@@ -149,3 +150,155 @@ def ctx = bb.createApplicationContext()
 {code}
 
 Then you can access the @maxSize@ and @productGroup@ properties in your DSL files.
+{hidden}
+Grails里组件构建器的目的是为依赖的组接提供一种简化的方法。
+
+此外，Spring常规的配置方法（借助于XML和注解）是静态的并且在运行时难以修改和配置，可以使用编程创建XML这样的方法，但是这样做容易出错并且非常繁琐。Grails的[BeanBuilder|api:grails.spring.BeanBuilder]改变了所有这些情况，方法是通过在运行时编程来组接组件，这允许你根据系统属性或环境变量等调整组接的逻辑。
+
+这样允许代码去适应环境并且避免不必要的代码重复（对测试、开发和生产环境可以有不同的Spring配置）
+
+h4. BeanBuilder类
+
+Grails提供了一个[grails.spring.BeanBuilder|api:grails.spring.BeanBuilder]类，它使用动态的Groovy语言构建组件定义。基础用法如下所示：
+
+{code:java}
+import org.apache.commons.dbcp.BasicDataSource
+import org.codehaus.groovy.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean
+import org.springframework.context.ApplicationContext
+import grails.spring.BeanBuilder
+
+def bb = new BeanBuilder()
+
+bb.beans {
+
+    dataSource(BasicDataSource) {
+        driverClassName = "org.h2.Driver"
+        url = "jdbc:h2:mem:grailsDB"
+        username = "sa"
+        password = ""
+    }
+
+    sessionFactory(ConfigurableLocalSessionFactoryBean) {
+        dataSource = ref('dataSource')
+        hibernateProperties = ["hibernate.hbm2ddl.auto": "create-drop",
+                               "hibernate.show_sql":     "true"]
+    }
+}
+
+ApplicationContext appContext = bb.createApplicationContext()
+{code}
+
+{note}
+在[插件|guide:plugins]和[grails-app/conf/spring/resources.groovy|guide:springdslAdditional]文件中你不必创建一个新的@BeanBuilder@实例。取而代之的是，在@doWithSpring@和@beans@代码块中可以直接使用DSL。
+{note}
+
+这个例子向你展示了如何使用@BeanBuilder@类为Hibernate配置一个数据源。
+
+每个方法调用（示例中的@dataSource@和@sessionFactory@调用）映射到Spring组件的名字。方法调用的第一个实参是组件的类型，而最后一个参数是一个代码块。在代码块中你可以使用标准的Groovy语法设置组件的属性。
+
+组件间的引用使用组件的名字自动解析。这可以在上面的示例中看到，其中@sessionFactory@组件引用了@dataSource@组件。
+
+与组件管理有关的某些特殊属性也可以通过组件构建器设置，如下列代码所示：
+
+{code:java}
+sessionFactory(ConfigurableLocalSessionFactoryBean) { bean ->
+    // 自动组接行为。另一个选项是'byType'. [autowire]
+    bean.autowire = 'byName'
+    // 设置组件的初始化方法为'init'。 [init-method]
+    bean.initMethod = 'init'
+    // 设置销毁方法为'destroy'. [destroy-method]
+    bean.destroyMethod = 'destroy'
+    // 设置组件的作用域。 [scope]
+    bean.scope = 'request'
+    dataSource = ref('dataSource')
+    hibernateProperties = ["hibernate.hbm2ddl.auto": "create-drop",
+                           "hibernate.show_sql":     "true"]
+}
+{code}
+
+方括号中的字符串是Spring XML配置中等价的组件属性名。
+
+h4. 在Spring MVC中使用BeanBuilder
+
+要在一般的Spring MVC应用程序中使用BeanBuilder，则要把@grails-spring-<version>.jar@文件包含到类路径中。然后添加下面的 @<context-param>@配置到你的@/WEB-INF/web.xml@文件：
+
+{code:xml}
+<context-param>
+    <param-name>contextConfigLocation</param-name>
+    <param-value>/WEB-INF/applicationContext.groovy</param-value>
+</context-param>
+
+<context-param>
+    <param-name>contextClass</param-name>
+    <param-value>
+      org.codehaus.groovy.grails.commons.spring.GrailsWebApplicationContext
+    </param-value>
+</context-param>
+{code}
+
+然后再创建一个@/WEB-INF/applicationContext.groovy@文件完成剩余的配置：
+
+{code:java}
+import org.apache.commons.dbcp.BasicDataSource
+
+beans {
+    dataSource(BasicDataSource) {
+        driverClassName = "org.h2.Driver"
+        url = "jdbc:h2:mem:grailsDB"
+        username = "sa"
+        password = ""
+    }
+}
+{code}
+
+h4. 从文件系统加载组件定义
+
+你可以使用@BeanBuilder@类加载外部的定义了组件的Groovy脚本，方法是使用这里定义中相同的路径匹配语法。例如：
+
+{code:java}
+def bb = new BeanBuilder()
+bb.loadBeans("classpath:*SpringBeans.groovy")
+
+def applicationContext = bb.createApplicationContext()
+{code}
+
+在这里@BeanBuilder@加载了位于类路径中以@SpringBeans.groovy@结尾的所有Groovy文件并且解析为组件定义。示例脚本的内容如下所示：
+
+{code:java}
+import org.apache.commons.dbcp.BasicDataSource
+import org.codehaus.groovy.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean
+
+beans {
+
+    dataSource(BasicDataSource) {
+        driverClassName = "org.h2.Driver"
+        url = "jdbc:h2:mem:grailsDB"
+        username = "sa"
+        password = ""
+    }
+
+    sessionFactory(ConfigurableLocalSessionFactoryBean) {
+        dataSource = dataSource
+        hibernateProperties = ["hibernate.hbm2ddl.auto": "create-drop",
+                               "hibernate.show_sql":     "true"]
+    }
+}
+{code}
+
+h4. 添加变量至Binding（Context）
+
+如果你从脚本中加载组件，你可以通过创建一个Groovy @Binding@来设置其绑定信息。
+
+{code:java}
+def binding = new Binding()
+binding.maxSize = 10000
+binding.productGroup = 'finance'
+
+def bb = new BeanBuilder()
+bb.binding = binding
+bb.loadBeans("classpath:*SpringBeans.groovy")
+
+def ctx = bb.createApplicationContext()
+{code}
+
+然后，你就可以在DSL中访问@maxSize@和@productGroup@属性了。

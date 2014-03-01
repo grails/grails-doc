@@ -1,3 +1,4 @@
+{hidden}
 By default all domain classes share a single @DataSource@ and a single database, but you have the option to partition your domain classes into two or more @DataSource@s.
 
 h4. Configuring Additional DataSources
@@ -161,6 +162,40 @@ zipCode.auditing.save()
 
 As you can see, you add the @DataSource@ to the method call in both the static case and the instance case.
 
+h4. Hibernate Mapped Domain Classes
+
+You can also partition annotated Java classes into separate datasources. Classes using the default datasource are registered in @grails-app/conf/hibernate/hibernate.cfg.xml@. To specify that an annotated class uses a non-default datasource, create a @hibernate.cfg.xml@ file for that datasource with the file name prefixed with the datasource name.
+
+For example if the @Book@ class is in the default datasource, you would register that in @grails-app/conf/hibernate/hibernate.cfg.xml@:
+
+{code:xml}
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          '-//Hibernate/Hibernate Configuration DTD 3.0//EN'
+          'http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd'>
+<hibernate-configuration>
+   <session-factory>
+      <mapping class='org.example.Book'/>
+   </session-factory>
+</hibernate-configuration>
+{code}
+
+and if the @Library@ class is in the "ds2" datasource, you would register that in @grails-app/conf/hibernate/ds2_hibernate.cfg.xml@:
+
+{code:xml}
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          '-//Hibernate/Hibernate Configuration DTD 3.0//EN'
+          'http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd'>
+<hibernate-configuration>
+   <session-factory>
+      <mapping class='org.example.Library'/>
+   </session-factory>
+</hibernate-configuration>
+{code}
+
+The process is the same for classes mapped with hbm.xml files - just list them in the appropriate hibernate.cfg.xml file.
+
 h4. Services
 
 Like Domain classes, by default Services use the default @DataSource@ and @PlatformTransactionManager@. To configure a Service to use a different @DataSource@, use the static @datasource@ property, for example:
@@ -186,3 +221,225 @@ h4. XA and Two-phase Commit
 
 Grails has no native support for [XA|https://secure.wikimedia.org/wikipedia/en/wiki/X/Open_XA] @DataSource@s or [two-phase commit|https://secure.wikimedia.org/wikipedia/en/wiki/Two-phase_commit], but the [Atomikos plugin|http://grails.org/plugin/atomikos] makes it easy. See the plugin documentation for the simple changes needed in your @DataSource@ definitions to reconfigure them as XA @DataSource@s.
 
+{hidden}
+默认所有的领域类共享单个@DataSource@和单个数据库，但是你可以选择把你的领域类划分到两个或多个@DataSource@中。
+
+h4. 配置其他的数据源
+
+在@grails-app/conf/DataSource.groovy@中默认的数据源配置如下所示：
+
+{code}
+dataSource {
+    pooled = true
+    driverClassName = "org.h2.Driver"
+    username = "sa"
+    password = ""
+}
+hibernate {
+    cache.use_second_level_cache = true
+    cache.use_query_cache = true
+    cache.provider_class = 'net.sf.ehcache.hibernate.EhCacheProvider'
+}
+
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop"
+            url = "jdbc:h2:mem:devDb"
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:mem:testDb"
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:prodDb"
+        }
+    }
+}
+{code}
+
+这样就使用名为@dataSource@的Spring组件配置了单个数据源。为了配置额外的@DataSource@，添加另一个@dataSource@代码块（在最顶层和/或环境代码块中，如同标准的@DataSource@配置那样），并使用一个自定义的名字，名字由下划线分隔。例如，下面的配置添加了第二个@DataSource@，其在开发环境中使用MySQL而在生产环境中使用Oracle：
+
+{code}
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop"
+            url = "jdbc:h2:mem:devDb"
+        }
+        dataSource_lookup {
+            dialect = org.hibernate.dialect.MySQLInnoDBDialect
+            driverClassName = 'com.mysql.jdbc.Driver'
+            username = 'lookup'
+            password = 'secret'
+            url = 'jdbc:mysql://localhost/lookup'
+            dbCreate = 'update'
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:mem:testDb"
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:prodDb"
+        }
+        dataSource_lookup {
+            dialect = org.hibernate.dialect.Oracle10gDialect
+            driverClassName = 'oracle.jdbc.driver.OracleDriver'
+            username = 'lookup'
+            password = 'secret'
+            url = 'jdbc:oracle:thin:@localhost:1521:lookup'
+            dbCreate = 'update'
+        }
+    }
+}
+{code}
+
+只要Hibernate支持，你可以使用相同的或不同的数据库。
+
+h4. 配置领域类
+
+如果一个领域类没有@DataSource@配置，则它默认使用标准的@'dataSource'@。在其@mapping@代码块中设置@dataSource@属性可以配置以使用非默认的@DataSource@。例如，如果你想使@ZipCode@领域类使用@'lookup'@ @DataSource@，进行如下配置：
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasource 'lookup'
+   }
+}
+{code}
+
+一个领域类也可以使用两个或多个@DataSource@。使用@dataSources@属性并指定数据源名字的列表来配置多于一个的数据源，例如：
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasources(['lookup', 'auditing'])
+   }
+}
+{code}
+
+如果一个领域类使用默认的数据源和一个或多个其他数据源，使用特殊的名字@'DEFAULT'@指定要使用默认的@DataSource@：
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasources(['lookup', 'DEFAULT'])
+   }
+}
+{code}
+
+如果一个领域类使用所有配置的@DataSource@，则可使用特殊值@'ALL'@：
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasource 'ALL'
+   }
+}
+{code}
+
+h4. 名字空间和GORM方法
+
+如果领域类使用了多于一个@DataSource@，那么你可以使用@DataSource@名字作为名字空间来指定GORM调用时要使用的@DataSource@。例如，下面的类使用了两个@DataSource@：
+
+{code}
+class ZipCode {
+
+   String code
+
+   static mapping = {
+      datasources(['lookup', 'auditing'])
+   }
+}
+{code}
+
+第一个指定的数据源当没有使用显式的名字空间时是默认的数据源，所以在本例中默认的数据源是'lookup'。但是你可以在'auditing' @DataSource@上使用其@DataSource@名字调用GORM方法，例如：
+
+{code}
+def zipCode = ZipCode.auditing.get(42)
+...
+zipCode.auditing.save()
+{code}
+
+正如你所看到的，你可以在静态方法和实例方法调用中添加@DataSource@的名字。
+
+h4. Hibernate映射的领域类
+
+你也可以把注解的Java类划分到各自的数据源中。使用默认数据源的类在@grails-app/conf/hibernate/hibernate.cfg.xml@中注册。要指定注解的类使用非默认的数据源，为其创建@hibernate.cfg.xml@文件并且将数据源的名字作为其配置文件名的前缀。
+
+举例说明，如果@Book@类位于默认数据源中，你将在@grails-app/conf/hibernate/hibernate.cfg.xml@中对其注册：
+
+{code:xml}
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          '-//Hibernate/Hibernate Configuration DTD 3.0//EN'
+          'http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd'>
+<hibernate-configuration>
+   <session-factory>
+      <mapping class='org.example.Book'/>
+   </session-factory>
+</hibernate-configuration>
+{code}
+
+如果@Library@类位于"ds2"数据源中，你要在@grails-app/conf/hibernate/ds2_hibernate.cfg.xml@中对其注册：
+
+{code:xml}
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          '-//Hibernate/Hibernate Configuration DTD 3.0//EN'
+          'http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd'>
+<hibernate-configuration>
+   <session-factory>
+      <mapping class='org.example.Library'/>
+   </session-factory>
+</hibernate-configuration>
+{code}
+
+上述过程对于使用hbm.xml文件映射的类型是相同的 - 仅仅需要在合适的hibernate.cfg.xml文件中进行注册。
+
+h4. 服务层组件
+
+像领域类一样，默认情况下服务层组件使用默认的@DataSource@和@PlatformTransactionManager@。要配置服务层组件使用一个不同的@DataSource@，可以使用静态的@datasource@属性，例如：
+
+{code}
+class DataService {
+
+   static datasource = 'lookup'
+
+   void someMethod(...) {
+      ...
+   }
+}
+{code}
+
+参与事务的服务层组件只能使用一个@DataSource@，因此要确保只对与服务层组件相同的@DataSource@中的领域类进行变更。
+
+注意服务层组件中指定的数据源与领域类使用的数据源没有关系；领域类使用的数据源由领域类自身声明的数据源确定。其用于声明使用哪一个事务管理器。
+
+如果你在dataSource1中有一个Foo领域类，在dataSource2中有一个Bar领域类，并且WahooService使用dataSource1，你将会看到的是，其中一个保存新建的Foo对象和Bar对象的服务层方法将只会对Foo对象支持事务，因为它们共享同一个数据源。但事务不会影响Bar实例。如果你想让两个对象都支持事务你需要使用两个服务层组件和支持两阶段提交的XA数据源，例如使用Atomikos插件。
+
+h4. XA和两阶段提交
+
+Grails对[XA|https://secure.wikimedia.org/wikipedia/en/wiki/X/Open_XA] @DataSource@和[两阶段提交|https://secure.wikimedia.org/wikipedia/en/wiki/Two-phase_commit]没有原生性的支持，但是[Atomikos插件|http://grails.org/plugin/atomikos]使它们变得容易。查看这个插件的文档了解需要在@DataSource@定义中的简单变动来重新配置成XA @DataSource@。

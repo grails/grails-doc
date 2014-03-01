@@ -15,29 +15,10 @@ log4j = {
 {code}
 
 This says that for loggers whose name starts with 'org.codehaus.groovy.grails.web.servlet' or 'org.codehaus.groovy.grails.web.pages', only messages logged at 'error' level and above will be shown. Loggers with names starting with 'org.apache.catalina' logger only show messages at the 'warn' level and above. What does that mean? First of all, you have to understand how levels work.
-{hidden}
 
-h3. 基础
-
-Grails利用其自身的配置机制来提供对 "Log4j":http://logging.apache.org/log4j/1.2/index.html 日志系统的配置，因此你所需要做的只是将@log4j@配置添加到@grails-app/conf/Config.groovy@配置文件中。
-
-那么@log4j@该配置什么样子呢？下边是一个基础的示例：
-
-{code:java}
-log4j = {
-    error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
-           'org.codehaus.groovy.grails.web.pages' //  GSP
-
-    warn   'org.apache.catalina'
-}
-{code}
-
-在上述示例中，那些名称以'org.codehaus.groovy.grails.web.servlet'或者'org.codehaus.groovy.grails.web.pages'开头的记录器，仅仅记录级别高于或等于'error'的信息；而名字以'org.apache.catalina'开始的记录器仅仅记录级别高于或等于'warn'的信息。要了解此中的意义，首先要知道日志级别是如何工作的。
-
-{hidden}
 h4. Logging levels
 
-The are several standard logging levels, which are listed here in order of descending priority:
+There are several standard logging levels, which are listed here in order of descending priority:
 
 # off
 # fatal
@@ -59,34 +40,7 @@ warn 'org.example.domain'
 then messages with a level of 'warn', 'error', or 'fatal' will be written out. Messages at other levels will be ignored.
 
 Before we go on to loggers, a quick note about those 'off' and 'all' levels. These are special in that they can only be used in the configuration; you can't log messages at these levels. So if you configure a logger with a level of 'off', then no messages will be written out. A level of 'all' means that you will see all messages. Simple.
-{hidden}
 
-h4. 日志级别
-
-以下是按照优先级降序（由高到低）排列的标准日志级别：
-
-# off
-# fatal
-# error
-# warn
-# info
-# debug
-# trace
-# all
-
-当你记录一条消息的时候，已经暗含地给此消息指定了级别，比如@log.error(msg)@方法，就是使用其'error'级别，同理@log.debug(msg)@指定的是'debug'。上述从'off'到'all'的级别都有一个同名对应的日志方法。
-
-日志系统使用记录器（介绍见下一节）配置的 _message_ 级别来判断此消息是否应该输出，比如你有一个'org.example.domain'记录器，其配置如下：
-
-{code:java}
-warn 'org.example.domain'
-{code}
-
-那么级别是'warn'、'error'或者'fatal'的消息都将会输出，而其他级别的都将被忽略。
-
-在我们继续记录器以前，我们需要对'off'和'all'的级别做一个小关注，它们都只能在配置中使用，你不能使用它们记录任何日志信息。因此如果你将级别配置为'off'，那么将不会有任何信息输出，而配置为'all'意味着你将看到所有的日志信息。
-
-{hidden}
 h4. Loggers
 
 Loggers are fundamental to the logging system, but they are a source of some confusion. For a start, what are they? Are they shared? How do you configure them?
@@ -98,7 +52,7 @@ There are two main ways to get hold of a logger:
 # use the @log@ instance injected into artifacts such as domain classes, controllers and services;
 # use the Commons Logging API directly.
 
-If you use the dynamic @log@ property, then the name of the logger is 'grails.app.<type>.<className>', where @type@ is the type of the artifact, for example 'controller' or 'service, and @className@ is the fully qualified name of the artifact. For example, if you have this service:
+If you use the dynamic @log@ property, then the name of the logger is 'grails.app.<type>.<className>', where @type@ is the type of the artifact, for example 'controllers' or 'services', and @className@ is the fully qualified name of the artifact. For example, if you have this service:
 
 {code:java}
 package org.example
@@ -124,47 +78,7 @@ class MyClass {
 {code}
 
 This will create a logger with the name 'org.other.MyClass' - note the lack of a 'grails.app.' prefix since the class isn't an artifact. You can also pass a name to the @getLog()@ method, such as "myLogger", but this is less common because the logging system treats names with dots ('.') in a special way.
-{hidden}
 
-h4. 记录器（Loggers）
-
-记录器是日志系统的基础，但是依然有一些根源上的困惑，比如它们是什么？可否共享？以及如何配置它们？
-
-一个记录器就是你要将信息记录进去的对象，因此@log.debug(msg)@中的@log@就是一个记录器实例（其类型是[Log|http://commons.apache.org/logging/apidocs/org/apache/commons/logging/Log.html]）. 这些记录器通过唯一的名字标识被缓存起来，因此如果两个不同的类使用同一个名字的记录器，那么这些记录器是同一个运行实例。
-
-主要有两种方法来获取一个记录器：
-
-# 使用注入到工件（比如领域类、控制器以及服务）中的@log@实例
-# 直接使用Commons Logging API。
-
-如果你使用动态的@log@属性，那么记录器的名字是'grails.app.<type>.<className>'，此处的@type@是工件的类型，比如'controller'或者'service'，而@className@则是此工件的全名，假设你有如下的一个服务：
-
-{code:java}
-package org.example
-
-class MyService {
-    ...
-}
-{code}
-
-那么上述记录器的名字是'grails.app.services.org.example.MyService'。
-
-对其他类来说，典型的方法是将记录器作为此类的一个静态常量字段，比如：
-
-{code:java}
-package org.other
-
-import org.apache.commons.logging.LogFactory
-
-class MyClass {
-    private static final log = LogFactory.getLog(this)
-    ...
-}
-{code}
-
-上述代码中将创建一个名字为'org.other.MyClass'的记录器，注意：此处并没有'grails.app.'前缀，因为此类不是一个Grails工件。你还可以一个自定义的名字（比如"myLogger"）给@getLog()@方法，但是这种用法并不常见，因为在日志系统中，名字中的点（'.'）是被特殊处理的。
-
-{hidden}
 h4. Configuring loggers
 
 You have already seen how to configure loggers in Grails:
@@ -175,7 +89,7 @@ log4j = {
 }
 {code}
 
-This example configures loggers with names starting with 'org.codehaus.groovy.grails.web.servlet' to ignore any messages sent to them at a level of 'warn' or lower. But is there a logger with this name in the application? No. So why have a configuration for it? Because the above rule applies to any logger whose name _begins with_ 'org.codehaus.groovy.grails.servlet.' as well. For example, the rule applies to both the @org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet@ class and the @org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest@ one.
+This example configures loggers with names starting with 'org.codehaus.groovy.grails.web.servlet' to ignore any messages sent to them at a level of 'warn' or lower. But is there a logger with this name in the application? No. So why have a configuration for it? Because the above rule applies to any logger whose name _begins with_ 'org.codehaus.groovy.grails.web.servlet.' as well. For example, the rule applies to both the @org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet@ class and the @org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest@ one.
 
 In other words, loggers are hierarchical. This makes configuring them by package much simpler than it would otherwise be.
 
@@ -217,62 +131,7 @@ Grails itself generates plenty of logging information and it can sometimes be he
 * @org.hibernate@ - See what Hibernate is doing
 
 So far, we've only looked at explicit configuration of loggers. But what about all those loggers that _don't_ have an explicit configuration? Are they simply ignored? The answer lies with the root logger.
-{hidden}
 
-h4. 配置记录器
-
-你已在Grails中看到如何配置记录器了，比如：
-
-{code:java}
-log4j = {
-    error  'org.codehaus.groovy.grails.web.servlet'
-}
-{code}
-
-此示例中，名字以'org.codehaus.groovy.grails.web.servlet'开始的记录器将忽略所有'warn'级别以下的消息。打住，在你的应用中真有此名字的记录器么？没有，那我们为什么要这样配置它呢？因为上述的规则将应用于任何以'org.codehaus.groovy.grails.servlet.'_开始_的记录器，比如类@org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet@和@org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest@。
-
-换句话说，记录器是分层级的，这使得用包名来配置比其他方式容易很多。
-
-在应用中，你最常记录的是控制器、服务以及其他工件的输出日志，这可以通过以前提到过的_grails.app.<artifactType>.<className>_来实现。需要注意的是类名必须是全名（包括包名），如下所示：
-
-{code:java}
-log4j = {
-    // Set level for all application artifacts
-    info "grails.app"
-
-    // Set for a specific controller in the default package
-    debug "grails.app.controllers.YourController"
-
-    // Set for a specific domain class
-    debug "grails.app.domain.org.example.Book"
-
-    // Set for all taglibs
-    info "grails.app.taglib"
-}
-{code}
-
-在日志配置中，常用的标准工件名称如下：
-
-* @conf@ - @grails-app/conf@下的任何类（过滤器除外），比如：@BootStrap.groovy@
-* @filters@ - 过滤器
-* @taglib@ - 标签库
-* @services@ - 服务类
-* @controllers@ - 控制器
-* @domain@ - 领域类
-
-Grails本身也带有大量的日志信息，有时候这些信息对我们的开发很有裨益，尤其要诊断你应用的问题的时候。以下是一些你可能使用到的内部记录器：
-
-* @org.codehaus.groovy.grails.commons@ - 核心工件信息，比如类加载等
-* @org.codehaus.groovy.grails.web@ - Grails的web请求处理
-* @org.codehaus.groovy.grails.web.mapping@ - 调试URL映射信息
-* @org.codehaus.groovy.grails.plugins@ - 记录插件的活动情况
-* @grails.spring@ - 在Grails和插件中定义的Spring的beans
-* @org.springframework@ - Spring的活动情况
-* @org.hibernate@ - Hibernate的活动情况
-
-到目前为止，我们仅仅查看了记录器的显式配置，那么其他那些_没有_明确指定的将是什么情况呢？它们是被简单的忽略了么？请看下面的根记录器小节。
-
-{hidden}
 h4. The Root Logger
 
 All logger objects inherit their configuration from the root logger, so if no explicit configuration is provided for a given logger, then any messages that go to that logger are subject to the rules defined for the root logger. In other words, the root logger provides the default configuration for the logging system.
@@ -315,52 +174,7 @@ log4j = { root ->
 For more information on what you can do with this @Logger@ instance, refer to the Log4j API documentation.
 
 Those are the basics of logging pretty well covered and they are sufficient if you're happy to only send log messages to the console. But what if you want to send them to a file? How do you make sure that messages from a particular logger go to a file but not the console? These questions and more will be answered as we look into appenders.
-{hidden}
 
-h4. 根记录器
-
-所有的记录器对象配置都是从其根记录器继承而来的，因此一个记录器如果没有明确地配置，那么此记录器的任何消息规则都使用其根记录器的定义。或者说，根记录器提供日志系统的缺省配置。
-
-Grails自动地将根记录器配置成只处理'error'级别地消息，并且将这些消息显示在命令行终端（stdout是从C语言中借鉴而来）中。你可以通过'root'来重新定义其行为，比如：
-
-{code:java}
-log4j = {
-    root {
-        info()
-    }
-    ...
-}
-{code}
-
-上述示例将配置根记录器记录并且输出'info'级别的消息到缺省的字符输出器。你也可以配置根记录器将信息记录到一个或者多个输出器（在下小节中详细讨论）中。比如：
-
-{code:java}
-log4j = {
-    appenders {
-        file name:'file', file:'/var/logs/mylog.log'
-    }
-    root {
-        debug 'stdout', 'file'
-    }
-}
-{code}
-
-在上述示例中，根记录器将记录到两个输出器中：缺省的'stdout'输出器和自定义的'file'输出器。
-
-对高级用户来说，还有另外一种配置根记录器的方式：传递给log4j闭包的参数root是@org.apache.log4j.Logger@实例，这让你可以直接操作logger：
-
-{code:java}
-log4j = { root ->
-    root.level = org.apache.log4j.Level.DEBUG
-    ...
-}
-{code}
-
-更多@Logger@实例的信息，请参考Log4j API文档。
-
-如果你仅仅满足于将日志信息输出到字符终端，那么目前所涉及到的基本信息已经足够用的了。但是如果你还想输出到一个文件呢？以及想将特定记录器的信息输出到一个特定文件，而不是字符终端，又该如何做呢？这些疑问将在下一节的输出器中得到解答。
-
-{hidden}
 h3. Appenders
 
 Loggers are a useful mechanism for filtering messages, but they don't physically write the messages anywhere. That's the job of the appender, of which there are various types. For example, there is the default one that writes messages to the console, another that writes them to a file, and several others. You can even create your own appender implementations\!
@@ -450,99 +264,7 @@ log4j = {
 {code}
 
 The key here is the @threshold@ argument which determines the cut-off for log messages. This argument is available for all appenders, but do note that you currently have to specify a @Level@ instance - a string such as "info" will not work.
-{hidden}
 
-h3. 输出器（Appenders）
-
-记录器是很好的信息过滤机制，但是它们并不将信息进行任何物理的写操作，这些都是不同类型的输出器所做的事。比如缺省的一个就是将信息输出到字符终端，另外一个输出到一个文件等等，更有甚者，你还可以创建你自己的输出器！
-
-下图展示了输出器在日志管道系统中的位置：
-
-!logging.png!
-
-如你所见，一个记录器可以挂载多个输出器。 在一个标准的Grails配置中，所有从根记录器而来的记录器都有一个名为'stdout'并唯一的字符终端输出器。你可以通过'appenders'代码块来增加更多的输出器，比如：
-
-{code:java}
-log4j = {
-    appenders {
-        rollingFile name: "myAppender",
-                    maxFileSize: 1024,
-                    file: "/tmp/logs/myApp.log"
-    }
-}
-{code}
-
-以下是缺省情况下，有效输出器的清单：
-
-{table}
- *名称* | *类名* | *描述*
- jdbc | [JDBCAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/jdbc/JDBCAppender.html] | 记录到JDBC连接。
- console | [ConsoleAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/ConsoleAppender.html] | 记录到字符终端。
- file | [FileAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/FileAppender.html] | 记录到一个文件。
- rollingFile | [RollingFileAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/RollingFileAppender.html] | 记录到滚动文件，比如一天一个新文件。
-{table}
-
-传递给输出器的每一个命名参数都将映射成实现了[Appender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Appender.html]接口的属性，因此上述的@RollingFileAppender@的实例中，@name@、@maxFileSize@和@file@都是其属性而已。
-
-你可以添加任意你需要的输出器，只要确保它们的名字不重复就可以了。同一类型的输出器，你甚至还可以有多个实例，比如将日志内容输出到不同的文件中。
-
-你如果倾向于手工创建输出器或者你需要的输出器不在上述的列表中，那么你只需简单的声明一个@appender@代码即可，比如：
-
-{code:java}
-import org.apache.log4j.*
-
-log4j = {
-    appenders {
-        appender new RollingFileAppender(
-                name: "myAppender",
-                maxFileSize: 1024,
-                file: "/tmp/logs/myApp.log")
-    }
-}
-{code}
-
-此种方法通常用来配置@JMSAppender@、@SocketAppender@和@SMTPAppender@等输出器。
-
-一旦你声明了这些额外的输出器，那么你还需要将它们跟特定的记录器进行关联，这可以通过记录器的名称和记录级别来完成，比如：
-
-{code:java}
-error myAppender: "grails.app.controllers.BookController"
-{code}
-
-这样就可以保证记录器'grails.app.controllers.BookController'将消息发送到'myAppender'中以及配置在根记录器中的任何输出器，要在记录器中增加更多的输出器，只需要将他们加入到同级别的声明即可，比如：
-
-{code:java}
-error myAppender:      "grails.app.controllers.BookController",
-      myFileAppender:  ["grails.app.controllers.BookController",
-                        "grails.app.services.BookService"],
-      rollingFile:     "grails.app.controllers.BookController"
-{code}
-
-上述示例同时也展示了在一个给定的输出器(@myFileAppender@)中如何通过列表来配置多个记录器。
-
-需要注意的是：一个记录器只能配置一个级别，如果你配置了如下的内容：
-
-{code:java}
-error myAppender:      "grails.app.controllers.BookController"
-debug myFileAppender:  "grails.app.controllers.BookController"
-fatal rollingFile:     "grails.app.controllers.BookController"
-{code}
-
-你将会发现'grails.app.controllers.BookController'记录器只记录'fatal'级别的消息，这是因为最后的级别设置将以前的覆盖掉了。你这样做的意图是想限制输出器的级别。
-
-一个根'all'级别记录器关联的输出器将记录大量的日志信息，如果记录在文件中，也许还能忍受，但在字符终端完全是另外一回事。因此我们需要将字符终端的输出器只记录'info'及其级别以上内容：
-
-{code:java}
-log4j = {
-    appenders {
-        console name: "stdout", threshold: org.apache.log4j.Level.INFO
-    }
-}
-{code}
-
-此处的@threshold@参数用以判断那些消息需要截去。此参数对所有的输出器有效，但需要注意的是你必须使用@Level@实例－"info"字符串的便利用法不能工作。
-
-{hidden}
 h3. Custom Layouts
 
 By default the Log4j DSL assumes that you want to use a [PatternLayout|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html]. However, there are other layouts available including:
@@ -572,39 +294,7 @@ log4j = {
     }
 }
 {code}
-{hidden}
 
-h3. 自定义布局
-
-多数情况下，Log4j DSL使用缺省的[PatternLayout|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html]，除此之外，还有以下布局可以选择：
-
-* @xml@ - 创建一个XML日志文件
-* @html@ - 创建一个HTML日志文件
-* @simple@ - 简单的文本文件
-* @pattern@ - Pattern布局的文件
-
-你可以通过@layout@来给一个输出器自定义布局：
-
-{code:java}
-log4j = {
-    appenders {
-        console name: "customAppender",
-                layout: pattern(conversionPattern: "%c{2} %m%n")
-    }
-}
-{code}
-
-此配置对内置的"stdout"（输出到字符终端）也有效：
-{code:java}
-log4j = {
-    appenders {
-        console name: "stdout",
-                layout: pattern(conversionPattern: "%c{2} %m%n")
-    }
-}
-{code}
-
-{hidden}
 h3. Environment-specific configuration
 
 Since the logging configuration is inside @Config.groovy@, you can put it inside an environment-specific block. However, there is a problem with this approach: you have to provide the full logging configuration each time you define the @log4j@ setting. In other words, you cannot selectively override parts of the configuration - it's all or nothing.
@@ -635,54 +325,14 @@ log4j = {
     environments {
         production {
             // Override previous setting for 'grails.app.controller'
-            error "grails.app.controller"
+            error "grails.app.controllers"
         }
     }
 }
 {code}
 
 The one place you can't put an environment block is _inside_ the @root@ definition, but you can put the @root@ definition inside an environment block.
-{hidden}
 
-h3. 特定环境的配置
-
-既然日志是配置在@Config.groovy@中，你自然也就可以将其配置在环境相关的代码块中。不过这种方式有一个小问题：每次你配置@log4j@的时候，你必须提供完整的日志配置。或者换句话说，你不能选择性的覆盖部分配置－要么全覆盖要么一点也不覆盖。
-
-为了避免此问题，日志DSL提供了自己的environment代码块配置，这样你就可以自由的配置了。
-
-{code:java}
-log4j = {
-    appenders {
-        console name: "stdout",
-                layout: pattern(conversionPattern: "%c{2} %m%n")
-
-        environments {
-            production {
-                rollingFile name: "myAppender", maxFileSize: 1024,
-                            file: "/tmp/logs/myApp.log"
-            }
-        }
-    }
-
-    root {
-        //...
-    }
-
-    // other shared config
-    info "grails.app.controller"
-
-    environments {
-        production {
-            // Override previous setting for 'grails.app.controller'
-            error "grails.app.controller"
-        }
-    }
-}
-{code}
-
-此处需要注意的是：你不能将environment代码块放在@root@定义的_内部_，但是你可以将其放在environment代码块中。
-
-{hidden}
 h3. Full stacktraces
 
 When exceptions occur, there can be an awful lot of noise in the stacktrace from Java and Groovy internals. Grails filters these typically irrelevant details and restricts traces to non-core Grails/Groovy class packages.
@@ -717,46 +367,6 @@ log4j = {
 You can of course combine this with attaching the 'stdout' appender to the 'StackTrace' logger if you want all the output in the console.
 
 Finally, you can completely disable stacktrace filtering by setting the @grails.full.stacktrace@ VM property to @true@:
-
-{code:java}
-grails -Dgrails.full.stacktrace=true run-app
-{code}
-{hidden}
-
-h3. 完整的栈跟踪
-
-当一个异常发生时，可能有大量的来自Java和Groovy内部栈跟踪信息，这其实是很恼人的。Grails的过滤器将这些不相干的细节屏蔽了，并且将栈的跟踪信息限制非Grails/Groovy的类包范围。
-
-当异常发生时，完整的跟踪信息总是被记录到@StackTrace@记录器中，此记录器缺省将内容输出到一个名为@stacktrace.log@的文件中。跟其他的记录器配合，你还可以改变其在配置中的行为，比如你可以将栈跟踪信息输出到字符终端：
-
-{code:java}
-error stdout: "StackTrace"
-{code}
-
-此动作不会阻止Grails创建stacktrace.log文件－它只是将栈跟踪重定向了而已。此外你还可以修改'stacktrace'输出器的位置信息，比如：
-
-{code:java}
-log4j = {
-    appenders {
-        rollingFile name: "stacktrace", maxFileSize: 1024,
-                    file: "/var/tmp/logs/myApp-stacktrace.log"
-    }
-}
-{code}
-
-或者，你根本就不想输出'stacktrace'，只需要将其输出器配置为'null'即可：
-
-{code:java}
-log4j = {
-    appenders {
-        'null' name: "stacktrace"
-    }
-}
-{code}
-
-你如果想在字符终端看到所有的输出，你可以通过将'StackTrace'记录器和'stdout'输出器关联合并来实现。
-
-最后，你如果想完全禁止栈跟踪的过滤，可以通过设置VM属性：@grails.full.stacktrace@为@true@来实现，比如：
 
 {code:java}
 grails -Dgrails.full.stacktrace=true run-app
@@ -865,3 +475,483 @@ grails.project.dependency.resolution = {
 {code}
 
 If you do this, you will get unfiltered, standard Java stacktraces in your log files and you won't be able to use the logging configuration DSL that's just been described. Instead, you will have to use the standard configuration mechanism for the library you choose.
+
+{hidden}
+h3. 基础
+
+Grails利用其公共的配置机制提供对 "Log4j":http://logging.apache.org/log4j/1.2/index.html 日志系统的配置，因此你所需要做的只是添加@log4j@配置到@grails-app/conf/Config.groovy@配置文件中。
+
+那么@log4j@配置看起来像什么呢？下边是一个基础的示例：
+
+{code:java}
+log4j = {
+    error  'org.codehaus.groovy.grails.web.servlet',  //  控制器
+           'org.codehaus.groovy.grails.web.pages' //  GSP
+
+    warn   'org.apache.catalina'
+}
+{code}
+
+以'org.codehaus.groovy.grails.web.servlet'或者'org.codehaus.groovy.grails.web.pages'开头的记录器，只有级别等于或高于'error'的信息才会显示；而名字以'org.apache.catalina'开始的记录器仅显示级别等于或高于'warn'的信息。它们的含义是什么？首先，你必须了解日志级别是如何工作的。
+
+h4. 日志级别
+
+有几个标准的日志级别，以下按照优先级降序的方式将他们列出：
+
+# off
+# fatal
+# error
+# warn
+# info
+# debug
+# trace
+# all
+
+当你记录一条消息的时候，已经隐式地给此消息指定了级别.比如@log.error(msg)@方法，就是以'error'级别记录一条信息。同样地，@log.debug(msg)@将会以'debug'级别记录。上述从'off'到'all'的级别都有一个同名的对应的日志方法。
+
+日志系统使用记录器（介绍见下一节）配置的 _信息_ 级别来确定此信息是否应该输出，例如，如果你有一个'org.example.domain'记录器配置如下：
+
+{code:java}
+warn 'org.example.domain'
+{code}
+
+那么级别是'warn'、'error'或者'fatal'的信息将会输出，而其他级别的都将被忽略。
+
+在我们继续记录器的讨论以前，我们需要对'off'和'all'的级别做一个快速注解，它们都只能在配置中使用；你不能在这些级别记录日志信息。因此如果你将记录器的级别配置为'off'，那么将不会有任何信息输出。配置为级别'all'意味着你将看到所有的日志信息。简单吧。
+
+h4. 记录器（Loggers）
+
+记录器是日志系统的基础，但是他们也是一些困惑的根源之一。比如它们是什么？可否共享？以及如何配置它们？
+
+一个记录器是你将信息记录进去的对象，因此在@log.debug(msg)@调用中的@log@就是一个记录器实例（其类型是[Log|http://commons.apache.org/logging/apidocs/org/apache/commons/logging/Log.html]）。这些记录器被缓存并可以通过唯一的名字标识，因此如果两个不同的类使用相同名字的记录器，那么这些记录器是实际上是同一个实例。
+
+主要有两种方法来获取一个记录器：
+
+# 使用注入到比如领域类、控制器以及服务层工件中的@log@实例；
+# 直接使用Commons Logging API。
+
+如果你使用动态@log@属性，那么记录器的名字是'grails.app.<type>.<className>'，@type@是工件的类型，例如'controller'或者'service'，而@className@是此工件的完全限定的类名。例如，如果你有如下的一个服务层组件：
+
+{code:java}
+package org.example
+
+class MyService {
+    ...
+}
+{code}
+
+那么上述记录器的名字是'grails.app.services.org.example.MyService'。
+
+对其他类型，通常的方法是将基于类名的记录器作为一个静态常量字段：
+
+{code:java}
+package org.other
+
+import org.apache.commons.logging.LogFactory
+
+class MyClass {
+    private static final log = LogFactory.getLog(this)
+    ...
+}
+{code}
+
+这会创建一个名字为'org.other.MyClass'的记录器，注意此处没有'grails.app.'前缀，因为此类不是一个Grails工件。你还可以传递自定义的名字（比如"myLogger"）到@getLog()@方法，但是这种用法并不常见，因为在日志系统中，名字中的点（'.'）是被特殊处理的。
+
+
+h4. 配置记录器
+
+你已经看到在Grails中如何配置记录器了：
+
+{code:java}
+log4j = {
+    error  'org.codehaus.groovy.grails.web.servlet'
+}
+{code}
+
+这个例子配置了名字以'org.codehaus.groovy.grails.web.servlet'开始的记录器将忽略所有'warn'级别及以下的信息。但是在应用程序中有这个名字的记录器吗？没有。那我们为什么要对其进行配置？因为上述的规则也应用于任何以'org.codehaus.groovy.grails.servlet.'_开始_的记录器。举例说明，这个规则可应用于类@org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet@和@org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest@。
+
+换句话说，记录器是层次结构的，这使得用包名来配置比其他方式容易很多。
+
+你想要配置日志输出的最常见的组件是控制器、服务层组件以及其他工件。这可以通过以前提到过的_grails.app.<artifactType>.<className>_来实现。特别说明类名必须是完全限定的，也就是如果位于包中的话要用包名限定：
+
+{code:java}
+log4j = {
+    // 设置所有应用程序中的工件的日志级别
+    info "grails.app"
+
+    // 为缺省包中一个特定的控制器进行设置
+    debug "grails.app.controllers.YourController"
+
+    // 对一个特定的领域类进行设置
+    debug "grails.app.domain.org.example.Book"
+
+    // 对所有的标签库进行设置
+    info "grails.app.taglib"
+}
+{code}
+
+日志配置中常用的标准工件名称如下：
+
+* @conf@ - @grails-app/conf@下的任何类型例如@BootStrap.groovy@（不包括过滤器）
+* @filters@ - 过滤器
+* @taglib@ - 标签库
+* @services@ - 服务层类
+* @controllers@ - 控制器
+* @domain@ - 领域实体类
+
+Grails自身生成大量的日志信息，有时候看到这些信息对我们很有帮助。以下是一些你可以使用的来自Grails内部的有用的记录器，尤其是要定位你的应用程序问题的时候：
+
+* @org.codehaus.groovy.grails.commons@ - 核心工件信息，比如类加载等
+* @org.codehaus.groovy.grails.web@ - Grails的web请求处理
+* @org.codehaus.groovy.grails.web.mapping@ - 调试URL映射
+* @org.codehaus.groovy.grails.plugins@ - 记录插件的活动情况
+* @grails.spring@ - 在Grails和插件中正在定义的Spring组件
+* @org.springframework@ - Spring的处理
+* @org.hibernate@ - Hibernate的处理
+
+到目前为止，我们仅仅查看了记录器的显式配置。那么其他那些_没有_明确配置的记录器是什么情况？它们是被简单地忽略了吗？请答案在于根记录器的配置。
+
+
+h4. 根记录器
+
+所有的记录器对象都是从其根记录器继承它们的配置，因此一个记录器如果没有提供显示地配置，那么记录到该记录器的此记录器的任何信息将会受为根记录器定义的规则约束。或者说，根记录器提供日志系统的缺省配置。
+
+Grails自动地将根记录器配置成只处理'error'级别及以上的信息，并且将这些信息定向至控制台（对那些有C语言背景的人而言是stdout）中。你可以通过'root'配置区域像下面这样定制其行为：
+
+{code:java}
+log4j = {
+    root {
+        info()
+    }
+    ...
+}
+{code}
+
+上述示例将配置根记录器记录'info'级别级以上的信息到默认的控制台输出器。你也可以配置根记录器将信息记录到一个或者多个带名字的输出器中（我们将立即进行更多的说明）：
+
+{code:java}
+log4j = {
+    appenders {
+        file name:'file', file:'/var/logs/mylog.log'
+    }
+    root {
+        debug 'stdout', 'file'
+    }
+}
+{code}
+
+在上述示例中，根记录器将记录到两个输出器中：缺省的'stdout'输出器（控制台）和自定义的'file'输出器。
+
+对高级用户来说，还有另外一种配置根记录器的替代语法：传递给log4j闭包的参数root是@org.apache.log4j.Logger@实例。这让你可以直接对记录器进行设置：
+
+{code:java}
+log4j = { root ->
+    root.level = org.apache.log4j.Level.DEBUG
+    ...
+}
+{code}
+
+有关@Logger@实例如何设置的更多信息，请参考Log4j API文档。
+
+上述内容已经很好地涉及了日志的基础知识，而且如果你满足于将日志信息只输出到控制台的话这就够用了。但是如果你想输出到一个文件呢？你怎样确保特定的记录器的信息输出到一个文件而不是控制台呢？这些问题及更多的问题当我们接触到输出器时会得到解答。
+
+h3. 输出器
+
+记录器是一个有用的信息过滤机制，但是它们并不将信息在任何地方进行实际地写入。这是输出器的工作，有各种各样的输出器类型。例如缺省的输出器是将信息写出到控制台，另外一个输出器将信息写出一个文件，还有几个其他的输出器。你甚至可以创建你自己的输出器实现！
+
+下图展示了日志管道中各种部件是怎样整合的：
+
+!logging.png!
+
+如你所见，一个记录器可以挂载多个输出器。 在一个标准的Grails配置中，名为'stdout'的控制台输出器通过默认的根记录器配置挂载到所有的记录器。但那也是唯一的一个输出器。你可以在'appenders'代码块中添加更多的输出器：
+
+{code:java}
+log4j = {
+    appenders {
+        rollingFile name: "myAppender",
+                    maxFileSize: 1024,
+                    file: "/tmp/logs/myApp.log"
+    }
+}
+{code}
+
+下列的输出器默认可用：
+
+{table}
+ *名称* | *类名* | *描述*
+ jdbc | [JDBCAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/jdbc/JDBCAppender.html] | 记录到JDBC连接。
+ console | [ConsoleAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/ConsoleAppender.html] | 记录到控制台。
+ file | [FileAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/FileAppender.html] | 记录到单个文件。
+ rollingFile | [RollingFileAppender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/RollingFileAppender.html] | 记录到滚动文件，例如每天一个新文件。
+{table}
+
+传递给输出器的每一个命名参数都将映射到底层[Appender|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Appender.html]实现的属性。因此上述的例子中设置了@RollingFileAppender@的@name@、@maxFileSize@和@file@等属性。
+
+你可以根据需要有多个输出器，只要确保它们都有一个唯一的的名字。你甚至还可以有相同类型的输出器的多个实例，例如输出到不同文件中的多个文件输出器。
+
+你如果倾向于编程的方式创建输出器或者你想使用不在上述语法中的输出器实现，只需简单地使用你想要的输出器实例声明一个@appender@即可：
+
+{code:java}
+import org.apache.log4j.*
+
+log4j = {
+    appenders {
+        appender new RollingFileAppender(
+                name: "myAppender",
+                maxFileSize: 1024,
+                file: "/tmp/logs/myApp.log")
+    }
+}
+{code}
+
+这种方法可以用于配置@JMSAppender@、@SocketAppender@和@SMTPAppender@及更多的输出器。
+
+一旦你声明了这些额外的输出器，你可以通过传递输出器的名字作为键名到前面章节介绍的某个日志级别方法挂载他们到特定的记录器：
+
+{code:java}
+error myAppender: "grails.app.controllers.BookController"
+{code}
+
+这样就可以确保记录器'grails.app.controllers.BookController'将日志信息发送到'myAppender'中以及配置在根记录器中的任何输出器，要在记录器中增加更多的输出器，那么将他们添加至相同的日志级别方法的声明即可，比如：
+
+{code:java}
+error myAppender:      "grails.app.controllers.BookController",
+      myFileAppender:  ["grails.app.controllers.BookController",
+                        "grails.app.services.BookService"],
+      rollingFile:     "grails.app.controllers.BookController"
+{code}
+
+上述示例同时也展示了在一个给定的输出器(@myFileAppender@)中如何通过列表来一次性地配置多个记录器。
+
+需要注意的是一个记录器只能配置一个日志级别，如果你配置了如下的内容：
+
+{code:java}
+error myAppender:      "grails.app.controllers.BookController"
+debug myFileAppender:  "grails.app.controllers.BookController"
+fatal rollingFile:     "grails.app.controllers.BookController"
+{code}
+
+你将会发现'grails.app.controllers.BookController'记录器只记录'fatal'级别的消息。这是因为对给定的记录器的最后声明的级别设置生效了。你可能想完成的配置是限制写出的信息的级别。
+
+一个配置成'all'级别的记录器关联的输出器将产生大量的日志信息。如果记录在文件中还没有问题，但在控制台下很难工作。因此我们将控制台输出器只记录'info'级别及以上的信息：
+
+{code:java}
+log4j = {
+    appenders {
+        console name: "stdout", threshold: org.apache.log4j.Level.INFO
+    }
+}
+{code}
+
+此处的关键是@threshold@参数，其决定那些日志信息需要截去。此参数对所有的输出器可用，但需要注意你必须指定@Level@实例———类似"info"的字符串不能工作。
+
+h3. 自定义布局
+
+默认Log4j DSL假定你想使用[PatternLayout|http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html]。但是，其他的布局也可以使用：
+
+* @xml@ - 创建一个XML日志文件
+* @html@ - 创建一个HTML日志文件
+* @simple@ - 简单的文本文件
+* @pattern@ - Pattern布局的文件
+
+你可以使用@layout@为输出器指定自定义布局：
+
+{code:java}
+log4j = {
+    appenders {
+        console name: "customAppender",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
+    }
+}
+{code}
+
+这种方法也适用于内置的"stdout"输出器，其记录日志到控制台：
+{code:java}
+log4j = {
+    appenders {
+        console name: "stdout",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
+    }
+}
+{code}
+
+h3. 环境特定的配置
+
+既然日志配置位于@Config.groovy@文件中，你可以将其置于特定环境的代码块中。不过这种方式有一个问题：每次你定义@log4j@设置的时候，你必须提供完整的日志配置。换句话说，你不能选择性地覆盖部分配置———要么全覆盖要么一点也不覆盖。
+
+为了解决这个问题，日志DSL提供了自己的环境相关的代码块，你可以在将其放在配置的任何地方：
+
+{code:java}
+log4j = {
+    appenders {
+        console name: "stdout",
+                layout: pattern(conversionPattern: "%c{2} %m%n")
+
+        environments {
+            production {
+                rollingFile name: "myAppender", maxFileSize: 1024,
+                            file: "/tmp/logs/myApp.log"
+            }
+        }
+    }
+
+    root {
+        //...
+    }
+
+    // 其他的共享配置
+    info "grails.app.controller"
+
+    environments {
+        production {
+            // 覆盖前面对'grails.app.controller'的配置
+            error "grails.app.controller"
+        }
+    }
+}
+{code}
+
+你不能将环境代码块放置的一个地方是@root@定义的_内部_，但是你可以将@root@定义放在环境代码块中。
+
+h3. 完整的栈跟踪
+
+当异常发生时，可能有大量的来自Java和Groovy内部的令人生畏的栈跟踪信息。Grails过滤掉这些通常不相关的细节并且限制追踪信息仅来自非Grails/Grovvy核心类的包中。
+
+当异常发生时，完整的跟踪信息总是被记录到@StackTrace@记录器中，该记录器缺省将跟踪信息输出到一个名为@stacktrace.log@的文件中。和其他的记录器类似，你可以在配置中改变它的行为，例如，如果你希望将栈跟踪信息输出到控制台，添加如下内容：
+
+{code:java}
+error stdout: "StackTrace"
+{code}
+
+这不会阻止Grails创建stacktrace.log文件———它只是重定向栈跟踪写入的位置。另一种替代的方法是改变'stacktrace'输出器的文件位置：
+
+{code:java}
+log4j = {
+    appenders {
+        rollingFile name: "stacktrace", maxFileSize: 1024,
+                    file: "/var/tmp/logs/myApp-stacktrace.log"
+    }
+}
+{code}
+
+或者，如果你根本不需要'stacktrace'输出器，将其配置为'null'输出器即可：
+
+{code:java}
+log4j = {
+    appenders {
+        'null' name: "stacktrace"
+    }
+}
+{code}
+
+如果你想要所有的输出都出现在控制台中，你当然可以将此与关联至'stdout'输出器的'StackTrace'记录器进行组合
+
+最后，如果你想完全禁止对栈跟踪的过滤，可以设置@grails.full.stacktrace@ VM属性的值为@true@：
+
+{code:java}
+grails -Dgrails.full.stacktrace=true run-app
+{code}
+
+h3. 在栈跟踪日志中屏蔽请求参数
+
+当Grails记录栈跟踪时，日志信息可能包含当前请求的所有请求参数的名字和值。为了对安全的请求参数的值进行屏蔽，在@grails.exceptionresolver.params.exclude@配置属性中指定这些参数的名字：
+
+{code:java}
+grails.exceptionresolver.params.exclude = ['password', 'creditCard']
+{code}
+
+通过设置@grails.exceptionresolver.logRequestParameters@配置属性的值为@false@可以完全关闭请求参数的日志功能。当应用程序在开发模式下运行时该属性的默认值是@true@，在所有其他模式下为@false@。
+
+{code:java}
+grails.exceptionresolver.logRequestParameters=false
+{code}
+
+h3. 记录器继承
+
+稍早的时候，我们提到过所有的记录器从根记录器继承配置并且记录器是基于'.'分隔的层次结构。这意味着除非你覆盖父记录器的设置，记录器保持父记录器所配置的日志级别和输出器。因此使用如下配置：
+
+{code:java}
+log4j = {
+    appenders {
+        file name:'file', file:'/var/logs/mylog.log'
+    }
+    root {
+        debug 'stdout', 'file'
+    }
+}
+{code}
+
+应用程序中所有的记录器将设置日志级别为'debug'并且记录日志至'stdout'和'file'两个输出器。如果对一个特定的记录器你只想输出至'stdout'呢？在这种情况下要修改记录器的'additivity'设置。
+
+可加性仅仅决定一个记录器是否从父记录器继承配置。如果可加性为false，那么它的配置不从父记录器继承。所有记录器的可加性设置默认为true，也就是他们继承配置。那么你如何改变这个设置呢？下面是一个示例：
+
+{code}
+log4j = {
+    appenders {
+        ...
+    }
+    root {
+        ...
+    }
+
+    info additivity: false
+         stdout: \["grails.app.controllers.BookController",
+                  "grails.app.services.BookService"\]
+}
+{code}
+
+因此当你指定日志级别的时候，你添加'additivity'命名参数。注意每当你指定可加性时，你必须对一个带名字的输出器配置记录器的可加性。下面的语法_不能_工作：
+
+{code:java}
+info additivity: false, \["grails.app.controllers.BookController",
+                         "grails.app.services.BookService"\]
+{code}
+
+h3. 定制栈跟踪的输出和过滤
+
+一般的栈跟踪，特别是使用Groovy产生的栈跟踪非常详细并且包含许多栈帧，它们在诊断问题时不是很有趣。所以Grails使用一个@org.codehaus.groovy.grails.exceptions.StackTraceFilterer@接口的实现来过滤掉不相关的栈帧。为了定制用于过滤的方法，在一个位于src/groovy和src/java下的类中实现这个接口并在@Config.groovy@中对其注册：
+
+{code}
+grails.logging.stackTraceFiltererClass =
+         'com.yourcompany.yourapp.MyStackTraceFilterer'
+{code}
+
+此外，Grails可以定制已过滤的栈跟踪的显示使得信息更加可读。要进行定制，在位于src/groovy和src/java下的类中实现@org.codehaus.groovy.grails.exceptions.StackTracePrinter@接口并在@Config.groovy@中对其注册：
+
+{code}
+grails.logging.stackTracePrinterClass =
+         'com.yourcompany.yourapp.MyStackTracePrinter'
+{code}
+
+最后，为了在错误GSP页面中显示错误信息，Grails提供了生成HTML的打印器实现。默认的实现是 @org.codehaus.groovy.grails.web.errors.ErrorsViewStackTracePrinter@并且注册为一个Spring组件。为了使用你自己的实现，直接实现@org.codehaus.groovy.grails.exceptions.StackTraceFilterer@或者派生@ErrorsViewStackTracePrinter@并在@grails-app/conf/spring/resources.groovy@ 中对其注册：
+
+{code}
+import com.yourcompany.yourapp.MyErrorsViewStackTracePrinter
+
+beans = {
+
+    errorsViewStackTracePrinter(MyErrorsViewStackTracePrinter,
+                                ref('grailsResourceLocator'))
+}
+{code}
+
+h3. 替代的日志库
+
+Grails默认使用Log4J进行日志记录。对于大多数人而言这绝对没有问题，并且许多用户甚至不关心使用了什么日志库。但是如果你不是这些人中的一员并且想使用别的选择的话，例如[JDK日志包|http://download.oracle.com/javase/6/docs/api/index.html?java/util/logging/package-summary.html]或[logback|http://logback.qos.ch/]，通过简单地从全局依赖集合中排除几个依赖并添加你自己日志库的依赖你可以达成目标：
+
+{code}
+grails.project.dependency.resolution = {
+    inherits("global") {
+        excludes "grails-plugin-logging", "log4j"
+    }
+    ...
+    dependencies {
+        runtime "ch.qos.logback:logback-core:0.9.29"
+        ...
+    }
+    ...
+}
+
+{code}
+
+如果你这样做的话，在日志文件中你将得到未经过滤的、标准的Java栈跟踪并且你不能使用刚描述过的日志配置DSL。取而代之的是你将不得不使用你所选择的日志库的标准配置机制。

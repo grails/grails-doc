@@ -1,0 +1,344 @@
+{hidden}
+h4. Remote Repositories
+
+Initially your BuildConfig.groovy does not use any remote public Maven repositories. There is a default @grailsHome()@ repository that will locate the JAR files Grails needs from your Grails installation. To use a public repository, specify it in the @repositories@ block:
+
+{code}
+repositories {
+    mavenCentral()
+}
+{code}
+
+In this case the default public Maven repository is specified. 
+
+You can also specify a specific Maven repository to use by URL:
+
+{code}
+repositories {
+    mavenRepo "http://repository.codehaus.org"
+}
+{code}
+
+and even give it a name:
+
+{code}
+repositories {
+    mavenRepo name: "Codehaus", root: "http://repository.codehaus.org"
+}
+{code}
+
+so that you can easily identify it in logs.
+
+h4. Controlling Repositories Inherited from Plugins
+
+A plugin you have installed may define a reference to a remote repository just as an application can. By default your application will inherit this repository definition when you install the plugin.
+
+If you do not wish to inherit repository definitions from plugins then you can disable repository inheritance:
+
+{code:java}
+repositories {
+    inherit false
+}
+{code}
+
+In this case your application will not inherit any repository definitions from plugins and it is down to you to provide appropriate (possibly internal) repository definitions.
+
+h4. Offline Mode
+
+There are times when it is not desirable to connect to any remote repositories (whilst working on the train for example!). In this case you can use the @offline@ flag to execute Grails commands and Grails will not connect to any remote repositories:
+
+{code}
+grails --offline run-app
+{code}
+
+{note}
+Note that this command will fail if you do not have the necessary dependencies in your local Ivy cache
+{note}
+
+You can also globally configure offline mode by setting @grails.offline.mode@ to @true@ in @~/.grails/settings.groovy@ or in your project's @BuildConfig.groovy@ file:
+
+{code}
+grails.offline.mode=true
+{code}
+
+h4. Local Resolvers
+
+If you do not wish to use a public Maven repository you can specify a flat file repository:
+
+{code}
+repositories {
+    flatDir name:'myRepo', dirs:'/path/to/repo'
+}
+{code}
+
+{warning}
+Aether does not support the @flatDir@ resolver or any custom file system resolvers. The above feature works only if you are using the Ivy dependency manager.
+{warning}
+
+To specify your local Maven cache (@~/.m2/repository@) as a repository:
+
+{code}
+repositories {
+    mavenLocal()
+}
+{code}
+
+h4. Custom Resolvers
+
+If you are using the Ivy dependency manager (Aether does not support custom resolvers), then you can explicitly specify an Ivy resolver:
+
+{code}
+/*
+ * Configure our resolver.
+ */
+def libResolver = new org.apache.ivy.plugins.resolver.URLResolver()
+['libraries', 'builds'].each {
+
+    libResolver.addArtifactPattern(
+            "http://my.repository/\${it}/" +
+            "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+
+    libResolver.addIvyPattern(
+            "http://my.repository/\${it}/" +
+            "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+}
+
+libResolver.name = "my-repository"
+libResolver.settings = ivySettings
+
+resolver libResolver
+{code}
+
+It's also possible to pull dependencies from a repository using SSH. Ivy comes with a dedicated resolver that you can configure and include in your project like so:
+{code}
+import org.apache.ivy.plugins.resolver.SshResolver
+...
+repositories {
+    ...
+
+    def sshResolver = new SshResolver(
+            name: "myRepo",
+            user: "username",
+            host: "dev.x.com",
+            keyFile: new File("/home/username/.ssh/id_rsa"),
+            m2compatible: true)
+
+    sshResolver.addArtifactPattern(
+            "/home/grails/repo/[organisation]/[artifact]/" +
+            "[revision]/[artifact]-[revision].[ext]")
+
+    sshResolver.latestStrategy =
+            new org.apache.ivy.plugins.latest.LatestTimeStrategy()
+
+    sshResolver.changingPattern = ".*SNAPSHOT"
+
+    sshResolver.setCheckmodified(true)
+
+    resolver sshResolver
+}
+{code}
+
+Download the [JSch|http://www.jcraft.com/jsch/] JAR and add it to Grails' classpath to use the SSH resolver. You can do this by passing the path in the Grails command line:
+{code}
+grails -classpath /path/to/jsch compile|run-app|etc.
+{code}
+
+You can also add its path to the @CLASSPATH@ environment variable but be aware this it affects many Java applications. An alternative on Unix is to create an alias for @grails -classpath ...@ so that you don't have to type the extra arguments each time.
+
+h4. Authentication
+
+If your repository requires authentication you can configure this using a @credentials@ block:
+
+{code}
+credentials {
+    realm = ".."
+    host = "localhost"
+    username = "myuser"
+    password = "mypass"
+}
+{code}
+
+This can be placed in your @USER_HOME/.grails/settings.groovy@ file using the @grails.project.ivy.authentication@ setting:
+
+{code}
+grails.project.ivy.authentication = {
+    credentials {
+        realm = ".."
+        host = "localhost"
+        username = "myuser"
+        password = "mypass"
+    }
+}
+{code}
+{hidden}
+h4. 远程仓库
+
+最初你的BuildConfig.groovy文件不使用任何远程公开Maven仓库。有一个默认的@grailsHome()@仓库其从Grails安装位置中定位Grails需要的JAR文件。要使用公开仓库，在@repositories@代码块中指定它：
+
+{code}
+repositories {
+    mavenCentral()
+}
+{code}
+
+在这种情况下指定了默认公开Maven仓库。
+
+你也可以通过URL指定要使用特定的Maven仓库：
+
+{code}
+repositories {
+    mavenRepo "http://repository.codehaus.org"
+}
+{code}
+
+并且甚至可以给它一个名字：
+
+{code}
+repositories {
+    mavenRepo name: "Codehaus", root: "http://repository.codehaus.org"
+}
+{code}
+
+这样你可以很容易地在日志中识别它。
+
+h4. 控制从插件继承的仓库
+
+你安装的插件可能和应用程序一样定义了一个远程仓库的引用。默认你的应用程序当你安装这个插件的时候将会继承这个仓库定义。
+
+如果你不希望继承来自插件的仓库定义的话，那么你可以禁用仓库继承：
+
+{code:java}
+repositories {
+    inherit false
+}
+{code}
+
+在这种情况下，你的应用程序将不会继承来自插件的任何仓库定义并且完全靠你提供合适的（可能是内部仓库的）仓库定义。
+
+h4. 离线模式
+
+有的时候可能不想连接到任何远程仓库（例如在火车上工作的时候！）。在这样的情况下你可以使用@offline@标志来执行Grails命令，Grails将不会连接到任何远程仓库：
+
+{code}
+grails --offline run-app
+{code}
+
+{note}
+要注意的是，如果你的本地Ivy缓存没有必要的依赖的话，这个命令将会失败
+{note}
+
+你也可以在@~/.grails/settings.groovy@中或者在你项目的@BuildConfig.groovy@文件中配置@grails.offline.mode@的设置为@true@来全局性地配置离线模式：
+
+{code}
+grails.offline.mode=true
+{code}
+
+h4. 本地解析器
+
+如果你不希望使用公开Maven仓库， 你可以指定一个扁平文件仓库：
+
+{code}
+repositories {
+    flatDir name:'myRepo', dirs:'/path/to/repo'
+}
+{code}
+
+{warning}
+Aether不支持@flatDir@解析器或任何自定义的文件系统解析器。上述的功能只有当你使用Ivy依赖管理程序的时候起作用。
+{warning}
+
+要指定你的本地Maven缓存(@~/.m2/repository@)作为仓库：
+
+{code}
+repositories {
+    mavenLocal()
+}
+{code}
+
+h4. 自定义解析器
+
+如果你使用的是Ivy依赖管理程序（Aether不支持定制的解析器），那么你可以显式地指定一个Ivy解析器
+
+{code}
+/*
+ * 配置我们的解析器。
+ */
+def libResolver = new org.apache.ivy.plugins.resolver.URLResolver()
+['libraries', 'builds'].each {
+
+    libResolver.addArtifactPattern(
+            "http://my.repository/\${it}/" +
+            "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+
+    libResolver.addIvyPattern(
+            "http://my.repository/\${it}/" +
+            "[organisation]/[module]/[revision]/[type]s/[artifact].[ext]")
+}
+
+libResolver.name = "my-repository"
+libResolver.settings = ivySettings
+
+resolver libResolver
+{code}
+
+也可以使用SSH从一个仓库中获得依赖。Ivy为此附带了一个专门的解析器，你可以在你的项目中像下面这样配置和包含它：
+{code}
+import org.apache.ivy.plugins.resolver.SshResolver
+...
+repositories {
+    ...
+
+    def sshResolver = new SshResolver(
+            name: "myRepo",
+            user: "username",
+            host: "dev.x.com",
+            keyFile: new File("/home/username/.ssh/id_rsa"),
+            m2compatible: true)
+
+    sshResolver.addArtifactPattern(
+            "/home/grails/repo/[organisation]/[artifact]/" +
+            "[revision]/[artifact]-[revision].[ext]")
+
+    sshResolver.latestStrategy =
+            new org.apache.ivy.plugins.latest.LatestTimeStrategy()
+
+    sshResolver.changingPattern = ".*SNAPSHOT"
+
+    sshResolver.setCheckmodified(true)
+
+    resolver sshResolver
+}
+{code}
+
+下载[JSch|http://www.jcraft.com/jsch/] JAR并且添加它到Grails的类路径中才能使用SSH解析器。你可以在Grails命令行中通过传递路径的方法完成：
+{code}
+grails -classpath /path/to/jsch compile|run-app|etc.
+{code}
+
+你也可以把它的路径添加至@CLASSPATH@环境变量，但是要注意这会影响很多Java应用程序。在Unix上的一个替代方法是为 @grails -classpath ...@创建一个别名，这样你就不必每次输入额外的参数了。
+
+h4. 认证
+
+如果你的仓库要求认证，你可以使用@credentials@代码块对其配置：
+
+{code}
+credentials {
+    realm = ".."
+    host = "localhost"
+    username = "myuser"
+    password = "mypass"
+}
+{code}
+
+这些可以放置在@USER_HOME/.grails/settings.groovy@文件中，方法是使用@grails.project.ivy.authentication@设置：
+
+{code}
+grails.project.ivy.authentication = {
+    credentials {
+        realm = ".."
+        host = "localhost"
+        username = "myuser"
+        password = "mypass"
+    }
+}
+{code}

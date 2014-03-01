@@ -1,3 +1,4 @@
+{hidden}
 h4. Reading Messages in the View
 
 The most common place that you need messages is inside the view. Use the [message|tags] tag for this:
@@ -35,6 +36,51 @@ def show() {
 {code}
 
 The same technique can be used in [tag libraries|guide:taglibs], but if your tag library uses a custom [namespace|guide:namespaces] then you must prefix the call with @g.@:
+
+{code:java}
+def myTag = { attrs, body ->
+    def msg = g.message(code: "my.localized.content", args: ['Juan', 'lunes'])
+}
+{code}
+
+{hidden}
+h4. 在视图中读取消息
+
+你需要使用消息的最常见的地方是在视图里面。可以使用[message|tags]标记获取消息：
+
+{code:xml}
+<g:message code="my.localized.content" />
+{code}
+
+只要你的@messages.properties@文件（或者带合适区域后缀）里有一个如下所示的Key，那么Grails就会查找到这个消息：
+
+{code:java}
+my.localized.content=Hola, Me llamo John. Hoy es domingo.
+{code}
+
+消息也可以包含参数，例如：
+
+{code:xml}
+<g:message code="my.localized.content" args="${ ['Juan', 'lunes'] }" />
+{code}
+
+这个消息声明指定了位置参数，它们是动态地被指定的：
+
+{code:java}
+my.localized.content=Hola, Me llamo {0}. Hoy es {1}.
+{code}
+
+h4. 在控制器和标签库里读取消息
+
+在控制器里面读取消息非常简单，因为你可以用方法的形式调用标签：
+
+{code:java}
+def show() {
+    def msg = message(code: "my.localized.content", args: ['Juan', 'lunes'])
+}
+{code}
+
+同样的技术可以用在[标签库|guide:taglibs]里，但是，如果你的标签库使用了自定义的[名字空间|guide:namespaces]，那么你必须为这样的调用使用@g.@作为其前缀：
 
 {code:java}
 def myTag = { attrs, body ->

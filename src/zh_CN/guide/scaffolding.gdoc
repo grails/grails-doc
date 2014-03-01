@@ -1,7 +1,20 @@
-Scaffolding lets you auto-generate a whole application for a given domain class including:
+{hidden}
+Scaffolding lets you generate some basic CRUD interfaces for a domain class, including:
 
 * The necessary [views|guide:gsp]
 * Controller actions for create/read/update/delete (CRUD) operations
+
+As of Grails 2.3, the scaffolding feature has been moved to a plugin. By default this is configured for installation in new applications, but if you are upgrading from a previous version of Grails you will need to add the following configuration to your @BuildConfig.groovy@ file:
+
+{code}
+    plugins {
+        ...
+        compile "\:scaffolding:2.0.0"
+        ...
+    }
+{code}
+
+Version 1.0.0 of the plugin provides the same scaffolding seen in Grails 2.2.x and below. Version 2.0.x of the scaffolding plugin includes different scaffolding templates that are aligned with the new REST APIs introcued in Grails 2.3 and above.
 
 h4. Dynamic Scaffolding
 
@@ -23,7 +36,7 @@ class SomeController {
 
 With this configured, when you start your application the actions and views will be auto-generated at runtime. The following actions are dynamically implemented by default by the runtime scaffolding mechanism:
 
-* list
+* index
 * show
 * edit
 * delete
@@ -61,7 +74,7 @@ class BookController {
     static scaffold = Book
 
     // overrides scaffolded action to return both authors and books
-    def list() {
+    def index() {
         [bookInstanceList: Book.list(),
          bookInstanceTotal: Book.count(),
          authorInstanceList: Author.list()]
@@ -151,3 +164,168 @@ grails generate-all com.bookstore.Book
 h4. Customizing the Scaffolding templates
 
 The templates used by Grails to generate the controller and views can be customized by installing the templates with the [install-templates|commandLine] command.
+
+{hidden}
+脚手架功能（Scaffolding）可以让你为领域类生成基本的CRUD界面，包括：
+
+* 必要的[视图|guide:gsp]
+* 用于创建/读取/更新/删除（CRUD）操作的控制器动作
+
+从Grails 2.3开始，脚手架功能已经变成一个插件。在新创建的应用程序中默认配置了该插件，但是如果你从一个以前版本的Grails进行升级，那么你需要在你的@BuildConfig.groovy@文件中添加下面的配置：
+
+{code}
+    plugins {
+        ...
+        compile "\:scaffolding:2.0.0"
+        ...
+    }
+{code}
+
+这个插件的1.0.0版本提供了与Grails 2.2.x及以下版本中相同的脚手架功能。脚手架插件的2.0.x版本中包含了不同的模板，这是为了与Grails 2.3及以上版本中新引入的REST API配合。
+
+h4. 动态脚手架
+
+最简单的开始使用脚手架的方法是使用@scaffold@属性启用它。例如在用于@Book@领域类的控制器中设置@scaffold@属性的值为@true：
+
+{code:java}
+class BookController {
+    static scaffold = true
+}
+{code}
+
+这样可以工作的原因是因为@BookController@遵循了与@Book@领域类相同的命名约定。要对一个特定的领域类应用脚手架功能，我们可以在scaffold属性中直接引用这个类。
+
+{code:java}
+class SomeController {
+    static scaffold = Author
+}
+{code}
+
+这样配置以后，当你启动应用程序后，动作和视图将会在运行时自动生成。下面的动作方法默认情况下由运行时脚手架机制动态实现：
+
+* index
+* show
+* edit
+* delete
+* create
+* save
+* update
+
+还会生成CRUD界面。要访问它的话，在浏览器中打开@http://localhost:8080/app/book@。
+
+如果你倾向于使用Java定义你的领域模型并且使用[Hibernate进行映射|guide:hibernate]，你仍然可以使用脚手架功能，仅需导入领域类并把它的名字设置为@scaffold@属性。
+
+{code:java}
+class BookController {
+
+    static scaffold = Book
+
+    def changeAuthor() {
+        def b = Book.get(params.id)
+        b.author = Author.get(params["author.id"])
+        b.save()
+
+        // 重定向到脚手架提供的动作方法
+        redirect(action:show)
+    }
+}
+{code}
+
+也你可以改写脚手架提供的动作方法：
+
+{code:java}
+class BookController {
+
+    static scaffold = Book
+
+    // 改写脚手架提供的动作方法，返回作者和图书数据
+    def index() {
+        [bookInstanceList: Book.list(),
+         bookInstanceTotal: Book.count(),
+         authorInstanceList: Author.list()]
+    }
+
+    def show() {
+        def book = Book.get(params.id)
+        log.error(book)
+        [bookInstance : book]
+    }
+}
+{code}
+
+所有这些称之为“动态脚手架”，其中CRUD界面在运行时动态生成。
+
+{note}
+默认情况下，脚手架提供的视图中文本区域的大小在CSS中定义，所以添加'rows'和'cols'属性不会起作用。
+
+而且，标准的脚手架视图期望形如@<propertyName>InstanceList@的集合模型变量，和形如@<propertyName>Instance@的单个实例变量。使用类似'books'和'book'的属性很有吸引力，但是这样做无法工作。
+{note}
+
+h4. 定制生成的视图
+
+视图会匹配[验证约束|guide:constraints]设置。例如，仅需调整约束的顺序，你就可以改变字段在视图中的出现顺序：
+
+{code:java}
+def constraints = {
+    title()
+    releaseDate()
+}
+{code}
+
+如果你使用@inList@约束，你会使生成程序生成列表而不是文本字段：
+
+{code:java}
+def constraints = {
+    title()
+    category(inList: ["Fiction", "Non-fiction", "Biography"])
+    releaseDate()
+}
+{code}
+
+或者，如果你对一个整数属性使用@range@约束也会如此：
+
+{code:java}
+def constraints = {
+    age(range:18..65)
+}
+{code}
+
+使用约束限制属性的大小会影响生成的视图中可以输入多少字符：
+
+{code:java}
+def constraints = {
+    name(size:0..30)
+}
+{code}
+
+h4. 静态脚手架
+
+Grails也支持静态脚手架。
+
+上面介绍的脚手架功能很有用，但是在实际应用中，你可能想对逻辑和视图进行定制。Grails会让你从命令行生成一个控制器和用于创建上述界面的多个视图。要生成控制器，输入：
+
+{code:java}
+grails generate-controller Book
+{code}
+
+要生成视图：
+
+{code:java}
+grails generate-views Book
+{code}
+
+或者要生成全部内容：
+
+{code:java}
+grails generate-all Book
+{code}
+
+如果你有一个位于包中的领域类或者从一个[使用Hibernate映射的类|guide:hibernate]进行生成的话，记住包含完全限定的包名：
+
+{code:java}
+grails generate-all com.bookstore.Book
+{code}
+
+h4. 定制脚手架模板
+
+Grails生成控制器和视图的模板可以通过使用[install-templates|commandLine]命令安装模板后进行定制。

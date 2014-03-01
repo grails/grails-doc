@@ -18,16 +18,16 @@ grails.gorm.failOnError = ['com.companyname.somepackage',
 
 Grails提供了如下的GORM配置选项：
 
-* @grails.gorm.failOnError@  - 如果此选项值为 @true@ 并且在保存的时候 [校验|guide:validation] 失败，那么此领域类的 @save()@ 方法将抛出一个  @grails.validation.ValidationException@ 异常。此选项的值还可以是代表包名的字符串列表。如果是字符串列表的话，那么failOnError仅仅作用于属于这些包名（包括子包名）的领域类。更多详细信息请参考 [save|domainClasses] 方法
+* @grails.gorm.failOnError@  - 如果设置为 @true@ ，当保存领域类实体时[验证|guide:validation]失败的话，会导致领域类的 @save()@ 方法抛出一个@grails.validation.ValidationException@异常。这个选项也可以赋值为代表包名的字符串的列表。如果选项值是字符串列表的话，那么failOnError仅仅应用于这些包（包括子包）中的领域类。查看[save|domainClasses]方法的文档了解更多信息。
 
-例如要使所有的领域类都能够failOnError，配置如下：
+例如，要对所有的领域类启用failOnError：
 {code:java}
 grails.gorm.failOnError=true
 {code}
 
-要使特定包名的领域类能够failOnError，代码如下：
+要对特定包中的领域类启用failOnError：
 {code:java}
 grails.gorm.failOnError = ['com.companyname.somepackage',
                            'com.companyname.someotherpackage']
 {code}
-* @grails.gorm.autoFlush@ = 如果此选项值为 @true@，那么将导致 [merge|domainClasses]、 [save|domainClasses] 和 [delete|domainClasses] 方法不需要明确地指定flush参数（比如 @save(flush: true)@ ）而清除会话的行为。
+* @grails.gorm.autoFlush@ = 如果设置为 @true@，将导致[merge|domainClasses]、[save|domainClasses]和[delete|domainClasses]方法刷新会话，代替了使用@save(flush: true)@显示刷新的需求。

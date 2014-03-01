@@ -1,0 +1,441 @@
+{hidden}
+
+h4. Improved Dependency Management
+
+The default dependency resolution engine used by Grails has been changed to [Aether|http://eclipse.org/aether], the dependency resolution engine used by Maven. Which engine you use can be configured in @BuildConfig@:
+
+{code}
+grails.project.dependency.resolver = "maven" // or ivy
+{code}
+
+Using Aether dependency resolution in Grails results in the same behavior as when using the Maven build tool, meaning improved snapshot handling, understanding of custom packaging types and so on.
+
+In addition, the [dependency-report|commandLine] command has been updated to print the dependency graph of the console, which helps in diagnosing dependency resolution failures. See the chapter on [Dependency Resolution|guide:dependencyResolution] for more information.
+
+
+h4. Data Binder
+
+Grails 2.3 includes a new data binding mechanism which is more flexible and easier to maintain than the data binder used in previous versions.  The new data binder includes numerous enhancements including:
+
+* Custom date formats on a per field basis using [BindingFormat|api:org.grails.databinding.BindingFormat]
+* User defined data converters using [ValueConverter|api:org.grails.databinding.converters.ValueConverter]
+* User defined formatted data converters using [BindingFormat|api:org.grails.databinding.BindingFormat] and [FormattedValueConverter|api:org.grails.databinding.converters.FormattedValueConverter]
+* Custom binding on a per class basis using [BindUsing|api:org.grails.databinding.BindUsing]
+* Custom binding on a per field basis using [BindUsing|api:org.grails.databinding.BindUsing]
+* By default all blank and empty Strings will be converted to null during data binding (configurable)
+
+See the [Data Binding|guide:dataBinding] section for details.
+
+The legacy data binder may be used by assigning @true@ to the @grails.databinding.useSpringBinder@ property in @grails-app/conf/Config.groovy@.  Note that the legacy binder does not support any of the new features provided by the new data binder.
+
+h4. Binding Request Body To Command Objects
+
+If a request is made to a controller action which accepts a command object and the request includes a body, the body will be parsed and used to do data binding to the command object.  This simplifies use cases where a request includes a JSON or XML body (for example) that can be bound to a command object.  See the [Command Objects|guide:commandObjects] documentation for more details.
+
+h4. Domain Classes As Command Objects
+
+When a domain class is used as a command object and there is an @id@ request parameter, the framework will retrieve the instance of the domain class from the database using the @id@ request parameter.  See the [Command Objects|guide:commandObjects] documentation for more details.
+
+h4. Forked Execution
+
+All major commands can now be forked into a separate JVM, thus isolating the build path from the runtime / test paths. Forked execution can be controlled via the @BuildConfig@:
+
+{code}
+grails.project.fork = [
+   test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true], // configure settings for the test-app JVM
+   run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256], // configure settings for the run-app JVM
+   war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256], // configure settings for the run-war JVM
+   console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]// configure settings for the Console UI JVM
+]
+{code}
+
+See the documentation on [Forked Mode|guide:forkedMode] for more information.
+
+h4. Test Runner Daemon
+
+To speed up testing when using forked execution a new daemon will start-up in the background to run tests when using interactive mode. You can restart the daemon with the @restart-daemon@ command from interactive mode:
+
+{code}
+\$ grails> restart-daemon
+{code}
+
+h4. Server-Side REST Improvements
+
+Grails' [REST support|guide:REST] has been significantly improved with the addition of the following features:
+
+* Rich [REST URL Mapping support|guide:restfulMappings] with supports for resource mappings, singular resource mappings, nested resources, versioning and more
+* New extensible response rendering and binding APIs
+* Support for HAL, Atom and Hypermedia (HATEAOS)
+* Scaffolding for REST controllers
+
+See the [user guide|guide:REST] for more information.
+
+h4. New Scaffolding 2.0 Plugin
+
+Grails' Scaffolding feature has been split into a [separate plugin|http://grails.org/plugin/scaffolding]. Version 2.0 of the plugin includes support for generating REST controllers, Async controllers, and Spock unit tests.
+
+h4. URL Mappings May Specify A Redirect
+
+URL Mappings may now specify that a redirect should be triggered when the mapping matches an incoming request:
+
+{code:java}
+class UrlMappings {
+    static mappings = {
+        "/viewBooks"(redirect: '/books/list')
+        "/viewAuthors"(redirect: [controller: 'author', action: 'list'])
+        "/viewPublishers"(redirect: [controller: 'publisher', action: 'list', permanent: true])
+
+        // ...
+    }
+}
+{code}
+
+See the [user guide|guide:redirectMappings] for more information.
+
+h4. Async support
+
+Grails 2.3 features new [Asynchronous Programming APIs|guide:async] that allow for asynchronous processing of requests and integrate seamlessly with GORM. Example:
+
+{code}
+import static grails.async.Promises.*
+...
+def index() {
+   tasks books: Book.async.list(),
+         totalBooks: Book.async.count(),
+         otherValue: {
+           // do hard work
+         }
+}
+{code}
+
+See [the documentation|guide:async] for further information.
+
+h4. Encoding / Escaping Improvements
+
+Grails 2.3 features dedicated support for [Cross Site Scripting (XSS) prevention|guide:xssPrevention], including :
+
+* Defaulting to HTML escaping all GSP expressions and scriptlets
+* Context sensitive encoding switching for tags
+* Double encoding prevention
+* Optional automatic encoding of all data in a GSP page not considered safe
+
+See the documentation on [Cross Site Scripting (XSS) prevention|guide:xssPrevention] for more information.
+
+h4. Hibernate 3 and 4 support
+
+The GORM for Hibernate 3 support for Grails has been extracted into a separate project, allowing new support for Hibernate 4 as a separate plugin.
+
+h4. Controller Exception Handling
+
+Controllers may define exception handler methods which will automatically be invoked any time an action in that controller throws an exception.
+
+{code:java}
+// grails-app/controllers/demo/DemoController.groovy
+package demo
+
+class DemoController {
+
+    def someAction() {
+        // do some work
+    }
+
+    def handleSQLException(SQLException e) {
+        render 'A SQLException Was Handled'
+    }
+
+    def handleBatchUpdateException(BatchUpdateException e) {
+        redirect controller: 'logging', action: 'batchProblem'
+    }
+
+    def handleNumberFormatException(NumberFormatException nfe) {
+        [problemDescription: 'A Number Was Invalid']
+    }
+}
+{code}
+
+See the [controller exception handling|guide:controllerExceptionHandling] docs for more information.
+
+h4. Namespaced Controllers
+
+Controllers may now be defined in a namespace which allows for multiple controllers to be defined with the same name in different packages.
+
+{code}
+// grails-app/controllers/com/app/reporting/AdminController.groovy
+package com.app.reporting
+
+class AdminController {
+
+    static namespace = 'reports'
+
+    // ...
+}
+{code}
+
+{code}
+// grails-app/controllers/com/app/security/AdminController.groovy
+package com.app.security
+
+class AdminController {
+
+    static namespace = 'users'
+
+    // ...
+}
+{code}
+
+
+{code}
+// grails-app/conf/UrlMappings.groovy
+class UrlMappings {
+
+    static mappings = {
+        '/userAdmin' {
+            controller = 'admin'
+            namespace = 'users'
+        }
+
+        '/reportAdmin' {
+            controller = 'admin'
+            namespace = 'reports'
+        }
+
+        "/\$namespace/\$controller/\$action?"()
+    }
+}
+{code}
+
+{code}
+<g:link controller="admin" namespace="reports">Click For Report Admin</g:link>
+<g:link controller="admin" namespace="users">Click For User Admin</g:link>
+{code}
+
+See the [namespaced controllers|guide:namespacedControllers] docs for more information.
+
+h4. Command Line
+
+The @create-app@ command will now by default generate the command line grailsw wrapper for newly created applications.  The @\-\-skip-wrapper@ switch may be used to prevent the wrapper from being generated.
+
+{code}
+grails create-app appname --skip-wrapper
+{code}
+
+{hidden}
+
+h4. 改进的依赖管理
+
+Grails默认的依赖解析引擎已经更改为Maven使用的依赖解析引擎[Aether|http://eclipse.org/aether]。可以在@BuildConfig@中配置你所使用的引擎：
+
+{code}
+grails.project.dependency.resolver = "maven" // or ivy
+{code}
+
+在Grails中使用Aether依赖解析引擎的结果是和使用Maven构建工具时具有相同的行为，这意味着改进的快照处理，可以更好地理解自定义打包类型等等。
+
+此外, [dependency-report|commandLine] 命令也已经进行了更新，可以在控制台输出依赖图， 有助于诊断依赖解析中的错误。可以查看有关[依赖解析|guide:dependencyResolution] 的章节了解更多信息。
+
+
+h4. 数据绑定器
+
+Grails 2.3引入了新的数据绑定机制，比以前版本中使用的数据绑定器更加灵活也更易于维护。 新的数据绑定器包括了许多增强，包括：
+
+* 使用[BindingFormat|api:org.grails.databinding.BindingFormat]按字段指定自定义的日期转换格式
+* 使用[ValueConverter|api:org.grails.databinding.converters.ValueConverter]的用户自定义数据转换器
+* 使用[BindingFormat|api:org.grails.databinding.BindingFormat]和[FormattedValueConverter|api:org.grails.databinding.converters.FormattedValueConverter]的用户自定义带格式的数据转换器
+* 使用[BindUsing|api:org.grails.databinding.BindUsing]按类型进行自定义绑定
+* 使用[BindUsing|api:org.grails.databinding.BindUsing]按字段进行自定义绑定
+* 在数据绑定中所有的空白字符串和空字符串默认转换为null(可配置)
+
+查看[数据绑定|guide:dataBinding]的章节了解更多的细节。
+
+在@grails-app/conf/Config.groovy@里把@grails.databinding.useSpringBinder@属性设置为@true@可以使用传统的数据绑定器。值得注意的是传统的绑定器不支持新的数据绑定器提供的任何新功能。
+
+h4. 绑定请求内容到命令对象
+
+如果接受命令对象的控制器动作接收的请求包括正文，则正文会被解析并用于对命令对象进行数据绑定。这就简化了请求中包括诸如JSON或XML正文绑定到命令对象的情况。查看[命令对象|guide:commandObjects]的文档了解更多的细节。
+
+h4. 领域类用作命令对象
+
+当一个领域类用作一个命令对象并且有@id@请求参数时，Grails框架将使用@id@请求参数从数据库中获取该领域类的实例。查看[命令对象|guide:commandObjects]的文档了解更多的细节。
+
+h4. 分叉执行
+
+所有主要的命令可以在分叉出的JVM中运行，因此可将构建路径与运行/测试路径隔离。分叉执行可以在@BuildConfig@中控制:
+
+{code}
+grails.project.fork = [
+   test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true], // test-app JVM的配置设定
+   run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256], // run-app JVM的配置设定
+   war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256], // run-war JVM的配置设定
+   console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]// Console UI JVM的配置设定
+]
+{code}
+
+查看[分叉模式|guide:forkedMode]的文档了解更多的信息。
+
+h4. 测试运行器守护程序
+
+当使用交互模式的时候，在分叉运行时为了加速测试的执行，会在后台启动一个新的守护程序运行测试。你可以从交互模式使用@restart-daemon@命令重新启动这个守护程序：
+
+{code}
+\$ grails> restart-daemon
+{code}
+
+h4. 服务器端REST改进
+
+Grails的[REST支持|guide:REST]已经有了重大的改进，新增功能如下：
+
+* 丰富的[REST URL映射支持|guide:restfulMappings]，支持资源映射，单数资源映射，嵌套资源，版本化等等
+* 新的可扩展的响应展示和绑定API
+* 对HAL, Atom和Hypermedia (HATEAOS)的支持
+* 脚手架化的REST控制器
+
+查看[用户指南|guide:REST]了解更多信息。
+
+h4. 新的Scaffolding 2.0插件
+
+Grails的脚手架功能已经分离成一个[单独的插件|http://grails.org/plugin/scaffolding]. 该插件的2.0.0版本包括生成REST控制器，Async控制器和Spock单元测试的功能。
+
+h4. URL映射可以指定重定向
+
+匹配外来请求的URL映射可以指定匹配时进行重定向：
+
+{code:java}
+class UrlMappings {
+    static mappings = {
+        "/viewBooks"(redirect: '/books/list')
+        "/viewAuthors"(redirect: [controller: 'author', action: 'list'])
+        "/viewPublishers"(redirect: [controller: 'publisher', action: 'list', permanent: true])
+
+        // ...
+    }
+}
+{code}
+
+查看[用户指南|guide:redirectMappings]了解更多信息。
+
+h4. Async支持
+
+Grails 2.3中的新[异步编程APIs|guide:async] 允许请求的异步处理和GORM的无缝集成。例如：
+
+{code}
+import static grails.async.Promises.*
+...
+def index() {
+   tasks books: Book.async.list(),
+         totalBooks: Book.async.count(),
+         otherValue: {
+           // do hard work
+         }
+}
+{code}
+
+查看[文档|guide:async]了解进一步的信息。
+
+h4. 编码/转义的改进
+
+Grails 2.3对[防止跨站脚本(XSS)|guide:xssPrevention]提供了专门的支持，包括：
+
+* 默认对所有的GSP表达式和GSP脚本应用HTML转义处理
+* 针对标签的上下文敏感的编码切换
+* 防止双重编码
+* GSP页面中全部的不安全数据可选的自动编码处理
+
+查看有关[防止跨站脚本(XSS)|guide:xssPrevention]的文档了解更多信息。
+
+h4. Hibernate 3 和Hibernate 4的支持
+
+Grails中支持Hibernate 3的GORM已经被抽取到一个分离的项目，允许对Hibernate 4通过单独的插件提供支持。
+
+h4. 控制器异常处理
+
+控制器可以定义异常处理方法，该方法在控制器中的动作方法抛出异常时会被自动调用。
+
+{code:java}
+// grails-app/controllers/demo/DemoController.groovy
+package demo
+
+class DemoController {
+
+    def someAction() {
+        // do some work
+    }
+
+    def handleSQLException(SQLException e) {
+        render 'A SQLException Was Handled'
+    }
+
+    def handleBatchUpdateException(BatchUpdateException e) {
+        redirect controller: 'logging', action: 'batchProblem'
+    }
+
+    def handleNumberFormatException(NumberFormatException nfe) {
+        [problemDescription: 'A Number Was Invalid']
+    }
+}
+{code}
+
+查看[控制器异常处理|guide:controllerExceptionHandling]的文档了解更多的信息。
+
+h4. 名字空间中的控制器
+
+控制器可以定义在名字空间中，这就允许在不同的包中定义同名的多个控制器。
+
+{code}
+// grails-app/controllers/com/app/reporting/AdminController.groovy
+package com.app.reporting
+
+class AdminController {
+
+    static namespace = 'reports'
+
+    // ...
+}
+{code}
+
+{code}
+// grails-app/controllers/com/app/security/AdminController.groovy
+package com.app.security
+
+class AdminController {
+
+    static namespace = 'users'
+
+    // ...
+}
+{code}
+
+
+{code}
+// grails-app/conf/UrlMappings.groovy
+class UrlMappings {
+
+    static mappings = {
+        '/userAdmin' {
+            controller = 'admin'
+            namespace = 'users'
+        }
+
+        '/reportAdmin' {
+            controller = 'admin'
+            namespace = 'reports'
+        }
+
+        "/\$namespace/\$controller/\$action?"()
+    }
+}
+{code}
+
+{code}
+<g:link controller="admin" namespace="reports">Click For Report Admin</g:link>
+<g:link controller="admin" namespace="users">Click For User Admin</g:link>
+{code}
+
+查看[名字空间中的控制器|guide:namespacedControllers]的文档了解更多的信息。
+
+h4. 命令行
+
+现在@create-app@命令默认将对新创建的应用程序生成命令行版本的grailsw封装程序。@--skip-wrapper@可以用于禁止封装程序的生成。
+
+{code}
+grails create-app appname --skip-wrapper
+{code}

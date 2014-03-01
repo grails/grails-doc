@@ -1,0 +1,83 @@
+{hidden}
+h4. Specifying Plugin JAR dependencies
+
+The way in which you specify dependencies for a [plugin|guide:plugins] is identical to how you specify dependencies in an application. When a plugin is installed into an application the application automatically inherits the dependencies of the plugin.
+
+To define a dependency that is resolved for use with the plugin but not _exported_ to the application then you can set the @export@ property of the dependency:
+
+{code}
+compile('org.spockframework:spock-core:0.5-groovy-1.8') {
+    export = false
+}
+{code}
+
+In this case the Spock dependency will be available only to the plugin and not resolved as an application dependency. Alternatively, if you're using the Map syntax:
+
+{code}
+compile group: 'org.spockframework', name: 'spock-core',
+     version: '0.5-groovy-1.8', export: false
+{code}
+
+{note}
+You can use @exported = false@ instead of @export = false@, but we recommend the latter because it's consistent with the Map argument.
+{note}
+
+h4. Overriding Plugin JAR Dependencies in Your Application
+
+If a plugin is using a JAR which conflicts with another plugin, or an application dependency then you can override how a plugin resolves its dependencies inside an application using exclusions. For example:
+
+{code}
+plugins {
+    compile("\:hibernate\:\$grailsVersion") {
+        excludes "javassist"
+    }
+}
+
+dependencies {
+    runtime "javassist:javassist:3.4.GA"
+}
+{code}
+
+In this case the application explicitly declares a dependency on the "hibernate" plugin and specifies an exclusion using the @excludes@ method, effectively excluding the javassist library as a dependency.
+
+{hidden}
+h4. 指定插件的JAR依赖
+
+为[插件|guide:plugins]指定依赖的方法与在应用程序中指定依赖的方法是完全一样的。当插件被安装到应用程序中时，该应用程序会自动继承这个插件的依赖。
+
+要定义插件使用的依赖但不向应用程序 _导出_ 的话，你可以设置该依赖的@export@属性：
+
+{code}
+compile('org.spockframework:spock-core:0.5-groovy-1.8') {
+    export = false
+}
+{code}
+
+在这个情况下，Spock依赖仅对插件可用而且不会作为应用程序的依赖被解析。此外，你可以使用Map语法：
+
+{code}
+compile group: 'org.spockframework', name: 'spock-core',
+     version: '0.5-groovy-1.8', export: false
+{code}
+
+{note}
+你可以使用@exported = false@而不是@export = false@，但是我们推荐后者，因为它与Map实参的用法一直。
+{note}
+
+h4. 在你的应用程序中覆盖插件的JAR依赖
+
+如果一个插件使用的JAR与其他插件或者应用程序的依赖冲突，那么你可以在应用程序中使用依赖排除对插件的依赖解析进行覆盖。例如：
+
+{code}
+plugins {
+    compile("\:hibernate\:\$grailsVersion") {
+        excludes "javassist"
+    }
+}
+
+dependencies {
+    runtime "javassist:javassist:3.4.GA"
+}
+{code}
+
+在这种情况下应用程序显式地声明对"hibernate"插件的依赖并且使用@excludes@方法指定了排除的依赖，实际排除了javassist库作为依赖。

@@ -1,3 +1,4 @@
+{hidden}
 h4. Per Environment Configuration
 
 Grails supports the concept of per environment configuration. The @Config.groovy@, @DataSource.groovy@, and @BootStrap.groovy@ files in the @grails-app/conf@ directory can use per-environment configuration using the syntax provided by [ConfigSlurper|http://groovy.codehaus.org/ConfigSlurper]. As an example consider the following default @DataSource@ definition provided by Grails:
@@ -74,7 +75,7 @@ switch (Environment.current) {
 
 h4. Per Environment Bootstrapping
 
-Its often desirable to run code when your application starts up on a per-environment basis. To do so you can use the @grails-app/conf/BootStrap.groovy@ file's support for per-environment execution:
+It's often desirable to run code when your application starts up on a per-environment basis. To do so you can use the @grails-app/conf/BootStrap.groovy@ file's support for per-environment execution:
 
 {code}
 def init = { ServletContext ctx ->
@@ -101,6 +102,113 @@ Environment.executeForCurrentEnvironment {
     }
     development {
         // do something only in development
+    }
+}
+{code}
+{hidden}
+h4. 按环境配置
+
+Grails支持按环境配置的概念。在@grails-app/conf@目录下的@Config.groovy@，@DataSource.groovy@和@BootStrap.groovy@文件可以使用[ConfigSlurper|http://groovy.codehaus.org/ConfigSlurper]提供的语法按环境配置。作为示例，考虑如下Grails提供的@DataSource@默认定义：
+
+{code:java}
+dataSource {
+    pooled = false
+    driverClassName = "org.h2.Driver"
+    username = "sa"
+    password = ""
+}
+environments {
+    development {
+        dataSource {
+            dbCreate = "create-drop"
+            url = "jdbc:h2:mem:devDb"
+        }
+    }
+    test {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:mem:testDb"
+        }
+    }
+    production {
+        dataSource {
+            dbCreate = "update"
+            url = "jdbc:h2:prodDb"
+        }
+    }
+}
+{code}
+
+注意到共同的配置是怎样在顶层提供的，并且@environments@代码块为@DataSource@中的@dbCreate@和@url@属性指定每个环境的配置。
+
+h4. 不同环境中的打包与运行
+
+Grails的[命令行|guide:commandLine]拥有在特定环境的上下文中执行任何命令的内置功能。 格式如下：
+
+{code:java}
+grails [environment] [command name]
+{code}
+
+此外，Grails有3个已知的预设环境：@dev@，@prod@和@test@分别代表@development@，@production@和@test@。例如要为@test@环境创建WAR，你需要运行：
+
+{code:java}
+grails test war
+{code}
+
+为了指定其他的环境你可以向任何命令传递@grails.env@变量：
+
+{code:java}
+grails -Dgrails.env=UAT run-app
+{code}
+
+h4. 编程时环境检测
+
+在你的代码中，例如在Gant脚本中或启动类中，你可以使用[Environment|api:grails.util.Environment]类探测当前的环境：
+
+{code:java}
+import grails.util.Environment
+
+...
+
+switch (Environment.current) {
+    case Environment.DEVELOPMENT:
+        configureForDevelopment()
+        break
+    case Environment.PRODUCTION:
+        configureForProduction()
+        break
+}
+{code}
+
+h4. 按环境的启动处理
+
+当应用程序启动时你经常希望根据环境运行不同的代码。你可以使用@grails-app/conf/BootStrap.groovy@文件对按环境执行的支持来实现：
+
+{code}
+def init = { ServletContext ctx ->
+    environments {
+        production {
+            ctx.setAttribute("env", "prod")
+        }
+        development {
+            ctx.setAttribute("env", "dev")
+        }
+    }
+    ctx.setAttribute("foo", "bar")
+}
+{code}
+
+h4. 通用的按环境执行
+
+以前的@BootStrap@示例内部使用了@grails.util.Environment@类。你自己也可以使用这个类来执行你自己的环境相关的逻辑：
+
+{code}
+Environment.executeForCurrentEnvironment {
+    production {
+        // 生产环境的处理
+    }
+    development {
+        // 开发环境吃的处理
     }
 }
 {code}

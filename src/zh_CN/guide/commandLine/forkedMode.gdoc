@@ -1,0 +1,257 @@
+{hidden}
+h4. Forked Execution
+
+Since Grails 2.3, the @run-app@, @run-war@, @test-app@ and @console@ commands are now executed in a forked JVM in order to isolate the build classpath from the runtime classpath.
+
+Forked execution is configured via the @grails-app/conf/BuildConfig.groovy@ file. The following is the default configuration:
+
+{code}
+grails.project.fork = [
+   test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true], // configure settings for the test-app JVM
+   run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256], // configure settings for the run-app JVM
+   war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256], // configure settings for the run-war JVM
+   console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]// configure settings for the Console UI JVM
+]
+{code}
+
+The memory requirements of the forked JVM can be tweaked as per the requirements of the application.
+
+h4. Forked Test Execution
+
+When running the [test-app|commandLine] command, a separate JVM is launched to execute this tests. This will have a notable impact on the speed of execution of the tests when running the command directly:
+
+{code}
+grails test-app
+{code}
+
+To mitigate this, Grails 2.3 and above include a feature that launches a background JVM on standby to run tests when using interactive mode. In other words, running @test-app@ from interactive mode will result in faster test execution times:
+
+{code}
+$ grails
+$ grails> test-app
+{code}
+
+It is recommended that forked execution is used for tests, however it does require modern hardware due to the use of multiple JVMs. You can therefore disable forked execution by setting the @grails.project.fork.test@ setting to @false@:
+
+{code}
+forkConfig = [maxMemory: 1024, minMemory: 64, debug: false, maxPerm: 256]
+grails.project.fork = [
+   test: false,
+   ...
+]
+{code}
+
+h4. Using the Test Runnner Deamon to Speed-up Test Execution
+
+The defaut configuration for the testing is to activate a daemon to run tests using the @daemon@ argument:
+
+{code}
+grails.project.fork = [
+   test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true], // configure settings for the test-app JVM
+   ...
+{code}
+
+This only works in interactive mode, so if you start Grails with the 'grails' command and then using @test-app@ the daemon will be used:
+
+{code}
+$ grails
+$ grails> test-app
+{code}
+
+This has the effect of speeding-up test executions times. You can disable the daemon by setting @daemon@ to @false@. If the @daemon@ becomes unresponsive you can restart it with @restart-daemon@:
+
+{code}
+$ grails> restart-daemon
+{code}
+ 
+
+h4. Debugging and Forked Execution (\--debug vs \--debug-fork)
+
+An important consideration when using forked execution is that the @debug@ argument will allow a remote debugger to be attached to the build JVM but not the JVM that your application is running in. To debug your application you should use the @debug-fork@ argument:
+
+{code}
+grails test-app --debug-fork
+{code}
+
+Or for run-app:
+
+{code}
+grails run-app --debug-fork
+{code}
+
+
+h4. Forked Tomcat Execution
+
+Grails 2.2 and above support forked JVM execution of the Tomcat container in development mode. This has several benefits including:
+
+* Reduced memory consumption, since the Grails build system can exit
+* Isolation of the build classpath from the runtime classpath
+* The ability to deploy other Grails/Spring applications in parallels without conflicting dependencies
+
+To enable forked execution you can set the @grails.project.fork.run@ property to @true@:
+
+{code}
+grails.project.fork.run=true
+{code}
+
+Then just us the regular @run-app@ command as per normal. Note that in forked mode the @grails@ process will exit and leave the container running in the background. To stop the server there is a new @stop-app@ command:
+
+{code}
+grails stop-app
+{code}
+
+To customize the JVM arguments passed to the forked JVM you can specify a map instead:
+
+{code}
+grails.project.fork.run= [maxMemory:1024, minMemory:64, debug:false, maxPerm:256, jvmArgs: '..arbitrary JVM arguments..']
+{code}
+
+h4. Auto-deploying additional WAR files in Forked Mode
+
+Since forked execution isolates classpaths more effectively than embedded execution you can deploy additional WAR files (such as other Grails or Spring applications) to the container.
+
+The easiest way to do so is to drop the WAR files into the @src/autodeploy@ directory (if it doesn't exist you can create it).
+
+You can customize the location of the autodeploy directory by specifying an alternative location in @BuildConfig.groovy@:
+
+{code}
+grails.project.autodeploy.dir="/path/to/my/war/files"
+{code}
+
+h4. Customizing the Forked Tomcat instance
+
+If you want to programmatically customize the forked [Tomcat|http://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/catalina/startup/Tomcat.html] instance you can do so by implementing a class named @org.grails.plugins.tomcat.ForkedTomcatCustomizer@ which provides a method with the following signature:
+
+{code}
+void customize(Tomcat tomcat) {
+ // your code here
+}
+{code}
+
+{hidden}
+h4. 分叉执行
+
+从Grails 2.3开始，@run-app@, @run-war@, @test-app@和@console@命令现在在分叉出的JVM中运行，这是为了将构建类路径与运行时类路径进行隔离。
+
+分叉执行通过@grails-app/conf/BuildConfig.groovy@文件进行配置。下面是默认的配置：
+
+{code}
+grails.project.fork = [
+   test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true], // test-app JVM的配置设定
+   run: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256], // run-app JVM的配置设定
+   war: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256], // run-war JVM的配置设定
+   console: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256]// Console UI JVM的配置设定
+]
+{code}
+
+分叉出的JVM的内存需求可以按照应用程序的需要进行调整。
+
+h4. 分叉测试运行
+
+当运行[test-app|commandLine]命令时，会启动一个独立的JVM执行测试。当直接运行这个命令时，这会对测试的执行速度有不小的影响：
+
+{code}
+grails test-app
+{code}
+
+为了缓解这种情况，Grails 2.3及以上版本包含了一个功能，它会启动一个后台待命的JVM用于在使用交互模式时运行测试。换句话说，从交互模式运行@test-app@命令将会带来更快的测试执行时间：
+
+{code}
+$ grails
+$ grails> test-app
+{code}
+
+推荐为测试使用分叉执行，但是，由于使用多个JVM，这就要求使用现代的硬件。你也可以禁用分叉执行，方法是设置@grails.project.fork.test@的值为@false@：
+
+{code}
+forkConfig = [maxMemory: 1024, minMemory: 64, debug: false, maxPerm: 256]
+grails.project.fork = [
+   test: false,
+   ...
+]
+{code}
+
+h4. 使用测试运行守护程序加速测试执行
+
+用于测试的默认配置是激活一个守护程序来运行测试，这使用了@daemon@参数：
+
+{code}
+grails.project.fork = [
+   test: [maxMemory: 768, minMemory: 64, debug: false, maxPerm: 256, daemon:true], // test-app JVM的配置设定
+   ...
+{code}
+
+这只在交互模式下起作用，所以，如果你使用'grail'命令启动Grails，然后使用@test-app@命令，就会使用守护程序：
+
+{code}
+$ grails
+$ grails> test-app
+{code}
+
+这样会有加速测试执行时间的效果。你可以把@daemon@设置为@false@来禁用守护程序。如果@daemon@失去响应，你可以使用@restart-daemon@重启它：
+
+{code}
+$ grails> restart-daemon
+{code}
+
+h4. 调试与分叉执行(\--debug vs \--debug-fork)
+
+当使用分叉执行时，一个重要的考虑是@debug@参数将会使远程调试器接驳到构建JVM而不是你的应用程序运行所在的JVM。要调试你的应用程序，你应该使用@debug-fork@参数：
+
+{code}
+grails test-app --debug-fork
+{code}
+
+或者对run-app使用：
+
+{code}
+grails run-app --debug-fork
+{code}
+
+h4. 分叉Tomcat执行
+
+在开发模式下Grails 2.2及以上版本支持Tomcat容器的分叉JVM执行。这有如下的数个优点：
+
+* 更少的内存消耗，因为可以退出Grails构建系统
+* 运行时类路径与构建类路径的隔离
+* 同时部署其它的Grails/Spring应用程序的能力，无引起冲突的依赖
+
+为了启用分叉执行，你可以设置@grails.project.fork.run@属性的值为@true@：
+
+{code}
+grails.project.fork.run=true
+{code}
+
+然后象平常一样仅仅使用常规的@run-app@命令即可。注意在分叉模式下，@grails@进程将会退出并让容器在后台运行。要停止服务器的话，有一个新的@stop-app@命令：
+
+{code}
+grails stop-app
+{code}
+
+要定制传递到分叉出的JVM的JVM参数，你也可以指定一个映射：
+
+{code}
+grails.project.fork.run= [maxMemory:1024, minMemory:64, debug:false, maxPerm:256, jvmArgs: '..arbitrary JVM arguments..']
+{code}
+
+h4. 在分叉模式下自动部署额外的WAR文件
+
+因为分叉执行比嵌入式执行能更有效地隔离类路径，你可以部署额外的WAR文件（例如其他的Grails和Spring程序）到容器中。
+
+最容易做到的方法是把WAR文件丢到@src/autodeploy@目录下（如果该目录不存在，你可以创建它）。
+
+你可以定制自动部署目录的位置，方法是在@BuildConfig.groovy@中指定一个别的位置：
+
+{code}
+grails.project.autodeploy.dir="/path/to/my/war/files"
+{code}
+
+h4. 定制分叉出的Tomcat实例
+
+如果你想编程定制分叉出的[Tomcat|http://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/catalina/startup/Tomcat.html]实例，你可以通过实现一个名为@org.grails.plugins.tomcat.ForkedTomcatCustomizer@的类实现，这个类提供了如下签名的一个方法：
+
+{code}
+void customize(Tomcat tomcat) {
+ // 这里是你的代码
+}
+{code}

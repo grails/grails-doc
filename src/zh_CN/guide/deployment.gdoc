@@ -1,3 +1,4 @@
+{hidden}
 Grails applications can be deployed in a number of ways, each of which has its pros and cons.
 
 h3. "grails run-app"
@@ -90,3 +91,95 @@ grails.war.resources = { stagingDir, args ->
 h2. Application servers
 
 Ideally you should be able to simply drop a WAR file created by Grails into any application server and it should work straight away. However, things are rarely ever this simple. The [Grails website|http://grails.org/Deployment] contains an up-to-date list of application servers that Grails has been tested with, along with any additional steps required to get a Grails WAR file working.
+
+{hidden}
+Grails应用程序的部署有多种方法，每种方法各有优缺点。
+
+h3. "grails run-app"
+
+目前，你应该对这种方法非常熟悉了，因为它是在开发阶段运行应用程序的最常用的方法。这种方法启动了嵌入式的Tomcat服务器并从开发的源代码中加载Web应用程序，因此允许Tomcat服务器处理应用程序文件的修改。
+
+因为其糟糕的性能，在生产环境部署时决不推荐这种方法。对修改进行检查并加载它们会对服务器造成很大的负担。说完这些以后，还要知道@grails prod run-app@移除了这种处理每个请求时的开销并且可以让你调整常规的文件修改检查发生的频率。
+
+设置系统属性"disable.auto.recompile"的值为@true@完全禁用这种常规的检查，而"recompile.frequency"属性控制着检查的频率。后一个属性应该设置为每次检查之间间隔的秒数。默认值当前是3秒。
+
+h3. "grails run-war"
+
+这种方法和前一种非常类似，但是Tomcat运行的是WAR文件而不是开发中的源代码。热部署已经被禁用，因此你会得到较好的性能，而且没有把WAR文件部署到别处的麻烦。
+
+h3. WAR文件
+
+归根结底，目前的Java基础设施几乎强制Web应用程序使用WAR文件进行部署，因此这是在生产环境中部署Grails应用程序的最常见方法。创建一个WAR文件简单到只需执行[war|commandLine]命令：
+
+{code}
+grails war
+{code}
+
+也有定制所创建WAR文件的许多方法。例如，你可以为该命令指定一个路径（绝对路径或相对路径）让它在那里生成WAR文件，还可以给WAR文件指定一个名字：
+
+{code}
+grails war /opt/java/tomcat-5.5.24/foobar.war
+{code}
+
+另外一种方法是，你在@grails-app/conf/BuildConfig.groovy@文件中添加一行代码修改默认的位置和文件名：
+
+{code}
+grails.project.war.file = "foobar-prod.war"
+{code}
+
+你提供的任何命令行参数会覆盖这些设置。
+
+也可以控制哪些库包含进WAR文件中，例如，可能是为了避免与共享目录中的库发生冲突。默认的行为是在WAR文件中包含Grails要求的所有的库加上插件"lib"目录中的任何库文件，再加上应用程序的"lib"目录中的任何库文件。默认行为的一种替代做法是显式地指定要包含在WAR文件中库的完整列表，方法是设置BuildConfig.groovy文件中的@grails.war.dependencies@为Ant包含模式的列表，或者为包含AntBuilder语法的闭包，该闭包在Ant "copy"步骤中被调用，因此只能包含类似"fileset"这样的元素，而模式列表中每一项都将被包含进去。除@grails.war.dependencies@以外，任何设置为后一个属性的闭包或模式都还将被包含进去。
+
+要注意这些属性：如果任何Grails所依赖的库不存在的话，应用程序几乎可以肯定会运行失败。这里是一个包含了标准Grails依赖的一个小的子集的例子：
+{code}
+def deps = [
+    "hibernate3.jar",
+    "groovy-all-*.jar",
+    "standard-\${servletVersion}.jar",
+    "jstl-\${servletVersion}.jar",
+    "oscache-*.jar",
+    "commons-logging-*.jar",
+    "sitemesh-*.jar",
+    "spring-*.jar",
+    "log4j-*.jar",
+    "ognl-*.jar",
+    "commons-*.jar",
+    "xstream-1.2.1.jar",
+    "xpp3_min-1.1.3.4.O.jar" ]
+
+grails.war.dependencies = {
+    fileset(dir: "libs") {
+        for (pattern in deps) {
+            include(name: pattern)
+        }
+    }
+}
+{code}
+
+这个例子只是为了演示这些属性的语法。如果你试着在你自己的应用程序中使用它，应用程序将可能无法工作。你可以发现Grails所要求的依赖列表，它位于解压缩后的发行版里的根目录中。你也可以在"War.groovy"脚本中找到包含进所生成WAR文件中的默认的依赖列表 - 查看@DEFAULT_DEPS@和@DEFAULT_J5_DEPS@两个变量。
+
+剩下的两个你可以使用的配置选项是@grails.war.copyToWebApp@和@grails.war.resources@，其中的第一个可以让你定制"web-app"目录中哪些文件包含进WAR文件中。第二个让你在WAR文件最终被创建之前完成任何额外的处理。
+
+{code}
+// 下面的闭包被传递了启动War处理过程的命令行参数
+grails.war.copyToWebApp = { args ->
+    fileset(dir:"web-app") {
+        include(name: "js/**")
+        include(name: "css/**")
+        include(name: "WEB-INF/**")
+    }
+}
+
+// 下面的闭包被传递了中转目录的位置
+// 该目录被压缩成最后的WAR文件，还被传递了命令行参数。
+// 这里我们用自己的web.xml覆盖了标准的web.xml。
+grails.war.resources = { stagingDir, args ->
+    copy(file: "grails-app/conf/custom-web.xml",
+         tofile: "\${stagingDir}/WEB-INF/web.xml")
+}
+{code}
+
+h2. 应用服务器
+
+理想情况下你应该仅仅只需把Grails生成的WAR文件放到任何应用服务器中，然后它应该可以直接工作。然而，事情很少这么简单。 [Grails网站|http://grails.org/Deployment]包含一个最新的测试过的应用服务器列表，以及使Grails WAR文件工作所必需的任何额外的步骤。

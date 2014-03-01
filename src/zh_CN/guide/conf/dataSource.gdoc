@@ -1,3 +1,4 @@
+{hidden}
 Since Grails is built on Java technology setting up a data source requires some knowledge of JDBC (the technology that doesn't stand for Java Database Connectivity).
 
 If you use a database other than H2 you need a JDBC driver. For example for MySQL you would need "Connector/J":http://www.mysql.com/downloads/connector/j/
@@ -98,3 +99,44 @@ Hibernate can automatically create the database tables required for your domain 
 * any other value - does nothing
 
 You can also remove the @dbCreate@ setting completely, which is recommended once your schema is relatively stable and definitely when your application and database are deployed in production. Database changes are then managed through proper migrations, either with SQL scripts or a migration tool like [Liquibase|http://www.liquibase.org/] (the "Database Migration":http://grails.org/plugin/database-migration plugin uses Liquibase and is tightly integrated with Grails and GORM).
+{hidden}
+因为Grails基于Java技术构建，所以设置数据源需要一些JDBC（该技术不代表Java Database Connectivity）的知识。
+
+如果你不使用H2数据库的话，你需要一个JDBC驱动程序。例如使用MySQL你将需要"Connector/J":http://www.mysql.com/downloads/connector/j/
+
+驱动程序通常是JAR文件的形式。如果其存在于Maven仓库的话，最好使用Ivy进行驱动程序jar文件的解析，例如你可以为MySQL驱动程序添加如下的依赖：
+
+{code}
+grails.project.dependency.resolution = {
+    inherits("global")
+    log "warn"
+    repositories {
+        grailsPlugins()
+        grailsHome()
+        grailsCentral()
+        mavenCentral()
+    }
+    dependencies {
+        runtime 'mysql:mysql-connector-java:5.1.16'
+    }
+}
+{code}
+
+注意这里包含了内置的@mavenCentral()@仓库，因为这是该驱动程序的一个可靠位置。
+
+如果你不能使用Ivy，那么只要把驱动程序的JAR文件放到项目的@lib@目录下即可。
+
+一旦你有了驱动程序的JAR文件，你需要熟悉位于@grails-app/conf/DataSource.groovy@的数据源描述文件。该文件包含数据源的定义，含有如下的设置：
+
+* @driverClassName@ - JDBC驱动程序的类名
+* @username@ - 用于建立JDBC连接的用户名
+* @password@ - 用于建立JDBC连接的密码
+* @url@ - 数据库的JDBC URL
+* @dbCreate@ - 是否从领域模型自动生成数据库 - 取值为'create-drop'、 'create'、 'update' 或 'validate'中的一个
+* @pooled@ - 是否使用连接池（默认为true）
+* @logSql@ - 启用SQL日志功能，记录到标准输出
+* @formatSql@ - 格式化记录的SQL
+* @dialect@ - 一个代表Hibernate方言的字符串或类，用于与数据库的通信。查看[org.hibernate.dialect|http://docs.jboss.org/hibernate/stable/core/javadocs/org/hibernate/dialect/package-summary.html]包了解可以使用的方言。
+* @readOnly@ - 如果为@true@使数据源变成只读，这会让连接池在每个@Connection@上调用@setReadOnly(true)@
+* @persistenceInterceptor@ - 默认数据源会自动设置持久拦截器，除非该属性设置为@true@，其他的数据源不会知道设置持久拦截器
+* @properties@ - 设置DataSource组件的附加属性。请查看[Commons DBCP BasicDataSource|http://commons.apache.org/dbcp/api-1.2.2/org/apache/commons/dbcp/BasicDataSource.html]的文档

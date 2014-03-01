@@ -1,3 +1,4 @@
+{hidden}
 Some deployments require that configuration be sourced from more than one place and be changeable without requiring a rebuild of the application. In order to support deployment scenarios such as these the configuration can be externalized. To do so, point Grails at the locations of the configuration files that should be used by adding a @grails.config.locations@ setting in @Config.groovy@, for example:
 
 {code:java}
@@ -30,4 +31,38 @@ This property supports the same values as the @grails.config.locations@ property
 
 {note}
 Grails also supports the concept of property place holders and property override configurers as defined in "Spring":http://www.springframework.org. For more information on these see the section on [Grails and Spring|guide:spring]
+{note}
+{hidden}
+有些部署要求配置的来源多于一个位置并且在没有重新构建应用程序的情况下可以进行修改。为了支持类似的部署场景，配置可以在应用程序外部进行。要这样做的话，将Grails指向应该使用的配置文件的位置，方法是在@Config.groovy@中添加@grails.config.locations@设置，例如：
+
+{code:java}
+grails.config.locations = [
+    "classpath:${appName}-config.properties",
+    "classpath:${appName}-config.groovy",
+    "file:${userHome}/.grails/${appName}-config.properties",
+    "file:${userHome}/.grails/${appName}-config.groovy" ]
+{code}
+
+在上面的实例中我们从类路径和位于@USER_HOME@下的文件中等不同位置加载了配置文件（Java属性文件和"ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper 配置两者都有）。
+
+也可以通过指定一个配置脚本的类型来加载配置。
+
+{code:java}
+grails.config.locations = [com.my.app.MyConfig]
+{code}
+
+这对于来自插件或者你的应用程序中其他部分的配置的情形是很有用的。一个典型的用法是在多个应用程序中重用插件提供的配置。
+
+最终所有的配置文件被合并到[GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication]对象的@config@属性，因此可以从其获取。
+
+与以前定义的名字相同的值将会覆盖现有的值，而且配置来源以它们定义的顺序被加载。
+
+h4. 配置默认值
+
+包含在@grails.config.locations@属性描述的各位置中的配置值将会*覆盖*在你应用程序的@Config.groovy@中定义的值，这可能不是你想要的。你可能想有一组被加载的默认值，它们可以在你的应用程序@Config.groovy@文件中或在明确指定的配置位置中进行覆盖。想要这样的话你可以使用@grails.config.defaults.locations@属性。
+
+该属性支持和@grails.config.locations@属性同样的值（即为配置脚本、属性文件的路径或类名），但是由@grails.config.defaults.locations@描述的配置将在所有其他值_之前_被加载，因此能够被覆盖。
+
+{note}
+Grails也支持属性占位符和"Spring":http://www.springframework.org 中定义的属性覆盖配置器的概念。有关的更多信息可以查看[Grails与Spring|guide:spring]的章节
 {note}

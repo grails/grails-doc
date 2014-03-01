@@ -1,3 +1,4 @@
+{hidden}
 The [H2 database console|http://h2database.com/html/quickstart.html#h2_console] is a convenient feature of H2 that provides a web-based interface to any database that you have a JDBC driver for, and it's very useful to view the database you're developing against. It's especially useful when running against an in-memory database.
 
 You can access the console by navigating to *http://localhost:8080/appname/dbconsole* in a browser. The URI can be configured using the @grails.dbconsole.urlRoot@ attribute in Config.groovy and defaults to @'/dbconsole'@.
@@ -27,3 +28,33 @@ If you enable the console in production be sure to guard access to it using a tr
 h4. Configuration
 
 By default the console is configured for an H2 database which will work with the default settings if you haven't configured an external database - you just need to change the JDBC URL to @jdbc:h2:mem:devDB@. If you've configured an external database (e.g. MySQL, Oracle, etc.) then you can use the Saved Settings dropdown to choose a settings template and fill in the url and username/password information from your DataSource.groovy.
+{hidden}
+[H2数据库控制台|http://h2database.com/html/quickstart.html#h2_console]是H2的一个方便的功能，它为你拥有JDBC驱动程序的任何数据库提供了一个基于Web的接口，并且对于查看开发中的数据库是非常有用的。当运行的是内存数据库时，这尤其有用。
+
+你可以通过浏览*http://localhost:8080/appname/dbconsole*访问数据库控制台。可以使用Config.groovy中的@grails.dbconsole.urlRoot@属性配置其URI，该属性默认设置为@'/dbconsole'@。
+
+在开发模式下默认启用了数据库控制台，并且可以在其他环境通过在Config.groovy中使用@grails.dbconsole.enabled@属性进行启用或禁用。例如你可以在生产环境中启用控制台：
+
+{code}
+environments {
+    production {
+        grails.serverURL = "http://www.changeme.com"
+        grails.dbconsole.enabled = true
+        grails.dbconsole.urlRoot = '/admin/dbconsole'
+    }
+    development {
+        grails.serverURL = "http://localhost:8080/\${appName}"
+    }
+    test {
+        grails.serverURL = "http://localhost:8080/\${appName}"
+    }
+}
+{code}
+
+{warning}
+如果你在生产环境中启用了控制台，必须使用信得过的安全框架保护对它的访问。
+{warning}
+
+h4. 配置
+
+如果你没有配置一个外部数据库的话，控制台默认配置为访问H2数据库，并使用其默认设置 - 你只需修改JDBC URL的值为@jdbc:h2:mem:devDB@。如果你已经配置了一个外部数据库（例如MySQL，Oracle等），那么你可以使用Saved Settings下拉列表框选择一个设置模板并填入DataSource.groovy中的url和username/password等信息。

@@ -3,11 +3,17 @@ h4. The Basics
 Testing URL mappings can be done with the @TestFor@ annotation testing a particular URL mappings class. For example to test the default URL mappings you can do the following:
 
 {code:java}
-@TestFor(UrlMappings)
-class UrlMappingsTests {
+import org.example.AuthorController
+import org.example.SimpleController
 
+@TestFor(UrlMappings)
+@Mock([AuthorController, SimpleController])
+class UrlMappingsTests {
+    ...
 }
 {code}
+
+As you can see, any controller that is the target of a URL mapping that you're testing _must_ be added to the @\@Mock@ annotation.
 
 {note}
 Note that since the default @UrlMappings@ class is in the default package your test must also be in the default package

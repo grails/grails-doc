@@ -1,0 +1,53 @@
+{hidden}
+Most Grails applications have runtime dependencies on several jar files that are provided by the Grails framework.  These include libraries like Spring, Sitemesh, Hibernate etc.  When a war file is created, all of these dependencies will be included in it.  But, an application may choose to exclude these jar files from the war.  This is useful when the jar files will be provided by the container, as would normally be the case if multiple Grails applications are deployed to the same container.
+
+The dependency resolution DSL provides a mechanism to express that all of the default dependencies will be provided by the container. This is done by invoking the @defaultDependenciesProvided@ method and passing @true@ as an argument:
+
+{code}
+grails.project.dependency.resolution = {
+
+    defaultDependenciesProvided true // all of the default dependencies will
+                                     // be "provided" by the container
+
+    inherits "global" // inherit Grails' default dependencies
+
+    repositories {
+        grailsHome()
+        ...
+    }
+    dependencies {
+        ...
+    }
+}
+{code}
+
+{note}
+@defaultDependenciesProvided@ must come before @inherits@, otherwise the Grails dependencies will be included in the war.
+{note}
+
+{hidden}
+大多数Grails应用程序有数个jar文件的运行时依赖由Grails框架提供。这些库包括Spring、Sitemesh、Hibernate等。当创建WAR文件的时候，这些依赖全部都要包含在其中。但是，应用程序可以选择从WAR文件中排除这些jar文件。这在jar文件由容器提供时是有用的，当多个Grails应用程序被部署到相同的容器时通常是这种情况。
+
+依赖解析DSL提供了一个机制用于表达所有的默认依赖将由容器提供。这可以通过调用@defaultDependenciesProvided@方法并且传递@true@作为参数完成：
+
+{code}
+grails.project.dependency.resolution = {
+
+    defaultDependenciesProvided true // 所有默认依赖将
+                                     // 由容器“提供”
+
+    inherits "global" // 继承Grails的默认依赖
+
+    repositories {
+        grailsHome()
+        ...
+    }
+    dependencies {
+        ...
+    }
+}
+{code}
+
+{note}
+@defaultDependenciesProvided@必须位于@inherits@之前, 否则Grails的依赖将会包含进WAR文件里。
+{note}
