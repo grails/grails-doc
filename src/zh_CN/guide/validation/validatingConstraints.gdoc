@@ -1,3 +1,4 @@
+{hidden}
 h4. Validation Basics
 
 Call the [validate|domainClasses] method to validate a domain class instance:
@@ -36,6 +37,57 @@ if (user.hasErrors()) {
 {code}
 
 The second phase of validation happens when you call [validate|domainClasses] or [save|domainClasses]. This is when Grails will validate the bound values againts the [constraints|domainClasses] you defined. For example, by default the [save|domainClasses] method calls @validate@ before executing, allowing you to write code like:
+
+{code:java}
+if (user.save()) {
+    return user
+}
+else {
+    user.errors.allErrors.each {
+        println it
+    }
+}
+{code}
+
+{hidden}
+h4. 验证基础
+
+调用[validate|domainClasses]方法来对一个领域类实例进行验证：
+
+{code:java}
+def user = new User(params)
+
+if (user.validate()) {
+    // 对user进行处理
+}
+else {
+    user.errors.allErrors.each {
+        println it
+    }
+}
+{code}
+
+领域类上的@errors@属性是Spring [Errors|api:org.springframework.validation.Errors]接口的一个实例。@Errors@接口提供了遍历验证错误并获取原始值的方法。
+
+h4. 验证的阶段
+
+在Grails内部有两个阶段的验证，第一个阶段是[数据绑定|guide:dataBinding]，在你绑定请求参数到一个实例上时它会发生，例如：
+
+{code:java}
+def user = new User(params)
+{code}
+
+在这个时候，由于类型转换（例如把字符串转换成Date），可能已经在@errors@属性中包含错误了。你可以使用@Errors@ API对此进行检查并得到最初的输入值：
+
+{code:java}
+if (user.hasErrors()) {
+    if (user.errors.hasFieldErrors("login")) {
+        println user.errors.getFieldError("login").rejectedValue
+    }
+}
+{code}
+
+第二个阶段的验证当你调用[validate|domainClasses]或者[save|domainClasses]时发生。这就是Grails使用你定义的[constraints|domainClasses]验证已经绑定成功的值的时候。例如，默认情况下，[save|domainClasses]方法在执行之前调用@validate@，这允许你写类似下面的代码：
 
 {code:java}
 if (user.save()) {

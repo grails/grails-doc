@@ -1,3 +1,4 @@
+{hidden}
 [Domain classes|guide:domainClasses] and [command objects|guide:commandObjects] support validation by default.  Other classes may be made validateable by defining the static @constraints@ property in the class (as described above) and then telling the framework about them.  It is important that the application register the validateable classes with the framework.  Simply defining the @constraints@ property is not sufficient.
 
 h4. The Validateable Annotation
@@ -26,6 +27,40 @@ class User {
 h4. Registering Validateable Classes
 
 If a class is not marked with @Validateable, it may still be made validateable by the framework. The steps required to do this are to define the static @constraints@ property in the class (as described above) and then telling the framework about the class by assigning a value to the @grails.validateable.classes@ property in @Config.groovy@:
+
+{code:java}
+grails.validateable.classes = [com.mycompany.myapp.User, com.mycompany.dto.Account]
+{code}
+
+{hidden}
+[领域类|guide:domainClasses]和[命令对象|guide:commandObjects]默认支持验证。其他的类可以通过在类中定义静态的@constraints@属性并且告诉框架它们的存在的方法支持验证。重要的是应用程序要对可以验证的类向框架进行注册。仅仅定义@constraints@是不够的。
+
+h4. Validateable注解
+
+定义了静态的@constraints@属性并使用\@Validateable注解的类支持框架进行验证。思考下面的示例：
+
+{code:java}
+// src/groovy/com/mycompany/myapp/User.groovy
+package com.mycompany.myapp
+
+import grails.validation.Validateable
+
+@Validateable
+class User {
+    ...
+
+    static constraints = {
+        login size: 5..15, blank: false, unique: true
+        password size: 5..15, blank: false
+        email email: true, blank: false
+        age min: 18
+    }
+}
+{code}
+
+h4. 注册可验证的类
+
+如果一个类没有使用\@Validatable进行标注，它仍然可以由框架进行验证。所需的步骤是在类中定义静态的@constraints@属性（如上所述）并通过给@Config.groovy@文件中@grails.validateable.classes@属性赋值的方式告诉框架：
 
 {code:java}
 grails.validateable.classes = [com.mycompany.myapp.User, com.mycompany.dto.Account]

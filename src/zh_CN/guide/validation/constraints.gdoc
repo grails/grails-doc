@@ -1,3 +1,4 @@
+{hidden}
 Within a domain class [constraints|domainClasses] are defined with the constraints property that is assigned a code block:
 
 {code:java}
@@ -78,3 +79,85 @@ class Response {
 {code}
 
 In this example, the @obj@ argument to the custom validator is the domain _instance_ that is being validated, so we can access its @survey@ property and return a boolean to indicate whether the new value for the @answer@ property, @val@, is valid.
+
+{hidden}
+在领域类中[constraints|domainClasses]使用constraints属性进行定义，它赋值为一个代码块：
+
+{code:java}
+class User {
+    String login
+    String password
+    String email
+    Integer age
+
+    static constraints = {
+      ...
+    }
+}
+{code}
+
+然后你使用匹配属性名字的方法调用为其指定所应用的约束，利用命名参数指定约束设置：
+
+{code:java}
+class User {
+    ...
+
+    static constraints = {
+        login size: 5..15, blank: false, unique: true
+        password size: 5..15, blank: false
+        email email: true, blank: false
+        age min: 18
+    }
+}
+{code}
+
+在这个例子中我们声明了@login@属性必须为5到15个字符的长度，不能为空并且必须是唯一的。我们也对@password@, @email@和@age@等属性应用了其他的约束。
+
+{note}
+默认情况下，所有领域类的属性是不能为空值的（也即，它们有一个隐式的@nullable: false@约束）。
+{note}
+
+关于可用约束的完整参考资料可以在快速参考部分的约束标题下找到。
+
+需要注意的是约束（的设置）只会被计算一次，对于依赖于像@java.util.Date@实例的约束而言，这可能会有影响。
+
+{code:java}
+class User {
+    ...
+
+    static constraints = {
+        // Date对象在约束被计算时创建，而不是
+        // 每次User类的实例每次验证时创建
+        birthDate max: new Date()
+    }
+}
+{code}
+
+h3. 警告 -- 从约束中引用领域类的属性
+
+试图从静态的constraints代码块引用实例变量是非常容易的，但是这在Groovy（或Java）中是不合法的。如果你这么做的话，你会得到一个@MissingPropertyException@这样的麻烦问题。例如，你可能尝试
+{code}
+class Response {
+    Survey survey
+    Answer answer
+
+    static constraints = {
+        survey blank: false
+        answer blank: false, inList: survey.answers
+    }
+}
+{code}
+
+看看@inList@约束怎么样引用了实例属性@survey@？这根本无法工作。取而代之的是，使用一个自定义的[validator|constraints]：
+
+{code}
+class Response {
+    ...
+    static constraints = {
+        survey blank: false
+        answer blank: false, validator: { val, obj -> val in obj.survey.answers }
+    }
+}
+{code}
+
+在这个例子中，传递到自定义验证器的@obj@参数是正在被验证的领域类 _实例_，所以我们可以访问它的@survey@属性并返回一个布尔值来指示@answer@属性的新值，@val@是否有效。

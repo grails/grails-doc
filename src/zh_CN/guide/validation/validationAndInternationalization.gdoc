@@ -1,3 +1,4 @@
+{hidden}
 Another important thing to note about errors in Grails is that error messages are not hard coded anywhere. The [FieldError|api:org.springframework.validation.FieldError] class in Spring resolves messages from message bundles using Grails' [i18n|guide:i18n] support.
 
 h4. Constraints and Message Codes
@@ -50,4 +51,58 @@ The [renderErrors|tags] tag will automatically look up messages for you using th
 {code}
 
 In this example within the body of the [eachError|tags] tag we use the [message|tags] tag in combination with its @error@ argument to read the message for the given error.
+
+{hidden}
+关于验证错误另一个需要注意的重要事项是错误消息在任何地方都不是硬编码的。Spring中的[FieldError|api:org.springframework.validation.FieldError]类使用了Grails的[国际化|guide:i18n]支持从消息绑定文件中解析消息。
+
+h4. 约束和消息代码
+
+消息代码自身是通过约定指定的。例如，考虑前面我们已经看到过的约束：
+
+{code:java}
+package com.mycompany.myapp
+
+class User {
+    ...
+
+    static constraints = {
+        login size: 5..15, blank: false, unique: true
+        password size: 5..15, blank: false
+        email email: true, blank: false
+        age min: 18
+    }
+}
+{code}
+
+如果违反了某个约束Grails将会按照约定查找如下形式的消息代码：
+
+{code:java}
+[Class Name].[Property Name].[Constraint Code]
+{code}
+
+在@blank@约束的情况下，这会是@user.login.blank@，所以在文件@grails-app/i18n/messages.properties@中你需要类似下面的一个消息：
+
+{code:java}
+user.login.blank=Your login name must be specified!
+{code}
+
+类名查找时会同时使用和不使用包的名字，并且带包名字的消息代码的优先级更高。所以com.mycompany.myapp.User.login.blank将会在user.login.blank之前被使用到。这考虑到了你的领域类的消息代码与插件中的发生冲突的情况。
+
+关于什么消息代码用于哪个约束的参考文档可以查看每个约束的参考指南。
+
+h4. 显示消息
+
+[renderErrors|tags]标记会使用[message|tags]标记自动地为你查找消息。如果你需要显示时更多的控制，你可以自己进行处理：
+
+{code:xml}
+<g:hasErrors bean="${user}">
+  <ul>
+   <g:eachError var="err" bean="${user}">
+       <li><g:message error="${err}" /></li>
+   </g:eachError>
+  </ul>
+</g:hasErrors>
+{code}
+
+在这个例子中，[eachError|tags]标记的内容中我们使用了[message|tags]标记和它的@error@参数来读取给定错误的消息。
 

@@ -1,3 +1,4 @@
+{hidden}
 h4. Displaying Errors
 
 Typically if you get a validation error you redirect back to the view for rendering. Once there you need some way of displaying errors. Grails supports a rich set of tags for dealing with errors. To render the errors as a list you can use [renderErrors|tags]:
@@ -39,3 +40,46 @@ Each error is actually an instance of the [FieldError|api:org.springframework.va
 {code}
 
 This code will check for an existing @FieldError@ in the @User@ bean and if there is obtain the originally input value for the @login@ field.
+
+{hidden}
+h4. 显示错误
+
+通常情况下，如果你遇到一个验证错误，你会重定向到视图进行显示。在视图中你需要某种方法显示错误。Grails支持丰富的标记用于处理错误。要以列表的方式显示错误你可以使用[renderErrors|tags]：
+
+{code:xml}
+<g:renderErrors bean="${user}" />
+{code}
+
+如果你需要更多的控制你可以使用[hasErrors|tags]和[eachError|tags]：
+
+{code:xml}
+<g:hasErrors bean="${user}">
+  <ul>
+   <g:eachError var="err" bean="${user}">
+       <li>${err}</li>
+   </g:eachError>
+  </ul>
+</g:hasErrors>
+{code}
+
+h4. 高亮显示错误
+
+当一个字段输入不正确时，使用红色的框线或其他的方式对其高亮显示通常是很有用的。这也可以通过[hasErrors|tags]标记以方法调用的方式完成。例如：
+
+{code:xml}
+<div class='value ${hasErrors(bean:user,field:'login','errors')}'>
+   <input type="text" name="login" value="${fieldValue(bean:user,field:'login')}"/>
+</div>
+{code}
+
+这段代码检查@user@的@login@字段是否有任何错误，如果有的话它会添加@errors@ CSS类到@div@元素，让你可以使用CSS规则对@div@元素高亮显示。
+
+h4. 获取输入值
+
+每个验证错误事实上是Spring中[FieldError|api:org.springframework.validation.FieldError]类的实例，其中保留了最初的输入值。这非常有用，因为你可以使用这个错误对象恢复用户的输入值，方法是使用[fieldValue|tags]标记：
+
+{code:xml}
+<input type="text" name="login" value="${fieldValue(bean:user,field:'login')}"/>
+{code}
+
+这段代码将会在@user@对象中检查是否存在@FieldError@，并且如果有的话，获取@login@字段最初的输入值。

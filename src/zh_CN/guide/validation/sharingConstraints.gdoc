@@ -1,3 +1,4 @@
+{hidden}
 A common pattern in Grails is to use [command objects|guide:commandObjects] for validating user-submitted data and then copy the properties of the command object to the relevant domain classes. This often means that your command objects and domain classes share properties and their constraints. You could manually copy and paste the constraints between the two, but that's a very error-prone approach. Instead, make use of Grails' global constraints and import mechanism.
 
 h3. Global Constraints
@@ -88,3 +89,95 @@ static constraints = {
 {code}
 
 Of course, @exclude@ does the reverse, specifying which constraints should _not_ be imported.
+
+{hidden}
+Grails一个常用的模式是使用[命令对象|guide:commandObjects]验证用户提交的数据然后将命令对象的属性复制到相关的领域类。这常常意味着你的命令对象和领域类会共享属性及约束。你可以在它们之间手工复制粘贴这些约束，但是这是非常容易出错的方法。与之相反，可以利用Grails的全局约束和约束导入机制。
+
+h3. 全局约束
+
+除了在领域类、命令对象和[其他可验证的对象|guide:validationNonDomainAndCommandObjectClasses]中定义约束之外，你也可以在@grails-app/conf/Config.groovy@中定义约束：
+
+{code}
+grails.gorm.default.constraints = {
+    '*'(nullable: true, size: 1..20)
+    myShared(nullable: false, blank: false)
+}
+{code}
+
+这些约束没有与任何特定的类相连接，但是可以从任何可以验证的类中对其引用：
+
+{code:java}
+class User {
+    ...
+
+    static constraints = {
+        login shared: "myShared"
+    }
+}
+{code}
+
+注意@shared@参数的使用，它的值是定义在@grails.gorm.default.constraints@里的一个约束的名字。不管配置设置中使用的名字是什么，你可以从任何可以验证的类中，例如命令对象中引用这些共享的约束。
+
+'*'代表的约束是一个特殊情况：它意味着相关联的约束（上例中的'nullable'和'size'）将会被应用到所有可验证的类中的全部属性。这些默认值可以由可验证类中声明的约束进行改写。
+
+h3. 导入约束
+
+Grails 2引入了一个共享约束的替代方法，可以让你从一个类中导入一组约束到另一个类中。
+
+比方说你有一个类似下面的领域类：
+
+{code}
+class User {
+    String firstName
+    String lastName
+    String passwordHash
+
+    static constraints = {
+        firstName blank: false, nullable: false
+        lastName blank: false, nullable: false
+        passwordHash blank: false, nullable: false
+    }
+}
+{code}
+
+然后你想创建一个命令对象，@UserCommand@，它要共享该领域类中的某些属性和对应的约束。你可以使用@importFrom()@方法完成该任务：
+
+{code}
+class UserCommand {
+    String firstName
+    String lastName
+    String password
+    String confirmPassword
+
+    static constraints = {
+        importFrom User
+
+        password blank: false, nullable: false
+        confirmPassword blank: false, nullable: false
+    }
+}
+{code}
+
+这将会从@User@领域类导入全部的约束并应用到@UserCommand@中。导入时将会忽略任何源类（@User@）中在导入类（@UserCommand@）没有对应属性的任何约束。在上述的例子中，只有'firstName'和'lastName'的约束会被导入到@UserCommand@中，因为只有这些属性是两个类共享的。
+
+如果你想对导入的约束有更多的控制，可以使用@include@和@exclude@参数。它们都接受匹配源约束中属性名的字符串或正则表达式的列表。例如你只想导入'lastName'约束，那么你可以使用：
+
+{code}
+...
+static constraints = {
+    importFrom User, include: ["lastName"]
+    ...
+}
+{code}
+
+或者如果你想导入所有以'Name'结尾的全部属性：
+
+{code}
+...
+static constraints = {
+    importFrom User, include: [/.*Name/]
+    ...
+}
+{code}
+
+当然了，@exclude@的作用正好相反，用于指定哪些约束 _不_ 应该被导入。
