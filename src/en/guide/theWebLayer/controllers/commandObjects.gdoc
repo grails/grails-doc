@@ -47,16 +47,16 @@ If the command object's type is that of a domain class and there is an @id@ requ
 
 h4. Command Objects And Request Parameter Names
 
-Normally request parameter names will be mapped directly to property names in the command object.  Nested parameter names may be used to bind down the object graph in an intuitive way.  In the example below a request parameter named @name@ will be bound to the @name@ property of the @PersonCommand@ instance and a request parameter named @address.city@ will be bound to the @city@ property of the @address@ property in the @PersonCommand@.
+Normally request parameter names will be mapped directly to property names in the command object.  Nested parameter names may be used to bind down the object graph in an intuitive way.  In the example below a request parameter named @name@ will be bound to the @name@ property of the @Person@ instance and a request parameter named @address.city@ will be bound to the @city@ property of the @address@ property in the @Person@.
 
 {code:java}
 class StoreController {
-    def buy(PersonCommand buyer) {
+    def buy(Person buyer) {
         // ...
     }
 }
 
-class PersonCommand {
+class Person {
     String name
     Address address
 }
@@ -70,12 +70,12 @@ A problem may arise if a controller action accepts multiple command objects whic
 
 {code:java}
 class StoreController {
-    def buy(PersonCommand buyer, ProductCommand product) {
+    def buy(Person buyer, Product product) {
         // ...
     }
 }
 
-class PersonCommand {
+class Person {
     String name
     Address address
 }
@@ -84,32 +84,35 @@ class Address {
     String city
 }
 
-class ProductCommand {
+class Product {
     String name
 }
 {code}
 
-If there is a request parameter named @name@ it isn't clear if that should represent the name of the @ProductCommand@ or the name of the @PersonCommand@.  To help deal with this the framework imposes special rules for mapping parameter names to command object types.  If a command object class name ends with "Command" and there are request parameters with a name which begins with the name of the command object class name minus the "Command" suffix then the data binding will treat all parameters that begin with that name as belonging to the corresponding command object.  For example, the @product.name@ request parameter will be bound to the @name@ property in the @ProductCommand@ instance, the @person.name@ request parameter will be bound to the @name@ property in the @PersonCommand@ instance and the @person.address.city@ request parameter will be bound to the @city@ property of the @address@ property in the @PersonCommand@ instance.
-
-A potentially problematic scenario is one where the command object class name ends with "Command" and the class contains a property with a name that matches the command object class name minus the "Command" suffix as shown below.
+If there is a request parameter named @name@ it isn't clear if that should represent the name of the @Product@ or the name of the @Person@.  Another version of the problem can come up if a controller action accepts 2 command objects of the same type as shown below.
 
 {code:java}
 class StoreController {
-    def buy(PersonCommand buyer) {
+    def buy(Person buyer, Person seller, Product product) {
         // ...
     }
 }
 
-class PersonCommand {
-    Person person
+class Person {
+    String name
+    Address address
 }
 
-class Person {
+class Address {
+    String city
+}
+
+class Product {
     String name
 }
 {code}
 
-In the example above one might expect a request parameter named @person.name@ to be bound to the @name@ property of the @person@ property in the @PersonCommand@ instance but because of the special handling described above that would not work.  The problem is since the @person.name@ request parameter begins with "person" and that happens to match the beginning of the command object class name, "PersonCommand", everything after the "person." prefix represents what is bound to the command object.  Since there is no @name@ property in the @PersonCommand@ class that request parameter is ignored during data binding.  The application could deal with this by renaming the @PersonCommand@ class, renaming the @person@ property name in the @PersonCommand@ class or by fully qualifying the request parameter name to be @person.person.name@.  The first "person" there is the qualifier which tells the framework the type of command object to bind this request paramter to.  The second "person" there represents the property name in @PersonCommand@ that @name@ should be bound to.
+To help deal with this the framework imposes special rules for mapping parameter names to command object types.  The command object data binding will treat all parameters that begin with the controller action parameter name as belonging to the corresponding command object.  For example, the @product.name@ request parameter will be bound to the @name@ property in the @product@ argument, the @buyer.name@ request parameter will be bound to the @name@ property in the @buyer@ argument the @seller.address.city@ request parameter will be bound to the @city@ property of the @address@ property of the @seller@ argument, etc...
 
 h4. Command Objects and Dependency Injection
 

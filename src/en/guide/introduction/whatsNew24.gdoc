@@ -99,3 +99,22 @@ The [formRemote|tags], [remoteField|tags], [remoteFunction|tags] and [remoteLink
 h4. Nullable Command Object Properties
 
 The behavior in Grails 2.3.x is such that constrained properties in command objects and other classes marked with \@Validateable are all configured with @nullable: false@ by default.  Unconstrained properties were not configured with @nullable: false@.  In Grails 2.4 all non-static unconstrained properties in command object classes and other classes marked with \@Validateable are all configured with @nullable: false@.
+
+h4. New Command Object Data Binding Behavior
+
+The data binding behavior for command objects have changed in Grails 2.4.  Request parameter names may now be prefixed with the name of the controller action argument name that the request parameter should be bound to.  For example, if a request is made to the @buy@ action in the controller below a request parameter named @buyer.name@ will be bound to the @name@ property of the @buyer@ argument and a request parameter named @seller.name@ will be bound to the @name@ property of the @seller@ argument.
+
+{code:java}
+class StoreController {
+    def buy(Person buyer, Person seller) {
+        // ...
+    }
+}
+
+class Person {
+    String name
+}
+{code}
+
+See the [Command Objects documentation|guide:commandObjects] for more details.
+
