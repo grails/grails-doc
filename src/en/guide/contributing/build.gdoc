@@ -70,15 +70,11 @@ h3. Debugging Grails or a Grails application
 
 To enable debugging, run:
 {code}
-grails -debug <command>
+grails --debug-fork run-app
 {code}
 
-and then connect to the JVM remotely via the IDE ("remote debugging") using the port 5005. Of course, if you have modified the @startGrails@ script to use a different port number, connect using that one.
+By default Grails forks a JVM to run the application in. The @--debug-fork@ argument causes the debugger to be associated with the forked JVM.  In order to instead attach the debugger to the build system which is going to fork the JVM use the @-debug@ option:
 
-{note}
-In previous versions of Grails there was a @grails-debug@ command.  The command is still included in the distribution and is deprecated in favor of the @-debug@ switch to the standard @grails@ command.
-{note}
-
-If you need to debug stuff that happens during application startup, then you should modify the "grails-debug" script and change the "suspend" option from 'n' to 'y'. You can read more about the JPDA connection settings TODO here: [http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#Invocation|http://java.sun.com/j2se/1.5.0/docs/guide/jpda/conninv.html#Invocation].
-
-It's also possible to get Eclipse to wait for incoming debugger connections and instead of using "-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005" you could use this "-Xrunjdwp:transport=dt_socket,server=n,address=8000" (which assumes the Eclipse default port for remote java applications) Inside eclipse you create a new "Remote Java Application" launch configuration and change the connection type to "Standard (Socket Listen)" and click debug. This allows you to start a debugger session in eclipse and just leave it running and you're free to debug anything without having to keep remembering to relaunch a "Socket Attach" launch configuration. You might find it handy to have 2 scripts, one called "grails-debug", and another called "grails-debug-attach"
+{code}
+grails -debug run-app
+{code}
