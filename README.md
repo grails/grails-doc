@@ -22,9 +22,9 @@ Grails 用户参考手册
 
     ./gradlew -Dgrails.home=/home/user/projects/grails-core docs 
 
-Grails代码是作为链接API文档的基础，它在筑建时必须生成。如果你没有设置 @grails.home@ 值，那么它会自动下载Grails代码，一个十几兆的内容，且还会花一些时间进行编译。
+Grails代码是作为链接API文档的基础，它在筑建时必须生成。如果你没有设置 `grails.home` 值，那么它会自动下载Grails代码，一个十几兆的内容，且还会花一些时间进行编译。
 
-也可以通过设置 local.preperties 文件来设置这个值：
+也可以通过设置 local.preperties (译者，未能实现这个效果) 文件来设置这个值：
 
     grails.home=/home/user/projects/grails-core
 
@@ -47,9 +47,9 @@ Grails代码是作为链接API文档的基础，它在筑建时必须生成。�
 贡献文档
 --------------------------
 
-用户手册文档的发布和 [the one for Grails projects|[1] 项目类似。你按照gdoc wiki 格式写，它最终会相应转换成 html文件。每个章节的顶层是 gdoc 文件，在 @src/<lang>/guide@ 目录中。子章节以及后续章节将按照相同文件名的方式存放在对应子目录下，注意没有前缀。
+用户手册文档的发布和 [the one for Grails projects][1] 项目类似。你按照gdoc wiki 格式写，它最终会相应转换成 html文件。每个章节的顶层是 gdoc 文件，在 `src/<lang>/guide` 目录中。子章节以及后续章节将按照相同文件名的方式存放在对应子目录下，注意没有前缀。
 
-用户文档的结构定义在 `src/<lang>/guide/toc.yml` 文件中，一个 [YAML][2] 格式文件。它定义每个章节的标题。如果你有增减 gdoc文件，你别忘修改它，把它作为文档的索引文件为好。
+用户文档的结构定义在 `src/<lang>/guide/toc.yml` 文件中，一个 YAML 格式文件。它定义每个章节的标题。如果你有增减 gdoc文件，你别忘修改它，把它作为文档的索引文件为好。
 
 `src/<lang>/ref`目录中包括了参考源。每个目录名就是分类的名称，也就是出现文档的名字。因此，不同的目录名就是不同语言。在进入目录中的gdoc文件中，也对应相应的方法，命令，属性或描述性的文字。
 
@@ -86,17 +86,17 @@ Grails代码是作为链接API文档的基础，它在筑建时必须生成。�
     es.title=El Grails Framework
     es.subtitle=...
 
-每个语言的翻译，其属性由 @<lang>@ 决定。上面的例子中用户文档标题 将变成 对应的中文翻译。它的格式 就是 '<lang>.translators' 这样的。你当然可以自己来定义，并在翻译文档中体现出来：
+每个语言的翻译，其属性由 `<lang>` 决定。上面的例子中用户文档标题 将变成 对应的中文翻译。它的格式 就是 '<lang>.translators' 这样的。你当然可以自己来定义，并在翻译文档中体现出来：
 
     fr.translators=Stéphane Maldini
 
 如果有多个人，可以通过逗号分开(很自然吧)，它会显示在 "Translated by" 的位置上。
 
-你可以方便的通过命令参数 `publishGuide_\*` 和 `publishPdf_\*` 指定任务。例如, 下面的能实现PDF的输出。
+你可以方便的通过命令参数 `publishGuide_\*` 和 `publishPdf_\*` 指定任务。例如, 下面能实现独立的PDF输出。
 
     ./gradlew publishPdf_fr
 
-每个翻译的内容都有自己的目录，例如法国版本文档的在 `build/docs/fr` 下。你可以通过 `build/docs/<lang>/index.html` 找到那个目录，并打开访问。
+每个翻译内容都有自己的目录，例如法国版本文档的在 `build/docs/fr` 下。你可以通过 `build/docs/<lang>/index.html` 找到那个目录，并打开访问。
 
 所有的翻译都属于 [Hudson CI build for the grails-doc][2] 项目的一部分，所以你不需要自己去建立文档，而只要递交你修改的gdoc即可。
 
