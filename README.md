@@ -96,7 +96,7 @@ Grails代码是作为链接API文档的基础，它在筑建时必须生成。�
 
     ./gradlew publishPdf_fr
 
-每个翻译内容都有自己的目录，例如法国版本文档的在 `build/docs/fr` 下。你可以通过 `build/docs/<lang>/index.html` 找到那个目录，并打开访问。
+每个翻译内容都有自己的目录，例如法国版本文档在 `build/docs/fr` 下。你可以通过 `build/docs/<lang>/index.html` 找到那个目录，并打开访问。
 
 所有的翻译都属于 [Hudson CI build for the grails-doc][2] 项目的一部分，所以你不需要自己去建立文档，而只要递交你修改的gdoc即可。
 
