@@ -1,8 +1,6 @@
 Grails 用户参考手册
 ===========================
 
-This is the project for generating the [Grails user & reference guide][Grails Documentation] that explains how to build applications with the [Grails][Grails] framework.
-
 这个项目是作为 [Grails user & reference guide][Grails Documentation] 的文档建立而准备的。文档将说明 [Grails][Grails] 框架实施。
 
 [Grails Documentation]: http://grails.org/doc/latest
