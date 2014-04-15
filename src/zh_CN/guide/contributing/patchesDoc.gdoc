@@ -1,6 +1,3 @@
-{hidden}
-Contributing to the documentation is simpler for the core framework because there is a public fork of the [http://github.com/grails/grails-doc|http://github.com/grails/grails-doc] project that anyone can request commit access to. So, if you want to submit patches to the documentation, simply request commit access to the following repository [http://github.com/pledbrook/grails-doc|http://github.com/pledbrook/grails-doc] by sending a GitHub message to 'pledbrook' and then commit your patches just as you would to any other GitHub repository.
-{hidden}
 作为一个核心的公共分支项目 [http://github.com/grails/grails-doc|http://github.com/grails/grails-doc] ，任何人贡献文档都是允许的。你只要给GitHub [http://github.com/pledbrook/grails-doc|http://github.com/pledbrook/grails-doc] 发送 'pledbrook'消息并递交你的文档修复部分，类似你在GitHub上做的其他仓库一样。
 
 h3. 筑建文档
@@ -85,24 +82,24 @@ um com o comando [integrate-with|commandLine]:
 This will then print out a recursive diff of the given translation against the reference English user guide. Anything in @\{hidden\}@ blocks that hasn't changed since being translated will _not_ appear in the diff output. In other words, all you will see is content that hasn't been translated yet and content that has changed since it was translated. Note that @\{code\}@ blocks are ignored, so you _don't_ need to include them inside @\{hidden\}@ macros.
 它会输出翻译与英语翻译手册中的不同。任何在 @\{hidden\}@ 块中不会因为翻译而变化。也就说，所有的 blocks 将被护绿，所以你不需要将他们放入都 @\{hidden\}@ 中。
 
-To provide translations for the headers, such as the user guide title and subtitle, just add language specific entries in the 'resources/doc.properties' file like so:
+对于翻译中的头部中的一些文字，类似用户文档标题和子标题，请加在“resources/doc.properties”文件中：
 {code}
-es.title=El Grails Framework
+es.title=Grails 框架
 es.subtitle=...
 {code}
 
-For each language translation, properties beginning @<lang>@. will override the standard ones. In the above example, the user guide title will be El Grails Framework for the Spanish translation. Also, translators can be credited by adding a '<lang>.translators' property:
+每个语言的翻译，其属性由 @<lang>@ 决定。上面的例子中用户文档标题 将变成 对应的中文翻译。它的格式 就是 '<lang>.translators' 这样的。你当然可以自己来定义，并在翻译文档中体现出来：
 {code}
-fr.translators=Stéphane Maldini
+zh_CN.translators=Fred Wu(中文)
 {code}
 
-This should be a comma-separated list of names (or the native language equivalent) and it will be displayed as a "Translated by" header in the user guide itself.
+如果有多个人，可以通过逗号分开(很自然吧)，它会显示在 "Translated by" 的位置上。
 
-You can build specific translations very easily using the @publishGuide_\*@ and @publishPdf_\*@ tasks. For example, to build both the French HTML and PDF user guides, simply execute
+你可以方便的通过命令参数 @publishGuide_\*@ 和 @publishPdf_\*@ 指定任务。例如, 下面的能实现PDF的输出。
 {code}
 ./gradlew publishPdf_fr
 {code}
 
-Each translation is generated in its own directory, so for example the French guide will end up in @build/docs/fr@. You can then view the translated guide by opening @build/docs/<lang>/index.html@.
+每个翻译的内容都有自己的目录，例如法国版本文档的在 @build/docs/fr@ 下。你可以通过 @build/docs/<lang>/index.html@ 找到那个目录，并打开访问。
 
-All translations are created as part of the [Hudson CI build for the grails-doc|http://hudson.grails.org/job/grails_docs_2.0.x/lastSuccessfulBuild/artifact/build/docs/] project, so you can easily see what the current state is without having to build the docs yourself.
+所有的翻译都属于 [Hudson CI build for the grails-doc|http://hudson.grails.org/job/grails_docs_2.0.x/lastSuccessfulBuild/artifact/build/docs/] 项目的一部分，所以你不需要自己去建立文档，而只要递交你修改的gdoc即可。
