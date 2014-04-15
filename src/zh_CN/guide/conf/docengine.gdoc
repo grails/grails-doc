@@ -56,6 +56,15 @@ There are various properties you can set within your @grails-app/conf/Config.gro
 
 Other properties such as the version are pulled from your project itself.  If a title is not specified, the application name is used.
 
+You can also customise the look of the documentation and provide images by setting a few other options:
+
+* *grails.doc.css* - The location of a directory containing custom CSS files (type @java.io.File@)
+* *grails.doc.js* - The location of a directory containing custom JavaScript files (type @java.io.File@)
+* *grails.doc.style* - The location of a directory containing custom HTML templates for the guide (type @java.io.File@)
+* *grails.doc.images* - The location of a directory containing image files for use in the style templates and within the documentation pages themselves (type @java.io.File@)
+
+One of the simplest ways to customise the look of the generated guide is to provide a value for @grails.doc.css@ and then put a custom.css file in the corresponding directory. Grails will automatically include this CSS file in the guide. You can also place a custom-pdf.css file in that directory. This allows you to override the styles for the PDF version of the guide.
+
 h4. Generating Documentation
 
 Once you have created some documentation (refer to the syntax guide in the next chapter) you can generate an HTML version of the documentation using the command:
@@ -93,6 +102,20 @@ Image:
 {code:xml}
 \!http://grails.org/images/new/grailslogo_topNav.png\!
 {code}
+
+You can also link to internal images like so:
+
+{code:xml}
+\!someFolder/my_diagram.png\!
+{code}
+
+This will link to an image stored locally within your project. There is currently no default location for doc images, but you can specify one with the @grails.doc.images@ setting in Config.groovy like so:
+
+{code}
+grails.doc.images = new File("src/docs/images")
+{code}
+
+In this example, you would put the my_diagram.png file in the directory 'src/docs/images/someFolder'.
 
 h5. Linking
 

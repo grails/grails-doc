@@ -1,0 +1,43 @@
+The @upgrade@ command has been removed from Grails 2.4.  The procedure for upgrading to the latest version of Grails will be detailed in the user guide from now on.  Below are steps that must be taken to upgrade an application from 2.3.x to 2.4.
+
+
+h4. The set-grails-version Command
+
+The [set-grails-version|commandLine] command should be run to update the application's metadata to indicate which version of Grails the application is built with.
+
+h4. The resources Plugin
+
+As of Grails 2.4 the @resources@ plugin has been replaced with the @asset-pipeline@ plugin as the default resource management plugin for newly created applications.  See the [static resource abstraction|guide:resources] section of the User Guide for more details.  When upgrading an application to Grails 2.4 if you choose to continue using the resources plugin you will need to use version 1.2.7 or later as previous versions of the plugin are not compatible with Grails 2.4.
+
+h4. Static Holder Classes
+
+The deprecated @org.codehaus.groovy.grails.commons.ApplicationHolder@ and @org.codehaus.groovy.grails.commons.ConfigurationHolder@ classes have been removed from Grails 2.4.
+
+{note}
+If your application uses the jquery plugin you will need to update to version 1.11.0.2 or later as previous versions of the plugin made use of the @ApplicationHolder@ class.  If your application uses the resources plugin you will need to update to version 1.2.7 or later as previous versions of the plugin made use of the @ConfigurationHolder@ class.
+{note}
+
+{note}We need to add some notes or provide a link to a blog post on how to address code which used to use these classes.{note}
+
+h4. Changes To applicationContex.xml
+
+The @web-app/WEB-INF/applicationContext.xml@ file contains a bean definition for a @grailsResourceLoader@ bean which is an instance of @org.codehaus.groovy.grails.commons.GrailsResourceLoaderFactoryBean@.  That bean definition needs to be removed from the file.  The @grailsApplication@ bean may have the @grailsResourceLoader@ bean injected into it as shown below.
+
+{code:java}
+<bean id="grailsApplication" class="org.codehaus.groovy.grails.commons.GrailsApplicationFactoryBean">
+    <description>Grails application factory bean</description>
+    <property name="grailsDescriptor" value="/WEB-INF/grails.xml" />
+    <property name="grailsResourceLoader" ref="grailsResourceLoader" />
+</bean>
+{code}
+
+The @grailsApplication@ bean definition should be left in the file but the @grailsResourceLoader@ bean reference should be removed as shown below.
+
+{code:java}
+<bean id="grailsApplication" class="org.codehaus.groovy.grails.commons.GrailsApplicationFactoryBean">
+    <description>Grails application factory bean</description>
+    <property name="grailsDescriptor" value="/WEB-INF/grails.xml" />
+</bean>
+{code}
+
+{note}More TBD Before 2.4 Final Is Released{note}

@@ -1,0 +1,133 @@
+For more complex marshallers it is recommended you implement the [ObjectMarshaller|api:org.codehaus.groovy.grails.web.converters.marshaller.ObjectMarshaller] interface. For example given a domain class:
+
+{code}
+class Book {
+    String title
+}
+{code}
+
+By default the output when using:
+
+{code}
+render book as XML
+{code}
+
+Would look like:
+
+{code:xml}
+<book id="1">
+   <title>The Stand</title>
+</book>
+{code}
+
+To write a custom marshaller you can do the following:
+
+{code}
+class BookMarshaller implements ObjectMarshaller<XML> {
+ 
+  public boolean supports(Object object) {
+    return object instanceof Book
+  }
+ 
+  public void marshalObject(Object object, XML converter) {
+    Book book  = (Book)object 
+    converter.chars book.title
+  }
+}
+{code}
+
+And then register the marshaller with:
+
+{code}
+XML.registerObjectMarshaller(new BookMarshaller())
+{code}
+
+With the custom @ObjectMarshaller@ in place, the output is now:
+
+{code:xml}
+<book>The Stand</book>
+{code}
+
+h4. Customizing the Name of the Root Element
+
+If you wish the customize the name of the surrounding element, you can implement [NameAwareMarshaller|api:org.codehaus.groovy.grails.web.converters.marshaller.NameAwareMarshaller]:
+
+{code}
+class BookMarshaller implements ObjectMarshaller<XML>,NameAwareMarshaller {
+ 
+  ...
+
+  String getElementName(Object o) {
+    return 'custom-book'
+  }
+
+}
+{code}
+
+With the above change the output would now be:
+
+{code:xml}
+<custom-book>The Stand</custom-book>
+{code}
+
+h4. Outputing Markup Using the Converters API or Builder
+
+With the passed Converter object you can explicitly code to the Converters API to stream markup to the response:
+
+{code}
+public void marshalObject(Object object, XML converter) {
+  Book book = (Book)object
+ 
+  converter.attribute 'id', book.id.toString()
+  converter.attribute 'date-released', book.dateReleased.toString()
+ 
+  converter.startNode 'title'
+  converter.chars book.title
+  converter.end()
+ 
+}
+{code}
+
+The above code results in:
+
+{code:xml}
+<book id="1" date-released="...">
+   <title>The Stand</title>
+</book>
+{code}
+
+You can also use a builder notation to achieve a similar result (although the builder notation does not work for @CompileStatic@):
+
+{code}
+public void marshalObject(Object object, XML converter) {
+  Book b = (Book)object
+ 
+  converter.build {
+     book(id: b.id) {
+        title b.title
+     }
+  } 
+}
+{code}
+
+h4. Using the convertAnother Method to Recursively Convert Objects
+
+To create more complex responses you can use the @convertAnother@ method to convert associations and other objects:
+
+{code}
+public void marshalObject(Object object, XML converter) {
+  Book book = (Book)object 
+ 
+  converter.startNode 'title'
+  converter.chars book.title
+  converter.end()
+ 
+  if (book.authors) {
+    converter.startNode 'authors'
+    for(author in book.authors) {
+      converter.convertAnother author
+    }    
+    converter.end()
+  }
+}
+{code}

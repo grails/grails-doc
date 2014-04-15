@@ -2,27 +2,15 @@ Since Grails is built on Java technology setting up a data source requires some 
 
 If you use a database other than H2 you need a JDBC driver. For example for MySQL you would need "Connector/J":http://www.mysql.com/downloads/connector/j/
 
-Drivers typically come in the form of a JAR archive. It's best to use Ivy to resolve the jar if it's available in a Maven repository, for example you could add a dependency for the MySQL driver like this:
+Drivers typically come in the form of a JAR archive. It's best to use the dependency resolution to resolve the jar if it's available in a Maven repository, for example you could add a dependency for the MySQL driver like this:
 
 {code}
-grails.project.dependency.resolution = {
-    inherits("global")
-    log "warn"
-    repositories {
-        grailsPlugins()
-        grailsHome()
-        grailsCentral()
-        mavenCentral()
-    }
     dependencies {
-        runtime 'mysql:mysql-connector-java:5.1.16'
+        runtime 'mysql:mysql-connector-java:5.1.29'
     }
-}
 {code}
 
-Note that the built-in @mavenCentral()@ repository is included here since that's a reliable location for this library.
-
-If you can't use Ivy then just put the JAR in your project's @lib@ directory.
+If you can't use dependency resolution then just put the JAR in your project's @lib@ directory.
 
 Once you have the JAR resolved you need to get familiar Grails' DataSource descriptor file located at @grails-app/conf/DataSource.groovy@. This file contains the dataSource definition which includes the following settings:
 
@@ -34,10 +22,12 @@ Once you have the JAR resolved you need to get familiar Grails' DataSource descr
 * @pooled@ - Whether to use a pool of connections (defaults to true)
 * @logSql@ - Enable SQL logging to stdout
 * @formatSql@ - Format logged SQL
-* @dialect@ - A String or Class that represents the Hibernate dialect used to communicate with the database. See the [org.hibernate.dialect|http://docs.jboss.org/hibernate/stable/core/javadocs/org/hibernate/dialect/package-summary.html] package for available dialects.
+* @dialect@ - A String or Class that represents the Hibernate dialect used to communicate with the database. See the [org.hibernate.dialect|http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/dialect/package-summary.html] package for available dialects.
 * @readOnly@ - If @true@ makes the DataSource read-only, which results in the connection pool calling @setReadOnly(true)@ on each @Connection@
+* @transactional@ - If @false@ leaves the DataSource's transactionManager bean outside the chained BE1PC transaction manager implementation. This only applies to additional datasources.
 * @persistenceInterceptor@ - The default datasource is automatically wired up to the persistence interceptor, other datasources are not wired up automatically unless this is set to @true@
-* @properties@ - Extra properties to set on the DataSource bean. See the [Commons DBCP BasicDataSource|http://commons.apache.org/dbcp/api-1.2.2/org/apache/commons/dbcp/BasicDataSource.html] documentation.
+* @properties@ - Extra properties to set on the DataSource bean. See the [Tomcat Pool|http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes] documentation. There is also a Javadoc format [documentation of the properties|https://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/tomcat/jdbc/pool/PoolConfiguration.html].
+* @jmxExport@ - If @false@, will disable registration of JMX MBeans for all DataSources. By default JMX MBeans are added for DataSources with @jmxEnabled = true@ in properties.
 
 A typical configuration for MySQL may be something like:
 
@@ -45,11 +35,30 @@ A typical configuration for MySQL may be something like:
 dataSource {
     pooled = true
     dbCreate = "update"
-    url = "jdbc:mysql://localhost/yourDB"
+    url = "jdbc:mysql://localhost:3306/my_database"
     driverClassName = "com.mysql.jdbc.Driver"
     dialect = org.hibernate.dialect.MySQL5InnoDBDialect
-    username = "yourUser"
-    password = "yourPassword"
+    username = "username"
+    password = "password"
+    properties {
+       jmxEnabled = true
+       initialSize = 5
+       maxActive = 50
+       minIdle = 5
+       maxIdle = 25
+       maxWait = 10000
+       maxAge = 10 * 60000
+       timeBetweenEvictionRunsMillis = 5000
+       minEvictableIdleTimeMillis = 60000
+       validationQuery = "SELECT 1"
+       validationQueryTimeout = 3
+       validationInterval = 15000
+       testOnBorrow = true
+       testWhileIdle = true
+       testOnReturn = false
+       jdbcInterceptors = "ConnectionState;StatementCache(max=200)"
+       defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED
+    }
 }
 {code}
 
@@ -69,20 +78,73 @@ Example of advanced configuration using extra properties:
 dataSource {
     pooled = true
     dbCreate = "update"
-    url = "jdbc:mysql://localhost/yourDB"
+    url = "jdbc:mysql://localhost:3306/my_database"
     driverClassName = "com.mysql.jdbc.Driver"
     dialect = org.hibernate.dialect.MySQL5InnoDBDialect
-    username = "yourUser"
-    password = "yourPassword"
+    username = "username"
+    password = "password"
     properties {
-        maxActive = 50
-        maxIdle = 25
-        minIdle = 5
-        initialSize = 5
-        minEvictableIdleTimeMillis = 60000
-        timeBetweenEvictionRunsMillis = 60000
-        maxWait = 10000
-        validationQuery = "/* ping */"
+       // Documentation for Tomcat JDBC Pool
+       // http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes
+       // https://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/tomcat/jdbc/pool/PoolConfiguration.html
+       jmxEnabled = true
+       initialSize = 5
+       maxActive = 50
+       minIdle = 5
+       maxIdle = 25
+       maxWait = 10000
+       maxAge = 10 * 60000
+       timeBetweenEvictionRunsMillis = 5000
+       minEvictableIdleTimeMillis = 60000
+       validationQuery = "SELECT 1"
+       validationQueryTimeout = 3
+       validationInterval = 15000
+       testOnBorrow = true
+       testWhileIdle = true
+       testOnReturn = false
+       ignoreExceptionOnPreLoad = true
+       // http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#JDBC_interceptors
+       jdbcInterceptors = "ConnectionState;StatementCache(max=200)"
+       defaultTransactionIsolation = java.sql.Connection.TRANSACTION_READ_COMMITTED // safe default
+       // controls for leaked connections 
+       abandonWhenPercentageFull = 100 // settings are active only when pool is full
+       removeAbandonedTimeout = 120
+       removeAbandoned = true
+       // use JMX console to change this setting at runtime
+       logAbandoned = false // causes stacktrace recording overhead, use only for debugging
+       // JDBC driver properties
+       // Mysql as example
+       dbProperties {
+           // Mysql specific driver properties
+           // http://dev.mysql.com/doc/connector-j/en/connector-j-reference-configuration-properties.html
+           // let Tomcat JDBC Pool handle reconnecting
+           autoReconnect=false
+           // truncation behaviour 
+           jdbcCompliantTruncation=false
+           // mysql 0-date conversion
+           zeroDateTimeBehavior='convertToNull'
+           // Tomcat JDBC Pool's StatementCache is used instead, so disable mysql driver's cache
+           cachePrepStmts=false
+           cacheCallableStmts=false
+           // Tomcat JDBC Pool's StatementFinalizer keeps track
+           dontTrackOpenResources=true
+           // performance optimization: reduce number of SQLExceptions thrown in mysql driver code
+           holdResultsOpenOverStatementClose=true
+           // enable MySQL query cache - using server prep stmts will disable query caching
+           useServerPrepStmts=false
+           // metadata caching
+           cacheServerConfiguration=true
+           cacheResultSetMetadata=true
+           metadataCacheSize=100
+           // timeouts for TCP/IP
+           connectTimeout=15000
+           socketTimeout=120000
+           // timer tuning (disable)
+           maintainTimeStats=false
+           enableQueryTimeouts=false
+           // misc tuning
+           noDatetimeStringSync=true
+       }
     }
 }
 {code}

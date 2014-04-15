@@ -161,6 +161,40 @@ zipCode.auditing.save()
 
 As you can see, you add the @DataSource@ to the method call in both the static case and the instance case.
 
+h4. Hibernate Mapped Domain Classes
+
+You can also partition annotated Java classes into separate datasources. Classes using the default datasource are registered in @grails-app/conf/hibernate/hibernate.cfg.xml@. To specify that an annotated class uses a non-default datasource, create a @hibernate.cfg.xml@ file for that datasource with the file name prefixed with the datasource name.
+
+For example if the @Book@ class is in the default datasource, you would register that in @grails-app/conf/hibernate/hibernate.cfg.xml@:
+
+{code:xml}
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          '-//Hibernate/Hibernate Configuration DTD 3.0//EN'
+          'http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd'>
+<hibernate-configuration>
+   <session-factory>
+      <mapping class='org.example.Book'/>
+   </session-factory>
+</hibernate-configuration>
+{code}
+
+and if the @Library@ class is in the "ds2" datasource, you would register that in @grails-app/conf/hibernate/ds2_hibernate.cfg.xml@:
+
+{code:xml}
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE hibernate-configuration PUBLIC
+          '-//Hibernate/Hibernate Configuration DTD 3.0//EN'
+          'http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd'>
+<hibernate-configuration>
+   <session-factory>
+      <mapping class='org.example.Library'/>
+   </session-factory>
+</hibernate-configuration>
+{code}
+
+The process is the same for classes mapped with hbm.xml files - just list them in the appropriate hibernate.cfg.xml file.
+
 h4. Services
 
 Like Domain classes, by default Services use the default @DataSource@ and @PlatformTransactionManager@. To configure a Service to use a different @DataSource@, use the static @datasource@ property, for example:
@@ -182,7 +216,28 @@ Note that the datasource specified in a service has no bearing on which datasour
 
 What you'll see is that if you have a Foo domain class in dataSource1 and a Bar domain class in dataSource2, and WahooService uses dataSource1, a service method that saves a new Foo and a new Bar will only be transactional for Foo since they share the datasource. The transaction won't affect the Bar instance. If you want both to be transactional you'd need to use two services and XA datasources for two-phase commit, e.g. with the Atomikos plugin.
 
+h4. Transactions across multiple datasources 
+
+Grails uses the Best Efforts 1PC pattern for handling transactions across multiple datasources.
+
+The [Best Efforts 1PC pattern|http://www.javaworld.com/article/2077963/open-source-tools/distributed-transactions-in-spring--with-and-without-xa.html?page=2] is fairly general but can fail in some circumstances that the developer must be aware of. This is a non-XA pattern that involves a synchronized single-phase commit of a number of resources. Because the [2PC|https://en.wikipedia.org/wiki/Two-phase_commit] is not used, it can never be as safe as an [XA|https://en.wikipedia.org/wiki/X/Open_XA] transaction, but is often good enough if the participants are aware of the compromises.
+
+The basic idea is to delay the commit of all resources as late as possible in a transaction so that the only thing that can go wrong is an infrastructure failure (not a business-processing error). Systems that rely on Best Efforts 1PC reason that infrastructure failures are rare enough that they can afford to take the risk in return for higher throughput. If business-processing services are also designed to be idempotent, then little can go wrong in practice.
+
+The BE1PC implementation was added in Grails 2.3.6. . Before this change additional datasources didn't take part in transactions initiated in Grails. The transactions in additional datasources were basically in auto commit mode. In some cases this might be the wanted behavior. One reason might be performance: on the start of each new transaction, the BE1PC transaction manager creates a new transaction to each datasource. It's possible to leave an additional datasource out of the BE1PC transaction manager by setting @transactional = false@ in the respective configuration block of the additional dataSource. Datasources with @readOnly = true@ will also be left out of the chained transaction manager (since 2.3.7).
+
+By default, the BE1PC implementation will add all beans implementing the Spring @[PlatformTransactionManager|http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/transaction/PlatformTransactionManager.html]@ interface to the chained BE1PC transaction manager. For example, a possible @[JMSTransactionManager|http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/jms/connection/JmsTransactionManager.html]@ bean in the Grails application context would be added to the Grails BE1PC transaction manager's chain of transaction managers. 
+
+You can exclude transaction manager beans from the BE1PC implementation with the this configuration option:
+{code}
+grails.transaction.chainedTransactionManagerPostProcessor.blacklistPattern = '.*'
+{code}
+The exclude matching is done on the name of the transaction manager bean. The transaction managers of datasources with @transactional = false@ or @readOnly = true@ will be skipped and using this configuration option is not required in that case.
+
 h4. XA and Two-phase Commit
 
-Grails has no native support for [XA|https://secure.wikimedia.org/wikipedia/en/wiki/X/Open_XA] @DataSource@s or [two-phase commit|https://secure.wikimedia.org/wikipedia/en/wiki/Two-phase_commit], but the [Atomikos plugin|http://grails.org/plugin/atomikos] makes it easy. See the plugin documentation for the simple changes needed in your @DataSource@ definitions to reconfigure them as XA @DataSource@s.
+When the Best Efforts 1PC pattern isn't suitable for handling transactions across multiple transactional resources (not only datasources), there are several options available for adding XA/2PC support to Grails applications.
 
+The [Spring transactions documentation|http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/transaction.html#transaction-application-server-integration] contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name @transactionManager@ manually in @resources.groovy@ or @resources.xml@ file.
+
+There is also [Atomikos plugin|http://grails.org/plugin/atomikos] available for XA support in Grails applications.

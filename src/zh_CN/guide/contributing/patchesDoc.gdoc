@@ -1,72 +1,94 @@
-Contributing to the documentation is much simpler from the core framework because there is a replica of the [http://github.com/grails/grails-doc|http://github.com/grails/grails-doc] project that anyone can request commit access on. So, if you want to submit patches to the documentation, you simply need to request commit access to the following repository [http://github.com/pledbrook/grails-doc|http://github.com/pledbrook/grails-doc] and commit your patches just as you would any other GitHub repository.
+{hidden}
+Contributing to the documentation is simpler for the core framework because there is a public fork of the [http://github.com/grails/grails-doc|http://github.com/grails/grails-doc] project that anyone can request commit access to. So, if you want to submit patches to the documentation, simply request commit access to the following repository [http://github.com/pledbrook/grails-doc|http://github.com/pledbrook/grails-doc] by sending a GitHub message to 'pledbrook' and then commit your patches just as you would to any other GitHub repository.
+{hidden}
+作为一个核心的公共分支项目 [http://github.com/grails/grails-doc|http://github.com/grails/grails-doc] ，任何人贡献文档都是允许的。你只要给GitHub [http://github.com/pledbrook/grails-doc|http://github.com/pledbrook/grails-doc] 发送 'pledbrook'消息并递交你的文档修复部分，类似你在GitHub上做的其他仓库一样。
 
-h3. Building the Guide
-To build the documentation, simply type:
+h3. 筑建文档
+
+筑建文档只要简单输入:
 {code}
 ./gradlew docs
 {code}
 
-Be warned: this command can take a while to complete and you should probably increase your Gradle memory settings by giving the @GRADLE_OPTS@ environment variable a value like
+注意：这个命令将消耗大量内存来筑建整个内容，它也会依赖你设置Gradle的内存设置。
 {code}
 export GRADLE_OPTS="-Xmx512m -XX:MaxPermSize=384m"
 {code}
 
-Fortunately, you can reduce the overall build time with a couple of useful options. The first allows you to specify the location of the Grails source to use:
+幸运的是，你可以通过参数来运行此命令。例如一下参数将定位你的grails目录：
+
 {code}
 ./gradlew -Dgrails.home=/home/user/projects/grails-core docs 
 {code}
 
-The Grails source is required because the guide links to its API documentation and the build needs to ensure it's generated. If you don't specify a @grails.home@ property, then the build will fetch the Grails source - a download of 10s of megabytes. It must then compile the Grails source which can take a while too.
+Grails代码是作为链接API文档的基础，它在筑建时必须生成。如果你没有设置 @grails.home@ 值，那么它会自动下载Grails代码，一个十几兆的内容，且还会花一些时间进行编译。
 
-Additionally you can create a local.properties file with this variable set:
+也可以通过设置 local.preperties 文件来设置这个值：
 {code}
 grails.home=/home/user/projects/grails-core
 {code}
-or
+或
 {code}
 grails.home=../grails-core
 {code}
 
-The other useful option allows you to disable the generation of the API documentation, since you only need to do it once:
+另一个有用的参数将禁止你生成API文档，如果你确认只要某些东东：
 {code}
 ./gradlew -Ddisable.groovydocs=true docs
 {code}
 
-Again, this can save a significant amount of time and memory.
+它将节省你大量的时间哟。
 
 The main English user guide is generated in the @build/docs@ directory, with the @guide@ sub-directory containing the user guide part and the @ref@ folder containing the reference material. To view the user guide, simply open @build/docs/index.html@.
+英语用户生成的文件在 @build/docs@ 中。@guide@ 子目录包括用户说明部分， @ref@ 目录包含参考材料。只要直接打开 @build/docs/index.html@ 就可查阅文档。
 
-h3. Publishing
-The publishing system for the user guide is the same as [the one for Grails projects|http://grails.org/doc/2.0.0.M1/guide/conf.html#docengine]. You write your chapters and sections in the gdoc wiki format which is then converted to HTML for the final guide. Each chapter is a top-level gdoc file in the @src/<lang>/guide@ directory. Sections and sub-sections then go into directories with the same name as the chapter gdoc but without the suffix.
+h3. 发布文档
 
+用户手册文档的发布和 [the one for Grails projects|http://grails.org/doc/2.0.0.M1/guide/conf.html#docengine] 项目类似。你按照gdoc wiki 格式写，它最终会相应转换成 html文件。每个章节的顶层是 gdoc 文件，在 @src/<lang>/guide@ 目录中。子章节以及后续章节将按照相同文件名的方式存放在对应子目录下，注意没有前缀。
+
+{hidden}
 The structure of the user guide is defined in the @src/<lang>/guide/toc.yml@ file, which is a YAML file. This file also defines the (language-specific) section titles. If you add or remove a gdoc file, you must update the TOC as well!
 
 The @src/<lang>/ref@ directory contains the source for the reference sidebar. Each directory is the name of a category, which also appears in the docs. Hence the directories need different names for the different languages. Inside the directories go the gdoc files, whose names match the names of the methods, commands, properties or whatever that the files describe.
+{hidden}
+用户文档的结构定义在 @src/<lang>/guide/toc.yml@ 文件中，一个YAML格式文件。它定义每个章节的标题。如果你有增减 gdoc文件，你别忘修改它，把它作为文档的索引文件为好。
 
-h3. Translations
+h3. 翻译
+
+{hidden}
 This project can host multiple translations of the user guide, with @src/en@ being the main one. To add another one, simply create a new language directory under @src@ and copy into it all the files under @src/en@. The build will take care of the rest.
 
 Once you have a copy of the original guide, you can use the @\{hidden\}@ macro to wrap the English text that you have replaced, rather than remove it. This makes it easier to compare changes to the English guide against your translation. For example:
+{hidden}
+本项目的文档可以支持多语言的翻译，留意 @src/en@ 作为主入口。如要添加新语言，你只要在 @src@ 目录中建立一个新语种目录，并将 @src/en@ 的文件都复制过去，作为翻译的模板文件。筑建会自动处理其他部分。
+
+有了基础语言的文件，你可以开始着手翻译了。一边翻译，一边你可以使用 @\{hidden\}@ 宏来定义英语部分，它不会显示出来的。完成一部分后你可以逐步去掉那些 @\{hidden\}@ 宏——当然是把英语部分整体去掉。这对于你的翻译工作很有益，即可一边看一边翻译，也可以保留一下，为以后做调整做参考。
+
 {code}
 \{hidden\}
+这里的内容是浏览器看不到的
 When you create a Grails application with the [create-app|commandLine] command,
 Grails doesn't automatically create an Ant @build.xml@ file but you can generate
 one with the [integrate-with|commandLine] command:
 \{hidden\}
 
+这里才看得到
 Quando crias uma aplicação Grails com o comando [create-app|commandLine], Grails
 não cria automaticamente um ficheiro de construção Ant @build.xml@ mas podes gerar
 um com o comando [integrate-with|commandLine]:
 {code}
 
-Because the English text remains in your gdoc files, @diff@ will show differences on the English lines. You can then use the output of @diff@ to see which bits of your translation need updating. On top of that, the @\{hidden\}@ macro ensures that the text inside it is not displayed in the browser, although you can display it by adding this URL as a bookmark: @javascript:toggleHidden();@ (requires you to build the user guide with Grails 2.0 M2 or later).
+因为英文的gdoc文件作为原始基础， diff 将显示你翻译的语言和英语的不同之处。
+总之， @\{hidden\}@ 能禁止将内容输出给浏览器，然而你可以使用 @javascript:toggleHidden();@ 加入 URL 作为标签(必须高于 Grails 2.0 M2 及以后版本)。
 
-Even better, you can use the @left_to_do.groovy@ script in the root of the project to see what still needs translating. You run it like so:
+另外，你还可以使用 在项目根目录中的 @left_to_do.groovy@ 脚本来看一下还有那些需要翻译。
+运行方式：
 {code}
 ./left_to_do.groovy es
 {code}
 
 This will then print out a recursive diff of the given translation against the reference English user guide. Anything in @\{hidden\}@ blocks that hasn't changed since being translated will _not_ appear in the diff output. In other words, all you will see is content that hasn't been translated yet and content that has changed since it was translated. Note that @\{code\}@ blocks are ignored, so you _don't_ need to include them inside @\{hidden\}@ macros.
+它会输出翻译与英语翻译手册中的不同。任何在 @\{hidden\}@ 块中不会因为翻译而变化。也就说，所有的 blocks 将被护绿，所以你不需要将他们放入都 @\{hidden\}@ 中。
 
 To provide translations for the headers, such as the user guide title and subtitle, just add language specific entries in the 'resources/doc.properties' file like so:
 {code}

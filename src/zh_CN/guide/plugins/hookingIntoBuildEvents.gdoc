@@ -1,10 +1,10 @@
 h4. Post-Install Configuration and Participating in Upgrades
 
-Grails plugins can do post-install configuration and participate in application upgrade process (the [upgrade|commandLine] command). This is achieved using two specially named scripts under the @scripts@ directory of the plugin - @_Install.groovy@ and @_Upgrade.groovy@.
+Grails plugins can do post-install configuration. This is achieved using a specially named script under the @scripts@ directory of the plugin - @_Install.groovy@.
 
-@_Install.groovy@ is executed after the plugin has been installed and @_Upgrade.groovy@ is executed each time the user upgrades the application (but not the plugin) with [upgrade|commandLine] command.
+@_Install.groovy@ is executed after the plugin has been installed.
 
-These scripts are [Gant|guide:commandLine] scripts, so you can use the full power of Gant. An addition to the standard Gant variables there is also a @pluginBasedir@ variable which points at the plugin installation basedir.
+This scripts is a [Gant|guide:commandLine] script, so you can use the full power of Gant. An addition to the standard Gant variables there is also a @pluginBasedir@ variable which points at the plugin installation basedir.
 
 As an example this @_Install.groovy@ script will create a new directory type under the @grails-app@ directory and install a configuration template:
 
@@ -14,6 +14,8 @@ ant.mkdir(dir: "${basedir}/grails-app/jobs")
 ant.copy(file: "${pluginBasedir}/src/samples/SamplePluginConfig.groovy",
          todir: "${basedir}/grails-app/conf")
 {code}
+
+The @pluginBasedir@ variable is not available in custom scripts, but you can use @fooPluginDir@, where @foo@ is the name of your plugin.
 
 h4. Scripting events
 
