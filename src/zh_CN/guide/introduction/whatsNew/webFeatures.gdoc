@@ -141,7 +141,9 @@ def val = params.date('myDate')
 
 h4. 自定义URL格式
 
-默认的URL链接机制是支持驼峰大小写命名的。在一个类似 @/mathHelper/addNumbers@ 的链接中，它指向一个 @MathHelperController@ 控制器中的 @addNumbers@ 动作。 Grails允许自定义匹配模式来支持将上面的链接不按照驼峰方式来予以实现，而是 @/math-helper/add-numbers@ 的方式。
+默认的URL链接机制是支持驼峰大小写命名的。
+在一个类似 @/mathHelper/addNumbers@ 的链接中，它指向一个 @MathHelperController@ 控制器中的 @addNumbers@ 动作。 
+Grails允许自定义匹配模式来支持将上面的链接不按照驼峰方式来予以实现，而是 @/math-helper/add-numbers@ 的方式。
 只要修改 @grails-app/conf/Config.groovy@ ，将 "hyphenated" 的值设置 @grails.web.url.converter@ 属性中即可。
 
 {code:java}
@@ -150,7 +152,8 @@ h4. 自定义URL格式
 grails.web.url.converter = 'hyphenated'
 {code}
 
-Arbitrary strategies may be plugged in by providing a class which implements the [UrlConverter|api:grails.web.UrlConverter] interface and adding an instance of that class to the Spring application context with the bean name of @grails.web.UrlConverter.BEAN_NAME@.  If Grails finds a bean in the context with that name, it will be used as the default converter and there is no need to assign a value to the @grails.web.url.converter@ config property.
+其他方式的策略可以通过 [UrlConverter|api:grails.web.UrlConverter] 接口中加入类实例到 Spring 的 @grails.web.UrlConverter.BEAN_NAME@ 中来实现。如Grails找到那个类名，它将作为默认转换器而不再通过 @grails.web.url.converter@ 的值来设置。
+
 
 {code:java}
 // src/groovy/com/myapplication/MyUrlConverterImpl.groovy
@@ -173,5 +176,5 @@ beans = {
 }
 {code}
 
-h4. Web Flow input and output
-It is now possible to provide input arguments when calling a subflow. Flows can also return output values that can be used in a calling flow.
+h4. Web 流的输入输出
+现对子流程也提供了输入参数。流中的输出值也可以由子流来输出。
