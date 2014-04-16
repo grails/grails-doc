@@ -1,18 +1,16 @@
-h4. Namespace Support
+h4. 命名空间支持
 
-Grails 2.2 includes improved support for managing naming conflicts between artifacts provided by an application and its plugins.
+Grails 2.2 提供了在一个应用程序中基于插件命名冲突解决方式。
 
-Bean names for Service artifacts provided by a plugin are now prefixed with the plugin name.  For example, if a Service named @com.publishing.AuthorService@ is provided by
-a plugin named @PublishingUtilities@ and another Service named @com.bookutils.AuthorService@ is provided by a plugin named @BookUtilities@, the bean names for those services
-will be @publishingUtilitiesAuthorService@ and @bookUtilitiesAuthorService@ respectively.  If a plugin provides a Service that does not have a name which conflicts with any
-other Service, then a bean alias will automatically be created that does not contain the prefix and the alias will refer to the bean referenced by the prefixed name.  Service
-artifacts provided directly by the application will have no prefix added to the relevant bean name. See the [dependency injection and services|guide:dependencyInjectionServices] docs. 
+Bean 服务名现在可含有前缀名称。例如，如果 @PublishingUtilities@ 插件含有一个服务是 @com.publishing.AuthorService@ ，
+而 @BookUtilities@ 插件含有一个服务是 @com.bookutils.AuthorService@ ，那么他们将各自的服务名为 @publishingUtilitiesAuthorService@ 和 @bookUtilitiesAuthorService@ 。
+如果一个服务并不其他服务名称冲突，那么那个Bean不会包含前缀。服务还是直接由应用程序中不含前缀的服务提供。
+具体参阅  [dependency injection and services|guide:dependencyInjectionServices]
 
-Domain classes provided by a plugin will have their default database table name prefixed with the plugin name if the @grails.gorm.table.prefix.enabled@ config property is
-set to @true@. For example, if the @PublishingUtilities@ plugin provides a domain class named @Book@, the default table name for that domain class will be
-@PUBLISHING_UTILITIES_BOOK@ if the @grails.gorm.table.prefix.enabled@ config property is set to @true@.
+@grails.gorm.table.prefix.enabled@ 设置如果是 @true@ ，那么这个插件中的模型将默认加上前缀。
+例如 @PublishingUtilities@ 插件含有 @Book@ 模型，那么这个表名就为 @PUBLISHING_UTILITIES_BOOK@ 。
 
-URL Mappings may now include a @plugin@ attribute to indicate that the controller referenced in the mapping is provided by a particular plugin.
+URL 映射也可以包含插件属性来指定一个特指的插件。
 
 {code:java}
 static mappings = {
@@ -33,10 +31,9 @@ static mappings = {
 }
 {code}
 
-See the [namespaced controllers|guide:namespacedControllers] docs for more information.
+具体参阅  [namespaced controllers|guide:namespacedControllers]
 
-Controller methods and GSP Tags which accept a controller name as a parameter now support an optional parameter indicating
-that the controller is provided by a specific plugin.
+控制方法中加入GSP参数标示指定特定的插件。
 
 {code:java}
 <g:link controller="user" plugin="springSecurity">Manage Users</g:link>
@@ -50,19 +47,19 @@ class DemoController {
 }
 {code}
 
-h4. Forked Tomcat Execution
+h4. 深入 Tomcat 执行
 
-Grails 2.2 supports forked JVM execution of the Tomcat container in development mode. This has several benefits including:
+Grails 2.2 支持对Tomcat运行容器的开发。它有以下优势：
 
-* Reduced memory consumption, since the Grails build system can exit
-* Isolation of the build classpath from the runtime classpath
-* The ability to deploy other Grails/Spring applications in parallel without conflicting dependencies
+* 减少内存开销，从Grails系统中可以退出
+* 从运行classpath中隔离开发的classpath
+* 可以发布多个Grails/Spring应用系统而没有依赖性冲突
 
-See the [documentation|guide:forkedMode] on using forked mode for more information.
+具体参阅 [documentation|guide:forkedMode]
 
-h4. SQL Projections In Criteria Queries
+h4. 在条件查询中的SQL设计
 
-Grails 2.2 adds new functionality to criteria queries to provide access to Hibernate's SQL projection API.
+Grails 2.2 加入了新的功能支持对查询条件的 Hibernate's SQL 设计API
 
 {code:java}
 // Use SQL projections to retrieve the perimeter and area of all of the Box instances...
@@ -75,8 +72,8 @@ def results = c.list {
 }
 {code}
 
-See the [Criteria|guide:criteria] section for more information.
+具体参阅 [Criteria|guide:criteria] 
 
 h4. Groovy 2
 
-Grails 2.2 ships with Groovy 2.0, which has a [bunch of new features|http://www.infoq.com/articles/new-groovy-20] itself.
+Grails 2.2 支持了 Groovy 2.0, 使得自身有了一些新功能 [bunch of new features|http://www.infoq.com/articles/new-groovy-20] 
