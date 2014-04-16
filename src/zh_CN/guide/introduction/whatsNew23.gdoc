@@ -1,42 +1,49 @@
-h4. Improved Dependency Management
+h4. 改善依赖管理
 
 The default dependency resolution engine used by Grails has been changed to [Aether|http://eclipse.org/aether], the dependency resolution engine used by Maven. Which engine you use can be configured in @BuildConfig@:
+默认依赖解决方式改变为 [Aether|http://eclipse.org/aether] ，之前是由 Maven解决。你可以通过 @BuildConfig@ 设置来改变。
 
 {code}
 grails.project.dependency.resolver = "maven" // or ivy
 {code}
 
-Using Aether dependency resolution in Grails results in the same behavior as when using the Maven build tool, meaning improved snapshot handling, understanding of custom packaging types and so on.
+使用 Aether 在部分功能上和 Maven类似，仅仅对快照处理，自定义包类型理解和其他一些东西有所改良。
 
-In addition, the [dependency-report|commandLine] command has been updated to print the dependency graph of the console, which helps in diagnosing dependency resolution failures. See the chapter on [Dependency Resolution|guide:dependencyResolution] for more information.
+此外，[dependency-report|commandLine] 命令升级值在命令窗口中输出依赖关联图，它将帮助分析关联失败的原因。可以通过 [Dependency Resolution|guide:dependencyResolution] 章节获取更多信息。
+
+h4. 数据绑定
+
+Grails 2.3 包括了新的数据绑定机制，比之前版本更灵活和方便保持数据绑定功能。
+新的数据绑定功能包括以下特征：
+
+* 使用 [BindingFormat|api:org.grails.databinding.BindingFormat] 为每个字段提供自定义数据格式 
+* 使用 [ValueConverter|api:org.grails.databinding.converters.ValueConverter] 用于默认数据转换 
+* 使用 [BindingFormat|api:org.grails.databinding.BindingFormat]  [FormattedValueConverter|api:org.grails.databinding.converters.FormattedValueConverter] 用于可定义化的数据转换 
+* 使用 [BindUsing|api:org.grails.databinding.BindUsing] 绑定基本类自定义
+* 使用 [BindUsing|api:org.grails.databinding.BindUsing] 绑定基本类自定义字段
+* 在数据绑定中，可以将空白值或空字符串值转换为 null 值 (可配置)
+
+可以通过 [Data Binding|guide:dataBinding] 章节获取更多信息
+
+对于遗留的数据绑定可以通过修改 @grails-app/conf/Config.groovy@ 的 @grails.databinding.useSpringBinder@ 为 @true@ 。
+遗留数据绑定并不支持新的数据绑定器。
+
+h4. 将请求绑定到命令行对象中
+
+如果命令对象承担一个控制动作请求内容，那么这个请求将解析并绑定给命令对象中。这将简化包含JSON或XML类型的请求。
+
+通过 [Command Objects|guide:commandObjects] 章节获取更多信息
+
+h4. 模型类作为命令类
+
+当模型类作为命令类使用，则含有一个 @id@ 请求参数，Grails 框架将返回一个按照 @id@ 的数据类。
+通过 [Command Objects|guide:commandObjects] 章节获取更多信息
 
 
-h4. Data Binder
+h4. 运行分支
 
-Grails 2.3 includes a new data binding mechanism which is more flexible and easier to maintain than the data binder used in previous versions.  The new data binder includes numerous enhancements including:
-
-* Custom date formats on a per field basis using [BindingFormat|api:org.grails.databinding.BindingFormat]
-* User defined data converters using [ValueConverter|api:org.grails.databinding.converters.ValueConverter]
-* User defined formatted data converters using [BindingFormat|api:org.grails.databinding.BindingFormat] and [FormattedValueConverter|api:org.grails.databinding.converters.FormattedValueConverter]
-* Custom binding on a per class basis using [BindUsing|api:org.grails.databinding.BindUsing]
-* Custom binding on a per field basis using [BindUsing|api:org.grails.databinding.BindUsing]
-* By default all blank and empty Strings will be converted to null during data binding (configurable)
-
-See the [Data Binding|guide:dataBinding] section for details.
-
-The legacy data binder may be used by assigning @true@ to the @grails.databinding.useSpringBinder@ property in @grails-app/conf/Config.groovy@.  Note that the legacy binder does not support any of the new features provided by the new data binder.
-
-h4. Binding Request Body To Command Objects
-
-If a request is made to a controller action which accepts a command object and the request includes a body, the body will be parsed and used to do data binding to the command object.  This simplifies use cases where a request includes a JSON or XML body (for example) that can be bound to a command object.  See the [Command Objects|guide:commandObjects] documentation for more details.
-
-h4. Domain Classes As Command Objects
-
-When a domain class is used as a command object and there is an @id@ request parameter, the framework will retrieve the instance of the domain class from the database using the @id@ request parameter.  See the [Command Objects|guide:commandObjects] documentation for more details.
-
-h4. Forked Execution
-
-All major commands can now be forked into a separate JVM, thus isolating the build path from the runtime / test paths. Forked execution can be controlled via the @BuildConfig@:
+所有主要将被分割到不同JVM中执行，也就是生产路径和运行/测试路径是分开的。
+这个是由 @BuildConfig@ 控制的：
 
 {code}
 grails.project.fork = [
@@ -47,30 +54,30 @@ grails.project.fork = [
 ]
 {code}
 
-See the documentation on [Forked Mode|guide:forkedMode] for more information.
+通过 [Forked Mode|guide:forkedMode] 章节获取更多信息
 
-h4. Test Runner Daemon
+h4. 运行分支的测试
 
-To speed up testing when using forked execution a new daemon will start-up in the background to run tests when using interactive mode. You can restart the daemon with the @restart-daemon@ command from interactive mode:
+通过交互模式可在后台运行调试，并快速执行一个新的守护进程。你可以在交互模式下重启守护进程。
 
 {code}
 \$ grails> restart-daemon
 {code}
 
-h4. Server-Side REST Improvements
+h4. 服务端 REST 改进
 
-Grails' [REST support|guide:REST] has been significantly improved with the addition of the following features:
+Grails' [REST support|guide:REST] 提供了一下重要特征:
 
-* Rich [REST URL Mapping support|guide:restfulMappings] with supports for resource mappings, singular resource mappings, nested resources, versioning and more
-* New extensible response rendering and binding APIs
-* Support for HAL, Atom and Hypermedia (HATEAOS)
-* Scaffolding for REST controllers
+* 富REST URL 映射 [REST URL Mapping support|guide:restfulMappings] 支持资源映射，单资源映射，叠套资源，版本和其他
+* 新的可扩展请求、渲染和绑定的API
+* 支持HAL，Atom 和 Hypermedia (HATEAOS)
+* 提供脚手架控制器
 
-See the [user guide|guide:REST] for more information.
+通过 [user guide|guide:REST] 章节获取更多信息
 
-h4. New Scaffolding 2.0 Plugin
+h4. 新的脚手架 2.0 插件
 
-Grails' Scaffolding feature has been split into a [separate plugin|http://grails.org/plugin/scaffolding]. Version 2.0 of the plugin includes support for generating REST controllers, Async controllers, and Spock unit tests.
+Grails 脚手架拆分到 [separate plugin|http://grails.org/plugin/scaffolding] 插件中。2.0 版本包括支持 REST 控制器，异步控制器和Spock 单元测试。
 
 h4. URL Mappings May Specify A Redirect
 
