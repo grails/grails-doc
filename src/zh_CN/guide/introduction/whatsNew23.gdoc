@@ -1,6 +1,5 @@
 h4. 改善依赖管理
 
-The default dependency resolution engine used by Grails has been changed to [Aether|http://eclipse.org/aether], the dependency resolution engine used by Maven. Which engine you use can be configured in @BuildConfig@:
 默认依赖解决方式改变为 [Aether|http://eclipse.org/aether] ，之前是由 Maven解决。你可以通过 @BuildConfig@ 设置来改变。
 
 {code}
@@ -9,7 +8,7 @@ grails.project.dependency.resolver = "maven" // or ivy
 
 使用 Aether 在部分功能上和 Maven类似，仅仅对快照处理，自定义包类型理解和其他一些东西有所改良。
 
-此外，[dependency-report|commandLine] 命令升级值在命令窗口中输出依赖关联图，它将帮助分析关联失败的原因。可以通过 [Dependency Resolution|guide:dependencyResolution] 章节获取更多信息。
+此外，[dependency-report|commandLine] 命令升级后提供在命令窗口中输出依赖关联图，它将帮助分析关联失败的原因。可以通过 [Dependency Resolution|guide:dependencyResolution] 章节获取更多信息。
 
 h4. 数据绑定
 
@@ -26,6 +25,7 @@ Grails 2.3 包括了新的数据绑定机制，比之前版本更灵活和方便
 可以通过 [Data Binding|guide:dataBinding] 章节获取更多信息
 
 对于遗留的数据绑定可以通过修改 @grails-app/conf/Config.groovy@ 的 @grails.databinding.useSpringBinder@ 为 @true@ 。
+
 遗留数据绑定并不支持新的数据绑定器。
 
 h4. 将请求绑定到命令行对象中
@@ -37,8 +37,8 @@ h4. 将请求绑定到命令行对象中
 h4. 模型类作为命令类
 
 当模型类作为命令类使用，则含有一个 @id@ 请求参数，Grails 框架将返回一个按照 @id@ 的数据类。
-通过 [Command Objects|guide:commandObjects] 章节获取更多信息
 
+通过 [Command Objects|guide:commandObjects] 章节获取更多信息
 
 h4. 运行分支
 
@@ -79,9 +79,9 @@ h4. 新的脚手架 2.0 插件
 
 Grails 脚手架拆分到 [separate plugin|http://grails.org/plugin/scaffolding] 插件中。2.0 版本包括支持 REST 控制器，异步控制器和Spock 单元测试。
 
-h4. URL Mappings May Specify A Redirect
+h4. URL 映射可指定一个跳转
 
-URL Mappings may now specify that a redirect should be triggered when the mapping matches an incoming request:
+当映射匹配一个传入的请求，URL映射将跳转指定到Redirect中。
 
 {code:java}
 class UrlMappings {
@@ -95,11 +95,12 @@ class UrlMappings {
 }
 {code}
 
-See the [user guide|guide:redirectMappings] for more information.
+通过 [user guide|guide:redirectMappings] 章节获取更多信息
 
-h4. Async support
+h4. 异步支持
 
 Grails 2.3 features new [Asynchronous Programming APIs|guide:async] that allow for asynchronous processing of requests and integrate seamlessly with GORM. Example:
+Grails 2.3 新增 [Asynchronous Programming APIs|guide:async] ，将运行多请求进程无缝的运作与GORM。例如：
 
 {code}
 import static grails.async.Promises.*
@@ -113,14 +114,14 @@ def index() {
 }
 {code}
 
-See [the documentation|guide:async] for further information.
+通过 [the documentation|guide:async] 章节获取更多信息
 
-h4. Encoding / Escaping Improvements
+h4. 编码中安全改良 Encoding / Escaping Improvements
 
-Grails 2.3 features dedicated support for [Cross Site Scripting (XSS) prevention|guide:xssPrevention], including :
+Grails 2.3 对于 [Cross Site Scripting (XSS) prevention|guide:xssPrevention] ，包括：
 
-* Defaulting to HTML escaping all GSP expressions and scriptlets
-* Context sensitive encoding switching for tags
+* 将GSP表达式和可脚本化的内容默认转为 HTML
+* 对于标签敏感性的编码性转换
 * Double encoding prevention
 * Optional automatic encoding of all data in a GSP page not considered safe
 
