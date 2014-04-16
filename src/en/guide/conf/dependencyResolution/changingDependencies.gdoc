@@ -1,6 +1,6 @@
 h4. Configuration Changing dependencies
 
-Typically, dependencies are constant. That is, for a given combination of @group@, @name@ and @version@ the jar (or plugin) that it refers to will never change. The Grails dependency management system uses this fact to cache dependencies in order to avoid having to download them from the source repository each time. Sometimes this is not desirable. For example, many developers use the convention of a _snapshot_ (i.e. a dependency with a version number ending in “-SNAPSHOT”) that can change from time to time while still retaining the same version number. We call this a "changing dependency".
+Typically, dependencies are constant. That is, for a given combination of @group@, @name@ and @version@ the jar (or plugin) that it refers to will never change. The Grails dependency management system uses this fact to cache dependencies in order to avoid having to download them from the source repository each time. Sometimes this is not desirable. For example, many developers use the convention of a _snapshot_ (i.e. a dependency with a version number ending in @-SNAPSHOT@) that can change from time to time while still retaining the same version number. We call this a "changing dependency".
 
 Whenever you have a changing dependency, Grails will always check the remote repository for a new version. More specifically, when a changing dependency is encountered during dependency resolution its last modified timestamp in the local cache is compared against the last modified timestamp in the dependency repositories. If the version on the remote server is deemed to be newer than the version in the local cache, the new version will be downloaded and used.
 
@@ -8,7 +8,7 @@ Whenever you have a changing dependency, Grails will always check the remote rep
 Be sure to read the next section on "Dependency Resolution Caching" in addition to this one as it affects changing dependencies.
 {note}
 
-All dependencies (jars and plugins) with a version number ending in @-SNAPSHOT@ are *implicitly* considered to be changing by Grails. You can also explicitly specify that a dependency is changing by setting the changing flag in the dependency DSL (This is only required for Ivy, Aether does not support the 'changing' flag and treats dependencies that end with -SNAPSHOT as changing):
+All dependencies (jars and plugins) with a version number ending in @-SNAPSHOT@ are *implicitly* considered to be changing by Grails. You can also explicitly specify that a dependency is changing by setting the changing flag in the dependency DSL (This is only required for Ivy, Aether does not support the 'changing' flag and treats dependencies that end with @-SNAPSHOT@ as changing):
 
 {code}
 runtime ('org.my:lib:1.2.3') {
