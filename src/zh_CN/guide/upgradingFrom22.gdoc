@@ -1,7 +1,7 @@
 A number of changes need to be considered when upgrading your application from Grails 2.2, some of them breaking. Here's a quick list with more detail on each item following after:
-当Grails2.2向上升级时，需要有些改变。下面是一个快速列表表明那些需要调整：
+当Grails2.2向上升级时，需要有些改变。下面列表表明那些需要调整：
 
-* 新的改善的数据绑定 (no Spring property editors)
+* 新的改善数据绑定 (no Spring property editors)
 * 对于XSS攻击中诸多方面设置为默认转为HTML编码
 * 新的依赖性解决引擎
 * 必须在线接受Grails依赖
@@ -43,17 +43,16 @@ h4. 依赖元数据的改变
 
 此外，用于Grails 2.3 POM和依赖的元数据已重新安排和清理，所以只有直接依赖的一个应用程序和所有其他指定的依赖关系是继承的。
 
-着意味着升级后， 如, Ehcache is 现在是一个传递依赖Hibernate的插件, 而之前是直接依赖. 如Ehcache出现一个错误，它大部分是因为你没有安装 Hibernate插件，以及直接定义了Ehcache关联：
+着意味着升级后，Ehcache 是一个传递依赖Hibernate的插件, 而之前是直接依赖. 如Ehcache出现一个错误，它大部分是因为没有安装 Hibernate插件，以及直接定义了Ehcache关联：
 (If get a compilation error related to Ehcache, it is most likely that you don't have the Hibernate plugin installed and need to directly declare the Ehcache dependency:)
 
 {code}
 compile "net.sf.ehcache:ehcache-core:2.4.6"
 {code}
 
-此外，
-In addition, excludes may no longer work and may need adjusting when upgrading due to how the metadata has changed. 运行 [dependency-report|commandLine] 查看新的依赖元数据以做出相应调整.
+此外，当升级后元数据如何改变，去除一些不能运行的和做一些调整。可以运行 [dependency-report|commandLine] 查看新的依赖元数据以做出相应调整.
 
-当升级时会有以下错误信息：
+当升级时有这个错误信息：
 {code}
 | Configuring classpath
 :: problems summary ::
@@ -65,7 +64,8 @@ In addition, excludes may no longer work and may need adjusting when upgrading d
     ::::::::::::::::::::::::::::::::::::::::::::::
 {code}
 
-This is caused by a plugin that depends on an old version of @spring-test@ (for example the [Mail plugin|http://grails.org/plugins/mail]). To correct this run @grails dependency-report@ and search for plugins that have a transitive dependency on @spring-test@ and exclude them. For example:
+一个插件依赖于一个旧版的@spring-test@ (例如，[Mail plugin|http://grails.org/plugins/mail]). 修改这个问题可以运行 @grails dependency-report@ ，搜索插件是否传递依赖 @spring-test@ 并去除 (excludes) 它。
+例如：
 
 {code}
 plugins {
@@ -75,17 +75,20 @@ plugins {
 }
 {code}
 
-However, longer term to solve problems like this we recommend that users move away from Ivy and use Aether instead for dependency resolution:
+无论如何，更长远的办法是像我们建议的那样，直接弃用 Ivy，而使用 Aether方案来替换依赖解决方案：
 
 {code}
 grails.project.dependency.resolver="maven"
 {code}
 
-h4. No initial offline mode with Aether
+h4. Aether中不能作为离线模式 No initial offline mode with Aether
 
-Aether does not support resolving dependencies from a flat file system. This means that the jars we ship with Grails in GRAILS_HOME/lib are not used for the first resolve, but instead the jars are obtained from Maven central. After they have been obtained from Maven central then Aether operates fine offline.
+Aether的依赖解决方式，并不是通过本地文件获得。也就是说，Grails将不会把 GRAILS_HOME/lib 作为jar存放地的首选，而是从 Maven 库中取得相关 jar。
+After they have been obtained from Maven central then Aether operates fine offline.
 
+然而，你不能从你的本地Maven中获得所需的jar时，那么你只能将 Ivy 作为 BuildConfig。
 If however you do not have the necessary jars in your local Maven repository, then the only way to get offline execution is to enable Ivy via BuildConfig (see above).
+
 
 h4. Changes to Core plugin versioning schemes and the Upgrade command
 
