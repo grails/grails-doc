@@ -2,55 +2,58 @@ A number of changes need to be considered when upgrading your application from G
 当Grails2.2向上升级时，需要有些改变。下面是一个快速列表表明那些需要调整：
 
 * 新的改善的数据绑定 (no Spring property editors)
-* Much improved XSS prevention with default HTML encoding
-* A new dependency resolution engine
-* Must be online to fetch Grails dependencies
-* Grails core dependencies rearranged
-* Tomcat and Hibernate plugins independently versioned now (breaking!)
-* Scaffolding is now a separate plugin
-* Spock included by default
-* Dependency injection does not work in integration tests by default
-* Forked execution for tests
-* Reloading in @run-app@ won't work by default on upgraded apps
-* @grails-debug@ doesn't work for forked execution
+* 对于XSS攻击中诸多方面设置为默认转为HTML编码
+* 新的依赖性解决引擎
+* 必须在线接受Grails依赖
+* Grails核心依赖重新整理
+* Tomcat 和 Hibernate 插件本版本分离 (breaking!)
+* 脚手架作为分离插件模式
+* 默认使用 Spock 
+* 默认在交互测试中依赖注入无法工作
+* 为测试中加入执行
+* 默认升级应用时 @run-app@ 无法工作
+* @grails-debug@ 不再使用
 
 
-h4. New Data Binder
+h4. 新的数据绑定
 
-There is a new data binding mechanism written from the ground up to meet Grails' needs. If you wish to continue using Spring for data binding then you must set the @grails.databinding.useSpringBinder@ property to @true@ in @grails-app/conf/Config.groovy@
+新的数据绑定机制从根本上重写以符合Grails的实际需求。如果你继续希望使用Spring来作为数据绑定，那么你需要修改  @grails-app/conf/Config.groovy@ 文件中的 @grails.databinding.useSpringBinder@ 的值为 @true@ 。
 
-h4. Encoding / Escaping (XSS) Changes
+h4. 编码中输出的安全改良 (XSS) Changes
 
-Grails 2.3 includes new features to help prevent XSS attacks. These are enabled by default for new applications, but older applications will require manual intervention. See the section on [Cross Site Scripting (XSS) prevention|guide:xssPrevention] for how to appropriately configure XSS prevention.
+Grails 2.3 包括新的机制来保护 XSS 攻击。它默认为新应用开启这个选项，但老版本应用需要手工来操作。
+可以查阅 [Cross Site Scripting (XSS) prevention|guide:xssPrevention] 来看如何设置 XSS 保护。
 
-h4. Dependency Resolution changes
+h4. 依赖性解决方案
 
-Although dependency resolution using Ivy is still supported, the default for Grails 2.3 is to use Aether and the Ivy support will not be improved upon going forward. You may wish to consider using Aether instead for your existing applications by setting the following in @grails-app/conf/BuildConfig.groovy@:
-
+虽然依赖性Ivy还是予以支持，但默认 Grails 2.3 已经使用 Aether 和 Ivy 今后不再继续。
+如果你希望使用 Aether 来替换你现有系统，可以通过 @grails-app/conf/BuildConfig.groovy@ ：
 {code}
 grails.project.dependency.resolver = "maven" // or ivy
 {code}
 
-If you need to authenticate to a maven repository, you will want to change the definition of that repository like so:
-
+如果你希望以认证方式连接到 maven 仓库，你需要修改这里：
 {code}
 mavenRepo("http://artifactory.mycompany.com/repo") {
     authentication(username: "myusername", password: "secret")
 }
 {code}
 
-h4. Dependency Metadata Changes
+h4. 依赖元数据的改变
 
-In addition, the POM and dependency metadata for Grails 2.3 has been re-arranged and cleaned up so that only direct dependencies are specified for an application and all other dependencies are inherited transitvely. This has implications to the upgrade since, for example, Ehcache is now a transitive dependency of the Hibernate plugin, whilst before it was a direct dependency. If get a compilation error related to Ehcache, it is most likely that you don't have the Hibernate plugin installed and need to directly declare the Ehcache dependency:
+此外，用于Grails 2.3 POM和依赖的元数据已重新安排和清理，所以只有直接依赖的一个应用程序和所有其他指定的依赖关系是继承的。
+
+着意味着升级后， 如, Ehcache is 现在是一个传递依赖Hibernate的插件, 而之前是直接依赖. 如Ehcache出现一个错误，它大部分是因为你没有安装 Hibernate插件，以及直接定义了Ehcache关联：
+(If get a compilation error related to Ehcache, it is most likely that you don't have the Hibernate plugin installed and need to directly declare the Ehcache dependency:)
 
 {code}
 compile "net.sf.ehcache:ehcache-core:2.4.6"
 {code}
 
-In addition, excludes may no longer work and may need adjusting when upgrading due to how the metadata has changed. Run the [dependency-report|commandLine] to see the new dependency metadata and make adjustments accordingly.
+此外，
+In addition, excludes may no longer work and may need adjusting when upgrading due to how the metadata has changed. 运行 [dependency-report|commandLine] 查看新的依赖元数据以做出相应调整.
 
-A common error that may occur when upgrading is:
-
+当升级时会有以下错误信息：
 {code}
 | Configuring classpath
 :: problems summary ::
