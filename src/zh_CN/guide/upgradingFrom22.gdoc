@@ -84,15 +84,18 @@ grails.project.dependency.resolver="maven"
 h4. Aether中不能作为离线模式 No initial offline mode with Aether
 
 Aether的依赖解决方式，并不是通过本地文件获得。也就是说，Grails将不会把 GRAILS_HOME/lib 作为jar存放地的首选，而是从 Maven 库中取得相关 jar。
+
 After they have been obtained from Maven central then Aether operates fine offline.
 
 然而，你不能从你的本地Maven中获得所需的jar时，那么你只能将 Ivy 作为 BuildConfig。
+
 If however you do not have the necessary jars in your local Maven repository, then the only way to get offline execution is to enable Ivy via BuildConfig (see above).
 
 
-h4. Changes to Core plugin versioning schemes and the Upgrade command
+h4. 核心插件的版本控制和Upgrade命令
 
-Core plugins like @tomcat@ and @hibernate@ are no longer versioned the same as the Grails version, instead they are versioned according to the Tomcat and Hibernate version they target. If you are upgrading from Grails 2.2 you need to manually configure the correct Tomcat and Hibernate plugins in @BuildConfig@. The @upgrade@ command will not do this for you!
+类似 @tomcat@ 和 @hibernate@ 版本控制不再和Grails版本一致，而是由Tomcat 和 Hibernate自己决定。如果你从Grails 2.2升级，你必须手工在 @BuildConfig@ 中设置它们的插件版本。
+@upgrade@ 命令不再为你做这个功能。
 
 {code}
     plugins {
@@ -104,11 +107,11 @@ Core plugins like @tomcat@ and @hibernate@ are no longer versioned the same as t
     }
 {code}
 
-Note that the @upgrade@ command will be deprecated in 2.3 and replaced with a command named @use-current-grails-version@, which will make no attempts to automatically upgrade Grails applications.
+注意，@upgrade@命令将在2.3中被@use-current-grails-version@命令所替换，它不再尝试自动升级Grails应用程序。
 
-h4. Scaffolding moved to a plugin and rewritten
+h4. 脚手架将被移为一个插件且被重写
 
-If you have dynamically scaffolded controllers in your application then you will need to configure the 1.0 version of the [Scaffolding plugin|http://grails.org/plugin/scaffolding] in BuildConfig:
+如果你要在应用程序中使用动态脚手架功能，则需要在 BuildConfig 中设置  1.0 版本的 [Scaffolding plugin|http://grails.org/plugin/scaffolding] :
 
 {code}
 plugins {
@@ -116,25 +119,25 @@ plugins {
 }
 {code}
 
-By default for new applications the 2.0 version of the scaffolding plugin is used, which is not backwards compatible with 1.0.
+默认新的应用程序的脚手架插件为2.0版，它并不后兼容。
 
-h4. Spock included by default
+h4. 默认包括 Spock 
 
-You no longer need to add the Spock plugin to your projects. Simply create Spock specifications as before and they will be run as unit tests. In fact, don't install the Spock plugin, otherwise your specifications will run twice and potentially fail. This also means that the @spock@ test type no longer exists. Specifications and JUnit tests run as the same type now.
+你不再需要加入 Spock 插件。只需创建 Spock 规格之前，它们将被作为运行单元测试。实际上你不需要安装这个插件，否则您的要求将运行两次，并有可能失败。也就是说， @spock@ 测试类型并不要明显存在。它已经内建于 Specifications 和 JUnit 运行中作为同一个类型。
 
 h4. Dependency Injection for Integration Tests
 
-In order to support alternate JUnit4 test runners, Grails 2.3 no longer uses a special test runner to run tests and integration tests should no longer extend @GroovyTestCase@.
+为了支持JUnit4测试者，Grails 2.3不再使用特殊测试来检测，集成测试不再扩展 @GroovyTestCase@。
 
-This change requires that any JUnit integration tests that require dependency injection now need to be annotated with:
+这个改变要求所有需要依赖注入的JUnit集成测试应当声明：
 
 {code}
 \@TestMixin(IntegrationTestMixin)
 {code}
 
-For Spock integration tests, extending @IntegrationSpec@ also works.
+Spock  集成测试，扩展@IntegrationSpec@ 依旧可以的。
 
-h4. Forked Execution for Testing
+h4. 执行测试
 
 Tests are now by default executed in a forked JVM (although this can be disabled). One implication of this is that tests will be slower to execute when using:
 

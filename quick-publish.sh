@@ -1,1 +1,1 @@
-./gradlew -Ddisable.groovydocs=true -Dzh_CN.only=true docs
+./gradlew -Ddisable.groovydocs=true -Dgrails.home=/Users/wgq91here/Sites/grails-works/grails-core-master -Dzh_CN.only=true docs
