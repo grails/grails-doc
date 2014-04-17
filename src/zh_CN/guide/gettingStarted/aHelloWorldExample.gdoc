@@ -1,23 +1,25 @@
-Let's now take the new project and turn it into the classic "Hello world!" example. First, change into the "helloworld" directory you just created and start the Grails interactive console:
+为了完成这个经典的“hello world!”示例，我们需要先 cd 到上一节所创建的"helloworld"目录下，并且激活交互模式，指令如下：
 
 bc.
 $ cd helloworld
 $ grails
 
-You should see a prompt that looks like this:
+上述命令将Grails的交互模式激活，你将会看到类似于下图所示的截图：
 
 !interactive-helloworld.png!
 
-What we want is a simple page that just prints the message "Hello World!" to the browser. In Grails, whenever you want a new page you just create a new controller action for it. Since we don't yet have a controller, let's create one now with the [create-controller|commandLine] command:
+如何让页面中显示 ”Hello World!" 呢。在Grails中，你需要建立控制器和动作。但现在我们还没有控制器，让我们通过 [create-controller|commandLine] 来建立它。 
 
 bc.
 grails> create-controller hello
 
-Don't forget that in the interactive console, we have auto-completion on command names. So you can type "cre" and then press <tab> to get a list of all @create\-\*@ commands. Type a few more letters of the command name and then <tab> again to finish.
+我们现在在交互模式下，所以，我们具有自动补全功能。只要你输入 "cre" 后再按 <tab> 键，交互模板将提示所有有关 @create\-\*@ 的命令。
+所以只要输入少量的字符然后按 <tab> 键，就可以完成大部分输入工作。
 
-The above command will create a new [controller|guide:controllers] in the @grails-app/controllers/helloworld@ directory called @HelloController.groovy@. Why the extra @helloworld@ directory? Because in Java land, it's strongly recommended that all classes are placed into packages, so Grails defaults to the application name if you don't provide one. The reference page for [create-controller|commandLine] provides more detail on this.
+运行该命令后，将会在 @grails-app/controllers/helloworld@ 目录下边创建一个名字为 @HelloController.groovy@ 的控制器[controller|guide:controllers]。
+为什么是 @helloworld@ 目录呢？因为，在Java范畴中，它强烈建议所有的类应该有个包，所以在你不指定的情况下，Grails默认将按照应用名来建立。参阅 [create-controller|commandLine] 。
 
-We now have a controller so let's add an action to generate the "Hello World!" page. The code looks like this: 
+我们现在有了一个控制器，然后我们加入方法并生成 "Hello World!" 页。代码看上去是：
 
 {code:java}
 package helloworld
@@ -30,24 +32,32 @@ class HelloController {
 }
 {code}
 
-The action is simply a method. In this particular case, it calls a special method provided by Grails to [render|tags] the page.
+动作是非常简单的类方法。在这个例子中，它由 Grails 的  [render|tags] 来实现的。
 
-Job done. To see your application in action, you just need to start up a server with another command called [run-app|commandLine]:
+完成! 让我们来运行一下。你需要使用另一个命令，启动一个服务，命令是 [run-app|commandLine]：
 
 bc.
 grails> run-app
 
-This will start an embedded server on port 8080 that hosts your application. You should now be able to access your application at the URL [http://localhost:8080/helloworld/|http://localhost:8080/helloworld/] - try it!
+它将启动一个内嵌的web服务，端口为8080。你可以通过浏览器访问它 [http://localhost:8080/helloworld/|http://localhost:8080/helloworld/] 。试一试！
 
 {note}
-If you see the error "Server failed to start for port 8080: Address already in use", then it means another server is running on that port. You can easily work around this by running your server on a different port using @-Dserver.port=9090 run-app@. '9090' is just an example: you can pretty much choose anything within the range 1024 to 49151.
+如果你看到错误  "Server failed to start for port 8080: Address already in use"，这个意味着你本机上有其他服务占用了这个端口。
+你可以简单的加个参数改变另个端口， @-Dserver.port=9090 run-app@ 。9090端口只是例子，一般情况下你可以使用从 1024 到 49151任何一个端口。(小于1024端口需要系统管理权限——译者注)
 {note}
 
-The result will look something like this:
+浏览器中你可以看到这个：
 
 !intropage.png!
 
-This is the Grails intro page which is rendered by the @grails-app/view/index.gsp@ file. It detects the presence of your controllers and provides links to them. You can click on the "HelloController" link to see our custom page containing the text "Hello World!". Voila! You have your first working Grails application.
+看上去不对？别急，看下面说明：
 
-One final thing: a controller can contain many actions, each of which corresponds to a different page (ignoring AJAX at this point). Each page is accessible via a unique URL that is composed from the controller name and the action name: /<appname>/<controller>/<action>. This means you can access the Hello World page via [/helloworld/hello/index|http://localhost:8080/helloworld/hello/index], where 'hello' is the controller name (remove the 'Controller' suffix from the class name and lower-case the first letter) and 'index' is the action name. But you can also access the page via the same URL without the action name: this is because 'index' is the _default action_. See the end of the [controllers and actions|guide:understandingControllersAndActions] section of the user guide to find out more on default actions.
+Grails 默认介绍页的文件是 @grails-app/view/index.gsp@ 。 它会自动检测所有你的控制器并提供一些链接。
+点一下 "HelloController" 链接，这样你就可以看到你的 "Hello World!"。
+OK，你的第一个Grails应用完成了。
+
+小结：一个控制器可拥有多个动作，每个动作又可以对应不同页面(除去Ajax)。每个页面由控制名和动作名来决定唯一的URL链接，格式是：/<appname>/<controller>/<action>。也就是说，[/helloworld/hello/index|http://localhost:8080/helloworld/hello/index] 链接是上面控制器和动作的完整链接。注意：将会去掉 Controller ，仅保留名字以及第一个字符是小写的。
+如果没有 index，则Grails会自动搜索默认的动作 _default action_ ,当然这里的默认动作就是 index。 
+
+具体参阅： [controllers and actions|guide:understandingControllersAndActions]
 
