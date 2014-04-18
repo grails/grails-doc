@@ -1,17 +1,18 @@
-The @upgrade@ command has been removed from Grails 2.4.  The procedure for upgrading to the latest version of Grails will be detailed in the user guide from now on.  Below are steps that must be taken to upgrade an application from 2.3.x to 2.4.
+Grails 2.4 中 @upgrade@ 命令已被移出。详细的升级介绍按照用户手册操作。以下步骤是从2.3.x到2.4升级方式。
 
+h4. set-grails-version 命令
 
-h4. The set-grails-version Command
+[set-grails-version|commandLine] 命令将设置应用程序元数据由Grails哪个版本建立的。
 
-The [set-grails-version|commandLine] command should be run to update the application's metadata to indicate which version of Grails the application is built with.
+h4. 资源插件
 
-h4. The resources Plugin
+因为Grails 2.4 默认将资源管理从原来的 @resources@ 插件改变为 @asset-pipeline@ 插件。
+参阅 [static resource abstraction|guide:resources] 章节查阅更多信息。
+如果升级应用程序到Grails2.4 ，那么使用 resources 的1.2.7及之后版本，之前版本将不被 Grails 2.4 所支持。
 
-As of Grails 2.4 the @resources@ plugin has been replaced with the @asset-pipeline@ plugin as the default resource management plugin for newly created applications.  See the [static resource abstraction|guide:resources] section of the User Guide for more details.  When upgrading an application to Grails 2.4 if you choose to continue using the resources plugin you will need to use version 1.2.7 or later as previous versions of the plugin are not compatible with Grails 2.4.
+h4. 静态 Holder 类 
 
-h4. Static Holder Classes
-
-The deprecated @org.codehaus.groovy.grails.commons.ApplicationHolder@ and @org.codehaus.groovy.grails.commons.ConfigurationHolder@ classes have been removed from Grails 2.4.
+@org.codehaus.groovy.grails.commons.ApplicationHolder@ 和 @org.codehaus.groovy.grails.commons.ConfigurationHolder@ 被Grails2.4 所弃用。
 
 {note}
 If your application uses the jquery plugin you will need to update to version 1.11.0.2 or later as previous versions of the plugin made use of the @ApplicationHolder@ class.  If your application uses the resources plugin you will need to update to version 1.2.7 or later as previous versions of the plugin made use of the @ConfigurationHolder@ class.
@@ -19,9 +20,9 @@ If your application uses the jquery plugin you will need to update to version 1.
 
 {note}We need to add some notes or provide a link to a blog post on how to address code which used to use these classes.{note}
 
-h4. Changes To applicationContex.xml
+h4. applicationContex.xml 文件的变化
 
-The @web-app/WEB-INF/applicationContext.xml@ file contains a bean definition for a @grailsResourceLoader@ bean which is an instance of @org.codehaus.groovy.grails.commons.GrailsResourceLoaderFactoryBean@.  That bean definition needs to be removed from the file.  The @grailsApplication@ bean may have the @grailsResourceLoader@ bean injected into it as shown below.
+在 @web-app/WEB-INF/applicationContext.xml@ 文件中有个 @grailsResourceLoader@ bean 实例  org.codehaus.groovy.grails.commons.GrailsResourceLoaderFactoryBean@.  这个Bean定义被移出。 @grailsApplication@ bean 会注入方式 @grailsResourceLoader@ 。
 
 {code:java}
 <bean id="grailsApplication" class="org.codehaus.groovy.grails.commons.GrailsApplicationFactoryBean">
@@ -31,7 +32,6 @@ The @web-app/WEB-INF/applicationContext.xml@ file contains a bean definition for
 </bean>
 {code}
 
-The @grailsApplication@ bean definition should be left in the file but the @grailsResourceLoader@ bean reference should be removed as shown below.
 
 {code:java}
 <bean id="grailsApplication" class="org.codehaus.groovy.grails.commons.GrailsApplicationFactoryBean">
@@ -40,4 +40,4 @@ The @grailsApplication@ bean definition should be left in the file but the @grai
 </bean>
 {code}
 
-{note}More TBD Before 2.4 Final Is Released{note}
+{note}更多的 TBD 将在Grails2.4正式发布前提供 {note}
