@@ -1,8 +1,8 @@
-Since Grails is built on Java technology setting up a data source requires some knowledge of JDBC (the technology that doesn't stand for Java Database Connectivity).
+既然Grails是基于Java技术来设置数据源的，那么一些JDBC的知识是必不可少的。
 
-If you use a database other than H2 you need a JDBC driver. For example for MySQL you would need "Connector/J":http://www.mysql.com/downloads/connector/j/
+如果你的数据库并非H2，那么你至少还需要一个JDBC驱动。以MySQL为例，你需要下载 "Connector/J":http://www.mysql.com/downloads/connector/j/
 
-Drivers typically come in the form of a JAR archive. It's best to use the dependency resolution to resolve the jar if it's available in a Maven repository, for example you could add a dependency for the MySQL driver like this:
+驱动通常打包成JAR。如果你需要的jar在Maven的存储库中存在，那么最好是通过Ivy来解析它们，比如下面是对MySQL驱动的依赖：
 
 {code}
     dependencies {
@@ -10,26 +10,26 @@ Drivers typically come in the form of a JAR archive. It's best to use the depend
     }
 {code}
 
-If you can't use dependency resolution then just put the JAR in your project's @lib@ directory.
+如果Ivy找不到，那么只需要将JAR放到你工程的lib目录即可。
 
-Once you have the JAR resolved you need to get familiar Grails' DataSource descriptor file located at @grails-app/conf/DataSource.groovy@. This file contains the dataSource definition which includes the following settings:
+一旦解决了JAR的问题，你需要来熟悉一下位于grails-app/conf/DataSource.groovy中的Grails数据源描述了。此文件包含如下所述的一些数据源的定义：
 
-* @driverClassName@ - The class name of the JDBC driver
-* @username@ - The username used to establish a JDBC connection
-* @password@ - The password used to establish a JDBC connection
-* @url@ - The JDBC URL of the database
-* @dbCreate@ - Whether to auto-generate the database from the domain model - one of 'create-drop', 'create', 'update' or 'validate'
-* @pooled@ - Whether to use a pool of connections (defaults to true)
-* @logSql@ - Enable SQL logging to stdout
-* @formatSql@ - Format logged SQL
-* @dialect@ - A String or Class that represents the Hibernate dialect used to communicate with the database. See the [org.hibernate.dialect|http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/dialect/package-summary.html] package for available dialects.
-* @readOnly@ - If @true@ makes the DataSource read-only, which results in the connection pool calling @setReadOnly(true)@ on each @Connection@
+* @driverClassName@ - JDBC驱动的类名
+* @username@ -  建立JDBC连接的用户名
+* @password@ - 建立JDBC连接的密码
+* @url@ -  JDBC数据库的URL
+* @dbCreate@ - 是否根据领域类自动生成数据库-可以是'create-drop'、'create'、'update'或者'validate'
+* @pooled@ - 是否使用连接池（缺省是true)
+* @logSql@ - 是否将SQL输出到字符终端
+* @formatSql@ - 格式化SQL
+* @dialect@ - Hibernate用于跟数据库通讯的方言（dialect），可以是字符串或者类名。可以通过 [org.hibernate.dialect|http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/dialect/package-summary.html] 来查看所支撑的方言。
+* @readOnly@ - 如果是true那么此数据源就是只读的，这是通过调用连接池的Connection的setReadOnly(true)来实现的。
 * @transactional@ - If @false@ leaves the DataSource's transactionManager bean outside the chained BE1PC transaction manager implementation. This only applies to additional datasources.
-* @persistenceInterceptor@ - The default datasource is automatically wired up to the persistence interceptor, other datasources are not wired up automatically unless this is set to @true@
-* @properties@ - Extra properties to set on the DataSource bean. See the [Tomcat Pool|http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes] documentation. There is also a Javadoc format [documentation of the properties|https://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/tomcat/jdbc/pool/PoolConfiguration.html].
-* @jmxExport@ - If @false@, will disable registration of JMX MBeans for all DataSources. By default JMX MBeans are added for DataSources with @jmxEnabled = true@ in properties.
+* @persistenceInterceptor@ - 数据源连接到持久的拦截。 除非设置 @true@ ，否则不拦截。
+* @properties@ - 设置数据源的额外属性。 [Tomcat Pool|http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes]  [documentation of the properties|https://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/tomcat/jdbc/pool/PoolConfiguration.html].
+* @jmxExport@ - 如果设置 @false@, 将禁止注册 JMX MBeans 。默认是 @jmxEnabled = true@ 
 
-A typical configuration for MySQL may be something like:
+一个MySQL的典型配置可能如下：
 
 {code:java}
 dataSource {
@@ -63,7 +63,7 @@ dataSource {
 {code}
 
 {warning}
-When configuring the DataSource do not include the type or the def keyword before any of the configuration settings as Groovy will treat these as local variable definitions and they will not be processed. For example the following is invalid:
+在配置数据源的时候，不要在配置名前加入任何类型或者def关键字，因为Groovy将其视为一个本地变量定义而将其忽略。比如：
 {warning}
 
 {code:java}
@@ -73,7 +73,8 @@ dataSource {
 }
 {code}
 
-Example of advanced configuration using extra properties:
+一个使用额外属性配置的高级示例如下：
+
 {code:java}
 dataSource {
     pooled = true
@@ -149,14 +150,13 @@ dataSource {
 }
 {code}
 
-h4. More on dbCreate
+h4. 关于dbCreate
 
-Hibernate can automatically create the database tables required for your domain model. You have some control over when and how it does this through the @dbCreate@ property, which can take these values:
+Hibernate能够根据你的领域类来自动创建数据库表。你可以通过dbCreate属性来进行一些控制，其可选值如下：
 
-* *create* - Drops the existing schemaCreates the schema on startup, dropping existing tables, indexes, etc. first.
-* *create-drop* - Same as *create*, but also drops the tables when the application shuts down cleanly.
-* *update* - Creates missing tables and indexes, and updates the current schema without dropping any tables or data. Note that this can't properly handle many schema changes like column renames (you're left with the old column containing the existing data).
-* *validate* - Makes no changes to your database. Compares the configuration with the existing database schema and reports warnings.
-* any other value - does nothing
+* *create* - 在启动时候，先删除已存在的，包括表、索引等，然后创建。
+* *create-drop* -  同 create，不过在应用关闭的时候，也进行表删除。
+* *update* - 创建不存在的表和索引，并且在不删除表和数据的情况下更新表结构。注意此种情况于很多限制，比如你不能很好地处理重命名字段（旧有地字段依然保留）
+* *validate* - 不改变你数据库地任何信息，只是跟现有地数据库配置脚本进行比较，并且报告一个警告。其他什么都不做
 
-You can also remove the @dbCreate@ setting completely, which is recommended once your schema is relatively stable and definitely when your application and database are deployed in production. Database changes are then managed through proper migrations, either with SQL scripts or a migration tool like [Liquibase|http://www.liquibase.org/] (the "Database Migration":http://grails.org/plugin/database-migration plugin uses Liquibase and is tightly integrated with Grails and GORM).
+如果你的数据库变化相对稳定或者你的应用部署于生产环境，推荐你将dbCreate完全移除。数据库的变更迁移可以通过SQL脚本或者迁移工具，比如 [Liquibase|http://www.liquibase.org/] （数据库迁移 "Database Migration":http://grails.org/plugin/database-migration 插件就是通过Liquibase来跟Grails和GORM紧密集成的)来完成。
