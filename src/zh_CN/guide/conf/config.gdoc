@@ -1,26 +1,27 @@
 For general configuration Grails provides two files:
+Grails提供了两个关于配置的文件：
 
 * @grails-app/conf/BuildConfig.groovy@
 * @grails-app/conf/Config.groovy@
 
-Both of them use Groovy's "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper syntax. The first, @BuildConfig.groovy@, is for settings that are used when running Grails commands, such as @compile@, @doc@, etc. The second file, @Config.groovy@, is for settings that are used when your application is running. This means that @Config.groovy@ is packaged with your application, but @BuildConfig.groovy@ is not. Don't worry if you're not clear on the distinction: the guide will tell you which file to put a particular setting in.
+它们都是用 "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper 语法。 第一个文件， @BuildConfig.groovy@ 配置文件，用作于当运行Grails命令时，诸如 @compile@, @doc@ 等。第二个文件 @Config.groovy@ ，用作应用程序运行时的设定。这个意味着， @Config.groovy@ 将被打包到你的应用程序，而 @BuildConfig.groovy@ 则不是。如果没有搞清，别急：文档将告知你如何实际运用。
 
-The most basic syntax is similar to that of Java properties files with dot notation on the left-hand side:
+大部分语法类似于java属性的结构，使用 @.@ 符号方式组织：
 
 {code}
 foo.bar.hello = "world"
 {code}
 
-Note that the value is a Groovy string literal! Those quotes around 'world' are important. In fact, this highlights one of the advantages of the ConfigSlurper syntax over properties files: the property values can be any valid Groovy type, such as strings, integers, or arbitrary objects!
+注意，Groovy字符串是平实的！引号是必须加入的。实际上 ConfigSlurper 语法高亮支持这个特征，包括： strings, integers, 或 其它 objects !
 
-Things become more interesting when you have multiple settings with the same base. For example, you could have the two settings
+当设置多个参数时将变成很有趣，例如你设置一下两个参数：
 
 {code}
 foo.bar.hello = "world"
 foo.bar.good = "bye"
 {code}
 
-both of which have the same base: @foo.bar@. The above syntax works but it's quite repetitive and verbose. You can remove some of that verbosity by nesting properties at the dots:
+这两个参数讲包括相同起始点： @foo.bar@ 。 以上语法不是快速有效。你可以按照以下方式将它们整合起来：
 
 {code}
 foo {
@@ -31,7 +32,7 @@ foo {
 }
 {code}
 
-or by only partially nesting them:
+或者只整合一部分：
 
 {code}
 foo {
@@ -40,7 +41,7 @@ foo {
 }
 {code}
 
-However, you can't nest after using the dot notation. In other words, this *won't* work:
+无论如何，起始点你不能有 @.@ 符号，否则它将报错：
 
 {code}
 // Won't work!
@@ -50,7 +51,7 @@ foo.bar {
 }
 {code}
 
-Within both @BuildConfig.groovy@ and @Config.groovy@ you can access several implicit variables from configuration values:
+有些内建值可以在 @BuildConfig.groovy@ 和 @Config.groovy@ 文件中直接使用：
 
 {table}
 *Variable* | *Description*
@@ -60,13 +61,13 @@ appName | The application name as it appears in application.properties.
 appVersion | The application version as it appears in application.properties.
 {table}
 
-For example:
+如:
 
 {code}
 my.tmp.dir = "\${userHome}/.grails/tmp"
 {code}
 
-In addition, @BuildConfig.groovy@ has
+此外， @BuildConfig.groovy@ 文件还可以有
 
 {table}
 *Variable* | *Description*
@@ -74,7 +75,7 @@ grailsVersion | The version of Grails used to build the project.
 grailsSettings | An object containing various build related settings, such as @baseDir@. It's of type [@BuildSettings@|api:grails.util.BuildSettings].
 {table}
 
-and @Config.groovy@ has
+@Config.groovy@ 有
 
 {table}
 *Variable* | *Description*
@@ -82,8 +83,9 @@ grailsApplication | The [@GrailsApplication@|api:org.codehaus.groovy.grails.comm
 {table}
 
 Those are the basics of adding settings to the configuration file, but how do you access those settings from your own application? That depends on which config you want to read.
+这些基本附加设置都可以加入到配置文件中，但如何从自己的应用程序获取这些设定呢？这依赖与你读取那个配置。
 
-The settings in @BuildConfig.groovy@ are only available from [command scripts|guide:creatingGantScripts] and can be accessed via the @grailsSettings.config@ property like so:
+@BuildConfig.groovy@ 中的配置值只能通过 [command scripts|guide:creatingGantScripts] 读取，并作为 @grailsSettings.config@ 值读取：
 
 {code}
 target(default: "Example command") {
@@ -92,7 +94,7 @@ target(default: "Example command") {
 }
 {code}
 
-If you want to read runtime configuration settings, i.e. those defined in @Config.groovy@, use the [@grailsApplication@|api:org.codehaus.groovy.grails.commons.GrailsApplication] object, which is available as a variable in controllers and tag libraries:
+如果你在运行时读取在 @Config.groovy@ 中的配置值，请使用 [@grailsApplication@|api:org.codehaus.groovy.grails.commons.GrailsApplication] 对象，查看在控制器和标签中的读取方式：
 
 {code}
 class MyController {
@@ -104,7 +106,7 @@ class MyController {
 }
 {code}
 
-and can be easily injected into services and other Grails artifacts:
+也可以非常简单的注入到 services ，让它读取到数值：
 
 {code}
 class MyService {
@@ -117,4 +119,4 @@ class MyService {
 }
 {code}
 
-As you can see, when accessing configuration settings you use the same dot notation as when you define them.
+就像你看到的那样，读取还是按照你在配置中的 @.@ 方式来读取。
