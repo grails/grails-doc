@@ -1,25 +1,25 @@
-Grails' command line system is built on [Gant|http://gant.codehaus.org/] - a simple Groovy wrapper around [Apache Ant|http://ant.apache.org].
+Grails的命令行系统建立在[Gant|http://gant.codehaus.org/]之上 - 对Apache Ant进行了简单的包装.
 
-However, Grails takes it further through the use of convention and the @grails@ command. When you type:
+然而，Grails通过约定规则以及@grails@命令的使用带来了一些改进。 当你键入如下内容时:
 
 {code}
 grails [command name]
 {code}
 
-Grails searches in the following directories for Gant scripts to execute:
+为了Gant脚本的执行，Grails会在下列目录中做一次搜索：:
 
 * @USER_HOME/.grails/scripts@
 * @PROJECT_HOME/scripts@
 * @PROJECT_HOME/plugins/*/scripts@
 * @GRAILS_HOME/scripts@
 
-Grails will also convert command names that are in lower case form such as run-app into camel case. So typing
+Grails将把小写的命令名称（如run-app）转换为单词连写的格式。因此如果键入的是
 
 {code}
 grails run-app
 {code}
 
-Results in a search for the following files:
+搜索运行顺序如下：
 
 * @USER_HOME/.grails/scripts/RunApp.groovy@
 * @PROJECT_HOME/scripts/RunApp.groovy@
@@ -27,17 +27,17 @@ Results in a search for the following files:
 * @GLOBAL_PLUGINS_HOME/*/scripts/RunApp.groovy@
 * @GRAILS_HOME/scripts/RunApp.groovy@
 
-If multiple matches are found Grails will give you a choice of which one to execute.
+如果找到多个同名的文件，Grails将要求你选择执行其中的一个。
 
-When Grails executes a Gant script, it invokes the "default" target defined in that script. If there is no default, Grails will quit with an error.
+当Grails执行一个Gant脚本的时候，它会首先调用定义在脚本文件中的“default”任务。如果找不到“default”任务，Grails将退出并报错。
 
-To get a list of all commands and some help about the available commands type:
+获得可用的命令及其帮助信息：
 
 {code}
 grails help
 {code}
 
-which outputs usage instructions and the list of commands Grails is aware of:
+这个命令将输出Grails当前所知的命令列表和使用说明：
 
 {code}
 Usage (optionals marked with *):
@@ -56,21 +56,21 @@ grails compile
 {code}
 
 {note}
-Refer to the Command Line reference in the Quick Reference menu of the reference guide for more information about individual commands
+在快速参考菜单中，可以获得更多的命令行的信息。
 {note}
 
-It's often useful to provide custom arguments to the JVM when running Grails commands, in particular with @run-app@ where you may for example want to set a higher maximum heap size. The Grails command will use any JVM options provided in the general @JAVA_OPTS@ environment variable, but you can also specify a Grails-specific environment variable too:
+当运行grails 命令的时候，提供自定义JVM的参数非常有用，尤其是run-app命令，例如，你可能想设置更大的JVM堆大小。Grails命令会使用环境变量JAVA_OPTS配置的所有JVM options，但你也可以指定一个Grails特定的环境变量：
 
 {code}
 export GRAILS_OPTS="-Xmx1G -Xms256m -XX:MaxPermSize=256m"
 grails run-app
 {code}
 
-h4. non-interactive mode
+h4. 非交互模式
 
-When you run a script manually and it prompts you for information, you can answer the questions and continue running the script. But when you run a script as part of an automated process, for example a continuous integration build server, there's no way to "answer" the questions. So you can pass the @\-\-non-interactive@ switch to the script command to tell Grails to accept the default answer for any questions, for example whether to install a missing plugin.
+当你手动执行一个脚本并提示你输入信息，你可以回答问题并接续执行脚本。但是当作为一个自动化过程中的一部分运行脚本，例如持续集成构建服务器，就没有办法手动"回答"的问题了。这个时候，你可以通过@\-\-non-interactive@开关来告诉Grails采用所有问题的默认回答，例如，是否要安装缺少的插件。
 
-For example:
+例如:
 
 {code}
 grails war --non-interactive
