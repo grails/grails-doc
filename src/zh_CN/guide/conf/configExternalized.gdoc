@@ -16,17 +16,17 @@ grails.config.locations = [
 grails.config.locations = [com.my.app.MyConfig]
 {code}
 
-This can be useful in situations where the config is either coming from a plugin or some other part of your application. A typical use for this is re-using configuration provided by plugins across multiple applications.
+此种情况特别适合于你从插件或者应用的其他部分来加载配置，其典型的应用就是一个插件所提供的配置可以在多个应用中复用。
 
-Ultimately all configuration files get merged into the @config@ property of the [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] object and are hence obtainable from there.
+最后，所有的这些配置文件的内容将合并于 [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] 的config属性中，因此，要获取使用也是通过它来实现的。
 
-Values that have the same name as previously defined values will overwrite the existing values, and the pointed to configuration sources are loaded in the order in which they are defined.
+配置中如果一个名字有多个值，那么新值将覆盖旧的，其顺序是根据源文件的加载顺序来定义的。
 
 h4. 默认设置
 
-The configuration values contained in the locations described by the @grails.config.locations@ property will *override* any values defined in your application @Config.groovy@ file which may not be what you want. You may want to have a set of _default_ values be be loaded that can be overridden in either your application's @Config.groovy@ file or in a named config location. For this you can use the @grails.config.defaults.locations@ property.
+通过grails.config.locations定义的配置将 优先于 你在Config.groovy文件中的任意值，这也许并非你所需要的。你希望Config.groovy或者特定位置的文件才能加载并且重载特定的 缺省值 ，这种情况，你可以通过配置grails.config.defaults.locations属性来实现。
 
-This property supports the same values as the @grails.config.locations@ property (i.e. paths to config scripts, property files or classes), but the config described by @grails.config.defaults.locations@ will be loaded _before_ all other values and can therefore be overridden. Some plugins use this mechanism to supply one or more sets of default configuration that you can choose to include in your application config.
+此属性的值跟grails.config.locations一样（可以是特定路径下的配置脚本、属性文件或者类名），但与之不同的是通过grails.config.defaults.locations来配置的值比其他方式加载的 更早 ，因此也就可有被重载。有些插件就是通过此机制来实现一个或者多个缺省配置的。
 
 {note}
 Grails 支持覆盖参数 "Spring":http://www.springframework.org 参阅 [Grails and Spring|guide:spring]
