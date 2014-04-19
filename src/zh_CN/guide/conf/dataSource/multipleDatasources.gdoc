@@ -1,8 +1,8 @@
-By default all domain classes share a single @DataSource@ and a single database, but you have the option to partition your domain classes into two or more @DataSource@s.
+缺省情况下，所有的领域类共享同一个DataSource和数据库，但是你还是有将领域类拆分到两个甚至更多个DataSource的选择的。
 
-h4. Configuring Additional DataSources
+h4. 配置额外的数据源
 
-The default @DataSource@ configuration in @grails-app/conf/DataSource.groovy@ looks something like this:
+缺省的DataSource配置是位于 @grails-app/conf/DataSource.groovy@ 中的，大体样子如下：
 
 {code}
 dataSource {
@@ -39,7 +39,7 @@ environments {
 }
 {code}
 
-This configures a single @DataSource@ with the Spring bean named @dataSource@. To configure extra @DataSource@s, add another @dataSource@ block (at the top level, in an environment block, or both, just like the standard @DataSource@ definition) with a custom name, separated by an underscore. For example, this configuration adds a second @DataSource@, using MySQL in the development environment and Oracle in production:
+上述示例配置了一个Spring bean名称为dataSource的DataSource。要配置额外的DataSource，需要增加另外一个自定义名称（以下划线分割）的dataSource（跟标准的DataSource类似，只不过要定义在在最外层、环境代码块或者同时两个地方）代码块即可。例如，以下代码的配置新增了第二个DataSource，其在开发环境下是MySQL数据库，在生产环境下是Oracle：
 
 {code}
 environments {
@@ -80,11 +80,11 @@ environments {
 }
 {code}
 
-You can use the same or different databases as long as they're supported by Hibernate.
+你可以使用Hibernate所支持的相同和或者相异的数据库。
 
-h4. Configuring Domain Classes
+h4. 配置领域类
 
-If a domain class has no @DataSource@ configuration, it defaults to the standard @'dataSource'@. Set the @datasource@ property in the @mapping@ block to configure a non-default @DataSource@. For example, if you want to use the @ZipCode@ domain to use the @'lookup'@ @DataSource@, configure it like this;
+如果一个领域类没有配置DataSource，那么其缺省使用标准的'dataSource'。你可以在mapping代码块中设置datasource属性来配置一个非标准的DataSource。例如，你希望ZipCode使用名为'lookup'的DataSource，其配置如下：
 
 {code}
 class ZipCode {
@@ -97,7 +97,7 @@ class ZipCode {
 }
 {code}
 
-A domain class can also use two or more @DataSource@s. Use the @datasources@ property with a list of names to configure more than one, for example:
+一个领域类还可以有两个甚至更多个DataSources。这时候，只需要将datasources设置为一个名称的列表即可，比如：
 
 {code}
 class ZipCode {
@@ -110,7 +110,7 @@ class ZipCode {
 }
 {code}
 
-If a domain class uses the default @DataSource@ and one or more others, use the special name @'DEFAULT'@ to indicate the default @DataSource@:
+如果一个领域类既使用缺省的又使用多于一个的DataSource，可以使用名称为'DEFAULT'来代表缺省的DataSource：
 
 {code}
 class ZipCode {
@@ -123,7 +123,7 @@ class ZipCode {
 }
 {code}
 
-If a domain class uses all configured @DataSource@s use the special value @'ALL'@:
+如果一个领域类要使用所有已经配置的DataSource，请使用特定名称'ALL'：
 
 {code}
 class ZipCode {
@@ -136,9 +136,9 @@ class ZipCode {
 }
 {code}
 
-h4. Namespaces and GORM Methods
+h4. 命名空间和GORM方法
 
-If a domain class uses more than one @DataSource@ then you can use the namespace implied by each @DataSource@ name to make GORM calls for a particular @DataSource@. For example, consider this class which uses two @DataSource@s:
+如果一个领域类使用了多于一个的DataSource，你可以将其每个DataSource名称作为命名空间，并且以此命名来执行GORM的方法调用。例如，下面示例的类有两个DataSource：
 
 {code}
 class ZipCode {
@@ -151,7 +151,7 @@ class ZipCode {
 }
 {code}
 
-The first @DataSource@ specified is the default when not using an explicit namespace, so in this case we default to 'lookup'. But you can call GORM methods on the 'auditing' @DataSource@ with the @DataSource@ name, for example:
+当没有明确指定命名空间的时候，其指定的第一个DataSource被视为缺省，上例中其缺省命名空间是'lookup'。但是你也可以在'auditing'的DataSource上执行GORM方法，比如：
 
 {code}
 def zipCode = ZipCode.auditing.get(42)
@@ -159,13 +159,14 @@ def zipCode = ZipCode.auditing.get(42)
 zipCode.auditing.save()
 {code}
 
-As you can see, you add the @DataSource@ to the method call in both the static case and the instance case.
+如你所见，你可以在DataSource上进行静态和实例类型的方法调用。
 
-h4. Hibernate Mapped Domain Classes
+h4. Hibernate 映射领域类
 
-You can also partition annotated Java classes into separate datasources. Classes using the default datasource are registered in @grails-app/conf/hibernate/hibernate.cfg.xml@. To specify that an annotated class uses a non-default datasource, create a @hibernate.cfg.xml@ file for that datasource with the file name prefixed with the datasource name.
+你可以将Java类申明到不同数据源中。如果类使用默认数据源，那么他们就在 @grails-app/conf/hibernate/hibernate.cfg.xml@ 中注册。
+对于特别不是默认的数据源申明类，那么按照数据源名作为 @hibernate.cfg.xml@ 的前缀。
 
-For example if the @Book@ class is in the default datasource, you would register that in @grails-app/conf/hibernate/hibernate.cfg.xml@:
+例如， @Book@ 在一个默认数据源中，你可以注册它 @grails-app/conf/hibernate/hibernate.cfg.xml@:
 
 {code:xml}
 <?xml version='1.0' encoding='UTF-8'?>
@@ -179,7 +180,7 @@ For example if the @Book@ class is in the default datasource, you would register
 </hibernate-configuration>
 {code}
 
-and if the @Library@ class is in the "ds2" datasource, you would register that in @grails-app/conf/hibernate/ds2_hibernate.cfg.xml@:
+如果 @Library@ 在名为 "ds2" 的数据源中，你可以这样注册它 @grails-app/conf/hibernate/ds2_hibernate.cfg.xml@:
 
 {code:xml}
 <?xml version='1.0' encoding='UTF-8'?>
@@ -193,11 +194,11 @@ and if the @Library@ class is in the "ds2" datasource, you would register that i
 </hibernate-configuration>
 {code}
 
-The process is the same for classes mapped with hbm.xml files - just list them in the appropriate hibernate.cfg.xml file.
+这个过程映射是完全一样的，只是把它们放在对应的 hibernate.cfg.xml 文件中而已。
 
-h4. Services
+h4. 服务类
 
-Like Domain classes, by default Services use the default @DataSource@ and @PlatformTransactionManager@. To configure a Service to use a different @DataSource@, use the static @datasource@ property, for example:
+跟领域类相似，服务类也是使用缺省的DataSource和PlatformTransactionManager。要配置服务使用另外一个不同的DataSource，请使用静态的（static）datasource属性，比如：
 
 {code}
 class DataService {
@@ -210,21 +211,21 @@ class DataService {
 }
 {code}
 
-A transactional service can only use a single @DataSource@, so be sure to only make changes for domain classes whose @DataSource@ is the same as the Service.
+一个支持事务的服务只能使用一个DataSource，因此请确保领域类的DataSource的名字要跟服务类中定义的一致。
 
-Note that the datasource specified in a service has no bearing on which datasources are used for domain classes; that's determined by their declared datasources in the domain classes themselves. It's used to declare which transaction manager to use.
+注意，一个服务类的datasource不对领域类的datasources产生影响，后者由其自身的声明决定。服务类的datasource多用来声明要使用哪一个事务管理器。
 
-What you'll see is that if you have a Foo domain class in dataSource1 and a Bar domain class in dataSource2, and WahooService uses dataSource1, a service method that saves a new Foo and a new Bar will only be transactional for Foo since they share the datasource. The transaction won't affect the Bar instance. If you want both to be transactional you'd need to use two services and XA datasources for two-phase commit, e.g. with the Atomikos plugin.
+假设你有两个数据源，领域类Foo属于dataSource1，Bar属于dataSource2，而WahooService使用dataSource1，此外还有一个方法来实现Foo和Bar的新增保存，那么只有Foo是支持事务的，因为他们共享dataSource1数据源。而Bar实例并不受事务影响。如果你想两者都支持事务，那么你需要两个服务类和支持两阶段提交的XA数据源，比如使用Atomikos插件。
 
-h4. Transactions across multiple datasources 
+h4. 在多个数据源中实现事务 Transactions across multiple datasources 
 
-Grails uses the Best Efforts 1PC pattern for handling transactions across multiple datasources.
+Grails 使用  the Best Efforts 1PC pattern (1PC模式的最佳实现-译者注)来处理跨多个数据源处理事务。
 
-The [Best Efforts 1PC pattern|http://www.javaworld.com/article/2077963/open-source-tools/distributed-transactions-in-spring--with-and-without-xa.html?page=2] is fairly general but can fail in some circumstances that the developer must be aware of. This is a non-XA pattern that involves a synchronized single-phase commit of a number of resources. Because the [2PC|https://en.wikipedia.org/wiki/Two-phase_commit] is not used, it can never be as safe as an [XA|https://en.wikipedia.org/wiki/X/Open_XA] transaction, but is often good enough if the participants are aware of the compromises.
+1PC模式的最佳实现 [Best Efforts 1PC pattern|http://www.javaworld.com/article/2077963/open-source-tools/distributed-transactions-in-spring--with-and-without-xa.html?page=2] 是大都公平的，但在一些情况下可能失败，这个需要引起开发者注意。This is a non-XA pattern that involves a synchronized single-phase commit of a number of resources. Because the [2PC|https://en.wikipedia.org/wiki/Two-phase_commit] is not used, it can never be as safe as an [XA|https://en.wikipedia.org/wiki/X/Open_XA] transaction, but is often good enough if the participants are aware of the compromises.
 
 The basic idea is to delay the commit of all resources as late as possible in a transaction so that the only thing that can go wrong is an infrastructure failure (not a business-processing error). Systems that rely on Best Efforts 1PC reason that infrastructure failures are rare enough that they can afford to take the risk in return for higher throughput. If business-processing services are also designed to be idempotent, then little can go wrong in practice.
 
-The BE1PC implementation was added in Grails 2.3.6. . Before this change additional datasources didn't take part in transactions initiated in Grails. The transactions in additional datasources were basically in auto commit mode. In some cases this might be the wanted behavior. One reason might be performance: on the start of each new transaction, the BE1PC transaction manager creates a new transaction to each datasource. It's possible to leave an additional datasource out of the BE1PC transaction manager by setting @transactional = false@ in the respective configuration block of the additional dataSource. Datasources with @readOnly = true@ will also be left out of the chained transaction manager (since 2.3.7).
+BE1PC 在Grails 2.3.6版本被加入。. Before this change additional datasources didn't take part in transactions initiated in Grails. The transactions in additional datasources were basically in auto commit mode. In some cases this might be the wanted behavior. One reason might be performance: on the start of each new transaction, the BE1PC transaction manager creates a new transaction to each datasource. It's possible to leave an additional datasource out of the BE1PC transaction manager by setting @transactional = false@ in the respective configuration block of the additional dataSource. 含有 @readOnly = true@ 的数据源也将被排除在链式事务管理外(since 2.3.7)。 
 
 By default, the BE1PC implementation will add all beans implementing the Spring @[PlatformTransactionManager|http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/transaction/PlatformTransactionManager.html]@ interface to the chained BE1PC transaction manager. For example, a possible @[JMSTransactionManager|http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/jms/connection/JmsTransactionManager.html]@ bean in the Grails application context would be added to the Grails BE1PC transaction manager's chain of transaction managers. 
 
@@ -234,10 +235,10 @@ grails.transaction.chainedTransactionManagerPostProcessor.blacklistPattern = '.*
 {code}
 The exclude matching is done on the name of the transaction manager bean. The transaction managers of datasources with @transactional = false@ or @readOnly = true@ will be skipped and using this configuration option is not required in that case.
 
-h4. XA and Two-phase Commit
+h4. XA和两阶段（Two-phase）提交
 
 When the Best Efforts 1PC pattern isn't suitable for handling transactions across multiple transactional resources (not only datasources), there are several options available for adding XA/2PC support to Grails applications.
 
-The [Spring transactions documentation|http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/transaction.html#transaction-application-server-integration] contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name @transactionManager@ manually in @resources.groovy@ or @resources.xml@ file.
+[Spring transactions documentation|http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/transaction.html#transaction-application-server-integration] 包含一些关于 JTA/XA 在不同应用程序中的事务管理说明。In this case, you can configure a bean with the name @transactionManager@ manually in @resources.groovy@ or @resources.xml@ file.
 
-There is also [Atomikos plugin|http://grails.org/plugin/atomikos] available for XA support in Grails applications.
+这个 [Atomikos plugin|http://grails.org/plugin/atomikos] 能在Grails实现XA。
