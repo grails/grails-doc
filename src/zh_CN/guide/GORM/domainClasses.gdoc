@@ -1,14 +1,14 @@
-When building Grails applications you have to consider the problem domain you are trying to solve. For example if you were building an [Amazon|http://www.amazon.com/]-style bookstore you would be thinking about books, authors, customers and publishers to name a few.
+当构建Grails应用程序你必须要考虑你正在试图解决什么，使用哪种关于领域的解决方式。例如，你要建立类似 [Amazon|http://www.amazon.com/]类型的书库，你应该考虑 books, authors, customers 和 publishers的一些有关问题。
 
-These are modeled in GORM as Groovy classes, so a @Book@ class may have a title, a release date, an ISBN number and so on. The next few sections show how to model the domain in GORM.
+Groovy类，类似 @Book@ 类应该有 标题，发行日期，一个ISBN数字，等等。下面，我们来看如何使用GORM来建立领域类。
 
-To create a domain class you run the [create-domain-class|commandLine] command as follows:
+建立领域类，你可以使用 [create-domain-class|commandLine] 命令:
 
 {code}
 grails create-domain-class org.bookstore.Book
 {code}
 
-The result will be a class at @grails-app/domain/org/bookstore/Book.groovy@:
+它将建立 @grails-app/domain/org/bookstore/Book.groovy@：
 
 {code}
 package org.bookstore
@@ -17,9 +17,9 @@ class Book {
 }
 {code}
 
-This class will map automatically to a table in the database called @book@ (the same name as the class). This behaviour is customizable through the [ORM Domain Specific Language|guide:ormdsl]
+它将自动在数据库中建立 @book@ (和类名一致)的表。这个特征可以由这里自定义化 [ORM Domain Specific Language|guid:ormdsl]
 
-Now that you have a domain class you can define its properties as Java types. For example:
+现在你可以通过Java类型方式为它定义属性。例如：
 
 {code}
 package org.bookstore
@@ -31,4 +31,5 @@ class Book {
 }
 {code}
 
-Each property is mapped to a column in the database, where the convention for column names is all lower case separated by underscores. For example @releaseDate@ maps onto a column @release_date@. The SQL types are auto-detected from the Java types, but can be customized with [Constraints|guide:constraints] or the [ORM DSL|guide:ormdsl].
+每个属性对应数据表的一个字段。字段名将驼峰命名方式转为下划线方式。例如 @releaseDate@ 将对应为 @release_date@ 字段名。这种根据Java类型的自动检测方式，可以通过 [Constraints|guide:constraints] 或 [ORM DSL|guide:ormdsl] 来改变。
+
