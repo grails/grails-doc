@@ -86,7 +86,7 @@ class Nose {
 
 h5. 控制关联端
 
-Occasionally you may find yourself with domain classes that have multiple properties of the same type. They may even be self-referential, i.e. the association property has the same type as the domain class it's in. Such situations can cause problems because Grails may guess incorrectly the type of the association. Consider this simple class:
+有时你可以将属性定义为和类名一样的名称。它们叫做反向引用。这样的情况可能因为Grails错误定义而产生问题。下面是简单的例子：
 
 {code}
 class Person {
@@ -99,9 +99,9 @@ class Person {
 }
 {code}
 
-As far as Grails is concerned, the @parent@ and @supervisor@ properties are two directions of the same association. So when you set the @parent@ property on a @Person@ instance, Grails will automatically set the @supervisor@ property on the other @Person@ instance. This may be what you want, but if you look at the class, what we in fact have are two unidirectional relationships.
+就像Grails所认为的那样，@parent@ 和 @supervisor@ 属性作为本身关联的两个直接引用。 你可以将一个 @Person@ 实例赋值给 @parent@，Grails自动将与其他 @Person@ 实例放入到 @supervisor@。这也许是你想要的，但如果你仔细看这个类，你将发现这个关联有两个单项关联。
 
-To guide Grails to the correct mapping, you can tell it that a particular association is unidirectional through the @mappedBy@ property:
+如果要正确的映射，你可以按照指定 @mappedBy@ 属性来确定一个特定关联方式：
 
 {code}
 class Person {
@@ -116,7 +116,7 @@ class Person {
 }
 {code}
 
-You can also replace "none" with any property name of the target class. And of course this works for normal domain classes too, not just self-referential ones.  @mappedBy@ 不仅仅可以在 many-to-one 和 one-to-one 中使用关联: 它也可以在 one-to-many 和 many-to-many 使用，下一章节你可以看到这点.
+你可以将"none"换成其他目标对象名，作为一般类中来使用，而不仅仅是反向引用，@mappedBy@ 不仅仅可以在 many-to-one 和 one-to-one 中使用关联: 它也可以在 one-to-many 和 many-to-many 使用，下一章节你可以看到这点.
 
 {warning}
 如果你正好有个名为"none"的领域类，那么就不能工作了！"none"属性被看做相反的关联(反向引用)。幸运的时，"none"很少作为常用的领域类名属性。
