@@ -1,6 +1,6 @@
-h4. Sets of Objects
+h4. Sets 对象
 
-By default when you define a relationship with GORM it is a @java.util.Set@ which is an unordered collection that cannot contain duplicates. In other words when you have:
+当你使用GORM定义了关联后，它将使用无序的 @java.util.Set@ 集合，同时它也是无重复的:
 
 {code}
 class Author {
@@ -8,7 +8,7 @@ class Author {
 }
 {code}
 
-The books property that GORM injects is a @java.util.Set@. Sets guarantee uniquenes but not order, which may not be what you want. To have custom ordering you configure the Set as a @SortedSet@:
+books属性将被注入在@java.util.Set@中。Sets是不排序的，这个可能不是你想要的。为了得到排序结果，你需要设置 @SortedSet@:
 
 {code}
 class Author {
@@ -19,7 +19,7 @@ class Author {
 }
 {code}
 
-In this case a @java.util.SortedSet@ implementation is used which means you must implement @java.lang.Comparable@ in your Book class:
+@java.util.SortedSet@意味着你的Book类也必须实现 @java.lang.Comparable@ :
 
 {code}
 class Book implements Comparable {
@@ -33,11 +33,11 @@ class Book implements Comparable {
 }
 {code}
 
-The result of the above class is that the Book instances in the books collection of the Author class will be ordered by their release date.
+以上的Book实例中的Author类将由它的Release date来实现排序。
 
-h4. Lists of Objects
+h4. Lists 对象
 
-To keep objects in the order which they were added and to be able to reference them by index like an array you can define your collection type as a @List@:
+为了让对象按照它们被添加的顺序，并能够通过索引引用它们，就像你定义集合类型为@List@数组：
 
 {code}
 class Author {
@@ -48,7 +48,7 @@ class Author {
 }
 {code}
 
-In this case when you add new elements to the books collection the order is retained in a sequential list indexed from 0 so you can do:
+在这种情况下，当你添加新元素到books集合去，它将保存在一个从0索引的顺序列表，你可以这样做：
 
 {code}
 author.books[0] // get the first book
@@ -56,7 +56,7 @@ author.books[0] // get the first book
 
 The way this works at the database level is Hibernate creates a @books_idx@ column where it saves the index of the elements in the collection to retain this order at the database level.
 
-When using a @List@, elements must be added to the collection before being saved, otherwise Hibernate will throw an exception (@org.hibernate.HibernateException@: null index column for collection):
+使用@List@, 元素必须在保存前加入到集合中，否则Hibernate将报错 (@org.hibernate.HibernateException@: null index column for collection):
 
 {code}
 // This won't work!
@@ -70,11 +70,11 @@ author.addToBooks(book)
 author.save()
 {code}
 
-h4. Bags of Objects
+h4. 对象 Hibernate bags
 
-If ordering and uniqueness aren't a concern (or if you manage these explicitly) then you can use the Hibernate [Bag|http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/collections.html] type to represent mapped collections.
+如果不关心排序和唯一性(或者你自己来实现)，那么你可以使用 Hibernate [Bag|http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/collections.html] 类型来代表集合.
 
-The only change required for this is to define the collection type as a @Collection@:
+你只需要定义那个集合类为@Collection@:
 
 {code}
 class Author {
@@ -85,11 +85,11 @@ class Author {
 }
 {code}
 
-Since uniqueness and order aren't managed by Hibernate, adding to or removing from collections mapped as a Bag don't trigger a load of all existing instances from the database, so this approach will perform better and require less memory than using a @Set@ or a @List@.
+这样Hibernate就不再管理唯一性和排序，作为包方式实现，从集合中加入或移出它都不会触发已经存在的数据库实例。这样做，你会有比使用 @Set@ 或 @List@ 更好的性能和较少的内存。
 
-h4. Maps of Objects
+h4. Maps 对象
 
-If you want a simple map of string/value pairs GORM can map this with the following:
+如果你要一个简单string/value列表，你可以这样：
 
 {code}
 class Author {
@@ -100,9 +100,9 @@ def a = new Author()
 a.books = ["1590597583":"Grails Book"]
 a.save()
 {code}
-In this case the key and value of the map MUST be strings.
+作为Map的键和值必须为Strings类型。
 
-If you want a Map of objects then you can do this:
+如果你要的是Map对象：
 
 {code}
 class Book {
@@ -119,13 +119,13 @@ book.authors = [stephen:a]
 book.save()
 {code}
 
-The static @hasMany@ property defines the type of the elements within the Map. The keys for the map *must* be strings.
+@hasMany@属性可以定义为内建的Map元素。它的*键*必须为Strings。
 
-h4. A Note on Collection Types and Performance
+h4. 留意集合类型和其性能
 
-The Java @Set@ type doesn't allow duplicates. To ensure uniqueness when adding an entry to a @Set@ association Hibernate has to load the entire associations from the database. If you have a large numbers of entries in the association this can be costly in terms of performance.
+Java的@Set@类型不允许重复。为了实现唯一性，当加入一个以@Set@方式关联，Hibernate不得不对数据库加载完整的关联。如果你有一个非常大数量的关联，它浪费影响大量性能。
 
-The same behavior is required for @List@ types, since Hibernate needs to load the entire association to maintain order. Therefore it is recommended that if you anticipate a large numbers of records in the association that you make the association bidirectional so that the link can be created on the inverse side. For example consider the following code:
+同样的情况也适用于@List@类型，它为了排序也这样做。因此建议在一个可能遇到大量记录作为关联时，你设置双向关联，以便于可以反向建立它，避免自动整体排序。例如：
 
 {code:java}
 def book = new Book(title:"New Grails Book")
@@ -134,7 +134,7 @@ book.author = author
 book.save()
 {code}
 
-In this example the association link is being created by the child (Book) and hence it is not necessary to manipulate the collection directly resulting in fewer queries and more efficient code. Given an @Author@ with a large number of associated @Book@ instances if you were to write code like the following you would see an impact on performance:
+这个例子中，建立是由子类(Book)来实现的，所以它不需要管理集合，从而得到更少查询和好的代码。在一个@Author@含有大量关联@Book@的实例下，在一下的例子中就能看到对性能的影响了：
 
 {code:java}
 def book = new Book(title:"New Grails Book")
@@ -143,4 +143,4 @@ author.addToBooks(book)
 author.save()
 {code}
 
-You could also model the collection as a Hibernate Bag as described above.
+此时，你应该使用 Hibernate Bag 来作为模型的集合。
