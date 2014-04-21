@@ -1,4 +1,4 @@
-A one-to-many relationship is when one class, example @Author@, has many instances of another class, example @Book@. With Grails you define such a relationship with the @hasMany@ setting:
+一对多关联是指一个类，例如 @Author@，需要含有多个其他类，例如 @Book@。Grails通过你定义一个 @hasMany@来设定：
 
 {code}
 class Author {
@@ -14,13 +14,13 @@ class Book {
 }
 {code}
 
-In this case we have a unidirectional one-to-many. Grails will, by default, map this kind of relationship with a join table.
+这里你将含有一个单项的一对多。Grails默认将Join的表通过Map的方式读取出来。
 
 {note}
-The [ORM DSL|guide:ormdsl] allows mapping unidirectional relationships using a foreign key association instead
+[ORM DSL|guide:ormdsl] 允许使用一个外键的方式映射到Map中。
 {note}
 
-Grails will automatically inject a property of type @java.util.Set@ into the domain class based on the @hasMany@ setting. This can be used to iterate over the collection:
+Grails将自动基于@hasMany@的设置，将领域类注入到@java.util.Set@中。你可以通过一个集合来使用：
 
 {code}
 def a = Author.get(1)
@@ -31,12 +31,11 @@ for (book in a.books) {
 {code}
 
 {note}
-The default fetch strategy used by Grails is "lazy", which means that the collection will be lazily initialized on first access. This can lead to the [n+1 problem|http://www.javalobby.org/java/forums/t20533.html] if you are not careful.
-
-If you need "eager" fetching you can use the [ORM DSL|guide:ormdsl] or specify eager fetching as part of a [query|guide:querying]
+Grails默认按照惰性方式来调用，也就是你第一次使用到这个集合时，它才会去读取。如果你不够仔细，可能会遇到这样的问题 [n+1 problem|http://www.javalobby.org/java/forums/t20533.html]。
+如果你希望"立即 eager"获取，你可以使用 [ORM DSL|guide:ormdsl] 或者 在 [query|guide:querying] 中加入特殊设置。
 {note}
 
-The default cascading behaviour is to cascade saves and updates, but not deletes unless a @belongsTo@ is also specified:
+默认时保存和修改将关联这个特征，但删除仅限于 @belongsTo@ 这个特征：
 
 {code}
 class Author {
@@ -53,7 +52,7 @@ class Book {
 }
 {code}
 
-If you have two properties of the same type on the many side of a one-to-many you have to use @mappedBy@ to specify which the collection is mapped:
+如果你在一对多中多的对象中含有多个需要一对多的字段，你不得不加入 @mappedBy@ 这个属性指定字段。
 
 {code}
 class Airport {
@@ -69,7 +68,7 @@ class Flight {
 }
 {code}
 
-This is also true if you have multiple collections that map to different properties on the many side:
+在多的侧有针对不同属性含有的多个集合也是可以的。
 
 {code}
 class Airport {

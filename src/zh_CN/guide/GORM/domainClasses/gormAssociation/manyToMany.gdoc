@@ -1,5 +1,4 @@
-Grails supports many-to-many relationships by defining a @hasMany@ on both sides of the relationship and having a @belongsTo@ on the owned side of the relationship:
-
+Grails在两个类中使用 @hasMany@ 支持多对多关联，在持有端使用@belongsTo@关联。
 {code}
 class Book {
     static belongsTo = Author
@@ -15,9 +14,9 @@ class Author {
 }
 {code}
 
-Grails maps a many-to-many using a join table at the database level. The owning side of the relationship, in this case @Author@, takes responsibility for persisting the relationship and is the only side that can cascade saves across.
+Grails在数据库层面上使用join表来实现多对多。在持有端，这里是@Author@，具有关联责任且拥有级联保存能力。
 
-For example this will work and cascade saves:
+下面例子说明了如何实现效果和级联保存(cascade saves)：
 
 {code}
 new Author(name:"Stephen King")
@@ -35,8 +34,8 @@ new Book(name:"Groovy in Action")
         .save()
 {code}
 
-This is the expected behaviour as, just like Hibernate, only one side of a many-to-many can take responsibility for managing the relationship.
+就像Hibernate中，只有一边的many-to-many的可以用于管理关系的责任。
 
 {warning}
-Grails' [Scaffolding|guide:scaffolding] feature *does not* currently support many-to-many relationship and hence you must write the code to manage the relationship yourself
+Grails的脚手架[Scaffolding|guide:scaffolding]特征当前*不能*支持多对多关联，你必须手动自己写相关代码。
 {warning}
