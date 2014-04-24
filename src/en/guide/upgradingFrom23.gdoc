@@ -5,19 +5,49 @@ h4. The set-grails-version Command
 
 The [set-grails-version|commandLine] command should be run to update the application's metadata to indicate which version of Grails the application is built with.
 
+h4. Update to latest Plugin versions
+
+You should update your application's @BuildConfig@ to use the latest plugins compatible with Grails 2.3. Example:
+
+{code}
+    plugins {
+        // plugins for the build system only
+        build ":tomcat:7.0.52.1"
+
+        // plugins for the compile step
+        compile ":scaffolding:2.1.0"
+        compile ':cache:1.1.3'
+        compile ":asset-pipeline:1.8.3"
+
+        // plugins needed at runtime but not for compilation
+        runtime ":hibernate4:4.3.5.1" // or ":hibernate:3.6.10.13"
+        runtime ":database-migration:1.4.0"
+        runtime ":jquery:1.11.0.2"
+        ...
+    }
+{code}
+
+You may get compilation errors or incompatibility problems with older versions of the above plugins installed.
+
 h4. The resources Plugin
 
 As of Grails 2.4 the @resources@ plugin has been replaced with the @asset-pipeline@ plugin as the default resource management plugin for newly created applications.  See the [static resource abstraction|guide:resources] section of the User Guide for more details.  When upgrading an application to Grails 2.4 if you choose to continue using the resources plugin you will need to use version 1.2.7 or later as previous versions of the plugin are not compatible with Grails 2.4.
 
 h4. Static Holder Classes
 
-The deprecated @org.codehaus.groovy.grails.commons.ApplicationHolder@ and @org.codehaus.groovy.grails.commons.ConfigurationHolder@ classes have been removed from Grails 2.4.
+The following deprecated classes have been removed from Grails 2.4.x:
+
+* @org.codehaus.groovy.grails.commons.ApplicationHolder@ 
+* @org.codehaus.groovy.grails.commons.ConfigurationHolder@ 
+* @org.codehaus.groovy.grails.plugins.PluginManagerHolder@
+* @org.codehaus.groovy.grails.web.context.ServletContextHolder@
+* @org.codehaus.groovy.grails.compiler.support.GrailsResourceLoaderHolder@
+
+If you or any plugins you have installed are using these classes you will get a compilation error. The problem can be rectified by updating to new plugins and using @grails.util.Holders@ instead.
 
 {note}
 If your application uses the jquery plugin you will need to update to version 1.11.0.2 or later as previous versions of the plugin made use of the @ApplicationHolder@ class.  If your application uses the resources plugin you will need to update to version 1.2.7 or later as previous versions of the plugin made use of the @ConfigurationHolder@ class.
 {note}
-
-{note}We need to add some notes or provide a link to a blog post on how to address code which used to use these classes.{note}
 
 h4. Changes To applicationContex.xml
 
