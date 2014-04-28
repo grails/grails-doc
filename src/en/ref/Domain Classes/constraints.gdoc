@@ -28,11 +28,17 @@ def b = new Book()
 assert !b.validate()
 {code}
 
-A list of [ConstrainedProperty|api:org.codehaus.groovy.grails.validation.ConstrainedProperty] instances applied against the domain class by the @constraints@ property is available at runtime:
+At runtime the static @constraints@ property is a Map such that the keys in the Map are property names and the values associated with the keys are instances of [ConstrainedProperty|api:org.codehaus.groovy.grails.validation.ConstrainedProperty]:
 
 {code:java}
-for (constraint in b.constraints) {
-    println it.name
-    println it.maxSize
+def constraintsMap = Book.constraints
+for(entry in constraintsMap) {
+    // propertyName is a String
+    def propertyName = entry.key
+
+    // constrainedProperty is a ConstrainedProperty
+    def constrainedProperty = entry.value
+
+    // ...
 }
 {code}
