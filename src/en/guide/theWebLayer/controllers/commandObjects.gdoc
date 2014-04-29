@@ -43,7 +43,7 @@ class LoginController {
 }
 {code}
 
-If the command object's type is that of a domain class and there is an @id@ request parameter then instead of invoking the domain class constructor to create a new instance a call will be made to the static @get@ method on the domain class and the value of the @id@ parameter will be passed as an argument.  Whatever is returned from that call to @get@ is what will be passed into the controller action.  This means that if there is an @id@ request parameter and no corresponding record is found in the database then the value of the command object will be @null@.
+If the command object's type is that of a domain class and there is an @id@ request parameter then instead of invoking the domain class constructor to create a new instance a call will be made to the static @get@ method on the domain class and the value of the @id@ parameter will be passed as an argument.  Whatever is returned from that call to @get@ is what will be passed into the controller action.  This means that if there is an @id@ request parameter and no corresponding record is found in the database then the value of the command object will be @null@.  If the command object's type is a domain class and there is no @id@ request parameter then @null@ will be passed into the controller action unless the HTTP request method is "POST", in which case a new instance of the domain class will be created by invoking the domain class constructor.  For all of the cases where the domain class instance is non-null, data binding is only performed if the HTTP request method is "POST", "PUT" or "PATCH".
 
 h4. Command Objects And Request Parameter Names
 
@@ -147,7 +147,7 @@ package bindingdemo
 
 class DemoController {
 
-    def createWidget(Widget w) { 
+    def createWidget(Widget w) {
         render "Name: \${w?.name}, Size: \${w?.size}"
     }
 }
@@ -161,13 +161,13 @@ class Widget {
 {code}
 \$ curl -H "Content-Type: application/json" -d '{"name":"Some Widget","size":"42"}' localhost:8080/myapp/demo/createWidget
  Name: Some Widget, Size: 42
-~ \$ 
+~ \$
 \$ curl -H "Content-Type: application/xml" -d '<widget><name>Some Other Widget</name><size>2112</size></widget>' localhost:8080/bodybind/demo/createWidget
  Name: Some Other Widget, Size: 2112
-~ \$ 
+~ \$
 {code}
 
-Note that the body of the request is being parsed to make that work.  Any attempt to read the body of the request after that will fail since the corresponding input stream will be empty.  The controller action can either use a command object or it can parse the body of the request on its own (either directly, or by referring to something like request.JSON), but cannot do both. 
+Note that the body of the request is being parsed to make that work.  Any attempt to read the body of the request after that will fail since the corresponding input stream will be empty.  The controller action can either use a command object or it can parse the body of the request on its own (either directly, or by referring to something like request.JSON), but cannot do both.
 
 {code:java}
 // grails-app/controllers/bindingdemo/DemoController.groovy
@@ -175,7 +175,7 @@ package bindingdemo
 
 class DemoController {
 
-    def createWidget(Widget w) { 
+    def createWidget(Widget w) {
         // this will fail because it requires reading the body,
         // which has already been read.
         def json = request.JSON
