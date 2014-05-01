@@ -66,6 +66,42 @@ def show() {
 In this case Grails will attempt to render a view at the location @grails-app/views/shared/display.gsp@.
 
 Grails also supports JSPs as views, so if a GSP isn't found in the expected location but a JSP is, it will be used instead.
+h4. Selecting Views For Namespaced Controllers
+
+If a controller defines a namespace for itself with the [namespace|guide:namespacedControllers] property that will affect the root directory in which Grails will look for views which are specified with a relative path.  The default root directory for views rendered by a namespaced controller is @grails-app/views/<namespace name>/<controller name>/@.  If the view is not found in the namespaced directory then Grails will fallback to looking for the view in the non-namespaced directory.
+
+See the example below.
+
+{code:java}
+class ReportingController {
+    static namespace = 'business'
+
+    def humanResources() {
+        // This will render grails-app/views/business/reporting/humanResources.gsp
+        // if it exists.
+
+        // If grails-app/views/business/reporting/humanResources.gsp does not
+        // exist the fallback will be grails-app/views/reporting/humanResources.gsp.
+
+        // The namespaced GSP will take precedence over the non-namespaced GSP.
+
+        [numberOfEmployees: 9]
+    }
+
+
+    def accountsReceivable() {
+        // This will render grails-app/views/business/reporting/accounting.gsp
+        // if it exists.
+
+        // If grails-app/views/business/reporting/accounting.gsp does not
+        // exist the fallback will be grails-app/views/reporting/accounting.gsp.
+
+        // The namespaced GSP will take precedence over the non-namespaced GSP.
+
+        render view: 'numberCrunch', model: [numberOfEmployees: 13]
+    }
+}
+{code}
 
 h4. Rendering a Response
 
