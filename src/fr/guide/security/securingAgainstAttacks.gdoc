@@ -63,7 +63,8 @@ h4. Denial of service
 Load balancers and other appliances are more likely to be useful here, but there are also issues relating to excessive queries for example where a link is created by an attacker to set the maximum value of a result set so that a query could exceed the memory limits of the server or slow the system down. The solution here is to always sanitize request parameters before passing them to dynamic finders or other GORM query methods:
 
 {code:java}
-def safeMax = Math.max(params.max?.toInteger(), 100) // limit to 100 results
+int limit = 100
+def safeMax = Math.min(params.max?.toInteger() ?: limit, limit) // limit to 100 results
 return Book.list(max:safeMax)
 {code}
 

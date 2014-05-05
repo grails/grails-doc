@@ -40,7 +40,7 @@ This really a public relations issue in terms of avoiding hijacking of your bran
 
 h4. XSS - cross-site scripting injection
 
-It is important that your application verifies as much as possible that incoming requests were originated from your application and not from another site. It is also important to ensure that all data values rendered into views are escaped correctly. For example when rendering to HTML or XHTML you must ensure that people cannot maliciously inject JavaScript or other HTML into data or tags viewed by others. 
+It is important that your application verifies as much as possible that incoming requests were originated from your application and not from another site. It is also important to ensure that all data values rendered into views are escaped correctly. For example when rendering to HTML or XHTML you must ensure that people cannot maliciously inject JavaScript or other HTML into data or tags viewed by others.
 
 Grails 2.3 and above include special support for automatically encoded data placed into GSP pages. See the documentation on [Cross Site Scripting (XSS) prevention|guide:xssPrevention] for further information.
 
@@ -63,7 +63,8 @@ h4. Denial of service
 Load balancers and other appliances are more likely to be useful here, but there are also issues relating to excessive queries for example where a link is created by an attacker to set the maximum value of a result set so that a query could exceed the memory limits of the server or slow the system down. The solution here is to always sanitize request parameters before passing them to dynamic finders or other GORM query methods:
 
 {code:java}
-def safeMax = Math.max(params.max?.toInteger(), 100) // limit to 100 results
+int limit = 100
+def safeMax = Math.min(params.max?.toInteger() ?: limit, limit) // limit to 100 results
 return Book.list(max:safeMax)
 {code}
 
