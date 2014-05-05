@@ -50,7 +50,7 @@ class BookController {
             html bookList: books
             json { render books as JSON }
             xml { render books as XML }
-            * { render books as JSON }
+            '*' { render books as JSON }
         }
     }
 }
@@ -105,6 +105,10 @@ grails.mime.disable.accept.header.userAgents = ['Gecko', 'WebKit', 'Presto', 'Tr
 For example, if it sees the accept header above ('application/json') it will set @format@ to @json@ as you'd expect. And of course this works with the @withFormat()@ method in just the same way as when the @format@ URL parameter is set (although the URL parameter takes precedence).
 
 An accept header of '\*/\*' results in a value of @all@ for the @format@ property.
+
+{note}
+If the accept header is used but contains no registered content types, Grails will assume a broken browser is making the request and will set the HTML format - note that this is different from how the other content negotiation modes work as those would activate the "all" format!
+{note}
 
 
 h4. Request format vs. Response format
