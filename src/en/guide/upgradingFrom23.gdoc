@@ -29,6 +29,37 @@ You should update your application's @BuildConfig@ to use the latest plugins com
 
 You may get compilation errors or incompatibility problems with older versions of the above plugins installed.
 
+h4. grails-debug Script Has Been Removed
+
+The @grails-debug@ and @grails-debug.bat@ scripts have been removed.  To debug the build system JVM run @grails -debug <command>@ and to debug the forked JVM run @grails --debug-fork <command>@.
+
+h4. New Command Object Data Binding Behavior
+
+The data binding behavior for command objects have changed in Grails 2.4.  Request parameter names may now be prefixed with the name of the controller action argument name that the request parameter should be bound to.  For example, if a request is made to the @buy@ action in the controller below a request parameter named @buyer.name@ will be bound to the @name@ property of the @buyer@ argument and a request parameter named @seller.name@ will be bound to the @name@ property of the @seller@ argument.
+
+h4. Nullable Command Object Properties
+
+The behavior in Grails 2.3.x is such that constrained properties in command objects and other classes marked with \@Validateable are all configured with @nullable: false@ by default.  Unconstrained properties were not configured with @nullable: false@.  In Grails 2.4 all non-static unconstrained properties in command object classes and other classes marked with \@Validateable are all configured with @nullable: false@.
+
+
+{code:java}
+class StoreController {
+    def buy(Person buyer, Person seller) {
+        // ...
+    }
+}
+
+class Person {
+    String name
+}
+{code}
+
+See the [Command Objects documentation|guide:commandObjects] for more details.
+
+h4. Ajax Tags Have Been Deprecated
+
+The [formRemote|tags], [remoteField|tags], [remoteFunction|tags] and [remoteLink|tags] Ajax tags have been deprecated and will be removed from a future version of Grails.  Applications may provide their own Ajax tags and/or Javascript plugins may provide Ajax tags of their own.
+
 h4. The resources Plugin
 
 As of Grails 2.4 the @resources@ plugin has been replaced with the @asset-pipeline@ plugin as the default resource management plugin for newly created applications.  See the [static resource abstraction|guide:resources] section of the User Guide for more details.  When upgrading an application to Grails 2.4 if you choose to continue using the resources plugin you will need to use version 1.2.7 or later as previous versions of the plugin are not compatible with Grails 2.4.

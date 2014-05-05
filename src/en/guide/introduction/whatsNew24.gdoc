@@ -8,7 +8,7 @@ Link to release notes is will be added once 2.3 is released
 
 h4. Spring 4.0
 
-Grails 2.4 comes with Spring 4.0.3 which includes many new features and enhancements.  See the [Spring documentation|http://docs.spring.io/spring/docs/4.0.x/spring-framework-reference/html/new-in-4.0.html].
+Grails 2.4 comes with Spring 4.0.4 which includes many new features and enhancements.  See the [Spring documentation|http://docs.spring.io/spring/docs/4.0.x/spring-framework-reference/html/new-in-4.0.html].
 
 h4. Hibernate 4.3
 
@@ -16,11 +16,11 @@ Grails 2.4 now uses Hibernate 4.3.5 by default (Hibernate 3 is still available a
 
 h4. Standalone GORM and GSP
 
-GORM and GSP can now be used outside of Grails. See the following guides for more information:
+GORM and GSP can now be used outside of Grails. See the following guides / examples for more information:
 
 * [Accessing Data with GORM|https://spring.io/guides/gs/accessing-data-gorm/]
 * [Accessing MongoDB Data with GORM|https://spring.io/guides/gs/accessing-data-gorm-mongodb/]
-* TODO: Link to standalone GSP article
+* [GSP in Spring Boot Example Application|https://github.com/grails/grails-boot/tree/master/sample-apps/gsp/gsp-example]
 
 h4.  The Asset-Pipeline replaces Resources to serve static assets.
 
@@ -51,7 +51,7 @@ Easily add your assets to your GSP files:
 <asset:image src="grails_logo.png" height="60" />
 {code}
 
-Enjoy developing with on the fly asset processing, asset compiling on WAR, and much more.  See the [docs](http://bertramdev.github.com/asset-pipeline) for more info.
+Enjoy developing with on the fly asset processing, asset compiling on WAR, and much more.  See the [docs|http://bertramdev.github.com/asset-pipeline] for more info.
 
 h4. Static Compilation
 
@@ -110,38 +110,61 @@ The [grails.compiler.GrailsTypeChecked|api:grails.compiler.GrailsTypeChecked] an
 More notes on static compilation to be provided before the release of 2.4.0 final.
 {note}
 
-h4. Ajax Tags Have Been Deprecated
+h4. More Advanced Subqueries in GORM
 
-The [formRemote|tags], [remoteField|tags], [remoteFunction|tags] and [remoteLink|tags] Ajax tags have been deprecated and will be removed from a future version of Grails.  Applications may provide their own Ajax tags and/or Javascript plugins may provide Ajax tags of their own.
+The support for subqueries has been extended. You can no use @in@ with nested subqueries:
 
-h4. Nullable Command Object Properties
+{code}
+def results = Person.where {
+    firstName in where { age < 18 }.firstName
+}.list()
+{code}
 
-The behavior in Grails 2.3.x is such that constrained properties in command objects and other classes marked with \@Validateable are all configured with @nullable: false@ by default.  Unconstrained properties were not configured with @nullable: false@.  In Grails 2.4 all non-static unconstrained properties in command object classes and other classes marked with \@Validateable are all configured with @nullable: false@.
+Criteria and where queries can be seamlessly mixed:
 
-h4. New Command Object Data Binding Behavior
-
-The data binding behavior for command objects have changed in Grails 2.4.  Request parameter names may now be prefixed with the name of the controller action argument name that the request parameter should be bound to.  For example, if a request is made to the @buy@ action in the controller below a request parameter named @buyer.name@ will be bound to the @name@ property of the @buyer@ argument and a request parameter named @seller.name@ will be bound to the @name@ property of the @seller@ argument.
-
-{code:java}
-class StoreController {
-    def buy(Person buyer, Person seller) {
-        // ...
-    }
-}
-
-class Person {
-    String name
+{code}
+def results = Person.withCriteria {
+    notIn "firstName", Person.where { age < 18 }.firstName
 }
 {code}
 
-See the [Command Objects documentation|guide:commandObjects] for more details.
+Subqueries can be used with projections:
+
+{code}
+def results = Person.where {
+    age > where { age > 18 }.avg('age')
+}
+{code}
+
+Correlated queries that span two domain classes can be used:
+
+{code}
+def employees = Employee.where {
+    region.continent in ['APAC', "EMEA"]
+}.id()
+
+def results = Sale.where {
+    employee in employees && total > 100000
+}.employee.list()
+{code}
+
+And support for aliases (cross query references) using simple variable declarations has been added to where queries:
+
+{code}
+def query = Employee.where {
+    def em1 = Employee
+    exists Sale.where {
+        def s1 = Sale
+        def em2 = employee
+        return em2.id == em1.id
+    }.id()
+}
+def results = query.list()
+{code}
 
 h4. Views For Namespaced Controllers
 
 The views for namespaced controllers may now be defined in the @grails-app/views/<namespace name>/<controller name>/@ directory.  See the [Models And Views|guide:modelsAndViews] section for more details.
 
-h4. grails-debug Script Has Been Removed
-
-The @grails-debug@ and @grails-debug.bat@ scripts have been removed.  To debug the build system JVM run @grails -debug <command>@ and to debug the forked JVM run @grails --debug-fork <command>@.
 
 
