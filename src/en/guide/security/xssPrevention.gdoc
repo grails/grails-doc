@@ -22,9 +22,16 @@ So what happens when you want to stop Grails from escaping some content? There a
 
 The @raw()@ method you see here is available from controllers, tag libraries and GSP pages.
 
+*XSS prevention is hard and requires a lot of developer attention*
+
 {warning}Although Grails plays it safe by default, that is no guarantee that your application will be invulnerable to an XSS-style attack. Such an attack is less likely to succeed than would otherwise be the case, but developers should always be conscious of potential attack vectors and attempt to uncover vulnerabilities in the application during testing. It's also easy to switch to an unsafe default, thereby increasing the risk of a vulnerability being introduced.{warning}
 
+There are more details about the XSS in [OWASP - XSS prevention rules|https://www.owasp.org/index.php/XSS_%28Cross_Site_Scripting%29_Prevention_Cheat_Sheet#XSS_Prevention_Rules] and [OWASP - Types of Cross-Site Scripting|https://www.owasp.org/index.php/Types_of_Cross-Site_Scripting]. Types of XSS are: [Stored XSS|https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)#Stored_XSS_Attacks], [Reflected XSS|https://www.owasp.org/index.php/Cross-site_Scripting_(XSS)#Reflected_XSS_Attacks] and [DOM based XSS|https://www.owasp.org/index.php/DOM_Based_XSS]. [DOM based XSS prevention|https://www.owasp.org/index.php/DOM_based_XSS_Prevention_Cheat_Sheet] is coming more important because of the popularity of Javascript client side templating and Single Page Apps. 
+
+Grails codecs are mainly for preventing stored and reflected XSS type of attacks. Grails 2.4 includes HTMLJS codec that assists in preventing some DOM based XSS attacks.
+
 It's difficult to make a solution that works for everyone, and so Grails provides a lot of flexibility with regard to fine-tuning how escaping works, allowing you to keep most of your application safe while switching off default escaping or changing the codec used for pages, tags, page fragments, and more.
+
 
 h4. Configuration
 
@@ -144,4 +151,3 @@ Note that, if activated, the @staticparts@ codec typically needs to be set to @r
         staticparts = 'raw' // escapes output from static template parts
     }
 {code}
-
