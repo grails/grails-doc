@@ -26,6 +26,19 @@ Account.withTransaction { status ->
 }
 {code}
 
+Named arguments may optionally be passed as an argument to control attributes of the transaction.
+
+{code:java}
+
+// the keys in the Map must correspond to properties
+// of org.springframework.transaction.support.DefaultTransactionDefinition
+
+Account.withTransaction([propagationBehavior: TransactionDefinition.PROPAGATION_REQUIRES_NEW,
+                         isolationLevel: TransactionDefinition.ISOLATION_REPEATABLE_READ]) {
+    // ...
+}
+{code}
+
 h2. Description
 
 The @withTransaction@ method accepts a Closure with a [TransactionStatus|api:org.springframework.transaction.TransactionStatus] argument. The @TransactionStatus@ object can be used to programmatically control rollback of the transaction.

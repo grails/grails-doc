@@ -161,5 +161,19 @@ h4. Views For Namespaced Controllers
 
 The views for namespaced controllers may now be defined in the @grails-app/views/<namespace name>/<controller name>/@ directory.  See the [Models And Views|guide:modelsAndViews] section for more details.
 
+h4. Improved Programmatic Transactions
 
+Transaction attributes may now be specified when invoking @withTransaction@.
 
+{code:java}
+
+// the keys in the Map must correspond to properties
+// of org.springframework.transaction.support.DefaultTransactionDefinition
+
+Account.withTransaction([propagationBehavior: TransactionDefinition.PROPAGATION_REQUIRES_NEW,
+                         isolationLevel: TransactionDefinition.ISOLATION_REPEATABLE_READ]) {
+    // ...
+}
+{code}
+
+See the [withTransaction|domainClasses] docs for more information.
