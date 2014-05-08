@@ -157,6 +157,31 @@ def query = Employee.where {
 def results = query.list()
 {code}
 
+h4. GORM for Hibernate in Unit tests
+
+It is no longer necessary to create integration tests in order to test GORM interactions with Hibernate. You can now instead use @HibernateTestMixin@:
+
+{code}
+...
+import grails.test.mixin.hibernate.*
+
+@TestMixin(HibernateTestMixin)
+class PersonSpec extends Specification{
+
+    void setupSpec() {
+        hibernateDomain([Person])
+    }
+
+    void "Test count people"() {
+        expect:"Test execute Hibernate count query"
+            Person.count() == 0
+            sessionFactory != null
+            transactionManager != null
+            session != null
+    }
+}
+{code}
+
 h4. Views For Namespaced Controllers
 
 The views for namespaced controllers may now be defined in the @grails-app/views/<namespace name>/<controller name>/@ directory.  See the [Models And Views|guide:modelsAndViews] section for more details.
