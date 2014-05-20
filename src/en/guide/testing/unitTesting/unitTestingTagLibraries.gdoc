@@ -62,6 +62,13 @@ class SimpleTagLibSpec extends Specification {
         applyTemplate('<s:hello name="Fred" />') == 'Hello Fred'
         applyTemplate('<s:bye author="\${author}" />', [author: new Author(name: 'Fred')]) == 'Bye Fred'
     }
+
+    void "test tag calls"() {
+        expect:
+        tagLib.hello().toString() == 'Hello World'
+        tagLib.hello(name: 'Fred').toString() == 'Hello Fred'
+        tagLib.bye(author: new Author(name: 'Fred')).toString == 'Bye Fred'
+    }
 }
 {code}
 
