@@ -202,3 +202,54 @@ Account.withTransaction([propagationBehavior: TransactionDefinition.PROPAGATION_
 {code}
 
 See the [withTransaction|domainClasses] docs for more information.
+
+h4. Improved Unit Testing Support For allowedMethods
+
+The allowedMethods property is now respected in unit tests.
+
+{code:java}
+// grails-app/controllers/com/demo/DemoController.groovypackage com.demo
+
+class DemoController {
+
+    static allowedMethods = [save: 'POST', update: 'PUT', delete: 'DELETE']
+
+    def save() {
+        render 'Save was successful!'
+    }
+
+    // ...
+}
+{code}
+
+{code:java}
+// test/unit/com/demo/DemoControllerSpec.groovy
+package com.demo
+
+import grails.test.mixin.TestFor
+import spock.lang.Specification
+import static javax.servlet.http.HttpServletResponse.*
+
+@TestFor(DemoController)
+class DemoControllerSpec extends Specification {
+
+    void "test a valid request method"() {
+        when:
+        request.method = 'POST'
+        controller.save()
+
+        then:
+        response.status == SC_OK
+        response.text == 'Save was successful!'
+    }
+
+    void "test an invalid request method"() {
+        when:
+        request.method == 'DELETE'
+        controller.save()
+
+        then:
+        response.status == SC_METHOD_NOT_ALLOWED
+    }
+}
+{code}

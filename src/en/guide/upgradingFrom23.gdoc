@@ -149,3 +149,55 @@ class SomeController {
 {note}
 There is one release in the 2.3.x chain which has the 2.4 behavior described above and that is Grails 2.3.8.  None of the 2.3.x releases before or after 2.3.8 have this behavior.
 {note}
+
+h4. The allowedMethods Property And Unit Tests
+
+The unit testing environment now respects the [allowedMethods|controllers] property in controllers.  Prior to Grails 2.4 a unit test which accessed a controller action which is supposed to be restricted to certain request methods could have skipped the step of setting the request method in the unit test because the allowedMethods property was ignored by the unit test.  As of Grails 2.4 if a controller action is limited to be accessed with certain request methods, the unit test must be constructed to deal with that.
+
+{code:java}
+// grails-app/controllers/com/demo/DemoController.groovypackage com.demo
+
+class DemoController {
+
+    static allowedMethods = [save: 'POST', update: 'PUT', delete: 'DELETE']
+
+    def save() {
+        render 'Save was successful!'
+    }
+
+    // ...
+}
+{code}
+
+{code:java}
+// test/unit/com/demo/DemoControllerSpec.groovy
+package com.demo
+
+import grails.test.mixin.TestFor
+import spock.lang.Specification
+import static javax.servlet.http.HttpServletResponse.*
+
+@TestFor(DemoController)
+class DemoControllerSpec extends Specification {
+
+    void "test a valid request method"() {
+        when:
+        request.method = 'POST'
+        controller.save()
+
+        then:
+        response.status == SC_OK
+        response.text == 'Save was successful!'
+    }
+
+    void "test an invalid request method"() {
+        when:
+        request.method == 'DELETE'
+        controller.save()
+
+        then:
+        response.status == SC_METHOD_NOT_ALLOWED
+    }
+}
+{code}
+

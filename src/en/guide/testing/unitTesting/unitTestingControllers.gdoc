@@ -747,6 +747,57 @@ class SimpleControllerSpec extends Specification {
 }
 {code}
 
+h4. Testing allowedMethods
+
+The unit testing environment respects the [allowedMethods|controllers] property in controllers.  If a controller action is limited to be accessed with certain request methods, the unit test must be constructed to deal with that.
+
+{code:java}
+// grails-app/controllers/com/demo/DemoController.groovypackage com.demo
+
+class DemoController {
+
+    static allowedMethods = [save: 'POST', update: 'PUT', delete: 'DELETE']
+
+    def save() {
+        render 'Save was successful!'
+    }
+
+    // ...
+}
+{code}
+
+{code:java}
+// test/unit/com/demo/DemoControllerSpec.groovy
+package com.demo
+
+import grails.test.mixin.TestFor
+import spock.lang.Specification
+import static javax.servlet.http.HttpServletResponse.*
+
+@TestFor(DemoController)
+class DemoControllerSpec extends Specification {
+
+    void "test a valid request method"() {
+        when:
+        request.method = 'POST'
+        controller.save()
+
+        then:
+        response.status == SC_OK
+        response.text == 'Save was successful!'
+    }
+
+    void "test an invalid request method"() {
+        when:
+        request.method == 'DELETE'
+        controller.save()
+
+        then:
+        response.status == SC_METHOD_NOT_ALLOWED
+    }
+}
+{code}
+
 h4. Testing Calling Tag Libraries
 
 You can test calling tag libraries using @ControllerUnitTestMixin@, although the mechanism for testing the tag called varies from tag to tag. For example to test a call to the @message@ tag, add a message to the @messageSource@. Consider the following action:
