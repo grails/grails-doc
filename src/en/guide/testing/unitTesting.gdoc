@@ -62,30 +62,9 @@ class BookControllerSpec extends Specification {
 {code}
 
 
-h4. Loading application beans in unit tests
-
-Adding @static loadExternalBeans = true@ field definition to a unit test class makes the Grails unit test runtime load all bean definitions from @grails-app/conf/spring/resources.groovy@ and @grails-app/conf/spring/resources.xml@ files.
-
-{code}
-import spock.lang.Issue
-import spock.lang.Specification
-import grails.test.mixin.support.GrailsUnitTestMixin
-
-@TestMixin(GrailsUnitTestMixin)
-class LoadExternalBeansSpec extends Specification {
-    static loadExternalBeans = true
-
-    void "should load external beans"(){
-        expect:
-        applicationContext.getBean('simpleBean') == 'Hello world!'
-    }
-}
-{code}
-
-
 h4. doWithSpring and doWithConfig callback methods, FreshRuntime annotation
 
-@doWithSpring@ callback method can be used to add beans with the BeanBuilder DSL. 
+The @doWithSpring@ callback method can be used to add beans with the BeanBuilder DSL. There is the @doWithConfig@ callback method for changing the grailsApplication.config values before the grailsApplication instance of the test runtime gets initialized.
 
 {code}
 import grails.test.mixin.support.GrailsUnitTestMixin
@@ -126,7 +105,7 @@ class StaticCallbacksSpec extends Specification {
 {code}
 
 
-You can also use these callbacks without "static" together with @grails.test.runtime.FreshRuntime@ annotation.
+You can also use these callbacks without "static" together with the @[grails.test.runtime.FreshRuntime|api:grails.test.runtime.FreshRuntime]@ annotation.
 In this case, a clean application context and grails application instance is initialized for each test method call.
 
 {code}
@@ -171,7 +150,7 @@ class TestInstanceCallbacksSpec extends Specification {
 
 
 
-You can use @org.codehaus.groovy.grails.commons.InstanceFactoryBean@ together with doWithSpring and FreshRuntime annotation to mock beans in tests.
+You can use @[org.codehaus.groovy.grails.commons.InstanceFactoryBean|api:org.codehaus.groovy.grails.commons.InstanceFactoryBean]@ together with doWithSpring and the [FreshRuntime|api:grails.test.runtime.FreshRuntime] annotation to mock beans in tests.
 
 {code}
 import grails.test.mixin.support.GrailsUnitTestMixin
@@ -201,3 +180,38 @@ class MockedBeanSpec extends Specification {
     }
 }
 {code}
+
+
+h4. Sharing test runtime grailsApplication instance and beans for several test classes
+
+It's possible to share a single grailsApplication instance and beans for several test classes.
+This feature is activated by the @[SharedRuntime|api:grails.test.runtime.SharedRuntime]@ annotation. This annotation takes an optional class parameter 
+implements @[SharedRuntimeConfigurer|api:grails.test.runtime.SharedRuntimeConfigurer]@ interface. All test classes referencing the same SharedRuntimeConfigurer implementation
+class will share the same runtime during a single test run.
+The value class for SharedRuntimeConfigurer annotation can also implement @[TestEventInterceptor|api:grails.test.runtime.TestEventInterceptor]@ . In this case the instance of the class
+will be registered as a test event interceptor for the test runtime.
+
+
+h4. Loading application beans in unit tests
+
+Adding @static loadExternalBeans = true@ field definition to a unit test class makes the Grails unit test runtime load all bean definitions from @grails-app/conf/spring/resources.groovy@ and @grails-app/conf/spring/resources.xml@ files.
+
+{code}
+import spock.lang.Issue
+import spock.lang.Specification
+import grails.test.mixin.support.GrailsUnitTestMixin
+
+@TestMixin(GrailsUnitTestMixin)
+class LoadExternalBeansSpec extends Specification {
+    static loadExternalBeans = true
+
+    void "should load external beans"(){
+        expect:
+        applicationContext.getBean('simpleBean') == 'Hello world!'
+    }
+}
+{code}
+
+
+
+
