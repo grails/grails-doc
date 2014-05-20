@@ -23,6 +23,18 @@ class LoginCommand {
 
 In this example, the command object is marked with the @Validateable@ annotation. The @Validateable@ annotation allows the definition of [constraints|guide:constraints] just like in [domain classes|guide:GORM]. If the command object is defined in the same source file as the controller that is using it, Grails will automatically mark it as @Validateable@. It is not required that command object classes be validateable.
 
+By default, all @Validateable@ object properties are @nullable: false@ which matches the behavior of GORM domain objects. If you want a @Validateable@ that has @nullable: true@ properties by default, you can specify @nullable: true@ on the annotation:
+
+{code:java}
+@grails.validation.Validateable(nullable=true)
+class AuthorSearchCommand {
+    String  name
+    Integer age
+}
+{code}
+
+In this example, both @name@ and @age@ will allow null values during validation. 
+
 h4. Using Command Objects
 
 To use command objects, controller actions may optionally specify any number of command object parameters. The parameter types must be supplied so that Grails knows what objects to create and initialize.
