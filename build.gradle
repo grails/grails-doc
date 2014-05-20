@@ -106,7 +106,7 @@ tasks.addRule("Pattern: publishPdf_<lang>") { String taskName ->
 
 task docs(dependsOn: ['publishPdf'])
 
-if (!System.getProperty("en.only")) {
+if (System.getProperty("all.langs")) {
     for (f in new File(projectDir, "src").listFiles()) {
         if (f.directory && !(f.name in ["en", "guide", "ref"])) {
             docs.dependsOn << "publishPdf_${f.name}"
