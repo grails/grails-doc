@@ -38,6 +38,10 @@ h4. New Command Object Data Binding Behavior
 
 The data binding behavior for command objects have changed in Grails 2.4.  Request parameter names may now be prefixed with the name of the controller action argument name that the request parameter should be bound to.  For example, if a request is made to the @buy@ action in the controller below a request parameter named @buyer.name@ will be bound to the @name@ property of the @buyer@ argument and a request parameter named @seller.name@ will be bound to the @name@ property of the @seller@ argument.
 
+h4. New Behavior For Domain Class Command Objects
+
+If a command object's type is a domain class and there is no @id@ request parameter then @null@ will be passed into the controller action unless the HTTP request method is "POST", in which case a new instance of the domain class will be created by invoking the domain class constructor.  For all of the cases where the domain class instance is non-null, data binding is only performed if the HTTP request method is "POST", "PUT" or "PATCH".  See the [Command Objects|guide:commandObjects] documentation for more details.
+
 h4. Nullable Command Object Properties
 
 The behavior in Grails 2.3.x is such that constrained properties in command objects and other classes marked with \@Validateable are all configured with @nullable: false@ by default.  Unconstrained properties were not configured with @nullable: false@.  In Grails 2.4 all non-static unconstrained properties in command object classes and other classes marked with \@Validateable are all configured with @nullable: false@.
