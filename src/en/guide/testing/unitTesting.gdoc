@@ -61,3 +61,24 @@ class BookControllerSpec extends Specification {
     }
 }
 {code}
+
+
+h4. Loading application beans in unit tests
+
+Adding @static loadExternalBeans = true@ field definition to a unit test class makes the Grails unit test runtime load all bean definitions from @grails-app/conf/spring/resources.groovy@ and @grails-app/conf/spring/resources.xml@ files.
+
+{code}
+import spock.lang.Issue
+import spock.lang.Specification
+import grails.test.mixin.support.GrailsUnitTestMixin
+
+@TestMixin(GrailsUnitTestMixin)
+class LoadExternalBeansSpec extends Specification {
+    static loadExternalBeans = true
+
+    void "should load external beans"(){
+        expect:
+        applicationContext.getBean('simpleBean') == 'Hello world!'
+    }
+}
+{code}
