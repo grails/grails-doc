@@ -122,6 +122,13 @@ The @grailsApplication@ bean definition should be left in the file but the @grai
 </bean>
 {code}
 
+h4. Changes to web.xml
+
+The Sitemesh servlet filter has been removed and the GSP layout feature is now handled by [GrailsLayoutView|api:org.codehaus.groovy.grails.web.sitemesh.GrailsLayoutView]. 
+Applications that are using a customized web.xml should apply the customizations to a web.xml file of Grails 2.4 . 
+This applies only to applications that have used the "install-templates" to install template files in src/templates folder of the application.
+It's recommended to rename src/templates to a different name and use a diff tool to apply the possible application specific customizations to the files created with Grails 2.4 install-templates command.
+
 h4. Data Binding Changes
 
 Prior to Grails 2.4 when data binding was performed with the @params@ object in a controller, if the request contained a body the body would be parsed and used for data binding instead of the @params@ object.  In Grails 2.4 this behavior has changed so that if binding is initiated with @params@, the binding will always be done with the @params@ object, without regard to whether or not the request has a body.  If binding is done with the @request@ object, if the request has a body then the body will be parsed and used for data binding, otherwise the request parameters will be used for data binding.
