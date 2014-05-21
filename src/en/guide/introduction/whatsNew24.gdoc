@@ -209,6 +209,21 @@ The Maven plugin has been rewritten to use [Aether for dependency resolution|htt
 
 This means that the Maven plugin version number is no longer tied to the version number of Grails and new releases of the Maven plugin will not come out with each new Grails release. Instead, users can continue to use the 2.4.0 version of the plugin for any version of Grails going forward.
 
+h4. Unit Testing improvements
+
+There is a Grails "unit testing runtime" that is based on the previous TestMixin based solution. It now separates the TestMixin classes and the actual runtime that handles the lifecycle of the Grails unit testing runtime. State of the runtime is not kept in static fields of the TestMixin classes anymore. The Groovy AST transformation behind the TestMixin annotation integrates to Junit and Spock test classes by adding Junit Rule fields to the class. In the previous solution, Before/BeforeClass and After/AfterClass annotations on AST added mix-in methods were used for the integration.
+
+Some of the main features:
+
+* the programming model remains the same for unit testing of Grails applications
+* setup/teardown method ordering is now deterministic because the integration is now using a single Junit Rule field and the test runtime uses eventing internally to setup and teardown resources
+* there are doWithSpring and doWithConfig callbacks for unit tests - these callback methods get called before the grailsApplication instance in the unit test runtime gets initialized.
+* it's possible to register a Spock Mock as a bean to the application context of the Grails unit test runtime application - you can replace a collaborator bean with a mock
+* it's possible to reuse a single application context for several test classes and control that so that tests can be made faster when required
+* there is a event-based plugin architecture for the Grails unit testing runtime. It's possible to add new test runtime "features" with new test runtime plugin classes. The test runtime plugin API is due to change. Changes will be made based on feedback from the Grails community.
+
+See the updated [unit testing chapter|guide:unitTesting] in the manual for more information of the new features like doWithSpring and doWithConfig.
+
 h4. Improved Unit Testing Support For allowedMethods
 
 The allowedMethods property is now respected in unit tests.
