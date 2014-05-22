@@ -217,3 +217,21 @@ class DemoControllerSpec extends Specification {
 }
 {code}
 
+h4. scanning for JSP taglibs has to be configured, no JSTL default dependency
+
+JSP taglib tld files aren't scanned by default any more. This must be configured with the @grails.gsp.tldScanPattern@ setting. It accepts a comma separated String value. Spring's PathMatchingResourcePatternResolver is used to resolve the patterns.
+
+You can get the previous behaviour by adding this setting to Config.groovy:
+{code}
+grails.gsp.tldScanPattern='classpath*:/META-INF/*.tld,/WEB-INF/tld/*.tld'
+{code}
+
+JSTL standard library is no more added as a dependency. In case you are using JSTL, you should also add these dependencies:
+{code}
+        runtime 'javax.servlet:jstl:1.1.2'
+        runtime 'taglibs:standard:1.1.2'
+{code}
+
+
+
+
