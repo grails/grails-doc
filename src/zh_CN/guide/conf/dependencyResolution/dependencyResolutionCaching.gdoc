@@ -1,0 +1,27 @@
+As a performance optimisation, when using Ivy (this does not apply to Aether), Grails does not resolve dependencies for every command invocation. Even with all the necessary dependencies downloaded and cached, resolution may take a second or two. To minimise this cost, Grails caches the result of dependency resolution (i.e. the location on the local file system of all of the declared dependencies, typically inside the dependency cache) and reuses this result for subsequent commands when it can reasonably expect that nothing has changed.
+
+Grails only performs dependency resolution under the following circumstances:
+
+* The project is clean (i.e. fresh checkout or after @grails clean@)
+* The @BuildConfig.groovy@ file has changed since the last command was run
+* The @\-\-refresh-dependencies@ command line switch is provided to the command (any command)
+* The @refresh-dependencies@ command is the command being executed
+
+Generally, this strategy works well and you can ignore dependency resolution caching. Every time you change your dependencies (i.e. modify @BuildConfig.groovy@) Grails will do the right thing and resolve your new dependencies.
+
+However, when you have _changing_ or _dynamic_ dependencies you will have to consider dependency resolution caching.
+
+{info}
+A _changing_ dependency is one whose version number does not change, but its contents do (like a SNAPSHOT). A _dynamic_ dependency is one that is defined as one of many possible options (like a dependency with a version range, or symbolic version number like @latest.integration@).
+{info}
+
+Both _changing_ and _dynamic_ dependencies are influenced by the environment. With caching active, any changes to the environment are effectively ignored. For example, your project may not automatically fetch the very latest version of a dependency when using @latest.integration@. Or if you declare a @SNAPSHOT@ dependency, you may not automatically get the latest that's available on the server.
+
+To ensure you have the correct version of a _changing_ or _dynamic_ dependency in your project, you can:
+
+* clean the project
+* run the @refresh-dependencies@ command
+* run _any_ command with the @\-\-refresh-dependencies@ switch; or
+* make a change to @BuildConfig.groovy@
+
+If you have your CI builds configured to not perform clean builds, it may be worth adding the @\-\-refresh-dependencies@ switch to the command you use to build your projects.

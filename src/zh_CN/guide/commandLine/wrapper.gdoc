@@ -1,0 +1,27 @@
+Grails Wrapper运行在没有安装Grails或设置GRAILS_HOME环境下执行Grails应用。Wrapper包括一个小型的脚本和一组项目所需的启动jar文件。Wrapper使得设置开发环境、设置CI和管理Grails版本变得更加容易。当你将应用升级到下一版本的Grail时，Wrapper将修改对应的源码控制，为开发者修改他们的工作环境和运行wrapper，它们将自动使用当前的Grails版本。
+
+h4. 生成 Wrapper
+
+ [wrapper|commandLine] 命令可以生成wrapper shell脚本和支持jar文件。在一个现有的Grails项目目录下运行此命令。
+
+{code}
+grails wrapper
+{code}
+
+Grails命令必需安装Grails及设置。Wrapper仅仅是为了启动Grails项目。一旦Wrapper被生成后，就不再需要Grails安装了。
+
+查阅 [wrapper|commandLine] 查阅更多详细参数。
+
+默认wrapper命令在项目顶层目录中，生成@grailsw@ shell脚本。此外，@wrapper/@目录(the name of the directory is configurable via command line options)将包括一些运行Warpper所需的支持文件。所有这些文件将被加入到项目控制源码中(IDE或运行环境中——译者注)。这样才能使得开发者在没有安装和设置Grails环境下，运行Wrapper时去运行Grails命令。
+
+h4. 使用 Wrapper
+
+Wrapper脚本和一般Grails命令参数一样使用。
+
+{code}
+./grailsw create-domain-class com.demo.Person
+./grailsw run-app
+./grailsw test-app unit:
+
+etc...
+{code}

@@ -15,6 +15,20 @@ h2. Description
 
 Sets the maximum value of a class that implements @java.lang.Comparable@. The type of the value must be the same as the property.
 
+Note that constraints are only evaluated once which may be relevant for a constraint that relies on a value like an instance of @java.util.Date@.
+
+{code:java}
+class User {
+    ...
+
+    static constraints = {
+        // this Date object is created when the constraints are evaluated, not
+        // each time an instance of the User class is validated.
+        birthDate max: new Date()
+    }
+}
+{code}
+
 This constraint influences [schema generation|guide:gormConstraints].
 
 Error Code: @className.propertyName.max.exceeded@

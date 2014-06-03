@@ -1,55 +1,122 @@
-{hidden}
-For general configuration Grails provides a file called @grails-app/conf/Config.groovy@. This file uses Groovy's "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper which is very similar to Java properties files except it is pure Groovy hence you can reuse variables and use proper Java types!
+For general configuration Grails provides two files:
+Grails提供了两个关于配置的文件：
 
-You can add your own configuration in here, for example:
+* @grails-app/conf/BuildConfig.groovy@
+* @grails-app/conf/Config.groovy@
 
-{code}
-foo.bar.hello = "world"
-{code}
+它们都是用 "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper 语法。 第一个文件， @BuildConfig.groovy@ 配置文件，用作于当运行Grails命令时，诸如 @compile@, @doc@ 等。第二个文件 @Config.groovy@ ，用作应用程序运行时的设定。这个意味着， @Config.groovy@ 将被打包到你的应用程序，而 @BuildConfig.groovy@ 则不是。如果没有搞清，别急：文档将告知你如何实际运用。
 
-Then later in your application you can access these settings in one of two ways. The most common is from the [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] object, which is available as a variable in controllers and tag libraries:
-
-{code}
-assert "world" == grailsApplication.config.foo.bar.hello
-{code}
-
-The other way involves getting a reference to the [ConfigurationHolder|api:org.codehaus.groovy.grails.commons.ConfigurationHolder] class that holds a reference to the configuration object:
-
-{code}
-import org.codehaus.groovy.grails.commons.*
-...
-def config = ConfigurationHolder.config
-assert "world" == config.foo.bar.hello
-{code}
-
-{warning}
-ConfigurationHolder and ApplicationHolder are deprecated and will be removed in a future version of Grails, so it is highly preferable to access the @GrailsApplication@ and config from the @grailsApplication@ variable.
-{warning}
-{hidden}
-
-Grails提供了一个 @grails-app/conf/Config.groovy@ 配置文件，用来完成通用的配置。此文件除了是Groovy的"ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper 之外，其他非常类似于Java属性文件，这样就既可以重用变量又可以使用合适的Java类！
-
-你可以添加属于你自己的配置信息，例如：
+大部分语法类似于java属性的结构，使用 @.@ 符号方式组织：
 
 {code}
 foo.bar.hello = "world"
 {code}
 
-在你随后的应用中，你可以使用以下两种方法中的一种来访问这些配置。最常用的就是 [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] 对象，不过此对象仅在控制器和标签库中有效。比如：
+注意，Groovy字符串是平实的！引号是必须加入的。实际上 ConfigSlurper 语法高亮支持这个特征，包括： strings, integers, 或 其它 objects !
+
+当设置多个参数时将变成很有趣，例如你设置一下两个参数：
 
 {code}
-assert "world" == grailsApplication.config.foo.bar.hello
+foo.bar.hello = "world"
+foo.bar.good = "bye"
 {code}
 
-另外一种方法是获取 [ConfigurationHolder|api:org.codehaus.groovy.grails.commons.ConfigurationHolder] 类的一个引用，此类中包含着配置对象，比如：
+这两个参数讲包括相同起始点： @foo.bar@ 。 以上语法不是快速有效。你可以按照以下方式将它们整合起来：
 
 {code}
-import org.codehaus.groovy.grails.commons.*
-...
-def config = ConfigurationHolder.config
-assert "world" == config.foo.bar.hello
+foo {
+    bar {
+        hello = "world"
+        good = "bye"
+    }
+}
 {code}
 
-{warning}
-ConfigurationHolder和ApplicationHolder现在已经被废弃，并且将在Grails的未来版本中移除，因此强烈推荐采用 @GrailsApplication@ 的实例变量 @grailsApplication@ 方式来访问配置对象。
-{warning}
+或者只整合一部分：
+
+{code}
+foo {
+    bar.hello = "world"
+    bar.good = "bye"
+}
+{code}
+
+无论如何，起始点你不能有 @.@ 符号，否则它将报错：
+
+{code}
+// Won't work!
+foo.bar {
+    hello = "world"
+    good = "bye"
+}
+{code}
+
+有些内建值可以在 @BuildConfig.groovy@ 和 @Config.groovy@ 文件中直接使用：
+
+{table}
+*Variable* | *Description*
+userHome | Location of the home directory for the account that is running the Grails application.
+grailsHome | Location of the directory where you installed Grails. If the @GRAILS_HOME@ environment variable is set, it is used.
+appName | The application name as it appears in application.properties.
+appVersion | The application version as it appears in application.properties.
+{table}
+
+如:
+
+{code}
+my.tmp.dir = "\${userHome}/.grails/tmp"
+{code}
+
+此外， @BuildConfig.groovy@ 文件还可以有
+
+{table}
+*Variable* | *Description*
+grailsVersion | The version of Grails used to build the project.
+grailsSettings | An object containing various build related settings, such as @baseDir@. It's of type [@BuildSettings@|api:grails.util.BuildSettings].
+{table}
+
+@Config.groovy@ 有
+
+{table}
+*Variable* | *Description*
+grailsApplication | The [@GrailsApplication@|api:org.codehaus.groovy.grails.commons.GrailsApplication] instance.
+{table}
+
+Those are the basics of adding settings to the configuration file, but how do you access those settings from your own application? That depends on which config you want to read.
+这些基本附加设置都可以加入到配置文件中，但如何从自己的应用程序获取这些设定呢？这依赖与你读取那个配置。
+
+@BuildConfig.groovy@ 中的配置值只能通过 [command scripts|guide:creatingGantScripts] 读取，并作为 @grailsSettings.config@ 值读取：
+
+{code}
+target(default: "Example command") {
+    def maxIterations = grailsSettings.config.myapp.iterations.max
+    ...
+}
+{code}
+
+如果你在运行时读取在 @Config.groovy@ 中的配置值，请使用 [@grailsApplication@|api:org.codehaus.groovy.grails.commons.GrailsApplication] 对象，查看在控制器和标签中的读取方式：
+
+{code}
+class MyController {
+    def hello() {
+        def recipient = grailsApplication.config.foo.bar.hello
+
+        render "Hello ${recipient}"
+    }
+}
+{code}
+
+也可以非常简单的注入到 services ，让它读取到数值：
+
+{code}
+class MyService {
+    def grailsApplication
+
+    String greeting() {
+        def recipient = grailsApplication.config.foo.bar.hello
+        return "Hello ${recipient}"
+    }
+}
+{code}
+
+就像你看到的那样，读取还是按照你在配置中的 @.@ 方式来读取。

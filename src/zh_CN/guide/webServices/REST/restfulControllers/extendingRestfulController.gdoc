@@ -1,0 +1,58 @@
+The easiest way to get started doing so is to create a new controller for your resource that extends the @grails.rest.RestfulController@ super class. For example:
+
+{code}
+class BookController extends RestfulController {
+    static responseFormats = ['json', 'xml']
+    BookController() {
+        super(Book)
+    }
+}
+{code}
+
+To customize any logic you can just override the appropriate action. The following table provides the names of the action names and the URIs they map to:
+
+{table}
+ HTTP Method | URI               | Controller Action
+ GET         |/books             | index            
+ GET         |/books/create      | create              
+ POST        |/books             | save            
+ GET         |/books/${id}       | show              
+ GET         |/books/${id}/edit  | edit              
+ PUT         |/books/${id}       | update           
+ DELETE      |/books/${id}       | delete        
+{table}
+
+{note}
+Note that the @create@ and @edit@ actions are only needed if the controller exposes an HTML interface. 
+{note}
+
+As an example, if you have a [nested resource|guide:restfulMappings] then you would typically want to query both the parent and the child identifiers. For example, given the following URL mapping:
+
+{code}
+"/authors"(resources:'author') {
+    "/books"(resources:'book')
+}
+{code}
+
+You could implement the nested controller as follows:
+
+{code}
+class BookController extends RestfulController {
+    static responseFormats = ['json', 'xml']
+    BookController() {
+        super(Book)
+    }
+
+    @Override
+    protected Book queryForResource(Serializable id) {
+        Book.where {
+            id == id && author.id = params.authorId
+        }.find()
+    }
+
+}
+{code}
+
+The example above subclasses @RestfulController@ and overrides the protected @queryForResource@ method to customize the query for the resource to take into account the parent resource.
+
+

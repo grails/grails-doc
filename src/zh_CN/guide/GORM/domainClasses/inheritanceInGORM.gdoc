@@ -1,4 +1,4 @@
-GORM supports inheritance both from abstract base classes and concrete persistent GORM entities. For example:
+GORM支持继承，无论是从抽象基类和具体的持久化GORM实体。
 
 {code}
 class Content {
@@ -24,23 +24,23 @@ class PodCast extends Content {
 }
 {code}
 
-In the above example we have a parent @Content@ class and then various child classes with more specific behaviour.
+上面的例子中，我们有个父类以及它的一系列子类使得它拥有更多的特征。
 
-h4. Considerations
+h4. 注意事项
 
-At the database level Grails by default uses table-per-hierarchy mapping with a discriminator column called @class@ so the parent class (@Content@) and its subclasses (@BlogEntry@, @Book@ etc.), share the *same* table.
+Grails默认使用表单层结构(table-per-hierarchy)映射，依据@class@类名作为可区分字段作为父类(@Content@)以及它的子类(@BlogEntry@, @Book@ ..)，共享*相同*的表。
 
-Table-per-hierarchy mapping has a down side in that you *cannot* have non-nullable properties with inheritance mapping. An alternative is to use table-per-subclass which can be enabled with the [ORM DSL|guide:ormdsl]
+表单层结构(table-per-hierarchy)映射不允许下层使用不为空non-nullable字段作为继承。 此外，使用表单层结构(table-per-hierarchy)具体开启哪些可以参阅 [ORM DSL|guide:ormdsl]
 
-However, excessive use of inheritance and table-per-subclass can result in poor query performance due to the use of outer join queries. In general our advice is if you're going to use inheritance, don't abuse it and don't make your inheritance hierarchy too deep.
+无论如何，使用继承和表单层结构(table-per-hierarchy)将对性能有所影响(join)。所以我们的建议是你如果打算使用继承，你就不能过于随意以及不得继承太深。
 
-h4. Polymorphic Queries
+h4. 多态查询
 
-The upshot of inheritance is that you get the ability to polymorphically query. For example using the [list|domainClasses] method on the @Content@ super class will return all subclasses of @Content@:
+继承的结果是，你能多态查询的能力。例如，使用在 @Content@ 类使用 [list|domainClasses] 方法，将返回所有@Content@子类：
 
 {code}
-def content = Content.list() // list all blog entries, books and podcasts
-content = Content.findAllByAuthor('Joe Bloggs') // find all by author
+def content = Content.list() // 列出所有 blog entries, books and podcasts | list all blog entries, books and podcasts
+content = Content.findAllByAuthor('Joe Bloggs') // 按照author来查询 | find all by author
 
-def podCasts = PodCast.list() // list only podcasts
+def podCasts = PodCast.list() // 只有podcasts类数据 | list only podcasts
 {code}

@@ -1,0 +1,135 @@
+Grails features five dependency resolution configurations (or 'scopes'):
+
+*  @build@: Dependencies for the build system only
+*  @compile@: Dependencies for the compile step
+*  @runtime@: Dependencies needed at runtime but not for compilation (see above)
+*  @test@: Dependencies needed for testing but not at runtime (see above)
+*  @provided@: Dependencies needed at development time, but not during WAR deployment
+
+Within the @dependencies@ block you can specify a dependency that falls into one of these configurations by calling the equivalent method. For example if your application requires the MySQL driver to function at @runtime@ you can specify that like this:
+
+{code}
+runtime 'com.mysql:mysql-connector-java:5.1.16'
+{code}
+
+This uses the string syntax: @group:name:version@. 
+
+
+If you are using Aether as the dependency resolution library, the Maven pattern of:
+
+{code}
+<groupId>:<artifactId>[:<extension>[:<classifier>]]:<version>
+{code}
+
+You can also use a Map-based syntax:
+
+{code}
+runtime group: 'com.mysql',
+        name: 'mysql-connector-java',
+        version: '5.1.16'
+{code}
+
+Possible settings to the map syntax are:
+
+* @group@ - The group / organization (or groupId in Maven terminology)
+* @name@ - The dependency name (or artifactId in Maven terminology)
+* @version@ - The version of the dependency
+* @extension@ (Aether only) - The file extension of the dependency
+* @classifier@ - The dependency classifier
+* @branch@ (Ivy only) - The branch of the dependency
+* @transitive@ (Ivy only) - Whether the dependency has transitive dependencies
+
+As you can see from the list above some dependency configuration settings work only in Aether and some only in Ivy.
+
+Multiple dependencies can be specified by passing multiple arguments:
+
+{code}
+runtime 'com.mysql:mysql-connector-java:5.1.16',
+        'net.sf.ehcache:ehcache:1.6.1'
+
+// Or
+
+runtime(
+    [group:'com.mysql', name:'mysql-connector-java', version:'5.1.16'],
+    [group:'net.sf.ehcache', name:'ehcache', version:'1.6.1']
+)
+{code}
+
+h3. Disabling transitive dependency resolution
+
+By default, Grails will not only get the JARs and plugins that you declare, but it will also get their transitive dependencies. This is usually what you want, but there are occasions where you want a dependency without all its baggage. In such cases, you can disable transitive dependency resolution on a case-by-case basis:
+
+{code}
+runtime('com.mysql:mysql-connector-java:5.1.16',
+        'net.sf.ehcache:ehcache:1.6.1') {
+    transitive = false
+}
+
+// Or
+runtime group:'com.mysql',
+        name:'mysql-connector-java',
+        version:'5.1.16',
+        transitive:false
+{code}
+
+{warning}
+Disabling transitive dependency resolution only works with the Ivy dependency manager. Aether does not support disabling of transitive resolution, instead explicit exclusions are required (see below).
+{warning}
+
+h3. Excluding specific transitive dependencies
+
+A far more common scenario is where you want the transitive dependencies, but some of them cause issues with your own dependencies or are unnecessary. For example, many Apache projects have 'commons-logging' as a transitive dependency, but it shouldn't be included in a Grails project (we use SLF4J). That's where the @excludes@ option comes in:
+
+{code}
+runtime('com.mysql:mysql-connector-java:5.1.16',
+        'net.sf.ehcache:ehcache:1.6.1') {
+    excludes "xml-apis", "commons-logging"
+}
+
+// Or
+runtime(group:'com.mysql', name:'mysql-connector-java', version:'5.1.16') {
+    excludes([ group: 'xml-apis', name: 'xml-apis'],
+             [ group: 'org.apache.httpcomponents' ],
+             [ name: 'commons-logging' ])
+{code}
+
+As you can see, you can either exclude dependencies by their artifact ID (also known as a module name) or any combination of group and artifact IDs (if you use the Map notation). You may also come across @exclude@ as well, but that can only accept a single string or Map:
+
+{code}
+runtime('com.mysql:mysql-connector-java:5.1.16',
+        'net.sf.ehcache:ehcache:1.6.1') {
+    exclude "xml-apis"
+}
+{code}
+
+h3. Using Ivy module configurations
+
+Using the Ivy dependency manager (Aether not supported), if you use Ivy module configurations and wish to depend on a specific configuration of a module, you can use the @dependencyConfiguration@ method to specify the configuration to use.
+
+{code}
+provided("my.org:web-service:1.0") {
+    dependencyConfiguration "api"
+}
+{code}
+
+If the dependency configuration is not explicitly set, the configuration named @"default"@ will be used (which is also the correct value for dependencies coming from Maven style repositories).
+
+h3. Where are the JARs?
+
+With all these declarative dependencies, you may wonder where all the JARs end up. They have to go somewhere after all. By default Grails puts them into a directory, called the dependency cache, that resides on your local file system at @user.home/.grails/ivy-cache@ or @user.home/.m2/repository@ when using Aether. You can change this either via the @settings.groovy@ file:
+
+{code}
+grails.dependency.cache.dir = "${userHome}/.my-dependency-cache"
+{code}
+
+or in the dependency DSL:
+
+{code}
+grails.project.dependency.resolution = {
+    ...
+    cacheDir "target/ivy-cache"
+    ...
+}
+{code}
+
+The @settings.groovy@ option applies to all projects, so it's the preferred approach.

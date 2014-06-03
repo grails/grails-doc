@@ -1,65 +1,10 @@
-{hidden}
-h4. The GORM API
-
-The GORM API has been formalized into a set of classes (@GormStaticApi@, @GormInstanceApi@ and @GormValidationApi@) that get statically wired into every domain class at the byte code level. The result is better code completion for IDEs, better integration with Java and the potential for more GORM implementations for other types of data stores.
-{hidden}
-
 h4. GORM API
 
-GORM API现在已正式规范为类的集合（@GormStaticApi@, @GormInstanceApi@, @GormValidationApi@），并且在每个领域类的字节码级别上进行注入的。如此一来，对IDE的代码补齐，Java的集成，以及潜在的其他类型的GORM实现来说，提供了更好的支持。
-
-{hidden}
-h4. New findOrCreate and findOrSave Methods
-
-Domain classes have support for the findOrCreateWhere, findOrSaveWhere, findOrCreateBy and findOrSaveBy query methods which behave just like findWhere and findBy methods except that they should never return null. If a matching instance cannot be found in the database then a new instance is created, populated with values represented in the query parameters and returned. In the case of findOrSaveWhere and findOrSaveBy, the instance is saved before being returned.
-
-{code}
-def book = Book.findOrCreateWhere(author: 'Douglas Adams', title: "The Hitchiker's Guide To The Galaxy")
-def book = Book.findOrSaveWhere(author: 'Daniel Suarez', title: 'Daemon')
-def book = Book.findOrCreateByAuthorAndTitle('Daniel Suarez', 'Daemon')
-def book = Book.findOrSaveByAuthorAndTitle('Daniel Suarez', 'Daemon')
-{code}
-{hidden}
-
-h4. 全新的findOrCreate和findOrSave方法
-
-领域类现在已经支持findOrCreateWhere, findOrSaveWhere, findOrCreateBy和findOrSaveBy查询方法，这些方法除了不返回null值以外，跟findWhere和findBy方法基本类似。如果在数据库中没有找到符合条件的实例，系统将会根据查询参数创建一个全新的实例返回，不过在findOrSaveWhere 和findOrSaveBy中,实例是先保存入库再返回的。示例代码如下：
-
-{code}
-def book = Book.findOrCreateWhere(author: 'Douglas Adams', title: "The Hitchiker's Guide To The Galaxy")
-def book = Book.findOrSaveWhere(author: 'Daniel Suarez', title: 'Daemon')
-def book = Book.findOrCreateByAuthorAndTitle('Daniel Suarez', 'Daemon')
-def book = Book.findOrSaveByAuthorAndTitle('Daniel Suarez', 'Daemon')
-{code}
-
-
-{hidden}
-h4. Detached Criteria and Where Queries
-
-Grails 2.0 features support for [DetachedCriteria|guide:detachedCriteria] which are criteria queries that are not associated with any session or connection and thus can be more easily reused and composed:
-
-{code}
-def criteria = new DetachedCriteria(Person).build {
-    eq 'lastName', 'Simpson'
-}
-def results = criteria.list(max:4, sort:"firstName")
-{code}
-
-To support the addition of [DetachedCriteria|guide:detachedCriteria] queries and encourage their use a new @where@ method and DSL has been introduced to greatly reduce the complexity of criteria queries:
-
-{code}
-def query = Person.where {
-    (lastName != "Simpson" && firstName != "Fred") || (firstName == "Bart" && age > 9)
-}
-def results = query.list(sort:"firstName")
-{code} 
-
-See the documentation on [DetachedCriteria|guide:detachedCriteria] and [Where Queries|guide:whereQueries] for more information.
-{hidden}
+GORM API现在已正式规范为类的集合( @GormStaticApi@, @GormInstanceApi@ and @GormValidationApi@ )，并且在每个领域类的字节码级别上进行注入的。如此一来，对IDE的代码补齐，Java的集成，以及潜在的其他类型的GORM实现来说，提供了更好的支持。
 
 h4. 分离的Criteria和Where查询
 
-Grails 2.0中[分离的Criteria|guide:detachedCriteria]是指条件（Criteria）查询不再跟任何数据库会话或者连接关联，因此可以很方便的复用和构造，比如：
+Grails 2.0中分离的 [DetachedCriteria|guide:detachedCriteria]  是指条件查询不再跟任何数据库会话或者连接关联，因此可以很方便的复用和构造，比如：
 
 {code}
 def criteria = new DetachedCriteria(Person).build {
@@ -68,7 +13,7 @@ def criteria = new DetachedCriteria(Person).build {
 def results = criteria.list(max:4, sort:"firstName")
 {code}
 
-为了支持[分离的Criteria|guide:detachedCriteria]查询和减少条件查询的复杂性，一个新的@where@方法及其DSL被引入，比如：
+为了支持 [DetachedCriteria|guide:detachedCriteria] 查询和减少条件查询的复杂性，一个新的 @where@ 方法及其DSL被引入，比如：
 
 {code}
 def query = Person.where {
@@ -77,13 +22,22 @@ def query = Person.where {
 def results = query.list(sort:"firstName")
 {code} 
 
-更多信息请参考本手册的[分离的Criteria|guide:detachedCriteria] and [Where Queries|guide:whereQueries]章节。
+更多信息请参考本手册的 [DetachedCriteria|guide:detachedCriteria] and [Where Queries|guide:whereQueries] 章节。
 
+h4. 全新的findOrCreate和findOrSave方法
 
-{hidden}
-h4. Abstract Inheritance
+领域类现在已经支持 findOrCreateWhere, findOrSaveWhere, findOrCreateBy 和 findOrSaveBy 查询方法，这些方法除了不返回null值以外，跟findWhere和findBy方法基本类似。如果在数据库中没有找到符合条件的实例，系统将会根据查询参数创建一个全新的实例返回，不过在findOrSaveWhere 和findOrSaveBy中,实例是先保存入库再返回的。示例代码如下：
 
-GORM now supports abstract inheritance trees which means you can define queries and associations linking to abstract classes:
+{code}
+def book = Book.findOrCreateWhere(author: 'Douglas Adams', title: "The Hitchiker's Guide To The Galaxy")
+def book = Book.findOrSaveWhere(author: 'Daniel Suarez', title: 'Daemon')
+def book = Book.findOrCreateByAuthorAndTitle('Daniel Suarez', 'Daemon')
+def book = Book.findOrSaveByAuthorAndTitle('Daniel Suarez', 'Daemon')
+{code}
+
+h4. 抽象继承
+
+GORM现在支持抽象的继承树或者说现在你可以定义抽象类的查询和关联了，比如：
 
 {code}
 abstract class Media {
@@ -103,59 +57,10 @@ class Account {
 
 def allMedia = Media.list()
 {code}
-{hidden}
-
-h4. 抽象继承
-
-GORM现在支持抽象的继承树或者说现在你可以定义抽象类的查询和关联了，比如：
-
-{code}
-abstract Media {
-    String title
-    …
-}
-class Book extends Media {
-}
-class Album extends Media {
-
-}
-class Account {
-    static hasMany = [purchasedMedia:Media]
-}
-
-..
-
-def allMedia = Media.list()
-{code}
-
-{hidden}
-h4. Multiple Data Sources Support
-
-It is now possible to define multiple datasources in @DataSource.groovy@ and declare one or more datasources a particular domain uses by default:
-
-{code}
-class ZipCode {
-
-   String code
-
-   static mapping = {
-      datasource 'ZIP_CODES'
-   }
-}
-{code}
-
-If multiple datasources are specified for a domain then you can use the name of a particular datasource as a namespace in front of any regular GORM method:
-
-{code}
-def zipCode = ZipCode.auditing.get(42)
-{code}
-
-For more information see the section on [Multiple Data Sources|guide:multipleDatasources] in the user guide.
-{hidden}
 
 h4. 支持多个数据源
 
-现在，可以在@DataSource.groovy@定义多个数据源了，对于特定的领域类来说，声明一个或者多个数据源的示例如下：
+现在，可以在 @DataSource.groovy@ 定义多个数据源了，对于特定的领域类来说，声明一个或者多个数据源的示例如下：
 
 {code}
 class ZipCode {
@@ -174,48 +79,23 @@ class ZipCode {
 def zipCode = ZipCode.auditing.get(42)
 {code}
 
-更多信息请参考本手册的[多数据源|guide:multipleDatasources]章节
-
-{hidden}
-h4. Database Migrations
-
-A new [database migration plugin|http://grails.org/plugin/database-migration] has been designed and built for Grails 2.0 allowing you to apply migrations to your database, rollback changes and diff your domain model with the current state of the database.
-{hidden}
+更多信息请参考本手册的 [Multiple Data Sources|guide:multipleDatasources] 章节
 
 h4. 数据库迁移（Database Migration）
 
-新设计的[数据库迁移插件|http://grails.org/plugin/database-migration]完全是基于Grails 2.0的，有了它，你可以迁移你的数据库了，比如根据当前的数据库状态回滚所做的变化，比较领域模型。
-
-{hidden}
-h4. Database Reverse Engineering
-
-A new [database reverse engineering|http://www.grails.org/plugin/db-reverse-engineer] plugin has been designed and built for Grails 2.0 that allows you to generate a domain model from an existing database schema.
-{hidden}
+新设计的 [database migration plugin|http://grails.org/plugin/database-migration] 完全是基于Grails 2.0的，有了它，你可以迁移你的数据库了，比如根据当前的数据库状态回滚所做的变化，比较领域模型。
 
 h4. 数据库逆向工程
 
-基于Grails 2.0的[数据库逆向工程插件|http://www.grails.org/plugin/db-reverse-engineer]可以根据已有的数据库模式（database schema），自动生成领域模型。
-
-{hidden}
-h4. Hibernate 3.6
-
-Grails 2.0 is now built on Hibernate 3.6
-{hidden}
+基于Grails 2.0的数据库逆向工程插件 [database reverse engineering|http://www.grails.org/plugin/db-reverse-engineer] 可以根据已有的数据库模式（database schema），自动生成领域模型。
 
 h4. Hibernate 3.6
 
 Grails 2.0现在基于Hibernate 3.6了
 
-{hidden}
-h4. Bag Collections
-
-You can now use Hibernate [Bag|http://docs.jboss.org/hibernate/stable/core/reference/en-US/html/collections.html]s for mapped collections to avoid the memory and performance issues of loading large collections to enforce @Set@ uniqueness or @List@ order.
-
-For more information see the section on [Sets, Lists and Maps|guide:sets,ListsAndMaps] in the user guide.
-{hidden}
-
 h4. Bag集合
 
-现在Hibernate的[Bag|http://docs.jboss.org/hibernate/stable/core/reference/en-US/html/collections.html]集合（Bag集合，即在集合中允许重复，可以简单的看作为Set和List的结合体－－译者注）在Grails 2.0中也得到了支持，由此也比较好的解决了加载大数据量集合转换（@Set@必须唯一或者@List@必须有序）导致的内存和性能问题。
+现在Hibernate的 [Bag|http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/collections.html] 集合（Bag集合，即在集合中允许重复，可以简单的看作为Set和List的结合体－－译者注）在Grails 2.0中也得到了支持，由此也比较好的解决了加载大数据量集合转换（ @Set@ 必须唯一或者 @List@ 必须有序）导致的内存和性能问题。
 
-更多信息请参考本手册的[集合、列表、映射|guide:sets,ListsAndMaps]章节。
+更多信息请参考本手册的集合、列表、映射  [Sets, Lists and Maps|guide:sets,ListsAndMaps] 章节。
+

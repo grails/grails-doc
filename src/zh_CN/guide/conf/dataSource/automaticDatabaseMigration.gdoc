@@ -1,18 +1,24 @@
-The @dbCreate@ property of the @DataSource@ definition is important as it dictates what Grails should do at runtime with regards to automatically generating the database tables from [GORM|guide:GORM] classes. The options are described in the [DataSource|guide:dataSource] section:
+DataSource中的 @dbCreate@ 属性是很重要的，正如其所暗示，Grails将根据此值和[GORM|guide:GORM]类在运行时来自动生成数据库表。可选项已经在 [DataSource|guide:dataSource] 章节中介绍：
 
 * @create@
 * @create-drop@
 * @update@
 * @validate@
-* no value
+* 空(no value)
 
-In [development|guide:environments] mode @dbCreate@ is by default set to "create-drop", but at some point in development (and certainly once you go to production) you'll need to stop dropping and re-creating the database every time you start up your server.
+在开发模式 [development|guide:environments]  中， @dbCreate@ 默认是设置为 "create-drop"，但是当开发到一定程度（更进一步要运行于生产环境），你将不会再采用这种每次启动先删除再创建的方式。
 
-It's tempting to switch to @update@ so you retain existing data and only update the schema when your code changes, but Hibernate's update support is very conservative. It won't make any changes that could result in data loss, and doesn't detect renamed columns or tables, so you'll be left with the old one and will also have the new one.
+当你想保留数据并且只想更新所变化的代码时，可以尝试使用update。不过Hibernate对更新的支撑是非常保守的。其在数据安全方面不能给你任何保证，此外它也不能自动检测到字段或者表的重命名，因此在新增的同时旧有的依然保留。
 
-Grails supports Rails-style migrations via the "Database Migration":http://grails.org/plugin/database-migration plugin which can be installed by running
+Grails支持数据迁移"Database Migration":http://grails.org/plugin/database-migration 插件，只要在 @grails-app/conf/BuildConfig.groovy@ 中加上:
 
-bc.
-grails install-plugin database-migration
+{code:java}
+grails.project.dependency.resolution = {
+    ...
+    plugins {
+        runtime ':database-migration:1.3.1'
+    }
+}
+{code}
 
-The plugin uses "Liquibase":http://www.liquibase.org/ and and provides access to all of its functionality, and also has support for GORM (for example generating a change set by comparing your domain classes to a database).
+此插件以 "Liquibase":http://www.liquibase.org/ 为基础，除了具有原来的强大功能外，其还对GORM提供了支持(比如通过领域类和数据库的比较来自动生成变化内容）。

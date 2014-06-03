@@ -1,4 +1,4 @@
-A many-to-one relationship is the simplest kind, and is defined with a property of the type of another domain class. Consider this example:
+多对一是最简单一种类型，它通过属性类型到另外一个领域类来实行。介绍一个例子：
 
 h5. Example A
 
@@ -13,7 +13,7 @@ class Nose {
 }
 {code}
 
-In this case we have a unidirectional many-to-one relationship from @Face@ to @Nose@. To make this relationship bidirectional define the other side as follows:
+以上我们将多对一的关联设定给 @Face@ 对 @Nose@。如果要做双向的关联，那么情况下面：
 
 h5. Example B
 
@@ -29,26 +29,26 @@ class Nose {
 }
 {code}
 
-In this case we use the @belongsTo@ setting to say that @Nose@ "belongs to" @Face@. The result of this is that we can create a @Face@, attach a @Nose@ instance to it and when we save or delete the @Face@ instance, GORM will save or delete the @Nose@. In other words, saves and deletes will cascade from @Face@ to the associated @Nose@:
+我们使用 @belongsTo@ 设置来将 @Nose@ 隶属于 @Face。这样使得我们建立一个 @Face@后，将@Nose@实例加入到@Face@中，这样当我们保存或删除@Face@实例时，GORM将自动保存或删除@Nose@。也就是说，保存和删除通过@Face@一并关联到@Nose@：
 
 {code}
 new Face(nose:new Nose()).save()
 {code}
 
-The example above will save both face and nose. Note that the inverse _is not_ true and will result in an error due to a transient @Face@:
+以上将同时保存 脸和鼻子。注意，这个不是可逆的。反之，将会出现错误：
 
 {code}
 new Nose(face:new Face()).save() // will cause an error
 {code}
 
-Now if we delete the @Face@ instance, the @Nose@ will go too:
+如果删除 @Face@实例，那么@Nose@将同时被删除：
 
 {code}
 def f = Face.get(1)
 f.delete() // both Face and Nose deleted
 {code}
 
-To make the relationship a true one-to-one, use the @hasOne@ property on the owning side, e.g. @Face@:
+让我们看一下 @hasOne@ 属性给 @Face@ ，将获得什么效果：
 
 h5. Example C
 
@@ -64,9 +64,9 @@ class Nose {
 }
 {code}
 
-Note that using this property puts the foreign key on the inverse table to the previous example, so in this case the foreign key column is stored in the @nose@ table inside a column called @face_id@. Also, @hasOne@ only works with bidirectional relationships.
+注意，使用这个属性将和之前那个例子不同，它们的外键(foreign key)放在不同表中。这个例子将在@nose@表中加入一个名为 @face_id@的内建字段。而且， @hasOne@是支持双向关联的。
 
-Finally, it's a good idea to add a unique constraint on one side of the one-to-one relationship:
+最后，如果在一对一关联中加入唯一属性是值得的。
 
 {code}
 class Face {
@@ -83,3 +83,41 @@ class Nose {
     Face face
 }
 {code}
+
+h5. 控制关联端
+
+有时你可以将属性定义为和类名一样的名称。它们叫做反向引用。这样的情况可能因为Grails错误定义而产生问题。下面是简单的例子：
+
+{code}
+class Person {
+    String name
+    Person parent
+
+    static belongsTo = [ supervisor: Person ]
+
+    static constraints = { supervisor nullable: true }
+}
+{code}
+
+就像Grails所认为的那样，@parent@ 和 @supervisor@ 属性作为本身关联的两个直接引用。 你可以将一个 @Person@ 实例赋值给 @parent@，Grails自动将与其他 @Person@ 实例放入到 @supervisor@。这也许是你想要的，但如果你仔细看这个类，你将发现这个关联有两个单项关联。
+
+如果要正确的映射，你可以按照指定 @mappedBy@ 属性来确定一个特定关联方式：
+
+{code}
+class Person {
+    String name
+    Person parent
+
+    static belongsTo = [ supervisor: Person ]
+
+    static mappedBy = [ supervisor: "none", parent: "none" ]
+
+    static constraints = { supervisor nullable: true }
+}
+{code}
+
+你可以将"none"换成其他目标对象名，作为一般类中来使用，而不仅仅是反向引用，@mappedBy@ 不仅仅可以在 many-to-one 和 one-to-one 中使用关联: 它也可以在 one-to-many 和 many-to-many 使用，下一章节你可以看到这点.
+
+{warning}
+如果你正好有个名为"none"的领域类，那么就不能工作了！"none"属性被看做相反的关联(反向引用)。幸运的是，"none"很少作为常用的领域类名属性。
+{warning}

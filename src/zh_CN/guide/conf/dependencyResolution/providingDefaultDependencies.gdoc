@@ -1,0 +1,25 @@
+Most Grails applications have runtime dependencies on several jar files that are provided by the Grails framework.  These include libraries like Spring, Sitemesh, Hibernate etc.  When a war file is created, all of these dependencies will be included in it.  But, an application may choose to exclude these jar files from the war.  This is useful when the jar files will be provided by the container, as would normally be the case if multiple Grails applications are deployed to the same container.
+
+The dependency resolution DSL provides a mechanism to express that all of the default dependencies will be provided by the container. This is done by invoking the @defaultDependenciesProvided@ method and passing @true@ as an argument:
+
+{code}
+grails.project.dependency.resolution = {
+
+    defaultDependenciesProvided true // all of the default dependencies will
+                                     // be "provided" by the container
+
+    inherits "global" // inherit Grails' default dependencies
+
+    repositories {
+        grailsHome()
+        ...
+    }
+    dependencies {
+        ...
+    }
+}
+{code}
+
+{note}
+@defaultDependenciesProvided@ must come before @inherits@, otherwise the Grails dependencies will be included in the war.
+{note}

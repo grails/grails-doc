@@ -1,10 +1,10 @@
-The actual @dataSource@ bean is wrapped in a transaction-aware proxy so you will be given the connection that's being used by the current transaction or Hibernate @Session@ if one is active.
+@dataSource@ 实际上只是事务感知代理的封装，因此你得到的数据库连接是来自于当前事务或者当前活动的Hibernate的 @Session@ 。
 
-If this were not the case, then retrieving a connection from the @dataSource@ would be a new connection, and you wouldn't be able to see changes that haven't been committed yet (assuming you have a sensible transaction isolation setting, e.g. @READ_COMMITTED@ or better).
+除此之外，直接从dataSource获取的连接将是一个新连接，你将看不到任何没有提交的变化（假设你设置了事务隔离敏感度，比如@READ_COMMITTED@或者更高）。
 
-The "real" unproxied @dataSource@ is still available to you if you need access to it; its bean name is @dataSourceUnproxied@.
+那个"真实的"未被代理的dataSource对你来说，依然可用，只不过其bean名称是 @dataSourceUnproxied@ 。
 
-You can access this bean like any other Spring bean, i.e. using dependency injection:
+你可用想其他Spring bean那样来访问此bean，比如使用依赖注入：
 
 {code}
 class MyService {
@@ -14,7 +14,7 @@ class MyService {
 }
 {code}
 
-or by pulling it from the @ApplicationContext@:
+或者直接从ApplicationContext中获取
 
 {code}
 def dataSourceUnproxied = ctx.dataSourceUnproxied
