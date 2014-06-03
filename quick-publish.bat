@@ -1,0 +1,1 @@
+gradlew -Ddisable.groovydocs=true -Dzh_CN.only=true -Dgrails.home=d:\GitHub\grails-core-master docs
