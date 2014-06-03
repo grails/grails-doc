@@ -57,9 +57,7 @@ Note that the attribute name can be anything you want, and the values are often 
 
 h4. Scoped Controllers
 
-By default, a new controller instance is created for each request. In fact, because the controller is @prototype@ scoped, it is thread-safe since each request happens on its own thread.
-
-You can change this behaviour by placing a controller in a particular scope. The supported scopes are:
+Supported controller scopes are:
 
 * @prototype@ (default) - A new controller will be created for each request (recommended for actions as Closure properties)
 * @session@ - One controller is created for the scope of a user session
@@ -77,6 +75,9 @@ You can define the default strategy under in @Config.groovy@ with the @grails.co
 grails.controllers.defaultScope = "singleton"
 {code}
 
+Newly created applications have the @grails.controllers.defaultScope@ property set in @grails-app/conf/Config.groovy@ with a value of "singleton".  You may change this value to any
+of the supported scopes listed above.  If the property is not assigned a value at all, controllers will default to "prototype" scope.
+
 {note}
-Use scoped controllers wisely. For instance, we don't recommend having any properties in a singleton-scoped controller since they will be shared for _all_ requests. Setting a default scope other than @prototype@ may also lead to unexpected behaviors if you have controllers provided by installed plugins that expect that the scope is @prototype@.
+Use scoped controllers wisely. For instance, we don't recommend having any properties in a singleton-scoped controller since they will be shared for _all_ requests.
 {note}

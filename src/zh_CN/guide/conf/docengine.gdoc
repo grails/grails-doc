@@ -1,10 +1,10 @@
-Since Grails 1.2, the documentation engine that powers the creation of this documentation has been available for your own Grails projects.
+从Grails 1.2以来，本文的文档就是通过文档引擎来创建的，并且对你的Grails项目文档也是有效的。
 
-The documentation engine uses a variation on the [Textile|http://textile.sitemonks.com/] syntax to automatically create project documentation with smart linking, formatting etc.
+文档引擎在 [Textile|http://textile.sitemonks.com/]  语法基础上，进行了一些改动，以适应自动创建工程文档的需要，此文档支持灵活链接、格式化等功能。
 
-h4. Creating project documentation
+h4. 创建工程文档
 
-To use the engine you need to follow a few conventions. First, you need to create a @src/docs/guide@ directory where your documentation source files will go. Then, you need to create the source docs themselves. Each chapter should have its own gdoc file as should all numbered sub-sections. You will end up with something like:
+为了使用此引擎，你需要遵循一些约定。首先，你需要创建 @src/docs/guide@ 目录用来存放文档的源文件。其次，需要创建文档文件，每一章节应该是独立的一个gdoc文件，并且还应该按照子章节的序号排列。比如下面示例：
 
 {code}
 + src/docs/guide/introduction.gdoc
@@ -15,9 +15,9 @@ To use the engine you need to follow a few conventions. First, you need to creat
 + src/docs/guide/configuration/build/controllers.gdoc
 {code}
 
-Note that you can have all your gdoc files in the top-level directory if you want, but you can also put sub-sections in sub-directories named after the parent section - as the above example shows.
+注意，如果你喜欢，你可以将所有的gdoc文件都放在顶层的目录下。但是你也可以将子章节放到相应名称的子目录中，正如上例所示。
 
-Once you have your source files, you still need to tell the documentation engine what the structure of your user guide is going to be. To do that, you add a @src/docs/guide/toc.yml@ file that contains the structure and titles for each section. This file is in [YAML|http://www.yaml.org/] format and basically represents the structure of the user guide in tree form. For example, the above files could be represented as:
+一旦你的源文件已经完成，你还是需要让文档引擎了知你文档的结构。为此你需要增加一个src/docs/guide/toc.yml文件，用以描述章节的结构和标题。 此 [YAML|http://www.yaml.org/] 格式的文件用以表述手册的树形格式的结构。比如上述的文件可以用如下的描述：
 
 {code:yaml}
 introduction:
@@ -31,21 +31,21 @@ configuration:
     controllers: Specifying Controllers
 {code}
 
-The format is pretty straightforward. Any section that has sub-sections is represented with the corresponding filename (minus the .gdoc extension) followed by a colon. The next line should contain @title:@ plus the title of the section as seen by the end user. Every sub-section then has its own line after the title. Leaf nodes, i.e. those without any sub-sections, declare their title on the same line as the section name but after the colon.
+此种格式是相当简洁易懂的，一个章节如果含有子章节的话，要在其对应的文件名（当然是去掉.gdoc后缀）后边添加一个冒号（：），紧随其后的一行必须是title:加对此章节的标题描述，在标题后边是每一个子章节的信息。如果子章节是一个叶子节点（不包含子章节的章节）其标题跟章节名称在同一行就好了，但要以冒号分割（可以参考上述示例－－译者注）。
 
-That's it. You can easily add, remove, and move sections within the @toc.yml@ to restructure the generated user guide. You should also make sure that all section names, i.e. the gdoc filenames, should be unique since they are used for creating internal links and for the HTML filenames. Don't worry though, the documentation engine will warn you of duplicate section names.
+搞定！你可以轻松地添加、删除和移动toc.yml中的章节，这样就可以重新排版用户手册了。此外你也需要确认所有的章节名称（gdoc文件名称）是全局唯一的，因为那些内部超链接和HTML名称也要用到它们。不过也无需太担心，文档引擎将提示你那些重复的章节名称。
 
-h4. Creating reference items
+h4. 创建条目(Item)引用
 
-Reference items appear in the Quick Reference section of the documentation. Each reference item belongs to a category and a category is a directory located in the @src/docs/ref@ directory. For example, suppose you have defined a new controller method called @renderPDF@. That belongs to the @Controllers@ category so you would create a gdoc text file at the following location:
+条目引用出现在文档的快速引用章节。每一个引用都属于一个类别，此类别位于src/docs/ref中。举例来说，假设你定义了一个新的控制器方法renderPDF，此方法属于Controllers类别，那么你应该在如下所示的位置创建一个gdoc文本文件：
 
 {code}
 + src/docs/ref/Controllers/renderPDF.gdoc
 {code}
 
-h4. Configuring Output Properties
+h4. 配置输出属性
 
-There are various properties you can set within your @grails-app/conf/Config.groovy@ file that customize the output of the documentation such as:
+在grails-app/conf/Config.groovy文件中，你有很多不同的属性可以设置，用以自定义文档的输出，比如：
 
 * *grails.doc.title* - The title of the documentation
 * *grails.doc.subtitle* - The subtitle of the documentation
@@ -54,101 +54,126 @@ There are various properties you can set within your @grails-app/conf/Config.gro
 * *grails.doc.copyright* - The copyright message to display
 * *grails.doc.footer* - The footer to use
 
-Other properties such as the version are pulled from your project itself.  If a title is not specified, the application name is used.
+其他的一些，比如版本直接从你的项目中获取。如果标题没有设定，将缺省使用你的应用名称。
 
-h4. Generating Documentation
+你可以按照以下选项为文档提供自定义(css、js、...)以及图片等功能：
 
-Once you have created some documentation (refer to the syntax guide in the next chapter) you can generate an HTML version of the documentation using the command:
+* *grails.doc.css* - CSS 文件目录位置 (type @java.io.File@)
+* *grails.doc.js* - Javascript 文件目录位置 (type @java.io.File@)
+* *grails.doc.style* - 自定义的HTML模板目录位置 (type @java.io.File@)
+* *grails.doc.images* - 被用于模板和内建文档的图片文件目录位置 (type @java.io.File@)
+
+设定 @grails.doc.css@ 值并将 custom.css 文件放在那个位置。Grails将自动将这个css文件放入到文档中。你甚至可以将 custom-pdf.css 文件放到那个目录，它自动为pdf版本的文档加载那个css。
+
+h4. 生成文档
+
+一旦你创建了文档（语法请参考下一节），你就可以生成HTML版本的文档了，命令如下：
 
 {code}
 grails doc
 {code}
 
-This command will output an @docs/manual/index.html@ which can be opened in a browser to view your documentation.
+此命令将输出到docs/manual/index.html，这样你就可以在浏览器中查看文档了。
 
-h4. Documentation Syntax
+h4. 文档基础
 
-As mentioned the syntax is largely similar to Textile or Confluence style wiki markup. The following sections walk you through the syntax basics.
+正如以前所述，文档语法跟Textile或者Confluence风格的wiki标签。下述章节将对基本的语法做个简单地介绍。
 
-h5. Basic Formatting
+h5. 基本格式
 
-Monospace: @monospace@
+等宽字体: monospace
 {code}
 \@monospace\@
 {code}
 
-Italic: _italic_
+斜体: italic
 {code}
 \_italic\_
 {code}
 
-Bold: *bold*
+黑体: bold
 {code}
 *bold*
 {code}
 
-Image:
-!http://grails.org/images/new/grailslogo_topNav.png!
+图像:
+!http://grails.org/img/grails.png!
+
+这样写
 
 {code:xml}
-\!http://grails.org/images/new/grailslogo_topNav.png\!
+\!http://grails.org/img/grails.png\!
 {code}
 
-h5. Linking
+你可以设置指定的图片链接地址：
 
-There are several ways to create links with the documentation generator. A basic external link can either be defined using confluence or textile style markup:
+{code:xml}
+\!someFolder/my_diagram.png\!
+{code}
+
+这个图片应该内建在你的项目中。当前没有默认文档的图片文件目录，你可以使用 Config.groovy 文件中的 @grails.doc.images@ 属性给它设置一个。
+
+{code}
+grails.doc.images = new File("src/docs/images")
+{code}
+
+上面的例子，你应当将 my_diagram.png 文件放在  'src/docs/images/someFolder'
+
+h5. 链接
+
+文档生成器对于链接可以不同的几个方法，最基本的外部链接可以使用以下两个：
 
 {code}
 [SpringSource|http://www.springsource.com/]
 {code}
 
-or
+或
 
 {code}
 "SpringSource":http://www.springsource.com/
 {code}
 
-For links to other sections inside the user guide you can use the @guide:@ prefix with the name of the section you want to link to:
+对于链接到手册的其他章节位置，你可以通过名称的方法来实现：
 
 {code}
 [Intro|guide:introduction]
 {code}
 
-The section name comes from the corresponding gdoc filename. The documentation engine will warn you if any links to sections in your guide break.
+章节名称是通过gdoc文件名来获得的。如果找不任何相关章节，文档生成器将提出警告。
 
-To link to reference items you can use a special syntax:
+对于小章节Item，你可以通过下面的方法：
 
 {code}
 [controllers|renderPDF]
 {code}
 
-In this case the category of the reference item is on the left hand side of the | and the name of the reference item on the right.
+此种情况，要引用的类别名称在|左边，而要引用的条目名称位于右边。
 
-Finally, to link to external APIs you can use the @api:@ prefix. For example:
+最后，如果是外部 APIs 的链接，你需要使用 @api:@ 前缀。例如：
 
 {code}
 [String|api:java.lang.String]
 {code}
 
-The documentation engine will automatically create the appropriate javadoc link in this case. To add additional APIs to the engine you can configure them in @grails-app/conf/Config.groovy@. For example:
+文档引擎将自动生成合适的javadoc链接。对于额外的API，你可以通过grails-app/conf/Config.groovy来进行配置，比如：
 
 {code}
 grails.doc.api.org.hibernate=
             "http://docs.jboss.org/hibernate/stable/core/javadocs"
 {code}
 
-The above example configures classes within the @org.hibernate@ package to link to the Hibernate website's API docs.
+上述示例中，配置org.hibernate包指向Hibernate的官方API文档。
 
-h5. Lists and Headings
+h5. 列表和标头
 
-Headings can be created by specifying the letter 'h' followed by a number and then a dot:
+标头可以通过字母'h'加数字再加一个点来表示，比如：
 
 {code}
 h3.<space>Heading3
 h4.<space>Heading4
 {code}
 
-Unordered lists are defined with the use of the * character:
+无序的列表可以通过*字符来定义：
 
 {code}
 * item 1
@@ -157,13 +182,13 @@ Unordered lists are defined with the use of the * character:
 * item 2
 {code}
 
-Numbered lists can be defined with the # character:
+有序的列表可以通过#来定义：
 
 {code}
 # item 1
 {code}
 
-Tables can be created using the @table@ macro:
+表格可以通过宏table来实现：
 
 {table}
  *Name* | *Number*
@@ -181,9 +206,9 @@ Tables can be created using the @table@ macro:
 \{table}
 {code}
 
-h5. Code and Notes
+h5. 代码和提示
 
-You can define code blocks with the @code@ macro:
+你可以通过宏code来定义代码块，比如：
 
 {code}
 class Book {
@@ -199,7 +224,7 @@ class Book {
 \{code\}
 {code}
 
-The example above provides syntax highlighting for Java and Groovy code, but you can also highlight XML markup:
+上述示例展示了Java和Groovy代码的高亮语法显示，但是你也可以高亮XML标签，比如：
 
 {code:xml}
 <hello>world</hello>
@@ -211,7 +236,7 @@ The example above provides syntax highlighting for Java and Groovy code, but you
 \{code\}
 {code}
 
-There are also a couple of macros for displaying notes and warnings:
+还有一些用于提示和警告的宏：
 
 Note:
 {note}

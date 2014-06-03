@@ -1,4 +1,4 @@
-By default Grails uses Hibernate's @ImprovedNamingStrategy@ to convert domain class Class and field names to SQL table and column names by converting from camel-cased Strings to ones that use underscores as word separators. You can customize these on a per-instance basis in the @mapping@ closure but if there's a consistent pattern you can specify a different @NamingStrategy@ class to use.
+By default Grails uses Hibernate's @ImprovedNamingStrategy@ to convert domain class Class and field names to SQL table and column names by converting from camel-cased Strings to ones that use underscores as word separators. You can customize these on a per-class basis in the @mapping@ closure but if there's a consistent pattern you can specify a different @NamingStrategy@ class to use.
 
 Configure the class name to be used in @grails-app/conf/DataSource.groovy@ in the @hibernate@ section, e.g.
 
@@ -13,6 +13,26 @@ hibernate {
     cache.use_second_level_cache = true
     ...
     naming_strategy = com.myco.myproj.CustomNamingStrategy
+}
+{code}
+
+You can also specify the name of the class and it will be loaded for you:
+
+{code:java}
+hibernate {
+    ...
+    naming_strategy = 'com.myco.myproj.CustomNamingStrategy'
+}
+{code}
+
+A third option is to provide an instance if there is some configuration required beyond calling the default constructor:
+
+{code:java}
+hibernate {
+    ...
+    def strategy = new com.myco.myproj.CustomNamingStrategy()
+    // configure as needed
+    naming_strategy = strategy
 }
 {code}
 

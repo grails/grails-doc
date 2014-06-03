@@ -4,13 +4,25 @@ Grails domain classes can be mapped onto many legacy schemas with an Object Rela
 None of this is necessary if you are happy to stick to the conventions defined by GORM for table names, column names and so on. You only needs this functionality if you need to tailor the way GORM maps onto legacy schemas or configures caching
 {note}
 
-Custom mappings are defined using a  a static @mapping@ block defined within your domain class:
+Custom mappings are defined using a static @mapping@ block defined within your domain class:
 
 {code:java}
 class Person {
     ...
     static mapping = {
-
+        version false
+        autoTimestamp false
     }
 }
 {code}
+
+You can also configure global mappings in Config.groovy (or an external config file) using this setting:
+
+{code:java}
+grails.gorm.default.mapping = {
+    version false
+    autoTimestamp false
+}
+{code}
+
+It has the same syntax as the standard @mapping@ block but it applies to all your domain classes! You can then override these defaults within the @mapping@ block of a domain class.

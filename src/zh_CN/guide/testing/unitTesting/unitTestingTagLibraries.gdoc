@@ -3,18 +3,27 @@ h4. The Basics
 Tag libraries and GSP pages can be tested with the @grails.test.mixin.web.GroovyPageUnitTestMixin@ mixin. To use the mixin declare which tag library is under test with the @TestFor@ annotation:
 
 {code:java}
-@TestFor(SimpleTagLib)
-class SimpleTagLibTests {
 
+import grails.test.mixin.TestFor
+import spock.lang.Specification
+
+@TestFor(SimpleTagLib)
+class SimpleTagLibSpec extends Specification {
+
+    void "test something"() {
+    }
 }
+
 {code}
 
 Note that if you are testing invocation of a custom tag from a controller you can combine the @ControllerUnitTestMixin@ and the @GroovyPageUnitTestMixin@ using the @Mock@ annotation:
 
 {code:java}
+import spock.lang.Specification
+
 @TestFor(SimpleController)
 @Mock(SimpleTagLib)
-class GroovyPageUnitTestMixinTests {
+class SimpleControllerSpec extends Specification {
 
 }
 {code}
@@ -31,17 +40,27 @@ class SimpleTagLib {
     def hello = { attrs, body ->
         out << "Hello ${attrs.name ?: 'World'}"
     }
+
+    def bye = { attrs, body ->
+        out << "Bye ${attrs.author.name ?: 'World'}"
+    }
 }
 {code}
 
 You can test this tag library by using @TestFor@ and supplying the name of the tag library:
 
 {code:java}
+import grails.test.mixin.TestFor
+import spock.lang.Specification
+
 @TestFor(SimpleTagLib)
-class SimpleTagLibTests {
-    void testHelloTag() {
-        assert applyTemplate('<s:hello />') == 'Hello World'
-        assert applyTemplate('<s:hello name="Fred" />') == 'Hello Fred'
+class SimpleTagLibSpec extends Specification {
+
+    void "test hello tag"() {
+        expect:
+        applyTemplate('<s:hello />') == 'Hello World'
+        applyTemplate('<s:hello name="Fred" />') == 'Hello Fred'
+        applyTemplate('<s:bye author="\${author}" />', [author: new Author(name: 'Fred')]) == 'Bye Fred'
     }
 }
 {code}
@@ -49,15 +68,20 @@ class SimpleTagLibTests {
 Alternatively, you can use the @TestMixin@ annotation and mock multiple tag libraries using the @mockTagLib()@ method:
 
 {code:java}
-@grails.test.mixin.TestMixin(GroovyPageUnitTestMixin)
-class MultipleTagLibraryTests {
+import spock.lang.Specification
+import grails.test.mixin.TestMixin
+import grails.test.mixin.web.GroovyPageUnitTestMixin
 
-    @Test
-    void testMuliple() {
-        mockTagLib(FirstTagLib)
-        mockTagLib(SecondTagLib)
+@TestMixin(GroovyPageUnitTestMixin)
+class MultipleTagLibSpec extends Specification {
 
-        ...
+    void "test multiple tags"() {
+        given:
+        mockTagLib(SomeTagLib)
+        mockTagLib(SomeOtherTagLib)
+
+        expect:
+        // ...
     }
 }
 {code}
@@ -65,13 +89,14 @@ class MultipleTagLibraryTests {
 The @GroovyPageUnitTestMixin@ provides convenience methods for asserting that the template output equals or matches an expected value.
 
 {code:java}
-@grails.test.mixin.TestMixin(GroovyPageUnitTestMixin)
-class MultipleTagLibraryTests {
+import grails.test.mixin.TestFor
+import spock.lang.Specification
 
-    @Test
-    void testMuliple() {
-        mockTagLib(FirstTagLib)
-        mockTagLib(SecondTagLib)
+@TestFor(SimpleTagLib)
+class SimpleTagLibSpec extends Specification {
+
+    void "test hello tag"() {
+        expect:
         assertOutputEquals ('Hello World', '<s:hello />')
         assertOutputMatches (/.*Fred.*/, '<s:hello name="Fred" />')
     }
@@ -83,8 +108,28 @@ h4. Testing View and Template Rendering
 You can test rendering of views and templates in @grails-app/views@ via the @render(Map)@ method provided by @GroovyPageUnitTestMixin@ :
 
 {code:java}
-def result = render(template: "/simple/hello")
-assert result == "Hello World"
+import spock.lang.Specification
+import grails.test.mixin.TestMixin
+import grails.test.mixin.web.GroovyPageUnitTestMixin
+
+@TestMixin(GroovyPageUnitTestMixin)
+class RenderingSpec extends Specification {
+
+    void "test rendering template"() {
+        when:
+        def result = render(template: '/simple/hello')
+
+        then:
+        result == 'Hello World!'
+    }
+}
 {code}
 
 This will attempt to render a template found at the location @grails-app/views/simple/_hello.gsp@. Note that if the template depends on any custom tag libraries you need to call @mockTagLib@ as described in the previous section.
+
+Some core tags use the active controller and action as input. In GroovyPageUnitTestMixin tests, you can manually set the active controller and action name by setting controllerName and actionName properties on the webRequest object:
+
+{code:java}
+    webRequest.controllerName = 'simple'
+    webRequest.actionName = 'hello'
+{code}
