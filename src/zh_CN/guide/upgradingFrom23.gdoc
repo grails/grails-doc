@@ -1,0 +1,43 @@
+Grails 2.4 中 @upgrade@ 命令已被移出。详细的升级介绍按照用户手册操作。以下步骤是从2.3.x到2.4升级方式。
+
+h4. set-grails-version 命令
+
+[set-grails-version|commandLine] 命令将设置应用程序元数据由Grails哪个版本建立的。
+
+h4. 资源插件
+
+因为Grails 2.4 默认将资源管理从原来的 @resources@ 插件改变为 @asset-pipeline@ 插件。
+参阅 [static resource abstraction|guide:resources] 章节查阅更多信息。
+如果升级应用程序到Grails2.4 ，那么使用 resources 的1.2.7及之后版本，之前版本将不被 Grails 2.4 所支持。
+
+h4. 静态 Holder 类 
+
+@org.codehaus.groovy.grails.commons.ApplicationHolder@ 和 @org.codehaus.groovy.grails.commons.ConfigurationHolder@ 被Grails2.4 所弃用。
+
+{note}
+If your application uses the jquery plugin you will need to update to version 1.11.0.2 or later as previous versions of the plugin made use of the @ApplicationHolder@ class.  If your application uses the resources plugin you will need to update to version 1.2.7 or later as previous versions of the plugin made use of the @ConfigurationHolder@ class.
+{note}
+
+{note}We need to add some notes or provide a link to a blog post on how to address code which used to use these classes.{note}
+
+h4. applicationContex.xml 文件的变化
+
+在 @web-app/WEB-INF/applicationContext.xml@ 文件中有个 @grailsResourceLoader@ bean 实例  org.codehaus.groovy.grails.commons.GrailsResourceLoaderFactoryBean@.  这个Bean定义被移出。 @grailsApplication@ bean 会注入方式 @grailsResourceLoader@ 。
+
+{code:java}
+<bean id="grailsApplication" class="org.codehaus.groovy.grails.commons.GrailsApplicationFactoryBean">
+    <description>Grails application factory bean</description>
+    <property name="grailsDescriptor" value="/WEB-INF/grails.xml" />
+    <property name="grailsResourceLoader" ref="grailsResourceLoader" />
+</bean>
+{code}
+
+
+{code:java}
+<bean id="grailsApplication" class="org.codehaus.groovy.grails.commons.GrailsApplicationFactoryBean">
+    <description>Grails application factory bean</description>
+    <property name="grailsDescriptor" value="/WEB-INF/grails.xml" />
+</bean>
+{code}
+
+{note}更多的 TBD 将在Grails2.4正式发布前提供 {note}
