@@ -55,6 +55,27 @@ class BookController extends RestfulController {
 
 The example above subclasses @RestfulController@ and overrides the protected @queryForResource@ method to customize the query for the resource to take into account the parent resource.
 
+h4. Customizing Data Binding In A RestfulController Subclass
+
+The RestfulController class contains code which does data binding for actions like @save@ and @update@.  The class defines a @getObjectToBind()@ method which returns a value which will be used as the source for data binding.  For example, the update action does something like this...
+
+{code:java}
+class RestfulController<T> {
+
+    def update() {
+        T instance = // retrieve instance from the database...
+
+        instance.properties = getObjectToBind()
+
+        // ...
+    }
+
+    // ...
+}
+{code}
+
+By default the @getObjectToBind()@ method returns the [request|controllers] object.  When the @request@ object is used as the binding source, if the request has a body then the body will be parsed and its contents will be used to do the data binding, otherwise the request parameters will be used to do the data binding.  Subclasses of RestfulController may override the @getObjectToBind()@ method and return anything that is a valid binding source, including a [Map|api:java.util.Map] or a [DataBindingSource|api:org.grails.databinding.DataBindingSource].  For most use cases binding the request is appropriate but the @getObjectToBind()@ method allows for changing that behavior where desired.
+
 h4. Using custom subclass of RestfulController with Resource annotation
 
 You can also customize the behaviour of the controller that backs the Resource annotation.
