@@ -166,18 +166,18 @@ h4. GORM for Hibernate in Unit tests
 It is no longer necessary to create integration tests in order to test GORM interactions with Hibernate. You can now instead use @HibernateTestMixin@:
 
 {code}
-...
-import grails.test.mixin.hibernate.*
+import grails.test.mixin.TestMixin
+import grails.test.mixin.gorm.Domain
+import grails.test.mixin.hibernate.HibernateTestMixin
+import spock.lang.Specification
 
+
+@Domain(Person)
 @TestMixin(HibernateTestMixin)
-class PersonSpec extends Specification{
-
-    void setupSpec() {
-        hibernateDomain([Person])
-    }
+class PersonSpec extends Specification {
 
     void "Test count people"() {
-        expect:"Test execute Hibernate count query"
+        expect: "Test execute Hibernate count query"
             Person.count() == 0
             sessionFactory != null
             transactionManager != null
@@ -185,6 +185,21 @@ class PersonSpec extends Specification{
     }
 }
 {code}
+
+This library dependency is required in grails-app/conf/BuildConfig.groovy for adding support for HibernateTestMixin
+{code}
+    dependencies {
+        test "org.grails:grails-datastore-test-support:1.0-grails-2.4"
+    }
+{code}
+
+HibernateTestMixin is only supported with hibernate4 plugin versions >= 4.3.5.4 .
+{code}
+    plugins {
+        runtime ":hibernate4:4.3.5.4"
+    }
+{code}
+
 
 h4. Views For Namespaced Controllers
 
