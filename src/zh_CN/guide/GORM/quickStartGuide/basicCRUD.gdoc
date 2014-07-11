@@ -1,47 +1,46 @@
-Try performing some basic CRUD (Create/Read/Update/Delete) operations.
+来尝试一些基本的CRUD(Create/Read/Update/Delete)操作。
 
-h4. Create
+h4. 建立 create
 
-To create a domain class use Map constructor to set its properties and call [save|domainClasses]:
+建立一个领域类数据通过领域类中的Map结构映射到它的属性，并通过 [save|domainClasses] 方法建立的：
 
 {code}
 def p = new Person(name: "Fred", age: 40, lastVisit: new Date())
 p.save()
 {code}
 
-The [save|domainClasses] method will persist your class to the database using the underlying Hibernate ORM layer.
+[save|domainClasses] 方法将你的类传入到 Hibernate ORM层。
 
-h4. Read
+h4. 读 Read
 
-Grails transparently adds an implicit @id@ property to your domain class which you can use for retrieval:
+Grails总是为你的领域类加入 @id@ 属性，让你来获取这个数据：
 
 {code}
 def p = Person.get(1)
 assert 1 == p.id
 {code}
 
-This uses the [get|domainClasses] method that expects a database identifier to read the @Person@ object back from the database.
-You can also load an object in a read-only state by using the [read|domainClasses] method:
+这里使用 [get|domainClasses] 方法，从数据库中将 @Person@ 对象调用出来。
+
+你可以通过只读模式 [read|domainClasses] 方法将对象读出：
 
 {code:java}
 def p = Person.read(1)
 {code}
 
-In this case the underlying Hibernate engine will not do any dirty checking and the object will not be persisted. Note that
-if you explicitly call the [save|domainClasses] method then the object is placed back into a read-write state.
+Hibernate引擎不会对对象做 ‘脏检查’ 和 持久化。注意，如果你显式调用[save|domainClasses]方法，那么该对象被放回读写状态。
 
-In addition, you can also load a proxy for an instance by using the [load|domainClasses] method:
+此外，你可以通过[load|domainClasses]方法为一个实例做一个调用代理：
 
 {code:java}
 def p = Person.load(1)
 {code}
 
-This incurs no database access until a method other than getId() is called. Hibernate then initializes the proxied instance, or
-throws an exception if no record is found for the specified id.
+这个方法不会马上执行数据连接，直到你使用 getId() 。Hibernate 只是初始化实例的接口，除非没有找到这个实例id它才会报错。
 
-h4. Update
+h4. 更新 Update
 
-To update an instance, change some properties and then call [save|domainClasses] again:
+更新一个实例，修改属性后，再使用 [save|domainClasses]:
 
 {code}
 def p = Person.get(1)
@@ -49,9 +48,9 @@ p.name = "Bob"
 p.save()
 {code}
 
-h4. Delete
+h4. 删除 Delete
 
-To delete an instance use the [delete|domainClasses] method:
+要删除一个实例，使用[delete|domainClasses]方法：
 
 {code}
 def p = Person.get(1)

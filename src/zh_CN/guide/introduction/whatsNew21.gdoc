@@ -1,0 +1,75 @@
+h4. Maven 增强 / 多模块支持
+
+Grails Maven的支持已经在很多方面改善。首先，可以在你的 @pom.xml@ 中可设置特殊的插件。
+
+{code}
+<dependency>
+    <groupId>org.grails.plugins</groupId>
+    <artifactId>hibernate</artifactId>
+    <version>2.1.0</version>
+    <type>zip</type>
+    <scope>compile</scope>
+</dependency>
+{code}
+
+Maven 解决了插件以及JAR依赖 (之前 jar 依赖是同时由 Maven 和 Ivy 插件)。 
+Ivy 已经被完全禁止所有的依赖性解析，而由Maven来确认分析依赖是否按预期执行。
+
+这里有个新的 Grails 脚本 @create-multi-project-build@ ，它具有初始化以支持 Maven 多模块化项目 (Gradle将在未来版本予以发布)。这个脚本可以运行在父级目录中，也就是包含Grails应用程序和插件的位置，它将生成一个 Maven 多模块化项目。
+
+先建立项目，然后在一个项目中使用 Maven 。
+{code}
+grails create-app myapp
+cd myapp
+grails create-pom com.mycompany
+mvn package
+{code}
+
+对于多模块化的 Maven, 按以下步骤建立：
+
+{code}
+grails create-app myapp
+grails create-plugin plugin-a
+grails create-plugin plugin-b
+grails create-multi-project-build com.mycompany:parent:1.0-SNAPSHOT
+mvn install
+{code}
+
+h4. Grails Wrapper 包装器
+
+Grails 包装器并不需要你本地安装 Grails 或设置 GRAILS_HOME。包装器包含一个简单可执行脚本和小型启动jar文件，按照标准化的方式引入项目的源代码。第一次执行这个包装器，它将自动下载和设置Grails安装。包装器将来甚至可以设置开发环境，调试器和管理升级。例如，当应用程序准备升级到下一版本Grails时，包装器将修改检查系统代码，在运行包装器后，它为开发者调整他们的工作区，并自动使用当前环境下的Grails版本。
+{hidden}
+The Grails Wrapper allows a Grails application to build without having to install Grails and configure a GRAILS_HOME environment variable.  The wrapper includes a small shell script and a couple of small bootstrap jar files that typically would be checked in to source code control along with the rest of the project.  The first time the wrapper is executed it will download and configure a Grails installation.  This wrapper makes it more simple to setup a development environment, configure CI and manage upgrades to future versions of Grails.  When the application is upgraded to the next version of Grails, the wrapper is updated and checked in to the source code control system and the next time developers update their workspace and run the wrapper, they will automatically be using the correct version of Grails.
+{hidden}
+
+具体可以查阅 [Wrapper Documentation|guide:wrapper] 
+
+h4. 调试可选项
+
+@grails@ 命令现在支持 @-debug@ 参数，能在启动后提供远程调试代理接口。这个特征之前是由 @grails-debug@ 命令实现的，并在未来版本中弃用。
+{code}
+grails -debug run-app
+{code}
+
+h4. Grails 命令别名
+
+@alias@ 命令可以用来定义 grails 的别名命令。
+
+下面这个命令将建立一个别名 @rit@ (别名于 "run integration tests")
+
+{code}
+grails alias rit test-app integration:
+{code}
+
+具体可以查阅 [alias|commandLine] 
+
+h4. 缓存插件
+
+Grails 2.1 默认安装 [cache plugin|http://grails.org/plugin/cache] 。 这个插件为应用程序和插件提供强劲的、易于使用的缓存功能。它主要提供了类似Map的缓存支持方式。如更多其他的缓存功能需要另外安装和设置。可以看  [cache-redis docs|http://grails-plugins.github.com/grails-cache-redis/] 和 [cache-ehcache docs|http://grails-plugins.github.com/grails-cache-ehcache/] 。
+
+具体可以查阅 [the main plugin documentation|http://grails-plugins.github.com/grails-cache/] 来看如何设置和使用这个插件。
+
+h4. 新的 GORM 方法
+
+在Grails 2.1.1 模型类中包括了 @first@ 和 @last@ 方法提供从数据中获得开头和结尾的实例。
+具体可以查阅 [first|domainClasses] 和 [last|domainClasses]

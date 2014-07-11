@@ -1,97 +1,63 @@
-{hidden}
-To implement the typical "hello world!" example @cd@ into the  directory created in the previous section and activate interactive mode:
-
-{code}
-$ cd helloworld
-$ grails
-{code}
-
-Grails' interactive mode will be activated and you should see a prompt that looks like the following:
-
-!interactive-helloworld.png!
-
-Now run the [create-controller|commandLine] command:
+为了完成这个经典的“hello world!”示例，我们需要先 cd 到上一节所创建的"helloworld"目录下，并且激活交互模式，指令如下：
 
 bc.
-grails> create-controller hello
-
-This will create a new controller (Refer to the section on [Controllers|guide:controllers] for more information) in the @grails-app/controllers@ directory called @helloworld/HelloController.groovy@.
-
-{note}
-If no package is specified with create-controller script, Grails automatically uses the application name as the package name. This default is configurable with the @grails.project.groupId@ attribute in Config.groovy.
-{note}
-
-Controllers are capable of dealing with web requests and to fulfil the "hello world!" use case our implementation needs to look like the following:
-
-{code:java}
-package helloworld
-
-class HelloController {
-
-    def world() {
-        render "Hello World!"
-    }
-}
-{code}
-
-Job done. Now start-up the container with another new command called [run-app|commandLine]:
-
-bc.
-grails> run-app
-
-This will start-up a server on port 8080 and you should now be able to access your application with the URL: @http://localhost:8080/helloworld@
-
-The result will look something like the following screenshot:
-
-!intropage.png!
-
-This is the Grails intro page which is rendered by the @web-app/index.gsp@ file. You will note it has a detected the presence of your controller and clicking on the link to our controller we can see the text "Hello World!" printed to the browser window.
-{hidden}
-
-为了完成这个经典的“hello world!”示例，我们需要先 @cd@ 到上一节所创建的"helloworld"目录下，并且激活交互模式，指令如下：
-
-{code}
 $ cd helloworld
 $ grails
-{code}
 
 上述命令将Grails的交互模式激活，你将会看到类似于下图所示的截图：
 
 !interactive-helloworld.png!
 
-现在再来运行如下所示的 [create-controller|commandLine] 命令：
+如何让页面中显示 ”Hello World!" 呢。在Grails中，你需要建立控制器和动作。但现在我们还没有控制器，让我们通过 [create-controller|commandLine] 来建立它。 
 
 bc.
 grails> create-controller hello
 
-运行该命令后，将会在@grails-app/controllers@目录下边创建一个名字为 @helloworld/HelloController.groovy@ 的控制器（更多信息请参考[控制器|guide:controllers]章节）。
+我们现在在交互模式下，所以，我们具有自动补全功能。只要你输入 "cre" 后再按 <tab> 键，交互模板将提示所有有关 @create\-\*@ 的命令。
+所以只要输入少量的字符然后按 <tab> 键，就可以完成大部分输入工作。
 
-{note}
-如果在create-controller命令中没有指定包名，那么Grails自动地将应用的名称作为包名.这个缺省配置是通过Config.groovy文件中地 @grails.project.groupId@ 属性来指定地。
-{note}
+运行该命令后，将会在 @grails-app/controllers/helloworld@ 目录下边创建一个名字为 @HelloController.groovy@ 的控制器[controller|guide:controllers]。
+为什么是 @helloworld@ 目录呢？因为，在Java范畴中，它强烈建议所有的类应该有个包，所以在你不指定的情况下，Grails默认将按照应用名来建立。参阅 [create-controller|commandLine] 。
 
-控制器主要用来完成对Web请求的处理，为了能够实现"hello world!"示例，我们的实现代码如下：
+我们现在有了一个控制器，然后我们加入方法并生成 "Hello World!" 页。代码看上去是：
 
 {code:java}
 package helloworld
 
 class HelloController {
 
-    def world() {
+    def index() {
         render "Hello World!"
     }
 }
 {code}
 
-大功告成！现在则需要运行另外一个[run-app|commandLine]命令来启动容器：
+动作是非常简单的类方法。在这个例子中，它由 Grails 的  [render|tags] 来实现的。
+
+完成! 让我们来运行一下。你需要使用另一个命令，启动一个服务，命令是 [run-app|commandLine]：
 
 bc.
 grails> run-app
 
-命令完成后，服务器将监听8080端口，因此你可以通过 @http://localhost:8080/helloworld@ 来访问应用。
+它将启动一个内嵌的web服务，端口为8080。你可以通过浏览器访问它 [http://localhost:8080/helloworld/|http://localhost:8080/helloworld/] 。试一试！
 
-其显示结果如下图所示：
+{note}
+如果你看到错误  "Server failed to start for port 8080: Address already in use"，这个意味着你本机上有其他服务占用了这个端口。
+你可以简单的加个参数改变另个端口， @-Dserver.port=9090 run-app@ 。9090端口只是例子，一般情况下你可以使用从 1024 到 49151任何一个端口。(小于1024端口需要系统管理权限——译者注)
+{note}
+
+浏览器中你可以看到这个：
 
 !intropage.png!
 
-上图是Grails的 @web-app/index.gsp@ 文件所生成的简介页面，你还会看到系统自动检测到的现有控制器，点击它，你将会看到"Hello World!"显示在浏览器窗口。
+看上去不对？别急，看下面说明：
+
+Grails 默认介绍页的文件是 @grails-app/view/index.gsp@ 。 它会自动检测所有你的控制器并提供一些链接。
+点一下 "HelloController" 链接，这样你就可以看到你的 "Hello World!"。
+OK，你的第一个Grails应用完成了。
+
+小结：一个控制器可拥有多个动作，每个动作又可以对应不同页面(除去Ajax)。每个页面由控制名和动作名来决定唯一的URL链接，格式是：/<appname>/<controller>/<action>。也就是说，[/helloworld/hello/index|http://localhost:8080/helloworld/hello/index] 链接是上面控制器和动作的完整链接。注意：将会去掉 Controller ，仅保留类名字以及第一个字符是小写的。
+如果没有 index，则Grails会自动搜索默认的动作 _default action_ ， 当然这里的默认动作就是 index。 
+
+具体参阅： [controllers and actions|guide:understandingControllersAndActions]
+

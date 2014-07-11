@@ -1,28 +1,10 @@
-{hidden}
-h4. Interactive Mode and Console Enhancements
-
-Grails 2.0 features brand new console output that is more concise and user friendly to consume. An example of the new output when running tests can be seen below:
-
-!test-output.png!
-
-In general Grails makes its best effort to display update information on a single line and only present the information that is crucial. This means that while in previous versions of Grails the [war|commandLine] command produced many lines of output, in Grails 2.0 only 1 line of output is produced:
-
-!war-output.png!
-
-In addition simply typing 'grails' at the command line activates the new interactive mode which features TAB completion, command history and keeps the JVM running to ensure commands execute much quicker than otherwise
-
-!interactive-output.png!
-
-For more information on the new features of the console refer to the section of the user guide that covers the [console and interactive mode|guide:interactiveMode].
-{hidden}
-
 h4. 交互模式和命令行的增强
 
 Grails 2.0中新的命令行输出将更加简洁和友好，以执行测试为例，新的输出如下图所示：
 
 !test-output.png!
 
-总的来说，Grails尽量在一行中显示所有相关的更新信息，并且仅仅显示当前最重要的信息，换句话说，以前版本的[war|commandLine]命令将产生很多行的输出，但是在2.0中，只有如下图所示的一行输出。
+总的来说，Grails尽量在一行中显示所有相关的更新信息，并且仅仅显示当前最重要的信息，换句话说，以前版本的 [war|commandLine] 命令将产生很多行的输出，但是在2.0中，只有如下图所示的一行输出:
 
 !war-output.png!
 
@@ -30,31 +12,11 @@ Grails 2.0中新的命令行输出将更加简洁和友好，以执行测试为�
 
 !interactive-output.png!
 
-更多命令行新特性请参考本用户手册的[命令行和交互模式|guide:interactiveMode]章节。
-
-{hidden}
-h4. Reloading Agent
-
-Grails 2.0 reloading mechanism no longer uses class loaders, but instead uses a JVM agent to reload changes to class files. This results in greatly improved reliability when reloading changes and also ensures that the class files stored in disk remain consistent with the class files loaded in memory, which reduces the need to run the [clean|commandLine] command.
-{hidden}
+更多命令行新特性请参考本用户手册的 [console and interactive mode|guide:interactiveMode]。
 
 h4. 重新加载代理
 
-Grails 2.0的重新加载机制不再使用用户的类加载器(Class Loaders)，而是使用JVM代理来重新加载那些改变过的类.这样一来，既能提高系统的稳定性，也可以保证磁盘和内存中的类的一致性，从而可以减少执行[clean|commandLine]的次数。
-
-{hidden}
-h4. New Test Report and Documentation Templates
-
-There are new templates for displaying test results that are clearer and more user friendly than the previous reports:
-
-!test-template.png!
-
-In addition, the Grails documentation engine has received a facelift with a new template for presenting Grails application and plugin documentation:
-
-!doc-template.png!
-
-See the section on the [documentation engine|guide:docengine] for more usage info.
-{hidden}
+Grails 2.0的重新加载机制不再使用用户的类加载器(Class Loaders)，而是使用JVM代理来重新加载那些改变过的类。这样一来，既能提高系统的稳定性，也可以保证磁盘和内存中的类的一致性，从而可以减少执行 [clean|commandLine] 的次数。
 
 h4. 全新的测试报告和文档模板
 
@@ -66,45 +28,15 @@ h4. 全新的测试报告和文档模板
 
 !doc-template.png!
 
-更多信息请参考[文档引擎|guide:docengine]章节。
+更多信息请参考文档  [documentation engine|guide:docengine]  章节。
 
-{hidden}
-h4. Use a TOC for Project Docs
-
-The old documentation engine relied on you putting section numbers into the gdoc filenames. Although convenient, this effectively made it difficult to restructure your user guide by inserting new chapters and sections. In addition, any such restructuring or renaming of section titles resulted in breaking changes to the URLs.
-
-You can now use logical names for your gdoc files and define the structure and section titles in a YAML table-of-contents file, as described in the section on the [documentation engine|guide:docengine]. The logical names appear in the URLs, so as long as you don't change those, your URLs will always remain the same no matter how much restructuring or changing of titles you do.
-
-Grails 2.0 even provides a [migrate-docs|commandLine] command to aid you in migrating existing gdoc user guides.
-{hidden}
-
-h4. 在项目文档中使用目录索引(TOC-Table Of Contents)
+h4. 使用目录索引(TOC-Table Of Contents)
 
 旧有的文档引擎将章节号写死在gdoc文件中，此举虽然便利，但是会导致在新增章节的时候很难重新构造你的用户手册，而且任何章节标题的改动，将会导致此章节的URL失效.（在处理多国语言的时候尤其不便－译者注）
 
-现在，你可以将结构和章节的标题的逻辑名称定义在YAML目录索引（TOC，在[文档引擎|guide:docengine]有更多描述）文件中，这样在你的gdoc文件中只需使用相应的逻辑名称即可。如此一来，不管你改了结构或者标题，只要你在URL中的逻辑名称没有改变，那么你URL将不会受任何影响。
+现在，你可以将结构和章节的标题的逻辑名称定义在YAML目录索引（TOC，在文档引擎有更多描述）文件中，这样在你的gdoc文件中只需使用相应的逻辑名称即可。如此一来，不管你改了结构或者标题，只要你在URL中的逻辑名称没有改变，那么你URL将不会受任何影响。
 
-对已有的gdoc用户手册，Grails 2.0还提供了[migrate-docs|commandLine]命令来帮助你进行迁移。
-
-{hidden}
-h4. Enhanced Error Reporting and Diagnosis
-
-Error reporting and problem diagnosis has been greatly improved with a new errors view that analyses stack traces and recursively displays problem areas in your code:
-
-!errors-view.png!
-
-In addition stack trace filtering has been further enhanced to display only relevant trace information:
-
-{code}
-   Line | Method
-->>   9 | getValue     in Book.groovy
-- - - - - - - - - - - - - - - - - - - - - - - - -
-|     7 | getBookValue in BookService.groovy
-|   886 | runTask . .  in ThreadPoolExecutor.java
-|   908 | run          in     ''
-^   662 | run . . . .  in Thread.java
-{code}
-{hidden}
+对已有的gdoc用户手册，Grails 2.0还提供了 [migrate-docs|commandLine] 命令来帮助你进行迁移。
 
 h4. 错误报告和诊断的增强
 
@@ -124,27 +56,11 @@ h4. 错误报告和诊断的增强
 ^   662 | run . . . .  in Thread.java
 {code}
 
-{hidden}
-h4. H2 Database and Console
-
-Grails 2.0 now uses the H2 database instead of HSQLDB, and enables the H2 database console in development mode (at the URI /dbconsole) so that the in-memory database can be easily queried from the browser:
-
-!h2-console.png!
-{hidden}
-
 h4. H2数据库及其管理界面
 
 在Grails 2.0中，已经舍弃了HSQLDB，取而代之的是H2数据库，并且在开发模式下，还增加了数据库管理界面（通过URI /dbconsole访问），这样即使数据库在内存模式下，也可以通过浏览器来查询，管理界面如下：
 
 !h2-console.png!
-
-{hidden}
-h4. Plugin Usage Tracking
-
-To enhance community awareness of the most popular plugins an opt-in plugin usage tracking system has been included where users can participate in providing feedback to the plugin community on which plugins are most popular.
-
-This will help drive the roadmap and increase support of key plugins while reducing the need to support older or less popular plugins thus helping plugin development teams focus their efforts.
-{hidden}
 
 h4. 跟踪插件的使用情况
 
@@ -152,58 +68,14 @@ h4. 跟踪插件的使用情况
 
 这有助于推动系统的线路图和增加对重要插件的支持，同时对那些陈旧或者不受欢迎的减插件少不必要的支持，从而帮助插件开发团队做更多有意义的事情。
 
-{hidden}
-h4. Dependency Resolution Improvements
-
-There are numerous improvements to dependency resolution handling via Ivy including:
-
-* Grails now makes a best effort to cache the previous resolve and avoid resolving again unless you change @BuildConfig.groovy@.
-* Plugins dependencies now appear in the dependency report generated by @grails dependency-report@
-* Plugins published with the release plugin now publish their transitive plugin dependencies in the generated POM which are later resolved.
-* It is now possible to customize the ivy cache directory via @BuildConfig.groovy@
-
-{code}
-grails.project.dependency.resolution = {
-    cacheDir "target/ivy-cache"
-}
-{code}
-
-* You can change the ivy cache directory for all projects via @settings.groovy@
-
-{code}
-grails.dependency.cache.dir = "${userHome}/.ivy2/cache"
-{code}
-
-* It is now possible to completely disable resolution from inherited repositories (repositories defined by other plugins):
-
-{code}
-grails.project.dependency.resolution = {
-
-    repositories {
-        inherits false // Whether to inherit repository definitions from plugins
-        ...
-    }
-    ...
-}
-{code}
-
-* It is now possible to easily disable checksum validation errors:
-
-{code}
-grails.project.dependency.resolution = {
-    checksums false // whether to verify checksums or not
-}
-{code}
-{hidden}
-
 h4. 依赖解决方案的增强
 
 在解决依赖问题方面，因为Ivy的协助，有了大量的改进：
 
-* 在不改变@BuildConfig.groovy@的前提下，Grails将尽量使用以前的缓存，从而避免了再解析检查。
-* 通过@grails dependency-report@，现在可以生成插件的依赖关系报告。
+* 在不改变  @BuildConfig.groovy@ 的前提下，Grails将尽量使用以前的缓存，从而避免了再解析检查。
+* 通过  @grails dependency-report@ ，现在可以生成插件的依赖关系报告。
 * 通过release plugin发布的插件现在可以将其依赖关系的传递性生成在POM中，以备后用。
-* 通过@BuildConfig.groovy@，现在可以自定义ivy的缓存目录了，代码如下：
+* 通过 @BuildConfig.groovy@ ，现在可以自定义ivy的缓存目录了，代码如下： 
 
 {code}
 grails.project.dependency.resolution = {
@@ -211,10 +83,10 @@ grails.project.dependency.resolution = {
 }
 {code}
 
-* 通过修改 @settings.groovy@ 配置来改变所有工程的ivy缓存目录，比如：
+* 通过修改 @settings.groovy@ 配置来改变所有工程的ivy缓存目录，比如： 
 
 {code}
-grails.dependency.cache.dir = "${userHome}/.ivy2/cache"
+grails.dependency.cache.dir = "\${userHome}/.ivy2/cache"
 {code}
 
 * 在继承过来的存储仓库（定义在别的插件中）中，现在可以完全使继承过来的失效，代码如下：

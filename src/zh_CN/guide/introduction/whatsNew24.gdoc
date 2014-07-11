@@ -1,0 +1,137 @@
+h4. Groovy 2.2
+
+Grails 2.4 自带 Groovy 2.3 ，它将包含许多新的特征和增强。
+
+{note}
+Link to release notes is will be added once 2.3 is released
+{note}
+
+h4. Spring 4.0
+
+Grails 2.4 自带 Spring 4.0.2 ，它将包含许多新的特征和增强。
+查阅 [Spring documentation|http://docs.spring.io/spring/docs/4.0.x/spring-framework-reference/html/new-in-4.0.html].
+
+h4.  静态内容将使用Asset(由系统管理的、可自动产生的静态文件集合[默认放在asset目录中，而得名] - 译者注)管道替换之前的资源池
+
+Asset管道提供一种新的，方便，更快速的管理你的 javascript, css 和 images。
+同时对一些可编译的客户端语言作为一等类公民对待（例如，Coffeescript, LESS, SASS）。
+
+所有的assets会放在 @grails-app/assets@ 子目录中。
+在这个目录中会有三个默认文件夹：
+
+* javascripts
+* stylesheets
+* images
+
+可以直接通过以下方式使用你的 javascript, css 文件。它会知道哪里去找你的文件。
+
+{code}
+//= require jquery
+//= require_self
+//= require file_a
+//= require_tree .
+
+console.log('some javascript');
+{code}
+
+也非常容易的在GSP文件中加载：
+
+{code}
+<asset:javascript src="application.js"/>
+<asset:stylesheet href="application.css"/>
+<asset:image src="grails_logo.png" height="60" />
+{code}
+
+感受快速的asset管理机制，它也编译到WAR中，还有诸多优势。
+具体参阅 [docs](http://bertramdev.github.com/asset-pipeline) 
+
+h4. 静态编译
+
+Groovy 一般认为是一个动态派发，动态语言类型，但它也具有很好的类型检查和静态编译能力 [these notes on Groovy static compilation|http://docs.codehaus.org/display/GroovyJSR/GEP+10+-+Static+compilation]。大部分情况下，一个Grails应用支持静态编译，但总是有一些特殊情况Grails不能做到完全静态化。例如，如果一个方法标示为 @\@CompileStatic@  的代码，希望静态编译，但它使用了 GORM 动态查询，这是代码将因为 Groovy 的编译器无法校验这个动态查询器而失效。
+Grails 2.4 提供代码以静态方式编译，而在运行时让 GORM 时看上去像是按照动态方式实现。
+
+[grails.compiler.GrailsCompileStatic|api:grails.compiler.GrailsCompileStatic] 声明特征大部分类似 [groovy.transform.CompileStatic|api:groovy.transform.CompileStatic] 声明，提供特殊处理，以识别Grails的具体实现结构。
+
+下面的控制器被标记为 @\@GrailsCompileStatic@，有了这个声明，我们将认为所有代码应当将被静态编译，当编译器计算代码不能被静态化，会提示编译错误。而Grails编译将仔细衡量这个部分是否有效而动态处理这个部分。
+
+{code:java}
+// grails-app/controllers/com/demo/PersonController.groovy
+package com.demo
+
+import grails.compiler.GrailsCompileStatic
+
+@GrailsCompileStatic
+class PersonController {
+
+    def showKids() {
+        def kids = Person.findAllByAgeLessThan(16)
+
+        // ...
+    }
+}
+{code}
+
+这个方式能解决大部分代码是否应当被编译，但一些特殊方法可以强制动态编译方式。看以下代码：
+
+{code:java}
+import grails.compiler.GrailsCompileStatic
+import groovy.transform.TypeCheckingMode
+
+@GrailsCompileStatic
+class SomeClass {
+
+    def update() {
+        // this method will be statically compiled
+    }
+
+    @GrailsCompileStatic(TypeCheckingMode.SKIP)
+    def save() {
+        // this method will not be statically compiled
+    }
+
+    def delete() {
+        // this method will be statically compiled
+    }
+}
+{code}
+
+必需仔细考量静态编译代码。为了静态化带来的好处而放弃有效灵活的动态方式，需要加以考虑。
+例如，某个插件提供的代码静态化后无法提供运行时元编程优势。
+
+{note}
+更多关于注释静态编译的2.4.0最终发布前提供。
+{note}
+
+h4. Ajax 标签将被弃用
+
+[formRemote|tags], [remoteField|tags], [remoteFunction|tags] and [remoteLink|tags] Ajax标签将被未来Grails版本中移除。应用程序应当自行制作关于Ajax标签。
+
+h4. 可空命令对象属性
+
+Grails 2.3.x 默认将标示有 \@Validateable 的命令对象和其他类设置为 @nullable: false@ 。不受限的属性则不能设置为 @nullable: false@ 。
+在Grails 2.4中所有标示为 \@Validateable 的非限定属性的命令类和其他类都将设置为 @nullable: false@ 。
+
+h4. 新的命令对象绑定特征
+
+Grails 2.4 的命令对象数据绑定有所改变。请求的参数名称按照控制参数名加前缀方式绑定。
+例如，如果请求控制器的 @buy@ 动作，包含一个命名的参数 @buyer.name@ 将对应 @buyer@ 的 @name@ 属性中，一个命名的参数 @seller.name@ 将对应 @buyer@ 的 @seller@
+
+{code:java}
+class StoreController {
+    def buy(Person buyer, Person seller) {
+        // ...
+    }
+}
+
+class Person {
+    String name
+}
+{code}
+
+查询 [Command Objects documentation|guide:commandObjects] 。
+
+h4. grails-debug 脚本已经被移除
+
+@grails-debug@ 和 @grails-debug.bat@ 脚本已经被移除.  如需要调试，请使用 debug 参数 ， @grails -debug <command>@ 和  @grails --debug-fork <command>@  。
+
+

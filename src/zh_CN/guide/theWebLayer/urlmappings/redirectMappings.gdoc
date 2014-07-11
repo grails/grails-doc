@@ -1,0 +1,16 @@
+Since Grails 2.3, it is possible to define URL mappings which specify a redirect.
+When a URL mapping specifies a redirect, any time that mapping matches an incoming
+request, a redirect is initiated with information provided by the mapping.
+
+When a URL mapping specifies a redirect the mapping must either supply a String
+representing a URI to redirect to or must provide a Map representing the target
+of the redirect.  That Map is structured just like the Map that may be passed
+as an argument to the @redirect@ method in a controller.
+
+{code}
+"/viewBooks"(redirect: '/books/list')
+"/viewAuthors"(redirect: [controller: 'author', action: 'list'])
+"/viewPublishers"(redirect: [controller: 'publisher', action: 'list', permanent: true])
+{code}
+
+Request parameters that were part of the original request will be included in the redirect.

@@ -1,0 +1,46 @@
+h1. create-multi-project-build
+
+h2. Purpose
+
+The @create-multi-project-build@ creates a multi-module Maven build from a Grails application and plugins
+
+h2. Examples
+
+bc.
+grails create-multi-project-build org.mycompany:foo:1.0
+
+h2. Description
+
+The @create-multi-project-build@ is designed to be run from the parent directory containing Grails applications and plugins. It will generate a parent POM and POMs for each child directory containing an application or plugin. It assumes that applications depend on all plugins in the parent directory and configures dependencies based on this assumption. Simple example:
+
+{code}
+$ grails create-app myapp
+$ grails create-plugin plugin1
+$ grails create-plugin plugin2
+$ grails create-multi-project-build org.mycompany:parent:1.0
+{code}
+
+The application will contain a @pom.xml@ with dependencies configured for each plugin:
+
+{code}
+<dependency>
+    <groupId>org.grails.plugins</groupId>
+    <artifactId>plugin1</artifactId>
+    <version>0.1</version>
+    <type>zip</type>
+    <scope>compile</scope>
+</dependency>
+{code}
+
+Running @mvn install@ will build all projects together. To enable the 'grails' command to read the POMs you can modify @BuildConfig.groovy@ to use the POM and resolve dependencies from your Maven local cache:
+
+{code}
+grails.project.dependency.resolution = {
+    ...
+    pom true
+    repositories {
+        ...
+        mavenLocal()    
+    }
+}
+{code}

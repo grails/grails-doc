@@ -1,4 +1,4 @@
-Some deployments require that configuration be sourced from more than one place and be changeable without requiring a rebuild of the application. In order to support deployment scenarios such as these the configuration can be externalized. To do so, point Grails at the locations of the configuration files that should be used by adding a @grails.config.locations@ setting in @Config.groovy@, for example:
+有些发布的产品可以修改配置文件来改变请求行为，而不需要重新重建应用。为了达到这个功能，配置文件可以扩展化。下面的方式可以指定 Grails 改变配置 @grails.config.locations@ 的 @Config.groovy@ :
 
 {code:java}
 grails.config.locations = [
@@ -8,26 +8,26 @@ grails.config.locations = [
     "file:${userHome}/.grails/${appName}-config.groovy" ]
 {code}
 
-In the above example we're loading configuration files (both Java Properties files and "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper configurations) from different places on the classpath and files located in @USER_HOME@.
+上面的例子，我们可以调用不同的 classpath 和 本地 @USER_HOME@ 目录中的配置文件(包括 Java 属性文件和 "ConfigSlurper":http://groovy.codehaus.org/ConfigSlurper 设置)
 
-It is also possible to load config by specifying a class that is a config script.
+这样就可以按照配置脚本进行调用参数
 
 {code:java}
 grails.config.locations = [com.my.app.MyConfig]
 {code}
 
-This can be useful in situations where the config is either coming from a plugin or some other part of your application. A typical use for this is re-using configuration provided by plugins across multiple applications.
+此种情况特别适合于你从插件或者应用的其他部分来加载配置，其典型的应用就是一个插件所提供的配置可以在多个应用中复用。
 
-Ultimately all configuration files get merged into the @config@ property of the [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] object and are hence obtainable from there.
+最后，所有的这些配置文件的内容将合并于 [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] 的config属性中，因此，要获取使用也是通过它来实现的。
 
-Values that have the same name as previously defined values will overwrite the existing values, and the pointed to configuration sources are loaded in the order in which they are defined.
+配置中如果一个名字有多个值，那么新值将覆盖旧的，其顺序是根据源文件的加载顺序来定义的。
 
-h4. Config Defaults
+h4. 默认设置
 
-The configuration values contained in the locations described by the @grails.config.locations@ property will *override* any values defined in your application @Config.groovy@ file which may not be what you want. You may want to have a set of _default_ values be be loaded that can be overridden in either your application's @Config.groovy@ file or in a named config location. For this you can use the @grails.config.defaults.locations@ property.
+通过grails.config.locations定义的配置将 优先于 你在Config.groovy文件中的任意值，这也许并非你所需要的。你希望Config.groovy或者特定位置的文件才能加载并且重载特定的 缺省值 ，这种情况，你可以通过配置grails.config.defaults.locations属性来实现。
 
-This property supports the same values as the @grails.config.locations@ property (i.e. paths to config scripts, property files or classes), but the config described by @grails.config.defaults.locations@ will be loaded _before_ all other values and can therefore be overridden. Some plugins use this mechanism to supply one or more sets of default configuration that you can choose to include in your application config.
+此属性的值跟grails.config.locations一样（可以是特定路径下的配置脚本、属性文件或者类名），但与之不同的是通过grails.config.defaults.locations来配置的值比其他方式加载的 更早 ，因此也就可有被重载。有些插件就是通过此机制来实现一个或者多个缺省配置的。
 
 {note}
-Grails also supports the concept of property place holders and property override configurers as defined in "Spring":http://www.springframework.org. For more information on these see the section on [Grails and Spring|guide:spring]
+Grails 支持覆盖参数 "Spring":http://www.springframework.org 参阅 [Grails and Spring|guide:spring]
 {note}
