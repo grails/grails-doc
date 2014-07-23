@@ -125,7 +125,7 @@ def band = Band.get(someBandId)
 band.properties = bindingMap
 {code}
 
-When binding to a @Map@ the structure of the binding @Map@ is the same as the structore of a @Map@ used for binding to a @List@ or a @Set@ and the index inside of square brackets corresponds to the key in the @Map@ being bound to.  See the following code:
+When binding to a @Map@ the structure of the binding @Map@ is the same as the structure of a @Map@ used for binding to a @List@ or a @Set@ and the index inside of square brackets corresponds to the key in the @Map@ being bound to.  See the following code:
 
 {code:java}
 class Album {
@@ -154,7 +154,7 @@ assert album.players.vocals.name == 'Peter Gabriel'
 assert album.players.keyboards.name == 'Tony Banks'
 {code}
   
-When updating an exisiting @Map@, if the key specified in the binding @Map@ does not exist in the @Map@ being bound to then a new value will be created and added to the @Map@ with the specified key as in the following example:
+When updating an existing @Map@, if the key specified in the binding @Map@ does not exist in the @Map@ being bound to then a new value will be created and added to the @Map@ with the specified key as in the following example:
 
 
 {code}
@@ -219,7 +219,7 @@ def save() {
 
 This has the same effect as using the implicit constructor.
 
-When binding an empty String (a String with no characters in it, not even spaces), the data binder will convert the empty String to null.  This simplifies the most common case where the intent is to treat an empty form field as having the value null since there isn't a way to actually submit a null as a request parameter.  When this behavior is not desireable the application may assign the value directly.
+When binding an empty String (a String with no characters in it, not even spaces), the data binder will convert the empty String to null.  This simplifies the most common case where the intent is to treat an empty form field as having the value null since there isn't a way to actually submit a null as a request parameter.  When this behavior is not desirable the application may assign the value directly.
 
 The mass property binding mechanism will by default automatically trim all Strings at binding time.  To disable this behavior set the @grails.databinding.trimStrings@ property to false in @grails-app/conf/Config.groovy@.
 
@@ -578,7 +578,7 @@ The default formats that are used are "yyyy-MM-dd HH:mm:ss.S" and "yyyy-MM-dd'T'
 
 h4. Custom Formatted Converters
 
-You may supply your own handler for the [BindingFormat|api:org.grails.databinding.BindingFormat] annotation by writing a class which implements the [FormattedValueConverter|api:org.grails.databinding.converters.FormattedValueConverter] interface and regiserting an instance of that class as a bean in the Spring application context.  Below is an example of a trivial custom String formatter that might convert the case of a String based on the value assigned to the BindingFormat annotation.
+You may supply your own handler for the [BindingFormat|api:org.grails.databinding.BindingFormat] annotation by writing a class which implements the [FormattedValueConverter|api:org.grails.databinding.converters.FormattedValueConverter] interface and registering an instance of that class as a bean in the Spring application context.  Below is an example of a trivial custom String formatter that might convert the case of a String based on the value assigned to the BindingFormat annotation.
 
 {code:java}
 package com.myapp.converters
@@ -721,7 +721,7 @@ beans = {
 }
 {code}
 
-When the data binder binds to an instance of the @Gadget@ class it will check to see if there are request parameters with names @compressedShape@ and @expandedShape@ which have a value of "struct" and if they do exist, that will trigger the use of the @StructuredShapeEditor@.  The individual components of the structure need to have parameter names of the form propertyName_structuredElementName.  In the case of the @Gadget@ class above that would mean that the @compressedShape@ request parameter should have a value of "struct" and the @compressedShape_width@ and @compressedShape_height@ parameters should have values which represent the width and the height of the compressed @Shape@.  Similarly, the @expandedShape@ request parameter should have a value of "struct" and the @expandedShape_width@ and @expandedShape_height@ parameters should have values which represent the width and the hight of the expanded @Shape@.
+When the data binder binds to an instance of the @Gadget@ class it will check to see if there are request parameters with names @compressedShape@ and @expandedShape@ which have a value of "struct" and if they do exist, that will trigger the use of the @StructuredShapeEditor@.  The individual components of the structure need to have parameter names of the form propertyName_structuredElementName.  In the case of the @Gadget@ class above that would mean that the @compressedShape@ request parameter should have a value of "struct" and the @compressedShape_width@ and @compressedShape_height@ parameters should have values which represent the width and the height of the compressed @Shape@.  Similarly, the @expandedShape@ request parameter should have a value of "struct" and the @expandedShape_width@ and @expandedShape_height@ parameters should have values which represent the width and the height of the expanded @Shape@.
 
 {code}
 // grails-app/controllers/demo/DemoController.groovy
