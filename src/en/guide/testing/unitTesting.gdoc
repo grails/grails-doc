@@ -182,11 +182,38 @@ class MockedBeanSpec extends Specification {
 }
 {code}
 
+h4. The DirtiesRuntime annotation
+
+Test methods may be marked with the @[grails.test.runtime.DirtiesRuntime|api:grails.test.runtime.DirtiesRuntime]@ annotation to indicate that the test modifies the runtime in ways which might be problematic for other tests and as such the runtime should be refreshed after this test method runs.
+
+{code}
+import grails.test.mixin.TestFor
+import spock.lang.Specification
+import grails.test.runtime.DirtiesRuntime
+
+@TestFor(PersonController)
+class PersonControllerSpec extends Specification {
+
+    @DirtiesRuntime
+    void "a test method which modifies the runtime"() {
+        when:
+        Person.metaClass.someMethod = { ... }
+        // ...
+
+        then:
+        // ...
+    }
+
+    void "a test method which should not be affected by the previous test method"() {
+        // ...
+    }
+}
+{code}
 
 h4. Sharing test runtime grailsApplication instance and beans for several test classes
 
 It's possible to share a single grailsApplication instance and beans for several test classes.
-This feature is activated by the @[SharedRuntime|api:grails.test.runtime.SharedRuntime]@ annotation. This annotation takes an optional class parameter 
+This feature is activated by the @[SharedRuntime|api:grails.test.runtime.SharedRuntime]@ annotation. This annotation takes an optional class parameter
 implements @[SharedRuntimeConfigurer|api:grails.test.runtime.SharedRuntimeConfigurer]@ interface. All test classes referencing the same SharedRuntimeConfigurer implementation
 class will share the same runtime during a single test run.
 The value class for SharedRuntimeConfigurer annotation can also implement @[TestEventInterceptor|api:grails.test.runtime.TestEventInterceptor]@ . In this case the instance of the class
