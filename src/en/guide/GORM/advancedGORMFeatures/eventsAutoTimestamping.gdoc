@@ -181,6 +181,8 @@ As of Grails 2.0 there is a new API for plugins and applications to register and
 To use this API you need to subclass @AbstractPersistenceEventListener@ (in package _org.grails.datastore.mapping.engine.event_) and implement the methods @onPersistenceEvent@ and @supportsEventType@. You also must provide a reference to the datastore to the listener.  The simplest possible implementation can be seen below:
 
 {code}
+import static org.grails.datastore.mapping.engine.event.EventType.*
+
 public MyPersistenceListener(final Datastore datastore) {
     super(datastore)
 }
@@ -191,7 +193,7 @@ protected void onPersistenceEvent(final AbstractPersistenceEvent event) {
         case PreInsert:
             println "PRE INSERT \${event.entityObject}"
         break
-        case PostInsert:
+        case EventType.PostInsert:
             println "POST INSERT \${event.entityObject}"
         break
         case PreUpdate:
@@ -226,9 +228,11 @@ The @AbstractPersistenceEvent@ class has many subclasses (@PreInsertEvent@, @Pos
 Once you have created your event listener you need to register it with the @ApplicationContext@. This can be done in @BootStrap.groovy@:
 
 {code}
+def grailsApplication
+
 def init = {
-    application.mainContext.eventTriggeringInterceptor.datastores.each { k, datastore ->
-        applicationContext.addApplicationListener new MyPersistenceListener(datastore)
+    grailsApplication.mainContext.getBeansOfType(Datastore).values().each { datastore ->
+        grailsApplication.mainContext.addApplicationListener(new MyPersistenceListener(datastore))
     }
 }
 {code}
@@ -237,8 +241,8 @@ or use this in a plugin:
 
 {code}
 def doWithApplicationContext = { applicationContext ->
-    application.mainContext.eventTriggeringInterceptor.datastores.each { k, datastore ->
-        applicationContext.addApplicationListener new MyPersistenceListener(datastore)
+    application.mainContext.getBeansOfType(Datastore).values().each { datastore ->
+        grailsApplication.mainContext.addApplicationListener(new MyPersistenceListener(datastore))
     }
 }
 {code}
