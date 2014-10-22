@@ -332,6 +332,36 @@ log4j = {
 
 The one place you can't put an environment block is _inside_ the @root@ definition, but you can put the @root@ definition inside an environment block.
 
+Since Grails 2.0, there is also one additional way to extend the Log4J configuration rather than replacing it. While configuring log4j variable it is possible to use a map of string and closures instead of just closure:
+
+{code:java}
+// main configuration
+log4j.main = {
+    // ...
+}
+ 
+// external (customer-specific) configuration
+log4j.external = {
+    // common configuration
+}
+ 
+environments {
+    development {
+        log4j.env = {
+            // environment-specific config
+        }
+    }
+    
+    production {
+        log4j.env = {
+            // environment-specific config
+        }
+    }
+}
+{code}
+
+As can be seen in the code listing above, log4j variable is now treated as map, rather than a single value object. log4j entries will be called in the defined order and the resulting configuration entries will be merged.
+
 h3. Full stacktraces
 
 When exceptions occur, there can be an awful lot of noise in the stacktrace from Java and Groovy internals. Grails filters these typically irrelevant details and restricts traces to non-core Grails/Groovy class packages.
