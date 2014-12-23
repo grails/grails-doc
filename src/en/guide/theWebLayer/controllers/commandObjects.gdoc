@@ -9,8 +9,7 @@ h4. Declaring Command Objects
 Command object classes are defined just like any other class.
 
 {code:java}
-@grails.validation.Validateable
-class LoginCommand {
+class LoginCommand implements grails.validation.trait.Validateable {
     String username
     String password
 
@@ -21,19 +20,22 @@ class LoginCommand {
 }
 {code}
 
-In this example, the command object is marked with the @Validateable@ annotation. The @Validateable@ annotation allows the definition of [constraints|guide:constraints] just like in [domain classes|guide:GORM]. If the command object is defined in the same source file as the controller that is using it, Grails will automatically mark it as @Validateable@. It is not required that command object classes be validateable.
+In this example, the command object class implements the @Validateable@ trait. The @Validateable@ trait allows the definition of [constraints|guide:constraints] just like in [domain classes|guide:GORM]. If the command object is defined in the same source file as the controller that is using it, Grails will automatically make it @Validateable@. It is not required that command object classes be validateable.
 
-By default, all @Validateable@ object properties are @nullable: false@ which matches the behavior of GORM domain objects. If you want a @Validateable@ that has @nullable: true@ properties by default, you can specify @nullable: true@ on the annotation:
+By default, all @Validateable@ object properties are @nullable: false@ which matches the behavior of GORM domain objects. If you want a @Validateable@ that has @nullable: true@ properties by default, you can specify this by defining a @defaultNullable@ method in the class:
 
 {code:java}
-@grails.validation.Validateable(nullable=true)
-class AuthorSearchCommand {
+class AuthorSearchCommand implements grails.validation.trait.Validateable {
     String  name
     Integer age
+
+    static boolean defaultNullable() {
+        true
+    }
 }
 {code}
 
-In this example, both @name@ and @age@ will allow null values during validation. 
+In this example, both @name@ and @age@ will allow null values during validation.
 
 h4. Using Command Objects
 
@@ -131,8 +133,7 @@ h4. Command Objects and Dependency Injection
 Command objects can participate in dependency injection. This is useful if your command object has some custom validation logic which uses a Grails [service|guide:services]:
 
 {code}
-@grails.validation.Validateable
-class LoginCommand {
+class LoginCommand implements grails.validation.trait.Validateable {
 
     def loginService
 
