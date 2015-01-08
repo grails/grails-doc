@@ -1,1 +1,1 @@
-./gradlew -Ddisable.groovydocs=true -Dgrails.home=../grails-master docs
+./gradlew -Ddisable.groovydocs=true -Dgrails.home=../dev docs 

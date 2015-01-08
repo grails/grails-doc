@@ -1,0 +1,42 @@
+
+You can create your own Command scripts by running the [create-script|commandLine] command from the root of your project. For example the following command:
+
+{code}
+grails create-script hello-world
+{code}
+
+
+
+Will create a script called @src/main/scripts/hello-world.groovy@. Each Command script is extends from the [GroovyScriptCommmand|api:org.grails.cli.profile.commands.script.GroovyScriptCommmand] class and hence has all of the methods of that class available to it.
+
+{note}
+In general Grails scripts should be used for scripting the Gradle based build system and code generation. Scripts cannot load application classes and in fact should not since Gradle is required to construct the application classpath.
+{note}
+
+See below for an example script that prints 'Hello World':
+
+{code}
+description "Example description", "grails hello-world"
+
+println "Hello World"
+{code}
+
+The @description@ method is used to define the output seen by @grails help@ and to aid users of the script. The following is a more complete example of providing a description taken from the @generate-all@ command:
+
+{code}
+description( "Generates a controller that performs CRUD operations and the associated views" ) {
+  usage "grails generate-all [DOMAIN CLASS]"
+  flag name:'force', description:"Whether to overwrite existing files"
+  argument name:'Domain Class', description:'The name of the domain class'
+}
+{code}
+
+As you can see this description profiles usage instructions, a flag and an argument. This allows the command to be used as follows:
+
+{code}
+grails generate-all MyClass --force
+{code}
+
+
+
+

@@ -1,35 +1,26 @@
-Grails' command line system is built on [Gant|http://gant.codehaus.org/] - a simple Groovy wrapper around [Apache Ant|http://ant.apache.org].
+Grails 3.0's command line system differs greatly from previous versions of Grails and features APIs for invoking Gradle for build related tasks, as well as performing code generation.
 
-However, Grails takes it further through the use of convention and the @grails@ command. When you type:
+When you type:
 
 {code}
 grails [command name]
 {code}
 
-Grails searches in the following directories for Gant scripts to execute:
+Grails searches the [profile repository|https://github.com/grails/grails-profile-repository] based on the profile of the current application. If the profile is for a web application then commmands a read from the web profile and the base profile which it inherits from.
 
-* @USER_HOME/.grails/scripts@
-* @PROJECT_HOME/scripts@
-* @PROJECT_HOME/plugins/*/scripts@
-* @GRAILS_HOME/scripts@
+Since command behavior is profile specific the web profile my provide different behavior for the @run-app@ command then say a profile for running batch applications.
 
-Grails will also convert command names that are in lower case form such as run-app into camel case. So typing
+When you type the following command:
 
 {code}
 grails run-app
 {code}
 
-Results in a search for the following files:
+It results in a search for the following files:
 
-* @USER_HOME/.grails/scripts/RunApp.groovy@
 * @PROJECT_HOME/scripts/RunApp.groovy@
-* @PLUGINS_HOME/*/scripts/RunApp.groovy@
-* @GLOBAL_PLUGINS_HOME/*/scripts/RunApp.groovy@
-* @GRAILS_HOME/scripts/RunApp.groovy@
-
-If multiple matches are found Grails will give you a choice of which one to execute.
-
-When Grails executes a Gant script, it invokes the "default" target defined in that script. If there is no default, Grails will quit with an error.
+* @PROFILE_REPOSITORY_PATH/profiles/web/commands/run-app.groovy@ (if the web profile is active)
+* @PROFILE_REPOSITORY_PATH/profiles/web/commands/run-app.yml@ (for YAML defined commands)
 
 To get a list of all commands and some help about the available commands type:
 
@@ -40,31 +31,23 @@ grails help
 which outputs usage instructions and the list of commands Grails is aware of:
 
 {code}
-Usage (optionals marked with *):
-grails [environment]* [target] [arguments]*
+grails [environment]* [target] [arguments]*'
 
-Examples:
-grails dev run-app
-grails create-app books
+| Examples:
+$ grails dev run-app
+$ grails create-app books
 
-Available Targets (type grails help 'target-name' for more info):
-grails bootstrap
-grails bug-report
-grails clean
-grails compile
+| Available Commands (type grails help 'command-name' for more info):
+| Command Name                          Command Description
+----------------------------------------------------------------------------------------------------
+clean                                   Cleans a Grails application's compiled sources
+compile                                 Compiles a Grails application
 ...
 {code}
 
 {note}
 Refer to the Command Line reference in the Quick Reference menu of the reference guide for more information about individual commands
 {note}
-
-It's often useful to provide custom arguments to the JVM when running Grails commands, in particular with @run-app@ where you may for example want to set a higher maximum heap size. The Grails command will use any JVM options provided in the general @JAVA_OPTS@ environment variable, but you can also specify a Grails-specific environment variable too:
-
-{code}
-export GRAILS_OPTS="-Xmx1G -Xms256m -XX:MaxPermSize=256m"
-grails run-app
-{code}
 
 h4. non-interactive mode
 
