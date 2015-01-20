@@ -1,0 +1,161 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>The Grails Framework null</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass(el) {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs">
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        <span id="logo"><a href="http://grails.org" target="_blank"><img alt="Grails Logo" title="The Grails Framework" src="../../../img/grails.png" border="0"/></a></span>
+        
+        
+        <span id="sponsor"><a href="http://springsource.com" target="_blank"><img alt="SpringSource Logo" title="SpringSource - Weapons for the War on Java Complexity" src="../../../img/springsource-logo.png" border="0"/></a></span>
+        
+    </div>
+    <p>See the light - agile, industrial strength, rapid web application development made easy</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="reference corner-all">
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                <div class="hidden-block">
+<h1>request</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>The <code>request</code> object is an instance of the Servlet API's <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpServletRequest.html" class="api">HttpServletRequest</a> interface<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/><div class="code"><pre>class BookController &#123;
+    def list() &#123;
+        log.info <span class="java&#45;quote">"User agent: "</span> + request.getHeader(<span class="java&#45;quote">"User&#45;Agent"</span>)<p class="paragraph"/>        render(view: actionName)
+    &#125;
+&#125;</pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>The <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpServletRequest.html" class="api">HttpServletRequest</a> class is useful for, amongst other things, obtaining request headers, storing request scoped attributes and establishing information about the client. Refer to the Servlet API's javadocs for further information.<p class="paragraph"/>Grails enhances the <code>HttpServletRequest</code> instance by adding the following new properties and methods:
+<ul class="star">
+<li><code>XML</code> - An instance of <code>XmlSlurper</code>'s <a href="http://groovy.codehaus.org/api/groovy/util/slurpersupport/GPathResult.html" target="blank">GPathResult</a> class that allows parsing of an incoming XML request (useful for REST).</li>
+<li><code>JSON</code> - An instance of Grails' <a href="../../api/org/codehaus/groovy/grails/web/json/JSONObject.html" class="api">JSONObject</a> class that allows parsing of an incoming JSON request (useful for JSON based REST).</li>
+<li><code>forwardURI</code> - Useful for obtaining the current request URI since the <code>request</code> objects <code>requestURI</code> property returns the original URI, not the matched one.</li>
+<li><code>get</code> - Returns true if the current request is an HTTP <code>GET</code> request.</li>
+<li><code>post</code> - Returns true if the current request is an HTTP <code>POST</code> request.</li>
+<li><code>each</code> - Implementation of Groovy's <code>each</code> method for iterating over request attributes.</li>
+<li><code>find</code> - Implementation of Groovy's default <code>find</code> method for searching request attributes.</li>
+<li><code>findAll</code> - Implementation of Groovy's default <code>findAll</code> method for searching request attributes.</li>
+<li><code>format</code> - The request format, used for guide:contentNegotiation.</li>
+<li><code>withFormat(Closure)</code> - The withFormat method, used for guide:contentNegotiation.</li>
+<li><code>xhr</code> - Returns <code>true</code> if the current request is an Ajax request.</li>
+</ul><p class="paragraph"/>The <code>XML</code> and <code>JSON</code> properties are useful for XML APIs and can be used to parse incoming XML or JSON packages. For example given a request body of:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;book&#62;</span>
+   <span class="xml&#45;tag">&#60;title&#62;</span>The Stand<span class="xml&#45;tag">&#60;/title&#62;</span>
+<span class="xml&#45;tag">&#60;/book&#62;</span></pre></div><p class="paragraph"/>This can be parsed easily:<p class="paragraph"/><div class="code"><pre>def title = request.XML?.book?.title
+render <span class="java&#45;quote">"The Title is $title"</span></pre></div><p class="paragraph"/>Request attributes which are normally accessible from the <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/ServletRequest.html#getAttribute(java.lang.String)" class="api">getAttribute</a> can also be indexed into using the array index operator or de-reference operator:<p class="paragraph"/><div class="code"><pre>def user = request&#91;'user'&#93;<p class="paragraph"/>request&#91;'user'&#93; = 'John'<p class="paragraph"/>asset 'John' == request.user</pre></div>
+</div><p class="paragraph"/><h1>request</h1><p class="paragraph"/><h2>Propósito</h2><p class="paragraph"/>O objeto <code>request</code> é uma instância de uma classe que implementa a interface <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpServletRequest.html" class="api">HttpServletRequest</a> da API Servlet.<p class="paragraph"/><h2>Exemplos</h2><p class="paragraph"/><div class="code"><pre>class BookController &#123;
+    def list() &#123;
+        log.info <span class="java&#45;quote">"User agent: "</span> + request.getHeader(<span class="java&#45;quote">"User&#45;Agent"</span>)<p class="paragraph"/>        render(view: actionName)
+    &#125;
+&#125;</pre></div><p class="paragraph"/><h2>Descrição</h2><p class="paragraph"/>A classe <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpServletRequest.html" class="api">HttpServletRequest</a> é util para, entre outras coisas, armazenar atributos pertencentes a esta requisição do usuário. Consulte a documentação da API Servlet diretamente para mais informações sobre o HttpServletRequest.<p class="paragraph"/>O Grails ainda adiciona novas propriedades e métodos ao <code>request</code> para facilitar seu uso:
+<ul class="star">
+<li><code>XML</code> - Uma instância de um <code>XmlSlurper</code> <a href="http://groovy.codehaus.org/api/groovy/util/slurpersupport/GPathResult.html" target="blank">GPathResult</a> que contém o XML enviado pelo cliente neste request. Muito utilizado para requisições REST.</li>
+<li><code>JSON</code> - Uma instância do <a href="../../api/org/codehaus/groovy/grails/web/json/JSONObject.html" class="api">JSONObject</a> do grails que permite navegar no JSON enviado pelo cliente neste request. Muito utilizado também em requisições REST ou AJAX.</li>
+<li><code>forwardURI</code> - Usado para se obter a URI do request atual.</li>
+<li><code>get</code> - Retorna <code>true</code> se o request foi feito se utilizando do método HTTP <code>GET</code>.</li>
+<li><code>post</code> - Retorna <code>true</code> se o request foi feito se utilizando do método HTTP <code>POST</code>.</li>
+<li><code>each</code> - Usado para se iterar diretamente nos atributos do request. (Semelhante ao <code>each</code> do Groovy)</li>
+<li><code>find</code> - Usado para se procurar algum atributo específico do request. (Semelhante ao <code>find</code> do Groovy)</li>
+<li><code>findAll</code> - Busca todos os atributos do request que satisfaçam a condição. (Semelhante ao <code>findAll</code> do Groovy)</li>
+<li><code>format</code> - O formato do request para se fazer 'guide:contentNegotiation'.</li>
+<li><code>withFormat(Closure)</code> - Também usado para se executar um código baseado no formato do request. Usado para se fazer 'guide:contentNegotiation'.</li>
+<li><code>xhr</code> - Retorna <code>true</code> se o request corrente foi feito utilizando AJAX.</li>
+</ul><p class="paragraph"/>Os atributos <code>XML</code> e <code>JSON</code> são usados para tratar o conteúdo do request quando o controller recebe um conteúdo em XML ou JSON como nos exemplos abaixo:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;book&#62;</span>
+   <span class="xml&#45;tag">&#60;title&#62;</span>The Stand<span class="xml&#45;tag">&#60;/title&#62;</span>
+<span class="xml&#45;tag">&#60;/book&#62;</span></pre></div><p class="paragraph"/>Que pode ser tratado facilmente da seguinte maneira:<p class="paragraph"/><div class="code"><pre>def title = request.XML?.book?.title
+render <span class="java&#45;quote">"The Title is $title"</span></pre></div><p class="paragraph"/>Os atributos do request são normalmente acessíveis a partir do método <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/ServletRequest.html#getAttribute(java.lang.String)" class="api">getAttribute</a> ou usando o método facilitador do Groovy:<p class="paragraph"/><div class="code"><pre>def user = request&#91;'user'&#93;<p class="paragraph"/>request&#91;'user'&#93; = 'John'<p class="paragraph"/>asset 'John' == request.user</pre></div>
+
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Services</h1>
+                        <div class="menu-sub">
+                            
+                            <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Services/scope.html">scope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Services/transactional.html">transactional</a>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Servlet API</h1>
+                        <div class="menu-sub selected">
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.
+    Sponsored by <a href="http://springsource.com">SpringSource</a>
+</div>
+
+
+<script type="text/javascript" src="../../../js/docs.js"></script>
+
+</body>
+</html>

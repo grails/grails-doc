@@ -1,0 +1,78 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>5.5.2.8 Eager and Lazy Fetching</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="5.5.2.8 Eager and Lazy Fetching">5.5.2.8 Eager and Lazy Fetching</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            <h4>Lazy Collections</h4><p class="paragraph"/>As discussed in the section on <a href="../guide/single.html#5.3.4 Eager and Lazy Fetching" class="guide">Eager and Lazy fetching</a>, GORM collections are lazily loaded by default but you can change this behaviour via the ORM DSL. There are several options available to you, but the most common ones are:
+<ul class="star">
+<li>lazy: false</li>
+<li>fetch: 'join'</li>
+</ul><p class="paragraph"/>and they're used like this:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    <span class="java&#45;object">String</span> firstName
+    Pet pet
+    <span class="java&#45;keyword">static</span> hasMany = &#91;addresses:Address&#93;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        addresses lazy:<span class="java&#45;keyword">false</span>
+        pet fetch: 'join'
+    &#125;
+&#125;<p class="paragraph"/>class Address &#123;
+    <span class="java&#45;object">String</span> street
+    <span class="java&#45;object">String</span> postCode
+&#125;<p class="paragraph"/>class Pet &#123;
+    <span class="java&#45;object">String</span> name
+&#125;</pre></div><p class="paragraph"/>The first option, <code>lazy: false</code> , ensures that when a <code>Person</code> instance is loaded, its <code>addresses</code> collection is loaded at the same time with a second SELECT. The second option is basically the same, except the collection is loaded via a JOIN rather than another SELECT. Typically you will want to reduce the number of queries, so <code>fetch: 'join'</code> will be the more appropriate option. On the other hand, it could feasibly be the more expensive approach if your domain model and data result in more and larger results than would otherwise be necessary.<p class="paragraph"/>For more advanced users, the other settings available are:
+<ol>
+<li>batchSize: N</li>
+<li>lazy: false, batchSize: N</li>
+</ol><p class="paragraph"/>where N is an integer. These allow you to fetch results in batches, with one query per batch. As a simple example, consider this mapping for <code>Person</code>:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    <span class="java&#45;object">String</span> firstName
+    Pet pet<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        pet batchSize: 5
+    &#125;
+&#125;</pre></div>
+If a query returns multiple <code>Person</code> instances, then when we access the first <code>pet</code> property, Hibernate will fetch that <code>Pet</code> plus the four next ones. You can get the same behaviour with eager loading by combining <code>batchSize</code> with the <code>lazy: false</code> option. You can find out more about these options in the <a href="http://docs.jboss.org/hibernate/core/3.3/reference/en/html/performance.html#performance-fetching" target="blank">Hibernate user guide</a> and this <a href="http://community.jboss.org/wiki/AShortPrimerOnFetchingStrategies" target="blank">primer on fetching strategies</a>. Note that ORM DSL does not currently support the "subselect" fetching strategy.<p class="paragraph"/><h4>Lazy Single-Ended Associations</h4><p class="paragraph"/>In GORM, one-to-one and many-to-one associations are by default lazy. Non-lazy single ended associations can be problematic when you load many entities because each non-lazy association will result in an extra SELECT statement. If the associated entities also have non-lazy associations, the number of queries grows exponentially!<p class="paragraph"/>If you want to make a one-to-one or many-to-one association non-lazy/eager, you can use the same technique as for lazy collections:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    <span class="java&#45;object">String</span> firstName
+&#125;<p class="paragraph"/>class Address &#123;
+    <span class="java&#45;object">String</span> street
+    <span class="java&#45;object">String</span> postCode
+    <span class="java&#45;keyword">static</span> belongsTo = &#91;person:Person&#93;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        person lazy:<span class="java&#45;keyword">false</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Here we configure GORM to load the associated <code>Person</code> instance (through the <code>person</code> property) whenever an <code>Address</code> is loaded.<p class="paragraph"/><h4>Lazy Single-Ended Associations and Proxies</h4><p class="paragraph"/>In order to facilitate single-ended lazy associations Hibernate uses runtime generated proxies. The way this works is that Hibernate dynamically subclasses the proxied entity to create the proxy.<p class="paragraph"/>Consider the previous example but with a lazily-loaded <code>person</code> association: Hibernate will set the <code>person</code> property to a proxy that is a subclass of <code>Person</code>. When you call any of the getters or setters on that proxy, Hibernate will load the entity from the database.<p class="paragraph"/>Unfortunately this technique can produce surprising results. Consider the following example classes:<p class="paragraph"/><div class="code"><pre>class Pet &#123;
+    <span class="java&#45;object">String</span> name
+&#125;
+class Dog <span class="java&#45;keyword">extends</span> Pet &#123;
+&#125;
+class Person &#123;
+    <span class="java&#45;object">String</span> name
+    Pet pet
+&#125;</pre></div><p class="paragraph"/>and assume that we have a single <code>Person</code> instance with a <code>Dog</code> as his or her <code>pet</code>. The following code will work as you would expect:
+<div class="code"><pre>def person = Person.get(1)
+assert person.pet <span class="java&#45;keyword">instanceof</span> Dog
+assert Pet.get(person.petId) <span class="java&#45;keyword">instanceof</span> Dog</pre></div>
+But this won't:
+<div class="code"><pre>def person = Person.get(1)
+assert person.pet <span class="java&#45;keyword">instanceof</span> Dog
+assert Pet.list()&#91;0&#93; <span class="java&#45;keyword">instanceof</span> Dog</pre></div>
+For some reason, the second assertion fails. To add to the confusion, this will work:
+<div class="code"><pre>assert Pet.list()&#91;0&#93; <span class="java&#45;keyword">instanceof</span> Dog</pre></div>
+What's going on here? It's down to a combination of how proxies work and the guarantees that the Hibernate session makes. When you load the <code>Person</code> instance, Hibernate creates a proxy for its <code>pet</code> relation and attaches it to the session. Once that happens, whenever you retrieve that <code>Pet</code> instance via a query, a <code>get()</code>, or the <code>pet</code> relation <em class="italic">within the same session</em> , Hibernate gives you the proxy.<p class="paragraph"/>Fortunately for us, GORM automatically unwraps the proxy when you use <code>get()</code> and <code>findBy&#42;()</code>, or when you directly access the relation. That means you don't have to worry at all about proxies in the majority of cases. But GORM doesn't do that for objects returned via a query that returns a list, such as <code>list()</code> and <code>findAllBy&#42;()</code>. However, if Hibernate hasn't attached the proxy to the session, those queries will return the real instances - hence why the last example works.<p class="paragraph"/>You can protect yourself to a degree from this problem by using the <code>instanceOf</code> method by GORM:
+<div class="code"><pre>def person = Person.get(1)
+assert Pet.list()&#91;0&#93;.instanceOf(Dog)</pre></div><p class="paragraph"/>However, it won't help here casting is involved. For example, the following code will throw a <code>ClassCastException</code> because the first pet in the list is a proxy instance with a class that is neither <code>Dog</code> nor a sub-class of <code>Dog</code>:<p class="paragraph"/><div class="code"><pre>def person = Person.get(1)
+Dog pet = Pet.list()&#91;0&#93;</pre></div><p class="paragraph"/>Of course, it's best not to use static types in this situation. If you use an untyped variable for the pet instead, you can access any <code>Dog</code> properties or methods on the instance without any problems.<p class="paragraph"/>These days it's rare that you will come across this issue, but it's best to be aware of it just in case. At least you will know why such an error occurs and be able to work around it.
+
+        </div>
+    </body>
+</html>

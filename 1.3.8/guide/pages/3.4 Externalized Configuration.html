@@ -1,0 +1,25 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>3.4 Externalized Configuration</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="3.4 Externalized Configuration">3.4 Externalized Configuration</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            Some deployments require that configuration be sourced from more than one place and be changeable without requiring a rebuild of the application. In order to support deployment scenarios such as these the configuration can be externalized. To do so you need to point Grails at the locations of the configuration files Grails should be using by adding a <code>grails.config.locations</code> setting in <code>Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.config.locations = &#91; <span class="java&#45;quote">"classpath:$&#123;appName&#125;&#45;config.properties"</span>,
+                            <span class="java&#45;quote">"classpath:$&#123;appName&#125;&#45;config.groovy"</span>,
+                            <span class="java&#45;quote">"file:$&#123;userHome&#125;/.grails/$&#123;appName&#125;&#45;config.properties"</span>,
+                            <span class="java&#45;quote">"file:$&#123;userHome&#125;/.grails/$&#123;appName&#125;&#45;config.groovy"</span>&#93;</pre></div><p class="paragraph"/>In the above example we're loading configuration files (both Java properties files and <a href="http://groovy.codehaus.org/ConfigSlurper" target="blank">ConfigSlurper</a> configurations) from different places on the classpath and files located in <code>USER_HOME</code>.<p class="paragraph"/>It is also possible to load config by specifying a class that is a config script.<p class="paragraph"/><div class="code"><pre>grails.config.locations = &#91;com.my.app.MyConfig&#93;</pre></div><p class="paragraph"/>This can be useful in situations where the config is either coming from a plugin or some other part of your application. A typical use for this is re-using configuration provided by plugins across multiple applications.<p class="paragraph"/>Ultimately all configuration files get merged into the <code>config</code> property of the <a href="../api/org/codehaus/groovy/grails/commons/GrailsApplication.html" class="api">GrailsApplication</a> object and are hence obtainable from there.<p class="paragraph"/>Values that have the same name as previously defined values will overwrite the existing values, and the pointed to configuration sources are loaded in the order in which they are defined.<p class="paragraph"/><h4>Config Defaults</h4><p class="paragraph"/>The configuration values contained in the locations described by the <code>grails.config.locations</code> property will <strong class="bold">override</strong> any values defined in your application <code>Config.groovy</code> file which may not be what you want. You may want to have a set of  <em class="italic">default</em>  values be be loaded that can be overridden in either your application's <code>Config.groovy</code> file or in a named config location. For this you can use the <code>grails.config.defaults.locations</code> property.<p class="paragraph"/>This property supports the same values as the <code>grails.config.locations</code> property (i.e. paths to config scripts, property files or classes), but the config described by <code>grails.config.defaults.locations</code> will be loaded  <em class="italic">before</em>  all other values and can therefore be overridden. Some plugins use this mechanism to supply one or more sets of default configuration that you can choose to include in your application config.<p class="paragraph"/><blockquote class="note">
+Grails also supports the concept of property place holders and property override configurers as defined in <a href="http://www.springframework.org." target="blank">Spring</a> For more information on these see the section on <a href="../guide/single.html#14. Grails and Spring" class="guide">Grails and Spring</a>
+</blockquote>
+        </div>
+    </body>
+</html>

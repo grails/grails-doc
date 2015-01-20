@@ -1,0 +1,70 @@
+<html>
+     <head>
+     	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+     	<title>5.5.2.11 Derived Properties</title>
+     	<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8">
+		<link rel="icon" href="../../img/favicon.ico" type="image/x-icon">
+		<link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"> 
+     </head>
+	<body class="body">
+		<div id="header">
+			<h2><a name="5.5.2.11 Derived Properties">5.5.2.11 Derived Properties</a></h2>
+		</div>
+		<div id="toc">
+			
+		</div>
+		<div id="content">
+			A derived property is a property that takes its value from a SQL expression,
+often but not necessarily based on the value of some other persistent
+property.  Consider a Product class like this:<p class="paragraph"/><div class="code"><pre>class Product &#123;
+  <span class="java&#45;object">Float</span> price
+  <span class="java&#45;object">Float</span> taxRate
+  <span class="java&#45;object">Float</span> tax
+&#125;</pre></div><p class="paragraph"/>If the <code>tax</code> property is derived based on the value of <code>price</code> and <code>taxRate</code>
+properties then there may be no need to persist the <code>tax</code> property in the
+database.  The SQL used to derive the value of a derived property may be 
+expressed in the ORM DSL like this:<p class="paragraph"/><div class="code"><pre>class Product &#123;
+  <span class="java&#45;object">Float</span> price
+  <span class="java&#45;object">Float</span> taxRate
+  <span class="java&#45;object">Float</span> tax<p class="paragraph"/>  <span class="java&#45;keyword">static</span> mapping = &#123;
+      tax formula: 'PRICE &#42; TAX_RATE'
+  &#125;
+&#125;</pre></div><p class="paragraph"/>Note that the formula expressed in the ORM DSL is SQL so references to other
+properties should relate to the persistence model not the object model, which
+is why the example refers to <code>PRICE</code> and <code>TAX_RATE</code> instead of <code>price</code> and 
+<code>taxRate</code>.<p class="paragraph"/>With that in place, when a Product is retrieved with something like <code>Product.get(42)</code>, the SQL that is generated to support 
+that will look something like this:<p class="paragraph"/><div class="code"><pre>select
+    product0_.id as id1_0_,
+    product0_.version as version1_0_,
+    product0_.price as price1_0_,
+    product0_.tax_rate as tax4_1_0_,
+    product0_.PRICE &#42; product0_.TAX_RATE as formula1_0_ 
+from
+    product product0_ 
+where
+    product0_.id=?</pre></div><p class="paragraph"/>Since the <code>tax</code> property is being derived at runtime and not stored in the
+database it might seem that the same effect could be achieved by adding
+a method like <code>getTax()</code> to the <code>Product</code> class that simply returns the
+product of the <code>taxRate</code> and <code>price</code> properties.  With an approach like
+that you would give up the ability query the database based on the value
+of the <code>tax</code> property.  Using a derived property allows exactly that.  To
+retrieve all <code>Product</code> objects that have a <code>tax</code> value greater than 21.12
+you could execute a query like this:<p class="paragraph"/><div class="code"><pre>Product.findAllByTaxGreaterThan(21.12)</pre></div><p class="paragraph"/>Derived properties may be referenced in the Criteria API:<p class="paragraph"/><div class="code"><pre>Product.withCriteria &#123;
+  gt 'tax', 21.12f
+&#125;</pre></div><p class="paragraph"/>The SQL that is generated to support either of those would look something like this:<p class="paragraph"/><div class="code"><pre>select
+    this_.id as id1_0_,
+    this_.version as version1_0_,
+    this_.price as price1_0_,
+    this_.tax_rate as tax4_1_0_,
+    this_.PRICE &#42; this_.TAX_RATE as formula1_0_ 
+from
+    product this_ 
+where
+    this_.PRICE &#42; this_.TAX_RATE&#62;?</pre></div><p class="paragraph"/><blockquote class="note">
+Note that because the value of a derived property is generated in the database and depends
+on the execution of SQL code, derived properties may not have GORM constraints applied
+to them.  If constraints are specified for a derived property, they will be ignored.
+</blockquote><p class="paragraph"/>
+		</div>
+	</body>
+</html>

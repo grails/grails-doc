@@ -1,0 +1,31 @@
+<html>
+    <head>
+	    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	    <title>Grails Reference</title>
+	    <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8" />
+	    <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+	    <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <h1>instanceOf</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Determines if a domain class instance is an instance of the specified class, resolving the actual class if the instance is a proxy.<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/>Given the domain classes:<p class="paragraph"/><div class="code"><pre>class Container &#123;
+   <span class="java&#45;keyword">static</span> hasMany = &#91;children: Child&#93;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Child &#123;
+   <span class="java&#45;object">String</span> name
+   <span class="java&#45;keyword">static</span> belongsTo = &#91;container: Container&#93;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Thing <span class="java&#45;keyword">extends</span> Child &#123;&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Other <span class="java&#45;keyword">extends</span> Child &#123;&#125;</pre></div><p class="paragraph"/>Then you can determine the type of the elements in a <code>Container</code>'s <code>children</code> collection using<p class="paragraph"/><div class="code"><pre>def container = Container.get(id)
+<span class="java&#45;keyword">for</span> (child in container.children) &#123;
+   <span class="java&#45;keyword">if</span> (child.instanceOf(Thing)) &#123;
+      // process Thing
+   &#125;
+   <span class="java&#45;keyword">else</span> <span class="java&#45;keyword">if</span> (child.instanceOf(Other)) &#123;
+      // process Other
+   &#125;
+   <span class="java&#45;keyword">else</span> &#123;
+      // handle unexpected type
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Parameters:
+<ul class="star">
+<li><code>clazz</code> - the type to check</li>
+</ul><p class="paragraph"/>
+    </body>
+</html>

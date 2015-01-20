@@ -1,0 +1,1598 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>7.2 Groovy Server Pages 2.1.0</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/upgradingFromPreviousVersionsOfGrails.html"><strong>3</strong><span>Upgrading from previous versions of Grails</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/commandLine.html"><strong>5</strong><span>The Command Line</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/GORM.html"><strong>6</strong><span>Object Relational Mapping (GORM)</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/validation.html"><strong>8</strong><span>Validation</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/services.html"><strong>9</strong><span>The Service Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/testing.html"><strong>10</strong><span>Testing</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/i18n.html"><strong>11</strong><span>Internationalization</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/security.html"><strong>12</strong><span>Security</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/plugins.html"><strong>13</strong><span>Plugins</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/webServices.html"><strong>14</strong><span>Web Services</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/spring.html"><strong>15</strong><span>Grails and Spring</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/hibernate.html"><strong>16</strong><span>Grails and Hibernate</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/scaffolding.html"><strong>17</strong><span>Scaffolding</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/deployment.html"><strong>18</strong><span>Deployment</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/contributing.html"><strong>19</strong><span>Contributing to Grails</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        <span id="logo"><a href="http://grails.org" target="_blank"><img alt="Grails Logo" title="The Grails Framework" src="../../img/grails.png" border="0"/></a></span>
+        
+        
+        <span id="sponsor"><a href="http://springsource.com" target="_blank"><img alt="SpringSource Logo" title="SpringSource - Weapons for the War on Java Complexity" src="../../img/springsource-logo.png" border="0"/></a></span>
+        
+    </div>
+    <p>See the light - agile, industrial strength, rapid web application development made easy</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/GORM.html">&lt;&lt; <strong>6</strong><span>Object Relational Mapping (GORM)</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/validation.html"><strong>8</strong><span>Validation</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>7.2 Groovy Server Pages - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith</p>
+
+                    <p><strong>Version:</strong> 2.1.0</p>
+
+                    
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#GSPBasics"><strong>7.1</strong><span>GSP Basics</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#variablesAndScopes"><strong>7.1.1</strong><span>Variables and Scopes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#logicAndIteration"><strong>7.1.2</strong><span>Logic and Iteration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#pageDirectives"><strong>7.1.3</strong><span>Page Directives</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#expressions"><strong>7.1.4</strong><span>Expressions</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#tags"><strong>7.2</strong><span>GSP Tags</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#tagVariablesAndScopes"><strong>7.2.1</strong><span>Variables and Scopes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#tagLogicAndIteration"><strong>7.2.2</strong><span>Logic and Iteration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#searchAndFiltering"><strong>7.2.3</strong><span>Search and Filtering</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#linksAndResources"><strong>7.2.4</strong><span>Links and Resources</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#formsAndFields"><strong>7.2.5</strong><span>Forms and Fields</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#tagsAsMethodCalls"><strong>7.2.6</strong><span>Tags as Method Calls</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#viewsAndTemplates"><strong>7.3</strong><span>Views and Templates</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#layouts"><strong>7.4</strong><span>Layouts with Sitemesh</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#resources"><strong>7.5</strong><span>Static Resources</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#includingResourcesUsingTheResourceTags"><strong>7.5.1</strong><span>Including resources using the resource tags</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#otherResourceTags"><strong>7.5.2</strong><span>Other resource tags</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#declaringResources"><strong>7.5.3</strong><span>Declaring resources</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#overridingPluginResources"><strong>7.5.4</strong><span>Overriding plugin resources</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#optimizingYourResources"><strong>7.5.5</strong><span>Optimizing your resources</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#debugging"><strong>7.5.6</strong><span>Debugging</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#preventingProcessingOfResources"><strong>7.5.7</strong><span>Preventing processing of resources</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#otherResourcesPlugins"><strong>7.5.8</strong><span>Other Resources-aware plugins</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#sitemeshContentBlocks"><strong>7.6</strong><span>Sitemesh Content Blocks</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#makingChangesToADeployedApplication"><strong>7.7</strong><span>Making Changes to a Deployed Application</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#GSPDebugging"><strong>7.8</strong><span>GSP Debugging</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+<a name="6.2 Groovy Server Pages"><!-- Legacy link --></a>
+<h2 id="gsp">7.2 Groovy Server Pages</h2>
+Groovy Servers Pages (or GSP for short) is Grails' view technology. It is designed to be familiar for users of technologies such as ASP and JSP, but to be far more flexible and intuitive.<p class="paragraph"/>GSPs live in the <code>grails-app/views</code> directory and are typically rendered automatically (by convention) or with the <a href="../ref/Controllers/render.html" class="controllers">render</a> method such as:<p class="paragraph"/><div class="code"><pre>render(view: <span class="java&#45;quote">"index"</span>)</pre></div><p class="paragraph"/>A GSP is typically a mix of mark-up and GSP tags which aid in view rendering.<p class="paragraph"/><blockquote class="note">
+Although it is possible to have Groovy logic embedded in your GSP and doing this will be covered in this document, the practice is strongly discouraged. Mixing mark-up and code is a <strong class="bold">bad</strong> thing and most GSP pages contain no code and needn't do so.
+</blockquote><p class="paragraph"/>A GSP typically has a "model" which is a set of variables that are used for view rendering. The model is passed to the GSP view from a controller. For example consider the following controller action:<p class="paragraph"/><div class="code"><pre>def show() &#123;
+    &#91;book: Book.get(params.id)&#93;
+&#125;</pre></div><p class="paragraph"/>This action will look up a <code>Book</code> instance and create a model that contains a key called <code>book</code>. This key can then be referenced within the GSP view using the name <code>book</code>:<p class="paragraph"/><div class="code"><pre>$&#123;book.title&#125;</pre></div>
+
+
+<a name="6.2.1 GSP Basics"><!-- Legacy link --></a>
+<h2 id="GSPBasics">7.2.1 GSP Basics</h2>
+In the next view sections we'll go through the basics of GSP and what is available to you. First off let's cover some basic syntax that users of JSP and ASP should be familiar with.<p class="paragraph"/>GSP supports the usage of <code>&#60;% %&#62;</code> scriptlet blocks to embed Groovy code (again this is discouraged):<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+   <span class="xml&#45;tag">&#60;body&#62;</span>
+     <span class="xml&#45;tag">&#60;% out &#60;&#60; <span class="xml&#45;quote">"Hello GSP!"</span> %&#62;</span>
+   <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>You can also use the <code>&#60;%= %&#62;</code> syntax to output values:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+   <span class="xml&#45;tag">&#60;body&#62;</span>
+     <span class="xml&#45;tag">&#60;%=<span class="xml&#45;quote">"Hello GSP!"</span> %&#62;</span>
+   <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>GSP also supports JSP-style server-side comments (which are not rendered in the HTML response) as the following example demonstrates:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+   <span class="xml&#45;tag">&#60;body&#62;</span>
+     <span class="xml&#45;tag">&#60;%&#45;&#45; This is my comment &#45;&#45;%&#62;</span>
+     <span class="xml&#45;tag">&#60;%=<span class="xml&#45;quote">"Hello GSP!"</span> %&#62;</span>
+   <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div>
+
+
+<a name="6.6.3 Variables and Scopes"><!-- Legacy link --></a>
+<h2 id="variablesAndScopes">7.2.1.1 Variables and Scopes</h2>
+Within the <code>&#60;% %&#62;</code> brackets you can declare variables:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;% now = new Date() %&#62;</span></pre></div><p class="paragraph"/>and then access those variables later in the page:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;%=now%&#62;</span></pre></div><p class="paragraph"/>Within the scope of a GSP there are a number of pre-defined variables, including:
+<ul class="star">
+<li><code>application</code> - The <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/ServletContext.html" class="api">javax.servlet.ServletContext</a> instance</li>
+<li><code>applicationContext</code> The Spring <a href="http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/context/ApplicationContext.html" class="api">ApplicationContext</a> instance</li>
+<li><code>flash</code> - The <a href="../ref/Controllers/flash.html" class="controllers">flash</a> object</li>
+<li><code>grailsApplication</code> - The <a href="../api/org/codehaus/groovy/grails/commons/GrailsApplication.html" class="api">GrailsApplication</a> instance</li>
+<li><code>out</code> - The response writer for writing to the output stream</li>
+<li><code>params</code> - The <a href="../ref/Controllers/params.html" class="controllers">params</a> object for retrieving request parameters</li>
+<li><code>request</code> - The <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpServletRequest.html" class="api">HttpServletRequest</a> instance</li>
+<li><code>response</code> - The <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpServletResponse.html" class="api">HttpServletResponse</a> instance</li>
+<li><code>session</code> - The <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpSession.html" class="api">HttpSession</a> instance</li>
+<li><code>webRequest</code> - The <a href="../api/org/codehaus/groovy/grails/web/servlet/mvc/GrailsWebRequest.html" class="api">GrailsWebRequest</a> instance</li>
+</ul><p class="paragraph"/>
+
+<a name="6.2.2.2 Logic and Iteration"><!-- Legacy link --></a>
+<h2 id="logicAndIteration">7.2.1.2 Logic and Iteration</h2>
+Using the <code>&#60;% %&#62;</code> syntax you can embed loops and so on using this syntax:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+   <span class="xml&#45;tag">&#60;body&#62;</span>
+      <span class="xml&#45;tag">&#60;% &#91;1,2,3,4&#93;.each &#123; num &#45;&#62;</span> %&#62;
+         <span class="xml&#45;tag">&#60;p&#62;</span><span class="xml&#45;tag">&#60;%=<span class="xml&#45;quote">"Hello $&#123;num&#125;!"</span> %&#62;</span><span class="xml&#45;tag">&#60;/p&#62;</span>
+      <span class="xml&#45;tag">&#60;%&#125;%&#62;</span>
+   <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>As well as logical branching:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+   <span class="xml&#45;tag">&#60;body&#62;</span>
+      <span class="xml&#45;tag">&#60;% if (params.hello == 'true')%&#62;</span>
+      <span class="xml&#45;tag">&#60;%=<span class="xml&#45;quote">"Hello!"</span>%&#62;</span>
+      <span class="xml&#45;tag">&#60;% else %&#62;</span>
+      <span class="xml&#45;tag">&#60;%=<span class="xml&#45;quote">"Goodbye!"</span>%&#62;</span>
+   <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div>
+
+
+<a name="6.2.1.3 Page Directives"><!-- Legacy link --></a>
+<h2 id="pageDirectives">7.2.1.3 Page Directives</h2>
+GSP also supports a few JSP-style page directives.<p class="paragraph"/>The import directive lets you import classes into the page. However, it is rarely needed due to Groovy's default imports and <a href="../guide/single.html#tags" class="guide">GSP Tags</a>:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;%@ page import=<span class="xml&#45;quote">"java.awt.&#42;"</span> %&#62;</span></pre></div><p class="paragraph"/>GSP also supports the contentType directive:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;%@ page contentType=<span class="xml&#45;quote">"text/json"</span> %&#62;</span></pre></div><p class="paragraph"/>The contentType directive allows using GSP to render other formats.
+
+
+<a name="6.2.1.4 Expressions"><!-- Legacy link --></a>
+<h2 id="expressions">7.2.1.4 Expressions</h2>
+In GSP the <code>&#60;%= %&#62;</code> syntax introduced earlier is rarely used due to the support for GSP expressions. A GSP expression is similar to a JSP EL expression or a Groovy GString and takes the form <code>${expr}</code>:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+  <span class="xml&#45;tag">&#60;body&#62;</span>
+    Hello $&#123;params.name&#125;
+  <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>However, unlike JSP EL you can have any Groovy expression within the <code>${..}</code> block. Variables within the <code>${..}</code> block are <strong class="bold">not</strong> escaped by default, so any HTML in the variable's string is rendered directly to the page. To reduce the risk of Cross-site-scripting (XSS) attacks, you can enable automatic HTML escaping with the <code>grails.views.default.codec</code> setting in <code>grails-app/conf/Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.views.<span class="java&#45;keyword">default</span>.codec='html'</pre></div><p class="paragraph"/>Other possible values are 'none' (for no default encoding) and 'base64'.
+
+
+<a name="6.2.2 GSP Tags"><!-- Legacy link --></a>
+<h2 id="tags">7.2.2 GSP Tags</h2>
+Now that the less attractive JSP heritage has been set aside, the following sections cover GSP's built-in tags, which are the preferred way to define GSP pages.<p class="paragraph"/><blockquote class="note">
+The section on <a href="../guide/single.html#taglibs" class="guide">Tag Libraries</a> covers how to add your own custom tag libraries.
+</blockquote><p class="paragraph"/>All built-in GSP tags start with the prefix <code>g:</code>. Unlike JSP, you don't specify any tag library imports. If a tag starts with <code>g:</code> it is automatically assumed to be a GSP tag. An example GSP tag would look like:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:example /&#62;</span></pre></div><p class="paragraph"/>GSP tags can also have a body such as:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:example&#62;</span>
+   Hello world
+<span class="xml&#45;tag">&#60;/g:example&#62;</span></pre></div><p class="paragraph"/>Expressions can be passed into GSP tag attributes, if an expression is not used it will be assumed to be a String value:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:example attr=<span class="xml&#45;quote">"$&#123;new Date()&#125;"</span>&#62;</span>
+   Hello world
+<span class="xml&#45;tag">&#60;/g:example&#62;</span></pre></div><p class="paragraph"/>Maps can also be passed into GSP tag attributes, which are often used for a named parameter style syntax:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:example attr=<span class="xml&#45;quote">"$&#123;new Date()&#125;"</span> attr2=<span class="xml&#45;quote">"&#91;one:1, two:2, three:3&#93;"</span>&#62;</span>
+   Hello world
+<span class="xml&#45;tag">&#60;/g:example&#62;</span></pre></div><p class="paragraph"/>Note that within the values of attributes you must use single quotes for Strings:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:example attr=<span class="xml&#45;quote">"$&#123;new Date()&#125;"</span> attr2=<span class="xml&#45;quote">"&#91;one:'one', two:'two'&#93;"</span>&#62;</span>
+   Hello world
+<span class="xml&#45;tag">&#60;/g:example&#62;</span></pre></div><p class="paragraph"/>With the basic syntax out the way, the next sections look at the tags that are built into Grails by default.
+
+
+
+<h2 id="tagVariablesAndScopes">7.2.2.1 Variables and Scopes</h2>
+Variables can be defined within a GSP using the <a href="../ref/Tags/set.html" class="tags">set</a> tag:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:set var=<span class="xml&#45;quote">"now"</span> value=<span class="xml&#45;quote">"$&#123;new Date()&#125;"</span> /&#62;</span></pre></div><p class="paragraph"/>Here we assign a variable called <code>now</code> to the result of a GSP expression (which simply constructs a new <code>java.util.Date</code> instance). You can also use the body of the <code>&#60;g:set&#62;</code> tag to define a variable:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:set var=<span class="xml&#45;quote">"myHTML"</span>&#62;</span>
+   Some re&#45;usable code on: $&#123;new Date()&#125;
+<span class="xml&#45;tag">&#60;/g:set&#62;</span></pre></div><p class="paragraph"/>Variables can also be placed in one of the following scopes:
+<ul class="star">
+<li><code>page</code> - Scoped to the current page (default)</li>
+<li><code>request</code> - Scoped to the current request</li>
+<li><code>flash</code> - Placed within <a href="../ref/Controllers/flash.html" class="controllers">flash</a> scope and hence available for the next request</li>
+<li><code>session</code> - Scoped for the user session</li>
+<li><code>application</code> - Application-wide scope.</li>
+</ul><p class="paragraph"/>To specify the scope, use the <code>scope</code> attribute:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:set var=<span class="xml&#45;quote">"now"</span> value=<span class="xml&#45;quote">"$&#123;new Date()&#125;"</span> scope=<span class="xml&#45;quote">"request"</span> /&#62;</span></pre></div>
+
+
+
+<h2 id="tagLogicAndIteration">7.2.2.2 Logic and Iteration</h2>
+GSP also supports logical and iterative tags out of the box. For logic there are <a href="../ref/Tags/if.html" class="tags">if</a>, <a href="../ref/Tags/else.html" class="tags">else</a> and <a href="../ref/Tags/elseif.html" class="tags">elseif</a> tags for use with branching:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:if test=<span class="xml&#45;quote">"$&#123;session.role == 'admin'&#125;"</span>&#62;</span>
+   <span class="xml&#45;tag">&#60;%&#45;&#45; show administrative functions &#45;&#45;%&#62;</span>
+<span class="xml&#45;tag">&#60;/g:if&#62;</span>
+<span class="xml&#45;tag">&#60;g:else&#62;</span>
+   <span class="xml&#45;tag">&#60;%&#45;&#45; show basic functions &#45;&#45;%&#62;</span>
+<span class="xml&#45;tag">&#60;/g:else&#62;</span></pre></div><p class="paragraph"/>Use the <a href="../ref/Tags/each.html" class="tags">each</a> and <a href="../ref/Tags/while.html" class="tags">while</a> tags for iteration:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:each in=<span class="xml&#45;quote">"$&#123;&#91;1,2,3&#93;&#125;"</span> var=<span class="xml&#45;quote">"num"</span>&#62;</span>
+   <span class="xml&#45;tag">&#60;p&#62;</span>Number $&#123;num&#125;<span class="xml&#45;tag">&#60;/p&#62;</span>
+<span class="xml&#45;tag">&#60;/g:each&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;g:set var=<span class="xml&#45;quote">"num"</span> value=<span class="xml&#45;quote">"$&#123;1&#125;"</span> /&#62;</span>
+<span class="xml&#45;tag">&#60;g:while test=<span class="xml&#45;quote">"$&#123;num &#60; 5 &#125;"</span>&#62;</span>
+    <span class="xml&#45;tag">&#60;p&#62;</span>Number $&#123;num++&#125;<span class="xml&#45;tag">&#60;/p&#62;</span>
+<span class="xml&#45;tag">&#60;/g:while&#62;</span></pre></div>
+
+
+<a name="6.2.2.3 Search and Filtering"><!-- Legacy link --></a>
+<h2 id="searchAndFiltering">7.2.2.3 Search and Filtering</h2>
+If you have collections of objects you often need to sort and filter them. Use the <a href="../ref/Tags/findAll.html" class="tags">findAll</a> and <a href="../ref/Tags/grep.html" class="tags">grep</a> tags for these tasks:<p class="paragraph"/><div class="code"><pre>Stephen King's Books:
+<span class="xml&#45;tag">&#60;g:findAll in=<span class="xml&#45;quote">"$&#123;books&#125;"</span> expr=<span class="xml&#45;quote">"it.author == 'Stephen King'"</span>&#62;</span>
+     <span class="xml&#45;tag">&#60;p&#62;</span>Title: $&#123;it.title&#125;<span class="xml&#45;tag">&#60;/p&#62;</span>
+<span class="xml&#45;tag">&#60;/g:findAll&#62;</span></pre></div><p class="paragraph"/>The <code>expr</code> attribute contains a Groovy expression that can be used as a filter. The <a href="../ref/Tags/grep.html" class="tags">grep</a> tag does a similar job, for example filtering by class:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:grep in=<span class="xml&#45;quote">"$&#123;books&#125;"</span> filter=<span class="xml&#45;quote">"NonFictionBooks.class"</span>&#62;</span>
+     <span class="xml&#45;tag">&#60;p&#62;</span>Title: $&#123;it.title&#125;<span class="xml&#45;tag">&#60;/p&#62;</span>
+<span class="xml&#45;tag">&#60;/g:grep&#62;</span></pre></div><p class="paragraph"/>Or using a regular expression:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:grep in=<span class="xml&#45;quote">"$&#123;books.title&#125;"</span> filter=<span class="xml&#45;quote">"~/.&#42;?Groovy.&#42;?/"</span>&#62;</span>
+     <span class="xml&#45;tag">&#60;p&#62;</span>Title: $&#123;it&#125;<span class="xml&#45;tag">&#60;/p&#62;</span>
+<span class="xml&#45;tag">&#60;/g:grep&#62;</span></pre></div><p class="paragraph"/>The above example is also interesting due to its usage of GPath. GPath is an XPath-like language in Groovy. The <code>books</code> variable is a collection of <code>Book</code> instances. Since each <code>Book</code> has a <code>title</code>, you can obtain a list of Book titles using the expression <code>books.title</code>. Groovy will auto-magically iterate the collection, obtain each title, and return a new list!
+
+
+<a name="6.2.2.4 Links and Resources"><!-- Legacy link --></a>
+<h2 id="linksAndResources">7.2.2.4 Links and Resources</h2>
+GSP also features tags to help you manage linking to controllers and actions. The <a href="../ref/Tags/link.html" class="tags">link</a> tag lets you specify controller and action name pairing and it will automatically work out the link based on the <a href="../guide/single.html#urlmappings" class="guide">URL Mappings</a>, even if you change them! For example:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:link action=<span class="xml&#45;quote">"show"</span> id=<span class="xml&#45;quote">"1"</span>&#62;</span>Book 1<span class="xml&#45;tag">&#60;/g:link&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;g:link action=<span class="xml&#45;quote">"show"</span> id=<span class="xml&#45;quote">"$&#123;currentBook.id&#125;"</span>&#62;</span>$&#123;currentBook.name&#125;<span class="xml&#45;tag">&#60;/g:link&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;g:link controller=<span class="xml&#45;quote">"book"</span>&#62;</span>Book Home<span class="xml&#45;tag">&#60;/g:link&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;g:link controller=<span class="xml&#45;quote">"book"</span> action=<span class="xml&#45;quote">"list"</span>&#62;</span>Book List<span class="xml&#45;tag">&#60;/g:link&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;g:link url=<span class="xml&#45;quote">"&#91;action: 'list', controller: 'book'&#93;"</span>&#62;</span>Book List<span class="xml&#45;tag">&#60;/g:link&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;g:link params=<span class="xml&#45;quote">"&#91;sort: 'title', order: 'asc', author: currentBook.author&#93;"</span>
+        action=<span class="xml&#45;quote">"list"</span>&#62;</span>Book List<span class="xml&#45;tag">&#60;/g:link&#62;</span></pre></div>
+
+
+<a name="6.2.2.5 Forms and Fields"><!-- Legacy link --></a>
+<h2 id="formsAndFields">7.2.2.5 Forms and Fields</h2>
+<h4>Form Basics</h4><p class="paragraph"/>GSP supports many different tags for working with HTML forms and fields, the most basic of which is the <a href="../ref/Tags/form.html" class="tags">form</a> tag. This is a controller/action aware version of the regular HTML form tag. The <code>url</code> attribute lets you specify which controller and action to map to:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:form name=<span class="xml&#45;quote">"myForm"</span> url=<span class="xml&#45;quote">"&#91;controller:'book',action:'list'&#93;"</span>&#62;</span>...<span class="xml&#45;tag">&#60;/g:form&#62;</span></pre></div><p class="paragraph"/>In this case we create a form called <code>myForm</code> that submits to the <code>BookController</code>'s <code>list</code> action. Beyond that all of the usual HTML attributes apply.<p class="paragraph"/><h4>Form Fields</h4><p class="paragraph"/>In addition to easy construction of forms, GSP supports custom tags for dealing with different types of fields, including:
+<ul class="star">
+<li><a href="../ref/Tags/textField.html" class="tags">textField</a> - For input fields of type 'text'</li>
+<li><a href="../ref/Tags/passwordField.html" class="tags">passwordField</a> - For input fields of type 'password'</li>
+<li><a href="../ref/Tags/checkBox.html" class="tags">checkBox</a> - For input fields of type 'checkbox'</li>
+<li><a href="../ref/Tags/radio.html" class="tags">radio</a> - For input fields of type 'radio'</li>
+<li><a href="../ref/Tags/hiddenField.html" class="tags">hiddenField</a> - For input fields of type 'hidden'</li>
+<li><a href="../ref/Tags/select.html" class="tags">select</a> - For dealing with HTML select boxes</li>
+</ul><p class="paragraph"/>Each of these allows GSP expressions for the value:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:textField name=<span class="xml&#45;quote">"myField"</span> value=<span class="xml&#45;quote">"$&#123;myValue&#125;"</span> /&#62;</span></pre></div><p class="paragraph"/>GSP also contains extended helper versions of the above tags such as <a href="../ref/Tags/radioGroup.html" class="tags">radioGroup</a> (for creating groups of <a href="../ref/Tags/radio.html" class="tags">radio</a> tags), <a href="../ref/Tags/localeSelect.html" class="tags">localeSelect</a>, <a href="../ref/Tags/currencySelect.html" class="tags">currencySelect</a> and <a href="../ref/Tags/timeZoneSelect.html" class="tags">timeZoneSelect</a> (for selecting locales, currencies and time zones respectively).<p class="paragraph"/><h4>Multiple Submit Buttons</h4><p class="paragraph"/>The age old problem of dealing with multiple submit buttons is also handled elegantly with Grails using the <a href="../ref/Tags/actionSubmit.html" class="tags">actionSubmit</a> tag. It is just like a regular submit, but lets you specify an alternative action to submit to:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:actionSubmit value=<span class="xml&#45;quote">"Some update label"</span> action=<span class="xml&#45;quote">"update"</span> /&#62;</span></pre></div>
+
+
+<a name="6.2.2.6 Tags as Method Calls"><!-- Legacy link --></a>
+<h2 id="tagsAsMethodCalls">7.2.2.6 Tags as Method Calls</h2>
+One major different between GSP tags and other tagging technologies is that GSP tags can be called as either regular tags or as method calls from <a href="../guide/single.html#controllers" class="guide">controllers</a>, <a href="../guide/single.html#taglibs" class="guide">tag libraries</a> or GSP views.<p class="paragraph"/><h4>Tags as method calls from GSPs</h4><p class="paragraph"/>Tags return their results as a String-like object (a <code>StreamCharBuffer</code> which has all of the same methods as String) instead of writing directly to the response when called as methods. For example:<p class="paragraph"/><div class="code"><pre>Static Resource: $&#123;createLinkTo(dir: <span class="xml&#45;quote">"images"</span>, file: <span class="xml&#45;quote">"logo.jpg"</span>)&#125;</pre></div><p class="paragraph"/>This is particularly useful for using a tag within an attribute:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;img src=<span class="xml&#45;quote">"$&#123;createLinkTo(dir: 'images', file: 'logo.jpg')&#125;"</span> /&#62;</span></pre></div><p class="paragraph"/>In view technologies that don't support this feature you have to nest tags within tags, which becomes messy quickly and often has an adverse effect of WYSWIG tools such as Dreamweaver that attempt to render the mark-up as it is not well-formed:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;img src=<span class="xml&#45;quote">"&#60;g:createLinkTo dir="</span>images<span class="xml&#45;quote">" file="</span>logo.jpg<span class="xml&#45;quote">" /&#62;</span>"</span> /&#62;</pre></div><p class="paragraph"/><h4>Tags as method calls from Controllers and Tag Libraries</h4><p class="paragraph"/>You can also invoke tags from controllers and tag libraries. Tags within the default <code>g:</code> <a href="../guide/single.html#namespaces" class="guide">namespace</a> can be invoked without the prefix and a <code>StreamCharBuffer</code> result is returned:<p class="paragraph"/><div class="code"><pre>def imageLocation = createLinkTo(dir:<span class="java&#45;quote">"images"</span>, file:<span class="java&#45;quote">"logo.jpg"</span>).toString()</pre></div><p class="paragraph"/>Prefix the namespace to avoid naming conflicts:<p class="paragraph"/><div class="code"><pre>def imageLocation = g.createLinkTo(dir:<span class="java&#45;quote">"images"</span>, file:<span class="java&#45;quote">"logo.jpg"</span>).toString()</pre></div><p class="paragraph"/>For tags that use a <a href="../guide/single.html#namespaces" class="guide">custom namespace</a>, use that prefix for the method call. For example (from the <a href="http://grails.org/plugin/fckeditor" target="blank">FCK Editor plugin</a>):<p class="paragraph"/><div class="code"><pre>def editor = fckeditor.editor(name: <span class="java&#45;quote">"text"</span>, width: <span class="java&#45;quote">"100%"</span>, height: <span class="java&#45;quote">"400"</span>)</pre></div>
+
+
+<a name="6.2.3 Views and Templates"><!-- Legacy link --></a>
+<h2 id="viewsAndTemplates">7.2.3 Views and Templates</h2>
+Grails also has the concept of templates. These are useful for partitioning your views into maintainable chunks, and combined with <a href="../guide/single.html#layouts" class="guide">Layouts</a> provide a highly re-usable mechanism for structured views.<p class="paragraph"/><h4>Template Basics</h4><p class="paragraph"/>Grails uses the convention of placing an underscore before the name of a view to identify it as a template. For example, you might have a template that renders Books located at <code>grails-app/views/book/_bookTemplate.gsp</code>:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;div class=<span class="xml&#45;quote">"book"</span> id=<span class="xml&#45;quote">"$&#123;book?.id&#125;"</span>&#62;</span>
+   <span class="xml&#45;tag">&#60;div&#62;</span>Title: $&#123;book?.title&#125;<span class="xml&#45;tag">&#60;/div&#62;</span>
+   <span class="xml&#45;tag">&#60;div&#62;</span>Author: $&#123;book?.author?.name&#125;<span class="xml&#45;tag">&#60;/div&#62;</span>
+<span class="xml&#45;tag">&#60;/div&#62;</span></pre></div><p class="paragraph"/>Use the <a href="../ref/Tags/render.html" class="tags">render</a> tag to render this template from one of the views in <code>grails-app/views/book</code>:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:render template=<span class="xml&#45;quote">"bookTemplate"</span> model=<span class="xml&#45;quote">"&#91;book: myBook&#93;"</span> /&#62;</span></pre></div><p class="paragraph"/>Notice how we pass into a model to use using the <code>model</code> attribute of the <code>render</code> tag. If you have multiple <code>Book</code> instances you can also render the template for each <code>Book</code> using the render tag with a <code>collection</code> attribute:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:render template=<span class="xml&#45;quote">"bookTemplate"</span> var=<span class="xml&#45;quote">"book"</span> collection=<span class="xml&#45;quote">"$&#123;bookList&#125;"</span> /&#62;</span></pre></div><p class="paragraph"/><h4>Shared Templates</h4><p class="paragraph"/>In the previous example we had a template that was specific to the <code>BookController</code> and its views at <code>grails-app/views/book</code>. However, you may want to share templates across your application.<p class="paragraph"/>In this case you can place them in the root views directory at grails-app/views or any subdirectory below that location, and then with the template attribute use an absolute location starting with <code>/</code> instead of a relative location. For example if you had a template called <code>grails-app/views/shared/_mySharedTemplate.gsp</code>, you would reference it as:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:render template=<span class="xml&#45;quote">"/shared/mySharedTemplate"</span> /&#62;</span></pre></div><p class="paragraph"/>You can also use this technique to reference templates in any directory from any view or controller:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:render template=<span class="xml&#45;quote">"/book/bookTemplate"</span> model=<span class="xml&#45;quote">"&#91;book: myBook&#93;"</span> /&#62;</span></pre></div><p class="paragraph"/><h4>The Template Namespace</h4><p class="paragraph"/>Since templates are used so frequently there is template namespace, called <code>tmpl</code>, available that makes using templates easier. Consider for example the following usage pattern:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:render template=<span class="xml&#45;quote">"bookTemplate"</span> model=<span class="xml&#45;quote">"&#91;book:myBook&#93;"</span> /&#62;</span></pre></div><p class="paragraph"/>This can be expressed with the <code>tmpl</code> namespace as follows:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;tmpl:bookTemplate book=<span class="xml&#45;quote">"$&#123;myBook&#125;"</span> /&#62;</span></pre></div><p class="paragraph"/><h4>Templates in Controllers and Tag Libraries</h4><p class="paragraph"/>You can also render templates from controllers using the <a href="../ref/Controllers/render.html" class="controllers">render</a> controller method. This is useful for <a href="../guide/single.html#ajax" class="guide">Ajax</a> applications where you generate small HTML or data responses to partially update the current page instead of performing new request:<p class="paragraph"/><div class="code"><pre>def bookData() &#123;
+    def b = Book.get(params.id)
+    render(template:<span class="java&#45;quote">"bookTemplate"</span>, model:&#91;book:b&#93;)
+&#125;</pre></div><p class="paragraph"/>The <a href="../ref/Controllers/render.html" class="controllers">render</a> controller method writes directly to the response, which is the most common behaviour. To instead obtain the result of template as a String you can use the <a href="../ref/Tags/render.html" class="tags">render</a> tag:<p class="paragraph"/><div class="code"><pre>def bookData() &#123;
+    def b = Book.get(params.id)
+    <span class="java&#45;object">String</span> content = g.render(template:<span class="java&#45;quote">"bookTemplate"</span>, model:&#91;book:b&#93;)
+    render content
+&#125;</pre></div><p class="paragraph"/>Notice the usage of the <code>g</code> namespace which tells Grails we want to use the <a href="../guide/single.html#tagsAsMethodCalls" class="guide">tag as method call</a> instead of the <a href="../ref/Controllers/render.html" class="controllers">render</a> method.
+
+
+<a name="6.2.4 Layouts with Sitemesh"><!-- Legacy link --></a>
+<h2 id="layouts">7.2.4 Layouts with Sitemesh</h2>
+<h4>Creating Layouts</h4><p class="paragraph"/>Grails leverages <a href="http://www.opensymphony.com/sitemesh/" target="blank">Sitemesh</a>, a decorator engine, to support view layouts. Layouts are located in the <code>grails-app/views/layouts</code> directory. A typical layout can be seen below:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+    <span class="xml&#45;tag">&#60;head&#62;</span>
+        <span class="xml&#45;tag">&#60;title&#62;</span><span class="xml&#45;tag">&#60;g:layoutTitle default=<span class="xml&#45;quote">"An example decorator"</span> /&#62;</span><span class="xml&#45;tag">&#60;/title&#62;</span>
+        <span class="xml&#45;tag">&#60;g:layoutHead /&#62;</span>
+    <span class="xml&#45;tag">&#60;/head&#62;</span>
+    <span class="xml&#45;tag">&#60;body onload=<span class="xml&#45;quote">"$&#123;pageProperty(name:'body.onload')&#125;"</span>&#62;</span>
+        <span class="xml&#45;tag">&#60;div class=<span class="xml&#45;quote">"menu"</span>&#62;</span><span class="xml&#45;comment">&#60;!&#45;&#45;my common menu goes here&#45;&#45;&#62;</span><span class="xml&#45;tag">&#60;/menu&#62;</span>
+            <span class="xml&#45;tag">&#60;div class=<span class="xml&#45;quote">"body"</span>&#62;</span>
+                <span class="xml&#45;tag">&#60;g:layoutBody /&#62;</span>
+            <span class="xml&#45;tag">&#60;/div&#62;</span>
+        <span class="xml&#45;tag">&#60;/div&#62;</span>
+    <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>The key elements are the <a href="../ref/Tags/layoutHead.html" class="tags">layoutHead</a>, <a href="../ref/Tags/layoutTitle.html" class="tags">layoutTitle</a> and <a href="../ref/Tags/layoutBody.html" class="tags">layoutBody</a> tag invocations:
+<ul class="star">
+<li><code>layoutTitle</code> - outputs the target page's title</li>
+<li><code>layoutHead</code> - outputs the target page's head tag contents</li>
+<li><code>layoutBody</code> - outputs the target page's body tag contents</li>
+</ul><p class="paragraph"/>The previous example also demonstrates the <a href="../ref/Tags/pageProperty.html" class="tags">pageProperty</a> tag which can be used to inspect and return aspects of the target page.<p class="paragraph"/><h4>Triggering Layouts</h4><p class="paragraph"/>There are a few ways to trigger a layout. The simplest is to add a meta tag to the view:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+    <span class="xml&#45;tag">&#60;head&#62;</span>
+        <span class="xml&#45;tag">&#60;title&#62;</span>An Example Page<span class="xml&#45;tag">&#60;/title&#62;</span>
+        <span class="xml&#45;tag">&#60;meta name=<span class="xml&#45;quote">"layout"</span> content=<span class="xml&#45;quote">"main"</span> /&#62;</span>
+    <span class="xml&#45;tag">&#60;/head&#62;</span>
+    <span class="xml&#45;tag">&#60;body&#62;</span>This is my content!<span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>In this case a layout called <code>grails-app/views/layouts/main.gsp</code> will be used to layout the page. If we were to use the layout from the previous section the output would resemble this:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+    <span class="xml&#45;tag">&#60;head&#62;</span>
+        <span class="xml&#45;tag">&#60;title&#62;</span>An Example Page<span class="xml&#45;tag">&#60;/title&#62;</span>
+    <span class="xml&#45;tag">&#60;/head&#62;</span>
+    <span class="xml&#45;tag">&#60;body onload=<span class="xml&#45;quote">""</span>&#62;</span>
+        <span class="xml&#45;tag">&#60;div class=<span class="xml&#45;quote">"menu"</span>&#62;</span><span class="xml&#45;comment">&#60;!&#45;&#45;my common menu goes here&#45;&#45;&#62;</span><span class="xml&#45;tag">&#60;/div&#62;</span>
+        <span class="xml&#45;tag">&#60;div class=<span class="xml&#45;quote">"body"</span>&#62;</span>
+            This is my content!
+        <span class="xml&#45;tag">&#60;/div&#62;</span>
+    <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/><h4>Specifying A Layout In A Controller</h4><p class="paragraph"/>Another way to specify a layout is to specify the name of the layout by assigning a value to the "layout" property in a controller. For example, if you have a controller such as:<p class="paragraph"/><div class="code"><pre>class BookController &#123;
+    <span class="java&#45;keyword">static</span> layout = 'customer'<p class="paragraph"/>    def list() &#123; &#8230; &#125;
+&#125;</pre></div><p class="paragraph"/>You can create a layout called <code>grails-app/views/layouts/customer.gsp</code> which will be applied to all views that the <code>BookController</code> delegates to.  The value of the "layout" property may contain a directory structure relative to the <code>grails-app/views/layouts/</code> directory.  For example:<p class="paragraph"/><div class="code"><pre>class BookController &#123;
+    <span class="java&#45;keyword">static</span> layout = 'custom/customer'<p class="paragraph"/>    def list() &#123; &#8230; &#125;
+&#125;</pre></div><p class="paragraph"/>Views rendered from that controller would be decorated with the <code>grails-app/views/layouts/custom/customer.gsp</code> template.<p class="paragraph"/><h4>Layout by Convention</h4><p class="paragraph"/>Another way to associate layouts is to use "layout by convention". For example, if you have this controller:<p class="paragraph"/><div class="code"><pre>class BookController &#123;
+    def list() &#123; &#8230; &#125;
+&#125;</pre></div><p class="paragraph"/>You can create a layout called <code>grails-app/views/layouts/book.gsp</code>, which will be applied to all views that the <code>BookController</code> delegates to.<p class="paragraph"/>Alternatively, you can create a layout called <code>grails-app/views/layouts/book/list.gsp</code> which will only be applied to the <code>list</code> action within the <code>BookController</code>.<p class="paragraph"/>If you have both the above mentioned layouts in place the layout specific to the action will take precedence when the list action is executed.<p class="paragraph"/>If a layout may not be located using any of those conventions, the convention of last resort is to look for the application default layout which
+is <code>grails-app/views/layouts/application.gsp</code>.  The name of the application default layout may be changed by defining a property
+in <code>grails-app/conf/Config.groovy</code> as follows:<p class="paragraph"/><div class="code"><pre>grails.sitemesh.<span class="java&#45;keyword">default</span>.layout = 'myLayoutName'</pre></div><p class="paragraph"/>With that property in place, the application default layout will be <code>grails-app/views/layouts/myLayoutName.gsp</code>.<p class="paragraph"/><h4>Inline Layouts</h4><p class="paragraph"/>Grails' also supports Sitemesh's concept of inline layouts with the <a href="../ref/Tags/applyLayout.html" class="tags">applyLayout</a> tag. This can be used to apply a layout to a template, URL or arbitrary section of content. This lets you even further modularize your view structure by "decorating" your template includes.<p class="paragraph"/>Some examples of usage can be seen below:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"myLayout"</span> template=<span class="xml&#45;quote">"bookTemplate"</span> collection=<span class="xml&#45;quote">"$&#123;books&#125;"</span> /&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"myLayout"</span> url=<span class="xml&#45;quote">"http://www.google.com"</span> /&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"myLayout"</span>&#62;</span>
+The content to apply a layout to
+<span class="xml&#45;tag">&#60;/g:applyLayout&#62;</span></pre></div><p class="paragraph"/><h4>Server-Side Includes</h4><p class="paragraph"/>While the <a href="../ref/Tags/applyLayout.html" class="tags">applyLayout</a> tag is useful for applying layouts to external content, if you simply want to include external content in the current page you use the <a href="../ref/Tags/include.html" class="tags">include</a> tag:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:include controller=<span class="xml&#45;quote">"book"</span> action=<span class="xml&#45;quote">"list"</span> /&#62;</span></pre></div><p class="paragraph"/>You can even combine the <a href="../ref/Tags/include.html" class="tags">include</a> tag and the <a href="../ref/Tags/applyLayout.html" class="tags">applyLayout</a> tag for added flexibility:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"myLayout"</span>&#62;</span>
+   <span class="xml&#45;tag">&#60;g:include controller=<span class="xml&#45;quote">"book"</span> action=<span class="xml&#45;quote">"list"</span> /&#62;</span>
+<span class="xml&#45;tag">&#60;/g:applyLayout&#62;</span></pre></div><p class="paragraph"/>Finally, you can also call the <a href="../ref/Tags/include.html" class="tags">include</a> tag from a controller or tag library as a method:<p class="paragraph"/><div class="code"><pre>def content = include(controller:<span class="java&#45;quote">"book"</span>, action:<span class="java&#45;quote">"list"</span>)</pre></div><p class="paragraph"/>The resulting content will be provided via the return value of the <a href="../ref/Tags/include.html" class="tags">include</a> tag.
+
+
+<a name="6.2.5 Static Resources"><!-- Legacy link --></a>
+<h2 id="resources">7.2.5 Static Resources</h2>
+Grails 2.0 integrates with the <a href="http://grails.org/plugin/resources" target="blank">Resources plugin</a> to provide sophisticated static resource management. This plugin is installed by default in new Grails applications.<p class="paragraph"/>The basic way to include a link to a static resource in your application is to use the <a href="../ref/Tags/resource.html" class="tags">resource</a> tag. This simple approach creates a URI pointing to the file.<p class="paragraph"/>However modern applications with dependencies on multiple JavaScript and CSS libraries and frameworks (as well as dependencies on multiple Grails plugins) require something more powerful.<p class="paragraph"/>The issues that the Resources framework tackles are:
+<ul class="star">
+<li>Web application performance tuning is difficult</li>
+<li>Correct ordering of resources, and deferred inclusion of JavaScript</li>
+<li>Resources that depend on others that must be loaded first</li>
+<li>The need for a standard way to expose static resources in plugins and applications</li>
+<li>The need for an extensible processing chain to optimize resources</li>
+<li>Preventing multiple inclusion of the same resource</li>
+</ul><p class="paragraph"/>The plugin achieves this by introducing new artefacts and processing the resources using the server's local file system.<p class="paragraph"/>It adds artefacts for declaring resources, for declaring "mappers" that can process resources, and a servlet filter to serve processed resources.<p class="paragraph"/>What you get is an incredibly advanced resource system that enables you to easily create highly optimized web applications that run the same in development and in production.<p class="paragraph"/>The Resources plugin documentation provides a more detailed overview of the <a href="http://grails-plugins.github.com/grails-resources/" target="blank">concepts</a> which will be beneficial when reading the following guide.
+
+
+<a name="6.2.5.1 Including resources using the resource tags"><!-- Legacy link --></a>
+<h2 id="includingResourcesUsingTheResourceTags">7.2.5.1 Including resources using the resource tags</h2>
+<h4>Pulling in resources with r:require</h4><p class="paragraph"/>To use resources, your GSP page must indicate which resource modules it requires. For example with the <a href="http://grails.org/plugin/jquery" target="blank">jQuery plugin</a>, which exposes a "jquery" resource module, to use jQuery in any page on your site you simply add:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+   <span class="xml&#45;tag">&#60;head&#62;</span>
+      <span class="xml&#45;tag">&#60;r:require module=<span class="xml&#45;quote">"jquery"</span>/&#62;</span>
+      <span class="xml&#45;tag">&#60;r:layoutResources/&#62;</span>
+   <span class="xml&#45;tag">&#60;/head&#62;</span>
+   <span class="xml&#45;tag">&#60;body&#62;</span>
+      &#8230;
+      <span class="xml&#45;tag">&#60;r:layoutResources/&#62;</span>
+   <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>This will automatically include all resources needed for jQuery, including them at the correct locations in the page. By default the plugin sets the disposition to be "head", so they load early in the page.<p class="paragraph"/>You can call <code>r:require</code> multiple times in a GSP page, and you use the "modules" attribute to provide a list of modules:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+   <span class="xml&#45;tag">&#60;head&#62;</span>
+      <span class="xml&#45;tag">&#60;r:require modules=<span class="xml&#45;quote">"jquery, main, blueprint, charting"</span>/&#62;</span>
+      <span class="xml&#45;tag">&#60;r:layoutResources/&#62;</span>
+   <span class="xml&#45;tag">&#60;/head&#62;</span>
+   <span class="xml&#45;tag">&#60;body&#62;</span>
+      &#8230;
+      <span class="xml&#45;tag">&#60;r:layoutResources/&#62;</span>
+   <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>The above may result in many JavaScript and CSS files being included, in the correct order, with some JavaScript files loading at the end of the body to improve the apparent page load time.<p class="paragraph"/>However you cannot use r:require in isolation - as per the examples you must have the &#60;r:layoutResources/&#62; tag to actually perform the render.<p class="paragraph"/><h4>Rendering the links to resources with r:layoutResources</h4><p class="paragraph"/>When you have declared the resource modules that your GSP page requires, the framework needs to render the links to those resources at the correct time.<p class="paragraph"/>To achieve this correctly, you must include the r:layoutResources tag twice in your page, or more commonly, in your GSP layout:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+   <span class="xml&#45;tag">&#60;head&#62;</span>
+      <span class="xml&#45;tag">&#60;g:layoutTitle/&#62;</span>
+      <span class="xml&#45;tag">&#60;r:layoutResources/&#62;</span>
+   <span class="xml&#45;tag">&#60;/head&#62;</span>
+   <span class="xml&#45;tag">&#60;body&#62;</span>
+      <span class="xml&#45;tag">&#60;g:layoutBody/&#62;</span>
+      <span class="xml&#45;tag">&#60;r:layoutResources/&#62;</span>
+   <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>This represents the simplest Sitemesh layout you can have that supports Resources.<p class="paragraph"/>The Resources framework has the concept of a "disposition" for every resource. This is an indication of where in the page the resource should be included.<p class="paragraph"/>The default disposition applied depends on the type of resource. All CSS must be rendered in &#60;head&#62; in HTML, so "head" is the default for all CSS, and will be rendered by the first r:layoutResources. Page load times are improved when JavaScript is loaded after the page content, so the default for JavaScript files is "defer", which means it is rendered when the second r:layoutResources is invoked.<p class="paragraph"/>Note that both your GSP page and your Sitemesh layout (as well as any GSP template fragments) can call r:require to depend on resources. The only limitation is that you must call r:require before the r:layoutResources that should render it.<p class="paragraph"/><h4>Adding page-specific JavaScript code with r:script</h4><p class="paragraph"/>Grails has the <a href="../ref/Tags/javascript.html" class="tags">javascript</a> tag which is adapted to defer to Resources plugin if installed, but it is recommended that you call <code>r:script</code> directly when you need to include fragments of JavaScript code.<p class="paragraph"/>This lets you write some "inline" JavaScript which is actually <strong class="bold">not</strong> rendered inline, but either in the &#60;head&#62; or at the end of the body, based on the disposition.<p class="paragraph"/>Given a Sitemesh layout like this:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+   <span class="xml&#45;tag">&#60;head&#62;</span>
+      <span class="xml&#45;tag">&#60;g:layoutTitle/&#62;</span>
+      <span class="xml&#45;tag">&#60;r:layoutResources/&#62;</span>
+   <span class="xml&#45;tag">&#60;/head&#62;</span>
+   <span class="xml&#45;tag">&#60;body&#62;</span>
+      <span class="xml&#45;tag">&#60;g:layoutBody/&#62;</span>
+      <span class="xml&#45;tag">&#60;r:layoutResources/&#62;</span>
+   <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>...in your GSP you can inject some JavaScript code into the head or deferred regions of the page like this:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+   <span class="xml&#45;tag">&#60;head&#62;</span>
+      <span class="xml&#45;tag">&#60;title&#62;</span>Testing r:script magic!<span class="xml&#45;tag">&#60;/title&#62;</span>
+   <span class="xml&#45;tag">&#60;/head&#62;</span>
+   <span class="xml&#45;tag">&#60;body&#62;</span>
+      <span class="xml&#45;tag">&#60;r:script disposition=<span class="xml&#45;quote">"head"</span>&#62;</span>
+         window.alert('This is at the end of <span class="xml&#45;tag">&#60;head&#62;</span>');
+      <span class="xml&#45;tag">&#60;/r:script&#62;</span>
+      <span class="xml&#45;tag">&#60;r:script disposition=<span class="xml&#45;quote">"defer"</span>&#62;</span>
+         window.alert('This is at the end of the body, and the page has loaded.');
+      <span class="xml&#45;tag">&#60;/r:script&#62;</span>
+   <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>The default disposition is "defer", so the disposition in the latter r:script is purely included for demonstration.<p class="paragraph"/>Note that such r:script code fragments <strong class="bold">always</strong> load after any modules that you have used, to ensure that any required libraries have loaded.<p class="paragraph"/><h4>Linking to images with r:img</h4><p class="paragraph"/>This tag is used to render <code>&#60;img&#62;</code> markup, using the Resources framework to process the resource on the fly (if configured to do so - e.g. make it eternally cacheable).<p class="paragraph"/>This includes any extra attributes on the <code>&#60;img&#62;</code> tag if the resource has been previously declared in a module.<p class="paragraph"/>With this mechanism you can specify the width, height and any other attributes in the resource declaration in the module, and they will be pulled in as necessary.<p class="paragraph"/>Example:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+   <span class="xml&#45;tag">&#60;head&#62;</span>
+      <span class="xml&#45;tag">&#60;title&#62;</span>Testing r:img<span class="xml&#45;tag">&#60;/title&#62;</span>
+   <span class="xml&#45;tag">&#60;/head&#62;</span>
+   <span class="xml&#45;tag">&#60;body&#62;</span>
+      <span class="xml&#45;tag">&#60;r:img uri=<span class="xml&#45;quote">"/images/logo.png"</span>/&#62;</span>
+   <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>Note that Grails has a built-in <code>g:img</code> tag as a shortcut for rendering <code>&#60;img&#62;</code> tags that refer to a static resource. The Grails <a href="../ref/Tags/img.html" class="tags">img</a> tag is Resources-aware and will delegate to <code>r:img</code> if found. However it is recommended that you use <code>r:img</code> directly if using the Resources plugin.<p class="paragraph"/>Alongside the regular Grails <a href="../ref/Tags/resource.html" class="tags">resource</a> tag attributes, this also supports the "uri" attribute for increased brevity.<p class="paragraph"/>See <a href="http://grails-plugins.github.com/grails-resources" target="blank">r:resource documentation</a> for full details.
+
+
+<a name="6.2.5.2 Other resource tags"><!-- Legacy link --></a>
+<h2 id="otherResourceTags">7.2.5.2 Other resource tags</h2>
+<h4>r:resource</h4><p class="paragraph"/>This is equivalent to the Grails <a href="../ref/Tags/resource.html" class="Tags">resource</a> tag, returning a link to the processed static resource. Grails' own <code>g:resource</code> tag delegates to this implementation if found, but if your code requires the Resources plugin, you should use <code>r:resource</code> directly.<p class="paragraph"/>Alongside the regular Grails <a href="../ref/Tags/resource.html" class="Tags">resource</a> tag attributes, this also supports the "uri" attribute for increased brevity.<p class="paragraph"/>See <a href="http://grails-plugins.github.com/grails-resources" target="blank">r:resource documentation</a> for full details.<p class="paragraph"/><h4>r:external</h4><p class="paragraph"/>This is a resource-aware version of Grails <a href="../ref/Tags/external.html" class="Tags">external</a> tag which renders the HTML markup necessary to include an external file resource such as CSS, JS or a favicon.<p class="paragraph"/>See <a href="http://grails-plugins.github.com/grails-resources" target="blank">r:resource documentation</a> for full details.
+
+
+<a name="6.2.5.3 Declaring resources"><!-- Legacy link --></a>
+<h2 id="declaringResources">7.2.5.3 Declaring resources</h2>
+A DSL is provided for declaring resources and modules. This can go either in your <code>Config.groovy</code> in the case of application-specific resources, or more commonly in a resources artefact in <code>grails-app/conf</code>.<p class="paragraph"/>Note that you do not need to declare all your static resources, especially images. However you must to establish dependencies or other resources-specific attributes. Any resource that is not declared is called "ad-hoc" and will still be processed using defaults for that resource type.<p class="paragraph"/>Consider this example resource configuration file, <code>grails-app/conf/MyAppResources.groovy</code>:<p class="paragraph"/><div class="code"><pre>modules = &#123;
+    core &#123;
+        dependsOn 'jquery, utils'<p class="paragraph"/>        resource url: '/js/core.js', disposition: 'head'
+        resource url: '/js/ui.js'
+        resource url: '/css/main.css',
+        resource url: '/css/branding.css'
+        resource url: '/css/print.css', attrs: &#91;media: 'print'&#93;
+    &#125;<p class="paragraph"/>    utils &#123;
+        dependsOn 'jquery'<p class="paragraph"/>        resource url: '/js/utils.js'
+    &#125;<p class="paragraph"/>    forms &#123;
+        dependsOn 'core,utils'<p class="paragraph"/>        resource url: '/css/forms.css'
+        resource url: '/js/forms.js'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>This defines three resource modules; 'core', 'utils' and 'forms'. The resources in these modules will be automatically bundled out of the box according to the module name, resulting in fewer files. You can override this with <code>bundle:'someOtherName'</code> on each resource, or call <code>defaultBundle</code> on the module (see <a href="http://grails-plugins.github.com/grails-resources" target="blank">resources plugin documentation</a>).<p class="paragraph"/>It declares dependencies between them using <code>dependsOn</code>, which controls the load order of the resources.<p class="paragraph"/>When you include an <code>&#60;r:require module="forms"/&#62;</code> in your GSP, it will pull in all the resources from 'core' and 'utils' as well as 'jquery', all in the correct order.<p class="paragraph"/>You'll also notice the <code>disposition:'head'</code> on the <code>core.js</code> file. This tells Resources that while it can defer all the other JS files to the end of the body, this one must go into the <code>&#60;head&#62;</code>.<p class="paragraph"/>The CSS file for print styling adds custom attributes using the <code>attrs</code> map option, and these are passed through to the <code>r:external</code> tag when the engine renders the link to the resource, so you can customize the HTML attributes of the generated link.<p class="paragraph"/>There is no limit to the number of modules or xxxResources.groovy artefacts you can provide, and plugins can supply them to expose modules to applications, which is exactly how the jQuery plugin works.<p class="paragraph"/>To define modules like this in your application's Config.groovy, you simply assign the DSL closure to the <code>grails.resources.modules</code> Config variable.<p class="paragraph"/>For full details of the resource DSL please see the <a href="http://grails-plugins.github.com/grails-resources" target="blank">resources plugin documentation</a>.
+
+
+<a name="6.2.5.4 Overriding plugin resources"><!-- Legacy link --></a>
+<h2 id="overridingPluginResources">7.2.5.4 Overriding plugin resources</h2>
+Because a resource module can define the bundle groupings and other attributes of resources, you may find that the settings provided are not correct for your application.<p class="paragraph"/>For example, you may wish to bundle jQuery and some other libraries all together in one file. There is a load-time and caching trade-off here, but often it is the case that you'd like to override some of these settings.<p class="paragraph"/>To do this, the DSL supports an "overrides" clause, within which you can change the <code>defaultBundle</code> setting for a module, or attributes of individual resources that have been declared with a unique id:<p class="paragraph"/><div class="code"><pre>modules = &#123;
+    core &#123;
+        dependsOn 'jquery, utils'
+        defaultBundle 'monolith'<p class="paragraph"/>        resource url: '/js/core.js', disposition: 'head'
+        resource url: '/js/ui.js'
+        resource url: '/css/main.css',
+        resource url: '/css/branding.css'
+        resource url: '/css/print.css', attrs: &#91;media: 'print'&#93;
+    &#125;<p class="paragraph"/>    utils &#123;
+        dependsOn 'jquery'
+        defaultBundle 'monolith'<p class="paragraph"/>        resource url: '/js/utils.js'
+    &#125;<p class="paragraph"/>    forms &#123;
+        dependsOn 'core,utils'
+        defaultBundle 'monolith'<p class="paragraph"/>        resource url: '/css/forms.css'
+        resource url: '/js/forms.js'
+    &#125;<p class="paragraph"/>    overrides &#123;
+        jquery &#123;
+            defaultBundle 'monolith'
+        &#125;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>This will put all code into a single bundle named 'monolith'. Note that this can still result in multiple files, as separate bundles are required for head and defer dispositions, and JavaScript and CSS files are bundled separately.<p class="paragraph"/>Note that overriding individual resources requires the original declaration to have included a unique id for the resource.<p class="paragraph"/>For full details of the resource DSL please see the <a href="http://grails-plugins.github.com/grails-resources" target="blank">resources plugin documentation</a>.
+
+
+<a name="6.2.5.5 Optimizing your resources"><!-- Legacy link --></a>
+<h2 id="optimizingYourResources">7.2.5.5 Optimizing your resources</h2>
+The Resources framework uses "mappers" to mutate the resources into the final format served to the user.<p class="paragraph"/>The resource mappers are applied to each static resource once, in a specific order. You can create your own resource mappers, and several plugins provide some already for zipping, caching and minifying.<p class="paragraph"/>Out of the box, the Resources plugin provides bundling of resources into fewer files, which is achieved with a few mappers that also perform CSS re-writing to handle when your CSS files are moved into a bundle.<p class="paragraph"/><h4>Bundling multiple resources into fewer files</h4><p class="paragraph"/>The 'bundle' mapper operates by default on any resource with a "bundle" defined - or inherited from a <code>defaultBundle</code> clause on the module. Modules have an implicit default bundle name the same as the name of the module.<p class="paragraph"/>Files of the same kind will be aggregated into this bundle file. Bundles operate across module boundaries:<p class="paragraph"/><div class="code"><pre>modules = &#123;
+    core &#123;
+        dependsOn 'jquery, utils'
+        defaultBundle 'common'<p class="paragraph"/>        resource url: '/js/core.js', disposition: 'head'
+        resource url: '/js/ui.js', bundle: 'ui'
+        resource url: '/css/main.css', bundle: 'theme'
+        resource url: '/css/branding.css'
+        resource url: '/css/print.css', attrs: &#91;media: 'print'&#93;
+    &#125;<p class="paragraph"/>    utils &#123;
+        dependsOn 'jquery'<p class="paragraph"/>        resource url: '/js/utils.js', bundle: 'common'
+    &#125;<p class="paragraph"/>    forms &#123;
+        dependsOn 'core,utils'<p class="paragraph"/>        resource url: '/css/forms.css', bundle: 'ui'
+        resource url: '/js/forms.js', bundle: 'ui'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Here you see that resources are grouped into bundles; 'common', 'ui' and 'theme' - across module boundaries.<p class="paragraph"/>Note that auto-bundling by module does <strong class="bold">not</strong> occur if there is only one resource in the module.<p class="paragraph"/><h4>Making resources cache "eternally" in the client browser</h4><p class="paragraph"/>Caching resources "eternally" in the client is only viable if the resource has a unique name that changes whenever the contents change, and requires caching headers to be set on the response.<p class="paragraph"/>The <a href="http://grails.org/plugin/cached-resources" target="blank">cached-resources</a> plugin provides a mapper that achieves this by hashing your files and renaming them based on this hash. It also sets the caching headers on every response for those resources. To use, simply install the cached-resources plugin.<p class="paragraph"/>Note that the caching headers can only be set if your resources are being served by your application. If you have another server serving the static content from your app (e.g. Apache HTTPD), configure it to send caching headers. Alternatively you can configure it to request and proxy the resources from your container.<p class="paragraph"/><h4>Zipping resources</h4><p class="paragraph"/>Returning gzipped resources is another way to reduce page load times and reduce bandwidth.<p class="paragraph"/>The <a href="http://grails.org/plugin/zipped-resources" target="blank">zipped-resources</a> plugin provides a mapper that automatically compresses your content, excluding by default already compressed formats such as gif, jpeg and png.<p class="paragraph"/>Simply install the zipped-resources plugin and it works.<p class="paragraph"/><h4>Minifying</h4><p class="paragraph"/>There are a number of CSS and JavaScript minifiers available to obfuscate and reduce the size of your code. At the time of writing none are publicly released but releases are imminent.
+
+
+<a name="6.2.5.6 Debugging"><!-- Legacy link --></a>
+<h2 id="debugging">7.2.5.6 Debugging</h2>
+When your resources are being moved around, renamed and otherwise mutated, it can be hard to debug client-side issues. Modern browsers, especially Safari, Chrome and Firefox have excellent tools that let you view all the resources requested by a page, including the headers and other information about them.<p class="paragraph"/>There are several debugging features built in to the Resources framework.<p class="paragraph"/><h4>X-Grails-Resources-Original-Src Header</h4><p class="paragraph"/>Every resource served in development mode will have the X-Grails-Resources-Original-Src: header added, indicating the original source file(s) that make up the response.<p class="paragraph"/><h4>Adding the debug flag</h4><p class="paragraph"/>If you add a query parameter <strong class="bold">_debugResources=y</strong> to your URL and request the page, Resources will bypass any processing so that you can see your original source files.<p class="paragraph"/>This also adds a unique timestamp to all your resource URLs, to defeat any caching that browsers may use. This means that you should always see your very latest code when you reload the page.<p class="paragraph"/><h4>Turning on debug all the time</h4><p class="paragraph"/>You can turn on the aforementioned debug mechanism without requiring a query parameter, but turning it on in Config.groovy:<p class="paragraph"/><div class="code"><pre>grails.resources.debug = <span class="java&#45;keyword">true</span></pre></div><p class="paragraph"/>You can of course set this per-environment.
+
+
+<a name="6.2.5.7 Preventing processing of resources"><!-- Legacy link --></a>
+<h2 id="preventingProcessingOfResources">7.2.5.7 Preventing processing of resources</h2>
+Sometimes you do not want a resource to be processed in a particular way, or even at all. Occasionally you may also want to disable all resource mapping.<p class="paragraph"/><h4>Preventing the application of a specific mapper to an individual resource</h4><p class="paragraph"/>All resource declarations support a convention of noXXXX:true where XXXX is a mapper name.<p class="paragraph"/>So for example to prevent the "hashandcache" mapper from being applied to a resource (which renames and moves it, potentially breaking relative links written in JavaScript code), you would do this:<p class="paragraph"/><div class="code"><pre>modules = &#123;
+    forms &#123;
+        resource url: '/css/forms.css', nohashandcache: <span class="java&#45;keyword">true</span>
+        resource url: '/js/forms.js', nohashandcache: <span class="java&#45;keyword">true</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Excluding/including paths and file types from specific mappers</h4><p class="paragraph"/>Mappers have includes/excludes Ant patterns to control whether they apply to a given resource. Mappers set sensible defaults for these based on their activity, for example the zipped-resources plugin's "zip" mapper is set to exclude images by default.<p class="paragraph"/>You can configure this in your <code>Config.groovy</code> using the mapper name e.g:<p class="paragraph"/><div class="code"><pre>// We wouldn't link to .exe files using Resources but <span class="java&#45;keyword">for</span> the sake of example:
+grails.resources.zip.excludes = &#91;'&#42;&#42;/&#42;.zip', '&#42;&#42;/&#42;.exe'&#93;<p class="paragraph"/>// Perhaps <span class="java&#45;keyword">for</span> some reason we want to prevent bundling on <span class="java&#45;quote">"less"</span> CSS files:
+grails.resources.bundle.excludes = &#91;'&#42;&#42;/&#42;.less'&#93;</pre></div><p class="paragraph"/>There is also an "includes" inverse. Note that settings these replaces the default includes/excludes for that mapper - it is not additive.<p class="paragraph"/><h4>Controlling what is treated as an "ad-hoc" (legacy) resource</h4><p class="paragraph"/>Ad-hoc resources are those undeclared, but linked to directly in your application <strong class="bold">without</strong> using the Grails or Resources linking tags (resource, img or external).<p class="paragraph"/>These may occur with some legacy plugins or code with hardcoded paths in.<p class="paragraph"/>There is a Config.groovy setting <strong class="bold">grails.resources.adhoc.patterns</strong> which defines a list of Servlet API compliant filter URI mappings, which the Resources filter will use to detect such "ad-hoc resource" requests.<p class="paragraph"/>By default this is set to:
+<div class="code"><pre>grails.resources.adhoc.patterns = &#91;'images/&#42;', '&#42;.js', '&#42;.css'&#93;</pre></div>
+
+
+<a name="6.2.5.8 Other Resources-aware plugins"><!-- Legacy link --></a>
+<h2 id="otherResourcesPlugins">7.2.5.8 Other Resources-aware plugins</h2>
+At the time of writing, the following plugins include support for the Resources framework:
+<ul class="star">
+<li><a href="http://grails.org/plugin/jquery" target="blank">jquery</a></li>
+<li><a href="http://grails.org/plugin/jquery-ui" target="blank">jquery-ui</a></li>
+<li><a href="http://grails.org/plugin/blueprint" target="blank">blueprint</a></li>
+<li><a href="http://grails.org/plugin/lesscss-resources" target="blank">lesscss-resources</a></li>
+<li><a href="http://grails.org/plugin/zipped-resources" target="blank">zipped-resources</a></li>
+<li><a href="http://grails.org/plugin/cached-resources" target="blank">cached-resources</a></li>
+</ul><p class="paragraph"/>
+
+<a name="6.2.6 Sitemesh Content Blocks"><!-- Legacy link --></a>
+<h2 id="sitemeshContentBlocks">7.2.6 Sitemesh Content Blocks</h2>
+Although it is useful to decorate an entire page sometimes you may find the need to decorate independent sections of your site. To do this you can use content blocks. To get started, partition the page to be decorated using the <code>&#60;content&#62;</code> tag:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;content tag=<span class="xml&#45;quote">"navbar"</span>&#62;</span>
+&#8230; draw the navbar here&#8230;
+<span class="xml&#45;tag">&#60;/content&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;content tag=<span class="xml&#45;quote">"header"</span>&#62;</span>
+&#8230; draw the header here&#8230;
+<span class="xml&#45;tag">&#60;/content&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;content tag=<span class="xml&#45;quote">"footer"</span>&#62;</span>
+&#8230; draw the footer here&#8230;
+<span class="xml&#45;tag">&#60;/content&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;content tag=<span class="xml&#45;quote">"body"</span>&#62;</span>
+&#8230; draw the body here&#8230;
+<span class="xml&#45;tag">&#60;/content&#62;</span></pre></div><p class="paragraph"/>Then within the layout you can reference these components and apply individual layouts to each:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+    <span class="xml&#45;tag">&#60;body&#62;</span>
+        <span class="xml&#45;tag">&#60;div id=<span class="xml&#45;quote">"header"</span>&#62;</span>
+            <span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"headerLayout"</span>&#62;</span>
+                <span class="xml&#45;tag">&#60;g:pageProperty name=<span class="xml&#45;quote">"page.header"</span> /&#62;</span>
+            <span class="xml&#45;tag">&#60;/g:applyLayout&#62;</span>
+        <span class="xml&#45;tag">&#60;/div&#62;</span>
+        <span class="xml&#45;tag">&#60;div id=<span class="xml&#45;quote">"nav"</span>&#62;</span>
+            <span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"navLayout"</span>&#62;</span>
+                <span class="xml&#45;tag">&#60;g:pageProperty name=<span class="xml&#45;quote">"page.navbar"</span> /&#62;</span>
+            <span class="xml&#45;tag">&#60;/g:applyLayout&#62;</span>
+        <span class="xml&#45;tag">&#60;/div&#62;</span>
+        <span class="xml&#45;tag">&#60;div id=<span class="xml&#45;quote">"body"</span>&#62;</span>
+            <span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"bodyLayout"</span>&#62;</span>
+                <span class="xml&#45;tag">&#60;g:pageProperty name=<span class="xml&#45;quote">"page.body"</span> /&#62;</span>
+            <span class="xml&#45;tag">&#60;/g:applyLayout&#62;</span>
+        <span class="xml&#45;tag">&#60;/div&#62;</span>
+        <span class="xml&#45;tag">&#60;div id=<span class="xml&#45;quote">"footer"</span>&#62;</span>
+            <span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"footerLayout"</span>&#62;</span>
+                <span class="xml&#45;tag">&#60;g:pageProperty name=<span class="xml&#45;quote">"page.footer"</span> /&#62;</span>
+            <span class="xml&#45;tag">&#60;/g:applyLayout&#62;</span>
+        <span class="xml&#45;tag">&#60;/div&#62;</span>
+    <span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div>
+
+
+<a name="6.2.7 Making Changes to a Deployed Application"><!-- Legacy link --></a>
+<h2 id="makingChangesToADeployedApplication">7.2.7 Making Changes to a Deployed Application</h2>
+One of the main issues with deploying a Grails application (or typically any servlet-based one) is that any change to the views requires that you redeploy your whole application. If all you want to do is fix a typo on a page, or change an image link, it can seem like a lot of unnecessary work. For such simple requirements, Grails does have a solution: the  <code>grails.gsp.view.dir</code>  configuration setting.<p class="paragraph"/>How does this work? The first step is to decide where the GSP files should go. Let's say we want to keep them unpacked in a  <code>/var/www/grails/my-app</code>  directory. We add these two lines to  <code>grails-app/conf/Config.groovy</code> :
+<div class="code"><pre>grails.gsp.enable.reload = <span class="java&#45;keyword">true</span>
+grails.gsp.view.dir = <span class="java&#45;quote">"/<span class="java&#45;keyword">var</span>/www/grails/my&#45;app/"</span></pre></div>
+The first line tells Grails that modified GSP files should be reloaded at runtime. If you don't have this setting, you can make as many changes as you like but they won't be reflected in the running application until you restart. The second line tells Grails where to load the views and layouts from.<p class="paragraph"/><blockquote class="note">
+The trailing slash on the  <code>grails.gsp.view.dir</code>  value is important! Without it, Grails will look for views in the parent directory.
+</blockquote><p class="paragraph"/>Setting "grails.gsp.view.dir" is optional. If it's not specified, you can update files directly to the application server's deployed war directory. Depending on the application server, these files might get overwritten when the server is restarted. Most application servers support "exploded war deployment" which is recommended in this case.<p class="paragraph"/>With those settings in place, all you need to do is copy the views from your web application to the external directory. On a Unix-like system, this would look something like this:
+<div class="code"><pre>mkdir &#45;p /<span class="java&#45;keyword">var</span>/www/grails/my&#45;app/grails&#45;app/views
+cp &#45;R grails&#45;app/views/&#42; /<span class="java&#45;keyword">var</span>/www/grails/my&#45;app/grails&#45;app/views</pre></div>
+The key point here is that you must retain the view directory structure, including the  <code>grails-app/views</code>  bit. So you end up with the path  <code>/var/www/grails/my-app/grails-app/views/...</code> .<p class="paragraph"/>One thing to bear in mind with this technique is that every time you modify a GSP, it uses up permgen space. So at some point you will eventually hit "out of permgen space" errors unless you restart the server. So this technique is not recommended for frequent or large changes to the views.<p class="paragraph"/>There are also some System properties to control GSP reloading:
+<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Name</strong></th><th><strong class="bold">Description</strong></th><th><strong class="bold">Default</strong></th></tr><tr class="table-odd"><td>grails.gsp.enable.reload</td><td>altervative system property for enabling the GSP reload mode without changing Config.groovy</td><td>&#160;</td></tr><tr class="table-even"><td>grails.gsp.reload.interval</td><td>interval between checking the lastmodified time of the gsp source file, unit is milliseconds</td><td>5000</td></tr><tr class="table-odd"><td>grails.gsp.reload.granularity</td><td>the number of milliseconds leeway to give before deciding a file is out of date. this is needed because different roundings usually cause a 1000ms difference in lastmodified times</td><td>1000</td></tr></table><p class="paragraph"/>GSP reloading is supported for precompiled GSPs since Grails 1.3.5 .
+
+
+<a name="6.2.8 GSP Debugging"><!-- Legacy link --></a>
+<h2 id="GSPDebugging">7.2.8 GSP Debugging</h2>
+<h4>Viewing the generated source code</h4>
+<ul class="star">
+<li>Adding "?showSource=true" or "&#38;showSource=true" to the url shows the generated Groovy source code for the view instead of rendering it. It won't show the source code of included templates. This only works in development mode</li>
+<li>The saving of all generated source code can be activated by setting the property "grails.views.gsp.keepgenerateddir" (in Config.groovy) . It must point to a directory that exists and is writable.</li>
+<li>During "grails war" gsp pre-compilation, the generated source code is stored in grails.project.work.dir/gspcompile (usually in ~/.grails/(grails_version)/projects/(project name)/gspcompile).</li>
+</ul><p class="paragraph"/><h4>Debugging GSP code with a debugger</h4>
+<ul class="star">
+<li>See <a href="http://contraptionsforprogramming.blogspot.com/2010/08/debuggable-gsps-in-springsource-tool.html" target="blank">Debugging GSP in STS</a></li>
+</ul><p class="paragraph"/><h4>Viewing information about templates used to render a single url</h4><p class="paragraph"/>GSP templates are reused in large web applications by using the <code>g:render</code> taglib. Several small templates can be used to render a single page.
+It might be hard to find out what GSP template actually renders the html seen in the result.
+The debug templates -feature adds html comments to the output. The comments contain debug information about gsp templates used to render the page.<p class="paragraph"/>Usage is simple: append "?debugTemplates" or "&#38;debugTemplates" to the url and view the source of the result in your browser.
+"debugTemplates" is restricted to development mode. It won't work in production.<p class="paragraph"/>Here is an example of comments added by debugTemplates :
+<div class="code"><pre>&#60;!&#45;&#45; GSP &#35;2 START template: /home/.../views/_carousel.gsp
+     precompiled: <span class="java&#45;keyword">false</span> lastmodified: &#8230; &#45;&#45;&#62;
+.
+.
+.
+&#60;!&#45;&#45; GSP &#35;2 END template: /home/.../views/_carousel.gsp
+     rendering time: 115 ms &#45;&#45;&#62;</pre></div><p class="paragraph"/>Each comment block has a unique id so that you can find the start &#38; end of each template call.
+
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/GORM.html">&lt;&lt; <strong>6</strong><span>Object Relational Mapping (GORM)</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/validation.html"><strong>8</strong><span>Validation</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Command Line</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/add-proxy.html">add-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bootstrap.html">bootstrap</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clean.html">clean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clear-proxy.html">clear-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/compile.html">compile</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/console.html">console</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-app.html">create-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-controller.html">create-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-domain-class.html">create-domain-class</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-filters.html">create-filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-multi-project-build.html">create-multi-project-build</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-plugin.html">create-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-pom.html">create-pom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-scaffold-controller.html">create-scaffold-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-script.html">create-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-service.html">create-service</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-tag-lib.html">create-tag-lib</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-unit-test.html">create-unit-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-controller.html">generate-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-views.html">generate-views</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/help.html">help</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/init.html">init</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-dependency.html">install-dependency</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-plugin.html">install-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-templates.html">install-templates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/integrate-with.html">integrate-with</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/interactive.html">interactive</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugin-updates.html">list-plugin-updates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/migrate-docs.html">migrate-docs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package-plugin.html">package-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package.html">package</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/plugin-info.html">plugin-info</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/refresh-dependencies.html">refresh-dependencies</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/remove-proxy.html">remove-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-war.html">run-war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-proxy.html">set-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-version.html">set-version</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/shell.html">shell</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/uninstall-plugin.html">uninstall-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/upgrade.html">upgrade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/wrapper.html">wrapper</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Constraints</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Constraints/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/attributes.html">attributes</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/bindable.html">bindable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/blank.html">blank</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/creditCard.html">creditCard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/email.html">email</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/inList.html">inList</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/matches.html">matches</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/max.html">max</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/maxSize.html">maxSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/min.html">min</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/minSize.html">minSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/notEqual.html">notEqual</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/nullable.html">nullable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/range.html">range</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/scale.html">scale</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/size.html">size</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/unique.html">unique</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/url.html">url</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/validator.html">validator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/widget.html">widget</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Controllers</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Controllers/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/afterInterceptor.html">afterInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/allowedMethods.html">allowedMethods</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/beforeInterceptor.html">beforeInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/bindData.html">bindData</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/chain.html">chain</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/defaultAction.html">defaultAction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/forward.html">forward</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/grailsApplication.html">grailsApplication</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/redirect.html">redirect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/session.html">session</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withForm.html">withForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withFormat.html">withFormat</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Database Mapping</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoImport.html">autoImport</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoTimestamp.html">autoTimestamp</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/batchSize.html">batchSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cache.html">cache</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cascade.html">cascade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/column.html">column</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/discriminator.html">discriminator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicInsert.html">dynamicInsert</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicUpdate.html">dynamicUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/fetch.html">fetch</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/id.html">id</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/ignoreNotFound.html">ignoreNotFound</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/indexColumn.html">indexColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/insertable.html">insertable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/joinTable.html">joinTable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/lazy.html">lazy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/order.html">order</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/sort.html">sort</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/table.html">table</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/type.html">type</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/updateable.html">updateable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/version.html">version</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Domain Classes</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/addTo.html">addTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/attach.html">attach</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/belongsTo.html">belongsTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/clearErrors.html">clearErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/constraints.html">constraints</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/count.html">count</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/countBy.html">countBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/createCriteria.html">createCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/delete.html">delete</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/discard.html">discard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/embedded.html">embedded</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/errors.html">errors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeQuery.html">executeQuery</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeUpdate.html">executeUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/exists.html">exists</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/fetchMode.html">fetchMode</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/find.html">find</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllBy.html">findAllBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllWhere.html">findAllWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findBy.html">findBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateBy.html">findOrCreateBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateWhere.html">findOrCreateWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveBy.html">findOrSaveBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveWhere.html">findOrSaveWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findWhere.html">findWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/get.html">get</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getAll.html">getAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getDirtyPropertyNames.html">getDirtyPropertyNames</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getPersistentValue.html">getPersistentValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasMany.html">hasMany</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasOne.html">hasOne</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/ident.html">ident</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/instanceOf.html">instanceOf</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isAttached.html">isAttached</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isDirty.html">isDirty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/list.html">list</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/listOrderBy.html">listOrderBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/load.html">load</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/lock.html">lock</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mappedBy.html">mappedBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mapping.html">mapping</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/merge.html">merge</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/namedQueries.html">namedQueries</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/properties.html">properties</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/read.html">read</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/refresh.html">refresh</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/removeFrom.html">removeFrom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/save.html">save</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/transients.html">transients</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/validate.html">validate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/where.html">where</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/whereAny.html">whereAny</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withCriteria.html">withCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withNewSession.html">withNewSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withSession.html">withSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withTransaction.html">withTransaction</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Plug-ins</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Plug-ins/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/URL%20mappings.html">URL mappings</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/codecs.html">codecs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/controllers.html">controllers</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/core.html">core</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/dataSource.html">dataSource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/domainClasses.html">domainClasses</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/filters.html">filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/hibernate.html">hibernate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/i18n.html">i18n</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/logging.html">logging</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/scaffolding.html">scaffolding</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/services.html">services</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/servlets.html">servlets</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/web%20flow.html">web flow</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Services</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Services/scope.html">scope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Services/transactional.html">transactional</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Servlet API</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tag Libraries</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/pageScope.html">pageScope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tags</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmit.html">actionSubmit</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmitImage.html">actionSubmitImage</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/applyLayout.html">applyLayout</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/checkBox.html">checkBox</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/collect.html">collect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/cookie.html">cookie</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/country.html">country</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/countrySelect.html">countrySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLink.html">createLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLinkTo.html">createLinkTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/currencySelect.html">currencySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/datePicker.html">datePicker</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/each.html">each</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/eachError.html">eachError</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/else.html">else</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/elseif.html">elseif</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/external.html">external</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/form.html">form</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formRemote.html">formRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatBoolean.html">formatBoolean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatDate.html">formatDate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatNumber.html">formatNumber</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/grep.html">grep</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/header.html">header</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hiddenField.html">hiddenField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/if.html">if</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/img.html">img</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/include.html">include</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isAvailable.html">isAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isNotAvailable.html">isNotAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/javascript.html">javascript</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/join.html">join</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutBody.html">layoutBody</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutHead.html">layoutHead</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutTitle.html">layoutTitle</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/link.html">link</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/localeSelect.html">localeSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/message.html">message</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/meta.html">meta</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/pageProperty.html">pageProperty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/paginate.html">paginate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/passwordField.html">passwordField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radio.html">radio</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radioGroup.html">radioGroup</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteField.html">remoteField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteFunction.html">remoteFunction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteLink.html">remoteLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/renderErrors.html">renderErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/resource.html">resource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/select.html">select</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/set.html">set</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/setProvider.html">setProvider</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/sortableColumn.html">sortableColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitButton.html">submitButton</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitToRemote.html">submitToRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textArea.html">textArea</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textField.html">textField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/timeZoneSelect.html">timeZoneSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/unless.html">unless</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/uploadForm.html">uploadForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/while.html">while</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.
+    Sponsored by <a href="http://springsource.com">SpringSource</a>
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>6.3 Tag Libraries</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="6.3 Tag Libraries">6.3 Tag Libraries</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            Like <a href="http://java.sun.com/products/jsp/" target="blank">Java Server Pages</a> (JSP), GSP supports the concept of custom tag libraries. Unlike JSP, Grails tag library mechanism is simply, elegant and completely reloadable at runtime.<p class="paragraph"/>Quite simply, to create a tag library create a Groovy class that ends with the convention <code>TagLib</code> and place it within the <code>grails-app/taglib</code> directory:<p class="paragraph"/><div class="code"><pre>class SimpleTagLib &#123;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/>Now to create a tag simply create property that is assigned a block of code that takes two arguments: The tag attributes and the body content:<p class="paragraph"/><div class="code"><pre>class SimpleTagLib &#123;
+    def simple = &#123; attrs, body &#45;&#62;<p class="paragraph"/>    &#125;
+&#125;</pre></div><p class="paragraph"/>The <code>attrs</code> argument is a simple map of the attributes of the tag, whilst the <code>body</code> argument is another invokable block of code that returns the body content:<p class="paragraph"/><div class="code"><pre>class SimpleTagLib &#123;
+    def emoticon = &#123; attrs, body &#45;&#62;
+       out &#60;&#60; body() &#60;&#60; (attrs.happy == '<span class="java&#45;keyword">true</span>' ? <span class="java&#45;quote">" :&#45;)"</span> : <span class="java&#45;quote">" :&#45;("</span>)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>As demonstrated above there is an implicit <code>out</code> variable that refers to the output <code>Writer</code> which you can use to append content to the response. Then you can simply reference the tag inside your GSP, no imports necessary:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:emoticon happy=<span class="xml&#45;quote">"true"</span>&#62;</span>Hi John<span class="xml&#45;tag">&#60;/g:emoticon&#62;</span></pre></div><p class="paragraph"/><blockquote class="note">
+To help IDEs like SpringSource Tool Suite (STS) and others autocomplete tag attributes, you should add Javadoc comments to your tag closures with <code>&#64;attr</code> descriptions. Since taglibs use Groovy code it can be difficult to reliably detect all usable attributes.<p class="paragraph"/>For example:<p class="paragraph"/><div class="code"><pre>class SimpleTagLib &#123;<p class="paragraph"/>    /&#42;&#42;
+     &#42; Renders the body with an emoticon.
+     &#42;
+     &#42; @attr happy whether to show a happy emoticon ('<span class="java&#45;keyword">true</span>') or a sad emoticon ('<span class="java&#45;keyword">false</span>')
+     &#42;/
+    def emoticon = &#123; attrs, body &#45;&#62;
+       out &#60;&#60; body() &#60;&#60; (attrs.happy == '<span class="java&#45;keyword">true</span>' ? <span class="java&#45;quote">" :&#45;)"</span> : <span class="java&#45;quote">" :&#45;("</span>)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>and any mandatory attributes should include the REQUIRED keyword, e.g.<p class="paragraph"/><div class="code"><pre>class SimpleTagLib &#123;<p class="paragraph"/>    /&#42;&#42;
+     &#42; Creates a <span class="java&#45;keyword">new</span> password field.
+     &#42;
+     &#42; @attr name REQUIRED the field name
+     &#42; @attr value the field value
+     &#42;/
+    def passwordField = &#123; attrs &#45;&#62;
+        attrs.type = <span class="java&#45;quote">"password"</span>
+        attrs.tagName = <span class="java&#45;quote">"passwordField"</span>
+        fieldImpl(out, attrs)
+    &#125;
+&#125;</pre></div>
+</blockquote>
+
+        </div>
+    </body>
+</html>

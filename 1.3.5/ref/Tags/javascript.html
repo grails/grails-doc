@@ -1,0 +1,87 @@
+<html>
+    <head>
+	    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	    <title>Grails Reference</title>
+	    <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8" />
+	    <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+	    <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <h1>javascript </h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Allows inclusion of javascript libraries and scripts as well a shorthand for inline Javascript<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/><div class="code"><pre>// actually imports '/app/js/myscript.js'
+<span class="xml&#45;tag">&#60;g:javascript src=<span class="xml&#45;quote">"myscript.js"</span> /&#62;</span><p class="paragraph"/>// imports all the necessary js for the scriptaculous library
+<span class="xml&#45;tag">&#60;g:javascript library=<span class="xml&#45;quote">"scriptaculous"</span> /&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;g:javascript&#62;</span>alert('hello')<span class="xml&#45;tag">&#60;/g:javascript&#62;</span></pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Attributes
+<ul class="star">
+<li><code>contextPath</code> (optional) - the context path to use (relative to the application context path). Defaults to "" or path to the plugin for a plugin view or template.</li>
+<li> <code>library</code> (optional) - The name of the library to include. Either "prototype", "scriptaculous", "yahoo" or "dojo"</li>
+<li> <code>src</code> (optional) - The name of the javascript file to import. Will look in /app/js dir</li>
+<li> <code>base</code> (optional - Since 0.6) - specifies the full base url to prepend to the library name</li>
+<li><code>plugin</code> (optional) - The plugin to look for the javascript in</li>
+</ul><p class="paragraph"/><h2>Source</h2><p class="paragraph"/><p><a href="#" onclick="document.getElementById('javascript').style.display='inline'">Show Source</a></p><div id="javascript" style="display:none;"><div class="code"><pre>def javascript = &#123; attrs, body &#45;&#62;<p class="paragraph"/>        setUpRequestAttributes()<p class="paragraph"/>        <span class="java&#45;keyword">if</span> (attrs.src) &#123;
+            javascriptInclude(attrs)
+        &#125;
+        <span class="java&#45;keyword">else</span> <span class="java&#45;keyword">if</span> (attrs.library) &#123;
+            <span class="java&#45;keyword">if</span> (LIBRARY_MAPPINGS.containsKey(attrs.library)) &#123;
+                LIBRARY_MAPPINGS&#91;attrs.library&#93;.each &#123;
+                    <span class="java&#45;keyword">if</span> (!request&#91;INCLUDED_JS&#93;.contains(it)) &#123;
+                        request&#91;INCLUDED_JS&#93; &#60;&#60; it
+                        def newattrs = &#91;:&#93; + attrs
+                        newattrs.src = it + &#39;.js&#39;
+                        javascriptInclude(newattrs)
+                    &#125;
+                &#125;
+                <span class="java&#45;keyword">if</span> (!request&#91;INCLUDED_LIBRARIES&#93;.contains(attrs.library)) &#123;
+                    request&#91;INCLUDED_LIBRARIES&#93; &#60;&#60; attrs.library
+                &#125;
+            &#125;
+            <span class="java&#45;keyword">else</span> &#123;
+                <span class="java&#45;keyword">if</span> (!request&#91;INCLUDED_LIBRARIES&#93;.contains(attrs.library)) &#123;
+                    def newattrs = &#91;:&#93; + attrs
+                    newattrs.src = newattrs.remove(&#39;library&#39;)+&#39;.js&#39;
+                    javascriptInclude(newattrs)
+                    request&#91;INCLUDED_LIBRARIES&#93; &#60;&#60; attrs.library
+                    request&#91;INCLUDED_JS&#93; &#60;&#60; attrs.library
+                &#125;
+            &#125;
+        &#125;
+        <span class="java&#45;keyword">else</span> &#123;
+            out.println &#39;&#60;script type=&#34;text/javascript&#34;&#62;&#39;
+            out.println body()
+            out.println &#39;&#60;/script&#62;&#39;
+        &#125;
+    &#125;<p class="paragraph"/>    <span class="java&#45;keyword">private</span> javascriptInclude(attrs) &#123;
+        def requestPluginContext
+        <span class="java&#45;keyword">if</span> (attrs.plugin) &#123;
+            requestPluginContext = pluginManager.getPluginPath(attrs.remove(&#39;plugin&#39;)) ?: &#39;&#39;
+        &#125;
+        <span class="java&#45;keyword">else</span> &#123;
+            <span class="java&#45;keyword">if</span> (attrs.contextPath != <span class="java&#45;keyword">null</span>) &#123;
+                requestPluginContext = attrs.remove(&#39;contextPath&#39;).toString()
+            &#125;
+            <span class="java&#45;keyword">else</span> &#123;
+                requestPluginContext = pageScope.pluginContextPath ?: &#39;&#39;
+            &#125;
+        &#125;<p class="paragraph"/>        def writer = out
+        writer &#60;&#60; &#39;&#60;script type=&#34;text/javascript&#34; src=&#34;&#39;
+        <span class="java&#45;keyword">if</span> (!attrs.base) &#123;
+            def baseUri = grailsAttributes.getApplicationUri(request)
+            writer &#60;&#60; baseUri &#60;&#60; (baseUri.endsWith(&#39;/&#39;) ? &#39;&#39; : &#39;/&#39;)
+            <span class="java&#45;keyword">if</span> (requestPluginContext) &#123;
+                writer &#60;&#60; (requestPluginContext.startsWith(&#34;/&#34;) ? requestPluginContext.substring(1) : requestPluginContext)
+                writer &#60;&#60; &#34;/&#34;
+            &#125;
+            writer &#60;&#60; &#39;js/&#39;
+        &#125;
+        <span class="java&#45;keyword">else</span> &#123;
+            writer &#60;&#60; attrs.base
+        &#125;<p class="paragraph"/>        writer &#60;&#60; attrs.src
+        writer &#60;&#60; &#39;&#34;&#39;
+        def otherAttrs = &#91;:&#93; + attrs
+        otherAttrs.remove(&#39;base&#39;)
+        otherAttrs.remove(&#39;src&#39;)
+        otherAttrs.remove(&#39;library&#39;)
+        otherAttrs.each &#123;k, v &#45;&#62; writer &#60;&#60; &#34; $k=&#92;&#34;$&#123;v.encodeAsHTML()&#125;&#92;&#34;&#34; &#125;
+        writer.println &#39;&#62;&#60;/script&#62;&#39;
+    &#125;</pre></div></div><p class="paragraph"/>
+
+    </body>
+</html>

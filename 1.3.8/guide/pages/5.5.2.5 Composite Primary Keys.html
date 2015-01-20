@@ -1,0 +1,37 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>5.5.2.5 Composite Primary Keys</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="5.5.2.5 Composite Primary Keys">5.5.2.5 Composite Primary Keys</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            GORM supports the concept of composite identifiers (identifiers composed from 2 or more properties). It is not an approach we recommend, but is available to you if you need it:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+  <span class="java&#45;object">String</span> firstName
+  <span class="java&#45;object">String</span> lastName<p class="paragraph"/>  <span class="java&#45;keyword">static</span> mapping = &#123;
+      id composite:&#91;'firstName', 'lastName'&#93;
+  &#125;
+&#125;</pre></div><p class="paragraph"/>The above will create a composite id of the <code>firstName</code> and <code>lastName</code> properties of the Person class. When you later need to retrieve an instance by id you have to use a prototype of the object itself:<p class="paragraph"/><div class="code"><pre>def p = Person.get(<span class="java&#45;keyword">new</span> Person(firstName:<span class="java&#45;quote">"Fred"</span>, lastName:<span class="java&#45;quote">"Flintstone"</span>))
+println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with composite primary keys must implement the <code>Serializable</code> interface and override the <code>equals</code> and <code>hashCode</code> methods, using the properties in the composite key for the calculations. The example above uses a <code>HashCodeBuilder</code> for convenience but it's fine to implement it yourself.<p class="paragraph"/>Another important consideration when using composite primary keys is associations. If for example you have a many-to-one association where the foreign keys are stored in the associated table then 2 columns will be present in the associated table.<p class="paragraph"/>For example consider the following domain class:<p class="paragraph"/><div class="code"><pre>class Address &#123;
+    Person person	
+&#125;</pre></div><p class="paragraph"/>In this case the <code>address</code> table will have an additional two columns called <code>person_first_name</code> and <code>person_last_name</code>. If you wish the change the mapping of these columns then you can do so using the following technique:<p class="paragraph"/><div class="code"><pre>class Address &#123;
+    Person person	
+	<span class="java&#45;keyword">static</span> mapping = &#123;
+		person &#123;
+			column: <span class="java&#45;quote">"FirstName"</span>
+			column: <span class="java&#45;quote">"LastName"</span>			
+		&#125;
+	&#125;
+&#125;</pre></div>
+
+        </div>
+    </body>
+</html>

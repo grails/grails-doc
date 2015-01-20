@@ -1,0 +1,24 @@
+<html>
+    <head>
+	    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	    <title>Grails Reference</title>
+	    <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8" />
+	    <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+	    <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <h1>embedded</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Supports embedding domain components into domain classes - otherwise known as <a href="../../guide/single.html#5.2.2 Composition in GORM" class="guide">composition</a>.<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/>Given a <code>Person</code> domain class and <code>Country</code> class like so:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    <span class="java&#45;object">String</span> name<p class="paragraph"/>    Country bornInCountry
+    Country livesInCountry<p class="paragraph"/>    <span class="java&#45;keyword">static</span> embedded = &#91;'bornInCountry', 'livesInCountry'&#93;
+&#125;<p class="paragraph"/>// If you don't want an associated table created <span class="java&#45;keyword">for</span> <span class="java&#45;keyword">this</span> class, either
+// define it in the same file as Person or put Country.groovy under the
+// src/groovy directory.
+class Country &#123;
+    <span class="java&#45;object">String</span> iso3
+    <span class="java&#45;object">String</span> name
+&#125;</pre></div><p class="paragraph"/>Grails will generate a <code>person</code> database table that looks like:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Column</strong></th><th><strong class="bold">Type</strong></th></tr><tr class="table-odd"><td>NAME</td><td>VARCHAR(255)</td></tr><tr class="table-even"><td>BORN_IN_COUNTRY_ISO3</td><td>VARCHAR(255)</td></tr><tr class="table-odd"><td>BORN_IN_COUNTRY_NAME</td><td>VARCHAR(255)</td></tr><tr class="table-even"><td>LIVES_IN_COUNTRY_ISO3</td><td>VARCHAR(255)</td></tr><tr class="table-odd"><td>LIVES_IN_COUNTRY_NAME</td><td>VARCHAR(255)</td></tr></table><p class="paragraph"/>
+<h2>Description</h2><p class="paragraph"/>An embedded component does not store its data in a separate table as a normal domain class relationship does. Instead, the data is embedded in the owner's table. So in the above example, the <code>Country</code> fields appear in the <code>person</code> table. This means that queries are faster because there is no join, but you may end up with duplicate data across tables.<p class="paragraph"/>The embedded component class is typically declared in the same file as the owning class or in its own file under <code>src/groovy</code>. You  <em class="italic">can</em>  put the component class under <code>grails-app/domain</code>, but if you do so Grails will automatically create a dedicated table for it. Putting the class under <code>src/groovy</code> is usually the best thing to do because you can then share the component across multiple domain classes.<p class="paragraph"/>Querying on embedded properties is no different from querying on normal relationships, so you can for example still do:<p class="paragraph"/><div class="code"><pre>Person.findAllByBornInCountry(brazil)
+Person.findAllByLivesInCountry(france)</pre></div><p class="paragraph"/>where <code>brazil</code> and <code>france</code> are instances of <code>Country</code>.
+
+    </body>
+</html>

@@ -1,0 +1,1527 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>7.1 Controllers 2.1.0</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/upgradingFromPreviousVersionsOfGrails.html"><strong>3</strong><span>Upgrading from previous versions of Grails</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/commandLine.html"><strong>5</strong><span>The Command Line</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/GORM.html"><strong>6</strong><span>Object Relational Mapping (GORM)</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/validation.html"><strong>8</strong><span>Validation</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/services.html"><strong>9</strong><span>The Service Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/testing.html"><strong>10</strong><span>Testing</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/i18n.html"><strong>11</strong><span>Internationalization</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/security.html"><strong>12</strong><span>Security</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/plugins.html"><strong>13</strong><span>Plugins</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/webServices.html"><strong>14</strong><span>Web Services</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/spring.html"><strong>15</strong><span>Grails and Spring</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/hibernate.html"><strong>16</strong><span>Grails and Hibernate</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/scaffolding.html"><strong>17</strong><span>Scaffolding</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/deployment.html"><strong>18</strong><span>Deployment</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/contributing.html"><strong>19</strong><span>Contributing to Grails</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        <span id="logo"><a href="http://grails.org" target="_blank"><img alt="Grails Logo" title="The Grails Framework" src="../../img/grails.png" border="0"/></a></span>
+        
+        
+        <span id="sponsor"><a href="http://springsource.com" target="_blank"><img alt="SpringSource Logo" title="SpringSource - Weapons for the War on Java Complexity" src="../../img/springsource-logo.png" border="0"/></a></span>
+        
+    </div>
+    <p>See the light - agile, industrial strength, rapid web application development made easy</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/GORM.html">&lt;&lt; <strong>6</strong><span>Object Relational Mapping (GORM)</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/validation.html"><strong>8</strong><span>Validation</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>7.1 Controllers - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith</p>
+
+                    <p><strong>Version:</strong> 2.1.0</p>
+
+                    
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#understandingControllersAndActions"><strong>7.1</strong><span>Understanding Controllers and Actions</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#controllersAndScopes"><strong>7.2</strong><span>Controllers and Scopes</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#modelsAndViews"><strong>7.3</strong><span>Models and Views</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#redirectsAndChaining"><strong>7.4</strong><span>Redirects and Chaining</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#interceptors"><strong>7.5</strong><span>Controller Interceptors</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#dataBinding"><strong>7.6</strong><span>Data Binding</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#xmlAndJSON"><strong>7.7</strong><span>XML and JSON Responses</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#moreOnJSONBuilder"><strong>7.8</strong><span>More on JSONBuilder</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#uploadingFiles"><strong>7.9</strong><span>Uploading Files</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#commandObjects"><strong>7.10</strong><span>Command Objects</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#formtokens"><strong>7.11</strong><span>Handling Duplicate Form Submissions</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#typeConverters"><strong>7.12</strong><span>Simple Type Converters</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#asynchronousRequestProcessing"><strong>7.13</strong><span>Asynchronous Request Processing</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+<a name="6.1 Controllers"><!-- Legacy link --></a>
+<h2 id="controllers">7.1 Controllers</h2>
+A controller handles requests and creates or prepares the response. A controller can generate the response directly or delegate to a view. To create a controller, simply create a class whose name ends with <code>Controller</code> in the <code>grails-app/controllers</code> directory (in a subdirectory if it's in a package).<p class="paragraph"/>The default <a href="../guide/single.html#urlmappings" class="guide">URL Mapping</a> configuration ensures that the first part of your controller name is mapped to a URI and each action defined within your controller maps to URIs within the controller name URI.
+
+
+<a name="6.1.1 Understanding Controllers and Actions"><!-- Legacy link --></a>
+<h2 id="understandingControllersAndActions">7.1.1 Understanding Controllers and Actions</h2>
+<h4>Creating a controller</h4><p class="paragraph"/>Controllers can be created with the <a href="../ref/Command Line/create-controller.html" class="commandLine">create-controller</a> or <a href="../ref/Command Line/generate-controller.html" class="commandLine">generate-controller</a> command. For example try running the following command from the root of a Grails project:<p class="paragraph"/><div class="code"><pre>grails create&#45;controller book</pre></div><p class="paragraph"/>The command will create a controller at the location <code>grails-app/controllers/myapp/BookController.groovy</code>:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> myapp<p class="paragraph"/>class BookController &#123;<p class="paragraph"/>    def index() &#123; &#125;
+&#125;</pre></div><p class="paragraph"/>where "myapp" will be the name of your application, the default package name if one isn't specified.<p class="paragraph"/><code>BookController</code> by default maps to the /book URI (relative to your application root).<p class="paragraph"/><blockquote class="note">
+The <code>create-controller</code> and <code>generate-controller</code> commands are just for convenience and you can just as easily create controllers using your favorite text editor or IDE
+</blockquote><p class="paragraph"/><h4>Creating Actions</h4><p class="paragraph"/>A controller can have multiple public action methods; each one maps to a URI:<p class="paragraph"/><div class="code"><pre>class BookController &#123;<p class="paragraph"/>    def list() &#123;<p class="paragraph"/>        // <span class="java&#45;keyword">do</span> controller logic
+        // create model<p class="paragraph"/>        <span class="java&#45;keyword">return</span> model
+    &#125;
+&#125;</pre></div><p class="paragraph"/>This example maps to the <code>/book/list</code> URI by default thanks to the property being named <code>list</code>.<p class="paragraph"/><h4>Public Methods as Actions</h4><p class="paragraph"/>In earlier versions of Grails actions were implemented with Closures. This is still supported, but the preferred approach is to use methods.<p class="paragraph"/>Leveraging methods instead of Closure properties has some advantages:
+<ul class="star">
+<li>Memory efficient</li>
+<li>Allow use of stateless controllers (<code>singleton</code> scope)</li>
+<li>You can override actions from subclasses and call the overridden superclass method with <code>super.actionName()</code></li>
+<li>Methods can be intercepted with standard proxying mechanisms, something that is complicated to do with Closures since they're fields.</li>
+</ul><p class="paragraph"/>If you prefer the Closure syntax or have older controller classes created in earlier versions of Grails and still want the advantages of using methods, you can set the <code>grails.compile.artefacts.closures.convert</code> property to true in <code>BuildConfig.groovy</code>:
+<div class="code"><pre>grails.compile.artefacts.closures.convert = <span class="java&#45;keyword">true</span></pre></div><p class="paragraph"/>and a compile-time AST transformation will convert your Closures to methods in the generated bytecode.<p class="paragraph"/><blockquote class="note">
+If a controller class extends some other class which is not defined under the <code>grails-app/controllers/</code> directory, methods inherited from that class are not converted to controller actions.  If the intent is to expose those inherited methods as controller actions the methods may be overridden in the subclass and the subclass method may invoke the method in the super class.
+</blockquote><p class="paragraph"/><h4>The Default Action</h4><p class="paragraph"/>A controller has the concept of a default URI that maps to the root URI of the controller, for example <code>/book</code> for <code>BookController</code>. The action that is called when the default URI is requested is dictated by the following rules:
+<ul class="star">
+<li>If there is only one action, it's the default</li>
+<li>If you have an action named <code>index</code>, it's the default</li>
+<li>Alternatively you can set it explicitly with the <code>defaultAction</code> property:</li>
+</ul><p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">static</span> defaultAction = <span class="java&#45;quote">"list"</span></pre></div>
+
+
+<a name="6.1.2 Controllers and Scopes"><!-- Legacy link --></a>
+<h2 id="controllersAndScopes">7.1.2 Controllers and Scopes</h2>
+<h4>Available Scopes</h4><p class="paragraph"/>Scopes are hash-like objects where you can store variables. The following scopes are available to controllers:
+<ul class="star">
+<li><a href="../ref/Controllers/servletContext.html" class="controllers">servletContext</a> - Also known as application scope, this scope lets you share state across the entire web application. The servletContext is an instance of <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/ServletContext.html" class="api">ServletContext</a></li>
+<li><a href="../ref/Controllers/session.html" class="controllers">session</a> - The session allows associating state with a given user and typically uses cookies to associate a session with a client. The session object is an instance of <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpSession.html" class="api">HttpSession</a></li>
+<li><a href="../ref/Controllers/request.html" class="controllers">request</a> - The request object allows the storage of objects for the current request only. The request object is an instance of <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpServletRequest.html" class="api">HttpServletRequest</a></li>
+<li><a href="../ref/Controllers/params.html" class="controllers">params</a> - Mutable map of incoming request query string or POST parameters</li>
+<li><a href="../ref/Controllers/flash.html" class="controllers">flash</a> - See below</li>
+</ul><p class="paragraph"/><h4>Accessing Scopes</h4><p class="paragraph"/>Scopes can be accessed using the variable names above in combination with Groovy's array index operator, even on classes provided by the Servlet API such as the <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpServletRequest.html" class="api">HttpServletRequest</a>:<p class="paragraph"/><div class="code"><pre>class BookController &#123;
+    def find() &#123;
+        def findBy = params&#91;<span class="java&#45;quote">"findBy"</span>&#93;
+        def appContext = request&#91;<span class="java&#45;quote">"foo"</span>&#93;
+        def loggedUser = session&#91;<span class="java&#45;quote">"logged_user"</span>&#93;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>You can also access values within scopes using the de-reference operator, making the syntax even more clear:<p class="paragraph"/><div class="code"><pre>class BookController &#123;
+    def find() &#123;
+        def findBy = params.findBy
+        def appContext = request.foo
+        def loggedUser = session.logged_user
+    &#125;
+&#125;</pre></div><p class="paragraph"/>This is one of the ways that Grails unifies access to the different scopes.<p class="paragraph"/><h4>Using Flash Scope</h4><p class="paragraph"/>Grails supports the concept of <a href="../ref/Controllers/flash.html" class="controllers">flash</a> scope as a temporary store to make attributes available for this request and the next request only. Afterwards the attributes are cleared. This is useful for setting a message directly before redirecting, for example:<p class="paragraph"/><div class="code"><pre>def delete() &#123;
+    def b = Book.get(params.id)
+    <span class="java&#45;keyword">if</span> (!b) &#123;
+        flash.message = <span class="java&#45;quote">"User not found <span class="java&#45;keyword">for</span> id $&#123;params.id&#125;"</span>
+        redirect(action:list)
+    &#125;
+    &#8230; // remaining code
+&#125;</pre></div><p class="paragraph"/>When the <code>list</code> action is requested, the <code>message</code> value will be in scope and can be used to display an information message. It will be removed from the <code>flash</code> scope after this second request.<p class="paragraph"/>Note that the attribute name can be anything you want, and the values are often strings used to display messages, but can be any object type.<p class="paragraph"/><h4>Scoped Controllers</h4><p class="paragraph"/>By default, a new controller instance is created for each request. In fact, because the controller is <code>prototype</code> scoped, it is thread-safe since each request happens on its own thread.<p class="paragraph"/>You can change this behaviour by placing a controller in a particular scope. The supported scopes are:
+<ul class="star">
+<li><code>prototype</code> (default) - A new controller will be created for each request (recommended for actions as Closure properties)</li>
+<li><code>session</code> - One controller is created for the scope of a user session</li>
+<li><code>singleton</code> - Only one instance of the controller ever exists (recommended for actions as methods)</li>
+</ul><p class="paragraph"/>To enable one of the scopes, add a static <code>scope</code> property to your class with one of the valid scope values listed above, for example<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">static</span> scope = <span class="java&#45;quote">"singleton"</span></pre></div><p class="paragraph"/>You can define the default strategy under in <code>Config.groovy</code> with the <code>grails.controllers.defaultScope</code> key, for example:<p class="paragraph"/><div class="code"><pre>grails.controllers.defaultScope = <span class="java&#45;quote">"singleton"</span></pre></div><p class="paragraph"/><blockquote class="note">
+Use scoped controllers wisely. For instance, we don't recommend having any properties in a singleton-scoped controller since they will be shared for  <em class="italic">all</em>  requests. Setting a default scope other than <code>prototype</code> may also lead to unexpected behaviors if you have controllers provided by installed plugins that expect that the scope is <code>prototype</code>.
+</blockquote>
+
+
+<a name="6.1.3 Models and Views"><!-- Legacy link --></a>
+<h2 id="modelsAndViews">7.1.3 Models and Views</h2>
+<h4>Returning the Model</h4><p class="paragraph"/>A model is a Map that the view uses when rendering. The keys within that Map correspond to variable names accessible by the view. There are a couple of ways to return a model. First, you can explicitly return a Map instance:<p class="paragraph"/><div class="code"><pre>def show() &#123;
+    &#91;book: Book.get(params.id)&#93;
+&#125;</pre></div><p class="paragraph"/><blockquote class="note">
+The above does  <em class="italic">not</em>  reflect what you should use with the scaffolding views - see the <a href="../guide/single.html#scaffolding" class="guide">scaffolding section</a> for more details.
+</blockquote><p class="paragraph"/>If no explicit model is returned the controller's properties will be used as the model, thus allowing you to write code like this:<p class="paragraph"/><div class="code"><pre>class BookController &#123;<p class="paragraph"/>    List books
+    List authors<p class="paragraph"/>    def list() &#123;
+        books = Book.list()
+        authors = Author.list()
+    &#125;
+&#125;</pre></div><p class="paragraph"/><blockquote class="note">
+This is possible due to the fact that controllers are prototype scoped. In other words a new controller is created for each request. Otherwise code such as the above would not be thread-safe, and all users would share the same data.
+</blockquote><p class="paragraph"/>In the above example the <code>books</code> and <code>authors</code> properties will be available in the view.<p class="paragraph"/>A more advanced approach is to return an instance of the Spring <a href="http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/web/servlet/ModelAndView.html" class="api">ModelAndView</a> class:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.springframework.web.servlet.ModelAndView<p class="paragraph"/>def index() &#123;
+    // get some books just <span class="java&#45;keyword">for</span> the index page, perhaps your favorites
+    def favoriteBooks = ...<p class="paragraph"/>    // forward to the list view to show them
+    <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">new</span> ModelAndView(<span class="java&#45;quote">"/book/list"</span>, &#91; bookList : favoriteBooks &#93;)
+&#125;</pre></div><p class="paragraph"/>One thing to bear in mind is that certain variable names can not be used in your model:
+<ul class="star">
+<li><code>attributes</code></li>
+<li><code>application</code></li>
+</ul><p class="paragraph"/>Currently, no error will be reported if you do use them, but this will hopefully change in a future version of Grails.<p class="paragraph"/><h4>Selecting the View</h4><p class="paragraph"/>In both of the previous two examples there was no code that specified which <a href="../guide/single.html#gsp" class="guide">view</a> to render. So how does Grails know which one to pick? The answer lies in the conventions. Grails will look for a view at the location <code>grails-app/views/book/show.gsp</code> for this <code>list</code> action:<p class="paragraph"/><div class="code"><pre>class BookController &#123;
+    def show() &#123;
+         &#91;book: Book.get(params.id)&#93;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>To render a different view, use the <a href="../ref/Controllers/render.html" class="controllers">render</a> method:<p class="paragraph"/><div class="code"><pre>def show() &#123;
+    def map = &#91;book: Book.get(params.id)&#93;
+    render(view: <span class="java&#45;quote">"display"</span>, model: map)
+&#125;</pre></div><p class="paragraph"/>In this case Grails will attempt to render a view at the location <code>grails-app/views/book/display.gsp</code>. Notice that Grails automatically qualifies the view location with the <code>book</code> directory of the <code>grails-app/views</code> directory. This is convenient, but to access shared views you need instead you can use an absolute path instead of a relative one:<p class="paragraph"/><div class="code"><pre>def show() &#123;
+    def map = &#91;book: Book.get(params.id)&#93;
+    render(view: <span class="java&#45;quote">"/shared/display"</span>, model: map)
+&#125;</pre></div><p class="paragraph"/>In this case Grails will attempt to render a view at the location <code>grails-app/views/shared/display.gsp</code>.<p class="paragraph"/>Grails also supports JSPs as views, so if a GSP isn't found in the expected location but a JSP is, it will be used instead.<p class="paragraph"/><h4>Rendering a Response</h4><p class="paragraph"/>Sometimes it's easier (for example with Ajax applications) to render snippets of text or code to the response directly from the controller. For this, the highly flexible <code>render</code> method can be used:<p class="paragraph"/><div class="code"><pre>render <span class="java&#45;quote">"Hello World!"</span></pre></div><p class="paragraph"/>The above code writes the text "Hello World!" to the response. Other examples include:<p class="paragraph"/><div class="code"><pre>// write some markup
+render &#123;
+   <span class="java&#45;keyword">for</span> (b in books) &#123;
+      div(id: b.id, b.title)
+   &#125;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>// render a specific view
+render(view: 'show')</pre></div><p class="paragraph"/><div class="code"><pre>// render a template <span class="java&#45;keyword">for</span> each item in a collection
+render(template: 'book_template', collection: Book.list())</pre></div><p class="paragraph"/><div class="code"><pre>// render some text with encoding and content type
+render(text: <span class="java&#45;quote">"&#60;xml&#62;some xml&#60;/xml&#62;"</span>, contentType: <span class="java&#45;quote">"text/xml"</span>, encoding: <span class="java&#45;quote">"UTF&#45;8"</span>)</pre></div><p class="paragraph"/>If you plan on using Groovy's <code>MarkupBuilder</code> to generate HTML for use with the <code>render</code> method be careful of naming clashes between HTML elements and Grails tags, for example:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> groovy.xml.MarkupBuilder
+&#8230;
+def login() &#123;
+    def writer = <span class="java&#45;keyword">new</span> StringWriter()
+    def builder = <span class="java&#45;keyword">new</span> MarkupBuilder(writer)
+    builder.html &#123;
+        head &#123;
+            title 'Log in'
+        &#125;
+        body &#123;
+            h1 'Hello'
+            form &#123;
+            &#125;
+        &#125;
+    &#125;<p class="paragraph"/>    def html = writer.toString()
+    render html
+&#125;</pre></div><p class="paragraph"/>This will actually <a href="../guide/single.html#tagsAsMethodCalls" class="guide">call the form tag</a> (which will return some text that will be ignored by the <code>MarkupBuilder</code>). To correctly output a <code>&#60;form&#62;</code> element, use the following:<p class="paragraph"/><div class="code"><pre>def login() &#123;
+    // &#8230;
+    body &#123;
+        h1 'Hello'
+        builder.form &#123;
+        &#125;
+    &#125;
+    // &#8230;
+&#125;</pre></div>
+
+
+<a name="6.1.4 Redirects and Chaining"><!-- Legacy link --></a>
+<h2 id="redirectsAndChaining">7.1.4 Redirects and Chaining</h2>
+<h4>Redirects</h4><p class="paragraph"/>Actions can be redirected using the <a href="../ref/Controllers/redirect.html" class="controllers">redirect</a> controller method:<p class="paragraph"/><div class="code"><pre>class OverviewController &#123;<p class="paragraph"/>    def login() &#123;&#125;<p class="paragraph"/>    def find() &#123;
+        <span class="java&#45;keyword">if</span> (!session.user)
+            redirect(action: 'login')
+            <span class="java&#45;keyword">return</span>
+        &#125;
+        &#8230;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Internally the <a href="../ref/Controllers/redirect.html" class="controllers">redirect</a> method uses the <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpServletResponse.html" class="api">HttpServletResponse</a> object's <code>sendRedirect</code> method.<p class="paragraph"/>The <code>redirect</code> method expects one of:
+<ul class="star">
+<li>Another closure within the same controller class:</li>
+</ul><p class="paragraph"/><div class="code"><pre>// Call the login action within the same class
+redirect(action: login)</pre></div>
+<ul class="star">
+<li>The name of an action (and controller name if the redirect isn't to an action in the current controller):</li>
+</ul><p class="paragraph"/><div class="code"><pre>// Also redirects to the index action in the home controller
+redirect(controller: 'home', action: 'index')</pre></div>
+<ul class="star">
+<li> A URI for a resource relative the application context path:</li>
+</ul><p class="paragraph"/><div class="code"><pre>// Redirect to an explicit URI
+redirect(uri: <span class="java&#45;quote">"/login.html"</span>)</pre></div>
+<ul class="star">
+<li>Or a full URL:</li>
+</ul><p class="paragraph"/><div class="code"><pre>// Redirect to a URL
+redirect(url: <span class="java&#45;quote">"http://grails.org"</span>)</pre></div><p class="paragraph"/>Parameters can optionally be passed from one action to the next using the <code>params</code> argument of the method:<p class="paragraph"/><div class="code"><pre>redirect(action: 'myaction', params: &#91;myparam: <span class="java&#45;quote">"myvalue"</span>&#93;)</pre></div><p class="paragraph"/>These parameters are made available through the <a href="../ref/Controllers/params.html" class="controllers">params</a> dynamic property that accesses request parameters. If a parameter is specified with the same name as a request parameter, the request parameter is overridden and the controller parameter is used.<p class="paragraph"/>Since the <code>params</code> object is a Map, you can use it to pass the current request parameters from one action to the next:<p class="paragraph"/><div class="code"><pre>redirect(action: <span class="java&#45;quote">"next"</span>, params: params)</pre></div><p class="paragraph"/>Finally, you can also include a fragment in the target URI:<p class="paragraph"/><div class="code"><pre>redirect(controller: <span class="java&#45;quote">"test"</span>, action: <span class="java&#45;quote">"show"</span>, fragment: <span class="java&#45;quote">"profile"</span>)</pre></div><p class="paragraph"/>which will (depending on the URL mappings) redirect to something like "/myapp/test/show#profile".<p class="paragraph"/><h4>Chaining</h4><p class="paragraph"/>Actions can also be chained. Chaining allows the model to be retained from one action to the next. For example calling the <code>first</code> action in this action:<p class="paragraph"/><div class="code"><pre>class ExampleChainController &#123;<p class="paragraph"/>    def first() &#123;
+        chain(action: second, model: &#91;one: 1&#93;)
+    &#125;<p class="paragraph"/>    def second () &#123;
+        chain(action: third, model: &#91;two: 2&#93;)
+    &#125;<p class="paragraph"/>    def third() &#123;
+        &#91;three: 3&#93;)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>results in the model:<p class="paragraph"/><div class="code"><pre>&#91;one: 1, two: 2, three: 3&#93;</pre></div><p class="paragraph"/>The model can be accessed in subsequent controller actions in the chain using the <code>chainModel</code> map. This dynamic property only exists in actions following the call to the <code>chain</code> method:<p class="paragraph"/><div class="code"><pre>class ChainController &#123;<p class="paragraph"/>    def nextInChain() &#123;
+        def model = chainModel.myModel
+        &#8230;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Like the <code>redirect</code> method you can also pass parameters to the <code>chain</code> method:<p class="paragraph"/><div class="code"><pre>chain(action: <span class="java&#45;quote">"action1"</span>, model: &#91;one: 1&#93;, params: &#91;myparam: <span class="java&#45;quote">"param1"</span>&#93;)</pre></div>
+
+
+<a name="6.1.5 Controller Interceptors"><!-- Legacy link --></a>
+<h2 id="interceptors">7.1.5 Controller Interceptors</h2>
+Often it is useful to intercept processing based on either request, session or application state. This can be achieved with action interceptors. There are currently two types of interceptors: before and after.<p class="paragraph"/><blockquote class="note">
+If your interceptor is likely to apply to more than one controller, you are almost certainly better off writing a <a href="../guide/single.html#filters" class="guide">Filter</a>. Filters can be applied to multiple controllers or URIs without the need to change the logic of each controller
+</blockquote><p class="paragraph"/><h4>Before Interception</h4><p class="paragraph"/>The <code>beforeInterceptor</code> intercepts processing before the action is executed. If it returns <code>false</code> then the intercepted action will not be executed. The interceptor can be defined for all actions in a controller as follows:<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#123;
+    println <span class="java&#45;quote">"Tracing action $&#123;actionUri&#125;"</span>
+&#125;</pre></div><p class="paragraph"/>The above is declared inside the body of the controller definition.  It will be executed before all actions and does not interfere with processing. A common use case is very simplistic authentication:<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#91;action: <span class="java&#45;keyword">this</span>.&#38;auth, except: 'login'&#93;<p class="paragraph"/>// defined with <span class="java&#45;keyword">private</span> scope, so it's not considered an action
+<span class="java&#45;keyword">private</span> auth() &#123;
+    <span class="java&#45;keyword">if</span> (!session.user) &#123;
+        redirect(action: 'login')
+        <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">false</span>
+    &#125;
+&#125;<p class="paragraph"/>def login() &#123;
+    // display login page
+&#125;</pre></div><p class="paragraph"/>The above code defines a method called <code>auth</code>. A private method is used so that it is not exposed as an action to the outside world. The <code>beforeInterceptor</code> then defines an interceptor that is used on all actions  <em class="italic">except</em>  the login action and it executes the <code>auth</code> method. The <code>auth</code> method is referenced using Groovy's method pointer syntax. Within the method it detects whether there is a user in the session, and if not it redirects to the <code>login</code> action and returns <code>false</code>, causing the intercepted action to not be processed.<p class="paragraph"/><h4>After Interception</h4><p class="paragraph"/>Use the <code>afterInterceptor</code> property to define an interceptor that is executed after an action:<p class="paragraph"/><div class="code"><pre>def afterInterceptor = &#123; model &#45;&#62;
+    println <span class="java&#45;quote">"Tracing action $&#123;actionUri&#125;"</span>
+&#125;</pre></div><p class="paragraph"/>The after interceptor takes the resulting model as an argument and can hence manipulate the model or response.<p class="paragraph"/>An after interceptor may also modify the Spring MVC <a href="http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/web/servlet/ModelAndView.html" class="api">ModelAndView</a> object prior to rendering. In this case, the above example becomes:<p class="paragraph"/><div class="code"><pre>def afterInterceptor = &#123; model, modelAndView &#45;&#62;
+    println <span class="java&#45;quote">"Current view is $&#123;modelAndView.viewName&#125;"</span>
+    <span class="java&#45;keyword">if</span> (model.someVar) modelAndView.viewName = <span class="java&#45;quote">"/mycontroller/someotherview"</span>
+    println <span class="java&#45;quote">"View is now $&#123;modelAndView.viewName&#125;"</span>
+&#125;</pre></div><p class="paragraph"/>This allows the view to be changed based on the model returned by the current action. Note that the <code>modelAndView</code> may be <code>null</code> if the action being intercepted called <code>redirect</code> or <code>render</code>.<p class="paragraph"/><h4>Interception Conditions</h4><p class="paragraph"/>Rails users will be familiar with the authentication example and how the 'except' condition was used when executing the interceptor (interceptors are called 'filters' in Rails; this terminology conflicts with Servlet filter terminology in Java):<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#91;action: <span class="java&#45;keyword">this</span>.&#38;auth, except: 'login'&#93;</pre></div><p class="paragraph"/>This executes the interceptor for all actions except the specified action. A list of actions can also be defined as follows:<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#91;action: <span class="java&#45;keyword">this</span>.&#38;auth, except: &#91;'login', 'register'&#93;&#93;</pre></div><p class="paragraph"/>The other supported condition is 'only', this executes the interceptor for only the specified action(s):<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#91;action: <span class="java&#45;keyword">this</span>.&#38;auth, only: &#91;'secure'&#93;&#93;</pre></div>
+
+
+<a name="6.1.6 Data Binding"><!-- Legacy link --></a>
+<h2 id="dataBinding">7.1.6 Data Binding</h2>
+Data binding is the act of "binding" incoming request parameters onto the properties of an object or an entire graph of objects. Data binding should deal with all necessary type conversion since request parameters, which are typically delivered by a form submission, are always strings whilst the properties of a Groovy or Java object may well not be.<p class="paragraph"/>Grails uses <a href="http://www.springframework.org" target="blank">Spring</a>'s underlying data binding capability to perform data binding.<p class="paragraph"/><h4>Binding Request Data to the Model</h4><p class="paragraph"/>There are two ways to bind request parameters onto the properties of a domain class. The first involves using a domain classes' Map constructor:<p class="paragraph"/><div class="code"><pre>def save() &#123;
+    def b = <span class="java&#45;keyword">new</span> Book(params)
+    b.save()
+&#125;</pre></div><p class="paragraph"/>The data binding happens within the code <code>new Book(params)</code>. By passing the <a href="../ref/Controllers/params.html" class="controllers">params</a> object to the domain class constructor Grails automatically recognizes that you are trying to bind from request parameters. So if we had an incoming request like:<p class="paragraph"/><div class="code"><pre>/book/save?title=The%20Stand&#38;author=Stephen%20King</pre></div><p class="paragraph"/>Then the <code>title</code> and <code>author</code> request parameters would automatically be set on the domain class. You can use the <a href="../ref/Domain Classes/properties.html" class="domainClasses">properties</a> property to perform data binding onto an existing instance:<p class="paragraph"/><div class="code"><pre>def save() &#123;
+    def b = Book.get(params.id)
+    b.properties = params
+    b.save()
+&#125;</pre></div><p class="paragraph"/>This has the same effect as using the implicit constructor.<p class="paragraph"/><blockquote class="warning">
+These forms of data binding in Grails are very convenient, but also indiscriminate. In other words, they will bind  <em class="italic">all</em>  non-transient, typed instance properties of the target object, including ones that you may not want bound. Just because the form in your UI doesn't submit all the properties, an attacker can still send malign data via a raw HTTP request. Fortunately, Grails also makes it easy to protect against such attacks - see the section titled "Data Binding and Security concerns" for more information.
+</blockquote><p class="paragraph"/><h4>Data binding and Single-ended Associations</h4><p class="paragraph"/>If you have a <code>one-to-one</code> or <code>many-to-one</code> association you can use Grails' data binding capability to update these relationships too. For example if you have an incoming request such as:<p class="paragraph"/><div class="code"><pre>/book/save?author.id=20</pre></div><p class="paragraph"/>Grails will automatically detect the <code>.id</code> suffix on the request parameter and look up the <code>Author</code> instance for the given id when doing data binding such as:<p class="paragraph"/><div class="code"><pre>def b = <span class="java&#45;keyword">new</span> Book(params)</pre></div><p class="paragraph"/>An association property can be set to <code>null</code> by passing the literal <code>String</code> "null". For example:<p class="paragraph"/><div class="code"><pre>/book/save?author.id=<span class="java&#45;keyword">null</span></pre></div><p class="paragraph"/><h4>Data Binding and Many-ended Associations</h4><p class="paragraph"/>If you have a one-to-many or many-to-many association there are different techniques for data binding depending of the association type.<p class="paragraph"/>If you have a <code>Set</code> based association (the default for a <code>hasMany</code>) then the simplest way to populate an association is to send a list of identifiers. For example consider the usage of <code>&#60;g:select&#62;</code> below:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:select name=<span class="xml&#45;quote">"books"</span>
+          from=<span class="xml&#45;quote">"$&#123;Book.list()&#125;"</span>
+          size=<span class="xml&#45;quote">"5"</span> multiple=<span class="xml&#45;quote">"yes"</span> optionKey=<span class="xml&#45;quote">"id"</span>
+          value=<span class="xml&#45;quote">"$&#123;author?.books&#125;"</span> /&#62;</span></pre></div><p class="paragraph"/>This produces a select box that lets you select multiple values. In this case if you submit the form Grails will automatically use the identifiers from the select box to populate the <code>books</code> association.<p class="paragraph"/>However, if you have a scenario where you want to update the properties of the associated objects the this technique won't work. Instead you use the subscript operator:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:textField name=<span class="xml&#45;quote">"books&#91;0&#93;.title"</span> value=<span class="xml&#45;quote">"the Stand"</span> /&#62;</span>
+<span class="xml&#45;tag">&#60;g:textField name=<span class="xml&#45;quote">"books&#91;1&#93;.title"</span> value=<span class="xml&#45;quote">"the Shining"</span> /&#62;</span></pre></div><p class="paragraph"/>However, with <code>Set</code> based association it is critical that you render the mark-up in the same order that you plan to do the update in. This is because a <code>Set</code> has no concept of order, so although we're referring to <code>books0</code> and <code>books1</code> it is not guaranteed that the order of the association will be correct on the server side unless you apply some explicit sorting yourself.<p class="paragraph"/>This is not a problem if you use <code>List</code> based associations, since a <code>List</code> has a defined order and an index you can refer to. This is also true of <code>Map</code> based associations.<p class="paragraph"/>Note also that if the association you are binding to has a size of two and you refer to an element that is outside the size of association:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:textField name=<span class="xml&#45;quote">"books&#91;0&#93;.title"</span> value=<span class="xml&#45;quote">"the Stand"</span> /&#62;</span>
+<span class="xml&#45;tag">&#60;g:textField name=<span class="xml&#45;quote">"books&#91;1&#93;.title"</span> value=<span class="xml&#45;quote">"the Shining"</span> /&#62;</span>
+<span class="xml&#45;tag">&#60;g:textField name=<span class="xml&#45;quote">"books&#91;2&#93;.title"</span> value=<span class="xml&#45;quote">"Red Madder"</span> /&#62;</span></pre></div><p class="paragraph"/>Then Grails will automatically create a new instance for you at the defined position. If you "skipped" a few elements in the middle:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:textField name=<span class="xml&#45;quote">"books&#91;0&#93;.title"</span> value=<span class="xml&#45;quote">"the Stand"</span> /&#62;</span>
+<span class="xml&#45;tag">&#60;g:textField name=<span class="xml&#45;quote">"books&#91;1&#93;.title"</span> value=<span class="xml&#45;quote">"the Shining"</span> /&#62;</span>
+<span class="xml&#45;tag">&#60;g:textField name=<span class="xml&#45;quote">"books&#91;5&#93;.title"</span> value=<span class="xml&#45;quote">"Red Madder"</span> /&#62;</span></pre></div><p class="paragraph"/>Then Grails will automatically create instances in between. For example in the above case Grails will create 4 additional instances if the association being bound had a size of 2.<p class="paragraph"/>You can bind existing instances of the associated type to a <code>List</code> using the same <code>.id</code> syntax as you would use with a single-ended association. For example:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:select name=<span class="xml&#45;quote">"books&#91;0&#93;.id"</span> from=<span class="xml&#45;quote">"$&#123;bookList&#125;"</span>
+          value=<span class="xml&#45;quote">"$&#123;author?.books&#91;0&#93;?.id&#125;"</span> /&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;g:select name=<span class="xml&#45;quote">"books&#91;1&#93;.id"</span> from=<span class="xml&#45;quote">"$&#123;bookList&#125;"</span>
+          value=<span class="xml&#45;quote">"$&#123;author?.books&#91;1&#93;?.id&#125;"</span> /&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;g:select name=<span class="xml&#45;quote">"books&#91;2&#93;.id"</span> from=<span class="xml&#45;quote">"$&#123;bookList&#125;"</span>
+          value=<span class="xml&#45;quote">"$&#123;author?.books&#91;2&#93;?.id&#125;"</span> /&#62;</span></pre></div><p class="paragraph"/>Would allow individual entries in the <code>books List</code> to be selected separately.<p class="paragraph"/>Entries at particular indexes can be removed in the same way too. For example:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:select name=<span class="xml&#45;quote">"books&#91;0&#93;.id"</span>
+          from=<span class="xml&#45;quote">"$&#123;Book.list()&#125;"</span>
+          value=<span class="xml&#45;quote">"$&#123;author?.books&#91;0&#93;?.id&#125;"</span>
+          noSelection=<span class="xml&#45;quote">"&#91;'null': ''&#93;"</span>/&#62;</span></pre></div><p class="paragraph"/>Will render a select box that will remove the association at <code>books0</code> if the empty option is chosen.<p class="paragraph"/>Binding to a <code>Map</code> property works the same way except that the list index in the parameter name is replaced by the map key:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:select name=<span class="xml&#45;quote">"images&#91;cover&#93;.id"</span>
+          from=<span class="xml&#45;quote">"$&#123;Image.list()&#125;"</span>
+          value=<span class="xml&#45;quote">"$&#123;book?.images&#91;cover&#93;?.id&#125;"</span>
+          noSelection=<span class="xml&#45;quote">"&#91;'null': ''&#93;"</span>/&#62;</span></pre></div><p class="paragraph"/>This would bind the selected image into the <code>Map</code> property <code>images</code> under a key of <code>"cover"</code>.<p class="paragraph"/><h4>Data binding with Multiple domain classes</h4><p class="paragraph"/>It is possible to bind data to multiple domain objects from the <a href="../ref/Controllers/params.html" class="controllers">params</a> object.<p class="paragraph"/>For example so you have an incoming request to:<p class="paragraph"/><div class="code"><pre>/book/save?book.title=The%20Stand&#38;author.name=Stephen%20King</pre></div><p class="paragraph"/>You'll notice the difference with the above request is that each parameter has a prefix such as <code>author.</code> or <code>book.</code> which is used to isolate which parameters belong to which type. Grails' <code>params</code> object is like a multi-dimensional hash and you can index into it to isolate only a subset of the parameters to bind.<p class="paragraph"/><div class="code"><pre>def b = <span class="java&#45;keyword">new</span> Book(params.book)</pre></div><p class="paragraph"/>Notice how we use the prefix before the first dot of the <code>book.title</code> parameter to isolate only parameters below this level to bind. We could do the same with an <code>Author</code> domain class:<p class="paragraph"/><div class="code"><pre>def a = <span class="java&#45;keyword">new</span> Author(params.author)</pre></div><p class="paragraph"/><h4>Data Binding and Action Arguments</h4><p class="paragraph"/>Controller action arguments are subject to request parameter data binding.  There are 2 categories of controller action arguments.  The first category is command objects.  Complex types are treated as command objects.  See the <a href="../guide/single.html#commandObjects" class="guide">Command Objects</a> section of the user guide for details.  The other category is basic object types.  Supported types are the 8 primitives, their corresponding type wrappers and <a href="http://download.oracle.com/javase/1.5.0/docs/api/java/lang/String.html" class="api">java.lang.String</a>.  The default behavior is to map request parameters to action arguments by name:<p class="paragraph"/><div class="code"><pre>class AccountingController &#123;<p class="paragraph"/>   // accountNumber will be initialized with the value of params.accountNumber
+   // accountType will be initialized with params.accountType
+   def displayInvoice(<span class="java&#45;object">String</span> accountNumber, <span class="java&#45;object">int</span> accountType) &#123;
+       // &#8230;
+   &#125;
+&#125;</pre></div><p class="paragraph"/>For primitive arguments and arguments which are instances of any of the primitive type wrapper classes a type conversion has to be carried out before the request parameter value can be bound to the action argument.  The type conversion happens automatically.  In a case like the example shown above, the <code>params.accountType</code> request parameter has to be converted to an <code>int</code>.  If type conversion fails for any reason, the argument will have its default value per normal Java behavior (null for type wrapper references, false for booleans and zero for numbers) and a corresponding error will be added to the <code>errors</code> property of the defining controller.<p class="paragraph"/><div class="code"><pre>/accounting/displayInvoice?accountNumber=B59786&#38;accountType=bogusValue</pre></div><p class="paragraph"/>Since "bogusValue" cannot be converted to type int, the value of accountType will be zero, the controller's <code>errors.hasErrors()</code> will be true, the controller's <code>errors.errorCount</code> will be equal to 1 and the controller's <code>errors.getFieldError('accountType')</code> will contain the corresponding error.<p class="paragraph"/>If the argument name does not match the name of the request parameter then the <code>&#64;grails.web.RequestParameter</code> annotation may be applied to an argument to express the name of the request parameter which should be bound to that argument:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.web.RequestParameter<p class="paragraph"/>class AccountingController &#123;<p class="paragraph"/>   // mainAccountNumber will be initialized with the value of params.accountNumber
+   // accountType will be initialized with params.accountType
+   def displayInvoice(@RequestParameter('accountNumber') <span class="java&#45;object">String</span> mainAccountNumber, <span class="java&#45;object">int</span> accountType) &#123;
+       // &#8230;
+   &#125;
+&#125;</pre></div><p class="paragraph"/>
+<h4>Data binding and type conversion errors</h4><p class="paragraph"/>Sometimes when performing data binding it is not possible to convert a particular String into a particular target type. This results in a type conversion error. Grails will retain type conversion errors inside the <a href="../ref/Domain Classes/errors.html" class="domainClasses">errors</a> property of a Grails domain class. For example:<p class="paragraph"/><div class="code"><pre>class Book &#123;
+    &#8230;
+    URL publisherURL
+&#125;</pre></div><p class="paragraph"/>Here we have a domain class <code>Book</code> that uses the <code>java.net.URL</code> class to represent URLs. Given an incoming request such as:<p class="paragraph"/><div class="code"><pre>/book/save?publisherURL=a&#45;bad&#45;url</pre></div><p class="paragraph"/>it is not possible to bind the string <code>a-bad-url</code> to the <code>publisherURL</code> property as a type mismatch error occurs. You can check for these like this:<p class="paragraph"/><div class="code"><pre>def b = <span class="java&#45;keyword">new</span> Book(params)<p class="paragraph"/><span class="java&#45;keyword">if</span> (b.hasErrors()) &#123;
+    println <span class="java&#45;quote">"The value $&#123;b.errors.getFieldError('publisherURL').rejectedValue&#125;"</span> +
+            <span class="java&#45;quote">" is not a valid URL!"</span>
+&#125;</pre></div><p class="paragraph"/>Although we have not yet covered error codes (for more information see the section on <a href="../guide/single.html#validation" class="guide">Validation</a>), for type conversion errors you would want a message from the <code>grails-app/i18n/messages.properties</code> file to use for the error. You can use a generic error message handler such as:<p class="paragraph"/><div class="code"><pre>typeMismatch.java.net.URL=The field &#123;0&#125; is not a valid URL</pre></div><p class="paragraph"/>Or a more specific one:<p class="paragraph"/><div class="code"><pre>typeMismatch.Book.publisherURL=The publisher URL you specified is not a valid URL</pre></div><p class="paragraph"/><h4>Data Binding and Security concerns</h4><p class="paragraph"/>When batch updating properties from request parameters you need to be careful not to allow clients to bind malicious data to domain classes and be persisted in the database. You can limit what properties are bound to a given domain class using the subscript operator:<p class="paragraph"/><div class="code"><pre>def p = Person.get(1)<p class="paragraph"/>p.properties&#91;'firstName','lastName'&#93; = params</pre></div><p class="paragraph"/>In this case only the <code>firstName</code> and <code>lastName</code> properties will be bound.<p class="paragraph"/>Another way to do this is is to use <a href="../guide/single.html#commandObjects" class="guide">Command Objects</a> as the target of data binding instead of domain classes. Alternatively there is also the flexible <a href="../ref/Controllers/bindData.html" class="controllers">bindData</a> method.<p class="paragraph"/>The <code>bindData</code> method allows the same data binding capability, but to arbitrary objects:<p class="paragraph"/><div class="code"><pre>def p = <span class="java&#45;keyword">new</span> Person()
+bindData(p, params)</pre></div><p class="paragraph"/>The <code>bindData</code> method also lets you exclude certain parameters that you don't want updated:<p class="paragraph"/><div class="code"><pre>def p = <span class="java&#45;keyword">new</span> Person()
+bindData(p, params, &#91;exclude: 'dateOfBirth'&#93;)</pre></div><p class="paragraph"/>Or include only certain properties:<p class="paragraph"/><div class="code"><pre>def p = <span class="java&#45;keyword">new</span> Person()
+bindData(p, params, &#91;include: &#91;'firstName', 'lastName&#93;&#93;)</pre></div><p class="paragraph"/><blockquote class="note">
+Note that if an empty List is provided as a value for the <code>include</code> parameter then all fields will be subject to binding if they are not explicitly excluded.
+</blockquote>
+
+
+
+<h2 id="xmlAndJSON">7.1.7 XML and JSON Responses</h2>
+<h4>Using the render method to output XML</h4><p class="paragraph"/>Grails supports a few different ways to produce XML and JSON responses. The first is the <a href="../ref/Controllers/render.html" class="controllers">render</a> method.<p class="paragraph"/>The <code>render</code> method can be passed a block of code to do mark-up building in XML:<p class="paragraph"/><div class="code"><pre>def list() &#123;<p class="paragraph"/>    def results = Book.list()<p class="paragraph"/>    render(contentType: <span class="java&#45;quote">"text/xml"</span>) &#123;
+        books &#123;
+            <span class="java&#45;keyword">for</span> (b in results) &#123;
+                book(title: b.title)
+            &#125;
+        &#125;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The result of this code would be something like:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;books&#62;</span>
+    <span class="xml&#45;tag">&#60;book title=<span class="xml&#45;quote">"The Stand"</span> /&#62;</span>
+    <span class="xml&#45;tag">&#60;book title=<span class="xml&#45;quote">"The Shining"</span> /&#62;</span>
+<span class="xml&#45;tag">&#60;/books&#62;</span></pre></div><p class="paragraph"/>Be careful to avoid naming conflicts when using mark-up building. For example this code would produce an error:<p class="paragraph"/><div class="code"><pre>def list() &#123;<p class="paragraph"/>    def books = Book.list()  // naming conflict here<p class="paragraph"/>    render(contentType: <span class="java&#45;quote">"text/xml"</span>) &#123;
+        books &#123;
+            <span class="java&#45;keyword">for</span> (b in results) &#123;
+                book(title: b.title)
+            &#125;
+        &#125;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>This is because there is local variable <code>books</code> which Groovy attempts to invoke as a method.<p class="paragraph"/><h4>Using the render method to output JSON</h4><p class="paragraph"/>The <code>render</code> method can also be used to output JSON:<p class="paragraph"/><div class="code"><pre>def list() &#123;<p class="paragraph"/>    def results = Book.list()<p class="paragraph"/>    render(contentType: <span class="java&#45;quote">"text/json"</span>) &#123;
+        books = array &#123;
+            <span class="java&#45;keyword">for</span> (b in results) &#123;
+                book title: b.title
+            &#125;
+        &#125;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>In this case the result would be something along the lines of:<p class="paragraph"/><div class="code"><pre>&#91;
+    &#123;title:<span class="java&#45;quote">"The Stand"</span>&#125;,
+    &#123;title:<span class="java&#45;quote">"The Shining"</span>&#125;
+&#93;</pre></div><p class="paragraph"/>The same dangers with naming conflicts described above for XML also apply to JSON building.<p class="paragraph"/><h4>Automatic XML Marshalling</h4><p class="paragraph"/>Grails also supports automatic marshalling of <a href="../guide/single.html#GORM" class="guide">domain classes</a> to XML using special converters.<p class="paragraph"/>To start off with, import the <code>grails.converters</code> package into your controller:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.converters.&#42;</pre></div><p class="paragraph"/>Now you can use the following highly readable syntax to automatically convert domain classes to XML:<p class="paragraph"/><div class="code"><pre>render Book.list() as XML</pre></div><p class="paragraph"/>The resulting output would look something like the following::<p class="paragraph"/><div class="code"><pre>&#60;?xml version=<span class="java&#45;quote">"1.0"</span> encoding=<span class="java&#45;quote">"ISO&#45;8859&#45;1"</span>?&#62;
+&#60;list&#62;
+  &#60;book id=<span class="java&#45;quote">"1"</span>&#62;
+    &#60;author&#62;Stephen King&#60;/author&#62;
+    &#60;title&#62;The Stand&#60;/title&#62;
+  &#60;/book&#62;
+  &#60;book id=<span class="java&#45;quote">"2"</span>&#62;
+    &#60;author&#62;Stephen King&#60;/author&#62;
+    &#60;title&#62;The Shining&#60;/title&#62;
+  &#60;/book&#62;
+&#60;/list&#62;</pre></div><p class="paragraph"/>An alternative to using the converters is to use the <a href="../guide/single.html#codecs" class="guide">codecs</a> feature of Grails. The codecs feature provides <a href="../guide/single.html#codecs" class="guide">encodeAsXML</a> and <a href="../guide/single.html#codecs" class="guide">encodeAsJSON</a> methods:<p class="paragraph"/><div class="code"><pre>def xml = Book.list().encodeAsXML()
+render xml</pre></div><p class="paragraph"/>For more information on XML marshalling see the section on <a href="../guide/single.html#REST" class="guide">REST</a><p class="paragraph"/><h4>Automatic JSON Marshalling</h4><p class="paragraph"/>Grails also supports automatic marshalling to JSON using the same mechanism. Simply substitute <code>XML</code> with <code>JSON</code>:<p class="paragraph"/><div class="code"><pre>render Book.list() as JSON</pre></div><p class="paragraph"/>The resulting output would look something like the following:<p class="paragraph"/><div class="code"><pre>&#91;
+    &#123;<span class="java&#45;quote">"id"</span>:1,
+     <span class="java&#45;quote">"class"</span>:<span class="java&#45;quote">"Book"</span>,
+     <span class="java&#45;quote">"author"</span>:<span class="java&#45;quote">"Stephen King"</span>,
+     <span class="java&#45;quote">"title"</span>:<span class="java&#45;quote">"The Stand"</span>&#125;,
+    &#123;<span class="java&#45;quote">"id"</span>:2,
+     <span class="java&#45;quote">"class"</span>:<span class="java&#45;quote">"Book"</span>,
+     <span class="java&#45;quote">"author"</span>:<span class="java&#45;quote">"Stephen King"</span>,
+     <span class="java&#45;quote">"releaseDate"</span>:<span class="java&#45;keyword">new</span> Date(1194127343161),
+     <span class="java&#45;quote">"title"</span>:<span class="java&#45;quote">"The Shining"</span>&#125;
+ &#93;</pre></div><p class="paragraph"/>Again as an alternative you can use the <code>encodeAsJSON</code> to achieve the same effect.
+
+
+<a name="6.1.8 More on JSONBuilder"><!-- Legacy link --></a>
+<h2 id="moreOnJSONBuilder">7.1.8 More on JSONBuilder</h2>
+The previous section on on XML and JSON responses covered simplistic examples of rendering XML and JSON responses. Whilst the XML builder used by Grails is the standard <a href="http://groovy.codehaus.org/Reading+XML+using+Groovy's+XmlSlurper" target="blank">XmlSlurper</a> found in Groovy, the JSON builder is a custom implementation specific to Grails.<p class="paragraph"/><h4>JSONBuilder and Grails versions</h4><p class="paragraph"/>JSONBuilder behaves different depending on the version of Grails you use. For version below 1.2 the deprecated <a href="../api/grails/web/JSONBuilder.html" class="api">grails.web.JSONBuilder</a> class is used. This section covers the usage of the Grails 1.2 JSONBuilder<p class="paragraph"/>For backwards compatibility the old <code>JSONBuilder</code> class is used with the <code>render</code> method for older applications; to use the newer/better <code>JSONBuilder</code> class set the following in <code>Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.json.legacy.builder = <span class="java&#45;keyword">false</span></pre></div><p class="paragraph"/><h4>Rendering Simple Objects</h4><p class="paragraph"/>To render a simple JSON object just set properties within the context of the Closure:<p class="paragraph"/><div class="code"><pre>render(contentType: <span class="java&#45;quote">"text/json"</span>) &#123;
+    hello = <span class="java&#45;quote">"world"</span>
+&#125;</pre></div><p class="paragraph"/>The above will produce the JSON:<p class="paragraph"/><div class="code"><pre>&#123;<span class="java&#45;quote">"hello"</span>:<span class="java&#45;quote">"world"</span>&#125;</pre></div><p class="paragraph"/><h4>Rendering JSON Arrays</h4><p class="paragraph"/>To render a list of objects simple assign a list:<p class="paragraph"/><div class="code"><pre>render(contentType: <span class="java&#45;quote">"text/json"</span>) &#123;
+    categories = &#91;'a', 'b', 'c'&#93;
+&#125;</pre></div><p class="paragraph"/>This will produce:<p class="paragraph"/><div class="code"><pre>&#123;<span class="java&#45;quote">"categories"</span>:&#91;<span class="java&#45;quote">"a"</span>,<span class="java&#45;quote">"b"</span>,<span class="java&#45;quote">"c"</span>&#93;&#125;</pre></div><p class="paragraph"/>You can also render lists of complex objects, for example:<p class="paragraph"/><div class="code"><pre>render(contentType: <span class="java&#45;quote">"text/json"</span>) &#123;
+    categories = &#91; &#123; a = <span class="java&#45;quote">"A"</span> &#125;, &#123; b = <span class="java&#45;quote">"B"</span> &#125; &#93;
+&#125;</pre></div><p class="paragraph"/>This will produce:<p class="paragraph"/><div class="code"><pre>&#123;<span class="java&#45;quote">"categories"</span>:&#91; &#123;<span class="java&#45;quote">"a"</span>:<span class="java&#45;quote">"A"</span>&#125; , &#123;<span class="java&#45;quote">"b"</span>:<span class="java&#45;quote">"B"</span>&#125;&#93; &#125;</pre></div><p class="paragraph"/>Use the special <code>element</code> method to return a list as the root:<p class="paragraph"/><div class="code"><pre>render(contentType: <span class="java&#45;quote">"text/json"</span>) &#123;
+    element 1
+    element 2
+    element 3
+&#125;</pre></div><p class="paragraph"/>The above code produces:<p class="paragraph"/><div class="code"><pre>&#91;1,2,3&#93;</pre></div><p class="paragraph"/><h4>Rendering Complex Objects</h4><p class="paragraph"/>Rendering complex objects can be done with Closures. For example:<p class="paragraph"/><div class="code"><pre>render(contentType: <span class="java&#45;quote">"text/json"</span>) &#123;
+    categories = &#91;'a', 'b', 'c'&#93;
+    title = <span class="java&#45;quote">"Hello JSON"</span>
+    information = &#123;
+        pages = 10
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The above will produce the JSON:<p class="paragraph"/><div class="code"><pre>&#123;<span class="java&#45;quote">"categories"</span>:&#91;<span class="java&#45;quote">"a"</span>,<span class="java&#45;quote">"b"</span>,<span class="java&#45;quote">"c"</span>&#93;,<span class="java&#45;quote">"title"</span>:<span class="java&#45;quote">"Hello JSON"</span>,<span class="java&#45;quote">"information"</span>:&#123;<span class="java&#45;quote">"pages"</span>:10&#125;&#125;</pre></div><p class="paragraph"/><h4>Arrays of Complex Objects</h4><p class="paragraph"/>As mentioned previously you can nest complex objects within arrays using Closures:<p class="paragraph"/><div class="code"><pre>render(contentType: <span class="java&#45;quote">"text/json"</span>) &#123;
+    categories = &#91; &#123; a = <span class="java&#45;quote">"A"</span> &#125;, &#123; b = <span class="java&#45;quote">"B"</span> &#125; &#93;
+&#125;</pre></div><p class="paragraph"/>You can use the <code>array</code> method to build them up dynamically:<p class="paragraph"/><div class="code"><pre>def results = Book.list()
+render(contentType: <span class="java&#45;quote">"text/json"</span>) &#123;
+    books = array &#123;
+        <span class="java&#45;keyword">for</span> (b in results) &#123;
+            book title: b.title
+        &#125;
+    &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Direct JSONBuilder API Access</h4><p class="paragraph"/>If you don't have access to the <code>render</code> method, but still want to produce JSON you can use the API directly:<p class="paragraph"/><div class="code"><pre>def builder = <span class="java&#45;keyword">new</span> JSONBuilder()<p class="paragraph"/>def result = builder.build &#123;
+    categories = &#91;'a', 'b', 'c'&#93;
+    title = <span class="java&#45;quote">"Hello JSON"</span>
+    information = &#123;
+        pages = 10
+    &#125;
+&#125;<p class="paragraph"/>// prints the JSON text
+println result.toString()<p class="paragraph"/>def sw = <span class="java&#45;keyword">new</span> StringWriter()
+result.render sw</pre></div>
+
+
+<a name="6.1.9 Uploading Files"><!-- Legacy link --></a>
+<h2 id="uploadingFiles">7.1.9 Uploading Files</h2>
+<h4>Programmatic File Uploads</h4><p class="paragraph"/>Grails supports file uploads using Spring's <a href="http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/web/multipart/MultipartHttpServletRequest.html" class="api">MultipartHttpServletRequest</a> interface. The first step for file uploading is to create a multipart form like this:<p class="paragraph"/><div class="code"><pre>Upload Form: <span class="xml&#45;tag">&#60;br /&#62;</span>
+    <span class="xml&#45;tag">&#60;g:uploadForm action=<span class="xml&#45;quote">"upload"</span>&#62;</span>
+        <span class="xml&#45;tag">&#60;input type=<span class="xml&#45;quote">"file"</span> name=<span class="xml&#45;quote">"myFile"</span> /&#62;</span>
+        <span class="xml&#45;tag">&#60;input type=<span class="xml&#45;quote">"submit"</span> /&#62;</span>
+    <span class="xml&#45;tag">&#60;/g:uploadForm&#62;</span></pre></div><p class="paragraph"/>The <code>uploadForm</code> tag conveniently adds the <code>enctype="multipart/form-data"</code> attribute to the standard <code>&#60;g:form&#62;</code> tag.<p class="paragraph"/>There are then a number of ways to handle the file upload. One is to work with the Spring <a href="http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/web/multipart/MultipartFile.html" class="api">MultipartFile</a> instance directly:<p class="paragraph"/><div class="code"><pre>def upload() &#123;
+    def f = request.getFile('myFile')
+    <span class="java&#45;keyword">if</span> (f.empty) &#123;
+        flash.message = 'file cannot be empty'
+        render(view: 'uploadForm')
+        <span class="java&#45;keyword">return</span>
+    &#125;<p class="paragraph"/>    f.transferTo(<span class="java&#45;keyword">new</span> File('/some/local/dir/myfile.txt'))
+    response.sendError(200, 'Done')
+&#125;</pre></div><p class="paragraph"/>This is convenient for doing transfers to other destinations and manipulating the file directly as you can obtain an <code>InputStream</code> and so on with the <a href="http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/web/multipart/MultipartFile.html" class="api">MultipartFile</a> interface.<p class="paragraph"/><h4>File Uploads through Data Binding</h4><p class="paragraph"/>File uploads can also be performed using data binding. Consider this <code>Image</code> domain class:<p class="paragraph"/><div class="code"><pre>class Image &#123;
+    <span class="java&#45;object">byte</span>&#91;&#93; myFile<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
+        // Limit upload file size to 2MB
+        myFile maxSize: 1024 &#42; 1024 &#42; 2
+    &#125;
+&#125;</pre></div><p class="paragraph"/>If you create an image using the <code>params</code> object in the constructor as in the example below, Grails will automatically bind the file's contents as a <code>byte</code> to the <code>myFile</code> property:<p class="paragraph"/><div class="code"><pre>def img = <span class="java&#45;keyword">new</span> Image(params)</pre></div><p class="paragraph"/>It's important that you set the <a href="../ref/Constraints/size.html" class="constraints">size</a> or <a href="../ref/Constraints/maxSize.html" class="constraints">maxSize</a> constraints, otherwise your database may be created with a small column size that can't handle reasonably sized files. For example, both H2 and MySQL default to a blob size of 255 bytes for <code>byte</code> properties.<p class="paragraph"/>It is also possible to set the contents of the file as a string by changing the type of the <code>myFile</code> property on the image to a String type:<p class="paragraph"/><div class="code"><pre>class Image &#123;
+   <span class="java&#45;object">String</span> myFile
+&#125;</pre></div>
+
+
+<a name="6.1.10 Command Objects"><!-- Legacy link --></a>
+<h2 id="commandObjects">7.1.10 Command Objects</h2>
+Grails controllers support the concept of command objects. A command object is similar to a form bean in a framework like Struts.  They are useful for grouping a subset of request parameters into a single object using <a href="../guide/single.html#dataBinding" class="guide">data binding</a>.<p class="paragraph"/><h4>Declaring Command Objects</h4><p class="paragraph"/>Command object classes are defined just like any other class.<p class="paragraph"/><div class="code"><pre>@grails.validation.Validateable
+class LoginCommand &#123;
+    <span class="java&#45;object">String</span> username
+    <span class="java&#45;object">String</span> password<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
+        username(blank: <span class="java&#45;keyword">false</span>, minSize: 6)
+        password(blank: <span class="java&#45;keyword">false</span>, minSize: 6)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>As this example shows, since the command object class is marked with <code>Validateable you can define <a href="../guide/single.html#constraints" class="guide">constraints</a> in command objects just like in <a href="../guide/single.html#GORM" class="guide">domain classes</a>.  Another way to make a command object class validateable is to define it in the same source file as the controller which is using the class as a command object.  If a command object class is not defined in the same source file as a controller which uses the class as a command object and the class is not marked with </code>Validateable, the class will not be made validateable.  It is not required that command object classes be validateable.<p class="paragraph"/><h4>Using Command Objects</h4><p class="paragraph"/>To use command objects, controller actions may optionally specify any number of command object parameters. The parameter types must be supplied so that Grails knows what objects to create and initialize.<p class="paragraph"/>Before the controller action is executed Grails will automatically create an instance of the command object class and populate its properties by binding the request parameters.  If the command object class is marked with @Validateable then the command object will be validated. For example:<p class="paragraph"/><div class="code"><pre>class LoginController &#123;<p class="paragraph"/>    def login(LoginCommand cmd) &#123;
+        <span class="java&#45;keyword">if</span> (cmd.hasErrors()) &#123;
+            redirect(action: 'loginForm')
+            <span class="java&#45;keyword">return</span>
+        &#125;<p class="paragraph"/>        // work with the command object data
+    &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Command Objects and Dependency Injection</h4><p class="paragraph"/>Command objects can participate in dependency injection. This is useful if your command object has some custom validation logic which uses a Grails <a href="../guide/single.html#services" class="guide">service</a>:<p class="paragraph"/><div class="code"><pre>@grails.validation.Validateable
+class LoginCommand &#123;<p class="paragraph"/>    def loginService<p class="paragraph"/>    <span class="java&#45;object">String</span> username
+    <span class="java&#45;object">String</span> password<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
+        username validator: &#123; val, obj &#45;&#62;
+            obj.loginService.canLogin(obj.username, obj.password)
+        &#125;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>In this example the command object interacts with the <code>loginService</code> bean which is injected by name from the Spring <code>ApplicationContext</code>.
+
+
+<a name="6.1.11 Handling Duplicate Form Submissions"><!-- Legacy link --></a>
+<h2 id="formtokens">7.1.11 Handling Duplicate Form Submissions</h2>
+Grails has built-in support for handling duplicate form submissions using the "Synchronizer Token Pattern". To get started you define a token on the <a href="../ref/Tags/form.html" class="tags">form</a> tag:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:form useToken=<span class="xml&#45;quote">"true"</span> ...&#62;</span></pre></div><p class="paragraph"/>Then in your controller code you can use the <a href="../ref/Controllers/withForm.html" class="controllers">withForm</a> method to handle valid and invalid requests:<p class="paragraph"/><div class="code"><pre>withForm &#123;
+   // good request
+&#125;.invalidToken &#123;
+   // bad request
+&#125;</pre></div><p class="paragraph"/>If you only provide the <a href="../ref/Controllers/withForm.html" class="controllers">withForm</a> method and not the chained <code>invalidToken</code> method then by default Grails will store the invalid token in a <code>flash.invalidToken</code> variable and redirect the request back to the original page. This can then be checked in the view:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:if test=<span class="xml&#45;quote">"$&#123;flash.invalidToken&#125;"</span>&#62;</span>
+  Don't click the button twice!
+<span class="xml&#45;tag">&#60;/g:if&#62;</span></pre></div><p class="paragraph"/><blockquote class="warning">
+The <a href="../ref/Controllers/withForm.html" class="controllers">withForm</a> tag makes use of the <a href="../ref/Controllers/session.html" class="controllers">session</a> and hence requires session affinity or clustered sessions if used in a cluster.
+</blockquote>
+
+
+<a name="6.1.12 Simple Type Converters"><!-- Legacy link --></a>
+<h2 id="typeConverters">7.1.12 Simple Type Converters</h2>
+<h3>Type Conversion Methods</h3><p class="paragraph"/>If you prefer to avoid the overhead of <a href="../guide/single.html#dataBinding" class="guide">Data Binding</a> and simply want to convert incoming parameters (typically Strings) into another more appropriate type the <a href="../ref/Controllers/params.html" class="controllers">params</a> object has a number of convenience methods for each type:<p class="paragraph"/><div class="code"><pre>def total = params.<span class="java&#45;object">int</span>('total')</pre></div><p class="paragraph"/>The above example uses the <code>int</code> method, and there are also methods for <code>boolean</code>, <code>long</code>, <code>char</code>, <code>short</code> and so on. Each of these methods is null-safe and safe from any parsing errors, so you don't have to perform any additional checks on the parameters.<p class="paragraph"/>Each of the conversion methods allows a default value to be passed as an optional second argument.  The default value will be returned if a corresponding entry cannot be found in the map or if an error occurs during the conversion.  Example:<p class="paragraph"/><div class="code"><pre>def total = params.<span class="java&#45;object">int</span>('total', 42)</pre></div><p class="paragraph"/>These same type conversion methods are also available on the <code>attrs</code> parameter of GSP tags.<p class="paragraph"/><h3>Handling Multi Parameters</h3><p class="paragraph"/>A common use case is dealing with multiple request parameters of the same name. For example you could get a query string such as <code>?name=Bob&#38;name=Judy</code>.<p class="paragraph"/>In this case dealing with one parameter and dealing with many has different semantics since Groovy's iteration mechanics for <code>String</code> iterate over each character. To avoid this problem the <a href="../ref/Controllers/params.html" class="controllers">params</a> object provides a <code>list</code> method that always returns a list:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">for</span> (name in params.list('name')) &#123;
+    println name
+&#125;</pre></div>
+
+
+<a name="6.1.13 Asynchronous Request Processing"><!-- Legacy link --></a>
+<h2 id="asynchronousRequestProcessing">7.1.13 Asynchronous Request Processing</h2>
+Grails support asynchronous request processing as provided by the Servlet 3.0 specification. To enable the async features you need to set your servlet target version to 3.0 in BuildConfig.groovy:<p class="paragraph"/><div class="code"><pre>grails.servlet.version = <span class="java&#45;quote">"3.0"</span></pre></div><p class="paragraph"/>With that done ensure you do a clean re-compile as some async features are enabled at compile time.<p class="paragraph"/><blockquote class="note">
+With a Servlet target version of 3.0 you can only deploy on Servlet 3.0 containers such as Tomcat 7 and above.
+</blockquote><p class="paragraph"/><h4>Asynchronous Rendering</h4><p class="paragraph"/>You can render content (templates, binary data etc.) in an asynchronous manner by calling the <code>startAsync</code> method which returns an instance of the Servlet 3.0 <code>AsyncContext</code>. Once you have a reference to the <code>AsyncContext</code> you can use Grails' regular render method to render content:<p class="paragraph"/><div class="code"><pre>def index() &#123;
+    def ctx = startAsync()
+    ctx.start &#123;
+        <span class="java&#45;keyword">new</span> Book(title:<span class="java&#45;quote">"The Stand"</span>).save()
+        render template:<span class="java&#45;quote">"books"</span>, model:&#91;books:Book.list()&#93;
+        ctx.complete()
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Note that you must call the <code>complete()</code> method to terminate the connection.<p class="paragraph"/><h4>Resuming an Async Request</h4><p class="paragraph"/>You resume processing of an async request (for example to delegate to view rendering) by using the <code>dispatch</code> method of the <code>AsyncContext</code> class:<p class="paragraph"/><div class="code"><pre>def index() &#123;
+    def ctx = startAsync()
+    ctx.start &#123;
+        // <span class="java&#45;keyword">do</span> working
+        &#8230;
+        // render view
+        ctx.dispatch()
+    &#125;
+&#125;</pre></div>
+
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/GORM.html">&lt;&lt; <strong>6</strong><span>Object Relational Mapping (GORM)</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/validation.html"><strong>8</strong><span>Validation</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Command Line</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/add-proxy.html">add-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bootstrap.html">bootstrap</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clean.html">clean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clear-proxy.html">clear-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/compile.html">compile</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/console.html">console</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-app.html">create-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-controller.html">create-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-domain-class.html">create-domain-class</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-filters.html">create-filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-multi-project-build.html">create-multi-project-build</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-plugin.html">create-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-pom.html">create-pom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-scaffold-controller.html">create-scaffold-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-script.html">create-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-service.html">create-service</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-tag-lib.html">create-tag-lib</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-unit-test.html">create-unit-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-controller.html">generate-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-views.html">generate-views</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/help.html">help</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/init.html">init</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-dependency.html">install-dependency</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-plugin.html">install-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-templates.html">install-templates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/integrate-with.html">integrate-with</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/interactive.html">interactive</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugin-updates.html">list-plugin-updates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/migrate-docs.html">migrate-docs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package-plugin.html">package-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package.html">package</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/plugin-info.html">plugin-info</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/refresh-dependencies.html">refresh-dependencies</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/remove-proxy.html">remove-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-war.html">run-war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-proxy.html">set-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-version.html">set-version</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/shell.html">shell</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/uninstall-plugin.html">uninstall-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/upgrade.html">upgrade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/wrapper.html">wrapper</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Constraints</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Constraints/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/attributes.html">attributes</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/bindable.html">bindable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/blank.html">blank</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/creditCard.html">creditCard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/email.html">email</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/inList.html">inList</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/matches.html">matches</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/max.html">max</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/maxSize.html">maxSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/min.html">min</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/minSize.html">minSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/notEqual.html">notEqual</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/nullable.html">nullable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/range.html">range</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/scale.html">scale</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/size.html">size</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/unique.html">unique</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/url.html">url</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/validator.html">validator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/widget.html">widget</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Controllers</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Controllers/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/afterInterceptor.html">afterInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/allowedMethods.html">allowedMethods</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/beforeInterceptor.html">beforeInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/bindData.html">bindData</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/chain.html">chain</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/defaultAction.html">defaultAction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/forward.html">forward</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/grailsApplication.html">grailsApplication</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/redirect.html">redirect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/session.html">session</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withForm.html">withForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withFormat.html">withFormat</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Database Mapping</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoImport.html">autoImport</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoTimestamp.html">autoTimestamp</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/batchSize.html">batchSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cache.html">cache</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cascade.html">cascade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/column.html">column</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/discriminator.html">discriminator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicInsert.html">dynamicInsert</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicUpdate.html">dynamicUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/fetch.html">fetch</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/id.html">id</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/ignoreNotFound.html">ignoreNotFound</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/indexColumn.html">indexColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/insertable.html">insertable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/joinTable.html">joinTable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/lazy.html">lazy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/order.html">order</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/sort.html">sort</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/table.html">table</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/type.html">type</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/updateable.html">updateable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/version.html">version</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Domain Classes</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/addTo.html">addTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/attach.html">attach</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/belongsTo.html">belongsTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/clearErrors.html">clearErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/constraints.html">constraints</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/count.html">count</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/countBy.html">countBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/createCriteria.html">createCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/delete.html">delete</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/discard.html">discard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/embedded.html">embedded</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/errors.html">errors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeQuery.html">executeQuery</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeUpdate.html">executeUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/exists.html">exists</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/fetchMode.html">fetchMode</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/find.html">find</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllBy.html">findAllBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllWhere.html">findAllWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findBy.html">findBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateBy.html">findOrCreateBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateWhere.html">findOrCreateWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveBy.html">findOrSaveBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveWhere.html">findOrSaveWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findWhere.html">findWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/get.html">get</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getAll.html">getAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getDirtyPropertyNames.html">getDirtyPropertyNames</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getPersistentValue.html">getPersistentValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasMany.html">hasMany</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasOne.html">hasOne</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/ident.html">ident</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/instanceOf.html">instanceOf</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isAttached.html">isAttached</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isDirty.html">isDirty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/list.html">list</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/listOrderBy.html">listOrderBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/load.html">load</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/lock.html">lock</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mappedBy.html">mappedBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mapping.html">mapping</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/merge.html">merge</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/namedQueries.html">namedQueries</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/properties.html">properties</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/read.html">read</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/refresh.html">refresh</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/removeFrom.html">removeFrom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/save.html">save</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/transients.html">transients</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/validate.html">validate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/where.html">where</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/whereAny.html">whereAny</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withCriteria.html">withCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withNewSession.html">withNewSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withSession.html">withSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withTransaction.html">withTransaction</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Plug-ins</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Plug-ins/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/URL%20mappings.html">URL mappings</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/codecs.html">codecs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/controllers.html">controllers</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/core.html">core</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/dataSource.html">dataSource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/domainClasses.html">domainClasses</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/filters.html">filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/hibernate.html">hibernate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/i18n.html">i18n</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/logging.html">logging</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/scaffolding.html">scaffolding</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/services.html">services</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/servlets.html">servlets</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/web%20flow.html">web flow</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Services</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Services/scope.html">scope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Services/transactional.html">transactional</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Servlet API</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tag Libraries</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/pageScope.html">pageScope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tags</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmit.html">actionSubmit</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmitImage.html">actionSubmitImage</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/applyLayout.html">applyLayout</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/checkBox.html">checkBox</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/collect.html">collect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/cookie.html">cookie</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/country.html">country</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/countrySelect.html">countrySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLink.html">createLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLinkTo.html">createLinkTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/currencySelect.html">currencySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/datePicker.html">datePicker</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/each.html">each</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/eachError.html">eachError</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/else.html">else</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/elseif.html">elseif</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/external.html">external</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/form.html">form</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formRemote.html">formRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatBoolean.html">formatBoolean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatDate.html">formatDate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatNumber.html">formatNumber</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/grep.html">grep</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/header.html">header</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hiddenField.html">hiddenField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/if.html">if</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/img.html">img</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/include.html">include</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isAvailable.html">isAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isNotAvailable.html">isNotAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/javascript.html">javascript</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/join.html">join</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutBody.html">layoutBody</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutHead.html">layoutHead</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutTitle.html">layoutTitle</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/link.html">link</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/localeSelect.html">localeSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/message.html">message</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/meta.html">meta</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/pageProperty.html">pageProperty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/paginate.html">paginate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/passwordField.html">passwordField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radio.html">radio</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radioGroup.html">radioGroup</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteField.html">remoteField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteFunction.html">remoteFunction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteLink.html">remoteLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/renderErrors.html">renderErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/resource.html">resource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/select.html">select</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/set.html">set</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/setProvider.html">setProvider</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/sortableColumn.html">sortableColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitButton.html">submitButton</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitToRemote.html">submitToRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textArea.html">textArea</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textField.html">textField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/timeZoneSelect.html">timeZoneSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/unless.html">unless</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/uploadForm.html">uploadForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/while.html">while</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.
+    Sponsored by <a href="http://springsource.com">SpringSource</a>
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

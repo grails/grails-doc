@@ -1,0 +1,48 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>11.3 Authentication</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="11.3 Authentication">11.3 Authentication</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            Grails has no default mechanism for authentication as it is possible to implement authentication in many different ways. It is however, easy to implement a simple authentication mechanism using either <a href="../guide/single.html#6.1.5 Controller Interceptors" class="guide">interceptors</a> or <a href="../guide/single.html#6.6 Filters" class="guide">filters</a>. This is sufficient for simple use cases but it's highly preferable to use an established security framework, for example by using the <a href="../guide/single.html#11.4.1 Spring Security" class="guide">Spring Security</a> or the <a href="../guide/single.html#11.4.2 Shiro" class="guide">Shiro</a> plugin.<p class="paragraph"/>Filters let you apply authentication across all controllers or across a URI space. For example you can create a new set of filters in a class called <code>grails-app/conf/SecurityFilters.groovy</code> by running:<p class="paragraph"/><div class="code"><pre>grails create&#45;filters security</pre></div><p class="paragraph"/>and implement your interception logic there:<p class="paragraph"/><div class="code"><pre>class SecurityFilters &#123;
+    def filters = &#123;
+        loginCheck(controller: '&#42;', action: '&#42;') &#123;
+            before = &#123;
+                <span class="java&#45;keyword">if</span> (!session.user &#38;&#38; actionName != <span class="java&#45;quote">"login"</span>) &#123;
+                    redirect(controller: <span class="java&#45;quote">"user"</span>, action: <span class="java&#45;quote">"login"</span>)
+                    <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">false</span>
+                &#125;
+            &#125;
+       &#125;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Here the <code>loginCheck</code> filter intercepts execution  <em class="italic">before</em>  all actions except <code>login</code> are executed, and if there is no user in the session then redirect to the <code>login</code> action.<p class="paragraph"/>The <code>login</code> action itself is trivial too:<p class="paragraph"/><div class="code"><pre>def login() &#123;
+    <span class="java&#45;keyword">if</span> (request.get) &#123;
+        <span class="java&#45;keyword">return</span> // render the login view
+    &#125;<p class="paragraph"/>    def u = User.findByLogin(params.login)
+    <span class="java&#45;keyword">if</span> (u) &#123;
+        <span class="java&#45;keyword">if</span> (u.password == params.password) &#123;
+            session.user = u
+            redirect(action: <span class="java&#45;quote">"home"</span>)
+        &#125;
+        <span class="java&#45;keyword">else</span> &#123;
+            render(view: <span class="java&#45;quote">"login"</span>, model: &#91;message: <span class="java&#45;quote">"Password incorrect"</span>&#93;)
+        &#125;
+    &#125;
+    <span class="java&#45;keyword">else</span> &#123;
+        render(view: <span class="java&#45;quote">"login"</span>, model: &#91;message: <span class="java&#45;quote">"User not found"</span>&#93;)
+    &#125;
+&#125;</pre></div>
+
+        </div>
+    </body>
+</html>

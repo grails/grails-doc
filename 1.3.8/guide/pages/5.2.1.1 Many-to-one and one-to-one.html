@@ -1,0 +1,42 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>5.2.1.1 Many-to-one and one-to-one</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="5.2.1.1 Many-to-one and one-to-one">5.2.1.1 Many-to-one and one-to-one</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            A many-to-one relationship is the simplest kind, and is defined trivially using a property of the type of another domain class. Consider this example:<p class="paragraph"/><h5>Example A</h5><p class="paragraph"/><div class="code"><pre>class Face &#123;
+    Nose nose
+&#125;
+class Nose &#123;
+&#125;</pre></div><p class="paragraph"/>In this case we have a unidirectional many-to-one relationship from <code>Face</code> to <code>Nose</code>. To make this relationship bidirectional define the other side as follows:<p class="paragraph"/><h5>Example B</h5><p class="paragraph"/><div class="code"><pre>class Face &#123;
+    Nose nose
+&#125;
+class Nose &#123;
+    <span class="java&#45;keyword">static</span> belongsTo = &#91;face:Face&#93;
+&#125;</pre></div><p class="paragraph"/>In this case we use the <code>belongsTo</code> setting to say that <code>Nose</code> "belongs to" <code>Face</code>. The result of this is that we can create a <code>Face</code>, attach a <code>Nose</code> instance to it and when we save or delete the <code>Face</code> instance, GORM will save or delete the <code>Nose</code>. In other words, saves and deletes will cascade from <code>Face</code> to the associated <code>Nose</code>:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">new</span> Face(nose:<span class="java&#45;keyword">new</span> Nose()).save()</pre></div><p class="paragraph"/>The example above will save both face and nose. Note that the inverse  <em class="italic">is not</em>  true and will result in an error due to a transient <code>Face</code>:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">new</span> Nose(face:<span class="java&#45;keyword">new</span> Face()).save() // will cause an error</pre></div><p class="paragraph"/>Now if we delete the <code>Face</code> instance, the <code>Nose</code> will go to:<p class="paragraph"/><div class="code"><pre>def f = Face.get(1)
+f.delete() // both Face and Nose deleted</pre></div><p class="paragraph"/>To make the relationship a true one-to-one, use the <code>hasOne</code> property on the owning side, e.g. <code>Face</code>:<p class="paragraph"/><h5>Example C</h5><p class="paragraph"/><div class="code"><pre>class Face &#123;
+    <span class="java&#45;keyword">static</span> hasOne = &#91;nose:Nose&#93;
+&#125;
+class Nose &#123;
+    Face face
+&#125;</pre></div><p class="paragraph"/>Note that using this property puts the foreign key on the inverse table to the previous example, so in this case the foreign key column is stored in the <code>nose</code> table inside a column called <code>face_id</code>. Also, <code>hasOne</code> only works with bidirectional relationships.<p class="paragraph"/>Finally, it's a good idea to add a unique constraint on one side of the one-to-one relationship:<p class="paragraph"/><div class="code"><pre>class Face &#123;
+    <span class="java&#45;keyword">static</span> hasOne = &#91;nose:Nose&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> constraints = &#123;
+        nose unique: <span class="java&#45;keyword">true</span>
+    &#125;
+&#125;<p class="paragraph"/>class Nose &#123;
+    Face face
+&#125;</pre></div>
+
+        </div>
+    </body>
+</html>

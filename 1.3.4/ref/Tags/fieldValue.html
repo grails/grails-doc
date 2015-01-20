@@ -1,0 +1,91 @@
+<html>
+    <head>
+	    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	    <title>Grails Reference</title>
+	    <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8" />
+	    <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+	    <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <h1>fieldValue </h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>This tag will inspect a bean which has been the subject of <a href="../../guide/single.html#6.1.6 Data Binding" class="guide">data binding</a> and obtain the value of the field either from the originally submitted value contained within the bean's errors object populating during data binding or from the value of a bean's property. Once the value is obtained it will be automatically HTML encoded.<p class="paragraph"/>
+<h2>Examples</h2><p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:fieldValue bean=<span class="xml&#45;quote">"$&#123;book&#125;"</span> field=<span class="xml&#45;quote">"title"</span> /&#62;</span><p class="paragraph"/>// or as a method
+<span class="xml&#45;tag">&#60;input type=<span class="xml&#45;quote">"text"</span> value=<span class="xml&#45;quote">"$&#123;fieldValue(bean:book,field:'title')&#125;"</span> /&#62;</span></pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Attributes
+<ul class="star">
+<li><code>bean</code> (required) - The bean instance to inspect</li>
+<li><code>field</code> (required) - The name of the field to obtain the value of</li>
+</ul><p class="paragraph"/><h2>Source</h2><p class="paragraph"/><p><a href="#" onclick="document.getElementById('fieldValue').style.display='inline'">Show Source</a></p><div id="fieldValue" style="display:none;"><div class="code"><pre>def fieldValue = &#123; attrs, body &#45;&#62;
+        def bean = attrs.bean
+        def field = attrs.field?.toString()
+        <span class="java&#45;keyword">if</span> (bean &#38;&#38; field) &#123;
+            <span class="java&#45;keyword">if</span> (bean.metaClass.hasProperty( bean,&#39;errors&#39;)) &#123;
+                Errors errors = bean.errors
+                def rejectedValue = errors?.getFieldError(field)?.rejectedValue
+                <span class="java&#45;keyword">if</span> (rejectedValue == <span class="java&#45;keyword">null</span> ) &#123;
+                    rejectedValue = bean
+                    field.split(&#34;&#92;&#92;.&#34;).each &#123; <span class="java&#45;object">String</span> fieldPart &#45;&#62;
+                        rejectedValue = rejectedValue?.&#34;$fieldPart&#34;
+                    &#125;
+                &#125;
+                <span class="java&#45;keyword">if</span> (rejectedValue != <span class="java&#45;keyword">null</span>) &#123;
+                    out &#60;&#60; formatValue(rejectedValue)
+                &#125;
+            &#125;
+            <span class="java&#45;keyword">else</span> &#123;
+                def rejectedValue = bean
+                field.split(&#34;&#92;&#92;.&#34;).each&#123; <span class="java&#45;object">String</span> fieldPart &#45;&#62;
+                    rejectedValue = rejectedValue?.&#34;$fieldPart&#34;
+                &#125;
+                <span class="java&#45;keyword">if</span> (rejectedValue != <span class="java&#45;keyword">null</span>) &#123;
+                    out &#60;&#60; formatValue(rejectedValue)
+                &#125;
+            &#125;
+        &#125;
+    &#125;<p class="paragraph"/>    def extractErrors(attrs) &#123;
+        def model = attrs&#91;&#39;model&#39;&#93;
+        def checkList = &#91;&#93;
+        <span class="java&#45;keyword">if</span> (attrs?.containsKey(&#39;bean&#39;)) &#123;
+            <span class="java&#45;keyword">if</span> (attrs.bean) &#123;
+                checkList &#60;&#60; attrs.bean
+            &#125;
+        &#125;
+        <span class="java&#45;keyword">else</span> <span class="java&#45;keyword">if</span> (attrs.containsKey(&#39;model&#39;)) &#123;
+            <span class="java&#45;keyword">if</span> (model) &#123;
+                checkList = model.findAll &#123;it.value?.errors <span class="java&#45;keyword">instanceof</span> Errors&#125;.collect &#123;it.value&#125;
+            &#125;
+        &#125;
+        <span class="java&#45;keyword">else</span> &#123;
+            request.attributeNames.each &#123;
+                def ra = request&#91;it&#93;
+                <span class="java&#45;keyword">if</span> (ra) &#123;
+                    def mc = GroovySystem.metaClassRegistry.getMetaClass(ra.getClass())
+                    <span class="java&#45;keyword">if</span> (ra <span class="java&#45;keyword">instanceof</span> Errors &#38;&#38; !checkList.contains(ra)) &#123;
+                        checkList &#60;&#60; ra
+                    &#125;
+                    <span class="java&#45;keyword">else</span> <span class="java&#45;keyword">if</span> (mc.hasProperty(ra, &#39;errors&#39;) &#38;&#38; ra.errors <span class="java&#45;keyword">instanceof</span> Errors &#38;&#38; !checkList.contains(ra.errors)) &#123;
+                        checkList &#60;&#60; ra.errors
+                    &#125;
+                &#125;
+            &#125;
+        &#125;<p class="paragraph"/>        def resultErrorsList = &#91;&#93;<p class="paragraph"/>        <span class="java&#45;keyword">for</span> (i in checkList) &#123;
+            def errors = <span class="java&#45;keyword">null</span>
+            <span class="java&#45;keyword">if</span> (i <span class="java&#45;keyword">instanceof</span> Errors) &#123;
+                errors = i
+            &#125;
+            <span class="java&#45;keyword">else</span> &#123;
+                def mc = GroovySystem.metaClassRegistry.getMetaClass(i.getClass())
+                <span class="java&#45;keyword">if</span> (mc.hasProperty(i, &#39;errors&#39;)) &#123;
+                    errors = i.errors
+                &#125;
+            &#125;
+            <span class="java&#45;keyword">if</span> (errors?.hasErrors()) &#123;
+                // <span class="java&#45;keyword">if</span> the &#39;field&#39; attribute is not provided then we should output a body,
+                // otherwise we should check <span class="java&#45;keyword">for</span> field&#45;specific errors
+                <span class="java&#45;keyword">if</span> (!attrs&#91;&#39;field&#39;&#93; || errors.hasFieldErrors(attrs&#91;&#39;field&#39;&#93;)) &#123;
+                    resultErrorsList &#60;&#60; errors
+                &#125;
+            &#125;
+        &#125;<p class="paragraph"/>        <span class="java&#45;keyword">return</span> resultErrorsList
+    &#125;</pre></div></div><p class="paragraph"/>
+
+    </body>
+</html>

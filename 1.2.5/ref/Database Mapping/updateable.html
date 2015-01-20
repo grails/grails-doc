@@ -1,0 +1,24 @@
+<html>
+     <head>
+     	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+     	<title>Grails Reference</title>
+     	<link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8">
+   	    <link rel="icon" href="../../img/favicon.ico" type="image/x-icon">
+	    <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"> 
+
+     </head>
+	<body class="body">
+		<h1>updateable</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Determines whether a property's database column is updated when persistent instances are updated.<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/><div class="code"><pre>class Book &#123;
+    <span class="java&#45;object">String</span> title
+    <span class="java&#45;keyword">static</span> belongsTo = &#91;author: Author&#93;
+    &#8230;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        author insertable: <span class="java&#45;keyword">false</span>
+        author updateable: <span class="java&#45;keyword">false</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Usage: <code>association_name(updateable: boolean)</code><p class="paragraph"/>Useful in general where you don't want to update a value (or include the column in the generated SQL) during a <code>save()</code>.<p class="paragraph"/>In particular this is useful for one-to-many relationships. For example when you store the foreign key in the 'child' table, it's often efficient to save the child using only the foreign key of the parent. You do this by setting the parent object (and the parent foreign key) in the 'child' entity. Setting the attributes insertable:false and updateable:false for the 'belongsTo' parent object allows you to insert and update using only the foreign key.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">static</span> mapping = &#123;
+    author updateable: <span class="java&#45;keyword">false</span>
+&#125;</pre></div>
+
+	</body>
+</html>

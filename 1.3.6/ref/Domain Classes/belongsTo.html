@@ -1,0 +1,30 @@
+<html>
+    <head>
+	    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	    <title>Grails Reference</title>
+	    <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8" />
+	    <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+	    <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <h1>belongsTo </h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Defines a "belongs to" relationship where the class specified by <code>belongsTo</code> assumes ownership of the relationship. This has the effect of controlling how saves and deletes cascade. The exact behaviour depends on the type of relationship you have:
+<ul class="star">
+<li>Many-to-one/one-to-one: saves and deletes cascade from the owner to the dependant (the class with the <code>belongsTo</code>).</li>
+<li>One-to-many: saves always cascade from the one side to the many side, but if the many side has <code>belongsTo</code>, then deletes also cascade in that direction.</li>
+<li>Many-to-many: only saves cascade from the "owner" to the "dependant", not deletes.</li>
+</ul><p class="paragraph"/><h2>Examples</h2><p class="paragraph"/><div class="code"><pre>class Book &#123;
+   <span class="java&#45;object">String</span> title
+   <span class="java&#45;keyword">static</span> belongsTo = &#91;author:Author&#93;
+&#125;</pre></div><p class="paragraph"/>In this example the <code>Book</code> class specifies that it belongs to the <code>Author</code> class, hence when an <code>Author</code> instance is deleted so are all the <code>Book</code> instances associated with the <code>Author</code><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>The <code>belongsTo</code> property serves to abstract the nature of the cascading behaviour in Hibernate. If you want one class to belong to another but not have a back reference, then you can specify a class or a list of classes as the value:
+<div class="code"><pre>class Book &#123;
+    <span class="java&#45;keyword">static</span> belongsTo = Author
+&#125;</pre></div><p class="paragraph"/>or:<p class="paragraph"/><div class="code"><pre>class Book &#123;
+    <span class="java&#45;keyword">static</span> belongsTo = &#91; Author, Library &#93;
+&#125;</pre></div><p class="paragraph"/>Back references, i.e. properties linking back to the owner, can be added in one of two ways:<p class="paragraph"/><div class="code"><pre>class Book &#123;
+    Author author<p class="paragraph"/>    <span class="java&#45;keyword">static</span> belongsTo = Author
+&#125;</pre></div><p class="paragraph"/>or:<p class="paragraph"/><div class="code"><pre>class Book &#123;
+    <span class="java&#45;keyword">static</span> belongsTo = &#91; author: Author &#93;
+&#125;</pre></div><p class="paragraph"/>In the above examples, both techniques create a property called <code>author</code> of type <code>Author</code>. Also, the map property can specify multiple properties and types if the class belongs to more than one owner.<p class="paragraph"/>The <code>belongsTo</code> property is simple and means you don't have to worry about the Hibernate cascading strategies, but if you need more control over cascading you can take advantage of the <a href="../../guide/single.html#5.5.2 Custom ORM Mapping" class="guide">ORM DSL</a>. This allows fine grained control of cascading updates and deletes. 
+
+    </body>
+</html>

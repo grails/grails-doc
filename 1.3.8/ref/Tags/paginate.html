@@ -1,0 +1,112 @@
+<html>
+    <head>
+	    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	    <title>Grails Reference</title>
+	    <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8" />
+	    <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+	    <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <h1>paginate</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Creates next/previous buttons and a breadcrumb trail to allow pagination of results<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/>Example domain class:<p class="paragraph"/><div class="code"><pre>class Book &#123;
+     <span class="java&#45;object">String</span> title
+     <span class="java&#45;object">String</span> author
+&#125;</pre></div><p class="paragraph"/>Example controller:<p class="paragraph"/><div class="code"><pre>class BookController &#123;
+  def list = &#123;
+     &#91;books: Book.list(params)&#93;
+  &#125;
+&#125;</pre></div><p class="paragraph"/>Paginate code:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:paginate controller=<span class="xml&#45;quote">"book"</span> action=<span class="xml&#45;quote">"list"</span> total=<span class="xml&#45;quote">"$&#123;Book.count()&#125;"</span> /&#62;</span></pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:paginate next=<span class="xml&#45;quote">"Forward"</span> prev=<span class="xml&#45;quote">"Back"</span>
+            maxsteps=<span class="xml&#45;quote">"0"</span> controller=<span class="xml&#45;quote">"book"</span>
+            action=<span class="xml&#45;quote">"list"</span> total=<span class="xml&#45;quote">"$&#123;Book.count()&#125;"</span> /&#62;</span></pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Attributes
+<ul class="star">
+<li><code>total</code> (required) - The total number of results to paginate</li>
+<li><code>action</code> (optional) - the name of the action to use in the link, if not specified the default action will be linked</li>
+<li><code>controller</code> (optional) - the name of the controller to use in the link, if not specified the current controller will be linked</li>
+<li><code>id</code> (optional) - The id to use in the link</li>
+<li><code>params</code> (optional) - A map containing request parameters</li>
+<li><code>prev</code> (optional) - The text to display for the previous link (defaults to "Previous" as defined by default.paginate.prev property in I18n messages.properties)</li>
+<li><code>next</code> (optional) - The text to display for the next link (defaults to "Next" as defined by default.paginate.next property in I18n messages.properties)</li>
+<li><code>max</code> (optional) - The number of records displayed per page (defaults to 10). Used ONLY if params.max is empty</li>
+<li><code>maxsteps</code> (optional) - The number of steps displayed for pagination (defaults to 10). Used ONLY if params.maxsteps is empty</li>
+<li><code>offset</code> (optional) - Used ONLY if params.offset is empty</li>
+</ul><p class="paragraph"/><h2>Source</h2><p class="paragraph"/><p><a href="#" onclick="document.getElementById('paginate').style.display='inline'">Show Source</a></p><div id="paginate" style="display:none;"><div class="code"><pre>def paginate = &#123; attrs &#45;&#62;
+        def writer = out
+        <span class="java&#45;keyword">if</span> (attrs.total == <span class="java&#45;keyword">null</span>) &#123;
+            throwTagError(&#34;Tag &#91;paginate&#93; is missing required attribute &#91;total&#93;&#34;)
+        &#125;<p class="paragraph"/>        def messageSource = grailsAttributes.messageSource
+        def locale = RCU.getLocale(request)<p class="paragraph"/>        def total = attrs.<span class="java&#45;object">int</span>(&#39;total&#39;) ?: 0
+        def action = (attrs.action ? attrs.action : (params.action ? params.action : &#34;list&#34;))
+        def offset = params.<span class="java&#45;object">int</span>(&#39;offset&#39;) ?: 0
+        def max = params.<span class="java&#45;object">int</span>(&#39;max&#39;)
+        def maxsteps = (attrs.<span class="java&#45;object">int</span>(&#39;maxsteps&#39;) ?: 10)<p class="paragraph"/>        <span class="java&#45;keyword">if</span> (!offset) offset = (attrs.<span class="java&#45;object">int</span>(&#39;offset&#39;) ?: 0)
+        <span class="java&#45;keyword">if</span> (!max) max = (attrs.<span class="java&#45;object">int</span>(&#39;max&#39;) ?: 10)<p class="paragraph"/>        def linkParams = &#91;:&#93;
+        <span class="java&#45;keyword">if</span> (attrs.params) linkParams.putAll(attrs.params)
+        linkParams.offset = offset &#45; max
+        linkParams.max = max
+        <span class="java&#45;keyword">if</span> (params.sort) linkParams.sort = params.sort
+        <span class="java&#45;keyword">if</span> (params.order) linkParams.order = params.order<p class="paragraph"/>        def linkTagAttrs = &#91;action:action&#93;
+        <span class="java&#45;keyword">if</span> (attrs.controller) &#123;
+            linkTagAttrs.controller = attrs.controller
+        &#125;
+        <span class="java&#45;keyword">if</span> (attrs.id != <span class="java&#45;keyword">null</span>) &#123;
+            linkTagAttrs.id = attrs.id
+        &#125;
+        <span class="java&#45;keyword">if</span> (attrs.fragment != <span class="java&#45;keyword">null</span>) &#123;
+            linkTagAttrs.fragment = attrs.fragment
+        &#125;
+        linkTagAttrs.params = linkParams<p class="paragraph"/>        // determine paging variables
+        def steps = maxsteps &#62; 0
+        <span class="java&#45;object">int</span> currentstep = (offset / max) + 1
+        <span class="java&#45;object">int</span> firststep = 1
+        <span class="java&#45;object">int</span> laststep = <span class="java&#45;object">Math</span>.round(<span class="java&#45;object">Math</span>.ceil(total / max))<p class="paragraph"/>        // display previous link when not on firststep
+        <span class="java&#45;keyword">if</span> (currentstep &#62; firststep) &#123;
+            linkTagAttrs.class = &#39;prevLink&#39;
+            linkParams.offset = offset &#45; max
+            writer &#60;&#60; link(linkTagAttrs.clone()) &#123;
+                (attrs.prev ?: messageSource.getMessage(&#39;paginate.prev&#39;, <span class="java&#45;keyword">null</span>, messageSource.getMessage(&#39;<span class="java&#45;keyword">default</span>.paginate.prev&#39;, <span class="java&#45;keyword">null</span>, &#39;Previous&#39;, locale), locale))
+            &#125;
+        &#125;<p class="paragraph"/>        // display steps when steps are enabled and laststep is not firststep
+        <span class="java&#45;keyword">if</span> (steps &#38;&#38; laststep &#62; firststep) &#123;
+            linkTagAttrs.class = &#39;step&#39;<p class="paragraph"/>            // determine begin and endstep paging variables
+            <span class="java&#45;object">int</span> beginstep = currentstep &#45; <span class="java&#45;object">Math</span>.round(maxsteps / 2) + (maxsteps % 2)
+            <span class="java&#45;object">int</span> endstep = currentstep + <span class="java&#45;object">Math</span>.round(maxsteps / 2) &#45; 1<p class="paragraph"/>            <span class="java&#45;keyword">if</span> (beginstep &#60; firststep) &#123;
+                beginstep = firststep
+                endstep = maxsteps
+            &#125;
+            <span class="java&#45;keyword">if</span> (endstep &#62; laststep) &#123;
+                beginstep = laststep &#45; maxsteps + 1
+                <span class="java&#45;keyword">if</span> (beginstep &#60; firststep) &#123;
+                    beginstep = firststep
+                &#125;
+                endstep = laststep
+            &#125;<p class="paragraph"/>            // display firststep link when beginstep is not firststep
+            <span class="java&#45;keyword">if</span> (beginstep &#62; firststep) &#123;
+                linkParams.offset = 0
+                writer &#60;&#60; link(linkTagAttrs.clone()) &#123;firststep.toString()&#125;
+                writer &#60;&#60; &#39;&#60;span class=&#34;step&#34;&#62;..&#60;/span&#62;&#39;
+            &#125;<p class="paragraph"/>            // display paginate steps
+            (beginstep..endstep).each &#123; i &#45;&#62;
+                <span class="java&#45;keyword">if</span> (currentstep == i) &#123;
+                    writer &#60;&#60; &#34;&#60;span class=&#92;&#34;currentStep&#92;&#34;&#62;$&#123;i&#125;&#60;/span&#62;&#34;
+                &#125;
+                <span class="java&#45;keyword">else</span> &#123;
+                    linkParams.offset = (i &#45; 1) &#42; max
+                    writer &#60;&#60; link(linkTagAttrs.clone()) &#123;i.toString()&#125;
+                &#125;
+            &#125;<p class="paragraph"/>            // display laststep link when endstep is not laststep
+            <span class="java&#45;keyword">if</span> (endstep &#60; laststep) &#123;
+                writer &#60;&#60; &#39;&#60;span class=&#34;step&#34;&#62;..&#60;/span&#62;&#39;
+                linkParams.offset = (laststep &#45;1) &#42; max
+                writer &#60;&#60; link(linkTagAttrs.clone()) &#123; laststep.toString() &#125;
+            &#125;
+        &#125;<p class="paragraph"/>        // display next link when not on laststep
+        <span class="java&#45;keyword">if</span> (currentstep &#60; laststep) &#123;
+            linkTagAttrs.class = &#39;nextLink&#39;
+            linkParams.offset = offset + max
+            writer &#60;&#60; link(linkTagAttrs.clone()) &#123;
+                (attrs.next ? attrs.next : messageSource.getMessage(&#39;paginate.next&#39;, <span class="java&#45;keyword">null</span>, messageSource.getMessage(&#39;<span class="java&#45;keyword">default</span>.paginate.next&#39;, <span class="java&#45;keyword">null</span>, &#39;Next&#39;, locale), locale))
+            &#125;
+        &#125;
+    &#125;</pre></div></div><p class="paragraph"/>
+
+    </body>
+</html>

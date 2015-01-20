@@ -1,0 +1,95 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>8.1.1 Transactions Rollback and the Session</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="8.1.1 Transactions Rollback and the Session">8.1.1 Transactions Rollback and the Session</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            <h3>Understanding Transactions and the Hibernate Session</h3><p class="paragraph"/>When using transactions there are important considerations you need to take into account with regards to how the underlying persistence session is handled by Hibernate. When a transaction is rolled back the Hibernate session used by GORM is cleared. This means any objects within the session become detached and accessing collections could lead to a <code>LazyInitializationException</code>.<p class="paragraph"/>To understand why it is important that the Hibernate session is cleared. Consider the following example:<p class="paragraph"/><div class="code"><pre>class Author &#123;
+	<span class="java&#45;object">String</span> name
+	<span class="java&#45;object">int</span> age
+	<span class="java&#45;keyword">static</span> hasMany = &#91;books:Book&#93;
+&#125;</pre></div><p class="paragraph"/>
+If you were to save 2 authors using consecutive transactions as follows:<p class="paragraph"/><div class="code"><pre>Author.withTransaction &#123; status &#45;&#62;
+   <span class="java&#45;keyword">new</span> Author(name:<span class="java&#45;quote">"Stephen King"</span>, age:40).save()
+   status.setRollbackOnly()
+&#125;
+Author.withTransaction &#123; status &#45;&#62;
+   <span class="java&#45;keyword">new</span> Author(name:<span class="java&#45;quote">"Stephen King"</span>, age:40).save()
+&#125;</pre></div><p class="paragraph"/>Only the last author would be saved since the first transaction rolls back the author save by clearing the Hibernate session. If the Hibernate session were not cleared then both author instance would be persisted and it would lead to very unexpected results.<p class="paragraph"/>It can, however, be frustrating to get <code>LazyInitializationException</code> due to the session being cleared.<p class="paragraph"/>For example, consider the following example:<p class="paragraph"/>
+<div class="code"><pre>class AuthorService &#123;<p class="paragraph"/>	<span class="java&#45;keyword">static</span> transactional = <span class="java&#45;keyword">true</span><p class="paragraph"/>	void updateAge(id, <span class="java&#45;object">int</span> age) &#123;
+		def author = Author.get(id)
+		author.age = age
+		<span class="java&#45;keyword">if</span>(author.age &#62; 100) &#123;
+			<span class="java&#45;keyword">throw</span> <span class="java&#45;keyword">new</span> AuthorException(<span class="java&#45;quote">"too old"</span>, author)
+		&#125;
+	&#125;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class AuthorController &#123;
+	AuthorService authorService
+	def updateAge() &#123;
+		<span class="java&#45;keyword">try</span> &#123;
+			authorService.updateAge(params.id, params.<span class="java&#45;object">int</span>(<span class="java&#45;quote">"age"</span>))
+		&#125;
+		<span class="java&#45;keyword">catch</span>(e) &#123;
+			render <span class="java&#45;quote">"Author books $&#123;e.author.books&#125;"</span>
+		&#125;<p class="paragraph"/>	&#125;
+&#125;</pre></div><p class="paragraph"/>In the above example the transaction will be rolled back if the <code>Author</code>'s age exceeds 100 by throwing an <code>AuthorException</code>. The <code>AuthorException</code> references the author but when the <code>books</code> association is accessed a <code>LazyInitializationException</code> will be thrown because the underlying Hibernate session has been cleared.<p class="paragraph"/>To solve this problem you have a number of options. One option is to ensure you query eagerly to get the data you are going to need:<p class="paragraph"/><div class="code"><pre>class AuthorService &#123;
+	...	
+	void updateAge(id, <span class="java&#45;object">int</span> age) &#123;
+		def author = Author.findById(id, &#91;fetch:&#91;books:<span class="java&#45;quote">"eager"</span>&#93;&#93;)
+		...</pre></div><p class="paragraph"/>
+In this example the <code>books</code> association will be queried when retrieving the <code>Author</code>.<p class="paragraph"/><blockquote class="note">
+This is the optimal solution as it requires fewer queries then the following suggested solutions.
+</blockquote><p class="paragraph"/>Another, alternative solution is to redirect the request after a transaction rollback:<p class="paragraph"/><div class="code"><pre>class AuthorController &#123;
+	AuthorService authorService
+	def updateAge() &#123;
+		<span class="java&#45;keyword">try</span> &#123;
+			authorService.updateAge(params.id, params.<span class="java&#45;object">int</span>(<span class="java&#45;quote">"age"</span>))
+		&#125;
+		<span class="java&#45;keyword">catch</span>(e) &#123;
+			flash.message <span class="java&#45;quote">"Can't update age"</span>
+			redirect action:<span class="java&#45;quote">"show"</span>, id:params.id
+		&#125;<p class="paragraph"/>	&#125;
+&#125;</pre></div><p class="paragraph"/>In this case a new request will deal with retrieving the <code>Author</code> again. And, finally a third solution is to retrieve the data for the <code>Author</code> again to make sure the session remains in the correct state:<p class="paragraph"/><div class="code"><pre>class AuthorController &#123;
+	AuthorService authorService
+	def updateAge() &#123;
+		<span class="java&#45;keyword">try</span> &#123;
+			authorService.updateAge(params.id, params.<span class="java&#45;object">int</span>(<span class="java&#45;quote">"age"</span>))
+		&#125;
+		<span class="java&#45;keyword">catch</span>(e) &#123;
+			def author = Author.read(params.id)
+			render <span class="java&#45;quote">"Author books $&#123;author.books&#125;"</span>
+		&#125;<p class="paragraph"/>	&#125;
+&#125;</pre></div><p class="paragraph"/><h3>Validation Errors and Rollback</h3><p class="paragraph"/>A common use case is rollback a transaction if there are validation errors. For example consider this service:<p class="paragraph"/>
+<div class="code"><pre><span class="java&#45;keyword">import</span> grails.validation.&#42;&#42;
+class AuthorService &#123;<p class="paragraph"/>	<span class="java&#45;keyword">static</span> transactional = <span class="java&#45;keyword">true</span><p class="paragraph"/>	void updateAge(id, <span class="java&#45;object">int</span> age) &#123;
+		def author = Author.get(id)
+		author.age = age
+		<span class="java&#45;keyword">if</span>(!age.validate()) &#123;
+			<span class="java&#45;keyword">throw</span> <span class="java&#45;keyword">new</span> ValidationException(<span class="java&#45;quote">"Author is not valid"</span>, author.errors)
+		&#125;
+	&#125;
+&#125;</pre></div><p class="paragraph"/>If you need to re-render the same view that a transaction was rolled back in you can re-associate the errors with a refreshed instance before rendering:<p class="paragraph"/><div class="code"><pre>class AuthorController &#123;
+	AuthorService authorService
+	def updateAge() &#123;
+		<span class="java&#45;keyword">try</span> &#123;
+			authorService.updateAge(params.id, params.<span class="java&#45;object">int</span>(<span class="java&#45;quote">"age"</span>))
+		&#125;
+		<span class="java&#45;keyword">catch</span>(ValidationException e) &#123;
+			def author = Author.read(params.id)
+			author.errors = e
+			render view:<span class="java&#45;quote">"edit"</span>, model: &#91;author:author&#93;
+		&#125;<p class="paragraph"/>	&#125;
+&#125;</pre></div>
+        </div>
+    </body>
+</html>

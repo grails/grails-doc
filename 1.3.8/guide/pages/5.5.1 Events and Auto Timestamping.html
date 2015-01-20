@@ -1,0 +1,111 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>5.5.1 Events and Auto Timestamping</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="5.5.1 Events and Auto Timestamping">5.5.1 Events and Auto Timestamping</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            GORM supports the registration of events as methods that get fired when certain events occurs such as deletes, inserts and updates. The following is a list of supported events:
+<ul class="star">
+<li><code>beforeInsert</code> - Executed before an object is initially persisted to the database</li>
+<li><code>beforeUpdate</code> - Executed before an object is updated</li>
+<li><code>beforeDelete</code> - Executed before an object is deleted</li>
+<li><code>beforeValidate</code> - Executed before an object is validated</li>
+<li><code>afterInsert</code> - Executed after an object is persisted to the database</li>
+<li><code>afterUpdate</code> - Executed after an object has been updated</li>
+<li><code>afterDelete</code> - Executed after an object has been deleted</li>
+<li><code>onLoad</code> - Executed when an object is loaded from the database</li>
+</ul><p class="paragraph"/>To add an event simply register the relevant closure with your domain class.<p class="paragraph"/><blockquote class="warning">
+Do not attempt to flush the session within an event (such as with obj.save(flush:true)). Since events are fired during flushing this will cause a StackOverflowError.
+</blockquote><p class="paragraph"/><h3>Event types</h3><p class="paragraph"/><h4>The beforeInsert event</h4><p class="paragraph"/>Fired before an object is saved to the db<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   Date dateCreated<p class="paragraph"/>   def beforeInsert() &#123;
+       dateCreated = <span class="java&#45;keyword">new</span> Date()
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h4>The beforeUpdate event</h4><p class="paragraph"/>Fired before an existing object is updated<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def beforeInsert() &#123;
+       dateCreated = <span class="java&#45;keyword">new</span> Date()
+   &#125;
+   def beforeUpdate() &#123;
+       lastUpdated = <span class="java&#45;keyword">new</span> Date()
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h4>The beforeDelete event</h4><p class="paragraph"/>Fired before an object is deleted.<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def beforeDelete() &#123;
+      ActivityTrace.withNewSession &#123;
+         <span class="java&#45;keyword">new</span> ActivityTrace(eventName:<span class="java&#45;quote">"Person Deleted"</span>,data:name).save()
+      &#125;      
+   &#125;
+&#125;</pre></div><p class="paragraph"/>Notice the usage of <code>withNewSession</code> method above. Since events are triggered whilst Hibernate is flushing using persistence methods like <code>save()</code> and <code>delete()</code> won't result in objects being saved unless you run your operations with a new <code>Session</code>.<p class="paragraph"/>Fortunately the <code>withNewSession</code> method allows you to share the same transactional JDBC connection even though you're using a different underlying <code>Session</code>.<p class="paragraph"/><h4>The beforeValidate event</h4><p class="paragraph"/>Fired before an object is validated.<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name<p class="paragraph"/>   <span class="java&#45;keyword">static</span> constraints = &#123;
+       name size: 5..45
+   &#125;<p class="paragraph"/>   def beforeValidate() &#123;
+       name = name?.trim()
+   &#125;
+&#125;</pre></div><p class="paragraph"/>The <code>beforeValidate</code> method is run before any validators are run.<p class="paragraph"/>GORM supports an overloaded version of <code>beforeValidate</code> which accepts a <code>List</code> parameter which may include
+the names of the properties which are about to be validated.  This version of <code>beforeValidate</code> will be called
+when the <code>validate</code> method has been invoked and passed a <code>List</code> of property names as an argument.<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   <span class="java&#45;object">String</span> town
+   <span class="java&#45;object">Integer</span> age<p class="paragraph"/>   <span class="java&#45;keyword">static</span> constraints = &#123;
+       name size: 5..45
+       age range: 4..99
+   &#125;<p class="paragraph"/>   def beforeValidate(List propertiesBeingValidated) &#123;
+      // <span class="java&#45;keyword">do</span> pre validation work based on propertiesBeingValidated
+   &#125;
+&#125;<p class="paragraph"/>def p = <span class="java&#45;keyword">new</span> Person(name: 'Jacob Brown', age: 10)
+p.validate(&#91;'age', 'name'&#93;)</pre></div><p class="paragraph"/><blockquote class="note">
+Note that when <code>validate</code> is triggered indirectly because of a call to the <code>save</code> method that
+the <code>validate</code> method is being invoked with no arguments, not a <code>List</code> that includes all of
+the property names.
+</blockquote><p class="paragraph"/>Either or both versions of <code>beforeValidate</code> may be defined in a domain class.  GORM will
+prefer the <code>List</code> version if a <code>List</code> is passed to <code>validate</code> but will fall back on the
+no-arg version if the <code>List</code> version does not exist.  Likewise, GORM will prefer the
+no-arg version if no arguments are passed to <code>validate</code> but will fall back on the 
+<code>List</code> version if the no-arg version does not exist.  In that case, null
+is passed to <code>beforeValidate</code>.<p class="paragraph"/><h4>The onLoad/beforeLoad event</h4><p class="paragraph"/>Fired immediately before an object is loaded from the db:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def onLoad() &#123;
+      log.debug <span class="java&#45;quote">"Loading $&#123;id&#125;"</span>
+   &#125;
+&#125;</pre></div><p class="paragraph"/><code>beforeLoad()</code> is effectively a synonym for <code>onLoad()</code>, so only declare one or the other.<p class="paragraph"/><h4>The afterLoad event</h4><p class="paragraph"/>Fired immediately after an object is loaded from the db:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def afterLoad() &#123;
+      name = <span class="java&#45;quote">"I'm loaded"</span>
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Custom Event Listeners</h4><p class="paragraph"/>You can also register event handler classes in an application's <code>grails-app/conf/spring/resources.groovy</code> or in the <code>doWithSpring</code> closure in a plugin descriptor by registering a Spring bean named <code>hibernateEventListeners</code>. This bean has one property, <code>listenerMap</code> which specifies the listeners to register for various Hibernate events.<p class="paragraph"/>The values of the map are instances of classes that implement one or more Hibernate listener interfaces. You can use one class that implements all of the required interfaces, or one concrete class per interface, or any combination. The valid map keys and corresponding interfaces are listed here:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Name</strong></th><th><strong class="bold">Interface</strong></th></tr><tr class="table-odd"><td>auto-flush</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/AutoFlushEventListener.html" class="api">AutoFlushEventListener</a></td></tr><tr class="table-even"><td>merge</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/MergeEventListener.html" class="api">MergeEventListener</a></td></tr><tr class="table-odd"><td>create</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PersistEventListener.html" class="api">PersistEventListener</a></td></tr><tr class="table-even"><td>create-onflush</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PersistEventListener.html" class="api">PersistEventListener</a></td></tr><tr class="table-odd"><td>delete</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/DeleteEventListener.html" class="api">DeleteEventListener</a></td></tr><tr class="table-even"><td>dirty-check</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/DirtyCheckEventListener.html" class="api">DirtyCheckEventListener</a></td></tr><tr class="table-odd"><td>evict</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/EvictEventListener.html" class="api">EvictEventListener</a></td></tr><tr class="table-even"><td>flush</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/FlushEventListener.html" class="api">FlushEventListener</a></td></tr><tr class="table-odd"><td>flush-entity</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/FlushEntityEventListener.html" class="api">FlushEntityEventListener</a></td></tr><tr class="table-even"><td>load</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/LoadEventListener.html" class="api">LoadEventListener</a></td></tr><tr class="table-odd"><td>load-collection</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/InitializeCollectionEventListener.html" class="api">InitializeCollectionEventListener</a></td></tr><tr class="table-even"><td>lock</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/LockEventListener.html" class="api">LockEventListener</a></td></tr><tr class="table-odd"><td>refresh</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/RefreshEventListener.html" class="api">RefreshEventListener</a></td></tr><tr class="table-even"><td>replicate</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/ReplicateEventListener.html" class="api">ReplicateEventListener</a></td></tr><tr class="table-odd"><td>save-update</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-even"><td>save</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-odd"><td>update</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-even"><td>pre-load</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PreLoadEventListener.html" class="api">PreLoadEventListener</a></td></tr><tr class="table-odd"><td>pre-update</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PreUpdateEventListener.html" class="api">PreUpdateEventListener</a></td></tr><tr class="table-even"><td>pre-delete</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PreDeleteEventListener.html" class="api">PreDeleteEventListener</a></td></tr><tr class="table-odd"><td>pre-insert</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PreInsertEventListener.html" class="api">PreInsertEventListener</a></td></tr><tr class="table-even"><td>pre-collection-recreate</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PreCollectionRecreateEventListener.html" class="api">PreCollectionRecreateEventListener</a></td></tr><tr class="table-odd"><td>pre-collection-remove</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PreCollectionRemoveEventListener.html" class="api">PreCollectionRemoveEventListener</a></td></tr><tr class="table-even"><td>pre-collection-update</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PreCollectionUpdateEventListener.html" class="api">PreCollectionUpdateEventListener</a></td></tr><tr class="table-odd"><td>post-load</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PostLoadEventListener.html" class="api">PostLoadEventListener</a></td></tr><tr class="table-even"><td>post-update</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PostUpdateEventListener.html" class="api">PostUpdateEventListener</a></td></tr><tr class="table-odd"><td>post-delete</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PostDeleteEventListener.html" class="api">PostDeleteEventListener</a></td></tr><tr class="table-even"><td>post-insert</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PostInsertEventListener.html" class="api">PostInsertEventListener</a></td></tr><tr class="table-odd"><td>post-commit-update</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PostUpdateEventListener.html" class="api">PostUpdateEventListener</a></td></tr><tr class="table-even"><td>post-commit-delete</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PostDeleteEventListener.html" class="api">PostDeleteEventListener</a></td></tr><tr class="table-odd"><td>post-commit-insert</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PostInsertEventListener.html" class="api">PostInsertEventListener</a></td></tr><tr class="table-even"><td>post-collection-recreate</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PostCollectionRecreateEventListener.html" class="api">PostCollectionRecreateEventListener</a></td></tr><tr class="table-odd"><td>post-collection-remove</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PostCollectionRemoveEventListener.html" class="api">PostCollectionRemoveEventListener</a></td></tr><tr class="table-even"><td>post-collection-update</td><td><a href="http://docs.jboss.org/hibernate/stable/core/api/org/hibernate/event/PostCollectionUpdateEventListener.html" class="api">PostCollectionUpdateEventListener</a></td></tr></table><p class="paragraph"/>For example, you could register a class <code>AuditEventListener</code> which implements <code>PostInsertEventListener</code>, <code>PostUpdateEventListener</code>, and <code>PostDeleteEventListener</code> using the following in an application:<p class="paragraph"/><div class="code"><pre>beans = &#123;<p class="paragraph"/>   auditListener(AuditEventListener)<p class="paragraph"/>   hibernateEventListeners(HibernateEventListeners) &#123;
+      listenerMap = &#91;'post&#45;insert':auditListener,
+                     'post&#45;update':auditListener,
+                     'post&#45;delete':auditListener&#93;
+   &#125;
+&#125;</pre></div><p class="paragraph"/>or use this in a plugin:<p class="paragraph"/><div class="code"><pre>def doWithSpring = &#123;<p class="paragraph"/>   auditListener(AuditEventListener)<p class="paragraph"/>   hibernateEventListeners(HibernateEventListeners) &#123;
+      listenerMap = &#91;'post&#45;insert':auditListener,
+                     'post&#45;update':auditListener,
+                     'post&#45;delete':auditListener&#93;
+   &#125;
+&#125;</pre></div><p class="paragraph"/>
+<h4>Automatic timestamping</h4><p class="paragraph"/>The examples above demonstrated using events to update a <code>lastUpdated</code> and <code>dateCreated</code> property to keep track of updates to objects. However, this is actually not necessary. By merely defining a <code>lastUpdated</code> and <code>dateCreated</code> property these will be automatically updated for you by GORM.<p class="paragraph"/>If this is not the behaviour you want you can disable this feature with:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   Date dateCreated
+   Date lastUpdated
+   <span class="java&#45;keyword">static</span> mapping = &#123;
+      autoTimestamp <span class="java&#45;keyword">false</span>
+   &#125;
+&#125;</pre></div><p class="paragraph"/><blockquote class="warning">
+If you put <code>nullable: false</code> constraints on either <code>dateCreated</code> or <code>lastUpdated</code>, your domain instances will fail validation - probably not what you want. Leave constraints off these properties unless you have disabled automatic timestamping.
+</blockquote>
+
+        </div>
+    </body>
+</html>

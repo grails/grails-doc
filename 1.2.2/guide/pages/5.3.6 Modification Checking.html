@@ -1,0 +1,42 @@
+<html>
+     <head>
+     	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+     	<title>5.3.6 Modification Checking</title>
+     	<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8">
+		<link rel="icon" href="../../img/favicon.ico" type="image/x-icon">
+		<link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"> 
+     </head>
+	<body class="body">
+		<div id="header">
+			<h2><a name="5.3.6 Modification Checking">5.3.6 Modification Checking</a></h2>
+		</div>
+		<div id="toc">
+			
+		</div>
+		<div id="content">
+			Once you have loaded and possibly modified a persistent domain class instance, it isn't straightforward to retrieve the original values. If you try to reload the instance using <a href="../ref/Domain Classes/get.html" class="domainClasses">get</a> Hibernate will return the current modified instance from its Session cache. Reloading using another query would trigger a flush which could cause problems if your data isn't ready to be flushed yet. So GORM provides some methods to retrieve the original values that Hibernate caches when it loads the instance (which it uses for dirty checking).<p class="paragraph"/><h4>isDirty</h4><p class="paragraph"/>You can use the <a href="../ref/Domain Classes/isDirty.html" class="domainClasses">isDirty</a> method to check if any field has been modified:<p class="paragraph"/><div class="code"><pre>def airport = Airport.get(10)
+assert !airport.isDirty()<p class="paragraph"/>airport.properties = params
+<span class="java&#45;keyword">if</span> (airport.isDirty()) &#123;
+   // <span class="java&#45;keyword">do</span> something based on changed state
+&#125;</pre></div><p class="paragraph"/>You can also check if individual fields have been modified:<p class="paragraph"/><div class="code"><pre>def airport = Airport.get(10)
+assert !airport.isDirty()<p class="paragraph"/>airport.properties = params
+<span class="java&#45;keyword">if</span> (airport.isDirty('name')) &#123;
+   // <span class="java&#45;keyword">do</span> something based on changed name
+&#125;</pre></div><p class="paragraph"/><h4>getDirtyPropertyNames</h4><p class="paragraph"/>You can use the <a href="../ref/Domain Classes/getDirtyPropertyNames.html" class="domainClasses">getDirtyPropertyNames</a> method to retrieve the names of modified fields; this may be empty but will not be null:<p class="paragraph"/><div class="code"><pre>def airport = Airport.get(10)
+assert !airport.isDirty()<p class="paragraph"/>airport.properties = params
+def modifiedFieldNames = airport.getDirtyPropertyNames()
+<span class="java&#45;keyword">for</span> (fieldName in modifiedFieldNames) &#123;
+   // <span class="java&#45;keyword">do</span> something based on changed value
+&#125;</pre></div><p class="paragraph"/><h4>getPersistentValue</h4><p class="paragraph"/>You can use the <a href="../ref/Domain Classes/getPersistentValue.html" class="domainClasses">getPersistentValue</a> method to retrieve the value of a modified field:<p class="paragraph"/><div class="code"><pre>def airport = Airport.get(10)
+assert !airport.isDirty()<p class="paragraph"/>airport.properties = params
+def modifiedFieldNames = airport.getDirtyPropertyNames()
+<span class="java&#45;keyword">for</span> (fieldName in modifiedFieldNames) &#123;
+    def currentName = b.name
+    def originalName = b.getPersistentValue('name')
+    <span class="java&#45;keyword">if</span> (currentName != originalName) &#123;
+        // <span class="java&#45;keyword">do</span> something based on changed value
+    &#125;
+&#125;</pre></div><p class="paragraph"/>
+		</div>
+	</body>
+</html>

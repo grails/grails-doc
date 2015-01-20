@@ -1,0 +1,22 @@
+<html>
+    <head>
+	    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	    <title>Grails Reference</title>
+	    <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8" />
+	    <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+	    <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <h1>ignoreNotFound</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Specifies how foreign keys that reference missing rows will be handled in many-to-one relationships.<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/><div class="code"><pre>class LegacyCdDomain &#123;
+    <span class="java&#45;object">String</span> title
+    Thumbnail thumbnail<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        thumbnail ignoreNotFound: <span class="java&#45;keyword">true</span>
+    &#125;
+&#125;<p class="paragraph"/>class Thumbnail &#123;
+    <span class="java&#45;object">byte</span>&#91;&#93; data
+&#125;</pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Usage: <code>association_name(ignoreNotFound: boolean)</code><p class="paragraph"/>When the data in the database is corrupt and a foreign key references a non existent record, Hibernate will complain with a "No row with the given identifier exists" message. For example, a <code>LegacyCdDomain</code> record may have a reference to a <code>Thumbnail</code> record with an ID of 1234, but the database may no longer contain a <code>Thumbnail</code> with that ID.<p class="paragraph"/>One possible way to load such corrupt data is to use the <code>ignoreNotFound</code> mapping option. If you set it to <code>true</code>, Hibernate will treat a missing row as a <code>null</code> association. So in the above example, our <code>LegacyCdDomain</code> instance would load but its <code>thumbnail</code> property would be <code>null</code>. Specifying a value of <code>false</code> for <code>ignoreNotFound</code> will result in Hibernate throwing an <code>org.hibernate.ObjectNotFoundException</code>.<p class="paragraph"/><blockquote class="warning">
+A dataset loaded with <code>ignoreNotFound: true</code> may throw an exception during <code>save()</code> because of the missing reference!
+</blockquote><p class="paragraph"/>The default value for this setting is <code>false</code>. It maps to Hibernate's <code>not-found</code> property.<p class="paragraph"/>This settings can be useful if you have a legacy database with unusual behaviour when it comes to referential integrity.
+
+    </body>
+</html>

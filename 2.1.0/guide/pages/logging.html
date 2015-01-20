@@ -1,0 +1,1216 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>4.1.2 Logging 2.1.0</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/upgradingFromPreviousVersionsOfGrails.html"><strong>3</strong><span>Upgrading from previous versions of Grails</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/commandLine.html"><strong>5</strong><span>The Command Line</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/GORM.html"><strong>6</strong><span>Object Relational Mapping (GORM)</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/validation.html"><strong>8</strong><span>Validation</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/services.html"><strong>9</strong><span>The Service Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/testing.html"><strong>10</strong><span>Testing</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/i18n.html"><strong>11</strong><span>Internationalization</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/security.html"><strong>12</strong><span>Security</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/plugins.html"><strong>13</strong><span>Plugins</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/webServices.html"><strong>14</strong><span>Web Services</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/spring.html"><strong>15</strong><span>Grails and Spring</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/hibernate.html"><strong>16</strong><span>Grails and Hibernate</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/scaffolding.html"><strong>17</strong><span>Scaffolding</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/deployment.html"><strong>18</strong><span>Deployment</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/contributing.html"><strong>19</strong><span>Contributing to Grails</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        <span id="logo"><a href="http://grails.org" target="_blank"><img alt="Grails Logo" title="The Grails Framework" src="../../img/grails.png" border="0"/></a></span>
+        
+        
+        <span id="sponsor"><a href="http://springsource.com" target="_blank"><img alt="SpringSource Logo" title="SpringSource - Weapons for the War on Java Complexity" src="../../img/springsource-logo.png" border="0"/></a></span>
+        
+    </div>
+    <p>See the light - agile, industrial strength, rapid web application development made easy</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/upgradingFromPreviousVersionsOfGrails.html">&lt;&lt; <strong>3</strong><span>Upgrading from previous versions of Grails</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/commandLine.html"><strong>5</strong><span>The Command Line</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>4.1.2 Logging - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith</p>
+
+                    <p><strong>Version:</strong> 2.1.0</p>
+
+                    
+                </div>
+
+                
+
+                
+<a name="3.1.2 Logging"><!-- Legacy link --></a>
+<h2 id="logging">4.1.2 Logging</h2>
+<h3>The Basics</h3><p class="paragraph"/>Grails uses its common configuration mechanism to provide the settings for the underlying <a href="http://logging.apache.org/log4j/1.2/index.html" target="blank">Log4j</a> log system, so all you have to do is add a <code>log4j</code> setting to the file <code>grails-app/conf/Config.groovy</code>.<p class="paragraph"/>So what does this <code>log4j</code> setting look like? Here's a basic example:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    error  'org.codehaus.groovy.grails.web.servlet',  //  controllers
+           'org.codehaus.groovy.grails.web.pages' //  GSP<p class="paragraph"/>    warn   'org.apache.catalina'
+&#125;</pre></div><p class="paragraph"/>This says that for loggers whose name starts with 'org.codehaus.groovy.grails.web.servlet' or 'org.codehaus.groovy.grails.web.pages', only messages logged at 'error' level and above will be shown. Loggers with names starting with 'org.apache.catalina' logger only show messages at the 'warn' level and above. What does that mean? First of all, you have to understand how levels work.<p class="paragraph"/><h4>Logging levels</h4><p class="paragraph"/>The are several standard logging levels, which are listed here in order of descending priority:
+<ol>
+<li>off</li>
+<li>fatal</li>
+<li>error</li>
+<li>warn</li>
+<li>info</li>
+<li>debug</li>
+<li>trace</li>
+<li>all</li>
+</ol><p class="paragraph"/>When you log a message, you implicitly give that message a level. For example, the method <code>log.error(msg)</code> will log a message at the 'error' level. Likewise, <code>log.debug(msg)</code> will log it at 'debug'. Each of the above levels apart from 'off' and 'all' have a corresponding log method of the same name.<p class="paragraph"/>The logging system uses that  <em class="italic">message</em>  level combined with the configuration for the logger (see next section) to determine whether the message gets written out. For example, if you have an 'org.example.domain' logger configured like so:<p class="paragraph"/><div class="code"><pre>warn 'org.example.domain'</pre></div><p class="paragraph"/>then messages with a level of 'warn', 'error', or 'fatal' will be written out. Messages at other levels will be ignored.<p class="paragraph"/>Before we go on to loggers, a quick note about those 'off' and 'all' levels. These are special in that they can only be used in the configuration; you can't log messages at these levels. So if you configure a logger with a level of 'off', then no messages will be written out. A level of 'all' means that you will see all messages. Simple.<p class="paragraph"/><h4>Loggers</h4><p class="paragraph"/>Loggers are fundamental to the logging system, but they are a source of some confusion. For a start, what are they? Are they shared? How do you configure them?<p class="paragraph"/>A logger is the object you log messages to, so in the call <code>log.debug(msg)</code>, <code>log</code> is a logger instance (of type <a href="http://commons.apache.org/logging/apidocs/org/apache/commons/logging/Log.html" target="blank">Log</a>). These loggers are cached and uniquely identified by name, so if two separate classes use loggers with the same name, those loggers are actually the same instance.<p class="paragraph"/>There are two main ways to get hold of a logger:
+<ol>
+<li>use the <code>log</code> instance injected into artifacts such as domain classes, controllers and services;</li>
+<li>use the Commons Logging API directly.</li>
+</ol><p class="paragraph"/>If you use the dynamic <code>log</code> property, then the name of the logger is 'grails.app.&#60;type&#62;.&#60;className&#62;', where <code>type</code> is the type of the artifact, for example 'controllers' or 'services', and <code>className</code> is the fully qualified name of the artifact. For example, if you have this service:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> org.example<p class="paragraph"/>class MyService &#123;
+    &#8230;
+&#125;</pre></div><p class="paragraph"/>then the name of the logger will be 'grails.app.services.org.example.MyService'.<p class="paragraph"/>For other classes, the typical approach is to store a logger based on the class name in a constant static field:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> org.other<p class="paragraph"/><span class="java&#45;keyword">import</span> org.apache.commons.logging.LogFactory<p class="paragraph"/>class MyClass &#123;
+    <span class="java&#45;keyword">private</span> <span class="java&#45;keyword">static</span> <span class="java&#45;keyword">final</span> log = LogFactory.getLog(<span class="java&#45;keyword">this</span>)
+    &#8230;
+&#125;</pre></div><p class="paragraph"/>This will create a logger with the name 'org.other.MyClass' - note the lack of a 'grails.app.' prefix since the class isn't an artifact. You can also pass a name to the <code>getLog()</code> method, such as "myLogger", but this is less common because the logging system treats names with dots ('.') in a special way.<p class="paragraph"/><h4>Configuring loggers</h4><p class="paragraph"/>You have already seen how to configure loggers in Grails:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    error  'org.codehaus.groovy.grails.web.servlet'
+&#125;</pre></div><p class="paragraph"/>This example configures loggers with names starting with 'org.codehaus.groovy.grails.web.servlet' to ignore any messages sent to them at a level of 'warn' or lower. But is there a logger with this name in the application? No. So why have a configuration for it? Because the above rule applies to any logger whose name  <em class="italic">begins with</em>  'org.codehaus.groovy.grails.servlet.' as well. For example, the rule applies to both the <code>org.codehaus.groovy.grails.web.servlet.GrailsDispatcherServlet</code> class and the <code>org.codehaus.groovy.grails.web.servlet.mvc.GrailsWebRequest</code> one.<p class="paragraph"/>In other words, loggers are hierarchical. This makes configuring them by package much simpler than it would otherwise be.<p class="paragraph"/>The most common things that you will want to capture log output from are your controllers, services, and other artifacts. Use the convention mentioned earlier to do that:  <em class="italic">grails.app.&#60;artifactType&#62;.&#60;className&#62;</em> . In particular the class name must be fully qualifed, i.e. with the package if there is one:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    // Set level <span class="java&#45;keyword">for</span> all application artifacts
+    info <span class="java&#45;quote">"grails.app"</span><p class="paragraph"/>    // Set <span class="java&#45;keyword">for</span> a specific controller in the <span class="java&#45;keyword">default</span> <span class="java&#45;keyword">package</span>
+    debug <span class="java&#45;quote">"grails.app.controllers.YourController"</span><p class="paragraph"/>    // Set <span class="java&#45;keyword">for</span> a specific domain class
+    debug <span class="java&#45;quote">"grails.app.domain.org.example.Book"</span><p class="paragraph"/>    // Set <span class="java&#45;keyword">for</span> all taglibs
+    info <span class="java&#45;quote">"grails.app.taglib"</span>
+&#125;</pre></div><p class="paragraph"/>The standard artifact names used in the logging configuration are:
+<ul class="star">
+<li><code>conf</code> - For anything under <code>grails-app/conf</code> such as <code>BootStrap.groovy</code> (but excluding filters)</li>
+<li><code>filters</code> - For filters</li>
+<li><code>taglib</code> - For tag libraries</li>
+<li><code>services</code> - For service classes</li>
+<li><code>controllers</code> - For controllers</li>
+<li><code>domain</code> - For domain entities</li>
+</ul><p class="paragraph"/>Grails itself generates plenty of logging information and it can sometimes be helpful to see that. Here are some useful loggers from Grails internals that you can use, especially when tracking down problems with your application:
+<ul class="star">
+<li><code>org.codehaus.groovy.grails.commons</code> - Core artifact information such as class loading etc.</li>
+<li><code>org.codehaus.groovy.grails.web</code> - Grails web request processing</li>
+<li><code>org.codehaus.groovy.grails.web.mapping</code> - URL mapping debugging</li>
+<li><code>org.codehaus.groovy.grails.plugins</code> - Log plugin activity</li>
+<li><code>grails.spring</code> - See what Spring beans Grails and plugins are defining</li>
+<li><code>org.springframework</code> - See what Spring is doing</li>
+<li><code>org.hibernate</code> - See what Hibernate is doing</li>
+</ul><p class="paragraph"/>So far, we've only looked at explicit configuration of loggers. But what about all those loggers that  <em class="italic">don't</em>  have an explicit configuration? Are they simply ignored? The answer lies with the root logger.<p class="paragraph"/><h4>The Root Logger</h4><p class="paragraph"/>All logger objects inherit their configuration from the root logger, so if no explicit configuration is provided for a given logger, then any messages that go to that logger are subject to the rules defined for the root logger. In other words, the root logger provides the default configuration for the logging system.<p class="paragraph"/>Grails automatically configures the root logger to only handle messages at 'error' level and above, and all the messages are directed to the console (stdout for those with a C background). You can customise this behaviour by specifying a 'root' section in your logging configuration like so:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    root &#123;
+        info()
+    &#125;
+    &#8230;
+&#125;</pre></div><p class="paragraph"/>The above example configures the root logger to log messages at 'info' level and above to the default console appender. You can also configure the root logger to log to one or more named appenders (which we'll talk more about shortly):<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    appenders &#123;
+        file name:'file', file:'/<span class="java&#45;keyword">var</span>/logs/mylog.log'
+    &#125;
+    root &#123;
+        debug 'stdout', 'file'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>In the above example, the root logger will log to two appenders - the default 'stdout' (console) appender and a custom 'file' appender.<p class="paragraph"/>For power users there is an alternative syntax for configuring the root logger: the root <code>org.apache.log4j.Logger</code> instance is passed as an argument to the log4j closure. This lets you work with the logger directly:<p class="paragraph"/><div class="code"><pre>log4j = &#123; root &#45;&#62;
+    root.level = org.apache.log4j.Level.DEBUG
+    &#8230;
+&#125;</pre></div><p class="paragraph"/>For more information on what you can do with this <code>Logger</code> instance, refer to the Log4j API documentation.<p class="paragraph"/>Those are the basics of logging pretty well covered and they are sufficient if you're happy to only send log messages to the console. But what if you want to send them to a file? How do you make sure that messages from a particular logger go to a file but not the console? These questions and more will be answered as we look into appenders.<p class="paragraph"/><h3>Appenders</h3><p class="paragraph"/>Loggers are a useful mechanism for filtering messages, but they don't physically write the messages anywhere. That's the job of the appender, of which there are various types. For example, there is the default one that writes messages to the console, another that writes them to a file, and several others. You can even create your own appender implementations&#33;<p class="paragraph"/>This diagram shows how they fit into the logging pipeline:<p class="paragraph"/><img border="0" class="center" src="../img/logging.png"></img><p class="paragraph"/>As you can see, a single logger may have several appenders attached to it. In a standard Grails configuration, the console appender named 'stdout' is attached to all loggers through the default root logger configuration. But that's the only one. Adding more appenders can be done within an 'appenders' block:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    appenders &#123;
+        rollingFile name: <span class="java&#45;quote">"myAppender"</span>,
+                    maxFileSize: 1024,
+                    file: <span class="java&#45;quote">"/tmp/logs/myApp.log"</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The following appenders are available by default:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Name</strong></th><th><strong class="bold">Class</strong></th><th><strong class="bold">Description</strong></th></tr><tr class="table-odd"><td>jdbc</td><td><a href="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/jdbc/JDBCAppender.html" target="blank">JDBCAppender</a></td><td>Logs to a JDBC connection.</td></tr><tr class="table-even"><td>console</td><td><a href="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/ConsoleAppender.html" target="blank">ConsoleAppender</a></td><td>Logs to the console.</td></tr><tr class="table-odd"><td>file</td><td><a href="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/FileAppender.html" target="blank">FileAppender</a></td><td>Logs to a single file.</td></tr><tr class="table-even"><td>rollingFile</td><td><a href="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/RollingFileAppender.html" target="blank">RollingFileAppender</a></td><td>Logs to rolling files, for example a new file each day.</td></tr></table><p class="paragraph"/>Each named argument passed to an appender maps to a property of the underlying <a href="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/Appender.html" target="blank">Appender</a> implementation. So the previous example sets the <code>name</code>, <code>maxFileSize</code> and <code>file</code> properties of the <code>RollingFileAppender</code> instance.<p class="paragraph"/>You can have as many appenders as you like - just make sure that they all have unique names. You can even have multiple instances of the same appender type, for example several file appenders that log to different files.<p class="paragraph"/>If you prefer to create the appender programmatically or if you want to use an appender implementation that's not available in the above syntax, simply declare an <code>appender</code> entry with an instance of the appender you want:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.apache.log4j.&#42;<p class="paragraph"/>log4j = &#123;
+    appenders &#123;
+        appender <span class="java&#45;keyword">new</span> RollingFileAppender(
+                name: <span class="java&#45;quote">"myAppender"</span>,
+                maxFileSize: 1024,
+                file: <span class="java&#45;quote">"/tmp/logs/myApp.log"</span>)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>This approach can be used to configure <code>JMSAppender</code>, <code>SocketAppender</code>, <code>SMTPAppender</code>, and more.<p class="paragraph"/>Once you have declared your extra appenders, you can attach them to specific loggers by passing the name as a key to one of the log level methods from the previous section:<p class="paragraph"/><div class="code"><pre>error myAppender: <span class="java&#45;quote">"grails.app.controllers.BookController"</span></pre></div><p class="paragraph"/>This will ensure that the 'grails.app.controllers.BookController' logger sends log messages to 'myAppender' as well as any appenders configured for the root logger. To add more than one appender to the logger, then add them to the same level declaration:<p class="paragraph"/><div class="code"><pre>error myAppender:      <span class="java&#45;quote">"grails.app.controllers.BookController"</span>,
+      myFileAppender:  &#91;<span class="java&#45;quote">"grails.app.controllers.BookController"</span>,
+                        <span class="java&#45;quote">"grails.app.services.BookService"</span>&#93;,
+      rollingFile:     <span class="java&#45;quote">"grails.app.controllers.BookController"</span></pre></div><p class="paragraph"/>The above example also shows how you can configure more than one logger at a time for a given appender (<code>myFileAppender</code>) by using a list.<p class="paragraph"/>Be aware that you can only configure a single level for a logger, so if you tried this code:<p class="paragraph"/><div class="code"><pre>error myAppender:      <span class="java&#45;quote">"grails.app.controllers.BookController"</span>
+debug myFileAppender:  <span class="java&#45;quote">"grails.app.controllers.BookController"</span>
+fatal rollingFile:     <span class="java&#45;quote">"grails.app.controllers.BookController"</span></pre></div><p class="paragraph"/>you'd find that only 'fatal' level messages get logged for 'grails.app.controllers.BookController'. That's because the last level declared for a given logger wins. What you probably want to do is limit what level of messages an appender writes.<p class="paragraph"/>An appender that is attached to a logger configured with the 'all' level will generate a lot of logging information. That may be fine in a file, but it makes working at the console difficult. So we configure the console appender to only write out messages at 'info' level or above:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    appenders &#123;
+        console name: <span class="java&#45;quote">"stdout"</span>, threshold: org.apache.log4j.Level.INFO
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The key here is the <code>threshold</code> argument which determines the cut-off for log messages. This argument is available for all appenders, but do note that you currently have to specify a <code>Level</code> instance - a string such as "info" will not work.<p class="paragraph"/><h3>Custom Layouts</h3><p class="paragraph"/>By default the Log4j DSL assumes that you want to use a <a href="http://logging.apache.org/log4j/1.2/apidocs/org/apache/log4j/PatternLayout.html" target="blank">PatternLayout</a>. However, there are other layouts available including:
+<ul class="star">
+<li><code>xml</code> - Create an XML log file</li>
+<li><code>html</code> - Creates an HTML log file</li>
+<li><code>simple</code> - A simple textual log</li>
+<li><code>pattern</code> - A Pattern layout</li>
+</ul><p class="paragraph"/>You can specify custom patterns to an appender using the <code>layout</code> setting:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    appenders &#123;
+        console name: <span class="java&#45;quote">"customAppender"</span>,
+                layout: pattern(conversionPattern: <span class="java&#45;quote">"%c&#123;2&#125; %m%n"</span>)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>This also works for the built-in appender "stdout", which logs to the console:
+<div class="code"><pre>log4j = &#123;
+    appenders &#123;
+        console name: <span class="java&#45;quote">"stdout"</span>,
+                layout: pattern(conversionPattern: <span class="java&#45;quote">"%c&#123;2&#125; %m%n"</span>)
+    &#125;
+&#125;</pre></div><p class="paragraph"/><h3>Environment-specific configuration</h3><p class="paragraph"/>Since the logging configuration is inside <code>Config.groovy</code>, you can put it inside an environment-specific block. However, there is a problem with this approach: you have to provide the full logging configuration each time you define the <code>log4j</code> setting. In other words, you cannot selectively override parts of the configuration - it's all or nothing.<p class="paragraph"/>To get around this, the logging DSL provides its own environment blocks that you can put anywhere in the configuration:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    appenders &#123;
+        console name: <span class="java&#45;quote">"stdout"</span>,
+                layout: pattern(conversionPattern: <span class="java&#45;quote">"%c&#123;2&#125; %m%n"</span>)<p class="paragraph"/>        environments &#123;
+            production &#123;
+                rollingFile name: <span class="java&#45;quote">"myAppender"</span>, maxFileSize: 1024,
+                            file: <span class="java&#45;quote">"/tmp/logs/myApp.log"</span>
+            &#125;
+        &#125;
+    &#125;<p class="paragraph"/>    root &#123;
+        //&#8230;
+    &#125;<p class="paragraph"/>    // other shared config
+    info <span class="java&#45;quote">"grails.app.controller"</span><p class="paragraph"/>    environments &#123;
+        production &#123;
+            // Override previous setting <span class="java&#45;keyword">for</span> 'grails.app.controller'
+            error <span class="java&#45;quote">"grails.app.controllers"</span>
+        &#125;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The one place you can't put an environment block is  <em class="italic">inside</em>  the <code>root</code> definition, but you can put the <code>root</code> definition inside an environment block.<p class="paragraph"/><h3>Full stacktraces</h3><p class="paragraph"/>When exceptions occur, there can be an awful lot of noise in the stacktrace from Java and Groovy internals. Grails filters these typically irrelevant details and restricts traces to non-core Grails/Groovy class packages.<p class="paragraph"/>When this happens, the full trace is always logged to the <code>StackTrace</code> logger, which by default writes its output to a file called <code>stacktrace.log</code>. As with other loggers though, you can change its behaviour in the configuration. For example if you prefer full stack traces to go to the console, add this entry:<p class="paragraph"/><div class="code"><pre>error stdout: <span class="java&#45;quote">"StackTrace"</span></pre></div><p class="paragraph"/>This won't stop Grails from attempting to create the stacktrace.log file - it just redirects where stack traces are written to. An alternative approach is to change the location of the 'stacktrace' appender's file:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    appenders &#123;
+        rollingFile name: <span class="java&#45;quote">"stacktrace"</span>, maxFileSize: 1024,
+                    file: <span class="java&#45;quote">"/<span class="java&#45;keyword">var</span>/tmp/logs/myApp&#45;stacktrace.log"</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>or, if you don't want to the 'stacktrace' appender at all, configure it as a 'null' appender:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    appenders &#123;
+        '<span class="java&#45;keyword">null</span>' name: <span class="java&#45;quote">"stacktrace"</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>You can of course combine this with attaching the 'stdout' appender to the 'StackTrace' logger if you want all the output in the console.<p class="paragraph"/>Finally, you can completely disable stacktrace filtering by setting the <code>grails.full.stacktrace</code> VM property to <code>true</code>:<p class="paragraph"/><div class="code"><pre>grails &#45;Dgrails.full.stacktrace=<span class="java&#45;keyword">true</span> run&#45;app</pre></div><p class="paragraph"/><h3>Masking Request Parameters From Stacktrace Logs</h3><p class="paragraph"/>When Grails logs a stacktrace, the log message may include the names and values of all of the request parameters for the current request.  To mask out the values of secure request parameters, specify the parameter names in the <code>grails.exceptionresolver.params.exclude</code> config property:<p class="paragraph"/><div class="code"><pre>grails.exceptionresolver.params.exclude = &#91;'password', 'creditCard'&#93;</pre></div><p class="paragraph"/>Request parameter logging may be turned off altogether by setting the <code>grails.exceptionresolver.logRequestParameters</code> config property to <code>false</code>.  The default value is <code>true</code> when the application is running in DEVELOPMENT mode and <code>false</code> for all other modes.<p class="paragraph"/><div class="code"><pre>grails.exceptionresolver.logRequestParameters=<span class="java&#45;keyword">false</span></pre></div><p class="paragraph"/><h3>Logger inheritance</h3><p class="paragraph"/>Earlier, we mentioned that all loggers inherit from the root logger and that loggers are hierarchical based on '.'-separated terms. What this means is that unless you override a parent setting, a logger retains the level and the appenders configured for that parent. So with this configuration:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    appenders &#123;
+        file name:'file', file:'/<span class="java&#45;keyword">var</span>/logs/mylog.log'
+    &#125;
+    root &#123;
+        debug 'stdout', 'file'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>all loggers in the application will have a level of 'debug' and will log to both the 'stdout' and 'file' appenders. What if you only want to log to 'stdout' for a particular logger? Change the 'additivity' for a logger in that case.<p class="paragraph"/>Additivity simply determines whether a logger inherits the configuration from its parent. If additivity is false, then its not inherited. The default for all loggers is true, i.e. they inherit the configuration. So how do you change this setting? Here's an example:<p class="paragraph"/><div class="code"><pre>log4j = &#123;
+    appenders &#123;
+        &#8230;
+    &#125;
+    root &#123;
+        &#8230;
+    &#125;<p class="paragraph"/>    info additivity: <span class="java&#45;keyword">false</span>
+         stdout: &#91;<span class="java&#45;quote">"grails.app.controllers.BookController"</span>,
+                  <span class="java&#45;quote">"grails.app.services.BookService"</span>&#93;
+&#125;</pre></div><p class="paragraph"/>So when you specify a log level, add an 'additivity' named argument. Note that you when you specify the additivity, you must configure the loggers for a named appender. The following syntax will  <em class="italic">not</em>  work:<p class="paragraph"/><div class="code"><pre>info additivity: <span class="java&#45;keyword">false</span>, &#91;<span class="java&#45;quote">"grails.app.controllers.BookController"</span>,
+                         <span class="java&#45;quote">"grails.app.services.BookService"</span>&#93;</pre></div><p class="paragraph"/><h3>Customizing stack trace printing and filtering</h3><p class="paragraph"/>Stacktraces in general and those generated when using Groovy in particular are quite verbose and contain many stack frames that aren't interesting when diagnosing problems. So Grails uses a implementation of the <code>org.codehaus.groovy.grails.exceptions.StackTraceFilterer</code> interface to filter out irrelevant stack frames. To customize the approach used for filtering, implement that interface in a class in src/groovy or src/java and register it in <code>Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.logging.stackTraceFiltererClass =
+         'com.yourcompany.yourapp.MyStackTraceFilterer'</pre></div><p class="paragraph"/>In addition, Grails customizes the display of the filtered stacktrace to make the information more readable. To customize this, implement the <code>org.codehaus.groovy.grails.exceptions.StackTracePrinter</code> interface in a class in src/groovy or src/java and register it in <code>Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.logging.stackTracePrinterClass =
+         'com.yourcompany.yourapp.MyStackTracePrinter'</pre></div><p class="paragraph"/>Finally, to render error information in the error GSP, an HTML-generating printer implementation is needed. The default implementation is <code>org.codehaus.groovy.grails.web.errors.ErrorsViewStackTracePrinter</code> and it's registered as a Spring bean. To use your own implementation, either implement the <code>org.codehaus.groovy.grails.exceptions.StackTraceFilterer</code> directly or subclass <code>ErrorsViewStackTracePrinter</code> and register it in <code>grails-app/conf/spring/resources.groovy</code> as:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> com.yourcompany.yourapp.MyErrorsViewStackTracePrinter<p class="paragraph"/>beans = &#123;<p class="paragraph"/>    errorsViewStackTracePrinter(MyErrorsViewStackTracePrinter,
+                                ref('grailsResourceLocator'))
+&#125;</pre></div><p class="paragraph"/><h3>Alternative logging libraries</h3><p class="paragraph"/>By default, Grails uses Log4J to do its logging. For most people this is absolutely fine, and many users don't even care what logging library is used. But if you're not one of those and want to use an alternative, such as the <a href="http://download.oracle.com/javase/6/docs/api/index.html?java/util/logging/package-summary.html" target="blank">JDK logging package</a> or <a href="http://logback.qos.ch/" target="blank">logback</a>, you can do so by simply excluding a couple of dependencies from the global set and adding your own:<p class="paragraph"/><div class="code"><pre>grails.project.dependency.resolution = &#123;
+    inherits(<span class="java&#45;quote">"global"</span>) &#123;
+        excludes <span class="java&#45;quote">"grails&#45;plugin&#45;logging"</span>, <span class="java&#45;quote">"log4j"</span>
+    &#125;
+    &#8230;
+    dependencies &#123;
+        runtime <span class="java&#45;quote">"ch.qos.logback:logback&#45;core:0.9.29"</span>
+        &#8230;
+    &#125;
+    &#8230;
+&#125;</pre></div><p class="paragraph"/>If you do this, you will get unfiltered, standard Java stacktraces in your log files and you won't be able to use the logging configuration DSL that's just been described. Instead, you will have to use the standard configuration mechanism for the library you choose.
+
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/upgradingFromPreviousVersionsOfGrails.html">&lt;&lt; <strong>3</strong><span>Upgrading from previous versions of Grails</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/commandLine.html"><strong>5</strong><span>The Command Line</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Command Line</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/add-proxy.html">add-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bootstrap.html">bootstrap</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clean.html">clean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clear-proxy.html">clear-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/compile.html">compile</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/console.html">console</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-app.html">create-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-controller.html">create-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-domain-class.html">create-domain-class</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-filters.html">create-filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-multi-project-build.html">create-multi-project-build</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-plugin.html">create-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-pom.html">create-pom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-scaffold-controller.html">create-scaffold-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-script.html">create-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-service.html">create-service</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-tag-lib.html">create-tag-lib</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-unit-test.html">create-unit-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-controller.html">generate-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-views.html">generate-views</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/help.html">help</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/init.html">init</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-dependency.html">install-dependency</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-plugin.html">install-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-templates.html">install-templates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/integrate-with.html">integrate-with</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/interactive.html">interactive</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugin-updates.html">list-plugin-updates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/migrate-docs.html">migrate-docs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package-plugin.html">package-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package.html">package</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/plugin-info.html">plugin-info</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/refresh-dependencies.html">refresh-dependencies</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/remove-proxy.html">remove-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-war.html">run-war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-proxy.html">set-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-version.html">set-version</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/shell.html">shell</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/uninstall-plugin.html">uninstall-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/upgrade.html">upgrade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/wrapper.html">wrapper</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Constraints</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Constraints/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/attributes.html">attributes</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/bindable.html">bindable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/blank.html">blank</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/creditCard.html">creditCard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/email.html">email</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/inList.html">inList</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/matches.html">matches</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/max.html">max</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/maxSize.html">maxSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/min.html">min</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/minSize.html">minSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/notEqual.html">notEqual</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/nullable.html">nullable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/range.html">range</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/scale.html">scale</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/size.html">size</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/unique.html">unique</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/url.html">url</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/validator.html">validator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/widget.html">widget</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Controllers</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Controllers/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/afterInterceptor.html">afterInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/allowedMethods.html">allowedMethods</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/beforeInterceptor.html">beforeInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/bindData.html">bindData</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/chain.html">chain</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/defaultAction.html">defaultAction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/forward.html">forward</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/grailsApplication.html">grailsApplication</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/redirect.html">redirect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/session.html">session</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withForm.html">withForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withFormat.html">withFormat</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Database Mapping</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoImport.html">autoImport</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoTimestamp.html">autoTimestamp</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/batchSize.html">batchSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cache.html">cache</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cascade.html">cascade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/column.html">column</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/discriminator.html">discriminator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicInsert.html">dynamicInsert</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicUpdate.html">dynamicUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/fetch.html">fetch</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/id.html">id</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/ignoreNotFound.html">ignoreNotFound</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/indexColumn.html">indexColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/insertable.html">insertable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/joinTable.html">joinTable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/lazy.html">lazy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/order.html">order</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/sort.html">sort</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/table.html">table</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/type.html">type</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/updateable.html">updateable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/version.html">version</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Domain Classes</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/addTo.html">addTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/attach.html">attach</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/belongsTo.html">belongsTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/clearErrors.html">clearErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/constraints.html">constraints</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/count.html">count</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/countBy.html">countBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/createCriteria.html">createCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/delete.html">delete</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/discard.html">discard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/embedded.html">embedded</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/errors.html">errors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeQuery.html">executeQuery</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeUpdate.html">executeUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/exists.html">exists</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/fetchMode.html">fetchMode</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/find.html">find</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllBy.html">findAllBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllWhere.html">findAllWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findBy.html">findBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateBy.html">findOrCreateBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateWhere.html">findOrCreateWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveBy.html">findOrSaveBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveWhere.html">findOrSaveWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findWhere.html">findWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/get.html">get</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getAll.html">getAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getDirtyPropertyNames.html">getDirtyPropertyNames</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getPersistentValue.html">getPersistentValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasMany.html">hasMany</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasOne.html">hasOne</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/ident.html">ident</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/instanceOf.html">instanceOf</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isAttached.html">isAttached</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isDirty.html">isDirty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/list.html">list</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/listOrderBy.html">listOrderBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/load.html">load</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/lock.html">lock</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mappedBy.html">mappedBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mapping.html">mapping</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/merge.html">merge</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/namedQueries.html">namedQueries</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/properties.html">properties</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/read.html">read</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/refresh.html">refresh</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/removeFrom.html">removeFrom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/save.html">save</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/transients.html">transients</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/validate.html">validate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/where.html">where</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/whereAny.html">whereAny</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withCriteria.html">withCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withNewSession.html">withNewSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withSession.html">withSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withTransaction.html">withTransaction</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Plug-ins</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Plug-ins/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/URL%20mappings.html">URL mappings</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/codecs.html">codecs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/controllers.html">controllers</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/core.html">core</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/dataSource.html">dataSource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/domainClasses.html">domainClasses</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/filters.html">filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/hibernate.html">hibernate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/i18n.html">i18n</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/logging.html">logging</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/scaffolding.html">scaffolding</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/services.html">services</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/servlets.html">servlets</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/web%20flow.html">web flow</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Services</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Services/scope.html">scope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Services/transactional.html">transactional</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Servlet API</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tag Libraries</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/pageScope.html">pageScope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tags</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmit.html">actionSubmit</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmitImage.html">actionSubmitImage</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/applyLayout.html">applyLayout</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/checkBox.html">checkBox</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/collect.html">collect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/cookie.html">cookie</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/country.html">country</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/countrySelect.html">countrySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLink.html">createLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLinkTo.html">createLinkTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/currencySelect.html">currencySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/datePicker.html">datePicker</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/each.html">each</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/eachError.html">eachError</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/else.html">else</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/elseif.html">elseif</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/external.html">external</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/form.html">form</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formRemote.html">formRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatBoolean.html">formatBoolean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatDate.html">formatDate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatNumber.html">formatNumber</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/grep.html">grep</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/header.html">header</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hiddenField.html">hiddenField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/if.html">if</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/img.html">img</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/include.html">include</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isAvailable.html">isAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isNotAvailable.html">isNotAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/javascript.html">javascript</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/join.html">join</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutBody.html">layoutBody</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutHead.html">layoutHead</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutTitle.html">layoutTitle</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/link.html">link</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/localeSelect.html">localeSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/message.html">message</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/meta.html">meta</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/pageProperty.html">pageProperty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/paginate.html">paginate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/passwordField.html">passwordField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radio.html">radio</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radioGroup.html">radioGroup</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteField.html">remoteField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteFunction.html">remoteFunction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteLink.html">remoteLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/renderErrors.html">renderErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/resource.html">resource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/select.html">select</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/set.html">set</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/setProvider.html">setProvider</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/sortableColumn.html">sortableColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitButton.html">submitButton</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitToRemote.html">submitToRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textArea.html">textArea</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textField.html">textField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/timeZoneSelect.html">timeZoneSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/unless.html">unless</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/uploadForm.html">uploadForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/while.html">while</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.
+    Sponsored by <a href="http://springsource.com">SpringSource</a>
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

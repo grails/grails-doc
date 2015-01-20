@@ -1,0 +1,34 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>5.5.2.12 Custom Naming Strategy</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="5.5.2.12 Custom Naming Strategy">5.5.2.12 Custom Naming Strategy</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            By default Grails uses Hibernate's <code>ImprovedNamingStrategy</code> to convert domain class Class and field names to SQL table and column names by converting from camel-cased Strings to ones that use underscores as word separators. You can customize these on a per-instance basis in the <code>mapping</code> closure but if there's a consistent pattern you can specify a different <code>NamingStrategy</code> class to use.<p class="paragraph"/>Configure the class name to be used in <code>grails-app/conf/DataSource.groovy</code> in the <code>hibernate</code> section, e.g.<p class="paragraph"/><div class="code"><pre>dataSource &#123;
+    pooled = <span class="java&#45;keyword">true</span>
+    dbCreate = <span class="java&#45;quote">"create&#45;drop"</span>
+	 &#8230;
+&#125;<p class="paragraph"/>hibernate &#123;
+    cache.use_second_level_cache = <span class="java&#45;keyword">true</span>
+	 &#8230;
+    naming_strategy = com.myco.myproj.CustomNamingStrategy
+&#125;</pre></div><p class="paragraph"/>You can use an existing class or write your own, for example one that prefixes table names and column names:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.myco.myproj<p class="paragraph"/><span class="java&#45;keyword">import</span> org.hibernate.cfg.ImprovedNamingStrategy
+<span class="java&#45;keyword">import</span> org.hibernate.util.StringHelper<p class="paragraph"/>class CustomNamingStrategy <span class="java&#45;keyword">extends</span> ImprovedNamingStrategy &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> classToTableName(<span class="java&#45;object">String</span> className) &#123;
+        <span class="java&#45;quote">"table_"</span> + StringHelper.unqualify(className)
+    &#125;<p class="paragraph"/>    <span class="java&#45;object">String</span> propertyToColumnName(<span class="java&#45;object">String</span> propertyName) &#123;
+        <span class="java&#45;quote">"col_"</span> + StringHelper.unqualify(propertyName)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>
+        </div>
+    </body>
+</html>

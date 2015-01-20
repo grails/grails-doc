@@ -1,0 +1,1373 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>6.4 Querying with GORM 2.1.0</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/upgradingFromPreviousVersionsOfGrails.html"><strong>3</strong><span>Upgrading from previous versions of Grails</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/commandLine.html"><strong>5</strong><span>The Command Line</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/GORM.html"><strong>6</strong><span>Object Relational Mapping (GORM)</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/validation.html"><strong>8</strong><span>Validation</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/services.html"><strong>9</strong><span>The Service Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/testing.html"><strong>10</strong><span>Testing</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/i18n.html"><strong>11</strong><span>Internationalization</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/security.html"><strong>12</strong><span>Security</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/plugins.html"><strong>13</strong><span>Plugins</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/webServices.html"><strong>14</strong><span>Web Services</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/spring.html"><strong>15</strong><span>Grails and Spring</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/hibernate.html"><strong>16</strong><span>Grails and Hibernate</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/scaffolding.html"><strong>17</strong><span>Scaffolding</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/deployment.html"><strong>18</strong><span>Deployment</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/contributing.html"><strong>19</strong><span>Contributing to Grails</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        <span id="logo"><a href="http://grails.org" target="_blank"><img alt="Grails Logo" title="The Grails Framework" src="../../img/grails.png" border="0"/></a></span>
+        
+        
+        <span id="sponsor"><a href="http://springsource.com" target="_blank"><img alt="SpringSource Logo" title="SpringSource - Weapons for the War on Java Complexity" src="../../img/springsource-logo.png" border="0"/></a></span>
+        
+    </div>
+    <p>See the light - agile, industrial strength, rapid web application development made easy</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/commandLine.html">&lt;&lt; <strong>5</strong><span>The Command Line</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>6.4 Querying with GORM - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith</p>
+
+                    <p><strong>Version:</strong> 2.1.0</p>
+
+                    
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#finders"><strong>6.1</strong><span>Dynamic Finders</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#whereQueries"><strong>6.2</strong><span>Where Queries</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#criteria"><strong>6.3</strong><span>Criteria</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#detachedCriteria"><strong>6.4</strong><span>Detached Criteria</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#hql"><strong>6.5</strong><span>Hibernate Query Language (HQL)</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+<a name="5.4 Querying with GORM"><!-- Legacy link --></a>
+<h2 id="querying">6.4 Querying with GORM</h2>
+GORM supports a number of powerful ways to query from dynamic finders, to criteria to Hibernate's object oriented query language HQL. Depending on the complexity of the query you have the following options in order of flexibility and power:
+<ul class="star">
+<li>Dynamic Finders</li>
+<li>Where Queries</li>
+<li>Criteria Queries</li>
+<li>Hibernate Query Language (HQL)</li>
+</ul><p class="paragraph"/>In addition, Groovy's ability to manipulate collections with <a href="http://groovy.codehaus.org/GPath" target="blank">GPath</a> and methods like sort, findAll and so on combined with GORM results in a powerful combination.<p class="paragraph"/>However, let's start with the basics.<p class="paragraph"/><h4>Listing instances</h4><p class="paragraph"/>Use the <a href="../ref/Domain Classes/list.html" class="domainClasses">list</a> method to obtain all instances of a given class:<p class="paragraph"/><div class="code"><pre>def books = Book.list()</pre></div><p class="paragraph"/>The <a href="../ref/Domain Classes/list.html" class="domainClasses">list</a> method supports arguments to perform pagination:<p class="paragraph"/><div class="code"><pre>def books = Book.list(offset:10, max:20)</pre></div><p class="paragraph"/>as well as sorting:<p class="paragraph"/><div class="code"><pre>def books = Book.list(sort:<span class="java&#45;quote">"title"</span>, order:<span class="java&#45;quote">"asc"</span>)</pre></div><p class="paragraph"/>Here, the <code>sort</code> argument is the name of the domain class property that you wish to sort on, and the <code>order</code> argument is either <code>asc</code> for <strong class="bold">asc</strong>ending or <code>desc</code> for <strong class="bold">desc</strong>ending.<p class="paragraph"/><h4>Retrieval by Database  Identifier</h4><p class="paragraph"/>The second basic form of retrieval is by database identifier using the <a href="../ref/Domain Classes/get.html" class="domainClasses">get</a> method:<p class="paragraph"/><div class="code"><pre>def book = Book.get(23)</pre></div><p class="paragraph"/>You can also obtain a list of instances for a set of identifiers using <a href="../ref/Domain Classes/getAll.html" class="domainClasses">getAll</a>:<p class="paragraph"/><div class="code"><pre>def books = Book.getAll(23, 93, 81)</pre></div>
+
+
+<a name="5.4.1 Dynamic Finders"><!-- Legacy link --></a>
+<h2 id="finders">6.4.1 Dynamic Finders</h2>
+GORM supports the concept of <strong class="bold">dynamic finders</strong>. A dynamic finder looks like a static method invocation, but the methods themselves don't actually exist in any form at the code level.<p class="paragraph"/>Instead, a method is auto-magically generated using code synthesis at runtime, based on the properties of a given class. Take for example the <code>Book</code> class:<p class="paragraph"/><div class="code"><pre>class Book &#123;
+    <span class="java&#45;object">String</span> title
+    Date releaseDate
+    Author author
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Author &#123;
+    <span class="java&#45;object">String</span> name
+&#125;</pre></div><p class="paragraph"/>The <code>Book</code> class has properties such as <code>title</code>, <code>releaseDate</code> and <code>author</code>. These can be used by the <a href="../ref/Domain Classes/findBy.html" class="domainClasses">findBy</a> and <a href="../ref/Domain Classes/findAllBy.html" class="domainClasses">findAllBy</a> methods in the form of "method expressions":<p class="paragraph"/><div class="code"><pre>def book = Book.findByTitle(<span class="java&#45;quote">"The Stand"</span>)<p class="paragraph"/>book = Book.findByTitleLike(<span class="java&#45;quote">"Harry Pot%"</span>)<p class="paragraph"/>book = Book.findByReleaseDateBetween(firstDate, secondDate)<p class="paragraph"/>book = Book.findByReleaseDateGreaterThan(someDate)<p class="paragraph"/>book = Book.findByTitleLikeOrReleaseDateLessThan(<span class="java&#45;quote">"%Something%"</span>, someDate)</pre></div><p class="paragraph"/><h4>Method Expressions</h4><p class="paragraph"/>A method expression in GORM is made up of the prefix such as <a href="../ref/Domain Classes/findBy.html" class="domainClasses">findBy</a> followed by an expression that combines one or more properties. The basic form is:<p class="paragraph"/><div class="code"><pre>Book.findBy(&#91;Property&#93;&#91;Comparator&#93;&#91;<span class="java&#45;object">Boolean</span> Operator&#93;)?&#91;Property&#93;&#91;Comparator&#93;</pre></div><p class="paragraph"/>The tokens marked with a '?' are optional. Each comparator changes the nature of the query. For example:<p class="paragraph"/><div class="code"><pre>def book = Book.findByTitle(<span class="java&#45;quote">"The Stand"</span>)<p class="paragraph"/>book =  Book.findByTitleLike(<span class="java&#45;quote">"Harry Pot%"</span>)</pre></div><p class="paragraph"/>In the above example the first query is equivalent to equality whilst the latter, due to the <code>Like</code> comparator, is equivalent to a SQL <code>like</code> expression.<p class="paragraph"/>The possible comparators include:
+<ul class="star">
+<li><code>InList</code> - In the list of given values</li>
+<li><code>LessThan</code> - less than a given value</li>
+<li><code>LessThanEquals</code> - less than or equal a give value</li>
+<li><code>GreaterThan</code> - greater than a given value</li>
+<li><code>GreaterThanEquals</code> - greater than or equal a given value</li>
+<li><code>Like</code> - Equivalent to a SQL like expression</li>
+<li><code>Ilike</code> - Similar to a <code>Like</code>, except case insensitive</li>
+<li><code>NotEqual</code> - Negates equality</li>
+<li><code>Between</code> - Between two values (requires two arguments)</li>
+<li><code>IsNotNull</code> - Not a null value (doesn't take an argument)</li>
+<li><code>IsNull</code> - Is a null value (doesn't take an argument)</li>
+</ul><p class="paragraph"/>Notice that the last three require different numbers of method arguments compared to the rest, as demonstrated in the following example:<p class="paragraph"/><div class="code"><pre>def now = <span class="java&#45;keyword">new</span> Date()
+def lastWeek = now &#45; 7
+def book = Book.findByReleaseDateBetween(lastWeek, now)<p class="paragraph"/>books = Book.findAllByReleaseDateIsNull()
+books = Book.findAllByReleaseDateIsNotNull()</pre></div><p class="paragraph"/><h4>Boolean logic (AND/OR)</h4><p class="paragraph"/>Method expressions can also use a boolean operator to combine two or more criteria:<p class="paragraph"/><div class="code"><pre>def books = Book.findAllByTitleLikeAndReleaseDateGreaterThan(
+                      <span class="java&#45;quote">"%Java%"</span>, <span class="java&#45;keyword">new</span> Date() &#45; 30)</pre></div><p class="paragraph"/>In this case we're using <code>And</code> in the middle of the query to make sure both conditions are satisfied, but you could equally use <code>Or</code>:<p class="paragraph"/><div class="code"><pre>def books = Book.findAllByTitleLikeOrReleaseDateGreaterThan(
+                      <span class="java&#45;quote">"%Java%"</span>, <span class="java&#45;keyword">new</span> Date() &#45; 30)</pre></div><p class="paragraph"/>You can combine as many criteria as you like, but they must all be combined with <code>And</code> or all <code>Or</code>. If you need to combine <code>And</code> and <code>Or</code> or if the number of criteria creates a very long method name, just convert the query to a <a href="../guide/single.html#criteria" class="guide">Criteria</a> or <a href="../guide/single.html#hql" class="guide">HQL</a> query.<p class="paragraph"/><h4>Querying Associations</h4><p class="paragraph"/>Associations can also be used within queries:<p class="paragraph"/><div class="code"><pre>def author = Author.findByName(<span class="java&#45;quote">"Stephen King"</span>)<p class="paragraph"/>def books = author ? Book.findAllByAuthor(author) : &#91;&#93;</pre></div><p class="paragraph"/>In this case if the <code>Author</code> instance is not null we use it in a query to obtain all the <code>Book</code> instances for the given <code>Author</code>.<p class="paragraph"/><h4>Pagination and Sorting</h4><p class="paragraph"/>The same pagination and sorting parameters available on the <a href="../ref/Domain Classes/list.html" class="domainClasses">list</a> method can also be used with dynamic finders by supplying a map as the final parameter:<p class="paragraph"/><div class="code"><pre>def books = Book.findAllByTitleLike(<span class="java&#45;quote">"Harry Pot%"</span>,
+               &#91;max: 3, offset: 2, sort: <span class="java&#45;quote">"title"</span>, order: <span class="java&#45;quote">"desc"</span>&#93;)</pre></div>
+
+
+
+<h2 id="whereQueries">6.4.2 Where Queries</h2>
+The <code>where</code> method, introduced in Grails 2.0, builds on the support for <a href="../guide/single.html#detachedCriteria" class="guide">Detached Criteria</a> by providing an enhanced, compile-time checked query DSL for common queries. The <code>where</code> method is more flexible than dynamic finders, less verbose than criteria and provides a powerful mechanism to compose queries.<p class="paragraph"/><h4>Basic Querying</h4><p class="paragraph"/>The <code>where</code> method accepts a closure that looks very similar to Groovy's regular collection methods. The closure should define the logical criteria in regular Groovy syntax, for example:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+   firstName == <span class="java&#45;quote">"Bart"</span>
+&#125;
+Person bart = query.find()</pre></div><p class="paragraph"/>The returned object is a <code>DetachedCriteria</code> instance, which means it is not associated with any particular database connection or session. This means you can use the <code>where</code> method to define common queries at the class level:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    <span class="java&#45;keyword">static</span> simpsons = where &#123;
+         lastName == <span class="java&#45;quote">"Simpson"</span>
+    &#125;
+    &#8230;
+&#125;
+&#8230;
+Person.simpsons.each &#123;
+    println it.firstname
+&#125;</pre></div><p class="paragraph"/>Query execution is lazy and only happens upon usage of the <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance. If you want to execute a where-style query immediately there are variations of the <code>findAll</code> and <code>find</code> methods to accomplish this:<p class="paragraph"/><div class="code"><pre>def results = Person.findAll &#123;
+     lastName == <span class="java&#45;quote">"Simpson"</span>
+&#125;
+def results = Person.findAll(sort:<span class="java&#45;quote">"firstName"</span>) &#123;
+     lastName == <span class="java&#45;quote">"Simpson"</span>
+&#125;
+Person p = Person.find &#123; firstName == <span class="java&#45;quote">"Bart"</span> &#125;</pre></div><p class="paragraph"/>Each Groovy operator maps onto a regular criteria method. The following table provides a map of Groovy operators to methods:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Operator</th><th>Criteria Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">==</strong></td><td>eq</td><td>Equal to</td></tr><tr class="table-even"><td><strong class="bold">!=</strong></td><td>ne</td><td>Not equal to</td></tr><tr class="table-odd"><td><strong class="bold">&#62;</strong></td><td>gt</td><td>Greater than</td></tr><tr class="table-even"><td><strong class="bold">&#60;</strong></td><td>lt</td><td>Less than</td></tr><tr class="table-odd"><td><strong class="bold">&#62;=</strong></td><td>ge</td><td>Greater than or equal to</td></tr><tr class="table-even"><td><strong class="bold">&#60;=</strong></td><td>le</td><td>Less than or equal to</td></tr><tr class="table-odd"><td><strong class="bold">in</strong></td><td>inList</td><td>Contained within the given list</td></tr><tr class="table-even"><td><strong class="bold">==~</strong></td><td>like</td><td>Like a given string</td></tr><tr class="table-odd"><td><strong class="bold">=~</strong></td><td>ilike</td><td>Case insensitive like</td></tr></table><p class="paragraph"/>It is possible use regular Groovy comparison operators and logic to formulate complex queries:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+    (lastName != <span class="java&#45;quote">"Simpson"</span> &#38;&#38; firstName != <span class="java&#45;quote">"Fred"</span>) || (firstName == <span class="java&#45;quote">"Bart"</span> &#38;&#38; age &#62; 9)
+&#125;
+def results = query.list(sort:<span class="java&#45;quote">"firstName"</span>)</pre></div><p class="paragraph"/>The Groovy regex matching operators map onto like and ilike queries unless the expression on the right hand side is a <code>Pattern</code> object, in which case they map onto an <code>rlike</code> query:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+     firstName ==~ ~/B.+/
+&#125;</pre></div><p class="paragraph"/><blockquote class="note">
+Note that <code>rlike</code> queries are only supported if the underlying database supports regular expressions
+</blockquote><p class="paragraph"/>A <code>between</code> criteria query can be done by combining the <code>in</code> keyword with a range:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+     age in 18..65
+&#125;</pre></div><p class="paragraph"/>Finally, you can do <code>isNull</code> and <code>isNotNull</code> style queries by using <code>null</code> with regular comparison operators:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+     middleName == <span class="java&#45;keyword">null</span>
+&#125;</pre></div><p class="paragraph"/><h4>Query Composition</h4><p class="paragraph"/>Since the return value of the <code>where</code> method is a <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance you can compose new queries from the original query:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+     lastName == <span class="java&#45;quote">"Simpson"</span>
+&#125;
+def bartQuery = query.where &#123;
+     firstName == <span class="java&#45;quote">"Bart"</span>
+&#125;
+Person p = bartQuery.find()</pre></div><p class="paragraph"/>Note that you cannot pass a closure defined as a variable into the <code>where</code> method unless it has been explicitly cast to a <code>DetachedCriteria</code> instance. In other words the following will produce an error:<p class="paragraph"/><div class="code"><pre>def callable = &#123;
+    lastName == <span class="java&#45;quote">"Simpson"</span>
+&#125;
+def query = Person.where(callable)</pre></div><p class="paragraph"/>The above must be written as follows:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.gorm.DetachedCriteria<p class="paragraph"/>def callable = &#123;
+    lastName == <span class="java&#45;quote">"Simpson"</span>
+&#125; as DetachedCriteria&#60;Person&#62;
+def query = Person.where(callable)</pre></div><p class="paragraph"/>As you can see the closure definition is cast (using the Groovy <code>as</code> keyword) to a <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance targeted at the <code>Person</code> class.<p class="paragraph"/><h4>Conjunction, Disjunction and Negation</h4><p class="paragraph"/>As mentioned previously you can combine regular Groovy logical operators (<code>||</code> and <code>&#38;&#38;</code>) to form conjunctions and disjunctions:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+    (lastName != <span class="java&#45;quote">"Simpson"</span> &#38;&#38; firstName != <span class="java&#45;quote">"Fred"</span>) || (firstName == <span class="java&#45;quote">"Bart"</span> &#38;&#38; age &#62; 9)
+&#125;</pre></div><p class="paragraph"/>You can also negate a logical comparison using <code>!</code>:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+    firstName == <span class="java&#45;quote">"Fred"</span> &#38;&#38; !(lastName == 'Simpson')
+&#125;</pre></div><p class="paragraph"/><h4>Property Comparison Queries</h4><p class="paragraph"/>If you use a property name on both the left hand and right side of a comparison expression then the appropriate property comparison criteria is automatically used:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+   firstName == lastName
+&#125;</pre></div><p class="paragraph"/>The following table described how each comparison operator maps onto each criteria property comparison method:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Operator</th><th>Criteria Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">==</strong></td><td>eqProperty</td><td>Equal to</td></tr><tr class="table-even"><td><strong class="bold">!=</strong></td><td>neProperty</td><td>Not equal to</td></tr><tr class="table-odd"><td><strong class="bold">&#62;</strong></td><td>gtProperty</td><td>Greater than</td></tr><tr class="table-even"><td><strong class="bold">&#60;</strong></td><td>ltProperty</td><td>Less than</td></tr><tr class="table-odd"><td><strong class="bold">&#62;=</strong></td><td>geProperty</td><td>Greater than or equal to</td></tr><tr class="table-even"><td><strong class="bold">&#60;=</strong></td><td>leProperty</td><td>Less than or equal to</td></tr></table><p class="paragraph"/><h4>Querying Associations</h4><p class="paragraph"/>Associations can be queried by using the dot operator to specify the property name of the association to be queried:<p class="paragraph"/><div class="code"><pre>def query = Pet.where &#123;
+    owner.firstName == <span class="java&#45;quote">"Joe"</span> || owner.firstName == <span class="java&#45;quote">"Fred"</span>
+&#125;</pre></div><p class="paragraph"/>You can group multiple criterion inside a closure method call where the name of the method matches the association name:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+    pets &#123; name == <span class="java&#45;quote">"Jack"</span> || name == <span class="java&#45;quote">"Joe"</span> &#125;
+&#125;</pre></div><p class="paragraph"/>This technique can be combined with other top-level criteria:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+     pets &#123; name == <span class="java&#45;quote">"Jack"</span> &#125; || firstName == <span class="java&#45;quote">"Ed"</span>
+&#125;</pre></div><p class="paragraph"/>For collection associations it is possible to apply queries to the size of the collection:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+       pets.size() == 2
+&#125;</pre></div><p class="paragraph"/>The following table shows which operator maps onto which criteria method for each size() comparison:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Operator</th><th>Criteria Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">==</strong></td><td>sizeEq</td><td>The collection size is equal to</td></tr><tr class="table-even"><td><strong class="bold">!=</strong></td><td>sizeNe</td><td>The collection size is not equal to</td></tr><tr class="table-odd"><td><strong class="bold">&#62;</strong></td><td>sizeGt</td><td>The collection size is greater than</td></tr><tr class="table-even"><td><strong class="bold">&#60;</strong></td><td>sizeLt</td><td>The collection size is less than</td></tr><tr class="table-odd"><td><strong class="bold">&#62;=</strong></td><td>sizeGe</td><td>The collection size is greater than or equal to</td></tr><tr class="table-even"><td><strong class="bold">&#60;=</strong></td><td>sizeLe</td><td>The collection size is less than or equal to</td></tr></table><p class="paragraph"/>
+<h4>Subqueries</h4><p class="paragraph"/>It is possible to execute subqueries within where queries. For example to find all the people older than the average age the following query can be used:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">final</span> query = Person.where &#123;
+  age &#62; avg(age)
+&#125;</pre></div><p class="paragraph"/>The following table lists the possible subqueries:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">avg</strong></td><td>The average of all values</td></tr><tr class="table-even"><td><strong class="bold">sum</strong></td><td>The sum of all values</td></tr><tr class="table-odd"><td><strong class="bold">max</strong></td><td>The maximum value</td></tr><tr class="table-even"><td><strong class="bold">min</strong></td><td>The minimum value</td></tr><tr class="table-odd"><td><strong class="bold">count</strong></td><td>The count of all values</td></tr><tr class="table-even"><td><strong class="bold">property</strong></td><td>Retrieves a property of the resulting entities</td></tr></table><p class="paragraph"/>You can apply additional criteria to any subquery by using the <code>of</code> method and passing in a closure containing the criteria:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+  age &#62; avg(age).of &#123; lastName == <span class="java&#45;quote">"Simpson"</span> &#125; &#38;&#38; firstName == <span class="java&#45;quote">"Homer"</span>
+&#125;</pre></div><p class="paragraph"/>Since the <code>property</code> subquery returns multiple results, the criterion used compares all results. For example the following query will find all people younger than people with the surname "Simpson":<p class="paragraph"/><div class="code"><pre>Person.where &#123;
+    age &#60; property(age).of &#123; lastName == <span class="java&#45;quote">"Simpson"</span> &#125;
+&#125;</pre></div><p class="paragraph"/>
+<h4>Other Functions</h4><p class="paragraph"/>There are several functions available to you within the context of a query. These are summarized in the table below:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">second</strong></td><td>The second of a date property</td></tr><tr class="table-even"><td><strong class="bold">minute</strong></td><td>The minute of a date property</td></tr><tr class="table-odd"><td><strong class="bold">hour</strong></td><td>The hour of a date property</td></tr><tr class="table-even"><td><strong class="bold">day</strong></td><td>The day of the month of a date property</td></tr><tr class="table-odd"><td><strong class="bold">month</strong></td><td>The month of a date property</td></tr><tr class="table-even"><td><strong class="bold">year</strong></td><td>The year of a date property</td></tr><tr class="table-odd"><td><strong class="bold">lower</strong></td><td>Converts a string property to upper case</td></tr><tr class="table-even"><td><strong class="bold">upper</strong></td><td>Converts a string property to lower case</td></tr><tr class="table-odd"><td><strong class="bold">length</strong></td><td>The length of a string property</td></tr><tr class="table-even"><td><strong class="bold">trim</strong></td><td>Trims a string property</td></tr></table><p class="paragraph"/><blockquote class="note">
+Currently functions can only be applied to properties or associations of domain classes. You cannot, for example, use a function on a result of a subquery. 
+</blockquote><p class="paragraph"/>For example the following query can be used to find all pet's born in 2011:<p class="paragraph"/><div class="code"><pre>def query = Pet.where &#123;
+    year(birthDate) == 2011
+&#125;</pre></div><p class="paragraph"/>You can also apply functions to associations:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+    year(pets.birthDate) == 2009
+&#125;</pre></div><p class="paragraph"/>
+<h4>Batch Updates and Deletes</h4><p class="paragraph"/>Since each <code>where</code> method call returns a <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance, you can use <code>where</code> queries to execute batch operations such as batch updates and deletes. For example, the following query will update all people with the surname "Simpson" to have the surname "Bloggs":<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+    lastName == 'Simpson'
+&#125;
+<span class="java&#45;object">int</span> total = query.updateAll(lastName:<span class="java&#45;quote">"Bloggs"</span>)</pre></div><p class="paragraph"/><blockquote class="note">
+Note that one limitation with regards to batch operations is that join queries (queries that query associations) are not allowed.
+</blockquote><p class="paragraph"/>To batch delete records you can use the <code>deleteAll</code> method:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+    lastName == 'Simpson'
+&#125;
+<span class="java&#45;object">int</span> total = query.deleteAll()</pre></div>
+
+<a name="5.4.2 Criteria"><!-- Legacy link --></a>
+<h2 id="criteria">6.4.3 Criteria</h2>
+Criteria is an advanced way to query that uses a Groovy builder to construct potentially complex queries. It is a much better approach than building up query strings using a <code>StringBuffer</code>.<p class="paragraph"/>Criteria can be used either with the <a href="../ref/Domain Classes/createCriteria.html" class="domainClasses">createCriteria</a> or <a href="../ref/Domain Classes/withCriteria.html" class="domainClasses">withCriteria</a> methods. The builder uses Hibernate's Criteria API. The nodes on this builder map the static methods found in the <a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/criterion/Restrictions.html" class="api">Restrictions</a> class of the Hibernate Criteria API. For example:<p class="paragraph"/><div class="code"><pre>def c = Account.createCriteria()
+def results = c &#123;
+    between(<span class="java&#45;quote">"balance"</span>, 500, 1000)
+    eq(<span class="java&#45;quote">"branch"</span>, <span class="java&#45;quote">"London"</span>)
+    or &#123;
+        like(<span class="java&#45;quote">"holderFirstName"</span>, <span class="java&#45;quote">"Fred%"</span>)
+        like(<span class="java&#45;quote">"holderFirstName"</span>, <span class="java&#45;quote">"Barney%"</span>)
+    &#125;
+    maxResults(10)
+    order(<span class="java&#45;quote">"holderLastName"</span>, <span class="java&#45;quote">"desc"</span>)
+&#125;</pre></div><p class="paragraph"/>This criteria will select up to 10 <code>Account</code> objects in a List matching the following criteria:
+<ul class="star">
+<li><code>balance</code> is between 500 and 1000</li>
+<li><code>branch</code> is 'London'</li>
+<li><code>holderFirstName</code> starts with 'Fred' or 'Barney'</li>
+</ul><p class="paragraph"/>The results will be sorted in descending order by <code>holderLastName</code>.<p class="paragraph"/>If no records are found with the above criteria, an empty List is returned.<p class="paragraph"/><h4>Conjunctions and Disjunctions</h4><p class="paragraph"/>As demonstrated in the previous example you can group criteria in a logical OR using an <code>or { }</code> block:<p class="paragraph"/><div class="code"><pre>or &#123;
+    between(<span class="java&#45;quote">"balance"</span>, 500, 1000)
+    eq(<span class="java&#45;quote">"branch"</span>, <span class="java&#45;quote">"London"</span>)
+&#125;</pre></div><p class="paragraph"/>This also works with logical AND:<p class="paragraph"/><div class="code"><pre>and &#123;
+    between(<span class="java&#45;quote">"balance"</span>, 500, 1000)
+    eq(<span class="java&#45;quote">"branch"</span>, <span class="java&#45;quote">"London"</span>)
+&#125;</pre></div><p class="paragraph"/>And you can also negate using logical NOT:<p class="paragraph"/><div class="code"><pre>not &#123;
+    between(<span class="java&#45;quote">"balance"</span>, 500, 1000)
+    eq(<span class="java&#45;quote">"branch"</span>, <span class="java&#45;quote">"London"</span>)
+&#125;</pre></div><p class="paragraph"/>All top level conditions are implied to be AND'd together.<p class="paragraph"/><h4>Querying Associations</h4><p class="paragraph"/>Associations can be queried by having a node that matches the property name. For example say the <code>Account</code> class had many <code>Transaction</code> objects:<p class="paragraph"/><div class="code"><pre>class Account &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> hasMany = &#91;transactions: Transaction&#93;
+    &#8230;
+&#125;</pre></div><p class="paragraph"/>We can query this association by using the property name <code>transaction</code> as a builder node:<p class="paragraph"/><div class="code"><pre>def c = Account.createCriteria()
+def now = <span class="java&#45;keyword">new</span> Date()
+def results = c.list &#123;
+    transactions &#123;
+        between('date', now &#45; 10, now)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The above code will find all the <code>Account</code> instances that have performed <code>transactions</code> within the last 10 days.
+You can also nest such association queries within logical blocks:<p class="paragraph"/><div class="code"><pre>def c = Account.createCriteria()
+def now = <span class="java&#45;keyword">new</span> Date()
+def results = c.list &#123;
+    or &#123;
+        between('created', now &#45; 10, now)
+        transactions &#123;
+            between('date', now &#45; 10, now)
+        &#125;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Here we find all accounts that have either performed transactions in the last 10 days OR have been recently created in the last 10 days.<p class="paragraph"/><h4>Querying with Projections</h4><p class="paragraph"/>Projections may be used to customise the results. Define a "projections" node within the criteria builder tree to use projections. There are equivalent methods within the projections node to the methods found in the Hibernate <a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/criterion/Projections.html" class="api">Projections</a> class:<p class="paragraph"/><div class="code"><pre>def c = Account.createCriteria()<p class="paragraph"/>def numberOfBranches = c.get &#123;
+    projections &#123;
+        countDistinct('branch')
+    &#125;
+&#125;</pre></div><p class="paragraph"/>When multiple fields are specified in the projection, a List of values will be returned. A single value will be returned otherwise.<p class="paragraph"/><h4>Using SQL Restrictions</h4><p class="paragraph"/>You can access Hibernate's SQL Restrictions capabilities.<p class="paragraph"/><div class="code"><pre>def c = Person.createCriteria()<p class="paragraph"/>def peopleWithShortFirstNames = c.list &#123;
+    sqlRestriction <span class="java&#45;quote">"char_length(first_name) &#60;= 4"</span>
+&#125;</pre></div><p class="paragraph"/>SQL Restrictions may be parameterized to deal with SQL injection vulnerabilities related to dynamic restrictions.<p class="paragraph"/>
+<div class="code"><pre>def c = Person.createCriteria()<p class="paragraph"/>def peopleWithShortFirstNames = c.list &#123;
+    sqlRestriction <span class="java&#45;quote">"char_length(first_name) &#60; ? AND char_length(first_name) &#62; ?"</span>, &#91;maxValue, minValue&#93;
+&#125;</pre></div><p class="paragraph"/>
+<blockquote class="note">
+Note that the parameter there is SQL. The <code>first_name</code> attribute referenced in the example refers to the persistence model, not the object model like in HQL queries. The <code>Person</code> property named <code>firstName</code> is mapped to the <code>first_name</code> column in the database and you must refer to that in the <code>sqlRestriction</code> string.<p class="paragraph"/>Also note that the SQL used here is not necessarily portable across databases.
+</blockquote><p class="paragraph"/><h4>Using Scrollable Results</h4><p class="paragraph"/>You can use Hibernate's <a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/ScrollableResults.html" class="api">ScrollableResults</a> feature by calling the scroll method:<p class="paragraph"/><div class="code"><pre>def results = crit.scroll &#123;
+    maxResults(10)
+&#125;
+def f = results.first()
+def l = results.last()
+def n = results.next()
+def p = results.previous()<p class="paragraph"/>def <span class="java&#45;keyword">future</span> = results.scroll(10)
+def accountNumber = results.getLong('number')</pre></div><p class="paragraph"/>To quote the documentation of Hibernate ScrollableResults:<p class="paragraph"/><blockquote class="quote">
+A result iterator that allows moving around within the results by arbitrary increments. The Query / ScrollableResults pattern is very similar to the JDBC PreparedStatement/ ResultSet pattern and the semantics of methods of this interface are similar to the similarly named methods on ResultSet.
+</blockquote><p class="paragraph"/>Contrary to JDBC, columns of results are numbered from zero.<p class="paragraph"/><h4>Setting properties in the Criteria instance</h4><p class="paragraph"/>If a node within the builder tree doesn't match a particular criterion it will attempt to set a property on the Criteria object itself. This allows full access to all the properties in this class. This example calls <code>setMaxResults</code> and <code>setFirstResult</code> on the <a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/Criteria.html" class="api">Criteria</a> instance:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.hibernate.FetchMode as FM
+&#8230;
+def results = c.list &#123;
+    maxResults(10)
+    firstResult(50)
+    fetchMode(<span class="java&#45;quote">"aRelationship"</span>, FM.JOIN)
+&#125;</pre></div><p class="paragraph"/><h4>Querying with Eager Fetching</h4><p class="paragraph"/>In the section on <a href="../guide/single.html#fetching" class="guide">Eager and Lazy Fetching</a> we discussed how to declaratively specify fetching to avoid the N+1 SELECT problem. However, this can also be achieved using a criteria query:<p class="paragraph"/><div class="code"><pre>def criteria = Task.createCriteria()
+def tasks = criteria.list&#123;
+    eq <span class="java&#45;quote">"assignee.id"</span>, task.assignee.id
+    join 'assignee'
+    join 'project'
+    order 'priority', 'asc'
+&#125;</pre></div><p class="paragraph"/>Notice the usage of the <code>join</code> method: it tells the criteria API to use a <code>JOIN</code> to fetch the named associations with the <code>Task</code> instances. It's probably best not to use this for one-to-many associations though, because you will most likely end up with duplicate results. Instead, use the 'select' fetch mode:
+<div class="code"><pre><span class="java&#45;keyword">import</span> org.hibernate.FetchMode as FM
+&#8230;
+def results = Airport.withCriteria &#123;
+    eq <span class="java&#45;quote">"region"</span>, <span class="java&#45;quote">"EMEA"</span>
+    fetchMode <span class="java&#45;quote">"flights"</span>, FM.SELECT
+&#125;</pre></div>
+Although this approach triggers a second query to get the <code>flights</code> association, you will get reliable results  - even with the <code>maxResults</code> option.<p class="paragraph"/><blockquote class="note">
+<code>fetchMode</code> and <code>join</code> are general settings of the query and can only be specified at the top-level, i.e. you cannot use them inside projections or association constraints.
+</blockquote><p class="paragraph"/>An important point to bear in mind is that if you include associations in the query constraints, those associations will automatically be eagerly loaded. For example, in this query:
+<div class="code"><pre>def results = Airport.withCriteria &#123;
+    eq <span class="java&#45;quote">"region"</span>, <span class="java&#45;quote">"EMEA"</span>
+    flights &#123;
+        like <span class="java&#45;quote">"number"</span>, <span class="java&#45;quote">"BA%"</span>
+    &#125;
+&#125;</pre></div>
+the <code>flights</code> collection would be loaded eagerly via a join even though the fetch mode has not been explicitly set.<p class="paragraph"/><h4>Method Reference</h4><p class="paragraph"/>If you invoke the builder with no method name such as:<p class="paragraph"/><div class="code"><pre>c &#123; &#8230; &#125;</pre></div><p class="paragraph"/>The build defaults to listing all the results and hence the above is equivalent to:<p class="paragraph"/><div class="code"><pre>c.list &#123; &#8230; &#125;</pre></div><p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">list</strong></td><td>This is the default method. It returns all matching rows.</td></tr><tr class="table-even"><td><strong class="bold">get</strong></td><td>Returns a unique result set, i.e. just one row. The criteria has to be formed that way, that it only queries one row. This method is not to be confused with a limit to just the first row.</td></tr><tr class="table-odd"><td><strong class="bold">scroll</strong></td><td>Returns a scrollable result set.</td></tr><tr class="table-even"><td><strong class="bold">listDistinct</strong></td><td>If subqueries or associations are used, one may end up with the same row multiple times in the result set, this allows listing only distinct entities and is equivalent to <code>DISTINCT_ROOT_ENTITY</code> of the <a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/criterion/CriteriaSpecification.html" class="api">CriteriaSpecification</a> class.</td></tr><tr class="table-odd"><td><strong class="bold">count</strong></td><td>Returns the number of matching rows.</td></tr></table>
+
+
+
+<h2 id="detachedCriteria">6.4.4 Detached Criteria</h2>
+Detached Criteria are criteria queries that are not associated with any given database session/connection. Supported since Grails 2.0, Detached Criteria queries have many uses including allowing you to create common reusable criteria queries, execute subqueries and execute batch updates/deletes.<p class="paragraph"/>
+<h4>Building Detached Criteria Queries</h4><p class="paragraph"/>The primary point of entry for using the Detached Criteria is the <code>grails.gorm.DetachedCriteria</code> class which accepts a domain class as the only argument to its constructor:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.gorm.&#42;
+&#8230;
+def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person)</pre></div><p class="paragraph"/>Once you have obtained a reference to a detached criteria instance you can execute <a href="../guide/single.html#whereQueries" class="guide">where</a> queries or criteria queries to build up the appropriate query. To build a normal criteria query you can use the <code>build</code> method:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
+    eq 'lastName', 'Simpson'
+&#125;</pre></div><p class="paragraph"/>Note that methods on the <code>DetachedCriteria</code> instance <strong class="bold">do not</strong> mutate the original object but instead return a new query. In other words, you have to use the return value of the <code>build</code> method to obtain the mutated criteria object:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
+    eq 'lastName', 'Simpson'
+&#125;
+def bartQuery = criteria.build &#123;
+    eq 'firstName', 'Bart'
+&#125;</pre></div><p class="paragraph"/><h4>Executing Detached Criteria Queries</h4><p class="paragraph"/>Unlike regular criteria, Detached Criteria are lazy, in that no query is executed at the point of definition. Once a Detached Criteria query has been constructed then there are a number of useful query methods which are summarized in the table below:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">list</strong></td><td>List all matching entities</td></tr><tr class="table-even"><td><strong class="bold">get</strong></td><td>Return a single matching result</td></tr><tr class="table-odd"><td><strong class="bold">count</strong></td><td>Count all matching records</td></tr><tr class="table-even"><td><strong class="bold">exists</strong></td><td>Return true if any matching records exist</td></tr><tr class="table-odd"><td><strong class="bold">deleteAll</strong></td><td>Delete all matching records</td></tr><tr class="table-even"><td><strong class="bold">updateAll(Map)</strong></td><td>Update all matching records with the given properties</td></tr></table><p class="paragraph"/>As an example the following code will list the first 4 matching records sorted by the <code>firstName</code> property:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
+    eq 'lastName', 'Simpson'
+&#125;
+def results = criteria.list(max:4, sort:<span class="java&#45;quote">"firstName"</span>)</pre></div><p class="paragraph"/>You can also supply additional criteria to the list method:<p class="paragraph"/><div class="code"><pre>def results = criteria.list(max:4, sort:<span class="java&#45;quote">"firstName"</span>) &#123;
+    gt 'age', 30
+&#125;</pre></div><p class="paragraph"/>To retrieve a single result you can use the <code>get</code> or <code>find</code> methods (which are synonyms):<p class="paragraph"/><div class="code"><pre>Person p = criteria.find() // or criteria.get()</pre></div><p class="paragraph"/>The <code>DetachedCriteria</code> class itself also implements the <code>Iterable</code> interface which means that it can be treated like a list:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
+    eq 'lastName', 'Simpson'
+&#125;
+criteria.each &#123;
+    println it.firstName
+&#125;</pre></div><p class="paragraph"/>In this case the query is only executed when the <code>each</code> method is called. The same applies to all other Groovy collection iteration methods.<p class="paragraph"/>You can also execute dynamic finders on <code>DetachedCriteria</code> just like on domain classes. For example:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
+    eq 'lastName', 'Simpson'
+&#125;
+def bart = criteria.findByFirstName(<span class="java&#45;quote">"Bart"</span>)</pre></div><p class="paragraph"/><h4>Using Detached Criteria for Subqueries</h4><p class="paragraph"/>Within the context of a regular criteria query you can use <code>DetachedCriteria</code> to execute subquery. For example if you want to find all people who are older than the average age the following query will accomplish that:<p class="paragraph"/><div class="code"><pre>def results = Person.withCriteria &#123;
+     gt <span class="java&#45;quote">"age"</span>, <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
+         projections &#123;
+             avg <span class="java&#45;quote">"age"</span>
+         &#125;
+     &#125;
+     order <span class="java&#45;quote">"firstName"</span>
+ &#125;</pre></div><p class="paragraph"/>Notice that in this case the subquery class is the same as the original criteria query class (ie. <code>Person</code>) and hence the query can be shortened to:<p class="paragraph"/><div class="code"><pre>def results = Person.withCriteria &#123;
+     gt <span class="java&#45;quote">"age"</span>, &#123;
+         projections &#123;
+             avg <span class="java&#45;quote">"age"</span>
+         &#125;
+     &#125;
+     order <span class="java&#45;quote">"firstName"</span>
+ &#125;</pre></div><p class="paragraph"/>If the subquery class differs from the original criteria query then you will have to use the original syntax.<p class="paragraph"/>In the previous example the projection ensured that only a single result was returned (the average age). If your subquery returns multiple results then there are different criteria methods that need to be used to compare the result. For example to find all the people older than the ages 18 to 65 a <code>gtAll</code> query can be used:<p class="paragraph"/><div class="code"><pre>def results = Person.withCriteria &#123;
+    gtAll <span class="java&#45;quote">"age"</span>, &#123;
+        projections &#123;
+            property <span class="java&#45;quote">"age"</span>
+        &#125;
+        between 'age', 18, 65
+    &#125;<p class="paragraph"/>    order <span class="java&#45;quote">"firstName"</span>
+&#125;</pre></div><p class="paragraph"/>The following table summarizes criteria methods for operating on subqueries that return multiple results:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">gtAll</strong></td><td>greater than all subquery results</td></tr><tr class="table-even"><td><strong class="bold">geAll</strong></td><td>greater than or equal to all subquery results</td></tr><tr class="table-odd"><td><strong class="bold">ltAll</strong></td><td>less than all subquery results</td></tr><tr class="table-even"><td><strong class="bold">leAll</strong></td><td>less than or equal to all subquery results</td></tr><tr class="table-odd"><td><strong class="bold">eqAll</strong></td><td>equal to all subquery results</td></tr><tr class="table-even"><td><strong class="bold">neAll</strong></td><td>not equal to all subquery results</td></tr></table><p class="paragraph"/><h4>Batch Operations with Detached Criteria</h4><p class="paragraph"/>The <code>DetachedCriteria</code> class can be used to execute batch operations such as batch updates and deletes. For example, the following query will update all people with the surname "Simpson" to have the surname "Bloggs":<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
+    eq 'lastName', 'Simpson'
+&#125;
+<span class="java&#45;object">int</span> total = criteria.updateAll(lastName:<span class="java&#45;quote">"Bloggs"</span>)</pre></div><p class="paragraph"/><blockquote class="note">
+Note that one limitation with regards to batch operations is that join queries (queries that query associations) are not allowed within the <code>DetachedCriteria</code> instance. 
+</blockquote><p class="paragraph"/>To batch delete records you can use the <code>deleteAll</code> method:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
+    eq 'lastName', 'Simpson'
+&#125;
+<span class="java&#45;object">int</span> total = criteria.deleteAll()</pre></div>
+
+
+<a name="5.4.3 Hibernate Query Language (HQL)"><!-- Legacy link --></a>
+<h2 id="hql">6.4.5 Hibernate Query Language (HQL)</h2>
+GORM classes also support Hibernate's query language HQL, a very complete reference for which can be found <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/queryhql.html" target="blank">in the Hibernate documentation</a> of the Hibernate documentation.<p class="paragraph"/>GORM provides a number of methods that work with HQL including <a href="../ref/Domain Classes/find.html" class="domainClasses">find</a>, <a href="../ref/Domain Classes/findAll.html" class="domainClasses">findAll</a> and <a href="../ref/Domain Classes/executeQuery.html" class="domainClasses">executeQuery</a>. An example of a query can be seen below:<p class="paragraph"/><div class="code"><pre>def results =
+      Book.findAll(<span class="java&#45;quote">"from Book as b where b.title like 'Lord of the%'"</span>)</pre></div><p class="paragraph"/><h4>Positional and Named Parameters</h4><p class="paragraph"/>In this case the value passed to the query is hard coded, however you can equally use positional parameters:<p class="paragraph"/><div class="code"><pre>def results =
+      Book.findAll(<span class="java&#45;quote">"from Book as b where b.title like ?"</span>, &#91;<span class="java&#45;quote">"The Shi%"</span>&#93;)</pre></div><p class="paragraph"/><div class="code"><pre>def author = Author.findByName(<span class="java&#45;quote">"Stephen King"</span>)
+def books = Book.findAll(<span class="java&#45;quote">"from Book as book where book.author = ?"</span>,
+                         &#91;author&#93;)</pre></div><p class="paragraph"/>Or even named parameters:<p class="paragraph"/><div class="code"><pre>def results =
+      Book.findAll(<span class="java&#45;quote">"from Book as b "</span> +
+                   <span class="java&#45;quote">"where b.title like :search or b.author like :search"</span>,
+                   &#91;search: <span class="java&#45;quote">"The Shi%"</span>&#93;)</pre></div><p class="paragraph"/><div class="code"><pre>def author = Author.findByName(<span class="java&#45;quote">"Stephen King"</span>)
+def books = Book.findAll(<span class="java&#45;quote">"from Book as book where book.author = :author"</span>,
+                         &#91;author: author&#93;)</pre></div><p class="paragraph"/><h4>Multiline Queries</h4><p class="paragraph"/>Use the line continuation character to separate the query across multiple lines:<p class="paragraph"/><div class="code"><pre>def results = Book.findAll(<span class="java&#45;quote">"&#92;
+from Book as b, &#92;
+     Author as a &#92;
+where b.author = a and a.surname = ?"</span>, &#91;'Smith'&#93;)</pre></div><p class="paragraph"/><blockquote class="note">
+Triple-quoted Groovy multiline Strings will NOT work with HQL queries.
+</blockquote><p class="paragraph"/><h4>Pagination and Sorting</h4><p class="paragraph"/>You can also perform pagination and sorting whilst using HQL queries. To do so simply specify the pagination options as a Map at the end of the method call and include an "ORDER BY" clause in the HQL:<p class="paragraph"/><div class="code"><pre>def results =
+      Book.findAll(<span class="java&#45;quote">"from Book as b where "</span> +
+                   <span class="java&#45;quote">"b.title like 'Lord of the%' "</span> +
+                   <span class="java&#45;quote">"order by b.title asc"</span>,
+                   &#91;max: 10, offset: 20&#93;)</pre></div>
+
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/commandLine.html">&lt;&lt; <strong>5</strong><span>The Command Line</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Command Line</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/add-proxy.html">add-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bootstrap.html">bootstrap</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clean.html">clean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clear-proxy.html">clear-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/compile.html">compile</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/console.html">console</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-app.html">create-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-controller.html">create-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-domain-class.html">create-domain-class</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-filters.html">create-filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-multi-project-build.html">create-multi-project-build</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-plugin.html">create-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-pom.html">create-pom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-scaffold-controller.html">create-scaffold-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-script.html">create-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-service.html">create-service</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-tag-lib.html">create-tag-lib</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-unit-test.html">create-unit-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-controller.html">generate-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-views.html">generate-views</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/help.html">help</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/init.html">init</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-dependency.html">install-dependency</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-plugin.html">install-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-templates.html">install-templates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/integrate-with.html">integrate-with</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/interactive.html">interactive</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugin-updates.html">list-plugin-updates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/migrate-docs.html">migrate-docs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package-plugin.html">package-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package.html">package</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/plugin-info.html">plugin-info</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/refresh-dependencies.html">refresh-dependencies</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/remove-proxy.html">remove-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-war.html">run-war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-proxy.html">set-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-version.html">set-version</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/shell.html">shell</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/uninstall-plugin.html">uninstall-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/upgrade.html">upgrade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/wrapper.html">wrapper</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Constraints</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Constraints/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/attributes.html">attributes</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/bindable.html">bindable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/blank.html">blank</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/creditCard.html">creditCard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/email.html">email</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/inList.html">inList</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/matches.html">matches</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/max.html">max</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/maxSize.html">maxSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/min.html">min</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/minSize.html">minSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/notEqual.html">notEqual</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/nullable.html">nullable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/range.html">range</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/scale.html">scale</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/size.html">size</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/unique.html">unique</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/url.html">url</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/validator.html">validator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/widget.html">widget</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Controllers</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Controllers/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/afterInterceptor.html">afterInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/allowedMethods.html">allowedMethods</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/beforeInterceptor.html">beforeInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/bindData.html">bindData</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/chain.html">chain</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/defaultAction.html">defaultAction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/forward.html">forward</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/grailsApplication.html">grailsApplication</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/redirect.html">redirect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/session.html">session</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withForm.html">withForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withFormat.html">withFormat</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Database Mapping</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoImport.html">autoImport</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoTimestamp.html">autoTimestamp</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/batchSize.html">batchSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cache.html">cache</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cascade.html">cascade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/column.html">column</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/discriminator.html">discriminator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicInsert.html">dynamicInsert</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicUpdate.html">dynamicUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/fetch.html">fetch</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/id.html">id</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/ignoreNotFound.html">ignoreNotFound</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/indexColumn.html">indexColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/insertable.html">insertable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/joinTable.html">joinTable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/lazy.html">lazy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/order.html">order</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/sort.html">sort</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/table.html">table</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/type.html">type</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/updateable.html">updateable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/version.html">version</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Domain Classes</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/addTo.html">addTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/attach.html">attach</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/belongsTo.html">belongsTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/clearErrors.html">clearErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/constraints.html">constraints</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/count.html">count</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/countBy.html">countBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/createCriteria.html">createCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/delete.html">delete</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/discard.html">discard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/embedded.html">embedded</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/errors.html">errors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeQuery.html">executeQuery</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeUpdate.html">executeUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/exists.html">exists</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/fetchMode.html">fetchMode</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/find.html">find</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllBy.html">findAllBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllWhere.html">findAllWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findBy.html">findBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateBy.html">findOrCreateBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateWhere.html">findOrCreateWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveBy.html">findOrSaveBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveWhere.html">findOrSaveWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findWhere.html">findWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/get.html">get</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getAll.html">getAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getDirtyPropertyNames.html">getDirtyPropertyNames</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getPersistentValue.html">getPersistentValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasMany.html">hasMany</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasOne.html">hasOne</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/ident.html">ident</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/instanceOf.html">instanceOf</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isAttached.html">isAttached</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isDirty.html">isDirty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/list.html">list</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/listOrderBy.html">listOrderBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/load.html">load</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/lock.html">lock</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mappedBy.html">mappedBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mapping.html">mapping</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/merge.html">merge</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/namedQueries.html">namedQueries</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/properties.html">properties</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/read.html">read</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/refresh.html">refresh</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/removeFrom.html">removeFrom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/save.html">save</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/transients.html">transients</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/validate.html">validate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/where.html">where</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/whereAny.html">whereAny</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withCriteria.html">withCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withNewSession.html">withNewSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withSession.html">withSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withTransaction.html">withTransaction</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Plug-ins</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Plug-ins/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/URL%20mappings.html">URL mappings</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/codecs.html">codecs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/controllers.html">controllers</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/core.html">core</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/dataSource.html">dataSource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/domainClasses.html">domainClasses</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/filters.html">filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/hibernate.html">hibernate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/i18n.html">i18n</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/logging.html">logging</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/scaffolding.html">scaffolding</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/services.html">services</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/servlets.html">servlets</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/web%20flow.html">web flow</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Services</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Services/scope.html">scope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Services/transactional.html">transactional</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Servlet API</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tag Libraries</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/pageScope.html">pageScope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tags</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmit.html">actionSubmit</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmitImage.html">actionSubmitImage</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/applyLayout.html">applyLayout</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/checkBox.html">checkBox</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/collect.html">collect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/cookie.html">cookie</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/country.html">country</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/countrySelect.html">countrySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLink.html">createLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLinkTo.html">createLinkTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/currencySelect.html">currencySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/datePicker.html">datePicker</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/each.html">each</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/eachError.html">eachError</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/else.html">else</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/elseif.html">elseif</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/external.html">external</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/form.html">form</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formRemote.html">formRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatBoolean.html">formatBoolean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatDate.html">formatDate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatNumber.html">formatNumber</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/grep.html">grep</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/header.html">header</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hiddenField.html">hiddenField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/if.html">if</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/img.html">img</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/include.html">include</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isAvailable.html">isAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isNotAvailable.html">isNotAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/javascript.html">javascript</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/join.html">join</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutBody.html">layoutBody</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutHead.html">layoutHead</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutTitle.html">layoutTitle</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/link.html">link</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/localeSelect.html">localeSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/message.html">message</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/meta.html">meta</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/pageProperty.html">pageProperty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/paginate.html">paginate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/passwordField.html">passwordField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radio.html">radio</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radioGroup.html">radioGroup</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteField.html">remoteField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteFunction.html">remoteFunction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteLink.html">remoteLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/renderErrors.html">renderErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/resource.html">resource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/select.html">select</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/set.html">set</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/setProvider.html">setProvider</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/sortableColumn.html">sortableColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitButton.html">submitButton</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitToRemote.html">submitToRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textArea.html">textArea</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textField.html">textField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/timeZoneSelect.html">timeZoneSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/unless.html">unless</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/uploadForm.html">uploadForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/while.html">while</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.
+    Sponsored by <a href="http://springsource.com">SpringSource</a>
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

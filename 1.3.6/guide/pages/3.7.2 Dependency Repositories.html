@@ -1,0 +1,70 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>3.7.2 Dependency Repositories</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="3.7.2 Dependency Repositories">3.7.2 Dependency Repositories</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            <h4>Remote Repositories</h4><p class="paragraph"/>Grails, when installed, does not use any remote public repositories. There is a default <code>grailsHome()</code> repository that will locate the JAR files Grails needs from your Grails installation. If you want to take advantage of a public repository you need to specify as such inside the <code>repositories</code> block:<p class="paragraph"/><div class="code"><pre>repositories &#123;
+    mavenCentral()
+&#125;</pre></div><p class="paragraph"/>In this case the default public Maven repository is specified. To use the SpringSource Enterprise Bundle Repository you can use the <code>ebr()</code> method:<p class="paragraph"/><div class="code"><pre>repositories &#123;
+    ebr()
+&#125;</pre></div><p class="paragraph"/>
+You can also specify a specific Maven repository to use by URL:<p class="paragraph"/><div class="code"><pre>repositories &#123;
+    mavenRepo <span class="java&#45;quote">"http://repository.codehaus.org"</span>
+&#125;</pre></div><p class="paragraph"/><h4>Controlling Repositories Inherited from Plugins</h4><p class="paragraph"/>A plugin you have installed may define a reference to a remote repository just as an application can. By default your application will inherit this repository definition when you install the plugin.<p class="paragraph"/>If you do not wish to inherit repository definitions from plugins then you can disable repository inheritance:<p class="paragraph"/><div class="code"><pre>repositories &#123;
+	inherit <span class="java&#45;keyword">false</span>
+&#125;</pre></div><p class="paragraph"/>In this case your application will not inherit any repository definitions from plugins and it is down to you to provide appropriate (possibly internal) repository definitions.<p class="paragraph"/><h4>Local Resolvers</h4><p class="paragraph"/>If you do not wish to use a public Maven repository you can specify a flat file repository:<p class="paragraph"/><div class="code"><pre>repositories &#123;
+    flatDir name:'myRepo', dirs:'/path/to/repo'
+&#125;</pre></div><p class="paragraph"/>To specify your local Maven cache (<code>~/.m2/repository</code>) as a repository:<p class="paragraph"/><div class="code"><pre>repositories &#123;
+    mavenLocal()
+&#125;</pre></div>
+<h4>Custom Resolvers</h4><p class="paragraph"/>If all else fails since Grails builds on Apache Ivy you can specify an Ivy resolver:<p class="paragraph"/><div class="code"><pre>/&#42;
+ &#42; Configure our resolver.
+ &#42;/
+def libResolver = <span class="java&#45;keyword">new</span> org.apache.ivy.plugins.resolver.URLResolver()
+&#91;'libraries', 'builds'&#93;.each &#123;
+    libResolver.addArtifactPattern(<span class="java&#45;quote">"http://my.repository/$&#123;it&#125;/&#91;organisation&#93;/&#91;module&#93;/&#91;revision&#93;/&#91;type&#93;s/&#91;artifact&#93;.&#91;ext&#93;"</span>)
+    libResolver.addIvyPattern(<span class="java&#45;quote">"http://my.repository/$&#123;it&#125;/&#91;organisation&#93;/&#91;module&#93;/&#91;revision&#93;/&#91;type&#93;s/&#91;artifact&#93;.&#91;ext&#93;"</span>)
+&#125;
+libResolver.name = <span class="java&#45;quote">"my&#45;repository"</span>
+libResolver.settings = ivySettings<p class="paragraph"/>resolver libResolver</pre></div><p class="paragraph"/>A common question is whether it's possible to pull dependencies from a repository using SSH. The answer is yes! Ivy comes with a dedicated resolver that you can configure and include in your project like so:
+<div class="code"><pre><span class="java&#45;keyword">import</span> org.apache.ivy.plugins.resolver.SshResolver
+&#8230;
+repositories &#123;
+    ...<p class="paragraph"/>    def sshResolver = <span class="java&#45;keyword">new</span> SshResolver(
+            name: <span class="java&#45;quote">"myRepo"</span>,
+            user: <span class="java&#45;quote">"username"</span>,
+            host: <span class="java&#45;quote">"dev.x.com"</span>,
+            keyFile: <span class="java&#45;keyword">new</span> File(<span class="java&#45;quote">"/home/username/.ssh/id_rsa"</span>),
+            m2compatible: <span class="java&#45;keyword">true</span>)<p class="paragraph"/>    sshResolver.addArtifactPattern(<span class="java&#45;quote">"/home/grails/repo/&#91;organisation&#93;/&#91;artifact&#93;/&#91;revision&#93;/&#91;artifact&#93;&#45;&#91;revision&#93;.&#91;ext&#93;"</span>)
+    sshResolver.latestStrategy = <span class="java&#45;keyword">new</span> org.apache.ivy.plugins.latest.LatestTimeStrategy()
+    sshResolver.changingPattern = <span class="java&#45;quote">".&#42;SNAPSHOT"</span>
+    sshResolver.setCheckmodified(<span class="java&#45;keyword">true</span>)<p class="paragraph"/>    resolver sshResolver
+&#125;</pre></div><p class="paragraph"/>If you're going to use the SSH resolver, then you will need to download the <a href="http://www.jcraft.com/jsch/" target="blank">JSch JAR</a> and add it to Grails' classpath. You can either do this by adding its path to the <code>CLASSPATH</code> environment variable or by passing the path in the Grails command line:
+<div class="code"><pre>grails &#45;classpath /path/to/jsch compile|run&#45;app|etc.</pre></div>
+The environment variable is more convenient, but be aware that it affects many Java applications. An alternative on Unix is to create an alias for <code>grails -classpath ...</code> so that you don't have to type the extra arguments each time.<p class="paragraph"/><h4>Authentication</h4><p class="paragraph"/>If your repository requires some form of authentication you can specify as such using a <code>credentials</code> block:<p class="paragraph"/><div class="code"><pre>credentials &#123;
+	realm = <span class="java&#45;quote">".."</span>
+	host = <span class="java&#45;quote">"localhost"</span>
+	username = <span class="java&#45;quote">"myuser"</span>
+	password = <span class="java&#45;quote">"mypass"</span>
+&#125;</pre></div><p class="paragraph"/>The above can also be placed in your <code>USER_HOME/.grails/settings.groovy</code> file using the <code>grails.project.ivy.authentication</code> setting:<p class="paragraph"/><div class="code"><pre>grails.project.ivy.authentication = &#123;
+	credentials &#123;
+		realm = <span class="java&#45;quote">".."</span>
+		host = <span class="java&#45;quote">"localhost"</span>
+		username = <span class="java&#45;quote">"myuser"</span>
+		password = <span class="java&#45;quote">"mypass"</span>
+	&#125;	
+&#125;</pre></div><p class="paragraph"/>
+        </div>
+    </body>
+</html>

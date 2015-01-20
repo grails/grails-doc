@@ -1,0 +1,29 @@
+<html>
+     <head>
+     	<meta http-equiv="Content-type" content="text/html; charset=utf-8">
+     	<title>6.2.6 Making Changes to a Deployed Application</title>
+     	<link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8">
+		<link rel="icon" href="../../img/favicon.ico" type="image/x-icon">
+		<link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"> 
+     </head>
+	<body class="body">
+		<div id="header">
+			<h2><a name="6.2.6 Making Changes to a Deployed Application">6.2.6 Making Changes to a Deployed Application</a></h2>
+		</div>
+		<div id="toc">
+			
+		</div>
+		<div id="content">
+			One of the main issues with deploying a Grails application (or typically any servlet-based one) is that any change to the views requires you to redeploy your whole application. If all you want to do is fix a typo on a page, or change an image link, it can seem like a lot of unnecessary work. For such simple requirements, Grails does have a solution: the  <code>grails.gsp.view.dir</code>  configuration setting.<p class="paragraph"/>How does this work? The first step is to decide where the GSP files should go. Let's say we want to keep them unpacked in a  <code>/var/www/grails/my-app</code>  directory. We add these two lines to  <code>grails-app/conf/Config.groovy</code> :
+<div class="code"><pre>grails.gsp.enable.reload = <span class="java&#45;keyword">true</span>
+grails.gsp.view.dir = <span class="java&#45;quote">"/<span class="java&#45;keyword">var</span>/www/grails/my&#45;app/"</span></pre></div>
+The first line tells Grails that modified GSP files should be reloaded at runtime. If you don't have this setting, you can make as many changes as you like but they won't be reflected in the running application. The second line tells Grails where to load the views and layouts from.<p class="paragraph"/><blockquote class="note">
+The trailing slash on the  <code>grails.gsp.view.dir</code>  value is important! Without it, Grails will look for views in the parent directory.
+</blockquote><p class="paragraph"/>With those settings in place, all you need to do is copy the views from your web application to the external directory. On a Unix-like system, this would look something like this:
+<div class="code"><pre>mkdir &#45;p /<span class="java&#45;keyword">var</span>/www/grails/my&#45;app/grails&#45;app/views
+cp &#45;R grails&#45;app/views/&#42; /<span class="java&#45;keyword">var</span>/www/grails/my&#45;app/grails&#45;app/views</pre></div>
+The key point here is that you must retain the view directory structure, including the  <code>grails-app/views</code>  bit. So you end up with the path  <code>/var/www/grails/my-app/grails-app/views/...</code> .<p class="paragraph"/>One thing to bear in mind with this technique is that every time you modify a GSP, it uses up permgen space. So at some point you will eventually hit "out of permgen space" errors unless you restart the server. So this technique is not recommended for frequent or large changes to the views.
+
+		</div>
+	</body>
+</html>

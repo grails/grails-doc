@@ -1,0 +1,1636 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>6.5 Advanced GORM Features 2.1.0</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/upgradingFromPreviousVersionsOfGrails.html"><strong>3</strong><span>Upgrading from previous versions of Grails</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/commandLine.html"><strong>5</strong><span>The Command Line</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/GORM.html"><strong>6</strong><span>Object Relational Mapping (GORM)</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/validation.html"><strong>8</strong><span>Validation</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/services.html"><strong>9</strong><span>The Service Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/testing.html"><strong>10</strong><span>Testing</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/i18n.html"><strong>11</strong><span>Internationalization</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/security.html"><strong>12</strong><span>Security</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/plugins.html"><strong>13</strong><span>Plugins</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/webServices.html"><strong>14</strong><span>Web Services</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/spring.html"><strong>15</strong><span>Grails and Spring</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/hibernate.html"><strong>16</strong><span>Grails and Hibernate</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/scaffolding.html"><strong>17</strong><span>Scaffolding</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/deployment.html"><strong>18</strong><span>Deployment</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/contributing.html"><strong>19</strong><span>Contributing to Grails</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        <span id="logo"><a href="http://grails.org" target="_blank"><img alt="Grails Logo" title="The Grails Framework" src="../../img/grails.png" border="0"/></a></span>
+        
+        
+        <span id="sponsor"><a href="http://springsource.com" target="_blank"><img alt="SpringSource Logo" title="SpringSource - Weapons for the War on Java Complexity" src="../../img/springsource-logo.png" border="0"/></a></span>
+        
+    </div>
+    <p>See the light - agile, industrial strength, rapid web application development made easy</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/commandLine.html">&lt;&lt; <strong>5</strong><span>The Command Line</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>6.5 Advanced GORM Features - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith</p>
+
+                    <p><strong>Version:</strong> 2.1.0</p>
+
+                    
+                </div>
+
+                
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#eventsAutoTimestamping"><strong>6.1</strong><span>Events and Auto Timestamping</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#ormdsl"><strong>6.2</strong><span>Custom ORM Mapping</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#tableAndColumnNames"><strong>6.2.1</strong><span>Table and Column Names</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#caching"><strong>6.2.2</strong><span>Caching Strategy</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#inheritanceStrategies"><strong>6.2.3</strong><span>Inheritance Strategies</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#identity"><strong>6.2.4</strong><span>Custom Database Identity</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#compositePrimaryKeys"><strong>6.2.5</strong><span>Composite Primary Keys</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#databaseIndices"><strong>6.2.6</strong><span>Database Indices</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#optimisticLockingAndVersioning"><strong>6.2.7</strong><span>Optimistic Locking and Versioning</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#fetchingDSL"><strong>6.2.8</strong><span>Eager and Lazy Fetching</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#customCascadeBehaviour"><strong>6.2.9</strong><span>Custom Cascade Behaviour</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#customHibernateTypes"><strong>6.2.10</strong><span>Custom Hibernate Types</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#derivedProperties"><strong>6.2.11</strong><span>Derived Properties</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#customNamingStrategy"><strong>6.2.12</strong><span>Custom Naming Strategy</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#defaultSortOrder"><strong>6.3</strong><span>Default Sort Order</span></a>
+                    </div>
+                    
+                </div>
+                
+
+                
+<a name="5.5 Advanced GORM Features"><!-- Legacy link --></a>
+<h2 id="advancedGORMFeatures">6.5 Advanced GORM Features</h2>
+The following sections cover more advanced usages of GORM including caching, custom mapping and events.
+
+<a name="5.5.1 Events and Auto Timestamping"><!-- Legacy link --></a>
+<h2 id="eventsAutoTimestamping">6.5.1 Events and Auto Timestamping</h2>
+GORM supports the registration of events as methods that get fired when certain events occurs such as deletes, inserts and updates. The following is a list of supported events:
+<ul class="star">
+<li><code>beforeInsert</code> - Executed before an object is initially persisted to the database</li>
+<li><code>beforeUpdate</code> - Executed before an object is updated</li>
+<li><code>beforeDelete</code> - Executed before an object is deleted</li>
+<li><code>beforeValidate</code> - Executed before an object is validated</li>
+<li><code>afterInsert</code> - Executed after an object is persisted to the database</li>
+<li><code>afterUpdate</code> - Executed after an object has been updated</li>
+<li><code>afterDelete</code> - Executed after an object has been deleted</li>
+<li><code>onLoad</code> - Executed when an object is loaded from the database</li>
+</ul><p class="paragraph"/>To add an event simply register the relevant closure with your domain class.<p class="paragraph"/><blockquote class="warning">
+Do not attempt to flush the session within an event (such as with obj.save(flush:true)). Since events are fired during flushing this will cause a StackOverflowError.
+</blockquote><p class="paragraph"/><h3>Event types</h3><p class="paragraph"/><h4>The beforeInsert event</h4><p class="paragraph"/>Fired before an object is saved to the database<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   Date dateCreated<p class="paragraph"/>   def beforeInsert() &#123;
+       dateCreated = <span class="java&#45;keyword">new</span> Date()
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h4>The beforeUpdate event</h4><p class="paragraph"/>Fired before an existing object is updated<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def beforeInsert() &#123;
+       dateCreated = <span class="java&#45;keyword">new</span> Date()
+   &#125;
+   def beforeUpdate() &#123;
+       lastUpdated = <span class="java&#45;keyword">new</span> Date()
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h4>The beforeDelete event</h4><p class="paragraph"/>Fired before an object is deleted.<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def beforeDelete() &#123;
+      ActivityTrace.withNewSession &#123;
+         <span class="java&#45;keyword">new</span> ActivityTrace(eventName:<span class="java&#45;quote">"Person Deleted"</span>,data:name).save()
+      &#125;
+   &#125;
+&#125;</pre></div><p class="paragraph"/>Notice the usage of <code>withNewSession</code> method above. Since events are triggered whilst Hibernate is flushing using persistence methods like <code>save()</code> and <code>delete()</code> won't result in objects being saved unless you run your operations with a new <code>Session</code>.<p class="paragraph"/>Fortunately the <code>withNewSession</code> method lets you share the same transactional JDBC connection even though you're using a different underlying <code>Session</code>.<p class="paragraph"/><h4>The beforeValidate event</h4><p class="paragraph"/>Fired before an object is validated.<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name<p class="paragraph"/>   <span class="java&#45;keyword">static</span> constraints = &#123;
+       name size: 5..45
+   &#125;<p class="paragraph"/>   def beforeValidate() &#123;
+       name = name?.trim()
+   &#125;
+&#125;</pre></div><p class="paragraph"/>The <code>beforeValidate</code> method is run before any validators are run.<p class="paragraph"/><blockquote class="note">
+Validation may run more often than you think. It is triggered by the <code>validate()</code> and <code>save()</code> methods as you'd expect, but it is also typically triggered just before the view is rendered as well. So when writing <code>beforeValidate()</code> implementations, make sure that they can handle being called multiple times with the same property values.
+</blockquote><p class="paragraph"/>GORM supports an overloaded version of <code>beforeValidate</code> which accepts a <code>List</code> parameter which may include
+the names of the properties which are about to be validated.  This version of <code>beforeValidate</code> will be called
+when the <code>validate</code> method has been invoked and passed a <code>List</code> of property names as an argument.<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   <span class="java&#45;object">String</span> town
+   <span class="java&#45;object">Integer</span> age<p class="paragraph"/>   <span class="java&#45;keyword">static</span> constraints = &#123;
+       name size: 5..45
+       age range: 4..99
+   &#125;<p class="paragraph"/>   def beforeValidate(List propertiesBeingValidated) &#123;
+      // <span class="java&#45;keyword">do</span> pre validation work based on propertiesBeingValidated
+   &#125;
+&#125;<p class="paragraph"/>def p = <span class="java&#45;keyword">new</span> Person(name: 'Jacob Brown', age: 10)
+p.validate(&#91;'age', 'name'&#93;)</pre></div><p class="paragraph"/><blockquote class="note">
+Note that when <code>validate</code> is triggered indirectly because of a call to the <code>save</code> method that
+the <code>validate</code> method is being invoked with no arguments, not a <code>List</code> that includes all of
+the property names.
+</blockquote><p class="paragraph"/>Either or both versions of <code>beforeValidate</code> may be defined in a domain class.  GORM will
+prefer the <code>List</code> version if a <code>List</code> is passed to <code>validate</code> but will fall back on the
+no-arg version if the <code>List</code> version does not exist.  Likewise, GORM will prefer the
+no-arg version if no arguments are passed to <code>validate</code> but will fall back on the
+<code>List</code> version if the no-arg version does not exist.  In that case, <code>null</code> is passed to <code>beforeValidate</code>.<p class="paragraph"/><h4>The onLoad/beforeLoad event</h4><p class="paragraph"/>Fired immediately before an object is loaded from the database:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def onLoad() &#123;
+      log.debug <span class="java&#45;quote">"Loading &#36;&#123;id&#125;"</span>
+   &#125;
+&#125;</pre></div><p class="paragraph"/><code>beforeLoad()</code> is effectively a synonym for <code>onLoad()</code>, so only declare one or the other.<p class="paragraph"/><h4>The afterLoad event</h4><p class="paragraph"/>Fired immediately after an object is loaded from the database:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def afterLoad() &#123;
+      name = <span class="java&#45;quote">"I'm loaded"</span>
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Custom Event Listeners</h4><p class="paragraph"/>As of Grails 2.0 there is a new API for plugins and applications to register and listen for persistence events. This API is not tied to Hibernate and also works for other persistence plugins such as the <a href="http://grails.org/plugin/mongodb" target="blank">MongoDB plugin for GORM</a>.<p class="paragraph"/>To use this API you need to subclass <code>AbstractPersistenceEventListener</code> (in package  <em class="italic">org.grails.datastore.mapping.engine.event</em> ) and implement a single method called <code>onPersistenceEvent</code>. The simplest possible implementation can be seen below:<p class="paragraph"/><div class="code"><pre>@Override
+<span class="java&#45;keyword">protected</span> void onPersistenceEvent(<span class="java&#45;keyword">final</span> AbstractPersistenceEvent event) &#123;
+    <span class="java&#45;keyword">switch</span>(event.eventType) &#123;
+        <span class="java&#45;keyword">case</span> PreInsert:
+            println <span class="java&#45;quote">"PRE INSERT &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>
+        <span class="java&#45;keyword">case</span> PostInsert:
+            println <span class="java&#45;quote">"POST INSERT &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>
+        <span class="java&#45;keyword">case</span> PreUpdate:
+            println <span class="java&#45;quote">"PRE UPDATE &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+        <span class="java&#45;keyword">case</span> PostUpdate:
+            println <span class="java&#45;quote">"POST UPDATE &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+        <span class="java&#45;keyword">case</span> PreDelete:
+            println <span class="java&#45;quote">"PRE DELETE &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+        <span class="java&#45;keyword">case</span> PostDelete:
+            println <span class="java&#45;quote">"POST DELETE &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+        <span class="java&#45;keyword">case</span> PreLoad:
+            println <span class="java&#45;quote">"PRE LOAD &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+        <span class="java&#45;keyword">case</span> PostLoad:
+            println <span class="java&#45;quote">"POST LOAD &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The <code>AbstractPersistenceEvent</code> class has many subclasses (<code>PreInsertEvent</code>, <code>PostInsertEvent</code> etc.) that provide further information specific to the event. A <code>cancel()</code> method is also provided on the event which allows you to veto an insert, update or delete operation.<p class="paragraph"/>Once you have created your event listener you need to register it with the <code>ApplicationContext</code>. This can be done in <code>BootStrap.groovy</code>:<p class="paragraph"/><div class="code"><pre>def init = &#123;
+    applicationContext.addApplicationListener(<span class="java&#45;keyword">new</span> MyPersistenceListener())
+&#125;</pre></div><p class="paragraph"/><h4>Hibernate Events</h4><p class="paragraph"/>It is generally encouraged to use the non-Hibernate specific API described above, but if you need access to more detailed Hibernate events then you can define custom Hibernate-specific event listeners.<p class="paragraph"/>You can also register event handler classes in an application's <code>grails-app/conf/spring/resources.groovy</code> or in the <code>doWithSpring</code> closure in a plugin descriptor by registering a Spring bean named <code>hibernateEventListeners</code>. This bean has one property, <code>listenerMap</code> which specifies the listeners to register for various Hibernate events.<p class="paragraph"/>The values of the Map are instances of classes that implement one or more Hibernate listener interfaces. You can use one class that implements all of the required interfaces, or one concrete class per interface, or any combination. The valid Map keys and corresponding interfaces are listed here:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Name</strong></th><th><strong class="bold">Interface</strong></th></tr><tr class="table-odd"><td>auto-flush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/AutoFlushEventListener.html" class="api">AutoFlushEventListener</a></td></tr><tr class="table-even"><td>merge</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/MergeEventListener.html" class="api">MergeEventListener</a></td></tr><tr class="table-odd"><td>create</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PersistEventListener.html" class="api">PersistEventListener</a></td></tr><tr class="table-even"><td>create-onflush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PersistEventListener.html" class="api">PersistEventListener</a></td></tr><tr class="table-odd"><td>delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/DeleteEventListener.html" class="api">DeleteEventListener</a></td></tr><tr class="table-even"><td>dirty-check</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/DirtyCheckEventListener.html" class="api">DirtyCheckEventListener</a></td></tr><tr class="table-odd"><td>evict</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/EvictEventListener.html" class="api">EvictEventListener</a></td></tr><tr class="table-even"><td>flush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/FlushEventListener.html" class="api">FlushEventListener</a></td></tr><tr class="table-odd"><td>flush-entity</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/FlushEntityEventListener.html" class="api">FlushEntityEventListener</a></td></tr><tr class="table-even"><td>load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/LoadEventListener.html" class="api">LoadEventListener</a></td></tr><tr class="table-odd"><td>load-collection</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/InitializeCollectionEventListener.html" class="api">InitializeCollectionEventListener</a></td></tr><tr class="table-even"><td>lock</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/LockEventListener.html" class="api">LockEventListener</a></td></tr><tr class="table-odd"><td>refresh</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/RefreshEventListener.html" class="api">RefreshEventListener</a></td></tr><tr class="table-even"><td>replicate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/ReplicateEventListener.html" class="api">ReplicateEventListener</a></td></tr><tr class="table-odd"><td>save-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-even"><td>save</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-odd"><td>update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-even"><td>pre-load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreLoadEventListener.html" class="api">PreLoadEventListener</a></td></tr><tr class="table-odd"><td>pre-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreUpdateEventListener.html" class="api">PreUpdateEventListener</a></td></tr><tr class="table-even"><td>pre-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreDeleteEventListener.html" class="api">PreDeleteEventListener</a></td></tr><tr class="table-odd"><td>pre-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreInsertEventListener.html" class="api">PreInsertEventListener</a></td></tr><tr class="table-even"><td>pre-collection-recreate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionRecreateEventListener.html" class="api">PreCollectionRecreateEventListener</a></td></tr><tr class="table-odd"><td>pre-collection-remove</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionRemoveEventListener.html" class="api">PreCollectionRemoveEventListener</a></td></tr><tr class="table-even"><td>pre-collection-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionUpdateEventListener.html" class="api">PreCollectionUpdateEventListener</a></td></tr><tr class="table-odd"><td>post-load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostLoadEventListener.html" class="api">PostLoadEventListener</a></td></tr><tr class="table-even"><td>post-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostUpdateEventListener.html" class="api">PostUpdateEventListener</a></td></tr><tr class="table-odd"><td>post-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostDeleteEventListener.html" class="api">PostDeleteEventListener</a></td></tr><tr class="table-even"><td>post-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostInsertEventListener.html" class="api">PostInsertEventListener</a></td></tr><tr class="table-odd"><td>post-commit-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostUpdateEventListener.html" class="api">PostUpdateEventListener</a></td></tr><tr class="table-even"><td>post-commit-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostDeleteEventListener.html" class="api">PostDeleteEventListener</a></td></tr><tr class="table-odd"><td>post-commit-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostInsertEventListener.html" class="api">PostInsertEventListener</a></td></tr><tr class="table-even"><td>post-collection-recreate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionRecreateEventListener.html" class="api">PostCollectionRecreateEventListener</a></td></tr><tr class="table-odd"><td>post-collection-remove</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionRemoveEventListener.html" class="api">PostCollectionRemoveEventListener</a></td></tr><tr class="table-even"><td>post-collection-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionUpdateEventListener.html" class="api">PostCollectionUpdateEventListener</a></td></tr></table><p class="paragraph"/>For example, you could register a class <code>AuditEventListener</code> which implements <code>PostInsertEventListener</code>, <code>PostUpdateEventListener</code>, and <code>PostDeleteEventListener</code> using the following in an application:<p class="paragraph"/><div class="code"><pre>beans = &#123;<p class="paragraph"/>   auditListener(AuditEventListener)<p class="paragraph"/>   hibernateEventListeners(HibernateEventListeners) &#123;
+      listenerMap = &#91;'post&#45;insert': auditListener,
+                     'post&#45;update': auditListener,
+                     'post&#45;delete': auditListener&#93;
+   &#125;
+&#125;</pre></div><p class="paragraph"/>or use this in a plugin:<p class="paragraph"/><div class="code"><pre>def doWithSpring = &#123;<p class="paragraph"/>   auditListener(AuditEventListener)<p class="paragraph"/>   hibernateEventListeners(HibernateEventListeners) &#123;
+      listenerMap = &#91;'post&#45;insert': auditListener,
+                     'post&#45;update': auditListener,
+                     'post&#45;delete': auditListener&#93;
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Automatic timestamping</h4><p class="paragraph"/>The examples above demonstrated using events to update a <code>lastUpdated</code> and <code>dateCreated</code> property to keep track of updates to objects. However, this is actually not necessary. By defining a <code>lastUpdated</code> and <code>dateCreated</code> property these will be automatically updated for you by GORM.<p class="paragraph"/>If this is not the behaviour you want you can disable this feature with:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   Date dateCreated
+   Date lastUpdated
+   <span class="java&#45;keyword">static</span> mapping = &#123;
+      autoTimestamp <span class="java&#45;keyword">false</span>
+   &#125;
+&#125;</pre></div><p class="paragraph"/><blockquote class="warning">
+If you put <code>nullable: false</code> constraints on either <code>dateCreated</code> or <code>lastUpdated</code>, your domain instances will fail validation - probably not what you want. Leave constraints off these properties unless you have disabled automatic timestamping.
+</blockquote>
+
+
+<a name="5.5.2 Custom ORM Mapping"><!-- Legacy link --></a>
+<h2 id="ormdsl">6.5.2 Custom ORM Mapping</h2>
+Grails domain classes can be mapped onto many legacy schemas with an Object Relational Mapping DSL (domain specific language). The following sections takes you through what is possible with the ORM DSL.<p class="paragraph"/><blockquote class="note">
+None of this is necessary if you are happy to stick to the conventions defined by GORM for table names, column names and so on. You only needs this functionality if you need to tailor the way GORM maps onto legacy schemas or configures caching
+</blockquote><p class="paragraph"/>Custom mappings are defined using a static <code>mapping</code> block defined within your domain class:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        version <span class="java&#45;keyword">false</span>
+        autoTimestamp <span class="java&#45;keyword">false</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>You can also configure global mappings in Config.groovy (or an external config file) using this setting:<p class="paragraph"/><div class="code"><pre>grails.gorm.<span class="java&#45;keyword">default</span>.mapping = &#123;
+    version <span class="java&#45;keyword">false</span>
+    autoTimestamp <span class="java&#45;keyword">false</span>
+&#125;</pre></div><p class="paragraph"/>It has the same syntax as the standard <code>mapping</code> block but it applies to all your domain classes! You can then override these defaults within the <code>mapping</code> block of a domain class.
+
+<a name="5.5.2.1 Table and Column Names"><!-- Legacy link --></a>
+<h2 id="tableAndColumnNames">6.5.2.1 Table and Column Names</h2>
+<h4>Table names</h4><p class="paragraph"/>The database table name which the class maps to can be customized using the <code>table</code> method:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>In this case the class would be mapped to a table called <code>people</code> instead of the default name of <code>person</code>.<p class="paragraph"/><h4>Column names</h4><p class="paragraph"/>It is also possible to customize the mapping for individual columns onto the database. For example to change the name you can do:<p class="paragraph"/><div class="code"><pre>class Person &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstName<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+        firstName column: 'First_Name'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Here <code>firstName</code> is a dynamic method within the <code>mapping</code> Closure that has a single Map parameter. Since its name corresponds to a domain class persistent field, the parameter values (in this case just <code>"column"</code>) are used to configure the mapping for that property.<p class="paragraph"/><h4>Column type</h4><p class="paragraph"/>GORM supports configuration of Hibernate types with the DSL using the type attribute. This includes specifing user types that implement the Hibernate <a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/usertype/UserType.html" class="api">org.hibernate.usertype.UserType</a> interface, which allows complete customization of how a type is persisted. As an example if you had a <code>PostCodeType</code> you could use it as follows:<p class="paragraph"/><div class="code"><pre>class Address &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> number
+    <span class="java&#45;object">String</span> postCode<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        postCode type: PostCodeType
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Alternatively if you just wanted to map it to one of Hibernate's basic types other than the default chosen by Grails you could use:<p class="paragraph"/><div class="code"><pre>class Address &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> number
+    <span class="java&#45;object">String</span> postCode<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        postCode type: 'text'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>This would make the <code>postCode</code> column map to the default large-text type for the database you're using (for example TEXT or CLOB).<p class="paragraph"/>See the Hibernate documentation regarding <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/mapping.html#mapping-types-basictypes" target="blank">Basic Types</a> for further information.<p class="paragraph"/><h4>Many-to-One/One-to-One Mappings</h4><p class="paragraph"/>In the case of associations it is also possible to configure the foreign keys used to map associations. In the case of a many-to-one or one-to-one association this is exactly the same as any regular column. For example consider the following:<p class="paragraph"/><div class="code"><pre>class Person &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstName
+    Address address<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+        firstName column: 'First_Name'
+        address column: 'Person_Address_Id'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>By default the <code>address</code> association would map to a foreign key column called <code>address_id</code>. By using the above mapping we have changed the name of the foreign key column to <code>Person_Adress_Id</code>.<p class="paragraph"/><h4>One-to-Many Mapping</h4><p class="paragraph"/>With a bidirectional one-to-many you can change the foreign key column used by changing the column name on the many side of the association as per the example in the previous section on one-to-one associations. However, with unidirectional associations the foreign key needs to be specified on the association itself. For example given a unidirectional one-to-many relationship between <code>Person</code> and <code>Address</code> the following code will change the foreign key in the <code>address</code> table:<p class="paragraph"/><div class="code"><pre>class Person &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstName<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;addresses: Address&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+        firstName column: 'First_Name'
+        addresses column: 'Person_Address_Id'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>If you don't want the column to be in the <code>address</code> table, but instead some intermediate join table you can use the <code>joinTable</code> parameter:<p class="paragraph"/><div class="code"><pre>class Person &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstName<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;addresses: Address&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+        firstName column: 'First_Name'
+        addresses joinTable: &#91;name: 'Person_Addresses',
+                              key: 'Person_Id',
+                              column: 'Address_Id'&#93;
+    &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Many-to-Many Mapping</h4><p class="paragraph"/>Grails, by default maps a many-to-many association using a join table. For example consider this many-to-many association:<p class="paragraph"/><div class="code"><pre>class Group &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> hasMany = &#91;people: Person&#93;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Person &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> belongsTo = Group
+    <span class="java&#45;keyword">static</span> hasMany = &#91;groups: Group&#93;
+&#125;</pre></div><p class="paragraph"/>In this case Grails will create a join table called <code>group_person</code> containing foreign keys called <code>person_id</code> and <code>group_id</code> referencing the <code>person</code> and <code>group</code> tables. To change the column names you can specify a column within the mappings for each class.<p class="paragraph"/><div class="code"><pre>class Group &#123;
+   &#8230;
+   <span class="java&#45;keyword">static</span> mapping = &#123;
+       people column: 'Group_Person_Id'
+   &#125;
+&#125;
+class Person &#123;
+   &#8230;
+   <span class="java&#45;keyword">static</span> mapping = &#123;
+       groups column: 'Group_Group_Id'
+   &#125;
+&#125;</pre></div><p class="paragraph"/>You can also specify the name of the join table to use:<p class="paragraph"/><div class="code"><pre>class Group &#123;
+   &#8230;
+   <span class="java&#45;keyword">static</span> mapping = &#123;
+       people column: 'Group_Person_Id',
+              joinTable: 'PERSON_GROUP_ASSOCIATIONS'
+   &#125;
+&#125;
+class Person &#123;
+   &#8230;
+   <span class="java&#45;keyword">static</span> mapping = &#123;
+       groups column: 'Group_Group_Id',
+              joinTable: 'PERSON_GROUP_ASSOCIATIONS'
+   &#125;
+&#125;</pre></div>
+
+
+<a name="5.5.2.2 Caching Strategy"><!-- Legacy link --></a>
+<h2 id="caching">6.5.2.2 Caching Strategy</h2>
+<h4>Setting up caching</h4><p class="paragraph"/><a href="http://www.hibernate.org/" target="blank">Hibernate</a> features a second-level cache with a customizable cache provider. This needs to be configured in the <code>grails-app/conf/DataSource.groovy</code> file as follows:<p class="paragraph"/><div class="code"><pre>hibernate &#123;
+    cache.use_second_level_cache=<span class="java&#45;keyword">true</span>
+    cache.use_query_cache=<span class="java&#45;keyword">true</span>
+    cache.provider_class='org.hibernate.cache.EhCacheProvider'
+&#125;</pre></div><p class="paragraph"/>You can customize any of these settings, for example to use a distributed caching mechanism.<p class="paragraph"/><blockquote class="note">
+For further reading on caching and in particular Hibernate's second-level cache, refer to the <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/performance.html#performance-cache" target="blank">Hibernate documentation</a> on the subject.
+</blockquote><p class="paragraph"/><h4>Caching instances</h4><p class="paragraph"/>Call the <code>cache</code> method in your mapping block to enable caching with the default settings:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+        cache <span class="java&#45;keyword">true</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>This will configure a 'read-write' cache that includes both lazy and non-lazy properties. You can customize this further:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+        cache usage: 'read&#45;only', include: 'non&#45;lazy'
+    &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Caching associations</h4><p class="paragraph"/>As well as the ability to use Hibernate's second level cache to cache instances you can also cache collections (associations) of objects. For example:<p class="paragraph"/><div class="code"><pre>class Person &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstName<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;addresses: Address&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+        version <span class="java&#45;keyword">false</span>
+        addresses column: 'Address', cache: <span class="java&#45;keyword">true</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Address &#123;
+    <span class="java&#45;object">String</span> number
+    <span class="java&#45;object">String</span> postCode
+&#125;</pre></div><p class="paragraph"/>This will enable a 'read-write' caching mechanism on the <code>addresses</code> collection. You can also use:<p class="paragraph"/><div class="code"><pre>cache: 'read&#45;write' // or 'read&#45;only' or 'transactional'</pre></div><p class="paragraph"/>to further configure the cache usage.<p class="paragraph"/><h4>Caching Queries</h4><p class="paragraph"/>You can cache queries such as dynamic finders and criteria. To do so using a dynamic finder you can pass the <code>cache</code> argument:<p class="paragraph"/><div class="code"><pre>def person = Person.findByFirstName(<span class="java&#45;quote">"Fred"</span>, &#91;cache: <span class="java&#45;keyword">true</span>&#93;)</pre></div><p class="paragraph"/><blockquote class="note">
+In order for the results of the query to be cached, you must enable caching in your mapping as discussed in the previous section.
+</blockquote><p class="paragraph"/>You can also cache criteria queries:<p class="paragraph"/><div class="code"><pre>def people = Person.withCriteria &#123;
+    like('firstName', 'Fr%')
+    cache <span class="java&#45;keyword">true</span>
+&#125;</pre></div><p class="paragraph"/><h4>Cache usages</h4><p class="paragraph"/>Below is a description of the different cache settings and their usages:
+<ul class="star">
+<li><code>read-only</code> - If your application needs to read but never modify instances of a persistent class, a read-only cache may be used.</li>
+<li><code>read-write</code> - If the application needs to update data, a read-write cache might be appropriate.</li>
+<li><code>nonstrict-read-write</code> - If the application only occasionally needs to update data (ie. if it is very unlikely that two transactions would try to update the same item simultaneously) and strict transaction isolation is not required, a <code>nonstrict-read-write</code> cache might be appropriate.</li>
+<li><code>transactional</code> - The <code>transactional</code> cache strategy provides support for fully transactional cache providers such as JBoss TreeCache. Such a cache may only be used in a JTA environment and you must specify <code>hibernate.transaction.manager_lookup_class</code> in the <code>grails-app/conf/DataSource.groovy</code> file's <code>hibernate</code> config.</li>
+</ul><p class="paragraph"/>
+
+<a name="5.5.2.3 Inheritance Strategies"><!-- Legacy link --></a>
+<h2 id="inheritanceStrategies">6.5.2.3 Inheritance Strategies</h2>
+By default GORM classes use <code>table-per-hierarchy</code> inheritance mapping. This has the disadvantage that columns cannot have a <code>NOT-NULL</code> constraint applied to them at the database level. If you would prefer to use a <code>table-per-subclass</code> inheritance strategy you can do so as follows:<p class="paragraph"/><div class="code"><pre>class Payment &#123;
+    <span class="java&#45;object">Integer</span> amount<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        tablePerHierarchy <span class="java&#45;keyword">false</span>
+    &#125;
+&#125;<p class="paragraph"/>class CreditCardPayment <span class="java&#45;keyword">extends</span> Payment &#123;
+    <span class="java&#45;object">String</span> cardNumber
+&#125;</pre></div><p class="paragraph"/>The mapping of the root <code>Payment</code> class specifies that it will not be using <code>table-per-hierarchy</code> mapping for all child classes.
+
+<a name="5.5.2.4 Custom Database Identity"><!-- Legacy link --></a>
+<h2 id="identity">6.5.2.4 Custom Database Identity</h2>
+You can customize how GORM generates identifiers for the database using the DSL. By default GORM relies on the native database mechanism for generating ids. This is by far the best approach, but there are still many schemas that have different approaches to identity.<p class="paragraph"/>To deal with this Hibernate defines the concept of an id generator. You can customize the id generator and the column it maps to as follows:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+        version <span class="java&#45;keyword">false</span>
+        id generator: 'hilo',
+           params: &#91;table: 'hi_value',
+                    column: 'next_value',
+                    max_lo: 100&#93;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>In this case we're using one of Hibernate's built in 'hilo' generators that uses a separate table to generate ids.<p class="paragraph"/><blockquote class="note">
+For more information on the different Hibernate generators refer to the <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/mapping.html#mapping-declaration-id-generator" target="blank">Hibernate reference documentation</a>
+</blockquote><p class="paragraph"/>Although you don't typically specify the <code>id</code> field (Grails adds it for you) you can still configure its mapping like the other properties. For example to customise the column for the id property you can do:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+        version <span class="java&#45;keyword">false</span>
+        id column: 'person_id'
+    &#125;
+&#125;</pre></div>
+
+
+<a name="5.5.2.5 Composite Primary Keys"><!-- Legacy link --></a>
+<h2 id="compositePrimaryKeys">6.5.2.5 Composite Primary Keys</h2>
+GORM supports the concept of composite identifiers (identifiers composed from 2 or more properties). It is not an approach we recommend, but is available to you if you need it:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.apache.commons.lang.builder.HashCodeBuilder<p class="paragraph"/>class Person <span class="java&#45;keyword">implements</span> Serializable &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstName
+    <span class="java&#45;object">String</span> lastName<p class="paragraph"/>    <span class="java&#45;object">boolean</span> equals(other) &#123;
+        <span class="java&#45;keyword">if</span> (!(other <span class="java&#45;keyword">instanceof</span> Person)) &#123;
+            <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">false</span>
+        &#125;<p class="paragraph"/>        other.firstName == firstName &#38;&#38; other.lastName == lastName
+    &#125;<p class="paragraph"/>    <span class="java&#45;object">int</span> hashCode() &#123;
+        def builder = <span class="java&#45;keyword">new</span> HashCodeBuilder()
+        builder.append firstName
+        builder.append lastName
+        builder.toHashCode()
+    &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        id composite: &#91;'firstName', 'lastName'&#93;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The above will create a composite id of the <code>firstName</code> and <code>lastName</code> properties of the Person class. To retrieve an instance by id you use a prototype of the object itself:<p class="paragraph"/><div class="code"><pre>def p = Person.get(<span class="java&#45;keyword">new</span> Person(firstName: <span class="java&#45;quote">"Fred"</span>, lastName: <span class="java&#45;quote">"Flintstone"</span>))
+println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with composite primary keys must implement the <code>Serializable</code> interface and override the <code>equals</code> and <code>hashCode</code> methods, using the properties in the composite key for the calculations. The example above uses a <code>HashCodeBuilder</code> for convenience but it's fine to implement it yourself.<p class="paragraph"/>Another important consideration when using composite primary keys is associations. If for example you have a many-to-one association where the foreign keys are stored in the associated table then 2 columns will be present in the associated table.<p class="paragraph"/>For example consider the following domain class:<p class="paragraph"/><div class="code"><pre>class Address &#123;
+    Person person
+&#125;</pre></div><p class="paragraph"/>In this case the <code>address</code> table will have an additional two columns called <code>person_first_name</code> and <code>person_last_name</code>. If you wish the change the mapping of these columns then you can do so using the following technique:<p class="paragraph"/><div class="code"><pre>class Address &#123;
+    Person person
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        person &#123;
+            column: <span class="java&#45;quote">"FirstName"</span>
+            column: <span class="java&#45;quote">"LastName"</span>
+        &#125;
+    &#125;
+&#125;</pre></div>
+
+
+<a name="5.5.2.6 Database Indices"><!-- Legacy link --></a>
+<h2 id="databaseIndices">6.5.2.6 Database Indices</h2>
+To get the best performance out of your queries it is often necessary to tailor the table index definitions. How you tailor them is domain specific and a matter of monitoring usage patterns of your queries. With GORM's DSL you can specify which columns are used in which indexes:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    <span class="java&#45;object">String</span> firstName
+    <span class="java&#45;object">String</span> address
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+        version <span class="java&#45;keyword">false</span>
+        id column: 'person_id'
+        firstName column: 'First_Name', index: 'Name_Idx'
+        address column: 'Address', index: 'Name_Idx,Address_Index'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Note that you cannot have any spaces in the value of the <code>index</code> attribute; in this example <code>index:'Name_Idx, Address_Index'</code> will cause an error.
+
+
+<a name="5.5.2.7 Optimistic Locking and Versioning"><!-- Legacy link --></a>
+<h2 id="optimisticLockingAndVersioning">6.5.2.7 Optimistic Locking and Versioning</h2>
+As discussed in the section on <a href="../guide/single.html#locking" class="guide">Optimistic and Pessimistic Locking</a>, by default GORM uses optimistic locking and automatically injects a <code>version</code> property into every class which is in turn mapped to a <code>version</code> column at the database level.<p class="paragraph"/>If you're mapping to a legacy schema that doesn't have version columns (or there's some other reason why you don't want/need this feature) you can disable this with the <code>version</code> method:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+        version <span class="java&#45;keyword">false</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/><blockquote class="note">
+If you disable optimistic locking you are essentially on your own with regards to concurrent updates and are open to the risk of users losing data (due to data overriding) unless you use <a href="../guide/single.html#locking" class="guide">pessimistic locking</a>
+</blockquote><p class="paragraph"/><h4>Version columns types</h4><p class="paragraph"/>By default Grails maps the <code>version</code> property as a <code>Long</code> that gets incremented by one each time an instance is updated. But Hibernate also supports using a <code>Timestamp</code>, for example:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> java.sql.Timestamp<p class="paragraph"/>class Person &#123;<p class="paragraph"/>    &#8230;
+    Timestamp version<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        table 'people'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>There's a slight risk that two updates occurring at nearly the same time on a fast server can end up with the same timestamp value but this risk is very low. One benefit of using a <code>Timestamp</code> instead of a <code>Long</code> is that you combine the optimistic locking and last-updated semantics into a single column.
+
+
+<a name="5.5.2.8 Eager and Lazy Fetching"><!-- Legacy link --></a>
+<h2 id="fetchingDSL">6.5.2.8 Eager and Lazy Fetching</h2>
+<h4>Lazy Collections</h4><p class="paragraph"/>As discussed in the section on <a href="../guide/single.html#fetching" class="guide">Eager and Lazy fetching</a>, GORM collections are lazily loaded by default but you can change this behaviour with the ORM DSL. There are several options available to you, but the most common ones are:
+<ul class="star">
+<li>lazy: false</li>
+<li>fetch: 'join'</li>
+</ul><p class="paragraph"/>and they're used like this:<p class="paragraph"/><div class="code"><pre>class Person &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstName
+    Pet pet<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;addresses: Address&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        addresses lazy: <span class="java&#45;keyword">false</span>
+        pet fetch: 'join'
+    &#125;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Address &#123;
+    <span class="java&#45;object">String</span> street
+    <span class="java&#45;object">String</span> postCode
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Pet &#123;
+    <span class="java&#45;object">String</span> name
+&#125;</pre></div><p class="paragraph"/>The first option, <code>lazy: false</code> , ensures that when a <code>Person</code> instance is loaded, its <code>addresses</code> collection is loaded at the same time with a second SELECT. The second option is basically the same, except the collection is loaded with a JOIN rather than another SELECT. Typically you want to reduce the number of queries, so <code>fetch: 'join'</code> is the more appropriate option. On the other hand, it could feasibly be the more expensive approach if your domain model and data result in more and larger results than would otherwise be necessary.<p class="paragraph"/>For more advanced users, the other settings available are:
+<ol>
+<li>batchSize: N</li>
+<li>lazy: false, batchSize: N</li>
+</ol><p class="paragraph"/>where N is an integer. These let you fetch results in batches, with one query per batch. As a simple example, consider this mapping for <code>Person</code>:<p class="paragraph"/><div class="code"><pre>class Person &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstName
+    Pet pet<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        pet batchSize: 5
+    &#125;
+&#125;</pre></div>
+If a query returns multiple <code>Person</code> instances, then when we access the first <code>pet</code> property, Hibernate will fetch that <code>Pet</code> plus the four next ones. You can get the same behaviour with eager loading by combining <code>batchSize</code> with the <code>lazy: false</code> option. You can find out more about these options in the <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/performance.html#performance-fetching" target="blank">Hibernate user guide</a> and this <a href="http://community.jboss.org/wiki/AShortPrimerOnFetchingStrategies" target="blank">primer on fetching strategies</a>. Note that ORM DSL does not currently support the "subselect" fetching strategy.<p class="paragraph"/><h4>Lazy Single-Ended Associations</h4><p class="paragraph"/>In GORM, one-to-one and many-to-one associations are by default lazy. Non-lazy single ended associations can be problematic when you load many entities because each non-lazy association will result in an extra SELECT statement. If the associated entities also have non-lazy associations, the number of queries grows significantly!<p class="paragraph"/>Use the same technique as for lazy collections to make a one-to-one or many-to-one association non-lazy/eager:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+    <span class="java&#45;object">String</span> firstName
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Address &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> street
+    <span class="java&#45;object">String</span> postCode<p class="paragraph"/>    <span class="java&#45;keyword">static</span> belongsTo = &#91;person: Person&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        person lazy: <span class="java&#45;keyword">false</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Here we configure GORM to load the associated <code>Person</code> instance (through the <code>person</code> property) whenever an <code>Address</code> is loaded.<p class="paragraph"/><h4>Lazy Single-Ended Associations and Proxies</h4><p class="paragraph"/>Hibernate uses runtime-generated proxies to facilitate single-ended lazy associations; Hibernate dynamically subclasses the entity class to create the proxy.<p class="paragraph"/>Consider the previous example but with a lazily-loaded <code>person</code> association: Hibernate will set the <code>person</code> property to a proxy that is a subclass of <code>Person</code>. When you call any of the getters (except for the <code>id</code> property) or setters on that proxy, Hibernate will load the entity from the database.<p class="paragraph"/>Unfortunately this technique can produce surprising results. Consider the following example classes:<p class="paragraph"/><div class="code"><pre>class Pet &#123;
+    <span class="java&#45;object">String</span> name
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Dog <span class="java&#45;keyword">extends</span> Pet &#123;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Person &#123;
+    <span class="java&#45;object">String</span> name
+    Pet pet
+&#125;</pre></div><p class="paragraph"/>and assume that we have a single <code>Person</code> instance with a <code>Dog</code> as the <code>pet</code>. The following code will work as you would expect:
+<div class="code"><pre>def person = Person.get(1)
+assert person.pet <span class="java&#45;keyword">instanceof</span> Dog
+assert Pet.get(person.petId) <span class="java&#45;keyword">instanceof</span> Dog</pre></div><p class="paragraph"/>But this won't:<p class="paragraph"/><div class="code"><pre>def person = Person.get(1)
+assert person.pet <span class="java&#45;keyword">instanceof</span> Dog
+assert Pet.list()&#91;0&#93; <span class="java&#45;keyword">instanceof</span> Dog</pre></div><p class="paragraph"/>The second assertion fails, and to add to the confusion, this will work:<p class="paragraph"/><div class="code"><pre>assert Pet.list()&#91;0&#93; <span class="java&#45;keyword">instanceof</span> Dog</pre></div><p class="paragraph"/>What's going on here? It's down to a combination of how proxies work and the guarantees that the Hibernate session makes. When you load the <code>Person</code> instance, Hibernate creates a proxy for its <code>pet</code> relation and attaches it to the session. Once that happens, whenever you retrieve that <code>Pet</code> instance with a query, a <code>get()</code>, or the <code>pet</code> relation  <em class="italic">within the same session</em>  , Hibernate gives you the proxy.<p class="paragraph"/>Fortunately for us, GORM automatically unwraps the proxy when you use <code>get()</code> and <code>findBy&#42;()</code>, or when you directly access the relation. That means you don't have to worry at all about proxies in the majority of cases. But GORM doesn't do that for objects returned with a query that returns a list, such as <code>list()</code> and <code>findAllBy&#42;()</code>. However, if Hibernate hasn't attached the proxy to the session, those queries will return the real instances - hence why the last example works.<p class="paragraph"/>You can protect yourself to a degree from this problem by using the <code>instanceOf</code> method by GORM:<p class="paragraph"/><div class="code"><pre>def person = Person.get(1)
+assert Pet.list()&#91;0&#93;.instanceOf(Dog)</pre></div><p class="paragraph"/>However, it won't help here if casting is involved. For example, the following code will throw a <code>ClassCastException</code> because the first pet in the list is a proxy instance with a class that is neither <code>Dog</code> nor a sub-class of <code>Dog</code>:<p class="paragraph"/><div class="code"><pre>def person = Person.get(1)
+Dog pet = Pet.list()&#91;0&#93;</pre></div><p class="paragraph"/>Of course, it's best not to use static types in this situation. If you use an untyped variable for the pet instead, you can access any <code>Dog</code> properties or methods on the instance without any problems.<p class="paragraph"/>These days it's rare that you will come across this issue, but it's best to be aware of it just in case. At least you will know why such an error occurs and be able to work around it.
+
+
+<a name="5.5.2.9 Custom Cascade Behaviour"><!-- Legacy link --></a>
+<h2 id="customCascadeBehaviour">6.5.2.9 Custom Cascade Behaviour</h2>
+As described in the section on <a href="../guide/single.html#cascades" class="guide">cascading updates</a>, the primary mechanism to control the way updates and deletes cascade from one association to another is the static <a href="../ref/Domain Classes/belongsTo.html" class="domainClasses">belongsTo</a> property.<p class="paragraph"/>However, the ORM DSL gives you complete access to Hibernate's <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/objectstate.html#objectstate-transitive" target="blank">transitive persistence</a> capabilities using the <code>cascade</code> attribute.<p class="paragraph"/>Valid settings for the cascade attribute include:
+<ul class="star">
+<li><code>merge</code> - merges the state of a detached association</li>
+<li><code>save-update</code> - cascades only saves and updates to an association</li>
+<li><code>delete</code> - cascades only deletes to an association</li>
+<li><code>lock</code> - useful if a pessimistic lock should be cascaded to its associations</li>
+<li><code>refresh</code> - cascades refreshes to an association</li>
+<li><code>evict</code> - cascades evictions (equivalent to <code>discard()</code> in GORM) to associations if set</li>
+<li><code>all</code> - cascade  <em class="italic">all</em>  operations to associations</li>
+<li><code>all-delete-orphan</code> - Applies only to one-to-many associations and indicates that when a child is removed from an association then it should be automatically deleted. Children are also deleted when the parent is.</li>
+</ul><p class="paragraph"/><blockquote class="note">
+It is advisable to read the section in the Hibernate documentation on <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/objectstate.html#objectstate-transitive" target="blank">transitive persistence</a> to obtain a better understanding of the different cascade styles and recommendations for their usage
+</blockquote><p class="paragraph"/>To specify the cascade attribute simply define one or more (comma-separated) of the aforementioned settings as its value:<p class="paragraph"/><div class="code"><pre>class Person &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstName<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;addresses: Address&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        addresses cascade: <span class="java&#45;quote">"all&#45;delete&#45;orphan"</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Address &#123;
+    <span class="java&#45;object">String</span> street
+    <span class="java&#45;object">String</span> postCode
+&#125;</pre></div>
+
+
+<a name="5.5.2.10 Custom Hibernate Types"><!-- Legacy link --></a>
+<h2 id="customHibernateTypes">6.5.2.10 Custom Hibernate Types</h2>
+You saw in an earlier section that you can use composition (with the <code>embedded</code> property) to break a table into multiple objects. You can achieve a similar effect with Hibernate's custom user types. These are not domain classes themselves, but plain Java or Groovy classes. Each of these types also has a corresponding "meta-type" class that implements <a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/usertype/UserType.html" class="api">org.hibernate.usertype.UserType</a>.<p class="paragraph"/>The <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/mapping.html#mapping-types-custom" target="blank">Hibernate reference manual</a> has some information on custom types, but here we will focus on how to map them in Grails. Let's start by taking a look at a simple domain class that uses an old-fashioned (pre-Java 1.5) type-safe enum class:<p class="paragraph"/><div class="code"><pre>class Book &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> title
+    <span class="java&#45;object">String</span> author
+    Rating rating<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        rating type: RatingUserType
+    &#125;
+&#125;</pre></div><p class="paragraph"/>All we have done is declare the <code>rating</code> field the enum type and set the property's type in the custom mapping to the corresponding <code>UserType</code> implementation. That's all you have to do to start using your custom type. If you want, you can also use the other column settings such as "column" to change the column name and "index" to add it to an index.<p class="paragraph"/>Custom types aren't limited to just a single column - they can be mapped to as many columns as you want. In such cases you explicitly define in the mapping what columns to use, since Hibernate can only use the property name for a single column. Fortunately, Grails lets you map multiple columns to a property using this syntax:<p class="paragraph"/><div class="code"><pre>class Book &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> title
+    Name author
+    Rating rating<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        name type: NameUserType, &#123;
+            column name: <span class="java&#45;quote">"first_name"</span>
+            column name: <span class="java&#45;quote">"last_name"</span>
+        &#125;
+        rating type: RatingUserType
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The above example will create "first_name" and "last_name" columns for the <code>author</code> property. You'll be pleased to know that you can also use some of the normal column/property mapping attributes in the column definitions. For example:<p class="paragraph"/><div class="code"><pre>column name: <span class="java&#45;quote">"first_name"</span>, index: <span class="java&#45;quote">"my_idx"</span>, unique: <span class="java&#45;keyword">true</span></pre></div><p class="paragraph"/>The column definitions do  <em class="italic">not</em>  support the following attributes: <code>type</code>, <code>cascade</code>, <code>lazy</code>, <code>cache</code>, and <code>joinTable</code>.<p class="paragraph"/>One thing to bear in mind with custom types is that they define the  <em class="italic">SQL types</em>  for the corresponding database columns. That helps take the burden of configuring them yourself, but what happens if you have a legacy database that uses a different SQL type for one of the columns? In that case, override the column's SQL type using the <code>sqlType</code> attribute:<p class="paragraph"/><div class="code"><pre>class Book &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> title
+    Name author
+    Rating rating<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        name type: NameUserType, &#123;
+            column name: <span class="java&#45;quote">"first_name"</span>, sqlType: <span class="java&#45;quote">"text"</span>
+            column name: <span class="java&#45;quote">"last_name"</span>, sqlType: <span class="java&#45;quote">"text"</span>
+        &#125;
+        rating type: RatingUserType, sqlType: <span class="java&#45;quote">"text"</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Mind you, the SQL type you specify needs to still work with the custom type. So overriding a default of "varchar" with "text" is fine, but overriding "text" with "yes_no" isn't going to work.
+
+
+<a name="5.5.2.11 Derived Properties"><!-- Legacy link --></a>
+<h2 id="derivedProperties">6.5.2.11 Derived Properties</h2>
+A derived property is one that takes its value from a SQL expression, often but not necessarily based on the value of one or more other persistent properties.  Consider a Product class like this:<p class="paragraph"/><div class="code"><pre>class Product &#123;
+    <span class="java&#45;object">Float</span> price
+    <span class="java&#45;object">Float</span> taxRate
+    <span class="java&#45;object">Float</span> tax
+&#125;</pre></div><p class="paragraph"/>If the <code>tax</code> property is derived based on the value of <code>price</code> and <code>taxRate</code> properties then is probably no need to persist the <code>tax</code> property.  The SQL used to derive the value of a derived property may be expressed in the ORM DSL like this:<p class="paragraph"/><div class="code"><pre>class Product &#123;
+    <span class="java&#45;object">Float</span> price
+    <span class="java&#45;object">Float</span> taxRate
+    <span class="java&#45;object">Float</span> tax<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        tax formula: 'PRICE &#42; TAX_RATE'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Note that the formula expressed in the ORM DSL is SQL so references to other properties should relate to the persistence model not the object model, which is why the example refers to <code>PRICE</code> and <code>TAX_RATE</code> instead of <code>price</code> and <code>taxRate</code>.<p class="paragraph"/>With that in place, when a Product is retrieved with something like <code>Product.get(42)</code>, the SQL that is generated to support that will look something like this:<p class="paragraph"/><div class="code"><pre>select
+    product0_.id as id1_0_,
+    product0_.version as version1_0_,
+    product0_.price as price1_0_,
+    product0_.tax_rate as tax4_1_0_,
+    product0_.PRICE &#42; product0_.TAX_RATE as formula1_0_
+from
+    product product0_
+where
+    product0_.id=?</pre></div><p class="paragraph"/>Since the <code>tax</code> property is derived at runtime and not stored in the database it might seem that the same effect could be achieved by adding a method like <code>getTax()</code> to the <code>Product</code> class that simply returns the product of the <code>taxRate</code> and <code>price</code> properties.  With an approach like that you would give up the ability query the database based on the value of the <code>tax</code> property.  Using a derived property allows exactly that.  To retrieve all <code>Product</code> objects that have a <code>tax</code> value greater than 21.12 you could execute a query like this:<p class="paragraph"/><div class="code"><pre>Product.findAllByTaxGreaterThan(21.12)</pre></div><p class="paragraph"/>Derived properties may be referenced in the Criteria API:<p class="paragraph"/><div class="code"><pre>Product.withCriteria &#123;
+    gt 'tax', 21.12f
+&#125;</pre></div><p class="paragraph"/>The SQL that is generated to support either of those would look something like this:<p class="paragraph"/><div class="code"><pre>select
+    this_.id as id1_0_,
+    this_.version as version1_0_,
+    this_.price as price1_0_,
+    this_.tax_rate as tax4_1_0_,
+    this_.PRICE &#42; this_.TAX_RATE as formula1_0_
+from
+    product this_
+where
+    this_.PRICE &#42; this_.TAX_RATE&#62;?</pre></div><p class="paragraph"/><blockquote class="note">
+Because the value of a derived property is generated in the database and depends on the execution of SQL code, derived properties may not have GORM constraints applied to them.  If constraints are specified for a derived property, they will be ignored.
+</blockquote>
+
+
+<a name="5.5.2.12 Custom Naming Strategy"><!-- Legacy link --></a>
+<h2 id="customNamingStrategy">6.5.2.12 Custom Naming Strategy</h2>
+By default Grails uses Hibernate's <code>ImprovedNamingStrategy</code> to convert domain class Class and field names to SQL table and column names by converting from camel-cased Strings to ones that use underscores as word separators. You can customize these on a per-class basis in the <code>mapping</code> closure but if there's a consistent pattern you can specify a different <code>NamingStrategy</code> class to use.<p class="paragraph"/>Configure the class name to be used in <code>grails-app/conf/DataSource.groovy</code> in the <code>hibernate</code> section, e.g.<p class="paragraph"/><div class="code"><pre>dataSource &#123;
+    pooled = <span class="java&#45;keyword">true</span>
+    dbCreate = <span class="java&#45;quote">"create&#45;drop"</span>
+    &#8230;
+&#125;<p class="paragraph"/>hibernate &#123;
+    cache.use_second_level_cache = <span class="java&#45;keyword">true</span>
+    &#8230;
+    naming_strategy = com.myco.myproj.CustomNamingStrategy
+&#125;</pre></div><p class="paragraph"/>You can also specify the name of the class and it will be loaded for you:<p class="paragraph"/><div class="code"><pre>hibernate &#123;
+    &#8230;
+    naming_strategy = 'com.myco.myproj.CustomNamingStrategy'
+&#125;</pre></div><p class="paragraph"/>A third option is to provide an instance if there is some configuration required beyond calling the default constructor:<p class="paragraph"/><div class="code"><pre>hibernate &#123;
+    &#8230;
+    def strategy = <span class="java&#45;keyword">new</span> com.myco.myproj.CustomNamingStrategy()
+    // configure as needed
+    naming_strategy = strategy
+&#125;</pre></div><p class="paragraph"/>You can use an existing class or write your own, for example one that prefixes table names and column names:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.myco.myproj<p class="paragraph"/><span class="java&#45;keyword">import</span> org.hibernate.cfg.ImprovedNamingStrategy
+<span class="java&#45;keyword">import</span> org.hibernate.util.StringHelper<p class="paragraph"/>class CustomNamingStrategy <span class="java&#45;keyword">extends</span> ImprovedNamingStrategy &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> classToTableName(<span class="java&#45;object">String</span> className) &#123;
+        <span class="java&#45;quote">"table_"</span> + StringHelper.unqualify(className)
+    &#125;<p class="paragraph"/>    <span class="java&#45;object">String</span> propertyToColumnName(<span class="java&#45;object">String</span> propertyName) &#123;
+        <span class="java&#45;quote">"col_"</span> + StringHelper.unqualify(propertyName)
+    &#125;
+&#125;</pre></div><p class="paragraph"/>
+
+<a name="5.5.3 Default Sort Order"><!-- Legacy link --></a>
+<h2 id="defaultSortOrder">6.5.3 Default Sort Order</h2>
+You can sort objects using query arguments such as those found in the <a href="../ref/Domain Classes/list.html" class="domainClasses">list</a> method:<p class="paragraph"/><div class="code"><pre>def airports = Airport.list(sort:'name')</pre></div><p class="paragraph"/>However, you can also declare the default sort order for a collection in the mapping:<p class="paragraph"/><div class="code"><pre>class Airport &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        sort <span class="java&#45;quote">"name"</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The above means that all collections of <code>Airport</code> instances will by default be sorted by the airport name. If you also want to change the sort  <em class="italic">order</em> , use this syntax:<p class="paragraph"/><div class="code"><pre>class Airport &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> mapping = &#123;
+        sort name: <span class="java&#45;quote">"desc"</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Finally, you can configure sorting at the association level:<p class="paragraph"/><div class="code"><pre>class Airport &#123;
+    &#8230;
+    <span class="java&#45;keyword">static</span> hasMany = &#91;flights: Flight&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        flights sort: 'number', order: 'desc'
+    &#125;
+&#125;</pre></div><p class="paragraph"/>In this case, the <code>flights</code> collection will always be sorted in descending order of flight number.<p class="paragraph"/><blockquote class="warning">
+These mappings will not work for default unidirectional one-to-many or many-to-many relationships because they involve a join table. See <a href="http://jira.codehaus.org/browse/GRAILS-4089" target="blank">this issue</a> for more details. Consider using a <code>SortedSet</code> or queries with sort parameters to fetch the data you need.
+</blockquote>
+
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/commandLine.html">&lt;&lt; <strong>5</strong><span>The Command Line</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Command Line</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/add-proxy.html">add-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bootstrap.html">bootstrap</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clean.html">clean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clear-proxy.html">clear-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/compile.html">compile</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/console.html">console</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-app.html">create-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-controller.html">create-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-domain-class.html">create-domain-class</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-filters.html">create-filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-multi-project-build.html">create-multi-project-build</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-plugin.html">create-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-pom.html">create-pom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-scaffold-controller.html">create-scaffold-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-script.html">create-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-service.html">create-service</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-tag-lib.html">create-tag-lib</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-unit-test.html">create-unit-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-controller.html">generate-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-views.html">generate-views</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/help.html">help</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/init.html">init</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-dependency.html">install-dependency</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-plugin.html">install-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-templates.html">install-templates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/integrate-with.html">integrate-with</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/interactive.html">interactive</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugin-updates.html">list-plugin-updates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/migrate-docs.html">migrate-docs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package-plugin.html">package-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package.html">package</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/plugin-info.html">plugin-info</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/refresh-dependencies.html">refresh-dependencies</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/remove-proxy.html">remove-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-war.html">run-war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-proxy.html">set-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-version.html">set-version</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/shell.html">shell</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/uninstall-plugin.html">uninstall-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/upgrade.html">upgrade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/wrapper.html">wrapper</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Constraints</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Constraints/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/attributes.html">attributes</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/bindable.html">bindable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/blank.html">blank</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/creditCard.html">creditCard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/email.html">email</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/inList.html">inList</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/matches.html">matches</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/max.html">max</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/maxSize.html">maxSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/min.html">min</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/minSize.html">minSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/notEqual.html">notEqual</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/nullable.html">nullable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/range.html">range</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/scale.html">scale</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/size.html">size</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/unique.html">unique</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/url.html">url</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/validator.html">validator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/widget.html">widget</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Controllers</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Controllers/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/afterInterceptor.html">afterInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/allowedMethods.html">allowedMethods</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/beforeInterceptor.html">beforeInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/bindData.html">bindData</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/chain.html">chain</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/defaultAction.html">defaultAction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/forward.html">forward</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/grailsApplication.html">grailsApplication</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/redirect.html">redirect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/session.html">session</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withForm.html">withForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withFormat.html">withFormat</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Database Mapping</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoImport.html">autoImport</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoTimestamp.html">autoTimestamp</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/batchSize.html">batchSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cache.html">cache</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cascade.html">cascade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/column.html">column</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/discriminator.html">discriminator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicInsert.html">dynamicInsert</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicUpdate.html">dynamicUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/fetch.html">fetch</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/id.html">id</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/ignoreNotFound.html">ignoreNotFound</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/indexColumn.html">indexColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/insertable.html">insertable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/joinTable.html">joinTable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/lazy.html">lazy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/order.html">order</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/sort.html">sort</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/table.html">table</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/type.html">type</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/updateable.html">updateable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/version.html">version</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Domain Classes</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/addTo.html">addTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/attach.html">attach</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/belongsTo.html">belongsTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/clearErrors.html">clearErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/constraints.html">constraints</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/count.html">count</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/countBy.html">countBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/createCriteria.html">createCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/delete.html">delete</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/discard.html">discard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/embedded.html">embedded</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/errors.html">errors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeQuery.html">executeQuery</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeUpdate.html">executeUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/exists.html">exists</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/fetchMode.html">fetchMode</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/find.html">find</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllBy.html">findAllBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllWhere.html">findAllWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findBy.html">findBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateBy.html">findOrCreateBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateWhere.html">findOrCreateWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveBy.html">findOrSaveBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveWhere.html">findOrSaveWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findWhere.html">findWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/get.html">get</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getAll.html">getAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getDirtyPropertyNames.html">getDirtyPropertyNames</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getPersistentValue.html">getPersistentValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasMany.html">hasMany</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasOne.html">hasOne</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/ident.html">ident</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/instanceOf.html">instanceOf</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isAttached.html">isAttached</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isDirty.html">isDirty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/list.html">list</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/listOrderBy.html">listOrderBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/load.html">load</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/lock.html">lock</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mappedBy.html">mappedBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mapping.html">mapping</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/merge.html">merge</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/namedQueries.html">namedQueries</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/properties.html">properties</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/read.html">read</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/refresh.html">refresh</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/removeFrom.html">removeFrom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/save.html">save</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/transients.html">transients</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/validate.html">validate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/where.html">where</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/whereAny.html">whereAny</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withCriteria.html">withCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withNewSession.html">withNewSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withSession.html">withSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withTransaction.html">withTransaction</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Plug-ins</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Plug-ins/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/URL%20mappings.html">URL mappings</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/codecs.html">codecs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/controllers.html">controllers</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/core.html">core</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/dataSource.html">dataSource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/domainClasses.html">domainClasses</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/filters.html">filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/hibernate.html">hibernate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/i18n.html">i18n</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/logging.html">logging</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/scaffolding.html">scaffolding</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/services.html">services</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/servlets.html">servlets</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/web%20flow.html">web flow</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Services</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Services/scope.html">scope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Services/transactional.html">transactional</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Servlet API</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tag Libraries</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/pageScope.html">pageScope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tags</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmit.html">actionSubmit</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmitImage.html">actionSubmitImage</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/applyLayout.html">applyLayout</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/checkBox.html">checkBox</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/collect.html">collect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/cookie.html">cookie</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/country.html">country</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/countrySelect.html">countrySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLink.html">createLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLinkTo.html">createLinkTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/currencySelect.html">currencySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/datePicker.html">datePicker</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/each.html">each</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/eachError.html">eachError</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/else.html">else</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/elseif.html">elseif</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/external.html">external</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/form.html">form</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formRemote.html">formRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatBoolean.html">formatBoolean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatDate.html">formatDate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatNumber.html">formatNumber</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/grep.html">grep</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/header.html">header</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hiddenField.html">hiddenField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/if.html">if</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/img.html">img</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/include.html">include</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isAvailable.html">isAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isNotAvailable.html">isNotAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/javascript.html">javascript</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/join.html">join</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutBody.html">layoutBody</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutHead.html">layoutHead</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutTitle.html">layoutTitle</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/link.html">link</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/localeSelect.html">localeSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/message.html">message</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/meta.html">meta</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/pageProperty.html">pageProperty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/paginate.html">paginate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/passwordField.html">passwordField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radio.html">radio</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radioGroup.html">radioGroup</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteField.html">remoteField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteFunction.html">remoteFunction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteLink.html">remoteLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/renderErrors.html">renderErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/resource.html">resource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/select.html">select</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/set.html">set</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/setProvider.html">setProvider</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/sortableColumn.html">sortableColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitButton.html">submitButton</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitToRemote.html">submitToRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textArea.html">textArea</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textField.html">textField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/timeZoneSelect.html">timeZoneSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/unless.html">unless</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/uploadForm.html">uploadForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/while.html">while</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.
+    Sponsored by <a href="http://springsource.com">SpringSource</a>
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

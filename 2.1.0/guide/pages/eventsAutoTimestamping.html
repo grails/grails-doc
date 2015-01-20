@@ -1,0 +1,1177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+                      "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
+<head>
+    <title>6.5.1 Events and Auto Timestamping 2.1.0</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <script type="text/javascript">
+function addJsClass() {
+    var classes = document.body.className.split(" ");
+    classes.push("js");
+    document.body.className = classes.join(" ");
+}
+    </script>
+</head>
+
+<body class="body" onload="addJsClass();">
+<div id="navigation">
+    <ul>
+        <li>
+            <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
+                <a href="../../guide/index.html" class="button">Table of contents</a>
+
+                <div id="nav-summary-childs" style="display:none;">
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/upgradingFromPreviousVersionsOfGrails.html"><strong>3</strong><span>Upgrading from previous versions of Grails</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/commandLine.html"><strong>5</strong><span>The Command Line</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/GORM.html"><strong>6</strong><span>Object Relational Mapping (GORM)</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/validation.html"><strong>8</strong><span>Validation</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/services.html"><strong>9</strong><span>The Service Layer</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/testing.html"><strong>10</strong><span>Testing</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/i18n.html"><strong>11</strong><span>Internationalization</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/security.html"><strong>12</strong><span>Security</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/plugins.html"><strong>13</strong><span>Plugins</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/webServices.html"><strong>14</strong><span>Web Services</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/spring.html"><strong>15</strong><span>Grails and Spring</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/hibernate.html"><strong>16</strong><span>Grails and Hibernate</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/scaffolding.html"><strong>17</strong><span>Scaffolding</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/deployment.html"><strong>18</strong><span>Deployment</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/contributing.html"><strong>19</strong><span>Contributing to Grails</span></a>
+                    </div>
+                    
+                </div>
+            </div>
+        </li>
+        <li class="separator selected">
+            <a id="ref-button" onclick="localToggle(); return false;" href="#">Quick Reference</a>
+        </li>
+    </ul>
+</div>
+<div id="header">
+    <div class="images clearfix">
+        
+        <span id="logo"><a href="http://grails.org" target="_blank"><img alt="Grails Logo" title="The Grails Framework" src="../../img/grails.png" border="0"/></a></span>
+        
+        
+        <span id="sponsor"><a href="http://springsource.com" target="_blank"><img alt="SpringSource Logo" title="SpringSource - Weapons for the War on Java Complexity" src="../../img/springsource-logo.png" border="0"/></a></span>
+        
+    </div>
+    <p>See the light - agile, industrial strength, rapid web application development made easy</p>
+</div>
+
+
+<table id="colset" border="0" cellpadding="0" cellspacing="0">
+    <tr>
+        <td id="col1">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/commandLine.html">&lt;&lt; <strong>5</strong><span>The Command Line</span></a></div>
+                
+
+                <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
+                
+                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>6.5.1 Events and Auto Timestamping - Reference Documentation</h1>
+
+                    <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith</p>
+
+                    <p><strong>Version:</strong> 2.1.0</p>
+
+                    
+                </div>
+
+                
+
+                
+<a name="5.5.1 Events and Auto Timestamping"><!-- Legacy link --></a>
+<h2 id="eventsAutoTimestamping">6.5.1 Events and Auto Timestamping</h2>
+GORM supports the registration of events as methods that get fired when certain events occurs such as deletes, inserts and updates. The following is a list of supported events:
+<ul class="star">
+<li><code>beforeInsert</code> - Executed before an object is initially persisted to the database</li>
+<li><code>beforeUpdate</code> - Executed before an object is updated</li>
+<li><code>beforeDelete</code> - Executed before an object is deleted</li>
+<li><code>beforeValidate</code> - Executed before an object is validated</li>
+<li><code>afterInsert</code> - Executed after an object is persisted to the database</li>
+<li><code>afterUpdate</code> - Executed after an object has been updated</li>
+<li><code>afterDelete</code> - Executed after an object has been deleted</li>
+<li><code>onLoad</code> - Executed when an object is loaded from the database</li>
+</ul><p class="paragraph"/>To add an event simply register the relevant closure with your domain class.<p class="paragraph"/><blockquote class="warning">
+Do not attempt to flush the session within an event (such as with obj.save(flush:true)). Since events are fired during flushing this will cause a StackOverflowError.
+</blockquote><p class="paragraph"/><h3>Event types</h3><p class="paragraph"/><h4>The beforeInsert event</h4><p class="paragraph"/>Fired before an object is saved to the database<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   Date dateCreated<p class="paragraph"/>   def beforeInsert() &#123;
+       dateCreated = <span class="java&#45;keyword">new</span> Date()
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h4>The beforeUpdate event</h4><p class="paragraph"/>Fired before an existing object is updated<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def beforeInsert() &#123;
+       dateCreated = <span class="java&#45;keyword">new</span> Date()
+   &#125;
+   def beforeUpdate() &#123;
+       lastUpdated = <span class="java&#45;keyword">new</span> Date()
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h4>The beforeDelete event</h4><p class="paragraph"/>Fired before an object is deleted.<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def beforeDelete() &#123;
+      ActivityTrace.withNewSession &#123;
+         <span class="java&#45;keyword">new</span> ActivityTrace(eventName:<span class="java&#45;quote">"Person Deleted"</span>,data:name).save()
+      &#125;
+   &#125;
+&#125;</pre></div><p class="paragraph"/>Notice the usage of <code>withNewSession</code> method above. Since events are triggered whilst Hibernate is flushing using persistence methods like <code>save()</code> and <code>delete()</code> won't result in objects being saved unless you run your operations with a new <code>Session</code>.<p class="paragraph"/>Fortunately the <code>withNewSession</code> method lets you share the same transactional JDBC connection even though you're using a different underlying <code>Session</code>.<p class="paragraph"/><h4>The beforeValidate event</h4><p class="paragraph"/>Fired before an object is validated.<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name<p class="paragraph"/>   <span class="java&#45;keyword">static</span> constraints = &#123;
+       name size: 5..45
+   &#125;<p class="paragraph"/>   def beforeValidate() &#123;
+       name = name?.trim()
+   &#125;
+&#125;</pre></div><p class="paragraph"/>The <code>beforeValidate</code> method is run before any validators are run.<p class="paragraph"/><blockquote class="note">
+Validation may run more often than you think. It is triggered by the <code>validate()</code> and <code>save()</code> methods as you'd expect, but it is also typically triggered just before the view is rendered as well. So when writing <code>beforeValidate()</code> implementations, make sure that they can handle being called multiple times with the same property values.
+</blockquote><p class="paragraph"/>GORM supports an overloaded version of <code>beforeValidate</code> which accepts a <code>List</code> parameter which may include
+the names of the properties which are about to be validated.  This version of <code>beforeValidate</code> will be called
+when the <code>validate</code> method has been invoked and passed a <code>List</code> of property names as an argument.<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   <span class="java&#45;object">String</span> town
+   <span class="java&#45;object">Integer</span> age<p class="paragraph"/>   <span class="java&#45;keyword">static</span> constraints = &#123;
+       name size: 5..45
+       age range: 4..99
+   &#125;<p class="paragraph"/>   def beforeValidate(List propertiesBeingValidated) &#123;
+      // <span class="java&#45;keyword">do</span> pre validation work based on propertiesBeingValidated
+   &#125;
+&#125;<p class="paragraph"/>def p = <span class="java&#45;keyword">new</span> Person(name: 'Jacob Brown', age: 10)
+p.validate(&#91;'age', 'name'&#93;)</pre></div><p class="paragraph"/><blockquote class="note">
+Note that when <code>validate</code> is triggered indirectly because of a call to the <code>save</code> method that
+the <code>validate</code> method is being invoked with no arguments, not a <code>List</code> that includes all of
+the property names.
+</blockquote><p class="paragraph"/>Either or both versions of <code>beforeValidate</code> may be defined in a domain class.  GORM will
+prefer the <code>List</code> version if a <code>List</code> is passed to <code>validate</code> but will fall back on the
+no-arg version if the <code>List</code> version does not exist.  Likewise, GORM will prefer the
+no-arg version if no arguments are passed to <code>validate</code> but will fall back on the
+<code>List</code> version if the no-arg version does not exist.  In that case, <code>null</code> is passed to <code>beforeValidate</code>.<p class="paragraph"/><h4>The onLoad/beforeLoad event</h4><p class="paragraph"/>Fired immediately before an object is loaded from the database:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def onLoad() &#123;
+      log.debug <span class="java&#45;quote">"Loading &#36;&#123;id&#125;"</span>
+   &#125;
+&#125;</pre></div><p class="paragraph"/><code>beforeLoad()</code> is effectively a synonym for <code>onLoad()</code>, so only declare one or the other.<p class="paragraph"/><h4>The afterLoad event</h4><p class="paragraph"/>Fired immediately after an object is loaded from the database:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   <span class="java&#45;object">String</span> name
+   Date dateCreated
+   Date lastUpdated<p class="paragraph"/>   def afterLoad() &#123;
+      name = <span class="java&#45;quote">"I'm loaded"</span>
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Custom Event Listeners</h4><p class="paragraph"/>As of Grails 2.0 there is a new API for plugins and applications to register and listen for persistence events. This API is not tied to Hibernate and also works for other persistence plugins such as the <a href="http://grails.org/plugin/mongodb" target="blank">MongoDB plugin for GORM</a>.<p class="paragraph"/>To use this API you need to subclass <code>AbstractPersistenceEventListener</code> (in package  <em class="italic">org.grails.datastore.mapping.engine.event</em> ) and implement a single method called <code>onPersistenceEvent</code>. The simplest possible implementation can be seen below:<p class="paragraph"/><div class="code"><pre>@Override
+<span class="java&#45;keyword">protected</span> void onPersistenceEvent(<span class="java&#45;keyword">final</span> AbstractPersistenceEvent event) &#123;
+    <span class="java&#45;keyword">switch</span>(event.eventType) &#123;
+        <span class="java&#45;keyword">case</span> PreInsert:
+            println <span class="java&#45;quote">"PRE INSERT &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>
+        <span class="java&#45;keyword">case</span> PostInsert:
+            println <span class="java&#45;quote">"POST INSERT &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>
+        <span class="java&#45;keyword">case</span> PreUpdate:
+            println <span class="java&#45;quote">"PRE UPDATE &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+        <span class="java&#45;keyword">case</span> PostUpdate:
+            println <span class="java&#45;quote">"POST UPDATE &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+        <span class="java&#45;keyword">case</span> PreDelete:
+            println <span class="java&#45;quote">"PRE DELETE &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+        <span class="java&#45;keyword">case</span> PostDelete:
+            println <span class="java&#45;quote">"POST DELETE &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+        <span class="java&#45;keyword">case</span> PreLoad:
+            println <span class="java&#45;quote">"PRE LOAD &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+        <span class="java&#45;keyword">case</span> PostLoad:
+            println <span class="java&#45;quote">"POST LOAD &#36;&#123;event.entityObject&#125;"</span>
+        <span class="java&#45;keyword">break</span>;
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The <code>AbstractPersistenceEvent</code> class has many subclasses (<code>PreInsertEvent</code>, <code>PostInsertEvent</code> etc.) that provide further information specific to the event. A <code>cancel()</code> method is also provided on the event which allows you to veto an insert, update or delete operation.<p class="paragraph"/>Once you have created your event listener you need to register it with the <code>ApplicationContext</code>. This can be done in <code>BootStrap.groovy</code>:<p class="paragraph"/><div class="code"><pre>def init = &#123;
+    applicationContext.addApplicationListener(<span class="java&#45;keyword">new</span> MyPersistenceListener())
+&#125;</pre></div><p class="paragraph"/><h4>Hibernate Events</h4><p class="paragraph"/>It is generally encouraged to use the non-Hibernate specific API described above, but if you need access to more detailed Hibernate events then you can define custom Hibernate-specific event listeners.<p class="paragraph"/>You can also register event handler classes in an application's <code>grails-app/conf/spring/resources.groovy</code> or in the <code>doWithSpring</code> closure in a plugin descriptor by registering a Spring bean named <code>hibernateEventListeners</code>. This bean has one property, <code>listenerMap</code> which specifies the listeners to register for various Hibernate events.<p class="paragraph"/>The values of the Map are instances of classes that implement one or more Hibernate listener interfaces. You can use one class that implements all of the required interfaces, or one concrete class per interface, or any combination. The valid Map keys and corresponding interfaces are listed here:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Name</strong></th><th><strong class="bold">Interface</strong></th></tr><tr class="table-odd"><td>auto-flush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/AutoFlushEventListener.html" class="api">AutoFlushEventListener</a></td></tr><tr class="table-even"><td>merge</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/MergeEventListener.html" class="api">MergeEventListener</a></td></tr><tr class="table-odd"><td>create</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PersistEventListener.html" class="api">PersistEventListener</a></td></tr><tr class="table-even"><td>create-onflush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PersistEventListener.html" class="api">PersistEventListener</a></td></tr><tr class="table-odd"><td>delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/DeleteEventListener.html" class="api">DeleteEventListener</a></td></tr><tr class="table-even"><td>dirty-check</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/DirtyCheckEventListener.html" class="api">DirtyCheckEventListener</a></td></tr><tr class="table-odd"><td>evict</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/EvictEventListener.html" class="api">EvictEventListener</a></td></tr><tr class="table-even"><td>flush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/FlushEventListener.html" class="api">FlushEventListener</a></td></tr><tr class="table-odd"><td>flush-entity</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/FlushEntityEventListener.html" class="api">FlushEntityEventListener</a></td></tr><tr class="table-even"><td>load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/LoadEventListener.html" class="api">LoadEventListener</a></td></tr><tr class="table-odd"><td>load-collection</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/InitializeCollectionEventListener.html" class="api">InitializeCollectionEventListener</a></td></tr><tr class="table-even"><td>lock</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/LockEventListener.html" class="api">LockEventListener</a></td></tr><tr class="table-odd"><td>refresh</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/RefreshEventListener.html" class="api">RefreshEventListener</a></td></tr><tr class="table-even"><td>replicate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/ReplicateEventListener.html" class="api">ReplicateEventListener</a></td></tr><tr class="table-odd"><td>save-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-even"><td>save</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-odd"><td>update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-even"><td>pre-load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreLoadEventListener.html" class="api">PreLoadEventListener</a></td></tr><tr class="table-odd"><td>pre-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreUpdateEventListener.html" class="api">PreUpdateEventListener</a></td></tr><tr class="table-even"><td>pre-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreDeleteEventListener.html" class="api">PreDeleteEventListener</a></td></tr><tr class="table-odd"><td>pre-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreInsertEventListener.html" class="api">PreInsertEventListener</a></td></tr><tr class="table-even"><td>pre-collection-recreate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionRecreateEventListener.html" class="api">PreCollectionRecreateEventListener</a></td></tr><tr class="table-odd"><td>pre-collection-remove</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionRemoveEventListener.html" class="api">PreCollectionRemoveEventListener</a></td></tr><tr class="table-even"><td>pre-collection-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionUpdateEventListener.html" class="api">PreCollectionUpdateEventListener</a></td></tr><tr class="table-odd"><td>post-load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostLoadEventListener.html" class="api">PostLoadEventListener</a></td></tr><tr class="table-even"><td>post-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostUpdateEventListener.html" class="api">PostUpdateEventListener</a></td></tr><tr class="table-odd"><td>post-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostDeleteEventListener.html" class="api">PostDeleteEventListener</a></td></tr><tr class="table-even"><td>post-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostInsertEventListener.html" class="api">PostInsertEventListener</a></td></tr><tr class="table-odd"><td>post-commit-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostUpdateEventListener.html" class="api">PostUpdateEventListener</a></td></tr><tr class="table-even"><td>post-commit-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostDeleteEventListener.html" class="api">PostDeleteEventListener</a></td></tr><tr class="table-odd"><td>post-commit-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostInsertEventListener.html" class="api">PostInsertEventListener</a></td></tr><tr class="table-even"><td>post-collection-recreate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionRecreateEventListener.html" class="api">PostCollectionRecreateEventListener</a></td></tr><tr class="table-odd"><td>post-collection-remove</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionRemoveEventListener.html" class="api">PostCollectionRemoveEventListener</a></td></tr><tr class="table-even"><td>post-collection-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionUpdateEventListener.html" class="api">PostCollectionUpdateEventListener</a></td></tr></table><p class="paragraph"/>For example, you could register a class <code>AuditEventListener</code> which implements <code>PostInsertEventListener</code>, <code>PostUpdateEventListener</code>, and <code>PostDeleteEventListener</code> using the following in an application:<p class="paragraph"/><div class="code"><pre>beans = &#123;<p class="paragraph"/>   auditListener(AuditEventListener)<p class="paragraph"/>   hibernateEventListeners(HibernateEventListeners) &#123;
+      listenerMap = &#91;'post&#45;insert': auditListener,
+                     'post&#45;update': auditListener,
+                     'post&#45;delete': auditListener&#93;
+   &#125;
+&#125;</pre></div><p class="paragraph"/>or use this in a plugin:<p class="paragraph"/><div class="code"><pre>def doWithSpring = &#123;<p class="paragraph"/>   auditListener(AuditEventListener)<p class="paragraph"/>   hibernateEventListeners(HibernateEventListeners) &#123;
+      listenerMap = &#91;'post&#45;insert': auditListener,
+                     'post&#45;update': auditListener,
+                     'post&#45;delete': auditListener&#93;
+   &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Automatic timestamping</h4><p class="paragraph"/>The examples above demonstrated using events to update a <code>lastUpdated</code> and <code>dateCreated</code> property to keep track of updates to objects. However, this is actually not necessary. By defining a <code>lastUpdated</code> and <code>dateCreated</code> property these will be automatically updated for you by GORM.<p class="paragraph"/>If this is not the behaviour you want you can disable this feature with:<p class="paragraph"/><div class="code"><pre>class Person &#123;
+   Date dateCreated
+   Date lastUpdated
+   <span class="java&#45;keyword">static</span> mapping = &#123;
+      autoTimestamp <span class="java&#45;keyword">false</span>
+   &#125;
+&#125;</pre></div><p class="paragraph"/><blockquote class="warning">
+If you put <code>nullable: false</code> constraints on either <code>dateCreated</code> or <code>lastUpdated</code>, your domain instances will fail validation - probably not what you want. Leave constraints off these properties unless you have disabled automatic timestamping.
+</blockquote>
+
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/commandLine.html">&lt;&lt; <strong>5</strong><span>The Command Line</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>7</strong><span>The Web Layer</span> >></a></div>
+                
+                <div style="clear:both"></div>
+            </div>
+        </td>
+        <td id="col2">
+            <div class="local clearfix">
+                <div class="local-title">
+                    <a href="../../guide/index.html" target="mainFrame">Quick Reference</a>
+                    <span class="toggle">(<a href="#" onclick="localToggle(); return false;">hide</a>)</span>
+                </div>
+                <div class="menu">
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Command Line</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/add-proxy.html">add-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bootstrap.html">bootstrap</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clean.html">clean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/clear-proxy.html">clear-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/compile.html">compile</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/console.html">console</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-app.html">create-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-controller.html">create-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-domain-class.html">create-domain-class</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-filters.html">create-filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-multi-project-build.html">create-multi-project-build</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-plugin.html">create-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-pom.html">create-pom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-scaffold-controller.html">create-scaffold-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-script.html">create-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-service.html">create-service</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-tag-lib.html">create-tag-lib</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-unit-test.html">create-unit-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-controller.html">generate-controller</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/generate-views.html">generate-views</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/help.html">help</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/init.html">init</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-dependency.html">install-dependency</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-plugin.html">install-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-templates.html">install-templates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/integrate-with.html">integrate-with</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/interactive.html">interactive</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugin-updates.html">list-plugin-updates</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/migrate-docs.html">migrate-docs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package-plugin.html">package-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/package.html">package</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/plugin-info.html">plugin-info</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/refresh-dependencies.html">refresh-dependencies</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/remove-proxy.html">remove-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-war.html">run-war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-proxy.html">set-proxy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/set-version.html">set-version</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/shell.html">shell</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/uninstall-plugin.html">uninstall-plugin</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/upgrade.html">upgrade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/wrapper.html">wrapper</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Constraints</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Constraints/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/attributes.html">attributes</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/bindable.html">bindable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/blank.html">blank</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/creditCard.html">creditCard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/email.html">email</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/inList.html">inList</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/matches.html">matches</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/max.html">max</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/maxSize.html">maxSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/min.html">min</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/minSize.html">minSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/notEqual.html">notEqual</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/nullable.html">nullable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/range.html">range</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/scale.html">scale</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/size.html">size</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/unique.html">unique</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/url.html">url</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/validator.html">validator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Constraints/widget.html">widget</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Controllers</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Controllers/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/afterInterceptor.html">afterInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/allowedMethods.html">allowedMethods</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/beforeInterceptor.html">beforeInterceptor</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/bindData.html">bindData</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/chain.html">chain</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/defaultAction.html">defaultAction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/forward.html">forward</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/grailsApplication.html">grailsApplication</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/redirect.html">redirect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/session.html">session</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withForm.html">withForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/withFormat.html">withFormat</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Database Mapping</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoImport.html">autoImport</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/autoTimestamp.html">autoTimestamp</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/batchSize.html">batchSize</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cache.html">cache</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/cascade.html">cascade</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/column.html">column</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/discriminator.html">discriminator</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicInsert.html">dynamicInsert</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/dynamicUpdate.html">dynamicUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/fetch.html">fetch</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/id.html">id</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/ignoreNotFound.html">ignoreNotFound</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/indexColumn.html">indexColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/insertable.html">insertable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/joinTable.html">joinTable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/lazy.html">lazy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/order.html">order</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/sort.html">sort</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/table.html">table</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/type.html">type</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/updateable.html">updateable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Database%20Mapping/version.html">version</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Domain Classes</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/addTo.html">addTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/attach.html">attach</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/belongsTo.html">belongsTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/clearErrors.html">clearErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/constraints.html">constraints</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/count.html">count</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/countBy.html">countBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/createCriteria.html">createCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/delete.html">delete</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/discard.html">discard</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/embedded.html">embedded</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/errors.html">errors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeQuery.html">executeQuery</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/executeUpdate.html">executeUpdate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/exists.html">exists</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/fetchMode.html">fetchMode</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/find.html">find</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllBy.html">findAllBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findAllWhere.html">findAllWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findBy.html">findBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateBy.html">findOrCreateBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrCreateWhere.html">findOrCreateWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveBy.html">findOrSaveBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findOrSaveWhere.html">findOrSaveWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/findWhere.html">findWhere</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/get.html">get</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getAll.html">getAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getDirtyPropertyNames.html">getDirtyPropertyNames</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/getPersistentValue.html">getPersistentValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasMany.html">hasMany</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/hasOne.html">hasOne</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/ident.html">ident</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/instanceOf.html">instanceOf</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isAttached.html">isAttached</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/isDirty.html">isDirty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/list.html">list</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/listOrderBy.html">listOrderBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/load.html">load</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/lock.html">lock</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mappedBy.html">mappedBy</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/mapping.html">mapping</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/merge.html">merge</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/namedQueries.html">namedQueries</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/properties.html">properties</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/read.html">read</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/refresh.html">refresh</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/removeFrom.html">removeFrom</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/save.html">save</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/transients.html">transients</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/validate.html">validate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/where.html">where</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/whereAny.html">whereAny</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withCriteria.html">withCriteria</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withNewSession.html">withNewSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withSession.html">withSession</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Domain%20Classes/withTransaction.html">withTransaction</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Plug-ins</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Plug-ins/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/URL%20mappings.html">URL mappings</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/codecs.html">codecs</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/controllers.html">controllers</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/core.html">core</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/dataSource.html">dataSource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/domainClasses.html">domainClasses</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/filters.html">filters</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/hibernate.html">hibernate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/i18n.html">i18n</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/logging.html">logging</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/scaffolding.html">scaffolding</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/services.html">services</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/servlets.html">servlets</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Plug-ins/web%20flow.html">web flow</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Services</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Services/scope.html">scope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Services/transactional.html">transactional</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Servlet API</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tag Libraries</h1><div class="menu-sub">
+                        
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/Usage.html">Usage</a></div>
+                            
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/actionName.html">actionName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/controllerName.html">controllerName</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/flash.html">flash</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/pageScope.html">pageScope</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/params.html">params</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/request.html">request</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/response.html">response</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/servletContext.html">servletContext</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tag%20Libraries/session.html">session</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tags</h1><div class="menu-sub">
+                        
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmit.html">actionSubmit</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/actionSubmitImage.html">actionSubmitImage</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/applyLayout.html">applyLayout</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/checkBox.html">checkBox</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/collect.html">collect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/cookie.html">cookie</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/country.html">country</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/countrySelect.html">countrySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLink.html">createLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/createLinkTo.html">createLinkTo</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/currencySelect.html">currencySelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/datePicker.html">datePicker</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/each.html">each</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/eachError.html">eachError</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/else.html">else</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/elseif.html">elseif</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/external.html">external</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/findAll.html">findAll</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/form.html">form</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formRemote.html">formRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatBoolean.html">formatBoolean</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatDate.html">formatDate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/formatNumber.html">formatNumber</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/grep.html">grep</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/header.html">header</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/hiddenField.html">hiddenField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/if.html">if</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/img.html">img</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/include.html">include</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isAvailable.html">isAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/isNotAvailable.html">isNotAvailable</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/javascript.html">javascript</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/join.html">join</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutBody.html">layoutBody</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutHead.html">layoutHead</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/layoutTitle.html">layoutTitle</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/link.html">link</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/localeSelect.html">localeSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/message.html">message</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/meta.html">meta</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/pageProperty.html">pageProperty</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/paginate.html">paginate</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/passwordField.html">passwordField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radio.html">radio</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/radioGroup.html">radioGroup</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteField.html">remoteField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteFunction.html">remoteFunction</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/remoteLink.html">remoteLink</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/render.html">render</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/renderErrors.html">renderErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/resource.html">resource</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/select.html">select</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/set.html">set</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/setProvider.html">setProvider</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/sortableColumn.html">sortableColumn</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitButton.html">submitButton</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/submitToRemote.html">submitToRemote</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textArea.html">textArea</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/textField.html">textField</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/timeZoneSelect.html">timeZoneSelect</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/unless.html">unless</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/uploadForm.html">uploadForm</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/while.html">while</a>
+                            </div>
+                            
+                            </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </td>
+    </tr>
+</table>
+
+<div id="footer">
+    Copies of this document may be made for your own use and for distribution to others, provided that you do not charge any fee for such copies and further provided that each copy contains this Copyright Notice, whether distributed in print or electronically.
+    Sponsored by <a href="http://springsource.com">SpringSource</a>
+</div>
+
+<script type="text/javascript" src="../js/docs.js"></script>
+
+</body>
+</html>

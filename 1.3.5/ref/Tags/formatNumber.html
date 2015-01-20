@@ -1,0 +1,130 @@
+<html>
+    <head>
+	    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	    <title>Grails Reference</title>
+	    <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8" />
+	    <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+	    <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <h1>formatNumber </h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Allows the formatting of numbers using the same patterns defined by the <a href="http://java.sun.com/javase/6/docs/api/java/text/DecimalFormat.html" target="blank">DecimalFormat</a> class.
+Supports also attributes that are used in the JSTL formatNumber tag.<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:formatNumber number=<span class="xml&#45;quote">"$&#123;myNumber&#125;"</span> format="&#92;&#92;$&#35;&#35;&#35;,&#35;&#35;0" /&#62;</span></pre></div><p class="paragraph"/>Example of formatting an EUR currency amount:
+<div class="code"><pre><span class="xml&#45;tag">&#60;g:formatNumber number=<span class="xml&#45;quote">"$&#123;myCurrencyAmount&#125;"</span> type=<span class="xml&#45;quote">"currency"</span> currencyCode=<span class="xml&#45;quote">"EUR"</span> /&#62;</span></pre></div><p class="paragraph"/>Example of formatting a USD currency amount:
+<div class="code"><pre><span class="xml&#45;tag">&#60;g:formatNumber number=<span class="xml&#45;quote">"$&#123;myCurrencyAmount&#125;"</span> type=<span class="xml&#45;quote">"currency"</span> currencyCode=<span class="xml&#45;quote">"USD"</span> /&#62;</span></pre></div>
+For USD, the currency symbol will be based on the locale of the request. For the "en_US" locale, the result is "$123.45" and 
+for "fi_FI" locale, the formatting is "123,45 USD". The formatting rules come from the <a href="http://java.sun.com/javase/6/docs/api/java/util/Currency.html" target="blank">java.util.Currency</a> class.<p class="paragraph"/>Example of left padding a number with zeros:
+<div class="code"><pre><span class="xml&#45;tag">&#60;g:formatNumber number=<span class="xml&#45;quote">"$&#123;myNumber&#125;"</span> type=<span class="xml&#45;quote">"number"</span> minIntegerDigits=<span class="xml&#45;quote">"9"</span> /&#62;</span></pre></div><p class="paragraph"/>Example of formatting a number showing 2 fraction digits:
+<div class="code"><pre><span class="xml&#45;tag">&#60;g:formatNumber number=<span class="xml&#45;quote">"$&#123;myNumber&#125;"</span> type=<span class="xml&#45;quote">"number"</span> maxFractionDigits=<span class="xml&#45;quote">"2"</span> /&#62;</span></pre></div><p class="paragraph"/>Example of formatting a number showing 2 fraction digits, rounding with RoundingMode.HALF_DOWN:
+<div class="code"><pre><span class="xml&#45;tag">&#60;g:formatNumber number=<span class="xml&#45;quote">"$&#123;myNumber&#125;"</span> type=<span class="xml&#45;quote">"number"</span> maxFractionDigits=<span class="xml&#45;quote">"2"</span> roundingMode=<span class="xml&#45;quote">"HALF_DOWN"</span> /&#62;</span></pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Attributes
+<ul class="star">
+<li><code>number</code> (required) - The number object to formate</li>
+<li><code>format</code> (optional) - The formatting pattern to use for the number, see <a href="http://java.sun.com/javase/6/docs/api/java/text/DecimalFormat.html" target="blank">DecimalFormat</a></li>
+<li><code>formatName</code> (optional) - Look up <code>format</code> from the default MessageSource / ResourceBundle (i18n/<strong class="bold">.properties file) with this key.Look up <code>format</code> from the default MessageSource / ResourceBundle (i18n/</strong>.properties file) with this key. If <code>format</code> and <code>formatName</code> are empty, <code>format</code> is looked up with '<code>default.number.format</code>' key. If the key is missing, '0' formatting pattern is used.</li>
+<li><code>type</code> (optional) - The type of formatter to use: 'number', 'currency' or 'percent' . <code>format</code> or <code>formatName</code> aren't used when <code>type</code> is specified.</li>
+<li><code>locale</code> (optional) - Override the locale of the request , String or java.util.Locale value</li>
+<li><code>groupingUsed</code> (optional) - Set whether or not grouping will be used in this format.</li>
+<li><code>minIntegerDigits</code> (optional) - Sets the minimum number of digits allowed in the integer portion of a number.</li>
+<li><code>maxIntegerDigits</code> (optional) - Sets the maximum number of digits allowed in the integer portion of a number.</li>
+<li><code>minFractionDigits</code> (optional) - Sets the minimum number of digits allowed in the fraction portion of a number.</li>
+<li><code>maxFractionDigits</code> (optional) - Sets the maximum number of digits allowed in the fraction portion of a number.</li>
+<li><code>currencyCode</code> (optional) - The standard currency code ('EUR', 'USD', etc.), uses formatting settings for the currency. type='currency' attribute is recommended.</li>
+<li><code>currencySymbol</code> (optional) - Force the currency symbol to some symbol, recommended way is to use <code>currencyCode</code> attribute instead (takes symbol information from <a href="http://java.sun.com/javase/6/docs/api/java/util/Currency.html" target="blank">java.util.Currency</a>)</li>
+<li><code>roundingMode</code> (optional) - Sets the <a href="http://java.sun.com/javase/6/docs/api/java/math/RoundingMode.html" target="blank">RoundingMode</a> used in this DecimalFormat. Usual values: HALF_UP, HALF_DOWN. If roundingMode is UNNECESSARY and ArithemeticException raises, the original number formatted with default number formatting will be returned.</li>
+</ul><p class="paragraph"/><h2>Source</h2><p class="paragraph"/><p><a href="#" onclick="document.getElementById('formatNumber').style.display='inline'">Show Source</a></p><div id="formatNumber" style="display:none;"><div class="code"><pre>def formatNumber = &#123; attrs &#45;&#62;
+        <span class="java&#45;keyword">if</span> (!attrs.containsKey(&#39;number&#39;)) &#123;
+            throwTagError(&#34;Tag &#91;formatNumber&#93; is missing required attribute &#91;number&#93;&#34;)
+        &#125;<p class="paragraph"/>        def number = attrs.get(&#39;number&#39;)
+        <span class="java&#45;keyword">if</span> (number == <span class="java&#45;keyword">null</span>) <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">null</span><p class="paragraph"/>        def formatName = attrs.get(&#39;formatName&#39;)
+        def format = attrs.get(&#39;format&#39;)
+        def type = attrs.get(&#39;type&#39;)
+        def locale = resolveLocale(attrs.get(&#39;locale&#39;))<p class="paragraph"/>        <span class="java&#45;keyword">if</span> (type == <span class="java&#45;keyword">null</span>) &#123;
+            <span class="java&#45;keyword">if</span> (!format &#38;&#38; formatName) &#123;
+                format = messageHelper(formatName,<span class="java&#45;keyword">null</span>,<span class="java&#45;keyword">null</span>,locale)
+                <span class="java&#45;keyword">if</span> (!format) &#123;
+                    throwTagError(&#34;Attribute &#91;formatName&#93; of Tag &#91;formatNumber&#93; specifies a format key &#91;$formatName&#93; that does not exist within a message bundle!&#34;)
+                &#125;
+            &#125;
+            <span class="java&#45;keyword">else</span> <span class="java&#45;keyword">if</span> (!format) &#123;
+                format = messageHelper( &#34;number.format&#34;, &#123; messageHelper( &#34;<span class="java&#45;keyword">default</span>.number.format&#34;, &#34;0&#34;, <span class="java&#45;keyword">null</span>, locale) &#125; ,<span class="java&#45;keyword">null</span> ,locale)
+            &#125;
+        &#125;<p class="paragraph"/>        DecimalFormatSymbols dcfs = locale ? <span class="java&#45;keyword">new</span> DecimalFormatSymbols( locale ) : <span class="java&#45;keyword">new</span> DecimalFormatSymbols()<p class="paragraph"/>        DecimalFormat decimalFormat
+        <span class="java&#45;keyword">if</span> (!type) &#123;
+            decimalFormat = <span class="java&#45;keyword">new</span> DecimalFormat(format, dcfs)
+        &#125;
+        <span class="java&#45;keyword">else</span> &#123;
+            <span class="java&#45;keyword">if</span> (type == &#39;currency&#39;) &#123;
+                decimalFormat = NumberFormat.getCurrencyInstance(locale)
+            &#125;
+            <span class="java&#45;keyword">else</span> <span class="java&#45;keyword">if</span> (type == &#39;number&#39;) &#123;
+                decimalFormat = NumberFormat.getNumberInstance(locale)
+            &#125;
+            <span class="java&#45;keyword">else</span> <span class="java&#45;keyword">if</span> (type == &#39;percent&#39;) &#123;
+                decimalFormat = NumberFormat.getPercentInstance(locale)
+            &#125;
+            <span class="java&#45;keyword">else</span> &#123;
+                throwTagError(&#34;Attribute &#91;type&#93; of Tag &#91;formatNumber&#93; specifies an unknown type. Known types are currency, number and percent.&#34;)
+            &#125;
+        &#125;<p class="paragraph"/>        // ensure formatting accuracy
+        decimalFormat.setParseBigDecimal(<span class="java&#45;keyword">true</span>)<p class="paragraph"/>        <span class="java&#45;keyword">if</span> (attrs.get(&#39;currencyCode&#39;) != <span class="java&#45;keyword">null</span>) &#123;
+            Currency currency = Currency.getInstance(attrs.get(&#39;currencyCode&#39;) as <span class="java&#45;object">String</span>)
+            decimalFormat.setCurrency(currency)
+        &#125;
+        <span class="java&#45;keyword">if</span> (attrs.get(&#39;currencySymbol&#39;) != <span class="java&#45;keyword">null</span>) &#123;
+            dcfs = decimalFormat.getDecimalFormatSymbols()
+            dcfs.setCurrencySymbol(attrs.get(&#39;currencySymbol&#39;) as <span class="java&#45;object">String</span>)
+            decimalFormat.setDecimalFormatSymbols(dcfs)
+        &#125;
+        <span class="java&#45;keyword">if</span> (attrs.get(&#39;groupingUsed&#39;) != <span class="java&#45;keyword">null</span>) &#123;
+            <span class="java&#45;keyword">if</span> (attrs.get(&#39;groupingUsed&#39;) <span class="java&#45;keyword">instanceof</span> <span class="java&#45;object">Boolean</span>) &#123;
+                decimalFormat.setGroupingUsed(attrs.get(&#39;groupingUsed&#39;))
+            &#125;
+            <span class="java&#45;keyword">else</span> &#123;
+                // accept <span class="java&#45;keyword">true</span>, y, 1, yes
+                decimalFormat.setGroupingUsed(attrs.get(&#39;groupingUsed&#39;).toString().toBoolean() || attrs.get(&#39;groupingUsed&#39;).toString()==&#39;yes&#39;)
+            &#125;
+        &#125;
+        <span class="java&#45;keyword">if</span> (attrs.get(&#39;maxIntegerDigits&#39;) != <span class="java&#45;keyword">null</span>) &#123;
+            decimalFormat.setMaximumIntegerDigits(attrs.get(&#39;maxIntegerDigits&#39;) as <span class="java&#45;object">Integer</span>)
+        &#125;
+        <span class="java&#45;keyword">if</span> (attrs.get(&#39;minIntegerDigits&#39;) != <span class="java&#45;keyword">null</span>) &#123;
+            decimalFormat.setMinimumIntegerDigits(attrs.get(&#39;minIntegerDigits&#39;) as <span class="java&#45;object">Integer</span>)
+        &#125;
+        <span class="java&#45;keyword">if</span> (attrs.get(&#39;maxFractionDigits&#39;) != <span class="java&#45;keyword">null</span>) &#123;
+            decimalFormat.setMaximumFractionDigits(attrs.get(&#39;maxFractionDigits&#39;) as <span class="java&#45;object">Integer</span>)
+        &#125;
+        <span class="java&#45;keyword">if</span> (attrs.get(&#39;minFractionDigits&#39;) != <span class="java&#45;keyword">null</span>) &#123;
+            decimalFormat.setMinimumFractionDigits(attrs.get(&#39;minFractionDigits&#39;) as <span class="java&#45;object">Integer</span>)
+        &#125;
+        <span class="java&#45;keyword">if</span> (attrs.get(&#39;roundingMode&#39;) != <span class="java&#45;keyword">null</span>) &#123;
+            def roundingMode=attrs.get(&#39;roundingMode&#39;)
+            <span class="java&#45;keyword">if</span> (!(roundingMode <span class="java&#45;keyword">instanceof</span> RoundingMode)) &#123;
+                roundingMode = RoundingMode.valueOf(roundingMode)
+            &#125;
+            decimalFormat.setRoundingMode(roundingMode)
+        &#125;<p class="paragraph"/>        <span class="java&#45;keyword">if</span> (!(number <span class="java&#45;keyword">instanceof</span> <span class="java&#45;object">Number</span>)) &#123;
+            number = decimalFormat.parse(number as <span class="java&#45;object">String</span>)
+        &#125;<p class="paragraph"/>        def formatted
+        <span class="java&#45;keyword">try</span> &#123;
+            formatted = decimalFormat.format(number)
+        &#125;
+        <span class="java&#45;keyword">catch</span>(ArithmeticException e) &#123;
+            // <span class="java&#45;keyword">if</span> roundingMode is UNNECESSARY and ArithemeticException raises, just <span class="java&#45;keyword">return</span> original number formatted with <span class="java&#45;keyword">default</span> number formatting
+            formatted = NumberFormat.getNumberInstance(locale).format(number)
+        &#125;
+        <span class="java&#45;keyword">return</span> formatted
+    &#125;<p class="paragraph"/>    def resolveLocale(localeAttr) &#123;
+        def locale = localeAttr
+        <span class="java&#45;keyword">if</span> (locale != <span class="java&#45;keyword">null</span> &#38;&#38; !(locale <span class="java&#45;keyword">instanceof</span> Locale)) &#123;
+            locale = StringUtils.parseLocaleString(locale as <span class="java&#45;object">String</span>)
+        &#125;
+        <span class="java&#45;keyword">if</span> (locale == <span class="java&#45;keyword">null</span>) &#123;
+            locale = RCU.getLocale(request)
+            <span class="java&#45;keyword">if</span> (locale == <span class="java&#45;keyword">null</span>) &#123;
+                locale = Locale.getDefault()
+            &#125;
+        &#125;
+        <span class="java&#45;keyword">return</span> locale
+    &#125;</pre></div></div><p class="paragraph"/>
+
+    </body>
+</html>

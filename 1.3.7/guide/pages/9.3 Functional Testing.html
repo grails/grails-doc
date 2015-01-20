@@ -1,0 +1,27 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>9.3 Functional Testing</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="9.3 Functional Testing">9.3 Functional Testing</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            Functional tests involve making HTTP requests against the running application and verifying the resultant behaviour. Grails does not ship with any support for writing functional tests directly, but there are several plugins available for this.
+<ul class="star">
+<li><code>Canoo Webtest</code> - <a href="http://grails.org/plugin/webtest" target="blank">http://grails.org/plugin/webtest</a></li>
+<li><code>G-Func</code> - <a href="http://grails.org/plugin/functional-test" target="blank">http://grails.org/plugin/functional-test</a></li>
+<li><code>Selenium-RC</code> - <a href="http://grails.org/plugin/selenium-rc" target="blank">http://grails.org/plugin/selenium-rc</a></li>
+<li><code>WebDriver</code> - <a href="http://grails.org/plugin/webdriver" target="blank">http://grails.org/plugin/webdriver</a></li>
+<li><code>Geb</code> - <a href="http://grails.org/plugin/geb" target="blank">http://grails.org/plugin/geb</a></li>
+</ul><p class="paragraph"/>Consult the documentation for each plugin for it's capabilities.<p class="paragraph"/><h4>Common Options</h4><p class="paragraph"/>There are options that are common to all plugins that control how the Grails application is launched, if at all.<p class="paragraph"/><h5>inline</h5><p class="paragraph"/>The <code>-inline</code> option specifies that the grails application should be started inline (i.e. like <code>run-app</code>).<p class="paragraph"/><strong class="bold">This option is implicitly set unless the <code>baseUrl</code> or <code>war</code> options are set</strong><p class="paragraph"/><h5>war</h5><p class="paragraph"/>The <code>-war</code> option specifies that the grails application should be packaged as a war and started. This is useful as it tests your application in a production like state, but it has a longer startup time than the <code>-inline</code> option. It also runs the war in a forked JVM, meaning that you cannot access any internal application objects.<p class="paragraph"/><div class="code"><pre>grails test&#45;app functional: &#45;war</pre></div><p class="paragraph"/>Note that the same build/config options for the <a href="../ref/Command Line/run-war.html" class="commandLine">run-war</a> command apply to functional testing against the WAR.<p class="paragraph"/><h5>https</h5><p class="paragraph"/>The <code>-https</code> option results in the application being able to receive https requests as well as http requests. It is compatible with both the <code>-inline</code> and <code>-war</code> options.<p class="paragraph"/><div class="code"><pre>grails test&#45;app functional: &#45;https</pre></div><p class="paragraph"/>Note that this does not change the test  <em class="italic">base url</em>  to be https, it will still be http unless the <code>-httpsBaseUrl</code> option is also given.<p class="paragraph"/><h5>httpsBaseUrl</h5><p class="paragraph"/>The <code>-httpsBaseUrl</code> causes the implicit base url to be used for tests to be a https url.<p class="paragraph"/><div class="code"><pre>grails test&#45;app functional: &#45;httpsBaseUrl</pre></div><p class="paragraph"/>This option is ignored if the <code>-baseUrl</code> option is given.<p class="paragraph"/><h5>baseUrl</h5><p class="paragraph"/>The <code>baseUrl</code> option allows the base url for tests to be specified.<p class="paragraph"/><div class="code"><pre>grails test&#45;app functional: &#45;baseUrl=http://mycompany.com/grailsapp</pre></div><p class="paragraph"/>This option will prevent the local grails application being started unless <code>-inline</code> or <code>-war</code> are given as well. If you want to use a custom base url, but still want to test against the local Grails application you <strong class="bold">must</strong> specify one of either the <code>-inline</code> or <code>-war</code> options.
+        </div>
+    </body>
+</html>

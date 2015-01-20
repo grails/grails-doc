@@ -1,0 +1,54 @@
+<html>
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <title>6.1.8 More on JSONBuilder</title>
+        <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen" title="Ref" charset="utf-8"/>
+        <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+        <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <div id="header">
+            <h2><a name="6.1.8 More on JSONBuilder">6.1.8 More on JSONBuilder</a></h2>
+        </div>
+        <div id="toc">
+            
+        </div>
+        <div id="content">
+            The previous section on on XML and JSON responses covered simplistic examples of rendering XML and JSON responses. Whilst the XML builder used by Grails is the standard <a href="http://groovy.codehaus.org/Reading+XML+using+Groovy's+XmlSlurper" target="blank">XmlSlurper</a> found in Groovy, the JSON builder is a custom implementation specific to Grails.<p class="paragraph"/><h4>JSONBuilder and Grails versions</h4><p class="paragraph"/>JSONBuilder behaves different depending on the version of Grails you use. For version below 1.2 there deprecated <a href="../api/grails/web/JSONBuilder.html" class="api">grails.web.JSONBuilder</a> class is used. This section covers the usage of the Grails 1.2 JSONBuilder<p class="paragraph"/>For backwards compatibility the old <code>JSONBuilder</code> class is used with the <code>render</code> method for older applications, if you want to use the newer/better <code>JSONBuilder</code> class then you can do so by setting the following in <code>Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.json.legacy.builder=<span class="java&#45;keyword">false</span></pre></div><p class="paragraph"/>
+<h4>Rendering Simple Objects</h4><p class="paragraph"/>To render a simple JSON object just set properties within the context of the closure:<p class="paragraph"/><div class="code"><pre>render(contentType:<span class="java&#45;quote">"text/json"</span>) &#123;
+	hello = <span class="java&#45;quote">"world"</span>
+&#125;</pre></div><p class="paragraph"/>The above will produce the JSON:<p class="paragraph"/><div class="code"><pre>&#123;<span class="java&#45;quote">"hello"</span>:<span class="java&#45;quote">"world"</span>&#125;</pre></div><p class="paragraph"/><h4>Rendering JSON Arrays</h4><p class="paragraph"/>To render a list of objects simple assign a list:<p class="paragraph"/><div class="code"><pre>render(contentType:<span class="java&#45;quote">"text/json"</span>) &#123;
+	categories = &#91;'a', 'b', 'c'&#93;
+&#125;</pre></div><p class="paragraph"/>This will produce:<p class="paragraph"/><div class="code"><pre>&#123;<span class="java&#45;quote">"categories"</span>:&#91;<span class="java&#45;quote">"a"</span>,<span class="java&#45;quote">"b"</span>,<span class="java&#45;quote">"c"</span>&#93;&#125;</pre></div><p class="paragraph"/>You can also render lists of complex objects, for example:<p class="paragraph"/><div class="code"><pre>render(contentType:<span class="java&#45;quote">"text/json"</span>) &#123;
+	categories = &#91; &#123; a = <span class="java&#45;quote">"A"</span> &#125;, &#123; b = <span class="java&#45;quote">"B"</span> &#125; &#93;
+&#125;</pre></div><p class="paragraph"/>This will produce:<p class="paragraph"/><div class="code"><pre>&#123;<span class="java&#45;quote">"categories"</span>:&#91; &#123;<span class="java&#45;quote">"a"</span>:<span class="java&#45;quote">"A"</span>&#125; , &#123;<span class="java&#45;quote">"b"</span>:<span class="java&#45;quote">"B"</span>&#125;&#93; &#125;</pre></div><p class="paragraph"/>If you want to return a list as the root then you have to use the special <code>element</code> method:<p class="paragraph"/><div class="code"><pre>render(contentType:<span class="java&#45;quote">"text/json"</span>) &#123;
+	element 1
+	element 2
+	element 3		
+&#125;</pre></div><p class="paragraph"/>The above code produces:<p class="paragraph"/><div class="code"><pre>&#91;1,2,3&#93;</pre></div><p class="paragraph"/><h4>Rendering Complex Objects</h4><p class="paragraph"/>Rendering complex objects can be done with closures. For example:<p class="paragraph"/><div class="code"><pre>render(contentType:<span class="java&#45;quote">"text/json"</span>) &#123;
+    categories = &#91;'a', 'b', 'c'&#93;
+    title =<span class="java&#45;quote">"Hello JSON"</span>
+    information = &#123;
+        pages = 10
+    &#125;
+&#125;</pre></div><p class="paragraph"/>The above will produce the JSON:<p class="paragraph"/><div class="code"><pre>&#123;<span class="java&#45;quote">"categories"</span>:&#91;<span class="java&#45;quote">"a"</span>,<span class="java&#45;quote">"b"</span>,<span class="java&#45;quote">"c"</span>&#93;,<span class="java&#45;quote">"title"</span>:<span class="java&#45;quote">"Hello JSON"</span>,<span class="java&#45;quote">"information"</span>:&#123;<span class="java&#45;quote">"pages"</span>:10&#125;&#125;</pre></div><p class="paragraph"/><h4>Arrays of Complex Objects</h4><p class="paragraph"/>As mentioned previously you can nest complex objects within arrays using closures:<p class="paragraph"/><div class="code"><pre>render(contentType:<span class="java&#45;quote">"text/json"</span>) &#123;
+	categories = &#91; &#123; a = <span class="java&#45;quote">"A"</span> &#125;, &#123; b = <span class="java&#45;quote">"B"</span> &#125; &#93;
+&#125;</pre></div><p class="paragraph"/>However, if you need to build them up dynamically then you may want to use the <code>array</code> method:<p class="paragraph"/><div class="code"><pre>def results = Book.list()
+render(contentType:<span class="java&#45;quote">"text/json"</span>) &#123;
+	books = array &#123;
+		<span class="java&#45;keyword">for</span>(b in results) &#123;
+			book title:b.title
+		&#125;
+	&#125;	
+&#125;</pre></div><p class="paragraph"/><h4>Direct JSONBuilder API Access</h4><p class="paragraph"/>If you don't have access to the <code>render</code> method, but still want to produce JSON you can use the API directly:<p class="paragraph"/><div class="code"><pre>def builder = <span class="java&#45;keyword">new</span> JSONBuilder()<p class="paragraph"/>def result = builder.build &#123;
+    categories = &#91;'a', 'b', 'c'&#93;
+    title =<span class="java&#45;quote">"Hello JSON"</span>
+    information = &#123;
+        pages = 10
+    &#125;
+&#125;<p class="paragraph"/>// prints the JSON text
+println result.toString()<p class="paragraph"/>def sw = <span class="java&#45;keyword">new</span> StringWriter()
+result.render sw</pre></div><p class="paragraph"/>
+        </div>
+    </body>
+</html>

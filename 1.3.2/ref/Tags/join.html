@@ -1,0 +1,25 @@
+<html>
+    <head>
+	    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	    <title>Grails Reference</title>
+	    <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8" />
+	    <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+	    <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <h1>join </h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Uses the Groovy JDK <a href="http://groovy.codehaus.org/groovy-jdk/java/util/Collection.html#join(java.lang.String)" target="blank">join</a> method to concatenate the toString() representation of each item in this collection with the given separator.<p class="paragraph"/>
+<h2>Examples</h2><p class="paragraph"/>
+<div class="code"><pre><span class="xml&#45;tag">&#60;g:join in=<span class="xml&#45;quote">"&#91;'Grails', 'Groovy', 'Gradle'&#93;"</span> delimiter=<span class="xml&#45;quote">"_"</span>/&#62;</span></pre></div><p class="paragraph"/>That would result in output like this:<p class="paragraph"/><div class="code"><pre>Grails_Groovy_Gradle</pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Attributes
+<ol>
+<li><code>in</code> - The collection to iterate over</li>
+<li><code>delimiter</code> (optional) - The value of the delimiter to use during the join.  If no delimiter is specified then ", " (a comma followed by a space) will be used as the delimiter.</li>
+</ol><p class="paragraph"/><p><a href="#" onclick="document.getElementById('join').style.display='inline'">Show Source</a></p><div id="join" style="display:none;"><div class="code"><pre>def join = &#123; attrs &#45;&#62;
+		def collection = attrs.&#39;in&#39;
+		<span class="java&#45;keyword">if</span>(collection == <span class="java&#45;keyword">null</span>) &#123;
+			<span class="java&#45;keyword">throw</span> <span class="java&#45;keyword">new</span> GrailsTagException(&#39;Tag &#91;&#34;join&#34;&#93; missing required attribute &#91;&#34;in&#34;&#93;&#39;)
+		&#125;
+		def delimiter = attrs.delimiter == <span class="java&#45;keyword">null</span> ? &#39;, &#39; : attrs.delimiter<p class="paragraph"/>		out &#60;&#60; collection.join(delimiter)
+	&#125;</pre></div></div>
+
+    </body>
+</html>

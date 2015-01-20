@@ -1,0 +1,76 @@
+<html>
+    <head>
+	    <meta http-equiv="Content-type" content="text/html; charset=utf-8"/>
+	    <title>Grails Reference</title>
+	    <link rel="stylesheet" href="../../css/ref.css" type="text/css" media="screen" title="Ref" charset="utf-8" />
+	    <link rel="icon" href="../../img/favicon.ico" type="image/x-icon"/>
+	    <link rel="shortcut icon" href="../../img/favicon.ico" type="image/x-icon"/>
+    </head>
+    <body class="body">
+        <h1>applyLayout</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Applies the specified layout to either the body, a given template and an arbitrary URL allowing the development of "portlet" style applications and mashups<p class="paragraph"/>
+<h2>Examples</h2><p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"myLayout"</span> template=<span class="xml&#45;quote">"displaybook"</span> collection=<span class="xml&#45;quote">"$&#123;books&#125;"</span> /&#62;</span></pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"myLayout"</span> url=<span class="xml&#45;quote">"http://www.google.com"</span> /&#62;</span></pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"myLayout"</span>&#62;</span>
+The content to apply a layout to
+<span class="xml&#45;tag">&#60;/g:applyLayout&#62;</span></pre></div><p class="paragraph"/>
+<h2>Description</h2><p class="paragraph"/>Attributes
+<ul class="star">
+<li><code>name</code> - The name of the layout to apply</li>
+<li><code>url</code> - The URL of the content to apply, could be an external URL</li>
+<li><code>template</code> (optional) - The name of the template to apply</li>
+<li><code>bean</code> (optional) - The bean to apply the template against</li>
+<li><code>model</code> (optional) - The model to apply the template against as a java.util.Map</li>
+<li><code>collection</code> (optional) - A collection of model objects to apply the template to</li>
+</ul><p class="paragraph"/><h2>Source</h2><p class="paragraph"/><p><a href="#" onclick="document.getElementById('applyLayout').style.display='inline'">Show Source</a></p><div id="applyLayout" style="display:none;"><div class="code"><pre>def applyLayout = &#123; attrs, body &#45;&#62;
+        <span class="java&#45;keyword">if</span>(!groovyPagesTemplateEngine) <span class="java&#45;keyword">throw</span> <span class="java&#45;keyword">new</span> IllegalStateException(&#34;Property &#91;groovyPagesTemplateEngine&#93; must be set!&#34;)
+        def oldPage = getPage()
+        def contentType = attrs.contentType ? attrs.contentType : &#34;text/html&#34;<p class="paragraph"/>        def content = &#34;&#34;
+        GSPSitemeshPage gspSiteMeshPage = <span class="java&#45;keyword">null</span>
+        <span class="java&#45;keyword">if</span>(attrs.url) &#123;
+        	content = <span class="java&#45;keyword">new</span> URL(attrs.url).text
+        &#125; <span class="java&#45;keyword">else</span> &#123;
+        	def oldGspSiteMeshPage=request.getAttribute(GrailsPageFilter.GSP_SITEMESH_PAGE)
+        	<span class="java&#45;keyword">try</span> &#123;
+        		gspSiteMeshPage = <span class="java&#45;keyword">new</span> GSPSitemeshPage()
+        		request.setAttribute(GrailsPageFilter.GSP_SITEMESH_PAGE, gspSiteMeshPage)
+		        <span class="java&#45;keyword">if</span>(attrs.view || attrs.template) &#123;
+		            content = render(attrs)
+		        &#125;
+		        <span class="java&#45;keyword">else</span> &#123;
+		        	def bodyClosure = GroovyPage.createOutputCapturingClosure(<span class="java&#45;keyword">this</span>, body, webRequest, <span class="java&#45;keyword">true</span>)
+		            content = bodyClosure()
+		        &#125;
+        		<span class="java&#45;keyword">if</span>(content <span class="java&#45;keyword">instanceof</span> StreamCharBuffer) &#123;
+        			gspSiteMeshPage.setPageBuffer(content)
+        		&#125; <span class="java&#45;keyword">else</span> <span class="java&#45;keyword">if</span> (content != <span class="java&#45;keyword">null</span>) &#123;
+        			def buf=<span class="java&#45;keyword">new</span> StreamCharBuffer()
+        			buf.writer.write(content)
+        			gspSiteMeshPage.setPageBuffer(buf)
+        		&#125;
+        	&#125; <span class="java&#45;keyword">finally</span> &#123;
+       			 request.setAttribute(GrailsPageFilter.GSP_SITEMESH_PAGE, oldGspSiteMeshPage)
+        	&#125;
+        &#125;<p class="paragraph"/>        def page = <span class="java&#45;keyword">null</span>
+        <span class="java&#45;keyword">if</span>(gspSiteMeshPage != <span class="java&#45;keyword">null</span> &#38;&#38; gspSiteMeshPage.isUsed()) &#123;
+        	page = gspSiteMeshPage
+        &#125; <span class="java&#45;keyword">else</span> &#123;
+            def parser = getFactory().getPageParser(contentType)
+        	page = parser.parse(content.toCharArray())
+        &#125;<p class="paragraph"/>        attrs.params?.each &#123; k,v&#45;&#62;
+            page.addProperty(k,v?.toString())
+        &#125;
+        def decoratorMapper = getFactory().getDecoratorMapper()<p class="paragraph"/>        <span class="java&#45;keyword">if</span>(decoratorMapper) &#123;
+            def d = decoratorMapper.getNamedDecorator(request, attrs.name)
+            <span class="java&#45;keyword">if</span>(d &#38;&#38; d.page) &#123;
+                <span class="java&#45;keyword">try</span> &#123;
+                    request&#91;PAGE&#93; = page
+                  	def t = groovyPagesTemplateEngine.createTemplate(d.getPage())
+                    def w = t.make()
+                    w.writeTo(out)<p class="paragraph"/>                &#125; <span class="java&#45;keyword">finally</span> &#123;
+                    request&#91;PAGE&#93; = oldPage
+                &#125;
+            &#125;
+        &#125;
+    &#125;<p class="paragraph"/>    <span class="java&#45;keyword">private</span> Factory getFactory() &#123;
+        <span class="java&#45;keyword">return</span> FactoryHolder.getFactory()
+    &#125;</pre></div></div><p class="paragraph"/><p class="paragraph"/><p class="paragraph"/>
+    </body>
+</html>
