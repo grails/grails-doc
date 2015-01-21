@@ -22,7 +22,7 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.grails:grails-docs:2.4.4.BUILD-SNAPSHOT"
+        classpath "org.grails:grails-docs:2.4.4"
         classpath 'org.codehaus.groovy:groovy-all:2.3.0'
     }
 }
@@ -47,15 +47,17 @@ task fetchGrailsSource << {
         mapper type: "regexp", from: "(grails-grails-core-\\S*?/)(.*)", to: "grails-src/\\2"
     }
 
+    ant.chmod(file:"${checkOutDir}/grails-src/gradlew", perm:700)
+
     println "Grails source code has been downloaded to ${relativePath(grailsHome)}"
 }
 
 fetchGrailsSource.onlyIf { !explicitGrailsHome }
 
-task apiDocs(type: GradleBuild, dependsOn: 'fetchGrailsSource') {
-    tasks = ["groovydoc"]
-    buildFile = "${project.grailsHome}/build.gradle"
-    startParameter.excludedTaskNames = ['compileGroovy', 'compileUaaGroovy', 'compileJsp21Groovy', 'compileAstGroovy', 'jar']
+task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
+    commandLine = ["./gradlew", "groovydoc"]
+    workingDir = "${checkOutDir}/grails-src"
+    
 }
 
 apiDocs.onlyIf { !System.getProperty("disable.groovydocs") }
