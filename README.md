@@ -12,6 +12,10 @@ Building the Guide
 To build the documentation, simply type:
 
     ./gradlew docs
+    
+This will take some time as it generates groovydoc for the Grails sources. If you want to just generate the user guide to preview your change you can do:
+
+    ./gradlew -Ddisable.groovydocs=true docs 
 
 Be warned: this command can take a while to complete and you should probably increase your Gradle memory settings by giving the `GRADLE_OPTS` environment variable a value like
 
