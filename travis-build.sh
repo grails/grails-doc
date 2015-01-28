@@ -12,7 +12,7 @@ export GRADLE_OPTS="-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadi
 
 if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then
 
-	git clone https://${GH_TOKEN}@github.com/grails/grails-doc.git -b gh-pages gh-pages --single-branch > /dev/null
+	git clone https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git -b gh-pages gh-pages --single-branch > /dev/null
 	cd gh-pages
 
 	# If this is the master branch then update the snapshot
@@ -21,33 +21,45 @@ if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then
 		cp -r ../build/docs/. ./snapshot/
 
 		git add snapshot/*
+	fi
+	# If there is a tag present then this becomes the latest
+	if [[ -n $TRAVIS_TAG ]]; then
+		version="$TRAVIS_TAG"
+		version=${version:1}
+        zipName="grails-docs-$version"
+        export RELEASE_FILE="${zipName}.zip"			
 
-		# If there is a tag present then this becomes the latest
-		if [[ -n $TRAVIS_TAG ]]; then
+		github-release upload \
+		    --user grails \
+		    --repo grails-core \
+		    --tag $TRAVIS_TAG \
+		    --name "grails-docs-${version}.zip" \
+		    --file "build/distributions/$RELEASE_FILE"
+
+
+		milestone=${version:5}		
+		if [[ -n $milestone ]]; then
 			git rm -rf latest/
 			mkdir -p latest
 			cp -r ../build/docs/. ./latest/
 			git add latest/*
+		fi
 
-			version="$TRAVIS_TAG"
-			version=${version:1}
-			majorVersion=${version:0:4}
-			majorVersion="${majorVersion}x"
+		majorVersion=${version:0:4}
+		majorVersion="${majorVersion}x"
 
-			mkdir -p "$version"
-			cp -r ../build/docs/. "./$version/"
-			git add "$version/*"			
+		mkdir -p "$version"
+		cp -r ../build/docs/. "./$version/"
+		git add "$version/*"			
 
-			mkdir -p "$majorVersion"
-			cp -r ../build/docs/. "./$majorVersion/"
-			git add "$majorVersion/*"						
+		mkdir -p "$majorVersion"
+		cp -r ../build/docs/. "./$majorVersion/"
+		git add "$majorVersion/*"						
 
-		fi		
+	fi		
 
-		git commit -a -m "Updating docs for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
-		git push origin HEAD
-		cd ..
-		rm -rf gh-pages
-
-	fi
+	git commit -a -m "Updating docs for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
+	git push origin HEAD
+	cd ..
+	rm -rf gh-pages	
 fi
