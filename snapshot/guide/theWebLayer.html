@@ -151,7 +151,7 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:10px"><a href="#redirectsAndChaining"><strong>7.1.4</strong><span>Redirects and Chaining</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#interceptors"><strong>7.1.5</strong><span>Controller Interceptors</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#controllerInterceptors"><strong>7.1.5</strong><span>Controller Interceptors</span></a>
                     </div>
                     
                     <div class="toc-item" style="margin-left:10px"><a href="#dataBinding"><strong>7.1.6</strong><span>Data Binding</span></a>
@@ -325,19 +325,16 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:10px"><a href="#namespacedControllers"><strong>7.4.13</strong><span>Namespaced Controllers</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#filters"><strong>7.5</strong><span>Filters</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#interceptors"><strong>7.5</strong><span>Interceptors</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#applyingFilters"><strong>7.5.1</strong><span>Applying Filters</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#definingInterceptors"><strong>7.5.1</strong><span>Defining Interceptors</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#filterTypes"><strong>7.5.2</strong><span>Filter Types</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#interceptorMatching"><strong>7.5.2</strong><span>Matching Requests with Inteceptors</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#filterVariablesAndScopes"><strong>7.5.3</strong><span>Variables and Scopes</span></a>
-                    </div>
-                    
-                    <div class="toc-item" style="margin-left:10px"><a href="#filterDependencies"><strong>7.5.4</strong><span>Filter Dependencies</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#interceptorOrdering"><strong>7.5.3</strong><span>Ordering Interceptor Execution</span></a>
                     </div>
                     
                     <div class="toc-item" style="margin-left:0px"><a href="#ajax"><strong>7.6</strong><span>Ajax</span></a>
@@ -560,10 +557,10 @@ redirect(url: <span class="java&#45;quote">"http://grails.org"</span>)</pre></di
 &#125;</pre></div><p class="paragraph"/>Like the <code>redirect</code> method you can also pass parameters to the <code>chain</code> method:<p class="paragraph"/><div class="code"><pre>chain(action: <span class="java&#45;quote">"action1"</span>, model: &#91;one: 1&#93;, params: &#91;myparam: <span class="java&#45;quote">"param1"</span>&#93;)</pre></div>
 
 
-<a name="7.1.5 Controller Interceptors"><!-- Legacy link --></a>
-<h2 id="interceptors">7.1.5 Controller Interceptors</h2>
+
+<h2 id="controllerInterceptors">7.1.5 Controller Interceptors</h2>
 Often it is useful to intercept processing based on either request, session or application state. This can be achieved with action interceptors. There are currently two types of interceptors: before and after.<p class="paragraph"/><blockquote class="note">
-If your interceptor is likely to apply to more than one controller, you are almost certainly better off writing a <a href="../guide/single.html#filters" class="guide">Filter</a>. Filters can be applied to multiple controllers or URIs without the need to change the logic of each controller
+If your interceptor is likely to apply to more than one controller, you are almost certainly better off writing a guide:filters. Filters can be applied to multiple controllers or URIs without the need to change the logic of each controller
 </blockquote><p class="paragraph"/><h4>Before Interception</h4><p class="paragraph"/>The <code>beforeInterceptor</code> intercepts processing before the action is executed. If it returns <code>false</code> then the intercepted action will not be executed. The interceptor can be defined for all actions in a controller as follows:<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#123;
     println <span class="java&#45;quote">"Tracing action $&#123;actionUri&#125;"</span>
 &#125;</pre></div><p class="paragraph"/>The above is declared inside the body of the controller definition.  It will be executed before all actions and does not interfere with processing. A common use case is very simplistic authentication:<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#91;action: <span class="java&#45;keyword">this</span>.&#38;auth, except: 'login'&#93;<p class="paragraph"/>// defined with <span class="java&#45;keyword">private</span> scope, so it's not considered an action
@@ -1988,168 +1985,71 @@ following mapping would work.<p class="paragraph"/><div class="code"><pre><span 
 is being provided by a plugin.<p class="paragraph"/>
 
 
-<a name="7.6 Filters"><!-- Legacy link --></a>
-<h2 id="filters">7.5 Filters</h2>
-Although Grails <a href="../guide/single.html#controllers" class="guide">controllers</a> support fine grained interceptors, these are only really useful when applied to a few controllers and become difficult to manage with larger applications. Filters on the other hand can be applied across a whole group of controllers, a URI space or to a specific action. Filters are far easier to plugin and maintain completely separately to your main controller logic and are useful for all sorts of cross cutting concerns such as security, logging, and so on.
-
-
-<a name="6.6.1 Applying Filters"><!-- Legacy link --></a>
-<h2 id="applyingFilters">7.5.1 Applying Filters</h2>
-To create a filter create a class that ends with the convention <code>Filters</code> in the <code>grails-app/conf</code> directory. Within this class define a code block called <code>filters</code> that contains the filter definitions:<p class="paragraph"/><div class="code"><pre>class ExampleFilters &#123;
-   def filters = &#123;
-        // your filters here
-   &#125;
-&#125;</pre></div><p class="paragraph"/>Each filter you define within the <code>filters</code> block has a name and a scope. The name is the method name and the scope is defined using named arguments. For example to define a filter that applies to all controllers and all actions you can use wildcards:<p class="paragraph"/><div class="code"><pre>sampleFilter(controller:'&#42;', action:'&#42;') &#123;
-  // interceptor definitions
-&#125;</pre></div><p class="paragraph"/>The scope of the filter can be one of the following things:
-<ul class="star">
-<li>A controller and/or action name pairing with optional wildcards</li>
-<li>A URI, with Ant path matching syntax</li>
-</ul><p class="paragraph"/>Filter rule attributes:
-<ul class="star">
-<li><code>controller</code> - controller matching pattern, by default &#42; is replaced with .&#42; and a regex is compiled</li>
-<li><code>controllerExclude</code> - controller exclusion pattern, by default &#42; is replaced with .&#42; and a regex is compiled</li>
-<li><code>action</code> - action matching pattern, by default &#42; is replaced with .&#42; and a regex is compiled</li>
-<li><code>actionExclude</code> - action exclusion pattern, by default &#42; is replaced with .&#42; and a regex is compiled</li>
-<li><code>regex</code> (<code>true</code>/<code>false</code>) - use regex syntax (don't replace '&#42;' with '.&#42;')</li>
-<li><code>uri</code> - a uri to match, expressed with as Ant style path (e.g. /book/&#42;&#42;)</li>
-<li><code>uriExclude</code> - a uri pattern to exclude, expressed with as Ant style path (e.g. /book/&#42;&#42;)</li>
-<li><code>find</code> (<code>true</code>/<code>false</code>) - rule matches with partial match (see <code>java.util.regex.Matcher.find()</code>)</li>
-<li><code>invert</code> (<code>true</code>/<code>false</code>) - invert the rule (NOT rule)</li>
-</ul><p class="paragraph"/>Some examples of filters include:
-<ul class="star">
-<li>All controllers and actions</li>
-</ul><p class="paragraph"/><div class="code"><pre>all(controller: '&#42;', action: '&#42;') &#123;<p class="paragraph"/>&#125;</pre></div>
-<ul class="star">
-<li>Only for the <code>BookController</code></li>
-</ul><p class="paragraph"/><div class="code"><pre>justBook(controller: 'book', action: '&#42;') &#123;<p class="paragraph"/>&#125;</pre></div>
-<ul class="star">
-<li>All controllers except the <code>BookController</code></li>
-</ul><p class="paragraph"/><div class="code"><pre>notBook(controller: 'book', invert: <span class="java&#45;keyword">true</span>) &#123;<p class="paragraph"/>&#125;</pre></div>
-<ul class="star">
-<li>All actions containing 'save' in the action name</li>
-</ul><p class="paragraph"/><div class="code"><pre>saveInActionName(action: '&#42;save&#42;', find: <span class="java&#45;keyword">true</span>) &#123;<p class="paragraph"/>&#125;</pre></div>
-<ul class="star">
-<li>All actions starting with the letter 'b' except for actions beginning with the phrase 'bad*'</li>
-</ul><p class="paragraph"/><div class="code"><pre>actionBeginningWithBButNotBad(action: 'b&#42;', actionExclude: 'bad&#42;', find: <span class="java&#45;keyword">true</span>) &#123;<p class="paragraph"/>&#125;</pre></div>
-<ul class="star">
-<li>Applied to a URI space</li>
-</ul><p class="paragraph"/><div class="code"><pre>someURIs(uri: '/book/&#42;&#42;') &#123;<p class="paragraph"/>&#125;</pre></div>
-<ul class="star">
-<li>Applied to all URIs</li>
-</ul><p class="paragraph"/><div class="code"><pre>allURIs(uri: '/&#42;&#42;') &#123;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/>In addition, the order in which you define the filters within the <code>filters</code> code block dictates the order in which they are executed.  To control the order of execution between <code>Filters</code> classes, you can use the <code>dependsOn</code> property discussed in <a href="../guide/single.html#filterDependencies" class="guide">filter dependencies</a> section.<p class="paragraph"/><blockquote class="note">
-Note: When exclude patterns are used they take precedence over the matching patterns.  For example, if action is 'b&#42;' and actionExclude is 'bad&#42;' then actions like 'best' and 'bien' will have that filter applied but actions like 'bad' and 'badlands' will not.
-</blockquote>
-
-
-<a name="6.6.2 Filter Types"><!-- Legacy link --></a>
-<h2 id="filterTypes">7.5.2 Filter Types</h2>
-Within the body of the filter you can then define one or several of the following interceptor types for the filter:
-<ul class="star">
-<li><code>before</code> - Executed before the action. Return <code>false</code> to indicate that the response has been handled that that all future filters and the action should not execute</li>
-<li><code>after</code> - Executed after an action. Takes a first argument as the view model to allow modification of the model before rendering the view</li>
-<li><code>afterView</code> - Executed after view rendering.  Takes an Exception as an argument which will be non-<code>null</code> if an exception occurs during processing. Note: this Closure is called before the layout is applied.</li>
-</ul><p class="paragraph"/>For example to fulfill the common simplistic authentication use case you could define a filter as follows:<p class="paragraph"/><div class="code"><pre>class SecurityFilters &#123;
-   def filters = &#123;
-       loginCheck(controller: '&#42;', action: '&#42;') &#123;
-           before = &#123;
-              <span class="java&#45;keyword">if</span> (!session.user &#38;&#38; !actionName.equals('login')) &#123;
-                  redirect(action: 'login')
-                  <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">false</span>
-               &#125;
-           &#125;
-       &#125;
-   &#125;
-&#125;</pre></div><p class="paragraph"/>Here the <code>loginCheck</code> filter uses a <code>before</code> interceptor to execute a block of code that checks if a user is in the session and if not redirects to the login action. Note how returning false ensure that the action itself is not executed.<p class="paragraph"/>Here's a more involved example that demonstrates all three filter types:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> java.util.concurrent.atomic.AtomicLong<p class="paragraph"/>class LoggingFilters &#123;<p class="paragraph"/>   <span class="java&#45;keyword">private</span> <span class="java&#45;keyword">static</span> <span class="java&#45;keyword">final</span> AtomicLong REQUEST_NUMBER_COUNTER = <span class="java&#45;keyword">new</span> AtomicLong()
-   <span class="java&#45;keyword">private</span> <span class="java&#45;keyword">static</span> <span class="java&#45;keyword">final</span> <span class="java&#45;object">String</span> START_TIME_ATTRIBUTE = 'Controller__START_TIME__'
-   <span class="java&#45;keyword">private</span> <span class="java&#45;keyword">static</span> <span class="java&#45;keyword">final</span> <span class="java&#45;object">String</span> REQUEST_NUMBER_ATTRIBUTE = 'Controller__REQUEST_NUMBER__'<p class="paragraph"/>   def filters = &#123;<p class="paragraph"/>      logFilter(controller: '&#42;', action: '&#42;') &#123;<p class="paragraph"/>         before = &#123;
-            <span class="java&#45;keyword">if</span> (!log.debugEnabled) <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">true</span><p class="paragraph"/>            <span class="java&#45;object">long</span> start = <span class="java&#45;object">System</span>.currentTimeMillis()
-            <span class="java&#45;object">long</span> currentRequestNumber = REQUEST_NUMBER_COUNTER.incrementAndGet()<p class="paragraph"/>            request&#91;START_TIME_ATTRIBUTE&#93; = start
-            request&#91;REQUEST_NUMBER_ATTRIBUTE&#93; = currentRequestNumber<p class="paragraph"/>            log.debug <span class="java&#45;quote">"preHandle request &#35;&#36;currentRequestNumber : "</span> +
-               <span class="java&#45;quote">"'&#36;request.servletPath'/'&#36;request.forwardURI', "</span> +
-               <span class="java&#45;quote">"from &#36;request.remoteHost (&#36;request.remoteAddr) "</span> +
-               <span class="java&#45;quote">" at &#36;&#123;<span class="java&#45;keyword">new</span> Date()&#125;, Ajax: &#36;request.xhr, controller: &#36;controllerName, "</span> +
-               <span class="java&#45;quote">"action: &#36;actionName, params: &#36;&#123;<span class="java&#45;keyword">new</span> TreeMap(params)&#125;"</span><p class="paragraph"/>            <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">true</span>
-         &#125;<p class="paragraph"/>         after = &#123; Map model &#45;&#62;<p class="paragraph"/>            <span class="java&#45;keyword">if</span> (!log.debugEnabled) <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">true</span><p class="paragraph"/>            <span class="java&#45;object">long</span> start = request&#91;START_TIME_ATTRIBUTE&#93;
-            <span class="java&#45;object">long</span> end = <span class="java&#45;object">System</span>.currentTimeMillis()
-            <span class="java&#45;object">long</span> requestNumber = request&#91;REQUEST_NUMBER_ATTRIBUTE&#93;<p class="paragraph"/>            def msg = <span class="java&#45;quote">"postHandle request &#35;&#36;requestNumber: end &#36;&#123;<span class="java&#45;keyword">new</span> Date()&#125;, "</span> +
-                      <span class="java&#45;quote">"controller total time &#36;&#123;end &#45; start&#125;ms"</span>
-            <span class="java&#45;keyword">if</span> (log.traceEnabled) &#123;
-            	log.trace msg + <span class="java&#45;quote">"; model: &#36;model"</span>
-            &#125;
-            <span class="java&#45;keyword">else</span> &#123;
-            	log.debug msg
-            &#125;
-         &#125;<p class="paragraph"/>         afterView = &#123; Exception e &#45;&#62;<p class="paragraph"/>            <span class="java&#45;keyword">if</span> (!log.debugEnabled) <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">true</span><p class="paragraph"/>            <span class="java&#45;object">long</span> start = request&#91;START_TIME_ATTRIBUTE&#93;
-            <span class="java&#45;object">long</span> end = <span class="java&#45;object">System</span>.currentTimeMillis()
-            <span class="java&#45;object">long</span> requestNumber = request&#91;REQUEST_NUMBER_ATTRIBUTE&#93;<p class="paragraph"/>            def msg = <span class="java&#45;quote">"afterCompletion request &#35;&#36;requestNumber: "</span> +
-                      <span class="java&#45;quote">"end &#36;&#123;<span class="java&#45;keyword">new</span> Date()&#125;, total time &#36;&#123;end &#45; start&#125;ms"</span>
-            <span class="java&#45;keyword">if</span> (e) &#123;
-               log.debug <span class="java&#45;quote">"&#36;msg &#92;n&#92;texception: &#36;e.message"</span>, e
-            &#125;
-            <span class="java&#45;keyword">else</span> &#123;
-               log.debug msg
-            &#125;
-         &#125;
-      &#125;
-   &#125;
-&#125;</pre></div><p class="paragraph"/>In this logging example we just log various request information, but note that the <code>model</code> map in the <code>after</code> filter is mutable. If you need to add or remove items from the model map you can do that in the <code>after</code> filter.
+<a name="7.1.5 Controller Interceptors"><!-- Legacy link --></a>
+<h2 id="interceptors">7.5 Interceptors</h2>
+Although Grails <a href="../guide/single.html#controllers" class="guide">controllers</a> support fine grained interceptors, these are only really useful when applied to a few controllers and become difficult to manage with larger applications.<p class="paragraph"/>To solve this you can create standalone Interceptors using the create-interceptors command:<p class="paragraph"/> <div class="code"><pre>$ grails create&#45;interceptor MyInterceptor</pre></div><p class="paragraph"/>The above command will create an Interceptor in the <code>grails-app/controllers</code> directory with the following default contents:<p class="paragraph"/><div class="code"><pre>class MyInterceptor &#123;<p class="paragraph"/>  <span class="java&#45;object">boolean</span> before() &#123; <span class="java&#45;keyword">true</span> &#125;<p class="paragraph"/>  <span class="java&#45;object">boolean</span> after() &#123; <span class="java&#45;keyword">true</span> &#125;<p class="paragraph"/>  void afterView() &#123;
+    // no&#45;op
+  &#125;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/><h4>Interceptors vs Filters</h4><p class="paragraph"/>In versions of Grails prior to Grails 3.0, Grails supported the notion of filters. These are still supported for backwards compatibility but are considered deprecated.<p class="paragraph"/>The new interceptors concept in Grails 3.0 is superior in a number of ways, most significantly interceptors can using Groovy's <code>CompileStatic</code> annotation to optimize performance (something which is often critical as interceptors can be executed for every request.)
 
 
 
-<h2 id="filterVariablesAndScopes">7.5.3 Variables and Scopes</h2>
-Filters support all the common properties available to <a href="../guide/single.html#controllers" class="guide">controllers</a> and <a href="../guide/single.html#taglibs" class="guide">tag libraries</a>, plus the application context:
+<h2 id="definingInterceptors">7.5.1 Defining Interceptors</h2>
+By default interceptors will match the controller name they apply to be convention. For example if you have an interceptor called <code>BookInterceptor</code> then all requests the actions of the <code>BookController</code> will trigger the interceptor.<p class="paragraph"/>An <code>Interceptor</code> implements the <a href="http://grails.org/doc/2.4.x/api/grails/artefact/Interceptor.html" class="api">Interceptor</a> trait and provides 3 methods that can be used to intercept requests:<p class="paragraph"/><div class="code"><pre>/&#42;&#42;
+     &#42; Executed before a matched action
+     &#42;
+     &#42; @<span class="java&#45;keyword">return</span> Whether the action should <span class="java&#45;keyword">continue</span> and execute
+     &#42;/
+    <span class="java&#45;object">boolean</span> before() &#123; <span class="java&#45;keyword">true</span> &#125;<p class="paragraph"/>    /&#42;&#42;
+     &#42; Executed after the action executes but prior to view rendering
+     &#42;
+     &#42; @<span class="java&#45;keyword">return</span> True <span class="java&#45;keyword">if</span> view rendering should <span class="java&#45;keyword">continue</span>, <span class="java&#45;keyword">false</span> otherwise
+     &#42;/
+    <span class="java&#45;object">boolean</span> after() &#123; <span class="java&#45;keyword">true</span> &#125;<p class="paragraph"/>    /&#42;&#42;
+     &#42; Executed after view rendering completes
+     &#42;/
+    void afterView() &#123;&#125;</pre></div><p class="paragraph"/>As described above the <code>before</code> method is executed prior to an action and can cancel the execution of the action by returning <code>false.<p class="paragraph"/>The </code>after<code> method is executed after an action executes and can halt view rendering if it returns false. The </code>after<code> method can also modify the view or model using the </code>view<code> and </code>model@ properties:<p class="paragraph"/><div class="code"><pre><span class="java&#45;object">boolean</span> after() &#123;
+  model.foo = <span class="java&#45;quote">"bar"</span> // add a <span class="java&#45;keyword">new</span> model attribute called 'foo'
+  view = 'alternate' // render a different view called 'alternate'
+  <span class="java&#45;keyword">true</span>
+&#125;</pre></div><p class="paragraph"/>The <code>afterView</code> method is executed after view rendering completes and if an exception occurs, the exception is available using the <code>throwable</code> property of the <a href="http://grails.org/doc/2.4.x/api/grails/artefact/Interceptor.html" class="api">Interceptor</a> trait. 
+
+
+
+<h2 id="interceptorMatching">7.5.2 Matching Requests with Inteceptors</h2>
+As mention in the previous section, by default an interceptor will match only requests to the associated controller by convention. However you can configure the interceptor to match any request using the <code>match</code> or <code>matchAll</code> methods defined in the <a href="http://grails.org/doc/2.4.x/api/grails/artefact/Interceptor.html" class="api">Interceptor API</a>.<p class="paragraph"/>The matching methods return a <a href="http://grails.org/doc/2.4.x/api/grails/artefact/Interceptor.html" class="api">Matcher</a> instance which can be used to configure how the interceptor matches the request.<p class="paragraph"/>For example the following interceptor will match all requests except those to the <code>login</code> controller:<p class="paragraph"/><div class="code"><pre>class AuthInterceptor &#123;
+  AuthInterceptor() &#123;
+    matchAll()
+    .excludes(controller:<span class="java&#45;quote">"login"</span>)
+  &#125;<p class="paragraph"/>  <span class="java&#45;object">boolean</span> before() &#123;
+    // perform authentication
+  &#125;
+&#125;</pre></div><p class="paragraph"/>You can also perform matching using named argument:<p class="paragraph"/>
+<div class="code"><pre>class LoggingInterceptor &#123;
+  LoggingInterceptor() &#123;
+    match(controller:<span class="java&#45;quote">"book"</span>, action:<span class="java&#45;quote">"show"</span>) // using strings
+    match(controller: ~/(author|publisher)/) // using regex
+  &#125;<p class="paragraph"/>  <span class="java&#45;object">boolean</span> before() &#123;
+    &#8230;
+  &#125;
+&#125;</pre></div><p class="paragraph"/>All named arguments accept either a String or a Regex expression. The possible named arguments are:
 <ul class="star">
-<li><a href="../ref/Controllers/request.html" class="controllers">request</a> - The HttpServletRequest object</li>
-<li><a href="../ref/Controllers/response.html" class="controllers">response</a> - The HttpServletResponse object</li>
-<li><a href="../ref/Controllers/session.html" class="controllers">session</a> - The HttpSession object</li>
-<li><a href="../ref/Controllers/servletContext.html" class="controllers">servletContext</a> - The ServletContext object</li>
-<li><a href="../ref/Controllers/flash.html" class="controllers">flash</a> - The flash object</li>
-<li><a href="../ref/Controllers/params.html" class="controllers">params</a> - The request parameters object</li>
-<li><a href="../ref/Controllers/actionName.html" class="controllers">actionName</a> - The action name that is being dispatched to</li>
-<li><a href="../ref/Controllers/controllerName.html" class="controllers">controllerName</a> - The controller name that is being dispatched to</li>
-<li><a href="../ref/Controllers/grailsApplication.html" class="controllers">grailsApplication</a> - The Grails application currently running</li>
-<li><a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/context/ApplicationContext.html" class="api">applicationContext</a> - The ApplicationContext object</li>
-</ul><p class="paragraph"/>However, filters only support a subset of the methods available to controllers and tag libraries. These include:
-<ul class="star">
-<li><a href="../ref/Controllers/redirect.html" class="controllers">redirect</a> - For redirects to other controllers and actions</li>
-<li><a href="../ref/Controllers/render.html" class="controllers">render</a> - For rendering custom responses</li>
+<li><code>namespace</code> - The namespace of the controller</li>
+<li><code>controller</code> - The name of the controller</li>
+<li><code>action</code> - The name of the action</li>
+<li><code>method</code> - The HTTP method</li>
+<li><code>uri</code> - The URI of the request (cannot be used in combination with other arguments)</li>
 </ul><p class="paragraph"/>
 
-<a name="6.6.4 Filter Dependencies"><!-- Legacy link --></a>
-<h2 id="filterDependencies">7.5.4 Filter Dependencies</h2>
-In a <code>Filters</code> class, you can specify any other <code>Filters</code> classes that should first be executed using the <code>dependsOn</code> property. This is used when a <code>Filters</code> class depends on the behavior of another <code>Filters</code> class (e.g. setting up the environment, modifying the request/session, etc.) and is defined as an array of <code>Filters</code> classes.<p class="paragraph"/>Take the following example <code>Filters</code> classes:<p class="paragraph"/><div class="code"><pre>class MyFilters &#123;
-    def dependsOn = &#91;MyOtherFilters&#93;<p class="paragraph"/>    def filters = &#123;
-        checkAwesome(uri: <span class="java&#45;quote">"/&#42;"</span>) &#123;
-            before = &#123;
-                <span class="java&#45;keyword">if</span> (request.isAwesome) &#123; // <span class="java&#45;keyword">do</span> something awesome &#125;
-            &#125;
-        &#125;<p class="paragraph"/>        checkAwesome2(uri: <span class="java&#45;quote">"/&#42;"</span>) &#123;
-            before = &#123;
-                <span class="java&#45;keyword">if</span> (request.isAwesome) &#123; // <span class="java&#45;keyword">do</span> something <span class="java&#45;keyword">else</span> awesome &#125;
-            &#125;
-        &#125;
-    &#125;
-&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class MyOtherFilters &#123;
-    def filters = &#123;
-        makeAwesome(uri: <span class="java&#45;quote">"/&#42;"</span>) &#123;
-            before = &#123;
-                request.isAwesome = <span class="java&#45;keyword">true</span>
-            &#125;
-        &#125;
-        doNothing(uri: <span class="java&#45;quote">"/&#42;"</span>) &#123;
-            before = &#123;
-                // <span class="java&#45;keyword">do</span> nothing
-            &#125;
-        &#125;
-    &#125;
-&#125;</pre></div><p class="paragraph"/>MyFilters specifically <code>dependsOn</code> MyOtherFilters.  This will cause all the filters in MyOtherFilters whose scope matches the current request to be executed before those in MyFilters. For a request of "/test", which will match the scope of every filter in the example, the execution order would be as follows:
-<ul class="star">
-<li>MyOtherFilters - makeAwesome</li>
-<li>MyOtherFilters - doNothing</li>
-<li>MyFilters - checkAwesome</li>
-<li>MyFilters - checkAwesome2</li>
-</ul><p class="paragraph"/>The filters within the MyOtherFilters class are processed in order first, followed by the filters in the MyFilters class.  Execution order between <code>Filters</code> classes are enabled and the execution order of filters within each <code>Filters</code> class are preserved.<p class="paragraph"/>If any cyclical dependencies are detected, the filters with cyclical dependencies will be added to the end of the filter chain and processing will continue.  Information about any cyclical dependencies that are detected will be written to the logs.  Ensure that your root logging level is set to at least WARN or configure an appender for the Grails Filters Plugin (<code>org.codehaus.groovy.grails.plugins.web.filters.FiltersGrailsPlugin</code>) when debugging filter dependency issues.
+
+<h2 id="interceptorOrdering">7.5.3 Ordering Interceptor Execution</h2>
+Interceptors can be ordered by defining an <code>order</code> property that defines a priority.<p class="paragraph"/>For example:<p class="paragraph"/><div class="code"><pre>class AuthInterceptor &#123;<p class="paragraph"/>  <span class="java&#45;object">int</span> order = HIGHEST_PRECEDENCE<p class="paragraph"/>  &#8230;
+&#125;</pre></div><p class="paragraph"/>The default value of the <code>order</code> property is 0.<p class="paragraph"/>The values <code>HIGHEST_PRECEDENCE</code> and <code>LOWEST_PRECEDENCE</code> can be used to define filters that should should run first or last respectively.<p class="paragraph"/>Note that if you write an interceptor that is to be used by others it is better increment or decrement the <code>HIGHEST_PRECEDENCE</code> and <code>LOWEST_PRECEDENCE</code> to allow other interceptors to be inserted before or after the interceptor you are authoring:<p class="paragraph"/><div class="code"><pre><span class="java&#45;object">int</span> order = HIGHEST_PRECEDENCE + 50<p class="paragraph"/>// or<p class="paragraph"/><span class="java&#45;object">int</span> order = LOWEST_PRECEDENCE &#45; 50</pre></div><p class="paragraph"/>To find out the computed order of interceptors you can add a debug logger to <code>logback.groovy</code> as follows:<p class="paragraph"/><div class="code"><pre>logger 'grails.artefact.Interceptor', DEBUG, &#91;'STDOUT'&#93;, <span class="java&#45;keyword">false</span></pre></div><p class="paragraph"/>You can override any interceptors default order by using bean override configuration in <code>grails-app/conf/application.yml</code>:<p class="paragraph"/><div class="code"><pre>beans:
+  authInterceptor:
+    order: 50</pre></div><p class="paragraph"/>Or in <code>grails-app/conf/application.groovy</code>:<p class="paragraph"/><div class="code"><pre>beans &#123;
+  authInterceptor &#123;
+    order = 50
+  &#125;
+&#125;</pre></div><p class="paragraph"/>Thus giving you complete control over interceptor execution order.
 
 
 <a name="7.7 Ajax"><!-- Legacy link --></a>
@@ -2409,13 +2309,13 @@ If the accept header is used but contains no registered content types, Grails wi
                             <div class="menu-item"><a href="../ref/Command%20Line/create-domain-class.html">create-domain-class</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../ref/Command%20Line/create-filters.html">create-filters</a>
-                            </div>
-                            
                             <div class="menu-item"><a href="../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/create-interceptor.html">create-interceptor</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-plugin.html">create-plugin</a>
@@ -2452,9 +2352,6 @@ If the accept header is used but contains no registered content types, Grails wi
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/init.html">init</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/list-plugin-updates.html">list-plugin-updates</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/list-plugins.html">list-plugins</a>

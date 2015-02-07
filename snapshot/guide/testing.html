@@ -1113,14 +1113,15 @@ With JSON don't forget the <code>class</code> property to specify the name the t
 
 <a name="12.3 Functional Testing"><!-- Legacy link --></a>
 <h2 id="functionalTesting">13.3 Functional Testing</h2>
-Functional tests involve making HTTP requests against the running application and verifying the resultant behaviour. The functional testing phase differs from the integration phase in that the Grails application is now listening and responding to actual HTTP requests. This is useful for end-to-end testing scenarios, such as making REST calls against a JSON API.<p class="paragraph"/>Grails does not ship with any support for writing functional tests directly, but there are several plugins available for this.
-<ul class="star">
-<li><code>Canoo Webtest</code> - <a href="http://grails.org/plugin/webtest" target="blank">http://grails.org/plugin/webtest</a></li>
-<li><code>G-Func</code> - <a href="http://grails.org/plugin/functional-test" target="blank">http://grails.org/plugin/functional-test</a></li>
-<li><code>Geb</code> - <a href="http://grails.org/plugin/geb" target="blank">http://grails.org/plugin/geb</a></li>
-<li><code>Selenium-RC</code> - <a href="http://grails.org/plugin/selenium-rc" target="blank">http://grails.org/plugin/selenium-rc</a></li>
-<li><code>WebDriver</code> - <a href="http://grails.org/plugin/webdriver" target="blank">http://grails.org/plugin/webdriver</a></li>
-</ul><p class="paragraph"/>Consult the documentation for each plugin for its capabilities.<p class="paragraph"/><h4>Common Options</h4><p class="paragraph"/>There are options that are common to all plugins that control how the Grails application is launched, if at all.<p class="paragraph"/><h5>inline</h5><p class="paragraph"/>The <code>-inline</code> option specifies that the grails application should be started inline (i.e. like <code>run-app</code>).<p class="paragraph"/><strong class="bold">This option is implicitly set unless the <code>baseUrl</code> or <code>war</code> options are set</strong><p class="paragraph"/><h5>war</h5><p class="paragraph"/>The <code>-war</code> option specifies that the grails application should be packaged as a war and started. This is useful as it tests your application in a production-like state, but it has a longer startup time than the <code>-inline</code> option. It also runs the war in a forked JVM, meaning that you cannot access any internal application objects.<p class="paragraph"/><div class="code"><pre>grails test&#45;app functional: &#45;war</pre></div><p class="paragraph"/>Note that the same build/config options for the commandLine command apply to functional testing against the WAR.<p class="paragraph"/><h5>https</h5><p class="paragraph"/>The <code>-https</code> option results in the application being able to receive https requests as well as http requests. It is compatible with both the <code>-inline</code> and <code>-war</code> options.<p class="paragraph"/><div class="code"><pre>grails test&#45;app functional: &#45;https</pre></div><p class="paragraph"/>Note that this does not change the test  <em class="italic">base url</em>  to be https, it will still be http unless the <code>-httpsBaseUrl</code> option is also given.<p class="paragraph"/><h5>httpsBaseUrl</h5><p class="paragraph"/>The <code>-httpsBaseUrl</code> causes the implicit base url to be used for tests to be a https url.<p class="paragraph"/><div class="code"><pre>grails test&#45;app functional: &#45;httpsBaseUrl</pre></div><p class="paragraph"/>This option is ignored if the <code>-baseUrl</code> option is specified.<p class="paragraph"/><h5>baseUrl</h5><p class="paragraph"/>The <code>baseUrl</code> option allows the base url for tests to be specified.<p class="paragraph"/><div class="code"><pre>grails test&#45;app functional: &#45;baseUrl=http://mycompany.com/grailsapp</pre></div><p class="paragraph"/>This option will prevent the local grails application being started unless <code>-inline</code> or <code>-war</code> are given as well. To use a custom base url but still test against the local Grails application you <strong class="bold">must</strong> specify one of either the <code>-inline</code> or <code>-war</code> options.
+Functional tests involve making HTTP requests against the running application and verifying the resultant behaviour. The functional testing phase differs from the integration phase in that the Grails application is now listening and responding to actual HTTP requests. This is useful for end-to-end testing scenarios, such as making REST calls against a JSON API.<p class="paragraph"/>Grails by default ships with support for writing functional tests using the <a href="http://www.gebish.org" target="blank">Geb framework</a>. To create a functional test you can use the <code>create-functional-test</code> command which will create a new functional test:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;functional&#45;test MyFunctional</pre></div><p class="paragraph"/>The above command will create a new Spock spec called <code>MyFunctionalSpec.groovy</code> in the <code>src/test/groovy</code> directory. The test is annotated with the <a href="http://grails.org/doc/2.4.x/api/grails/test/mixin/integration/Integration.html" class="api">Integration</a> annotation to indicate it is a integration test and extends the <code>GebSpec</code> super class:<p class="paragraph"/><div class="code"><pre>@Integration
+class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p class="paragraph"/>    def setup() &#123;
+    &#125;<p class="paragraph"/>    def cleanup() &#123;
+    &#125;<p class="paragraph"/>    void <span class="java&#45;quote">"Test the home page renders correctly"</span>() &#123;
+        when:<span class="java&#45;quote">"The home page is visited"</span>
+            go '/'<p class="paragraph"/>        then:<span class="java&#45;quote">"The title is correct"</span>
+          $('title').text() == <span class="java&#45;quote">"Welcome to Grails"</span>
+    &#125;
+&#125;</pre></div><p class="paragraph"/>When the test is run the application container will be loaded up in the background and you can send requests to the running application using the Geb API.<p class="paragraph"/>Note that the application is only loaded once for the entire test run, so functional tests share the state of the application across the whole suite.<p class="paragraph"/>In addition the application is loaded in the JVM as the test, this means that the test has full access to the application state and can interact directly with data services such as GORM to setup and cleanup test data.
 
 
 
@@ -1176,13 +1177,13 @@ Functional tests involve making HTTP requests against the running application an
                             <div class="menu-item"><a href="../ref/Command%20Line/create-domain-class.html">create-domain-class</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../ref/Command%20Line/create-filters.html">create-filters</a>
-                            </div>
-                            
                             <div class="menu-item"><a href="../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/create-interceptor.html">create-interceptor</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-plugin.html">create-plugin</a>
@@ -1219,9 +1220,6 @@ Functional tests involve making HTTP requests against the running application an
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/init.html">init</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/list-plugin-updates.html">list-plugin-updates</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/list-plugins.html">list-plugins</a>

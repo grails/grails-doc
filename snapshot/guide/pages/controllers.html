@@ -148,7 +148,7 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0px"><a href="#redirectsAndChaining"><strong>7.4</strong><span>Redirects and Chaining</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#interceptors"><strong>7.5</strong><span>Controller Interceptors</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#controllerInterceptors"><strong>7.5</strong><span>Controller Interceptors</span></a>
                     </div>
                     
                     <div class="toc-item" style="margin-left:0px"><a href="#dataBinding"><strong>7.6</strong><span>Data Binding</span></a>
@@ -358,10 +358,10 @@ redirect(url: <span class="java&#45;quote">"http://grails.org"</span>)</pre></di
 &#125;</pre></div><p class="paragraph"/>Like the <code>redirect</code> method you can also pass parameters to the <code>chain</code> method:<p class="paragraph"/><div class="code"><pre>chain(action: <span class="java&#45;quote">"action1"</span>, model: &#91;one: 1&#93;, params: &#91;myparam: <span class="java&#45;quote">"param1"</span>&#93;)</pre></div>
 
 
-<a name="7.1.5 Controller Interceptors"><!-- Legacy link --></a>
-<h2 id="interceptors">7.1.5 Controller Interceptors</h2>
+
+<h2 id="controllerInterceptors">7.1.5 Controller Interceptors</h2>
 Often it is useful to intercept processing based on either request, session or application state. This can be achieved with action interceptors. There are currently two types of interceptors: before and after.<p class="paragraph"/><blockquote class="note">
-If your interceptor is likely to apply to more than one controller, you are almost certainly better off writing a <a href="../guide/single.html#filters" class="guide">Filter</a>. Filters can be applied to multiple controllers or URIs without the need to change the logic of each controller
+If your interceptor is likely to apply to more than one controller, you are almost certainly better off writing a guide:filters. Filters can be applied to multiple controllers or URIs without the need to change the logic of each controller
 </blockquote><p class="paragraph"/><h4>Before Interception</h4><p class="paragraph"/>The <code>beforeInterceptor</code> intercepts processing before the action is executed. If it returns <code>false</code> then the intercepted action will not be executed. The interceptor can be defined for all actions in a controller as follows:<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#123;
     println <span class="java&#45;quote">"Tracing action $&#123;actionUri&#125;"</span>
 &#125;</pre></div><p class="paragraph"/>The above is declared inside the body of the controller definition.  It will be executed before all actions and does not interfere with processing. A common use case is very simplistic authentication:<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#91;action: <span class="java&#45;keyword">this</span>.&#38;auth, except: 'login'&#93;<p class="paragraph"/>// defined with <span class="java&#45;keyword">private</span> scope, so it's not considered an action
@@ -973,13 +973,13 @@ That controller will behave as if it were written something like this...<p class
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-domain-class.html">create-domain-class</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/create-filters.html">create-filters</a>
-                            </div>
-                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-interceptor.html">create-interceptor</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-plugin.html">create-plugin</a>
@@ -1016,9 +1016,6 @@ That controller will behave as if it were written something like this...<p class
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/init.html">init</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugin-updates.html">list-plugin-updates</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>

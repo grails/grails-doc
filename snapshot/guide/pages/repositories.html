@@ -138,27 +138,8 @@ function addJsClass() {
 <a name="15.2 Plugin Repositories"><!-- Legacy link --></a>
 <h2 id="repositories">16.2 Plugin Repositories</h2>
 <h4>Distributing Plugins in the Grails Central Plugin Repository</h4><p class="paragraph"/>The preferred way to distribute plugin is to publish to the official Grails Central Plugin Repository. This will make your plugin visible to the <a href="../ref/Command Line/list-plugins.html" class="commandLine">list-plugins</a> command:<p class="paragraph"/><div class="code"><pre>grails list&#45;plugins</pre></div><p class="paragraph"/>which lists all plugins that are in the central repository. Your plugin will also be available to the <a href="../ref/Command Line/plugin-info.html" class="commandLine">plugin-info</a> command:<p class="paragraph"/><div class="code"><pre>grails plugin&#45;info &#91;plugin&#45;name&#93;</pre></div><p class="paragraph"/>which prints extra information about it, such as its description, who wrote, etc.<p class="paragraph"/><blockquote class="note">
-If you have created a Grails plugin and want it to be hosted in the central repository, you'll find instructions for getting an account on <a href="http://grails.org/Creating+Plugins" target="blank">this wiki page</a>.
-</blockquote><p class="paragraph"/>When you have access to the Grails Plugin repository, install the <a href="http://grails-plugins.github.com/grails-release/docs/index.html" target="blank">Release Plugin</a> by declaring it as a 'build' scoped dependency in <code>grails-app/conf/BuildConfig.groovy</code> file:<p class="paragraph"/><div class="code"><pre>grails.project.dependency.resolution = &#123;
-    &#8230;
-    plugins &#123;
-        build ':release:3.0.0'
-    &#125;
-&#125;</pre></div><p class="paragraph"/>And execute the <code>publish-plugin</code> command to release your plugin:<p class="paragraph"/><div class="code"><pre>grails publish&#45;plugin</pre></div><p class="paragraph"/>
-This will automatically publish the plugin to the central repository. If the command is successful, it will immediately be available on the plugin portal at http://grails.org/plugin/&#60;pluginName&#62;. You can find out more about the Release plugin and its other features in <a href="http://grails-plugins.github.com/grails-release/docs/index.html" target="blank">its user guide</a>.<p class="paragraph"/><h4>Configuring Additional Repositories</h4><p class="paragraph"/>The process for configuring repositories in Grails differs between versions. For version of Grails 1.2 and earlier please refer to the <a href="http://grails.org/doc/1.2.x/guide/12.%20Plug-ins.html#12.2%20Plugin%20Repositories" target="blank">Grails 1.2 documentation</a> on the subject. The following sections cover Grails 1.3 and above.<p class="paragraph"/>Grails 1.3 and above use Ivy under the hood to resolve plugin dependencies. The mechanism for defining additional plugin repositories is largely the same as <a href="../guide/single.html#dependencyResolution" class="guide">defining repositories for JAR dependencies</a>. For example you can define a remote Maven repository that contains Grails plugins using the following syntax in <code>grails-app/conf/BuildConfig.groovy</code>:<p class="paragraph"/><div class="code"><pre>repositories &#123;
-    mavenRepo <span class="java&#45;quote">"http://repository.codehaus.org"</span><p class="paragraph"/>    // ...or with a name
-    mavenRepo name: <span class="java&#45;quote">"myRepo"</span>,
-              root: <span class="java&#45;quote">"http://myserver:8081/artifactory/plugins&#45;snapshots&#45;local"</span>
-&#125;</pre></div><p class="paragraph"/>You can also define a SVN-based Grails repository (such as the one hosted at <a href="http://plugins.grails.org/" target="blank">http://plugins.grails.org</a>) using the <code>grailsRepo</code> method:<p class="paragraph"/><div class="code"><pre>repositories &#123;
-    grailsRepo <span class="java&#45;quote">"http://myserver/mygrailsrepo"</span><p class="paragraph"/>    // ...or with a name
-    grailsRepo <span class="java&#45;quote">"http://myserver/svn/grails&#45;plugins"</span>, <span class="java&#45;quote">"mySvnRepo"</span> 
-&#125;</pre></div><p class="paragraph"/>There is a shortcut to setup the Grails central repository:<p class="paragraph"/><div class="code"><pre>repositories &#123;
-    grailsCentral()
-&#125;</pre></div><p class="paragraph"/>The order in which plugins are resolved is based on the ordering of the repositories. So in this case the Grails central repository will be searched last:<p class="paragraph"/><div class="code"><pre>repositories &#123;
-    grailsRepo <span class="java&#45;quote">"http://myserver/mygrailsrepo"</span>
-    grailsCentral()
-&#125;</pre></div><p class="paragraph"/>
-<h4>Publishing to Maven Compatible Repositories</h4><p class="paragraph"/>In general it is recommended for Grails 1.3 and above to use standard Maven-style repositories to self host plugins. The benefits of doing so include the ability for existing tooling and repository managers to interpret the structure of a Maven repository.<p class="paragraph"/>You use the Release plugin to publish a plugin to a Maven repository. Please refer to the section of the guide:mavendeploy user guide on the subject.
+If you have created a Grails plugin and want it to be hosted in the central repository, you'll find instructions for getting an account on the <a href="http://grails.org/plugins" target="blank">plugin portal</a> website.
+</blockquote>
 
 
 
@@ -214,13 +195,13 @@ This will automatically publish the plugin to the central repository. If the com
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-domain-class.html">create-domain-class</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/create-filters.html">create-filters</a>
-                            </div>
-                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-interceptor.html">create-interceptor</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-plugin.html">create-plugin</a>
@@ -257,9 +238,6 @@ This will automatically publish the plugin to the central repository. If the com
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/init.html">init</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/list-plugin-updates.html">list-plugin-updates</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>

@@ -151,31 +151,28 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0px"><a href="#evaluatingConventions"><strong>16.5</strong><span>Evaluating Conventions</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#hookingIntoBuildEvents"><strong>16.6</strong><span>Hooking into Build Events</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#hookingIntoRuntimeConfiguration"><strong>16.6</strong><span>Hooking into Runtime Configuration</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#hookingIntoRuntimeConfiguration"><strong>16.7</strong><span>Hooking into Runtime Configuration</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#addingDynamicMethodsAtRuntime"><strong>16.7</strong><span>Adding Dynamic Methods at Runtime</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#addingDynamicMethodsAtRuntime"><strong>16.8</strong><span>Adding Dynamic Methods at Runtime</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#participatingInAutoReloadEvents"><strong>16.8</strong><span>Participating in Auto Reload Events</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#participatingInAutoReloadEvents"><strong>16.9</strong><span>Participating in Auto Reload Events</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#understandingPluginLoadOrder"><strong>16.9</strong><span>Understanding Plugin Load Order</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#understandingPluginLoadOrder"><strong>16.10</strong><span>Understanding Plugin Load Order</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#artefactApi"><strong>16.10</strong><span>The Artefact API</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#artefactApi"><strong>16.11</strong><span>The Artefact API</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#queryingArtefacts"><strong>16.10.1</strong><span>Asking About Available Artefacts</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#queryingArtefacts"><strong>16.11.1</strong><span>Asking About Available Artefacts</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#customArtefacts"><strong>16.10.2</strong><span>Adding Your Own Artefact Types</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#customArtefacts"><strong>16.11.2</strong><span>Adding Your Own Artefact Types</span></a>
-                    </div>
-                    
-                    <div class="toc-item" style="margin-left:0px"><a href="#binaryPlugins"><strong>16.12</strong><span>Binary Plugins</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#binaryPlugins"><strong>16.11</strong><span>Binary Plugins</span></a>
                     </div>
                     
                 </div>
@@ -249,27 +246,8 @@ The Artifactory repository for Grails now includes all the dependencies for publ
 <a name="15.2 Plugin Repositories"><!-- Legacy link --></a>
 <h2 id="repositories">16.2 Plugin Repositories</h2>
 <h4>Distributing Plugins in the Grails Central Plugin Repository</h4><p class="paragraph"/>The preferred way to distribute plugin is to publish to the official Grails Central Plugin Repository. This will make your plugin visible to the <a href="../ref/Command Line/list-plugins.html" class="commandLine">list-plugins</a> command:<p class="paragraph"/><div class="code"><pre>grails list&#45;plugins</pre></div><p class="paragraph"/>which lists all plugins that are in the central repository. Your plugin will also be available to the <a href="../ref/Command Line/plugin-info.html" class="commandLine">plugin-info</a> command:<p class="paragraph"/><div class="code"><pre>grails plugin&#45;info &#91;plugin&#45;name&#93;</pre></div><p class="paragraph"/>which prints extra information about it, such as its description, who wrote, etc.<p class="paragraph"/><blockquote class="note">
-If you have created a Grails plugin and want it to be hosted in the central repository, you'll find instructions for getting an account on <a href="http://grails.org/Creating+Plugins" target="blank">this wiki page</a>.
-</blockquote><p class="paragraph"/>When you have access to the Grails Plugin repository, install the <a href="http://grails-plugins.github.com/grails-release/docs/index.html" target="blank">Release Plugin</a> by declaring it as a 'build' scoped dependency in <code>grails-app/conf/BuildConfig.groovy</code> file:<p class="paragraph"/><div class="code"><pre>grails.project.dependency.resolution = &#123;
-    &#8230;
-    plugins &#123;
-        build ':release:3.0.0'
-    &#125;
-&#125;</pre></div><p class="paragraph"/>And execute the <code>publish-plugin</code> command to release your plugin:<p class="paragraph"/><div class="code"><pre>grails publish&#45;plugin</pre></div><p class="paragraph"/>
-This will automatically publish the plugin to the central repository. If the command is successful, it will immediately be available on the plugin portal at http://grails.org/plugin/&#60;pluginName&#62;. You can find out more about the Release plugin and its other features in <a href="http://grails-plugins.github.com/grails-release/docs/index.html" target="blank">its user guide</a>.<p class="paragraph"/><h4>Configuring Additional Repositories</h4><p class="paragraph"/>The process for configuring repositories in Grails differs between versions. For version of Grails 1.2 and earlier please refer to the <a href="http://grails.org/doc/1.2.x/guide/12.%20Plug-ins.html#12.2%20Plugin%20Repositories" target="blank">Grails 1.2 documentation</a> on the subject. The following sections cover Grails 1.3 and above.<p class="paragraph"/>Grails 1.3 and above use Ivy under the hood to resolve plugin dependencies. The mechanism for defining additional plugin repositories is largely the same as <a href="../guide/single.html#dependencyResolution" class="guide">defining repositories for JAR dependencies</a>. For example you can define a remote Maven repository that contains Grails plugins using the following syntax in <code>grails-app/conf/BuildConfig.groovy</code>:<p class="paragraph"/><div class="code"><pre>repositories &#123;
-    mavenRepo <span class="java&#45;quote">"http://repository.codehaus.org"</span><p class="paragraph"/>    // ...or with a name
-    mavenRepo name: <span class="java&#45;quote">"myRepo"</span>,
-              root: <span class="java&#45;quote">"http://myserver:8081/artifactory/plugins&#45;snapshots&#45;local"</span>
-&#125;</pre></div><p class="paragraph"/>You can also define a SVN-based Grails repository (such as the one hosted at <a href="http://plugins.grails.org/" target="blank">http://plugins.grails.org</a>) using the <code>grailsRepo</code> method:<p class="paragraph"/><div class="code"><pre>repositories &#123;
-    grailsRepo <span class="java&#45;quote">"http://myserver/mygrailsrepo"</span><p class="paragraph"/>    // ...or with a name
-    grailsRepo <span class="java&#45;quote">"http://myserver/svn/grails&#45;plugins"</span>, <span class="java&#45;quote">"mySvnRepo"</span> 
-&#125;</pre></div><p class="paragraph"/>There is a shortcut to setup the Grails central repository:<p class="paragraph"/><div class="code"><pre>repositories &#123;
-    grailsCentral()
-&#125;</pre></div><p class="paragraph"/>The order in which plugins are resolved is based on the ordering of the repositories. So in this case the Grails central repository will be searched last:<p class="paragraph"/><div class="code"><pre>repositories &#123;
-    grailsRepo <span class="java&#45;quote">"http://myserver/mygrailsrepo"</span>
-    grailsCentral()
-&#125;</pre></div><p class="paragraph"/>
-<h4>Publishing to Maven Compatible Repositories</h4><p class="paragraph"/>In general it is recommended for Grails 1.3 and above to use standard Maven-style repositories to self host plugins. The benefits of doing so include the ability for existing tooling and repository managers to interpret the structure of a Maven repository.<p class="paragraph"/>You use the Release plugin to publish a plugin to a Maven repository. Please refer to the section of the guide:mavendeploy user guide on the subject.
+If you have created a Grails plugin and want it to be hosted in the central repository, you'll find instructions for getting an account on the <a href="http://grails.org/plugins" target="blank">plugin portal</a> website.
+</blockquote>
 
 
 <a name="15.3 Understanding a Plug-ins Structure"><!-- Legacy link --></a>
@@ -346,14 +324,8 @@ Before looking at providing runtime configuration based on conventions you first
 </ul><p class="paragraph"/>For a full reference refer to the <a href="http://grails.org/doc/2.4.x/api/org/codehaus/groovy/grails/commons/GrailsClass.html" class="api">javadoc API</a>.
 
 
-<a name="15.6 Hooking into Build Events"><!-- Legacy link --></a>
-<h2 id="hookingIntoBuildEvents">16.6 Hooking into Build Events</h2>
-<h4>Post-Install Configuration and Participating in Upgrades</h4><p class="paragraph"/>Grails plugins can do post-install configuration. This is achieved using a specially named script under the <code>scripts</code> directory of the plugin - <code>_Install.groovy</code>.<p class="paragraph"/><code>_Install.groovy</code> is executed after the plugin has been installed.<p class="paragraph"/>This scripts is a <a href="../guide/single.html#commandLine" class="guide">Gant</a> script, so you can use the full power of Gant. An addition to the standard Gant variables there is also a <code>pluginBasedir</code> variable which points at the plugin installation basedir.<p class="paragraph"/>As an example this <code>_Install.groovy</code> script will create a new directory type under the <code>grails-app</code> directory and install a configuration template:<p class="paragraph"/><div class="code"><pre>ant.mkdir(dir: <span class="java&#45;quote">"$&#123;basedir&#125;/grails&#45;app/jobs"</span>)<p class="paragraph"/>ant.copy(file: <span class="java&#45;quote">"$&#123;pluginBasedir&#125;/src/samples/SamplePluginConfig.groovy"</span>,
-         todir: <span class="java&#45;quote">"$&#123;basedir&#125;/grails&#45;app/conf"</span>)</pre></div><p class="paragraph"/>The <code>pluginBasedir</code> variable is not available in custom scripts, but you can use <code>fooPluginDir</code>, where <code>foo</code> is the name of your plugin.<p class="paragraph"/><h4>Scripting events</h4><p class="paragraph"/>It is also possible to hook into command line scripting events. These are events triggered during execution of Grails target and plugin scripts.<p class="paragraph"/>For example, you can hook into status update output (i.e. "Tests passed", "Server running") and the creation of files or artefacts.<p class="paragraph"/>A plugin just has to provide an <code>_Events.groovy</code> script to listen to the required events. Refer the documentation on guide:events for further information.
-
-
 <a name="15.7 Hooking into Runtime Configuration"><!-- Legacy link --></a>
-<h2 id="hookingIntoRuntimeConfiguration">16.7 Hooking into Runtime Configuration</h2>
+<h2 id="hookingIntoRuntimeConfiguration">16.6 Hooking into Runtime Configuration</h2>
 Grails provides a number of hooks to leverage the different parts of the system and perform runtime configuration by convention.<p class="paragraph"/><h4>Hooking into the Grails Spring configuration</h4><p class="paragraph"/>First, you can hook in Grails runtime configuration by providing a property called <code>doWithSpring</code> which is assigned a block of code. For example the following snippet is from one of the core Grails plugins that provides <a href="../guide/single.html#i18n" class="guide">i18n</a> support:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.springframework.web.servlet.i18n.CookieLocaleResolver
 <span class="java&#45;keyword">import</span> org.springframework.web.servlet.i18n.LocaleChangeInterceptor
 <span class="java&#45;keyword">import</span> org.springframework.context.support.ReloadableResourceBundleMessageSource<p class="paragraph"/>class I18nGrailsPlugin &#123;<p class="paragraph"/>    def version = <span class="java&#45;quote">"0.1"</span><p class="paragraph"/>    def doWithSpring = &#123;
@@ -404,7 +376,7 @@ Grails provides a number of hooks to leverage the different parts of the system 
 
 
 <a name="15.8 Adding Dynamic Methods at Runtime"><!-- Legacy link --></a>
-<h2 id="addingDynamicMethodsAtRuntime">16.8 Adding Dynamic Methods at Runtime</h2>
+<h2 id="addingDynamicMethodsAtRuntime">16.7 Adding Dynamic Methods at Runtime</h2>
 <h4>The Basics</h4><p class="paragraph"/>Grails plugins let you register dynamic methods with any Grails-managed or other class at runtime. This work is done in a <code>doWithDynamicMethods</code> closure.<p class="paragraph"/>For Grails-managed classes like controllers, tag libraries and so forth you can add methods, constructors etc. using the <a href="http://groovy.codehaus.org/ExpandoMetaClass" target="blank">ExpandoMetaClass</a> mechanism by accessing each controller's <a href="http://docs.groovy-lang.org/docs/latest/html/api/groovy/lang/MetaClass.html" class="api">MetaClass</a>:<p class="paragraph"/><div class="code"><pre>class ExamplePlugin &#123;
     def doWithDynamicMethods = &#123; applicationContext &#45;&#62;
         <span class="java&#45;keyword">for</span> (controllerClass in application.controllerClasses) &#123;
@@ -440,7 +412,7 @@ Grails provides a number of hooks to leverage the different parts of the system 
 
 
 <a name="15.9 Participating in Auto Reload Events"><!-- Legacy link --></a>
-<h2 id="participatingInAutoReloadEvents">16.9 Participating in Auto Reload Events</h2>
+<h2 id="participatingInAutoReloadEvents">16.8 Participating in Auto Reload Events</h2>
 <h4>Monitoring Resources for Changes</h4><p class="paragraph"/>Often it is valuable to monitor resources for changes and perform some action when they occur. This is how Grails implements advanced reloading of application state at runtime. For example, consider this simplified snippet from the Grails <code>ServicesPlugin</code>:<p class="paragraph"/><div class="code"><pre>class ServicesGrailsPlugin &#123;
     &#8230;
     def watchedResources = <span class="java&#45;quote">"file:./grails&#45;app/services/&#42;Service.groovy"</span><p class="paragraph"/>    &#8230;
@@ -471,7 +443,7 @@ Grails provides a number of hooks to leverage the different parts of the system 
 
 
 <a name="15.10 Understanding Plug-in Load Order"><!-- Legacy link --></a>
-<h2 id="understandingPluginLoadOrder">16.10 Understanding Plugin Load Order</h2>
+<h2 id="understandingPluginLoadOrder">16.9 Understanding Plugin Load Order</h2>
 <h4>Controlling Plugin Dependencies</h4><p class="paragraph"/>Plugins often depend on the presence of other plugins and can adapt depending on the presence of others. This is implemented with two properties. The first is called <code>dependsOn</code>. For example, take a look at this snippet from the Hibernate plugin:<p class="paragraph"/><div class="code"><pre>class HibernateGrailsPlugin &#123;<p class="paragraph"/>    def version = <span class="java&#45;quote">"1.0"</span><p class="paragraph"/>    def dependsOn = &#91;dataSource: <span class="java&#45;quote">"1.0"</span>,
                      domainClass: <span class="java&#45;quote">"1.0"</span>,
                      i18n: <span class="java&#45;quote">"1.0"</span>,
@@ -508,12 +480,12 @@ def scopes = &#91;excludes:'war'&#93;</pre></div><p class="paragraph"/>In this e
 
 
 
-<h2 id="artefactApi">16.11 The Artefact API</h2>
+<h2 id="artefactApi">16.10 The Artefact API</h2>
 You should by now understand that Grails has the concept of artefacts: special types of classes that it knows about and can treat differently from normal Groovy and Java classes, for example by enhancing them with extra properties and methods. Examples of artefacts include domain classes and controllers. What you may not be aware of is that Grails allows application and plugin developers access to the underlying infrastructure for artefacts, which means you can find out what artefacts are available and even enhance them yourself. You can even provide your own custom artefact types.
 
 
 
-<h2 id="queryingArtefacts">16.11.1 Asking About Available Artefacts</h2>
+<h2 id="queryingArtefacts">16.10.1 Asking About Available Artefacts</h2>
 As a plugin developer, it can be important for you to find out about what domain classes, controllers, or other types of artefact are available in an application. For example, the <a href="http://grails.org/plugin/searchable" target="blank">Searchable plugin</a> needs to know what domain classes exist so it can check them for any <code>searchable</code> properties and index the appropriate ones. So how does it do it? The answer lies with the <code>grailsApplication</code> object, and instance of <a href="http://grails.org/doc/2.4.x/api/org/codehaus/groovy/grails/commons/GrailsApplication.html" class="api">GrailsApplication</a> that's available automatically in controllers and GSPs and can be <a href="../guide/single.html#dependencyInjectionServices" class="guide">injected</a> everywhere else.<p class="paragraph"/>The <code>grailsApplication</code> object has several important properties and methods for querying artefacts. Probably the most common is the one that gives you all the classes of a particular artefact type:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">for</span> (cls in grailsApplication.&#60;artefactType&#62;Classes) &#123;
     &#8230;
 &#125;</pre></div><p class="paragraph"/>In this case, <code>artefactType</code> is the property name form of the artefact type. With core Grails you have:
@@ -543,7 +515,7 @@ As a plugin developer, it can be important for you to find out about what domain
 
 
 
-<h2 id="customArtefacts">16.11.2 Adding Your Own Artefact Types</h2>
+<h2 id="customArtefacts">16.10.2 Adding Your Own Artefact Types</h2>
 Plugins can easily provide their own artefacts so that they can easily find out what implementations are available and take part in reloading. All you need to do is create an <code>ArtefactHandler</code> implementation and register it in your main plugin class:<p class="paragraph"/><div class="code"><pre>class MyGrailsPlugin &#123;
     def artefacts = &#91; org.somewhere.MyArtefactHandler &#93;
     &#8230;
@@ -556,7 +528,7 @@ Plugins can easily provide their own artefacts so that they can easily find out 
 
 
 <a name="15.11 Binary Plugins"><!-- Legacy link --></a>
-<h2 id="binaryPlugins">16.12 Binary Plugins</h2>
+<h2 id="binaryPlugins">16.11 Binary Plugins</h2>
 Regular Grails plugins are packaged as zip files containing the full source of the plugin. This has some advantages in terms of being an open distribution system (anyone can see the source), in addition to avoiding problems with the source compatibility level used for compilation.<p class="paragraph"/>As of Grails 2.0 you can pre-compile Grails plugins into regular JAR files known as "binary plugins". This has several advantages (and some disadvantages as discussed in the advantages of source plugins above) including:
 <ul class="star">
 <li>Binary plugins can be published as standard JAR files to a Maven repository</li>
@@ -628,13 +600,13 @@ Since binary plugins are packaged as JAR files, they are declared as dependencie
                             <div class="menu-item"><a href="../ref/Command%20Line/create-domain-class.html">create-domain-class</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../ref/Command%20Line/create-filters.html">create-filters</a>
-                            </div>
-                            
                             <div class="menu-item"><a href="../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/create-interceptor.html">create-interceptor</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-plugin.html">create-plugin</a>
@@ -671,9 +643,6 @@ Since binary plugins are packaged as JAR files, they are declared as dependencie
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/init.html">init</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/list-plugin-updates.html">list-plugin-updates</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/list-plugins.html">list-plugins</a>
