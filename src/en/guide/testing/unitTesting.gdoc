@@ -35,33 +35,7 @@ Most testing can be achieved via the @TestFor@ annotation in combination with th
 
 The @TestFor@ annotation defines the class under test and will automatically create a field for the type of class under test. For example in the above case a "controller" field will be present, however if @TestFor@ was defined for a service a "service" field would be created and so on.
 
-The @Mock@ annotation creates mock version of any collaborators. There is an in-memory implementation of GORM that will simulate most interactions with the GORM API. For those interactions that are not automatically mocked you can use the built in support for defining mocks and stubs programmatically. For example:
-
-
-{code}
-import grails.test.mixin.TestFor
-import spock.lang.Specification
-
-@TestFor(BookController)
-@Mock(Book)
-class BookControllerSpec extends Specification {
-
-    void "test search"() {
-        given:
-        def searchMock = mockFor(SearchService)
-        searchMock.demand.searchWeb { String q -> ['first result', 'second result'] }
-        searchMock.demand.static.logResults { List results ->  }
-        controller.searchService = searchMock.createMock()
-
-        when:
-        controller.search()
-
-        then:
-        controller.response.text.contains "Found 2 results"
-    }
-}
-{code}
-
+The @Mock@ annotation creates mock version of any collaborators. There is an in-memory implementation of GORM that will simulate most interactions with the GORM API.
 
 h4. doWithSpring and doWithConfig callback methods, FreshRuntime annotation
 
@@ -143,7 +117,7 @@ class TestInstanceCallbacksSpec extends Specification {
     }
 
     def "doWithConfig callback is executed"(){
-        expect:        
+        expect:
         config.myConfigValue == 'Hello'
     }
 }
