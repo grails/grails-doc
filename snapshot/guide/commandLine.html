@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>5 The Command Line 3.0.0.BUILD-SNAPSHOT</title>
+    <title>5 The Command Line "3.0.0.BUILD-SNAPSHOT"</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -127,7 +127,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.0.BUILD-SNAPSHOT</p>
+                    <p><strong>Version:</strong> "3.0.0.BUILD-SNAPSHOT"</p>
 
                     
                 </div>
@@ -222,7 +222,7 @@ steps:
 <ul class="star">
 <li><code>render</code> - To render a template to a given destination (as seen in the previous example)</li>
 <li><code>mkdir</code> - To make a directory specified by the <code>location</code> parameter</li>
-<li><code>execute</code> - To execute a command specified by the <code>class</code> parameter. Must be a class that implements the <a href="http://grails.org/doc/2.4.x/api/org/grails/cli/profile/Command.html" class="api">Command</a> interface.</li>
+<li><code>execute</code> - To execute a command specified by the <code>class</code> parameter. Must be a class that implements the <a href="http://grails.org/doc/3.0.x/api/org/grails/cli/profile/Command.html" class="api">Command</a> interface.</li>
 <li><code>gradle</code> - To execute one or many Gradle tasks specified by the <code>tasks</code> parameter.</li>
 </ul><p class="paragraph"/>For example to invoke a Gradle task, you can define the following YAML:<p class="paragraph"/><div class="code"><pre>description: Creates a WAR file <span class="java&#45;keyword">for</span> deployment to a container (like Tomcat)
 minArguments: 0
@@ -231,7 +231,7 @@ usage: |
 steps:
  &#45; command: gradle
    tasks:
-     &#45; war</pre></div><p class="paragraph"/>If you need more flexiblity than what the declarative YAML approach provides you can create Groovy script commands. Each Command script is extends from the <a href="http://grails.org/doc/2.4.x/api/org/grails/cli/profile/commands/script/GroovyScriptCommmand.html" class="api">GroovyScriptCommmand</a> class and hence has all of the methods of that class available to it.<p class="paragraph"/>The following is an example of the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command written in Groovy:<p class="paragraph"/><div class="code"><pre>description( <span class="java&#45;quote">"Creates a Grails script"</span> ) &#123;
+     &#45; war</pre></div><p class="paragraph"/>If you need more flexiblity than what the declarative YAML approach provides you can create Groovy script commands. Each Command script is extends from the <a href="http://grails.org/doc/3.0.x/api/org/grails/cli/profile/commands/script/GroovyScriptCommmand.html" class="api">GroovyScriptCommmand</a> class and hence has all of the methods of that class available to it.<p class="paragraph"/>The following is an example of the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command written in Groovy:<p class="paragraph"/><div class="code"><pre>description( <span class="java&#45;quote">"Creates a Grails script"</span> ) &#123;
   usage <span class="java&#45;quote">"grails create&#45;script &#91;SCRIPT NAME&#93;"</span>
   argument name:'Script Name', description:<span class="java&#45;quote">"The name of the script to create"</span>
   flag name:'force', description:<span class="java&#45;quote">"Whether to overwrite existing files"</span>
@@ -245,7 +245,7 @@ def overwrite = flag('force') ? <span class="java&#45;keyword">true</span> : <sp
 
 <h2 id="creatingCustomScripts">5.3 Creating Custom Scripts</h2>
 
-You can create your own Command scripts by running the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command from the root of your project. For example the following command:<p class="paragraph"/><div class="code"><pre>grails create&#45;script hello&#45;world</pre></div><p class="paragraph"/><p class="paragraph"/>Will create a script called <code>src/main/scripts/hello-world.groovy</code>. Each Command script is extends from the <a href="http://grails.org/doc/2.4.x/api/org/grails/cli/profile/commands/script/GroovyScriptCommmand.html" class="api">GroovyScriptCommmand</a> class and hence has all of the methods of that class available to it.<p class="paragraph"/><blockquote class="note">
+You can create your own Command scripts by running the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command from the root of your project. For example the following command:<p class="paragraph"/><div class="code"><pre>grails create&#45;script hello&#45;world</pre></div><p class="paragraph"/><p class="paragraph"/>Will create a script called <code>src/main/scripts/hello-world.groovy</code>. Each Command script is extends from the <a href="http://grails.org/doc/3.0.x/api/org/grails/cli/profile/commands/script/GroovyScriptCommmand.html" class="api">GroovyScriptCommmand</a> class and hence has all of the methods of that class available to it.<p class="paragraph"/><blockquote class="note">
 In general Grails scripts should be used for scripting the Gradle based build system and code generation. Scripts cannot load application classes and in fact should not since Gradle is required to construct the application classpath.
 </blockquote><p class="paragraph"/>See below for an example script that prints 'Hello World':<p class="paragraph"/><div class="code"><pre>description <span class="java&#45;quote">"Example description"</span>, <span class="java&#45;quote">"grails hello&#45;world"</span><p class="paragraph"/>println <span class="java&#45;quote">"Hello World"</span></pre></div><p class="paragraph"/>The <code>description</code> method is used to define the output seen by <code>grails help</code> and to aid users of the script. The following is a more complete example of providing a description taken from the <code>generate-all</code> command:<p class="paragraph"/><div class="code"><pre>description( <span class="java&#45;quote">"Generates a controller that performs CRUD operations and the associated views"</span> ) &#123;
   usage <span class="java&#45;quote">"grails generate&#45;all &#91;DOMAIN CLASS&#93;"</span>
@@ -256,7 +256,7 @@ In general Grails scripts should be used for scripting the Gradle based build sy
 
 <a name="4.2 Re-using Grails scripts"><!-- Legacy link --></a>
 <h2 id="reusingGrailsScripts">5.4 Re-using Grails scripts</h2>
-Grails ships with a lot of command line functionality out of the box that you may find useful in your own scripts (See the command line reference in the reference guide for info on all the commands).<p class="paragraph"/>Any script you create an invoke another Grails script simply by invoking a method:<p class="paragraph"/><div class="code"><pre>testApp()</pre></div><p class="paragraph"/>The above will invoke the <code>test-app</code> command. You can also pass arguments using the method arguments:<p class="paragraph"/><div class="code"><pre>testApp('&#45;&#45;debug&#45;jvm')</pre></div><p class="paragraph"/><h4>Invoking Gradle </h4><p class="paragraph"/>Instead of invoking another Grails CLI command you can invoke Gradle directory using the <code>gradle</code> property.<p class="paragraph"/><div class="code"><pre>gradle.compileGroovy()</pre></div><p class="paragraph"/><h4>Invoking Ant</h4><p class="paragraph"/>You can also invoke Ant tasks from scripts which can help if you need to writing code generation and automation tasks:<p class="paragraph"/><div class="code"><pre>ant.mkdir(dir:<span class="java&#45;quote">"path"</span>)</pre></div><p class="paragraph"/><h4>Template Generation</h4><p class="paragraph"/>Plugins and applications that need to define template generation tasks can do so using scripts. A example of this is the Scaffolding plugin which defines the <code>generate-all</code> and <code>generate-controllers</code> commands.<p class="paragraph"/>Every Grails script implements the <a href="http://grails.org/doc/2.4.x/api/org/grails/cli/profile/commands/templates/TemplateRenderer.html" class="api">TemplateRenderer</a> interface which makes it trivial to render templates to the users project workspace.<p class="paragraph"/>The following is an example of the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command written in Groovy:<p class="paragraph"/><div class="code"><pre>description( <span class="java&#45;quote">"Creates a Grails script"</span> ) &#123;
+Grails ships with a lot of command line functionality out of the box that you may find useful in your own scripts (See the command line reference in the reference guide for info on all the commands).<p class="paragraph"/>Any script you create an invoke another Grails script simply by invoking a method:<p class="paragraph"/><div class="code"><pre>testApp()</pre></div><p class="paragraph"/>The above will invoke the <code>test-app</code> command. You can also pass arguments using the method arguments:<p class="paragraph"/><div class="code"><pre>testApp('&#45;&#45;debug&#45;jvm')</pre></div><p class="paragraph"/><h4>Invoking Gradle </h4><p class="paragraph"/>Instead of invoking another Grails CLI command you can invoke Gradle directory using the <code>gradle</code> property.<p class="paragraph"/><div class="code"><pre>gradle.compileGroovy()</pre></div><p class="paragraph"/><h4>Invoking Ant</h4><p class="paragraph"/>You can also invoke Ant tasks from scripts which can help if you need to writing code generation and automation tasks:<p class="paragraph"/><div class="code"><pre>ant.mkdir(dir:<span class="java&#45;quote">"path"</span>)</pre></div><p class="paragraph"/><h4>Template Generation</h4><p class="paragraph"/>Plugins and applications that need to define template generation tasks can do so using scripts. A example of this is the Scaffolding plugin which defines the <code>generate-all</code> and <code>generate-controllers</code> commands.<p class="paragraph"/>Every Grails script implements the <a href="http://grails.org/doc/3.0.x/api/org/grails/cli/profile/commands/templates/TemplateRenderer.html" class="api">TemplateRenderer</a> interface which makes it trivial to render templates to the users project workspace.<p class="paragraph"/>The following is an example of the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command written in Groovy:<p class="paragraph"/><div class="code"><pre>description( <span class="java&#45;quote">"Creates a Grails script"</span> ) &#123;
   usage <span class="java&#45;quote">"grails create&#45;script &#91;SCRIPT NAME&#93;"</span>
   argument name:'Script Name', description:<span class="java&#45;quote">"The name of the script to create"</span>
   flag name:'force', description:<span class="java&#45;quote">"Whether to overwrite existing files"</span>
@@ -277,22 +277,23 @@ $ grails compile</pre></div><p class="paragraph"/>You can invoke Gradle directly
 <h2 id="gradleDependencies">5.5.1 Defining Dependencies with Gradle</h2>
 Dependencies for your project are defined in the <code>dependencies</code> block. In general you can follow the <a href="http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html" target="blank">Gradle documentation on dependency management</a> to understand how to configure additional dependencies.<p class="paragraph"/>The default dependencies for the "web" profile can be seen below:<p class="paragraph"/><div class="code"><pre>dependencies &#123;
   compile 'org.springframework.boot:spring&#45;boot&#45;starter&#45;logging'
-  compile(<span class="java&#45;quote">"org.springframework.boot:spring&#45;boot&#45;starter&#45;actuator"</span>)
-  compile <span class="java&#45;quote">"org.springframework.boot:spring&#45;boot&#45;autoconfigure"</span>
-  compile <span class="java&#45;quote">"org.springframework.boot:spring&#45;boot&#45;starter&#45;tomcat"</span>
-  compile <span class="java&#45;quote">"org.grails:grails&#45;dependencies:$grailsVersion"</span>
-  compile <span class="java&#45;quote">"org.grails:grails&#45;web&#45;boot:$grailsVersion"</span><p class="paragraph"/>  compile <span class="java&#45;quote">"org.grails.plugins:hibernate"</span>
-  compile <span class="java&#45;quote">"org.grails.plugins:cache"</span>
-  compile <span class="java&#45;quote">"org.hibernate:hibernate&#45;ehcache"</span><p class="paragraph"/>  runtime <span class="java&#45;quote">"org.grails.plugins:asset&#45;pipeline"</span>
-  runtime <span class="java&#45;quote">"org.grails.plugins:scaffolding"</span><p class="paragraph"/>  testCompile <span class="java&#45;quote">"org.grails:grails&#45;plugin&#45;testing"</span>
-  testCompile <span class="java&#45;quote">"org.grails.plugins:geb"</span><p class="paragraph"/>  // Note: It is recommended to update to a more robust driver (Chrome, Firefox etc.)
-  testRuntime 'org.seleniumhq.selenium:selenium&#45;htmlunit&#45;driver:2.44.0'<p class="paragraph"/>  console <span class="java&#45;quote">"org.grails:grails&#45;console"</span>
+  compile('org.springframework.boot:spring&#45;boot&#45;starter&#45;actuator')
+  compile 'org.springframework.boot:spring&#45;boot&#45;autoconfigure'
+  compile 'org.springframework.boot:spring&#45;boot&#45;starter&#45;tomcat'
+  compile 'org.grails:grails&#45;dependencies'
+  compile 'org.grails:grails&#45;web&#45;boot'<p class="paragraph"/>  compile 'org.grails.plugins:hibernate'
+  compile 'org.grails.plugins:cache'
+  compile 'org.hibernate:hibernate&#45;ehcache'<p class="paragraph"/>  runtime 'org.grails.plugins:asset&#45;pipeline'
+  runtime 'org.grails.plugins:scaffolding'<p class="paragraph"/>  testCompile <span class="java&#45;quote">"org.grails:grails&#45;plugin&#45;testing'
+  testCompile "</span>org.grails.plugins:geb'<p class="paragraph"/>  // Note: It is recommended to update to a more robust driver (Chrome, Firefox etc.)
+  testRuntime 'org.seleniumhq.selenium:selenium&#45;htmlunit&#45;driver:2.44.0'<p class="paragraph"/>  console 'org.grails:grails&#45;console'
 &#125;</pre></div><p class="paragraph"/>Note that version numbers are not present in the majority of the dependencies. This is thanks to the dependency management plugin which configures a Maven BOM that defines the default dependency versions for certain commonly used dependencies and plugins:<p class="paragraph"/><div class="code"><pre>dependencyManagement &#123;
     imports &#123;
-        mavenBom <span class="java&#45;quote">"org.grails:grails&#45;bom:$grailsVersion"</span>
+        mavenBom 'org.grails:grails&#45;bom:' + grailsVersion
     &#125;
     applyMavenExclusions <span class="java&#45;keyword">false</span>
-&#125;</pre></div><p class="paragraph"/>
+&#125;</pre></div>
+
 
 
 <h2 id="gradleTasks">5.5.2 Working with Gradle Tasks</h2>

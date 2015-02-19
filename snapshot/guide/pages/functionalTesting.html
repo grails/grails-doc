@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>13.3 Functional Testing 3.0.0.BUILD-SNAPSHOT</title>
+    <title>13.3 Functional Testing "3.0.0.BUILD-SNAPSHOT"</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -127,7 +127,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.0.BUILD-SNAPSHOT</p>
+                    <p><strong>Version:</strong> "3.0.0.BUILD-SNAPSHOT"</p>
 
                     
                 </div>
@@ -137,13 +137,13 @@ function addJsClass() {
                 
 <a name="12.3 Functional Testing"><!-- Legacy link --></a>
 <h2 id="functionalTesting">13.3 Functional Testing</h2>
-Functional tests involve making HTTP requests against the running application and verifying the resultant behaviour. The functional testing phase differs from the integration phase in that the Grails application is now listening and responding to actual HTTP requests. This is useful for end-to-end testing scenarios, such as making REST calls against a JSON API.<p class="paragraph"/>Grails by default ships with support for writing functional tests using the <a href="http://www.gebish.org" target="blank">Geb framework</a>. To create a functional test you can use the <code>create-functional-test</code> command which will create a new functional test:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;functional&#45;test MyFunctional</pre></div><p class="paragraph"/>The above command will create a new Spock spec called <code>MyFunctionalSpec.groovy</code> in the <code>src/test/groovy</code> directory. The test is annotated with the <a href="http://grails.org/doc/2.4.x/api/grails/test/mixin/integration/Integration.html" class="api">Integration</a> annotation to indicate it is a integration test and extends the <code>GebSpec</code> super class:<p class="paragraph"/><div class="code"><pre>@Integration
+Functional tests involve making HTTP requests against the running application and verifying the resultant behaviour. The functional testing phase differs from the integration phase in that the Grails application is now listening and responding to actual HTTP requests. This is useful for end-to-end testing scenarios, such as making REST calls against a JSON API.<p class="paragraph"/>Grails by default ships with support for writing functional tests using the <a href="http://www.gebish.org" target="blank">Geb framework</a>. To create a functional test you can use the <code>create-functional-test</code> command which will create a new functional test:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;functional&#45;test MyFunctional</pre></div><p class="paragraph"/>The above command will create a new Spock spec called <code>MyFunctionalSpec.groovy</code> in the <code>src/test/groovy</code> directory. The test is annotated with the <a href="http://grails.org/doc/3.0.x/api/grails/test/mixin/integration/Integration.html" class="api">Integration</a> annotation to indicate it is a integration test and extends the <code>GebSpec</code> super class:<p class="paragraph"/><div class="code"><pre>@Integration
 class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p class="paragraph"/>    def setup() &#123;
     &#125;<p class="paragraph"/>    def cleanup() &#123;
     &#125;<p class="paragraph"/>    void <span class="java&#45;quote">"Test the home page renders correctly"</span>() &#123;
         when:<span class="java&#45;quote">"The home page is visited"</span>
             go '/'<p class="paragraph"/>        then:<span class="java&#45;quote">"The title is correct"</span>
-          $('title').text() == <span class="java&#45;quote">"Welcome to Grails"</span>
+          &#36;('title').text() == <span class="java&#45;quote">"Welcome to Grails"</span>
     &#125;
 &#125;</pre></div><p class="paragraph"/>When the test is run the application container will be loaded up in the background and you can send requests to the running application using the Geb API.<p class="paragraph"/>Note that the application is only loaded once for the entire test run, so functional tests share the state of the application across the whole suite.<p class="paragraph"/>In addition the application is loaded in the JVM as the test, this means that the test has full access to the application state and can interact directly with data services such as GORM to setup and cleanup test data.
 
