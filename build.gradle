@@ -1,6 +1,6 @@
 apply plugin: "base"
 
-version = System.getProperty("grails.version") ?: "3.0.0.BUILD-SNAPSHOT"
+version = project.getProperty("grails.version")
 
 archivesBaseName = "grails-docs"
 
@@ -80,7 +80,7 @@ task publishGuide(type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', '
     // generated with a 'en' in the path, but the source is in 'en'
     // so that it's easy to track with git.
     sourceDir = new File(projectDir, "src/en")
-    propertiesFiles = [ new File(project.grailsHome, "build.properties") ]
+    propertiesFiles = [ new File(projectDir, "gradle.properties") ]
     macros = [ new grails.doc.macros.GspTagSourceMacro(searchDirs) ]
 }
 
