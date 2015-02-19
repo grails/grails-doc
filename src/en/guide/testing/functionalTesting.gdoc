@@ -34,3 +34,16 @@ When the test is run the application container will be loaded up in the backgrou
 Note that the application is only loaded once for the entire test run, so functional tests share the state of the application across the whole suite.
 
 In addition the application is loaded in the JVM as the test, this means that the test has full access to the application state and can interact directly with data services such as GORM to setup and cleanup test data.
+
+The @Integration@ annotation supports an optional @applicationClass@ attribute which may be used to specify the application class to use for the functional test.  The class must extend [GrailsAutoConfiguration|api:grails.boot.config.GrailsAutoConfiguration].
+
+{code}
+@Integration(applicationClass=com.demo.Application)
+class HomeSpec extends GebSpec {
+
+    // ...
+
+}
+{code}
+
+If the @applicationClass@ is not specified then the test runtime environment will attempt to locate the application class dynamically which can be problematic in multiproject builds where multiple application classes may be present.
