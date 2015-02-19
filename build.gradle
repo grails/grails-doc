@@ -22,9 +22,13 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.grails:grails-docs:3.0.0.M1"
+        classpath "org.grails:grails-docs:3.0.0.BUILD-SNAPSHOT"
         classpath 'org.codehaus.groovy:groovy-all:2.4.0'
     }
+}
+
+task buildscriptDependencies(type: DependencyReportTask) {
+    configurations = [buildscript.configurations.classpath]
 }
 
 // use jsoup in PdfBuilder for cleaning input html
@@ -57,7 +61,7 @@ fetchGrailsSource.onlyIf { !explicitGrailsHome }
 task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
     commandLine = ["./gradlew", "groovydoc"]
     workingDir = "${checkOutDir}/grails-src"
-
+    environment "GRADLE_OPTS", "-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
 }
 
 apiDocs.onlyIf { !System.getProperty("disable.groovydocs") }
