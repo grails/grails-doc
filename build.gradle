@@ -59,8 +59,7 @@ task fetchGrailsSource << {
 fetchGrailsSource.onlyIf { !explicitGrailsHome }
 
 task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
-    commandLine = ["./gradlew", "groovydoc"]
-    args = ['--info', '--stacktrace']
+    commandLine = ["./gradlew", "groovydoc", '--info', '--stacktrace']
     workingDir = "${checkOutDir}/grails-src"
     environment "GRADLE_OPTS", "-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
 }
