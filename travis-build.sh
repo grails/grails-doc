@@ -8,7 +8,7 @@ echo "https://$GH_TOKEN:@github.com" > ~/.git-credentials
 
 export GRADLE_OPTS="-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
 
-./gradlew assemble --info
+./gradlew assemble --info --stacktrace
 
 if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then
 
