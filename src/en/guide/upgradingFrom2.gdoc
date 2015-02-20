@@ -1,1 +1,191 @@
-TBD
+Grails 3.0 is a complete ground up rewrite of Grails and introduces new concepts and components for many parts of the framework.
+
+When upgrading an application or plugin from Grails 3.0 there are many areas to consider including:
+
+* Project structure differences
+* File location differences
+* Configuration differences
+* Package name differences
+* Legacy Gant Scripts
+* Gradle Build System
+* Changes to Plugins
+* Source vs Binary Plugins
+
+The best approach to take when upgrading a plugin or application (and if your application is using several plugins the plugins will need upgrading first) is to create a new Grails 3.0 application of the same name and copy the source files into the correct locations in the new application.
+
+h3. Project Structure Changes
+
+h4. File Location Differences
+
+The location of certain files have changed or been replaced with other files in Grails 3.0. The following table lists old default locations and their respective new locations:
+
+{table}
+*Old Location* | *New Location* | *Description*
+@grails-app/conf/BuildConfig.groovy@ | @build.gradle@ | Build time configuration is now defined in a Gradle build file
+@grails-app/conf/Config.groovy@ | @grails-app/conf/application.groovy@ | Renamed for consistency with Spring Boot
+@grails-app/conf/UrlMappings.groovy@ | @grails-app/controllers/UrlMappings.groovy@ | Moved since grails-app/conf is not a source directory anymore
+@grails-app/conf/BootStrap.groovy@ | @grails-app/init/BootStrap.groovy@ | Moved since grails-app/conf is not a source directory anymore
+@scripts@ | @src/main/scripts@ | Moved for consistency with Gradle
+@src/groovy@ | @src/main/groovy@ | Moved for consistency with Gradle
+@src/java@ | @src/main/groovy@ | Moved for consistency with Gradle
+@test/unit@ | @src/test/groovy@ | Moved for consistency with Gradle
+@test/integration@ | @src/integration-test/groovy@ | Moved for consistency with Gradle
+@web-app@ | @src/main/webapp@ | Moved for consistency with Gradle
+@\*GrailsPlugin.groovy@ | @src/main/groovy@ | The plugin descriptor moved to a source directory
+{table}
+
+For plugins the plugin descriptor (a Groovy file ending with "GrailsPlugin") which was previously located in the root of the plugin directory should be moved to the @src/main/groovy@ directory under an appropriate package.
+
+h4. New Files Not Present in Grails 2.x
+
+The reason it is best to create a new application and copy your original sources to it is because there are a number of new files that are not present in Grails 2.x by default. These include:
+
+{table}
+*File* | *Description*
+@build.gradle@ | The Gradle build descriptor located in the root of the project
+@gradle.properties@ | Properties file defining the Grails and Gradle versions
+@grails-app/conf/logback.groovy@ | Logging previously defined in @Config.groovy@ is now defined using Logback
+@grails-app/conf/application.yml@ | Configuration can now also be defined using YAML
+@grails-app/init/PACKAGE_PATH/Application.groovy@ | The @Application@ class used By Spring Boot to start the application
+{table}
+
+h4. Files Not Present in Grails 3.x
+
+Some files that were previously created by Grails 2.x are no longer created. These have either been removed or an appropriate replacement added. The following table lists files no longer in use:
+
+{table}
+*File* | *Description*
+@application.properties@ | The application name and version is now defined in @build.gradle@
+@grails-app/conf/DataSource.groovy@ | Merged together into @application.yml@
+@lib@ | Dependency resolution should be used to resolve JAR files
+@web-app/WEB-INF/applicationContext.xml@ | Removed, beans can be defined in @grails-app/conf/spring/resources.groovy@
+@src/templates/war/web.xml@ | Grails 3.0 no longer requires web.xml. Customizations can be done via Spring
+@web-app/WEB-INF/sitemesh.xml@ | Removed, sitemesh filter no longer present.
+@web-app/WEB-INF/tld@ | Removed, can be restored in src/main/webapp
+{table}
+
+h3. Upgrading a Plugin to Grails 3.x
+
+To upgrade a Grails 2.x plugin to Grails 3.x you need to make a number of different changes. This documentation will outline the steps that were taken to upgrade the Quartz plugin to Grails 3, each individual plugin may differ.
+
+h4. Step 1 - Create a new Grails 3 plugin
+
+The first step is to create a new Grails 3 plugin using the command line:
+
+{code}
+$ grails create-plugin quartz
+{code}
+
+This will create a Grails 3 plugin in the @quartz@ directory.
+
+h4. Step 2 - Copy sources from the original Grails 2 plugin
+
+The next step is to copy the sources from the original Grails 2 plugin to the Grails 3 plugin:
+
+{code}
+# first the sources
+cp -rf ../quartz-2.x/src/groovy src/main/groovy
+cp -rf ../quartz-2.x/src/java src/main/groovy
+cp -rf ../quartz-2.x/grails-app grails-app
+cp -rf ../quartz-2.x/QuartzGrailsPlugin.groovy src/main/groovy/grails/plugins/quartz
+
+# then the tests
+cp -rf ../quartz-2.x/test/unit src/test/groovy
+mkdir -p src/integration-test/groovy
+cp -rf ../quartz-2.x/test/integration src/integration-test/groovy
+
+# then templates / other resources
+cp -rf ../quartz-2.x/src/templates src/main/templates
+{code}
+
+You will need to add a package declaration to the plugin descriptor. In this case @QuartzGrailsPlugin@ is modified as follows:
+
+{code}
+// add package declaration
+package grails.plugins.quartz
+...
+class QuartzGrailsPlugin {
+ ...
+}
+{code}
+
+h4. Step 3 - Update the Gradle build with required dependencies
+
+The repositories and dependencies defined in @grails-app/conf/BuildConfig.groovy@ of the original Grails 2.x plugin will need to be defined in @build.gradle@ of the new Grails 3.x plugin:
+
+{code}
+  compile("org.quartz-scheduler:quartz:2.2.1") {
+    exclude group: 'slf4j-api', module: 'c3p0'
+  }
+{code}
+
+h4. Step 4 - Modify Package Imports
+
+In Grails 3.x all internal APIs can be found in the @org.grails@ package and public facing APIs in the @grails@ package. The @org.codehaus.groovy.grails@ package no longer exists.
+
+All package declaration in sources should be modified for the new location of the respective classes. Example @org.codehaus.groovy.grails.commons.GrailsApplication@ is now @grails.core.GrailsApplication@.
+
+h4. Step 5 - Migrate Plugin Specific Config to application.yml
+
+Some plugins define a default configuration fail. For example the Quartz plugin defines a file called @grails-app/conf/DefaultQuartzConfig.groovy@. In Grails 3.x this default configuration can be migrated to @grails-app/conf/application.yml@ and it will automatically be loaded by Grails without requiring manual configuration merging.
+
+h4. Step 6 - Register ArtefactHandler Definitions
+
+In Grails 3.x ArtefactHandler definitions need to be declared in a file called @src/main/resources/META-INF/grails.factories@ since these need to be known at compile time. The Quartz plugin requires the following definition to register the ArtrefactHandler:
+
+{code}
+grails.core.ArtefactHandler=grails.plugins.quartz.JobArtefactHandler
+{code}
+
+h4. Step 7 - Migrate Code Generation Scripts
+
+Many plugins previously defined command line scripts in Gant. In Grails 3.x command line scripts have been replaced by two new features: Code generation scripts and Gradle tasks.
+
+If your script is doing simple code generation then for many cases a code generation script can replace an old Gant script.
+
+The @create-job@ script provided by the Quartz plugin in Grails 2.x was defined in @scripts/CreateJob.groovy@ as:
+
+{code}
+includeTargets << grailsScript("_GrailsCreateArtifacts")
+
+target(createJob: "Creates a new Quartz scheduled job") {
+    depends(checkVersion, parseArguments)
+
+    def type = "Job"
+    promptForName(type: type)
+
+    for (name in argsMap.params) {
+        name = purgeRedundantArtifactSuffix(name, type)
+        createArtifact(name: name, suffix: type, type: type, path: "grails-app/jobs")
+        createUnitTest(name: name, suffix: type)
+    }
+}
+
+setDefaultTarget 'createJob'
+{code}
+
+A replacement Grails 3.x compatible script can be created using the @create-script@ command:
+
+{code}
+$ grails create-script create-job
+{code}
+
+Which creates a new script called @src/main/scripts/create-job.groovy@. Using the new code generation API it is simple to implement:
+
+{code}
+description("Creates a new Quartz scheduled job") {
+    usage "grails create-job [JOB NAME]"
+    argument name:'Job Name', description:"The name of the job"
+}
+
+model = model( args[0] )
+render  template:"Job.groovy",
+        destination: file( "grails-app/jobs/$model.packagePath/${model.simpleName}Job.groovy"),
+        model: model
+{code}
+
+Please refer to the documentation on [Creating Custom Scripts|guide:creatingCustomScripts] for more information.
+
+h4. Migrating More Complex Scripts Using Gradle Tasks
+
+Using the old Grails 2.x build system it was relatively common to spin up Grails inside the command line. In Grails 3.x it is not possible to load a Grails application within a command line script.
