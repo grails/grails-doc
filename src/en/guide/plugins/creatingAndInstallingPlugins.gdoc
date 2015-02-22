@@ -8,15 +8,17 @@ grails create-plugin [PLUGIN NAME]
 
 This will create a plugin project for the name you specify. For example running @grails create-plugin example@ would create a new plugin project called @example@.
 
+In Grails 3.0 you should consider whether the plugin you create requires a web environment or whether the plugin can be used with other profiles. If you plugin does not require a web environment then use the "plugin" profile instead of the "web-plugin" profile:
+
+{code:java}
+grails create-plugin [PLUGIN NAME] --profile=plugin
+{code}
+
 Make sure the plugin name does not contain more than one capital in a row, or it won't work. Camel case is fine, though.
 
-The structure of a Grails plugin is very nearly the same as a Grails application project's except that in the root of the plugin directory you will find a plugin Groovy file called the "plugin descriptor".
+The structure of a Grails plugin is very nearly the same as a Grails application project's except that in the @src/main/groovy@ directory under the plugin package structure you will find a plugin descriptor class (a class that ends in "GrailsPlugin").
 
-{note}
-The only plugins included in a new plugin project are Tomcat and Release. Hibernate is not included by default.
-{note}
-
-Being a regular Grails project has a number of benefits in that you can immediately test your plugin by running:
+Being a regular Grails project has a number of benefits in that you can immediately test your plugin by running (if the plugin targets the "web" profile):
 
 {code:java}
 grails run-app
@@ -30,18 +32,15 @@ The plugin descriptor name ends with the convention @GrailsPlugin@ and is found 
 
 {code:java}
 class ExampleGrailsPlugin {
-   def version = "0.1"
-
    ...
 }
 {code}
 
-All plugins must have this class in the root of their directory structure. The plugin class defines the version of the plugin and other metadata, and optionally various hooks into plugin extension points (covered shortly).
+All plugins must have this class under the @src/main/groovy@ directory, otherwise they are not regarded as a plugin. The plugin class defines metadata about the plugin, and optionally various hooks into plugin extension points (covered shortly).
 
 You can also provide additional information about your plugin using several special properties:
 
 * @title@ - short one-sentence description of your plugin
-* @version@ - The version of your plugin. Valid values include example "0.1", "0.2-SNAPSHOT", "1.1.4" etc.
 * @grailsVersion@ - The version of version range of Grails that the plugin supports. eg. "1.2 > *" (indicating 1.2 or higher)
 * @author@ - plugin author's name
 * @authorEmail@ - plugin author's contact e-mail
@@ -52,7 +51,6 @@ Here is an example from the [Quartz Grails plugin|http://grails.org/plugin/quart
 
 {code:java}
 class QuartzGrailsPlugin {
-    def version = "0.1"
     def grailsVersion = "1.1 > *"
     def author = "Sergey Nebolsin"
     def authorEmail = "nebolsin@gmail.com"
@@ -71,80 +69,76 @@ via Spring, but is made simpler by the coding by convention paradigm.\\\
 
 h4. Installing Local Plugins
 
-To make your plugin available for use in a Grails application run the @maven-install@ command:
+To make your plugin available for use in a Grails application run the @install@ command:
 
 {code:java}
-grails maven-install
+grails install
 {code}
 
-This will install the plugin into your local Maven cache. Then to use the plugin within an application declare a dependency on the plugin in your @grails-app/conf/BuildConfig.groovy@ file:
+This will install the plugin into your local Maven cache. Then to use the plugin within an application declare a dependency on the plugin in your @build.gradle@ file:
 
 {code:java}
-compile "\:quartz:0.1"
+compile "org.grails.plugins:quartz:0.1"
 {code}
 
+{note}
+In Grails 2.x plugins were packaged as ZIP files, however in Grails 3.x plugins are simple JAR files that can be added to the classpath of the IDE.
+{note}
 
 h4. Notes on excluded Artefacts
 
 Although the [create-plugin|commandLine] command creates certain files for you so that the plugin can be run as a Grails application, not all of these files are included when packaging a plugin. The following is a list of artefacts created, but not included by [package-plugin|commandLine]:
 
-* @grails-app/conf/BootStrap.groovy@
-* @grails-app/conf/BuildConfig.groovy@ (although it is used to generate @dependencies.groovy@)
-* @grails-app/conf/Config.groovy@
-* @grails-app/conf/DataSource.groovy@ (and any other @*DataSource.groovy@)
-* @grails-app/conf/UrlMappings.groovy@
+* @grails-app/build.gradle@ (although it is used to generate @dependencies.groovy@)
+* @grails-app/conf/application.yml@ (renamed to plugin.yml)
 * @grails-app/conf/spring/resources.groovy@
-* Everything within @/web-app/WEB-INF@
-* Everything within @/web-app/plugins/\*\*@
-* Everything within @/test/\*\*@
+* @grails-app/conf/logback.groovy@
+* Everything within @/src/test/\*\*@
 * SCM management files within @\*\*/.svn/\*\*@ and @\*\*/CVS/\*\*@
-
-If you need artefacts within @WEB-INF@ it is recommended you use the @_Install.groovy@ script (covered later), which is executed when a plugin is installed, to provide such artefacts. In addition, although @UrlMappings.groovy@ is excluded you are allowed to include a @UrlMappings@ definition with a different name, such as @MyPluginUrlMappings.groovy@.
 
 h4. Customizing the plugin contents
 
-You can specify what to exclude in addition to the default excludes by adding elements to the @pluginExcludes@ descriptor property (described below). In addition, there are two ways to configure the contents of the plugin ZIP or JAR file.
+When developing a plugin you may create test classes and sources that are used during the development and testing of the plugin but should not be exported to the application.
 
-One is to create an event handler for the @CreatePluginArchiveStart@ event, which is fired after all of the plugin files have been copied to the staging directory. By adding an event handler you can add, modify, or delete files as needed. Add the handler to @_Events.groovy@ in the @scripts@ directory, for example
+To exclude test sources you need to modify the @pluginExcludes@ property of the plugin descriptor AND exclude the resources inside your @build.gradle@ file. For example say you have some classes under the @com.demo@ package that are in your plugin source tree but should not be packaged in the application. In your plugin descriptor you should exclude these:
 
 {code}
-eventCreatePluginArchiveStart = { stagingDir ->
-   // update staging directory contents here
+  // resources that should be loaded by the plugin once installed in the application
+  def pluginExcludes = [
+    '**/com/demo/**'
+  ]
+{code}
+
+And in your @build.gradle@ you should exclude the compiled classes from the JAR file:
+
+{code}
+jar {
+  exclude "com/demo/**/**"
 }
 {code}
 
-You can customize the location of the staging directory with the @grails.project.plugin.staging.dir@ attribute in @BuildConfig.groovy@ or as  as system property. 
 
-Note that there is also a @CreatePluginArchiveEnd@ event which is fired after the ZIP or JAR is packaged.
+h4. Inline Plugins in Grails 3.0
 
-You can also do this work in a Closure in @BuildConfig.groovy@ with the property @grails.plugin.resources@ which is analogous to the @grails.war.resources@ property, e.g.
+In Grails 2.x it was possible to specify inline plugins in @BuildConfig@, in Grails 3.x this functionality has been replaced by Gradle's multi-project build feature.
+
+To set up a multi project build create an appliation and a plugin in a parent directory:
 
 {code}
-grails.plugin.resources = { stagingDir ->
-   // update staging directory contents here
-}
+$ grails create-app myapp
+$ grails create-plugin myplugin
 {code}
 
-h4. Specifying Plugin Locations
+Then create a @settings.gradle@ file in the parent directory specifying the location of your application and plugin:
 
-An application can load plugins from anywhere on the file system, even if they have not been installed. Specify the location of the (unpacked) plugin in the application's @grails-app/conf/BuildConfig.groovy@ file:
-
-{code:java}
-// Useful to test plugins you are developing.
-grails.plugin.location.shiro =
-        "/home/dilbert/dev/plugins/grails-shiro"
-
-// Useful for modular applications where all plugins and
-// applications are in the same directory.
-grails.plugin.location.'grails-ui' = "../grails-grails-ui"
+{code}
+include 'myapp', 'myplugin'
 {code}
 
-This is particularly useful in two cases:
+Finally add a dependency in your application's @build.gradle@ on the plugin:
 
-* You are developing a plugin and want to test it in a real application without packaging and installing it first.
-* You have split an application into a set of plugins and an application, all in the same "super-project" directory.
+{code}
+compile project(':myplugin')
+{code}
 
-{note}
-The Artifactory repository for Grails now includes all the dependencies for published plugins. So, if you are using inline plugins that have dependencies, it is necessary to do a secondary resolve because these dependencies might not be in the repository. Therefore, you should set @legacyResolve@ to @true@ in your @BuildConfig.groovy@ if you are using inline plugins with dependencies.
-{note}
-
+Using this technique you have achieved the equivalent of inline plugins from Grails 2.x.
