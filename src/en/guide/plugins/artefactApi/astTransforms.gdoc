@@ -1,0 +1,129 @@
+Thanks to Groovy's support for "AST Transforms":http://groovy.codehaus.org/Local+AST+Transformations your plugin can transparently add methods to grails artefacts at compile-time.
+
+Suppose you want your plugin to enhance all grails controllers with the following method:
+
+{code}
+def helloWorld() {
+  return "Hello World!"
+}
+{code}
+
+The steps are as follows:
+
+h4. 1. API class
+
+In your plugin's base directory, create a directory called @src/ast@ and then add @com.myplugin.api.HelloWorldApi@:
+
+{code}
+package com.myplugin.api;
+
+public class HelloWorldApi implements Serializable {
+  private static final long serialVersionUID = 1;
+
+  public String helloWorld(Object instance) {
+    return "Hello World!";
+  }
+}
+{code}
+
+h4. 2. Transformer class
+
+Also under @src/ast@, create @org.codehause.groovy.grails.compiler.HelloWorldTransformer@:
+
+{code}
+package org.codehaus.groovy.grails.compiler;
+
+import java.net.URL;
+import java.util.regex.Pattern;
+import org.codehaus.groovy.ast.AnnotationNode;
+import org.codehaus.groovy.ast.ClassNode;
+import org.codehaus.groovy.grails.commons.ControllerArtefactHandler;
+import org.codehaus.groovy.grails.compiler.injection.AbstractGrailsArtefactTransformer;
+import org.codehaus.groovy.grails.compiler.injection.AstTransformer;
+import org.codehaus.groovy.grails.io.support.GrailsResourceUtils;
+import grails.web.controllers.ControllerMethod;
+import com.myplugin.api.HelloWorldApi;
+
+@AstTransformer
+public class HelloWorldTransformer extends AbstractGrailsArtefactTransformer {
+
+  public static Pattern CONTROLLER_PATTERN = Pattern.compile(".+/" +
+      GrailsResourceUtils.GRAILS_APP_DIR + "/controllers/(.+)Controller\\.groovy");
+
+  public Class<?> getInstanceImplementation() {
+    return HelloWorldApi.class;
+  }
+
+  public Class<?> getStaticImplementation() {
+    return null;  // No static api
+  }
+
+  public boolean shouldInject(URL url) {
+    return url != null && CONTROLLER_PATTERN.matcher(url.getFile()).find();
+  }
+
+  protected AnnotationNode getMarkerAnnotation() {
+    return new AnnotationNode(new ClassNode(ControllerMethod.class).getPlainNodeReference());
+  }
+
+  public String getArtefactType() {
+    return ControllerArtefactHandler.TYPE;
+  }
+}
+{code}
+
+h4. 3. Precompile AST
+
+Grails will automatically pick up and apply your AST transform to your project's controllers, but only if it has *already been compiled* before your main build starts. In order to achieve this, you must hook into Grails's event mechanism to trigger a pre-compilation of your AST files.
+
+Create @scripts/_Events.groovy@ as follows:
+
+{code}
+eventCompileStart = { target ->
+  compileAst()
+}
+eventPluginInstalled = { pluginName ->
+  def mypluginName = new File("${mypluginPluginDir}").name
+  if (pluginName == mypluginName) {
+    compileAst()
+  }
+}
+def compileAst() {
+  ant.sequential {
+    def src = "${mypluginPluginDir}/src/ast"
+    def tgt = "${pluginClassesDirPath}"
+    
+    if (new File(src).exists()) {
+      event("StatusUpdate", ["Precompiling AST transformations"])
+      
+      path id: "grails.compile.classpath", compileClasspath
+      def classpathId = "grails.compile.classpath"
+      mkdir dir:tgt
+      javac(
+        destdir:tgt,
+        srcDir:src,
+        classpathref:classpathId,
+        verbose:grailsSettings.verboseCompile,
+        encoding:"UTF-8"
+      )
+      
+      grailsConsole.addStatus "Finished precompiling AST transformations"
+    }
+  }
+}
+{code}
+
+h4. 5. Try It Out
+
+Package and release your plugin as usual, then add it as a compile dependency
+in your main project's @BuildConfig@.
+
+Finally, try out your @helloWorld()@ method in a new controller:
+
+{code}
+class CoolController() {
+  def index() { render helloWorld() }
+}
+{code}
+
+Run your app and browse to @http://localhost:8080/myapp/cool@ and you should see the message "Hello World!"
