@@ -1,0 +1,65 @@
+Grails 3.0 is a complete ground up rewrite of Grails and introduces new concepts and components for many parts of the framework.
+
+When upgrading an application or plugin from Grails 3.0 there are many areas to consider including:
+
+* Project structure differences
+* File location differences
+* Configuration differences
+* Package name differences
+* Legacy Gant Scripts
+* Gradle Build System
+* Changes to Plugins
+* Source vs Binary Plugins
+
+The best approach to take when upgrading a plugin or application (and if your application is using several plugins the plugins will need upgrading first) is to create a new Grails 3.0 application of the same name and copy the source files into the correct locations in the new application.
+
+h3. Project Structure Changes
+
+h4. File Location Differences
+
+The location of certain files have changed or been replaced with other files in Grails 3.0. The following table lists old default locations and their respective new locations:
+
+{table}
+*Old Location* | *New Location* | *Description*
+@grails-app/conf/BuildConfig.groovy@ | @build.gradle@ | Build time configuration is now defined in a Gradle build file
+@grails-app/conf/Config.groovy@ | @grails-app/conf/application.groovy@ | Renamed for consistency with Spring Boot
+@grails-app/conf/UrlMappings.groovy@ | @grails-app/controllers/UrlMappings.groovy@ | Moved since grails-app/conf is not a source directory anymore
+@grails-app/conf/BootStrap.groovy@ | @grails-app/init/BootStrap.groovy@ | Moved since grails-app/conf is not a source directory anymore
+@scripts@ | @src/main/scripts@ | Moved for consistency with Gradle
+@src/groovy@ | @src/main/groovy@ | Moved for consistency with Gradle
+@src/java@ | @src/main/groovy@ | Moved for consistency with Gradle
+@test/unit@ | @src/test/groovy@ | Moved for consistency with Gradle
+@test/integration@ | @src/integration-test/groovy@ | Moved for consistency with Gradle
+@web-app@ | @src/main/webapp@ | Moved for consistency with Gradle
+@\*GrailsPlugin.groovy@ | @src/main/groovy@ | The plugin descriptor moved to a source directory
+{table}
+
+For plugins the plugin descriptor (a Groovy file ending with "GrailsPlugin") which was previously located in the root of the plugin directory should be moved to the @src/main/groovy@ directory under an appropriate package.
+
+h4. New Files Not Present in Grails 2.x
+
+The reason it is best to create a new application and copy your original sources to it is because there are a number of new files that are not present in Grails 2.x by default. These include:
+
+{table}
+*File* | *Description*
+@build.gradle@ | The Gradle build descriptor located in the root of the project
+@gradle.properties@ | Properties file defining the Grails and Gradle versions
+@grails-app/conf/logback.groovy@ | Logging previously defined in @Config.groovy@ is now defined using Logback
+@grails-app/conf/application.yml@ | Configuration can now also be defined using YAML
+@grails-app/init/PACKAGE_PATH/Application.groovy@ | The @Application@ class used By Spring Boot to start the application
+{table}
+
+h4. Files Not Present in Grails 3.x
+
+Some files that were previously created by Grails 2.x are no longer created. These have either been removed or an appropriate replacement added. The following table lists files no longer in use:
+
+{table}
+*File* | *Description*
+@application.properties@ | The application name and version is now defined in @build.gradle@
+@grails-app/conf/DataSource.groovy@ | Merged together into @application.yml@
+@lib@ | Dependency resolution should be used to resolve JAR files
+@web-app/WEB-INF/applicationContext.xml@ | Removed, beans can be defined in @grails-app/conf/spring/resources.groovy@
+@src/templates/war/web.xml@ | Grails 3.0 no longer requires web.xml. Customizations can be done via Spring
+@web-app/WEB-INF/sitemesh.xml@ | Removed, sitemesh filter no longer present.
+@web-app/WEB-INF/tld@ | Removed, can be restored in src/main/webapp
+{table}
