@@ -1,4 +1,4 @@
-As a plugin developer, it can be important for you to find out about what domain classes, controllers, or other types of artefact are available in an application. For example, the [Searchable plugin|http://grails.org/plugin/searchable] needs to know what domain classes exist so it can check them for any @searchable@ properties and index the appropriate ones. So how does it do it? The answer lies with the @grailsApplication@ object, and instance of [GrailsApplication|api:org.codehaus.groovy.grails.commons.GrailsApplication] that's available automatically in controllers and GSPs and can be [injected|guide:dependencyInjectionServices] everywhere else.
+As a plugin developer, it can be important for you to find out about what domain classes, controllers, or other types of artefact are available in an application. For example, the [Searchable plugin|http://grails.org/plugin/searchable] needs to know what domain classes exist so it can check them for any @searchable@ properties and index the appropriate ones. So how does it do it? The answer lies with the @grailsApplication@ object, and instance of [GrailsApplication|api:grails.core.GrailsApplication] that's available automatically in controllers and GSPs and can be [injected|guide:dependencyInjectionServices] everywhere else.
 
 The @grailsApplication@ object has several important properties and methods for querying artefacts. Probably the most common is the one that gives you all the classes of a particular artefact type:
 
@@ -34,7 +34,7 @@ for (cls in grailsApplication.urlMappingsClasses) {
 }
 {code}
 
-You need to be aware that the objects returned by these properties are not instances of [Class|api:java.lang.Class]. Instead, they are instances of [GrailsClass|api:org.codehaus.groovy.grails.commons.GrailsClass] that has some particularly useful properties and methods, including one for the underlying @Class@:
+You need to be aware that the objects returned by these properties are not instances of [Class|api:java.lang.Class]. Instead, they are instances of [GrailsClass|api:grails.core.GrailsClass] that has some particularly useful properties and methods, including one for the underlying @Class@:
 
 * @shortName@ - the class name of the artefact without the package (equivalent of @Class.simpleName@).
 * @logicalPropertyName@ - the artefact name in property form without the 'type' suffix. So @MyGreatController@ becomes 'myGreat'.

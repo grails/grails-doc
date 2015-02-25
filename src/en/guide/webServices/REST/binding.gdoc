@@ -76,7 +76,7 @@ class BookController {
 }
 {code}
 
-The data binding depends on an instance of the [DataBindingSource|api:org.grails.databinding.DataBindingSource] interface created by an instance of the [DataBindingSourceCreator|api:org.grails.databinding.bindingsource.DataBindingSourceCreator] interface.  The specific implementation of @DataBindingSourceCreator@ will be selected based on the @contentType@ of the request.  Several implementations are provided to handle common content types.  The default implementations will be fine for most use cases.  The following table lists the content types which are supported by the core framework and which @DataBindingSourceCreator@ implementations are used for each. All of the implementation classes are in the @org.codehaus.groovy.grails.web.binding.bindingsource@ package.
+The data binding depends on an instance of the [DataBindingSource|api:org.grails.databinding.DataBindingSource] interface created by an instance of the [DataBindingSourceCreator|api:org.grails.databinding.bindingsource.DataBindingSourceCreator] interface.  The specific implementation of @DataBindingSourceCreator@ will be selected based on the @contentType@ of the request.  Several implementations are provided to handle common content types.  The default implementations will be fine for most use cases.  The following table lists the content types which are supported by the core framework and which @DataBindingSourceCreator@ implementations are used for each. All of the implementation classes are in the @org.grails.databinding.bindingsource@ package.
 
 {table}
  Content Type(s)             | Bean Name                      | DataBindingSourceCreator Impl.
@@ -97,27 +97,27 @@ The @DataBindingSourceCreator@ interface defines just 2 methods:
 {code:java}
 package org.grails.databinding.bindingsource
 
-import org.codehaus.groovy.grails.web.mime.MimeType
-import org.grails.databinding.DataBindingSource
+import grails.web.mime.MimeType
+import grails.databinding.DataBindingSource
 
 /**
  * A factory for DataBindingSource instances
- * 
+ *
  * @since 2.3
  * @see DataBindingSourceRegistry
  * @see DataBindingSource
  *
  */
 interface DataBindingSourceCreator {
-    
+
     /**
      * @return All of the {@link MimeType} supported by this helper
      */
     MimeType[] getMimeTypes()
-    
+
     /**
      * Creates a DataBindingSource suitable for binding bindingSource to bindingTarget
-     * 
+     *
      * @param mimeType a mime type
      * @param bindingTarget the target of the data binding
      * @param bindingSource the value being bound
@@ -142,8 +142,8 @@ The code below shows a simple implementation.
 // src/groovy/com/demo/myapp/databinding
 package com.demo.myapp.databinding
 
-import org.codehaus.groovy.grails.web.mime.MimeType
-import org.grails.databinding.DataBindingSource
+import grails.web.mime.MimeType
+import grails.databinding.DataBindingSource
 import org...databinding.SimpleMapDataBindingSource
 import org...databinding.bindingsource.AbstractRequestBodyDataBindingSourceCreator
 
@@ -164,9 +164,9 @@ class MyCustomDataBindingSourceCreator extends AbstractRequestBodyDataBindingSou
     @Override
     protected DataBindingSource createBindingSource(InputStream inputStream) {
         def map = [:]
-        
+
         def reader = new InputStreamReader(inputStream)
-        
+
         // this is an obviously naive parser and is intended
         // for demonstration purposes only.
 
@@ -181,7 +181,7 @@ class MyCustomDataBindingSourceCreator extends AbstractRequestBodyDataBindingSou
                 }
             }
         }
-        
+
         // create and return a DataBindingSource which contains the parsed data
         new SimpleMapDataBindingSource(map)
     }
