@@ -18,17 +18,9 @@ package myplugin
 @CompileStatic
 class ControllerTraitInjector implements TraitInjector {
 
-    static Pattern CONTROLLER_PATTERN = Pattern.compile(".+/" +
-        GrailsResourceUtils.GRAILS_APP_DIR + "/controllers/(.+)Controller\\.groovy");
-
     @Override
     Class getTrait() {
         DateTrait
-    }
-
-    @Override
-    boolean shouldInject(URL url) {
-        return url != null && CONTROLLER_PATTERN.matcher(url.getFile()).find();
     }
 
     @Override
@@ -38,4 +30,4 @@ class ControllerTraitInjector implements TraitInjector {
 }
 {code}
 
-The above @TraitInjector@ will add the @DateTrait@ to all controllers. The @shouldInject@ method is used to restrict which source files will have the trait compiled into it. And the @getArtefactTypes@ method defines the supported artefact types.
+The above @TraitInjector@ will add the @DateTrait@ to all controllers. The @getArtefactTypes@ method defines the types of artefacts that the trait should be applied to.
