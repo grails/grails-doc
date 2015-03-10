@@ -242,58 +242,6 @@ class FooTagLibTests extends GroovyTestCase {
 
 Notice that for the second example, @testBodyTag@, we pass a block that returns the body of the tag. This is convenient to representing the body as a String.
 
-h4. Testing Tag Libraries with GroovyPagesTestCase
-
-In addition to doing simple testing of tag libraries like in the above examples, you can also use the @grails.test.GroovyPagesTestCase@ class to test tag libraries with integration tests.
-
-The @GroovyPagesTestCase@ class is a subclass of the standard @GroovyTestCase@ class and adds utility methods for testing the output of GSP rendering.
-
-{note}
-@GroovyPagesTestCase@ can only be used in an integration test.
-{note}
-
-For example, consider this date formatting tag library:
-
-{code}
-import java.text.SimpleDateFormat
-
-class FormatTagLib {
-    def dateFormat = { attrs, body ->
-        out << new SimpleDateFormat(attrs.format) << attrs.date
-    }
-}
-{code}
-
-This can be easily tested as follows:
-
-{code}
-class FormatTagLibTests extends GroovyPagesTestCase {
-    void testDateFormat() {
-        def template =
-                '<g:dateFormat format="dd-MM-yyyy" date="\${myDate}" />'
-
-        def testDate = ... // create the date
-        assertOutputEquals('01-01-2008', template, [myDate:testDate])
-    }
-}
-{code}
-
-You can also obtain the result of a GSP using the @applyTemplate@ method of the @GroovyPagesTestCase@ class:
-
-{code}
-class FormatTagLibTests extends GroovyPagesTestCase {
-    void testDateFormat() {
-        def template =
-                '<g:dateFormat format="dd-MM-yyyy" date="\${myDate}" />'
-
-        def testDate = ... // create the date
-        def result = applyTemplate(template, [myDate:testDate])
-
-        assertEquals '01-01-2008', result
-    }
-}
-{code}
-
 h4. Testing Domain Classes
 
 Testing domain classes is typically a simple matter of using the [GORM API|guide:GORM], but there are a few things to be aware of. Firstly, when testing queries you often need to "flush" to ensure the correct state has been persisted to the database. For example take the following example:
