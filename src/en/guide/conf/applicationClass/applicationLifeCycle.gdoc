@@ -1,0 +1,16 @@
+The @Application@ class also implements the [GrailsApplicationLifeCycle|api:grails.core.GrailsApplicationLifeCycle] interface which all plugins implement.
+
+This means that the @Application@ class can be used to perform the same functions as a plugin. You can override the [regular plugins hooks|guide:hookingIntoRuntimeConfiguration] such as @doWithSpring@, @doWithApplicationContext@ and so on by overriding the appropriate method:
+
+{code}
+class Application extends GrailsAutoConfiguration {
+    @Override
+    Closure doWithSpring() {
+        {->
+            mySpringBean(MyType)
+        }
+    }
+
+    ...
+}
+{code}
