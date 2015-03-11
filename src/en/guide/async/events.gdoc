@@ -1,0 +1,17 @@
+Grails 3.0 introduces a new Events API based on [Reactor|https://github.com/reactor/reactor].
+
+All services and controllers in Grails 3.0 implement the [Events|api:grails.events.Events] trait.
+
+The @Events@ trait allows the ability to consume and publish events that are handled by Reactor.
+
+The default Reactor configuration utilises a thread pool backed event bus. You can however configure Reactor within @application.yml@, for example:
+
+{code}
+reactor
+    dispatchers:
+        default: myExecutor
+        myExecutor:
+            type: threadPoolExecutor
+            size: 5
+            backlog: 2048
+{code}
