@@ -1,273 +1,63 @@
-Integration tests differ from unit tests in that you have full access to the Grails environment within the test. Grails uses an in-memory H2 database for integration tests and clears out all the data from the database between tests.
+Integration tests differ from unit tests in that you have full access to the Grails environment within the test. You can create an integration test using the [create-integration-test|commandLine] command:
 
-One thing to bear in mind is that logging is enabled for your application classes, but it is different from logging in tests. So if you have something like this:
-
-{code:java}
-class MyServiceTests extends GroovyTestCase {
-    void testSomething() {
-        log.info "Starting tests"
-        ...
-    }
-}
+{code}
+$ grails create-integration-test Example
 {code}
 
-the "starting tests" message is logged using a different system than the one used by the application. The @log@ property in the example above is an instance of @java.util.logging.Logger@ (inherited from the base class, not injected by Grails), which doesn't have the same methods as the @log@ property injected into your application artifacts. For example, it doesn't have @debug()@ or @trace()@ methods, and the equivalent of @warn()@ is in fact @warning()@.
+The above command will create a new integration test at the location @src/integration-test/groovy/<PACKAGE>/ExampleSpec.groovy@.
+
+Grails uses the test environment for integration tests and loads the application prior to the first test run. All tests use the same application state.
 
 h4. Transactions
 
-Integration tests run inside a database transaction by default, which is rolled back at the end of the each test. This means that data saved during a test is not persisted to the database. Add a @transactional@ property to your test class to check transactional behaviour:
+Integration tests run inside a database transaction by default, which is rolled back at the end of the each test. This means that data saved during a test is not persisted to the database (which is shared across all tests). The default generated integration test template includes the [Rollback|api:grails.transaction.Rollback] annotation:
 
 {code}
-class MyServiceTests extends GroovyTestCase {
-    static transactional = false
+import grails.test.mixin.integration.Integration
+import grails.transaction.*
+import spock.lang.*
 
-    void testMyTransactionalServiceMethod() {
-        ...
+@Integration
+@Rollback
+class @artifact.name@Spec extends Specification {
+
+    ...
+
+    void "test something"() {
+        expect:"fix me"
+            true == false
     }
 }
 {code}
 
-Be sure to remove any persisted data from a non-transactional test, for example in the @tearDown@ method, so these tests don't interfere with standard transactional tests that expect a clean database.
+The @Rollback@ annotation ensures that each test methods runs in a transaction that is rolled back. Generally this is desirable because you do not want your tests depending on order or application state.
+
+If you do have a series of tests that will share state you can remove the @Rollback@ and the last test in the suite should feature the [DirtiesContext|api:org.springframework.test.annotation.DirtiesContext] annotation which will shutdown the environment and restart it fresh (note that this will have an impact on test run times).
+
+h4. Autowiring
+
+To obtain a reference to a bean you can use the [Autowired|api:org.springframework.beans.factory.annotation.Autowired] annotation. For example:
+
+{code}
+...
+import org.springframework.beans.factory.annotation.*
+
+@Integration
+@Rollback
+class @artifact.name@Spec extends Specification {
+
+    @Autowired
+    ExampleService exampleService
+    ...
+
+    void "Test example service"() {
+        expect:
+            exampleService.countExamples() == 0
+    }
+}
+{code}
+
 
 h4. Testing Controllers
 
-To test controllers you first have to understand the Spring Mock Library.
-
-Grails automatically configures each test with a [MockHttpServletRequest|api:org.springframework.mock.web.MockHttpServletRequest], [MockHttpServletResponse|api:org.springframework.mock.web.MockHttpServletResponse], and [MockHttpSession|api:org.springframework.mock.web.MockHttpSession] that you can use in your tests. For example consider the following controller:
-
-{code:java}
-class FooController {
-
-    def text() {
-        render "bar"
-    }
-
-    def someRedirect() {
-        redirect(action:"bar")
-    }
-}{code}
-
-The tests for this would be:
-
-{code:java}
-class FooControllerTests extends GroovyTestCase {
-
-    void testText() {
-        def fc = new FooController()
-        fc.text()
-        assertEquals "bar", fc.response.contentAsString
-    }
-
-    void testSomeRedirect() {
-        def fc = new FooController()
-        fc.someRedirect()
-        assertEquals "/foo/bar", fc.response.redirectedUrl
-    }
-}
-{code}
-
-In the above case @response@ is an instance of @MockHttpServletResponse@ which we can use to obtain the generated content with @contentAsString@ (when writing to the response) or the redirected URL. These mocked versions of the Servlet API are completely mutable (unlike the real versions) and hence you can set properties on the request such as the @contextPath@ and so on.
-
-Grails *does not* invoke [interceptors|guide:interceptors] or servlet filters when calling actions during integration testing. You should test interceptors and filters in isolation, using [functional testing|guide:functionalTesting] if necessary.
-
-h4. Testing Controllers with Services
-
-If your controller references a service (or other Spring beans), you have to explicitly initialise the service from your test.
-
-Given a controller using a service:
-
-{code:java}
-class FilmStarsController {
-    def popularityService
-
-    def update() {
-        // do something with popularityService
-    }
-}{code}
-
-The test for this would be:
-
-{code:java}
-class FilmStarsTests extends GroovyTestCase {
-    def popularityService
-
-    void testInjectedServiceInController () {
-        def fsc = new FilmStarsController()
-        fsc.popularityService = popularityService
-        fsc.update()
-    }
-}{code}
-
-h4. Testing Controller Command Objects
-
-With command objects you just supply parameters to the request and it will automatically do the command object work for you when you call your action with no parameters:
-
-Given a controller using a command object:
-
-{code:java}
-class AuthenticationController {
-    def signup(SignupForm form) {
-        ...
-    }
-}{code}
-
-You can then test it like this:
-
-{code:java}
-def controller = new AuthenticationController()
-controller.params.login = "marcpalmer"
-controller.params.password = "secret"
-controller.params.passwordConfirm = "secret"
-controller.signup()
-{code}
-
-Grails auto-magically sees your call to @signup()@ as a call to the action and populates the command object from the mocked request parameters. During controller testing, the @params@ are mutable with a mocked request supplied by Grails.
-
-h4. Testing Controllers and the render Method
-
-The [render|controllers] method lets you render a custom view at any point within the body of an action. For instance, consider the example below:
-
-{code:java}
-def save() {
-    def book = Book(params)
-    if (book.save()) {
-        // handle
-    }
-    else {
-        render(view:"create", model:[book:book])
-    }
-}
-{code}
-
-In the above example the result of the model of the action is not available as the return value, but instead is stored within the @modelAndView@ property of the controller. The @modelAndView@ property is an instance of Spring MVC's [ModelAndView|http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/web/servlet/ModelAndView.html] class and you can use it to the test the result of an action:
-
-{code:java}
-def bookController = new BookController()
-bookController.save()
-def model = bookController.modelAndView.model.book
-{code}
-
-h4. Simulating Request Data
-
-You can use the Spring [MockHttpServletRequest|api:org.springframework.mock.web.MockHttpServletRequest] to test an action that requires request data, for example a REST web service. For example consider this action which performs data binding from an incoming request:
-
-{code:java}
-def create() {
-    [book: new Book(params.book)]
-}
-{code}
-
-To simulate the 'book' parameter as an XML request you could do something like the following:
-
-{code:java}
-void testCreateWithXML() {
-
-    def controller = new BookController()
-
-    controller.request.contentType = 'text/xml'
-    controller.request.content = '''\\\\
-            <?xml version="1.0" encoding="ISO-8859-1"?>
-            <book>
-                <title>The Stand</title>
-                ...
-            </book>
-            '''.stripIndent().getBytes() // note we need the bytes
-
-    def model = controller.create()
-    assert model.book
-    assertEquals "The Stand", model.book.title
-}
-{code}
-
-The same can be achieved with a JSON request:
-
-{code:java}
-void testCreateWithJSON() {
-
-    def controller = new BookController()
-
-    controller.request.contentType = "application/json"
-    controller.request.content =
-            '{"id":1,"class":"Book","title":"The Stand"}'.getBytes()
-
-    def model = controller.create()
-    assert model.book
-    assertEquals "The Stand", model.book.title
-}
-{code}
-
-{note}
-With JSON don't forget the @class@ property to specify the name the target type to bind to. In XML this is implicit within the name of the @<book>@ node, but this property is required as part of the JSON packet.
-{note}
-
-For more information on the subject of REST web services see the section on [REST|guide:REST].
-
-h4. Testing Tag Libraries
-
-Testing tag libraries is simple because when a tag is invoked as a method it returns its result as a string (technically a @StreamCharBuffer@ but this class implements all of the methods of @String@). So for example if you have a tag library like this:
-
-{code:java}
-class FooTagLib {
-
-    def bar = { attrs, body ->
-        out << "<p>Hello World!</p>"
-    }
-
-    def bodyTag = { attrs, body ->
-        out << "<\${attrs.name}>"
-        out << body()
-        out << "</\${attrs.name}>"
-    }
-}
-{code}
-
-The tests would look like:
-
-{code:java}
-class FooTagLibTests extends GroovyTestCase {
-
-    void testBarTag() {
-        assertEquals "<p>Hello World!</p>",
-                     new FooTagLib().bar(null, null).toString()
-    }
-
-    void testBodyTag() {
-        assertEquals "<p>Hello World!</p>",
-                     new FooTagLib().bodyTag(name: "p") {
-                         "Hello World!"
-                     }.toString()
-    }
-}
-{code}
-
-Notice that for the second example, @testBodyTag@, we pass a block that returns the body of the tag. This is convenient to representing the body as a String.
-
-h4. Testing Domain Classes
-
-Testing domain classes is typically a simple matter of using the [GORM API|guide:GORM], but there are a few things to be aware of. Firstly, when testing queries you often need to "flush" to ensure the correct state has been persisted to the database. For example take the following example:
-
-{code:java}
-void testQuery() {
-    def books = [
-            new Book(title: "The Stand"),
-            new Book(title: "The Shining")]
-    books*.save()
-
-    assertEquals 2, Book.list().size()
-}
-{code}
-
-This test will fail because calling [save|domainClasses] does not actually persist the @Book@ instances when called. Calling @save@ only indicates to Hibernate that at some point in the future these instances should be persisted. To commit changes immediately you "flush" them:
-
-{code:java}
-void testQuery() {
-    def books = [
-            new Book(title: "The Stand"),
-            new Book(title: "The Shining")]
-    books*.save(flush: true)
-
-    assertEquals 2, Book.list().size()
-}
-{code}
-
-In this case since we're passing the argument @flush@ with a value of @true@ the updates will be persisted immediately and hence will be available to the query later on.
+To integration test controllers it is recommended you use [create-functional-test|commandLine] command to create a Geb functional test. See the following section on functional testing for more information.
