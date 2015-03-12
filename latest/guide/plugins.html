@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>17 Plugins 3.0.0.M2</title>
+    <title>17 Plugins 3.0.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.0.M2</p>
+                    <p><strong>Version:</strong> 3.0.0.RC1</p>
 
                     
                 </div>
@@ -333,18 +333,14 @@ Grails 3.0 makes it easy to add new traits to existing artefact types from a plu
     <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">new</span> Date()
   &#125;
 &#125;</pre></div><p class="paragraph"/>Once you have a trait you must tell Grails which artefacts you want to inject the trait into at compile time. To do this you implement a <a href="http://grails.org/doc/3.0.x/api/grails/compiler/traits/TraitInjector.html" class="api">TraitInjector</a>:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> myplugin<p class="paragraph"/>@CompileStatic
-class ControllerTraitInjector <span class="java&#45;keyword">implements</span> TraitInjector &#123;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> Pattern CONTROLLER_PATTERN = Pattern.compile(<span class="java&#45;quote">".+/"</span> +
-        GrailsResourceUtils.GRAILS_APP_DIR + "/controllers/(.+)Controller&#92;&#92;.groovy");<p class="paragraph"/>    @Override
+class ControllerTraitInjector <span class="java&#45;keyword">implements</span> TraitInjector &#123;<p class="paragraph"/>    @Override
     <span class="java&#45;object">Class</span> getTrait() &#123;
         DateTrait
-    &#125;<p class="paragraph"/>    @Override
-    <span class="java&#45;object">boolean</span> shouldInject(URL url) &#123;
-        <span class="java&#45;keyword">return</span> url != <span class="java&#45;keyword">null</span> &#38;&#38; CONTROLLER_PATTERN.matcher(url.getFile()).find();
     &#125;<p class="paragraph"/>    @Override
     <span class="java&#45;object">String</span>&#91;&#93; getArtefactTypes() &#123;
         &#91;'Controller'&#93; as <span class="java&#45;object">String</span>&#91;&#93;
     &#125;
-&#125;</pre></div><p class="paragraph"/>The above <code>TraitInjector</code> will add the <code>DateTrait</code> to all controllers. The <code>shouldInject</code> method is used to restrict which source files will have the trait compiled into it. And the <code>getArtefactTypes</code> method defines the supported artefact types.
+&#125;</pre></div><p class="paragraph"/>The above <code>TraitInjector</code> will add the <code>DateTrait</code> to all controllers. The <code>getArtefactTypes</code> method defines the types of artefacts that the trait should be applied to.
 
 
 <a name="15.8 Adding Dynamic Methods at Runtime"><!-- Legacy link --></a>

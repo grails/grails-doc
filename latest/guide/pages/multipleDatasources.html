@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>4.3.5 Multiple Datasources 3.0.0.M2</title>
+    <title>4.4.5 Multiple Datasources 3.0.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -126,11 +126,11 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>4.3.5 Multiple Datasources - Reference Documentation</h1>
+                    <h1>4.4.5 Multiple Datasources - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.0.M2</p>
+                    <p><strong>Version:</strong> 3.0.0.RC1</p>
 
                     
                 </div>
@@ -139,7 +139,7 @@ function addJsClass() {
 
                 
 <a name="3.3.6 Multiple Datasources"><!-- Legacy link --></a>
-<h2 id="multipleDatasources">4.3.5 Multiple Datasources</h2>
+<h2 id="multipleDatasources">4.4.5 Multiple Datasources</h2>
 By default all domain classes share a single <code>DataSource</code> and a single database, but you have the option to partition your domain classes into two or more <code>DataSource</code>s.<p class="paragraph"/><h4>Configuring Additional DataSources</h4><p class="paragraph"/>The default <code>DataSource</code> configuration in <code>grails-app/conf/DataSource.groovy</code> looks something like this:<p class="paragraph"/><div class="code"><pre>&#45;&#45;&#45;
 dataSource:
     pooled: <span class="java&#45;keyword">true</span>
@@ -161,44 +161,47 @@ dataSource:
             url: jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
             properties:
                jmxEnabled: <span class="java&#45;keyword">true</span>
-               initialSize: 5</pre></div><p class="paragraph"/>This configures a single <code>DataSource</code> with the Spring bean named <code>dataSource</code>. To configure extra <code>DataSource</code>s, add a <code>dataSources</code> block (at the top level, in an environment block, or both, just like the standard <code>DataSource</code> definition) with a custom name, separated by an underscore. For example, this configuration adds a second <code>DataSource</code>, using MySQL in the development environment and Oracle in production:<p class="paragraph"/><div class="code"><pre>&#45;&#45;&#45;
-dataSources: 
-  dataSource:
-      pooled: <span class="java&#45;keyword">true</span>
-      jmxExport: <span class="java&#45;keyword">true</span>
-      driverClassName: org.h2.Driver
-      username: sa
-      password:
-  dataSource_lookup:
-      dialect: org.hibernate.dialect.MySQLInnoDBDialect
-      driverClassName: com.mysql.jdbc.Driver
-      username: lookup
-      password: secret
-      url: jdbc:mysql://localhost/lookup
-      dbCreate: update<p class="paragraph"/>environments:
+               initialSize: 5</pre></div><p class="paragraph"/>This configures a single <code>DataSource</code> with the Spring bean named <code>dataSource</code>. To configure extra <code>DataSource</code>s, add a <code>dataSources</code> block (at the top level, in an environment block, or both, just like the standard <code>DataSource</code> definition) with a custom name. For example, this configuration adds a second <code>DataSource</code>, using MySQL in the development environment and Oracle in production:<p class="paragraph"/><div class="code"><pre>&#45;&#45;&#45;
+dataSources:
+    dataSource:
+        pooled: <span class="java&#45;keyword">true</span>
+        jmxExport: <span class="java&#45;keyword">true</span>
+        driverClassName: org.h2.Driver
+        username: sa
+        password:
+    lookup:
+        dialect: org.hibernate.dialect.MySQLInnoDBDialect
+        driverClassName: com.mysql.jdbc.Driver
+        username: lookup
+        password: secret
+        url: jdbc:mysql://localhost/lookup
+        dbCreate: update<p class="paragraph"/>environments:
     development:
-        dataSource:
-            dbCreate: create&#45;drop
-            url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+        dataSources:
+            dataSource:
+                dbCreate: create&#45;drop
+                url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
     test:
-        dataSource:
-            dbCreate: update
-            url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+        dataSources:
+            dataSource:
+                dbCreate: update
+                url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
     production:
-        dataSource:
-            dbCreate: update
-            url: jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE            
-            properties:
-               jmxEnabled: <span class="java&#45;keyword">true</span>
-               initialSize: 5
-               &#8230;
-        dataSource_lookup:
-            dialect: org.hibernate.dialect.Oracle10gDialect
-            driverClassName: oracle.jdbc.driver.OracleDriver
-            username: lookup
-            password: secret
-            url: jdbc:oracle:thin:@localhost:1521:lookup
-            dbCreate: update</pre></div><p class="paragraph"/>You can use the same or different databases as long as they're supported by Hibernate.<p class="paragraph"/><h4>Configuring Domain Classes</h4><p class="paragraph"/>If a domain class has no <code>DataSource</code> configuration, it defaults to the standard <code>'dataSource'</code>. Set the <code>datasource</code> property in the <code>mapping</code> block to configure a non-default <code>DataSource</code>. For example, if you want to use the <code>ZipCode</code> domain to use the <code>'lookup'</code> <code>DataSource</code>, configure it like this;<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
+        dataSources:
+            dataSource:
+                dbCreate: update
+                url: jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+                properties:
+                   jmxEnabled: <span class="java&#45;keyword">true</span>
+                   initialSize: 5
+                   &#8230;
+            lookup:
+                dialect: org.hibernate.dialect.Oracle10gDialect
+                driverClassName: oracle.jdbc.driver.OracleDriver
+                username: lookup
+                password: secret
+                url: jdbc:oracle:thin:@localhost:1521:lookup
+                dbCreate: update</pre></div><p class="paragraph"/>You can use the same or different databases as long as they're supported by Hibernate.<p class="paragraph"/><h4>Configuring Domain Classes</h4><p class="paragraph"/>If a domain class has no <code>DataSource</code> configuration, it defaults to the standard <code>'dataSource'</code>. Set the <code>datasource</code> property in the <code>mapping</code> block to configure a non-default <code>DataSource</code>. For example, if you want to use the <code>ZipCode</code> domain to use the <code>'lookup'</code> <code>DataSource</code>, configure it like this;<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
       datasource 'lookup'
    &#125;
 &#125;</pre></div><p class="paragraph"/>A domain class can also use two or more <code>DataSource</code>s. Use the <code>datasources</code> property with a list of names to configure more than one, for example:<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
