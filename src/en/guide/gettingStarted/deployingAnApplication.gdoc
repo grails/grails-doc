@@ -8,6 +8,12 @@ grails war
 
 This will produce a WAR file under the @build/libs@ directory which can then be deployed as per your container's instructions.
 
+Note that by default Grails will include an embeddable version of Tomcat inside the WAR file, this can cause problems if you deploy to a different version of Tomcat. If you don't intend to use the embedded container then you should change the scope of the Tomcat dependencies to @provided@ prior to deploying to your production container in @build.gradle@:
+
+{code}
+provided "org.springframework.boot:spring-boot-starter-tomcat"
+{code}
+
 Unlike most scripts which default to the @development@ environment unless overridden, the @war@ command runs in the @production@ environment by default. You can override this like any script by specifying the environment name, for example:
 
 {code}
@@ -18,7 +24,7 @@ If you prefer not to operate a separate Servlet container then you can simply ru
 
 {code}
 grails war
-java -Xmx768M -XX:MaxPermSize=256m -jar build/libs/mywar-0.1.war
+java -Dgrails.env=prod -jar build/libs/mywar-0.1.war
 {code}
 
 
