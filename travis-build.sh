@@ -16,4 +16,6 @@ git rm -rf latest/
 mkdir -p latest
 cp -r ../build/docs/. ./latest/
 git add latest/*
+git commit -a -m "Updating docs for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
+git push origin HEAD
 
