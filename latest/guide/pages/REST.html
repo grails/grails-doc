@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>9.1 REST 3.0.0.RC3</title>
+    <title>9.1 REST 3.0.0</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.0.RC3</p>
+                    <p><strong>Version:</strong> 3.0.0</p>
 
                     
                 </div>
@@ -709,7 +709,9 @@ It is critical that place your new mime types after the 'all' Mime Type because 
 <span class="java&#45;keyword">import</span> grails.web.mime.&#42;<p class="paragraph"/>beans = &#123;
     halBookRenderer(HalJsonRenderer, <span class="java&#45;keyword">rest</span>.test.Book, <span class="java&#45;keyword">new</span> MimeType(<span class="java&#45;quote">"application/vnd.books.org.book+json"</span>, &#91;v:<span class="java&#45;quote">"1.0"</span>&#93;))
     halBookListRenderer(HalJsonCollectionRenderer, <span class="java&#45;keyword">rest</span>.test.Book, <span class="java&#45;keyword">new</span> MimeType(<span class="java&#45;quote">"application/vnd.books.org.booklist+json"</span>, &#91;v:<span class="java&#45;quote">"1.0"</span>&#93;))
-&#125;</pre></div><p class="paragraph"/>In the above example the first bean defines a HAL renderer for a single book instance that returns a Mime Type of <code>application/vnd.books.org.book+json</code>. The second bean defines the Mime Type used to render a collection of books (in this case <code>application/vnd.books.org.booklist+json</code>).<p class="paragraph"/>With this in place issuing a request for the new Mime Type returns the necessary HAL:<p class="paragraph"/><div class="code"><pre>$ curl &#45;i &#45;H <span class="java&#45;quote">"Accept: application/vnd.books.org.book+json"</span> http://localhost:8080/myapp/books/1<p class="paragraph"/>HTTP/1.1 200 OK
+&#125;</pre></div><p class="paragraph"/>In the above example the first bean defines a HAL renderer for a single book instance that returns a Mime Type of <code>application/vnd.books.org.book+json</code>. The second bean defines the Mime Type used to render a collection of books (in this case <code>application/vnd.books.org.booklist+json</code>).<p class="paragraph"/><blockquote class="note">
+<code>application/vnd.books.org.booklist+json</code> is an example of a media-range (http://www.w3.org/Protocols/rfc2616/rfc2616.html - Header Field Definitions).  This example uses entity (book) and operation (list) to form the media-range values but in reality, it may not be necessary to create a separate Mime type for each operation.  Further, it may not be necessary to create Mime types at the entity level.  See the section on "Versioning REST resources" for further information about how to define your own Mime types.
+</blockquote><p class="paragraph"/>With this in place issuing a request for the new Mime Type returns the necessary HAL:<p class="paragraph"/><div class="code"><pre>$ curl &#45;i &#45;H <span class="java&#45;quote">"Accept: application/vnd.books.org.book+json"</span> http://localhost:8080/myapp/books/1<p class="paragraph"/>HTTP/1.1 200 OK
 Server: Apache&#45;Coyote/1.1
 Content&#45;Type: application/vnd.books.org.book+json;charset=ISO&#45;8859&#45;1<p class="paragraph"/>
 &#123;
