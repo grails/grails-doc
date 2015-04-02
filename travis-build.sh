@@ -23,12 +23,12 @@ if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then
     export RELEASE_FILE="${zipName}.zip"
 
 		milestone=${version:5}
-		if [[ -n $milestone ]]; then
+		# if [[ -n $milestone ]]; then
 			git rm -rf latest/
 			mkdir -p latest
 			cp -r ../build/docs/. ./latest/
 			git add latest/*
-		fi
+		# fi
 
 		majorVersion=${version:0:4}
 		majorVersion="${majorVersion}x"
