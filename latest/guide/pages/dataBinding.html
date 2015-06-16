@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.1.6 Data Binding 3.0.1</title>
+    <title>7.1.6 Data Binding 3.0.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.1</p>
+                    <p><strong>Version:</strong> 3.0.2</p>
 
                     
                 </div>
@@ -302,7 +302,7 @@ assert person.homeAddress.city = <span class="java&#45;quote">"O'Fallon"</span>
 assert person.homeAddress.state = 'Missouri'</pre></div><p class="paragraph"/><h4>Date Formats For Data Binding</h4><p class="paragraph"/>A custom date format may be specified to be used when binding a String to a Date value by applying the <a href="http://grails.org/doc/3.0.x/api/org/grails/databinding/BindingFormat.html" class="api">BindingFormat</a> annotation to a Date field.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.grails.databinding.BindingFormat<p class="paragraph"/>class Person &#123;
     @BindingFormat('MMddyyyy')
     Date birthDate
-&#125;</pre></div><p class="paragraph"/>A global setting may be configured in <code>Config.groovy</code> to define date formats which will be used application wide when binding to Date.<p class="paragraph"/><div class="code"><pre>// grails&#45;app/conf/Config.groovy<p class="paragraph"/>grails.databinding.dateFormats = &#91;'MMddyyyy', 'yyyy&#45;MM&#45;dd HH:mm:ss.S', <span class="java&#45;quote">"yyyy&#45;MM&#45;dd'T'hh:mm:ss'Z'"</span>&#93;</pre></div><p class="paragraph"/>The formats specified in <code>grails.databinding.dateFormats</code> will be attempted in the order in which they are included in the List.  If a property is marked with &#64;BindingFormat, the &#64;BindingFormat will take precedence over the values specified in <code>grails.databinding.dateFormats</code>.<p class="paragraph"/>The default formats that are used are "yyyy-MM-dd HH:mm:ss.S" and "yyyy-MM-dd'T'hh:mm:ss'Z'".<p class="paragraph"/><h4>Custom Formatted Converters</h4><p class="paragraph"/>You may supply your own handler for the <a href="http://grails.org/doc/3.0.x/api/org/grails/databinding/BindingFormat.html" class="api">BindingFormat</a> annotation by writing a class which implements the <a href="http://grails.org/doc/3.0.x/api/org/grails/databinding/converters/FormattedValueConverter.html" class="api">FormattedValueConverter</a> interface and registering an instance of that class as a bean in the Spring application context.  Below is an example of a trivial custom String formatter that might convert the case of a String based on the value assigned to the BindingFormat annotation.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.myapp.converters<p class="paragraph"/><span class="java&#45;keyword">import</span> org.grails.databinding.converters.FormattedValueConverter<p class="paragraph"/>class FormattedStringValueConverter <span class="java&#45;keyword">implements</span> FormattedValueConverter &#123;
+&#125;</pre></div><p class="paragraph"/>A global setting may be configured in <code>Config.groovy</code> to define date formats which will be used application wide when binding to Date.<p class="paragraph"/><div class="code"><pre>// grails&#45;app/conf/Config.groovy<p class="paragraph"/>grails.databinding.dateFormats = &#91;'MMddyyyy', 'yyyy&#45;MM&#45;dd HH:mm:ss.S', <span class="java&#45;quote">"yyyy&#45;MM&#45;dd'T'hh:mm:ss'Z'"</span>&#93;</pre></div><p class="paragraph"/>The formats specified in <code>grails.databinding.dateFormats</code> will be attempted in the order in which they are included in the List.  If a property is marked with &#64;BindingFormat, the &#64;BindingFormat will take precedence over the values specified in <code>grails.databinding.dateFormats</code>.<p class="paragraph"/>The default formats that are used are "yyyy-MM-dd HH:mm:ss.S", "yyyy-MM-dd'T'hh:mm:ss'Z'" and "yyyy-MM-dd HH:mm:ss.S z".<p class="paragraph"/><h4>Custom Formatted Converters</h4><p class="paragraph"/>You may supply your own handler for the <a href="http://grails.org/doc/3.0.x/api/org/grails/databinding/BindingFormat.html" class="api">BindingFormat</a> annotation by writing a class which implements the <a href="http://grails.org/doc/3.0.x/api/org/grails/databinding/converters/FormattedValueConverter.html" class="api">FormattedValueConverter</a> interface and registering an instance of that class as a bean in the Spring application context.  Below is an example of a trivial custom String formatter that might convert the case of a String based on the value assigned to the BindingFormat annotation.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.myapp.converters<p class="paragraph"/><span class="java&#45;keyword">import</span> org.grails.databinding.converters.FormattedValueConverter<p class="paragraph"/>class FormattedStringValueConverter <span class="java&#45;keyword">implements</span> FormattedValueConverter &#123;
     def convert(value, <span class="java&#45;object">String</span> format) &#123;
         <span class="java&#45;keyword">if</span>('UPPERCASE' == format) &#123;
             value = value.toUpperCase()
@@ -486,7 +486,7 @@ Note that if an empty List is provided as a value for the <code>include</code> p
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-service.html">create-service</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/create-tag-lib.html">create-tag-lib</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-taglib.html">create-taglib</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-unit-test.html">create-unit-test</a>
