@@ -2,7 +2,36 @@ Grails has built in support for [Content negotiation|http://en.wikipedia.org/wik
 
 h4. Configuring Mime Types
 
-Before you can start dealing with content negotiation you need to tell Grails what content types you wish to support. By default Grails comes configured with a number of different content types within @grails-app/conf/Config.groovy@ using the @grails.mime.types@ setting:
+Before you can start dealing with content negotiation you need to tell Grails what content types you wish to support. By default Grails comes configured with a number of different content types within @grails-app/conf/application.yml@ using the @grails.mime.types@ setting:
+
+{code:java}
+grails:
+    mime:
+        types:
+            all: '*/*'
+            atom: application/atom+xml
+            css: text/css
+            csv: text/csv
+            form: application/x-www-form-urlencoded
+            html: 
+              - text/html
+              - application/xhtml+xml
+            js: text/javascript
+            json:
+              - application/json
+              - text/json
+            multipartForm: multipart/form-data
+            rss: application/rss+xml
+            text: text/plain
+            hal: 
+              - application/hal+json
+              - application/hal+xml
+            xml:
+              - text/xml
+              - application/xml
+{code}
+
+The setting can also be done in @grails-app/conf/application.groovy@ as shown below:
 
 {code:java}
 grails.mime.types = [ // the first one is the default format
@@ -25,7 +54,7 @@ grails.mime.types = [ // the first one is the default format
 The above bit of configuration allows Grails to detect to format of a request containing either the 'text/xml' or 'application/xml' media types as simply 'xml'. You can add your own types by simply adding new entries into the map.
 The first one is the default format.
 
-h4. Content Negotiation using the format parameter
+h4. Content Negotiation using the format Request Parameter
 
 Let's say a controller action can return a resource in a variety of formats: HTML, XML, and JSON. What format will the client get? The easiest and most reliable way for the client to control this is through a @format@ URL parameter.
 
@@ -35,7 +64,17 @@ So if you, as a browser or some other client, want a resource as XML, you can us
 http://my.domain.org/books?format=xml
 {code}
 
-The result of this on the server side is a @format@ property on the @response@ object with the value @xml@ . You could code your controller action to return XML based on this property, but you can also make use of the controller-specific @withFormat()@ method:
+The result of this on the server side is a @format@ property on the @response@ object with the value @xml@ . 
+
+You can also define this parameter in the [URL Mappings|guide:urlmappings] definition:
+
+{code:java}
+"/book/list"(controller:"book", action:"list") {
+    format = "xml"
+}
+{code}
+
+You could code your controller action to return XML based on this property, but you can also make use of the controller-specific @withFormat()@ method:
 
 {code:java}
 import grails.converters.JSON
@@ -125,22 +164,6 @@ request.withFormat {
     json {
         // read JSON
     }
-}
-{code}
-
-h4. Content Negotiation with the format Request Parameter
-
-If fiddling with request headers if not your favorite activity you can override the format used by specifying a @format@ request parameter:
-
-{code:java}
-/book/list?format=xml
-{code}
-
-You can also define this parameter in the [URL Mappings|guide:urlmappings] definition:
-
-{code:java}
-"/book/list"(controller:"book", action:"list") {
-    format = "xml"
 }
 {code}
 

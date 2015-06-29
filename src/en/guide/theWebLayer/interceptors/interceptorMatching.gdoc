@@ -19,7 +19,6 @@ class AuthInterceptor {
 
 You can also perform matching using named argument:
 
-
 {code}
 class LoggingInterceptor {
   LoggingInterceptor() {
@@ -33,10 +32,15 @@ class LoggingInterceptor {
 }
 {code}
 
+You can use any number of matchers defined in your interceptor. They will be executed in the order in which they have been defined. For example the above interceptor will match for all of the following:
+
+* when the @show@ action of @BookController@ is called 
+* when @AuthorController@ or @PublisherController@ is called
+
 All named arguments accept either a String or a Regex expression. The possible named arguments are:
 
 * @namespace@ - The namespace of the controller
 * @controller@ - The name of the controller
 * @action@ - The name of the action
 * @method@ - The HTTP method
-* @uri@ - The URI of the request (cannot be used in combination with other arguments)
+* @uri@ - The URI of the request. If this argument is used then all other arguments will be ignored and only this will be used.

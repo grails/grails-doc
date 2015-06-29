@@ -1,26 +1,26 @@
-By default interceptors will match the controller name they apply to be convention. For example if you have an interceptor called @BookInterceptor@ then all requests the actions of the @BookController@ will trigger the interceptor.
+By default interceptors will match the controllers with the same name. For example if you have an interceptor called @BookInterceptor@ then all requests to the actions of the @BookController@ will trigger the interceptor.
 
 An @Interceptor@ implements the [Interceptor|api:grails.artefact.Interceptor] trait and provides 3 methods that can be used to intercept requests:
 
 {code}
-    /**
-     * Executed before a matched action
-     *
-     * @return Whether the action should continue and execute
-     */
-    boolean before() { true }
+/**
+ * Executed before a matched action
+ *
+ * @return Whether the action should continue and execute
+ */
+boolean before() { true }
 
-    /**
-     * Executed after the action executes but prior to view rendering
-     *
-     * @return True if view rendering should continue, false otherwise
-     */
-    boolean after() { true }
+/**
+ * Executed after the action executes but prior to view rendering
+ *
+ * @return True if view rendering should continue, false otherwise
+ */
+boolean after() { true }
 
-    /**
-     * Executed after view rendering completes
-     */
-    void afterView() {}
+/**
+ * Executed after view rendering completes
+ */
+void afterView() {}
 {code}
 
 As described above the @before@ method is executed prior to an action and can cancel the execution of the action by returning @false@.
@@ -37,4 +37,4 @@ boolean after() {
 }
 {code}
 
-The @afterView@ method is executed after view rendering completes and if an exception occurs, the exception is available using the @throwable@ property of the [Interceptor|api:grails.artefact.Interceptor] trait.
+The @afterView@ method is executed after view rendering completes. If an exception occurs, the exception is available using the @throwable@ property of the [Interceptor|api:grails.artefact.Interceptor] trait.

@@ -32,6 +32,85 @@ class @artifact.name@Spec extends Specification {
 
 The @Rollback@ annotation ensures that each test methods runs in a transaction that is rolled back. Generally this is desirable because you do not want your tests depending on order or application state.
 
+h4. Using Spring's Rollback annotation
+In Grails 3.0 tests rely on @grails.transaction.Rollback@ annotation to bind the session in integration tests. But with this approach the @setup()@ and @setupSpec()@ method in the test is run prior to the transaction starting hence
+you would see @No Hibernate Session found@ error while running integration test if @setup()@ sets up data and persists them as shown in the below sample:
+
+{code}
+import grails.test.mixin.integration.Integration
+import grails.transaction.*
+import spock.lang.*
+
+@Integration
+@Rollback
+class @artifact.name@Spec extends Specification {
+
+    void setup() {
+        // Below line would throw a Hibernate session not found error
+        new Book(name: 'Grails in Action').save(flush: true)
+    }
+
+    void "test something"() {
+        expect:
+        Book.count() == 1
+    }
+}
+{code}
+
+To make sure the setup logic runs within the transaction you have to move it to be called from the method itself. Similar to usage of @setupData()@ method shown below:
+
+{code}
+import grails.test.mixin.integration.Integration
+import grails.transaction.*
+import spock.lang.*
+
+@Integration
+@Rollback
+class @artifact.name@Spec extends Specification {
+
+    void setupData() {
+        new Book(name: 'Grails in Action').save(flush: true)
+    }
+
+    void "test something"() {
+        given:
+        setupData()
+
+        expect:
+        Book.count() == 1
+    }
+}
+{code}
+
+Another approach could be to use Spring's [@Rollback|http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/test/annotation/Rollback.html] instead.
+
+{code}
+import grails.test.mixin.integration.Integration
+import org.springframework.test.annotation.Rollback
+import spock.lang.*
+
+@Integration
+@Rollback
+class @artifact.name@Spec extends Specification {
+
+    void setup() {
+        new Book(name: 'Grails in Action').save(flush: true)
+    }
+
+    void "test something"() {
+        expect:
+        Book.count() == 1
+    }
+}
+{code}
+
+{note}
+It isn't possible to make @grails.transaction.Rollback@ behave the same way as Spring's Rollback annotation because @grails.transaction.Rollback@ transforms the byte code of the class, eliminating the need for a proxy (which Spring's version requires).
+This has the downside that you cannot implement it differently for different cases (as Spring does for testing).
+{note}
+
+h4. DirtiesContext
+
 If you do have a series of tests that will share state you can remove the @Rollback@ and the last test in the suite should feature the [DirtiesContext|api:org.springframework.test.annotation.DirtiesContext] annotation which will shutdown the environment and restart it fresh (note that this will have an impact on test run times).
 
 h4. Autowiring

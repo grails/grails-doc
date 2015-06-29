@@ -1,13 +1,14 @@
 h4. Setting up caching
 
-"Hibernate":http://www.hibernate.org/ features a second-level cache with a customizable cache provider. This needs to be configured in the @grails-app/conf/DataSource.groovy@ file as follows:
+"Hibernate":http://www.hibernate.org/ features a second-level cache with a customizable cache provider. This needs to be configured in the @grails-app/conf/application.yml@ file as follows:
 
-{code:java}
-hibernate {
-    cache.use_second_level_cache=true
-    cache.use_query_cache=true
-    cache.provider_class='org.hibernate.cache.EhCacheProvider'
-}
+{code}
+hibernate:
+  cache:
+    use_second_level_cache: true
+    provider_class: net.sf.ehcache.hibernate.EhCacheProvider
+    region:
+       factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory
 {code}
 
 You can customize any of these settings, for example to use a distributed caching mechanism.
@@ -104,4 +105,4 @@ Below is a description of the different cache settings and their usages:
 * @read-only@ - If your application needs to read but never modify instances of a persistent class, a read-only cache may be used.
 * @read-write@ - If the application needs to update data, a read-write cache might be appropriate.
 * @nonstrict-read-write@ - If the application only occasionally needs to update data (i.e. if it is very unlikely that two transactions would try to update the same item simultaneously) and strict transaction isolation is not required, a @nonstrict-read-write@ cache might be appropriate.
-* @transactional@ - The @transactional@ cache strategy provides support for fully transactional cache providers such as JBoss TreeCache. Such a cache may only be used in a JTA environment and you must specify @hibernate.transaction.manager_lookup_class@ in the @grails-app/conf/DataSource.groovy@ file's @hibernate@ config.
+* @transactional@ - The @transactional@ cache strategy provides support for fully transactional cache providers such as JBoss TreeCache. Such a cache may only be used in a JTA environment and you must specify @hibernate.transaction.manager_lookup_class@ in the @grails-app/conf/application.groovy@ file's @hibernate@ config.
