@@ -221,7 +221,7 @@ This has the same effect as using the implicit constructor.
 
 When binding an empty String (a String with no characters in it, not even spaces), the data binder will convert the empty String to null.  This simplifies the most common case where the intent is to treat an empty form field as having the value null since there isn't a way to actually submit a null as a request parameter.  When this behavior is not desirable the application may assign the value directly.
 
-The mass property binding mechanism will by default automatically trim all Strings at binding time.  To disable this behavior set the @grails.databinding.trimStrings@ property to false in @grails-app/conf/Config.groovy@.
+The mass property binding mechanism will by default automatically trim all Strings at binding time.  To disable this behavior set the @grails.databinding.trimStrings@ property to false in @grails-app/conf/application.groovy@.
 
 {code:java}
 // the default value is true
@@ -343,7 +343,7 @@ This would bind the selected image into the @Map@ property @images@ under a key 
 When binding to Maps, Arrays and Collections the data binder will automatically grow the size of the collections as necessary.  The default limit to how large the binder will grow a collection is 256.  If the data binder encounters an entry that requires the collection be grown beyond that limit, the entry is ignored.  The limit may be configured by assigning a value to the @grails.databinding.autoGrowCollectionLimit@ property in @Config.groovy@.
 
 {code:java}
-// grails-app/conf/Config.groovy
+// grails-app/conf/application.groovy
 
 // the default value is 256
 grails.databinding.autoGrowCollectionLimit = 128
@@ -566,7 +566,7 @@ class Person {
 A global setting may be configured in @Config.groovy@ to define date formats which will be used application wide when binding to Date.
 
 {code:java}
-// grails-app/conf/Config.groovy
+// grails-app/conf/application.groovy
 
 grails.databinding.dateFormats = ['MMddyyyy', 'yyyy-MM-dd HH:mm:ss.S', "yyyy-MM-dd'T'hh:mm:ss'Z'"]
 
@@ -830,10 +830,10 @@ public interface BindEventListener {
 }
 {code}
 
-Support for @BindEventListener@ is disabled by default.  To enable support assign a value of @true@ to the @grails.databinding.enableSpringEventAdapter@ property in @grails-app/conf/Config.groovy@.
+Support for @BindEventListener@ is disabled by default.  To enable support assign a value of @true@ to the @grails.databinding.enableSpringEventAdapter@ property in @grails-app/conf/application.groovy@.
 
 {code}
-// grails-app/conf/Config.groovy
+// grails-app/conf/application.groovy
 grails.databinding.enableSpringEventAdapter=true
 
 ...
