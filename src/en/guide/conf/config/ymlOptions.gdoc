@@ -1,0 +1,21 @@
+@application.yml@ was introduced in Grails 3.0 for an alternative format for the configuration tasks.
+
+h3. Using system properties / command line arguments
+
+Suppose you are using the @JDBC_CONNECTION_STRING@ command line argument and you want to access the same in the yml file then it can be done in the following manner:
+
+{code:java}
+production:
+    dataSource: 
+        url: '${JDBC_CONNECTION_STRING}'
+{code}
+
+Similarly system arguments can be accessed.
+
+You will need to have this in @build.gradle@ to modify the @bootRun@ target if @grails run-app@ is used to start the application
+
+{code:java}
+run {
+    systemProperties = System.properties
+}
+{code}
