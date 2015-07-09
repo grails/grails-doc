@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>4.1 Basic Configuration 3.0.2</title>
+    <title>4.1 Basic Configuration 3.0.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.3</p>
 
                     
                 </div>
@@ -139,13 +139,16 @@ function addJsClass() {
                 <div id="table-of-content">
                     <h2>Table of Contents</h2>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#builtInOptions"><strong>4.1</strong><span>Built in options</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#ymlOptions"><strong>4.1</strong><span>Options for the yml format Config</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#logging"><strong>4.2</strong><span>Logging</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#builtInOptions"><strong>4.2</strong><span>Built in options</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#configGORM"><strong>4.3</strong><span>GORM</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#logging"><strong>4.3</strong><span>Logging</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#configGORM"><strong>4.4</strong><span>GORM</span></a>
                     </div>
                     
                 </div>
@@ -175,8 +178,19 @@ In Groovy code you must use single quotes around the string for the value of the
 </blockquote><p class="paragraph"/>As you can see, when accessing configuration settings you use the same dot notation as when you define them.
 
 
+
+<h2 id="ymlOptions">4.1.1 Options for the yml format Config</h2>
+<code>application.yml</code> was introduced in Grails 3.0 for an alternative format for the configuration tasks.<p class="paragraph"/><h3>Using system properties / command line arguments</h3><p class="paragraph"/>Suppose you are using the <code>JDBC_CONNECTION_STRING</code> command line argument and you want to access the same in the yml file then it can be done in the following manner:<p class="paragraph"/><div class="code"><pre>production:
+    dataSource: 
+        url: '$&#123;JDBC_CONNECTION_STRING&#125;'</pre></div><p class="paragraph"/>Similarly system arguments can be accessed.<p class="paragraph"/>You will need to have this in <code>build.gradle</code> to modify the <code>bootRun</code> target if <code>grails run-app</code> is used to start the application<p class="paragraph"/><div class="code"><pre>run &#123;
+    systemProperties = <span class="java&#45;object">System</span>.properties
+&#125;</pre></div><p class="paragraph"/>For testing the following will need to change the <code>test</code> task as follows<p class="paragraph"/><div class="code"><pre>test &#123; 
+    systemProperties = <span class="java&#45;object">System</span>.properties 
+&#125;</pre></div>
+
+
 <a name="3.1.1 Built in options"><!-- Legacy link --></a>
-<h2 id="builtInOptions">4.1.1 Built in options</h2>
+<h2 id="builtInOptions">4.1.2 Built in options</h2>
 Grails has a set of core settings that are worth knowing about. Their defaults are suitable for most projects, but it's important to understand what they do because you may need one or more of them later.<p class="paragraph"/>
 <h3>Runtime settings</h3><p class="paragraph"/>On the runtime front, i.e. <code>grails-app/conf/application.yml</code>, there are quite a few more core settings:
 <ul class="star">
@@ -191,13 +205,13 @@ Grails has a set of core settings that are worth knowing about. Their defaults a
 </ul><p class="paragraph"/>
 
 <a name="3.1.2 Logging"><!-- Legacy link --></a>
-<h2 id="logging">4.1.2 Logging</h2>
+<h2 id="logging">4.1.3 Logging</h2>
 By default logging in Grails 3.0 is handled by the <a href="http://logback.qos.ch" target="blank">Logback logging framework</a> and can be configured with the <code>grails-app/conf/logback.groovy</code> file.<p class="paragraph"/><blockquote class="note">
 If you prefer XML you can replace the <code>logback.groovy</code> file with a <code>logback.xml</code> file instead.
 </blockquote><p class="paragraph"/>For more information on configuring logging refer to the <a href="http://logback.qos.ch/manual/groovy.html" target="blank">Logback documentation</a> on the subject.
 
 <a name="3.1.3 GORM"><!-- Legacy link --></a>
-<h2 id="configGORM">4.1.3 GORM</h2>
+<h2 id="configGORM">4.1.4 GORM</h2>
 Grails provides the following GORM configuration options:
 <ul class="star">
 <li><code>grails.gorm.failOnError</code>  - If set to <code>true</code>, causes the <code>save()</code> method on domain classes to throw a <code>grails.validation.ValidationException</code> if <a href="../guide/single.html#validation" class="guide">validation</a> fails during a save.  This option may also be assigned a list of Strings representing package names.  If the value is a list of Strings then the failOnError behavior will only be applied to domain classes in those packages (including sub-packages).  See the <a href="../ref/Domain Classes/save.html" class="domainClasses">save</a> method docs for more information.</li>
@@ -235,9 +249,6 @@ Grails provides the following GORM configuration options:
                         
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
-                            </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
                             </div>
@@ -290,7 +301,7 @@ Grails provides the following GORM configuration options:
                             <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/docs.html">docs</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -327,6 +338,9 @@ Grails provides the following GORM configuration options:
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stop-app.html">stop-app</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>

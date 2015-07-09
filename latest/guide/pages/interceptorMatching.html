@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.5.2 Matching Requests with Inteceptors 3.0.2</title>
+    <title>7.5.2 Matching Requests with Inteceptors 3.0.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.3</p>
 
                     
                 </div>
@@ -147,21 +147,24 @@ As mention in the previous section, by default an interceptor will match only re
   &#125;<p class="paragraph"/>  <span class="java&#45;object">boolean</span> before() &#123;
     // perform authentication
   &#125;
-&#125;</pre></div><p class="paragraph"/>You can also perform matching using named argument:<p class="paragraph"/>
-<div class="code"><pre>class LoggingInterceptor &#123;
+&#125;</pre></div><p class="paragraph"/>You can also perform matching using named argument:<p class="paragraph"/><div class="code"><pre>class LoggingInterceptor &#123;
   LoggingInterceptor() &#123;
     match(controller:<span class="java&#45;quote">"book"</span>, action:<span class="java&#45;quote">"show"</span>) // using strings
     match(controller: ~/(author|publisher)/) // using regex
   &#125;<p class="paragraph"/>  <span class="java&#45;object">boolean</span> before() &#123;
     &#8230;
   &#125;
-&#125;</pre></div><p class="paragraph"/>All named arguments accept either a String or a Regex expression. The possible named arguments are:
+&#125;</pre></div><p class="paragraph"/>You can use any number of matchers defined in your interceptor. They will be executed in the order in which they have been defined. For example the above interceptor will match for all of the following:
+<ul class="star">
+<li>when the <code>show</code> action of <code>BookController</code> is called</li>
+<li>when <code>AuthorController</code> or <code>PublisherController</code> is called</li>
+</ul><p class="paragraph"/>All named arguments accept either a String or a Regex expression. The possible named arguments are:
 <ul class="star">
 <li><code>namespace</code> - The namespace of the controller</li>
 <li><code>controller</code> - The name of the controller</li>
 <li><code>action</code> - The name of the action</li>
 <li><code>method</code> - The HTTP method</li>
-<li><code>uri</code> - The URI of the request (cannot be used in combination with other arguments)</li>
+<li><code>uri</code> - The URI of the request. If this argument is used then all other arguments will be ignored and only this will be used.</li>
 </ul><p class="paragraph"/>
 
 
@@ -186,9 +189,6 @@ As mention in the previous section, by default an interceptor will match only re
                         
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
-                            </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
                             </div>
@@ -241,7 +241,7 @@ As mention in the previous section, by default an interceptor will match only re
                             <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/docs.html">docs</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -278,6 +278,9 @@ As mention in the previous section, by default an interceptor will match only re
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stop-app.html">stop-app</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>

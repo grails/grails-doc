@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>4.4 The DataSource 3.0.2</title>
+    <title>4.4 The DataSource 3.0.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.3</p>
 
                     
                 </div>
@@ -162,7 +162,7 @@ function addJsClass() {
 <h2 id="dataSource">4.4 The DataSource</h2>
 Since Grails is built on Java technology setting up a data source requires some knowledge of JDBC (the technology that doesn't stand for Java Database Connectivity).<p class="paragraph"/>If you use a database other than H2 you need a JDBC driver. For example for MySQL you would need <a href="http://www.mysql.com/downloads/connector/j/" target="blank">Connector/J</a><p class="paragraph"/>Drivers typically come in the form of a JAR archive. It's best to use the dependency resolution to resolve the jar if it's available in a Maven repository, for example you could add a dependency for the MySQL driver like this:<p class="paragraph"/><div class="code"><pre>dependencies &#123;
         runtime 'mysql:mysql&#45;connector&#45;java:5.1.29'
-    &#125;</pre></div><p class="paragraph"/>If you can't use dependency resolution then just put the JAR in your project's <code>lib</code> directory.<p class="paragraph"/>Once you have the JAR resolved you need to get familiar with Grails' DataSource descriptor file located at <code>grails-app/conf/DataSource.groovy</code>. This file contains the dataSource definition which includes the following settings:
+    &#125;</pre></div><p class="paragraph"/>If you can't use dependency resolution then just put the JAR in your project's <code>lib</code> directory.<p class="paragraph"/>Once you have the JAR resolved you need to get familiar with how Grails manages its database configuration. The configuration can be maintained in either <code>grails-app/conf/application.groovy</code> or <code>grails-app/conf/application.yml</code>. These files contain the dataSource definition which includes the following settings:
 <ul class="star">
 <li><code>driverClassName</code> - The class name of the JDBC driver</li>
 <li><code>username</code> - The username used to establish a JDBC connection</li>
@@ -178,7 +178,7 @@ Since Grails is built on Java technology setting up a data source requires some 
 <li><code>persistenceInterceptor</code> - The default datasource is automatically wired up to the persistence interceptor, other datasources are not wired up automatically unless this is set to <code>true</code></li>
 <li><code>properties</code> - Extra properties to set on the DataSource bean. See the <a href="http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes" target="blank">Tomcat Pool</a> documentation. There is also a Javadoc format <a href="https://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/tomcat/jdbc/pool/PoolConfiguration.html" target="blank">documentation of the properties</a>.</li>
 <li><code>jmxExport</code> - If <code>false</code>, will disable registration of JMX MBeans for all DataSources. By default JMX MBeans are added for DataSources with <code>jmxEnabled = true</code> in properties.</li>
-</ul><p class="paragraph"/>A typical configuration for MySQL may be something like:<p class="paragraph"/><div class="code"><pre>dataSource &#123;
+</ul><p class="paragraph"/>A typical configuration for MySQL in <code>application.groovy</code> may be something like:<p class="paragraph"/><div class="code"><pre>dataSource &#123;
     pooled = <span class="java&#45;keyword">true</span>
     dbCreate = <span class="java&#45;quote">"update"</span>
     url = <span class="java&#45;quote">"jdbc:mysql://localhost:3306/my_database"</span>
@@ -344,12 +344,12 @@ The <a href="http://h2database.com/html/quickstart.html#h2_console" target="blan
     &#125;
 &#125;</pre></div><p class="paragraph"/><blockquote class="warning">
 If you enable the console in production be sure to guard access to it using a trusted security framework.
-</blockquote><p class="paragraph"/><h4>Configuration</h4><p class="paragraph"/>By default the console is configured for an H2 database which will work with the default settings if you haven't configured an external database - you just need to change the JDBC URL to <code>jdbc:h2:mem:devDB</code>. If you've configured an external database (e.g. MySQL, Oracle, etc.) then you can use the Saved Settings dropdown to choose a settings template and fill in the url and username/password information from your DataSource.groovy.
+</blockquote><p class="paragraph"/><h4>Configuration</h4><p class="paragraph"/>By default the console is configured for an H2 database which will work with the default settings if you haven't configured an external database - you just need to change the JDBC URL to <code>jdbc:h2:mem:devDB</code>. If you've configured an external database (e.g. MySQL, Oracle, etc.) then you can use the Saved Settings dropdown to choose a settings template and fill in the url and username/password information from your <code>application.groovy</code>.
 
 
 <a name="3.3.6 Multiple Datasources"><!-- Legacy link --></a>
 <h2 id="multipleDatasources">4.4.5 Multiple Datasources</h2>
-By default all domain classes share a single <code>DataSource</code> and a single database, but you have the option to partition your domain classes into two or more <code>DataSource</code>s.<p class="paragraph"/><h4>Configuring Additional DataSources</h4><p class="paragraph"/>The default <code>DataSource</code> configuration in <code>grails-app/conf/DataSource.groovy</code> looks something like this:<p class="paragraph"/><div class="code"><pre>&#45;&#45;&#45;
+By default all domain classes share a single <code>DataSource</code> and a single database, but you have the option to partition your domain classes into two or more <code>DataSource</code>s.<p class="paragraph"/><h4>Configuring Additional DataSources</h4><p class="paragraph"/>The default <code>DataSource</code> configuration in <code>grails-app/conf/application.yml</code> looks something like this:<p class="paragraph"/><div class="code"><pre>&#45;&#45;&#45;
 dataSource:
     pooled: <span class="java&#45;keyword">true</span>
     jmxExport: <span class="java&#45;keyword">true</span>
@@ -427,7 +427,7 @@ dataSources:
    &#125;
 &#125;</pre></div><p class="paragraph"/>The first <code>DataSource</code> specified is the default when not using an explicit namespace, so in this case we default to 'lookup'. But you can call GORM methods on the 'auditing' <code>DataSource</code> with the <code>DataSource</code> name, for example:<p class="paragraph"/><div class="code"><pre>def zipCode = ZipCode.auditing.get(42)
 &#8230;
-zipCode.auditing.save()</pre></div><p class="paragraph"/>As you can see, you add the <code>DataSource</code> to the method call in both the static case and the instance case.<p class="paragraph"/><h4>Hibernate Mapped Domain Classes</h4><p class="paragraph"/>You can also partition annotated Java classes into separate datasources. Classes using the default datasource are registered in <code>grails-app/conf/hibernate/hibernate.cfg.xml</code>. To specify that an annotated class uses a non-default datasource, create a <code>hibernate.cfg.xml</code> file for that datasource with the file name prefixed with the datasource name.<p class="paragraph"/>For example if the <code>Book</code> class is in the default datasource, you would register that in <code>grails-app/conf/hibernate/hibernate.cfg.xml</code>:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;?xml version='1.0' encoding='UTF&#45;8'?&#62;</span>
+zipCode.auditing.save()</pre></div><p class="paragraph"/>As you can see, you add the <code>DataSource</code> to the method call in both the static case and the instance case.<p class="paragraph"/><h4>Hibernate Mapped Domain Classes</h4><p class="paragraph"/>You can also partition annotated Java classes into separate datasources. Classes using the default datasource are registered in <code>grails-app/conf/hibernate.cfg.xml</code>. To specify that an annotated class uses a non-default datasource, create a <code>hibernate.cfg.xml</code> file for that datasource with the file name prefixed with the datasource name.<p class="paragraph"/>For example if the <code>Book</code> class is in the default datasource, you would register that in <code>grails-app/conf/hibernate.cfg.xml</code>:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;?xml version='1.0' encoding='UTF&#45;8'?&#62;</span>
 &#60;!DOCTYPE hibernate&#45;configuration PUBLIC
           '&#45;//Hibernate/Hibernate Configuration DTD 3.0//EN'
           'http://hibernate.sourceforge.net/hibernate&#45;configuration&#45;3.0.dtd'&#62;
@@ -435,7 +435,7 @@ zipCode.auditing.save()</pre></div><p class="paragraph"/>As you can see, you add
    <span class="xml&#45;tag">&#60;session&#45;factory&#62;</span>
       <span class="xml&#45;tag">&#60;mapping class='org.example.Book'/&#62;</span>
    <span class="xml&#45;tag">&#60;/session&#45;factory&#62;</span>
-<span class="xml&#45;tag">&#60;/hibernate&#45;configuration&#62;</span></pre></div><p class="paragraph"/>and if the <code>Library</code> class is in the "ds2" datasource, you would register that in <code>grails-app/conf/hibernate/ds2_hibernate.cfg.xml</code>:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;?xml version='1.0' encoding='UTF&#45;8'?&#62;</span>
+<span class="xml&#45;tag">&#60;/hibernate&#45;configuration&#62;</span></pre></div><p class="paragraph"/>and if the <code>Library</code> class is in the "ds2" datasource, you would register that in <code>grails-app/conf/ds2_hibernate.cfg.xml</code>:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;?xml version='1.0' encoding='UTF&#45;8'?&#62;</span>
 &#60;!DOCTYPE hibernate&#45;configuration PUBLIC
           '&#45;//Hibernate/Hibernate Configuration DTD 3.0//EN'
           'http://hibernate.sourceforge.net/hibernate&#45;configuration&#45;3.0.dtd'&#62;
@@ -449,6 +449,7 @@ zipCode.auditing.save()</pre></div><p class="paragraph"/>As you can see, you add
 &#125;</pre></div><p class="paragraph"/>A transactional service can only use a single <code>DataSource</code>, so be sure to only make changes for domain classes whose <code>DataSource</code> is the same as the Service.<p class="paragraph"/>Note that the datasource specified in a service has no bearing on which datasources are used for domain classes; that's determined by their declared datasources in the domain classes themselves. It's used to declare which transaction manager to use.<p class="paragraph"/>What you'll see is that if you have a Foo domain class in dataSource1 and a Bar domain class in dataSource2, and WahooService uses dataSource1, a service method that saves a new Foo and a new Bar will only be transactional for Foo since they share the datasource. The transaction won't affect the Bar instance. If you want both to be transactional you'd need to use two services and XA datasources for two-phase commit, e.g. with the Atomikos plugin.<p class="paragraph"/><h4>Transactions across multiple datasources </h4><p class="paragraph"/>Grails uses the Best Efforts 1PC pattern for handling transactions across multiple datasources.<p class="paragraph"/>The <a href="http://www.javaworld.com/article/2077963/open-source-tools/distributed-transactions-in-spring--with-and-without-xa.html?page=2" target="blank">Best Efforts 1PC pattern</a> is fairly general but can fail in some circumstances that the developer must be aware of. This is a non-XA pattern that involves a synchronized single-phase commit of a number of resources. Because the <a href="https://en.wikipedia.org/wiki/Two-phase_commit" target="blank">2PC</a> is not used, it can never be as safe as an <a href="https://en.wikipedia.org/wiki/X/Open_XA" target="blank">XA</a> transaction, but is often good enough if the participants are aware of the compromises.<p class="paragraph"/>The basic idea is to delay the commit of all resources as late as possible in a transaction so that the only thing that can go wrong is an infrastructure failure (not a business-processing error). Systems that rely on Best Efforts 1PC reason that infrastructure failures are rare enough that they can afford to take the risk in return for higher throughput. If business-processing services are also designed to be idempotent, then little can go wrong in practice.<p class="paragraph"/>The BE1PC implementation was added in Grails 2.3.6. . Before this change additional datasources didn't take part in transactions initiated in Grails. The transactions in additional datasources were basically in auto commit mode. In some cases this might be the wanted behavior. One reason might be performance: on the start of each new transaction, the BE1PC transaction manager creates a new transaction to each datasource. It's possible to leave an additional datasource out of the BE1PC transaction manager by setting <code>transactional = false</code> in the respective configuration block of the additional dataSource. Datasources with <code>readOnly = true</code> will also be left out of the chained transaction manager (since 2.3.7).<p class="paragraph"/>By default, the BE1PC implementation will add all beans implementing the Spring <code><a href="http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/transaction/PlatformTransactionManager.html" target="blank">PlatformTransactionManager</a></code> interface to the chained BE1PC transaction manager. For example, a possible <code><a href="http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/jms/connection/JmsTransactionManager.html" target="blank">JMSTransactionManager</a></code> bean in the Grails application context would be added to the Grails BE1PC transaction manager's chain of transaction managers.<p class="paragraph"/>You can exclude transaction manager beans from the BE1PC implementation with the this configuration option:
 <div class="code"><pre>grails.transaction.chainedTransactionManagerPostProcessor.blacklistPattern = '.&#42;'</pre></div>
 The exclude matching is done on the name of the transaction manager bean. The transaction managers of datasources with <code>transactional = false</code> or <code>readOnly = true</code> will be skipped and using this configuration option is not required in that case.<p class="paragraph"/><h4>XA and Two-phase Commit</h4><p class="paragraph"/>When the Best Efforts 1PC pattern isn't suitable for handling transactions across multiple transactional resources (not only datasources), there are several options available for adding XA/2PC support to Grails applications.<p class="paragraph"/>The <a href="http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/transaction.html#transaction-application-server-integration" target="blank">Spring transactions documentation</a> contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name <code>transactionManager</code> manually in <code>resources.groovy</code> or <code>resources.xml</code> file.<p class="paragraph"/>There is also <a href="http://grails.org/plugin/atomikos" target="blank">Atomikos plugin</a> available for XA support in Grails applications.
+
 
 
                 <div style="clear:both;margin-top:15px;"></div>
@@ -472,9 +473,6 @@ The exclude matching is done on the name of the transaction manager bean. The tr
                         
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
-                            </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
                             </div>
@@ -527,7 +525,7 @@ The exclude matching is done on the name of the transaction manager bean. The tr
                             <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/docs.html">docs</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -564,6 +562,9 @@ The exclude matching is done on the name of the transaction manager bean. The tr
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stop-app.html">stop-app</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>

@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>17.1 Creating and Installing Plugins 3.0.2</title>
+    <title>17.1 Creating and Installing Plugins 3.0.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.3</p>
 
                     
                 </div>
@@ -140,18 +140,21 @@ function addJsClass() {
                 
 <a name="15.1 Creating and Installing Plug-ins"><!-- Legacy link --></a>
 <h2 id="creatingAndInstallingPlugins">17.1 Creating and Installing Plugins</h2>
-<h4>Creating Plugins</h4><p class="paragraph"/>Creating a Grails plugin is a simple matter of running the command:<p class="paragraph"/><div class="code"><pre>grails create&#45;plugin &#91;PLUGIN NAME&#93;</pre></div><p class="paragraph"/>This will create a plugin project for the name you specify. For example running <code>grails create-plugin example</code> would create a new plugin project called <code>example</code>.<p class="paragraph"/>In Grails 3.0 you should consider whether the plugin you create requires a web environment or whether the plugin can be used with other profiles. If you plugin does not require a web environment then use the "plugin" profile instead of the "web-plugin" profile:<p class="paragraph"/><div class="code"><pre>grails create&#45;plugin &#91;PLUGIN NAME&#93; &#45;&#45;profile=plugin</pre></div><p class="paragraph"/>Make sure the plugin name does not contain more than one capital in a row, or it won't work. Camel case is fine, though.<p class="paragraph"/>The structure of a Grails plugin is very nearly the same as a Grails application project's except that in the <code>src/main/groovy</code> directory under the plugin package structure you will find a plugin descriptor class (a class that ends in "GrailsPlugin").<p class="paragraph"/>Being a regular Grails project has a number of benefits in that you can immediately test your plugin by running (if the plugin targets the "web" profile):<p class="paragraph"/><div class="code"><pre>grails run&#45;app</pre></div><p class="paragraph"/><blockquote class="note">
+<h4>Creating Plugins</h4><p class="paragraph"/>Creating a Grails plugin is a simple matter of running the command:<p class="paragraph"/><div class="code"><pre>grails create&#45;plugin &#91;PLUGIN NAME&#93;</pre></div><p class="paragraph"/>This will create a plugin project for the name you specify. For example running <code>grails create-plugin example</code> would create a new plugin project called <code>example</code>.<p class="paragraph"/>In Grails 3.0 you should consider whether the plugin you create requires a web environment or whether the plugin can be used with other profiles. If your plugin does not require a web environment then use the "plugin" profile instead of the "web-plugin" profile:<p class="paragraph"/><div class="code"><pre>grails create&#45;plugin &#91;PLUGIN NAME&#93; &#45;&#45;profile=plugin</pre></div><p class="paragraph"/>Make sure the plugin name does not contain more than one capital letter in a row, or it won't work. Camel case is fine, though.<p class="paragraph"/>The structure of a Grails plugin is very nearly the same as a Grails application project's except that in the <code>src/main/groovy</code> directory under the plugin package structure you will find a plugin descriptor class (a class that ends in "GrailsPlugin").<p class="paragraph"/>Being a regular Grails project has a number of benefits in that you can immediately test your plugin by running (if the plugin targets the "web" profile):<p class="paragraph"/><div class="code"><pre>grails run&#45;app</pre></div><p class="paragraph"/><blockquote class="note">
 Plugin projects don't provide an index.gsp by default since most plugins don't need it. So, if you try to view the plugin running in a browser right after creating it, you will receive a page not found error. You can easily create a <code>grails-app/views/index.gsp</code> for your plugin if you'd like.
 </blockquote><p class="paragraph"/>The plugin descriptor name ends with the convention <code>GrailsPlugin</code> and is found in the root of the plugin project. For example:<p class="paragraph"/><div class="code"><pre>class ExampleGrailsPlugin &#123;
    &#8230;
 &#125;</pre></div><p class="paragraph"/>All plugins must have this class under the <code>src/main/groovy</code> directory, otherwise they are not regarded as a plugin. The plugin class defines metadata about the plugin, and optionally various hooks into plugin extension points (covered shortly).<p class="paragraph"/>You can also provide additional information about your plugin using several special properties:
 <ul class="star">
 <li><code>title</code> - short one-sentence description of your plugin</li>
-<li><code>grailsVersion</code> - The version of version range of Grails that the plugin supports. eg. "1.2 &#62; *" (indicating 1.2 or higher)</li>
+<li><code>grailsVersion</code> - The version range of Grails that the plugin supports. eg. "1.2 &#62; *" (indicating 1.2 or higher)</li>
 <li><code>author</code> - plugin author's name</li>
 <li><code>authorEmail</code> - plugin author's contact e-mail</li>
 <li><code>description</code> - full multi-line description of plugin's features</li>
 <li><code>documentation</code> - URL of the plugin's documentation</li>
+<li><code>license</code> - License of the plugin</li>
+<li><code>issueManagement</code> - Issue Tracker of the plugin</li>
+<li><code>scm</code> - Source code management location of the plugin</li>
 </ul><p class="paragraph"/>Here is an example from the <a href="http://grails.org/plugin/quartz" target="blank">Quartz Grails plugin</a>:<p class="paragraph"/><div class="code"><pre>class QuartzGrailsPlugin &#123;
     def grailsVersion = <span class="java&#45;quote">"1.1 &#62; &#42;"</span>
     def author = <span class="java&#45;quote">"Sergey Nebolsin"</span>
@@ -207,9 +210,6 @@ $ grails create&#45;plugin myplugin</pre></div><p class="paragraph"/>Then create
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
-                            </div>
-                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
                             </div>
                             
@@ -261,7 +261,7 @@ $ grails create&#45;plugin myplugin</pre></div><p class="paragraph"/>Then create
                             <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/docs.html">docs</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -298,6 +298,9 @@ $ grails create&#45;plugin myplugin</pre></div><p class="paragraph"/>Then create
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stop-app.html">stop-app</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>

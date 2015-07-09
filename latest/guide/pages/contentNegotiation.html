@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.6 Content Negotiation 3.0.2</title>
+    <title>7.6 Content Negotiation 3.0.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.3</p>
 
                     
                 </div>
@@ -140,7 +140,30 @@ function addJsClass() {
                 
 <a name="7.8 Content Negotiation"><!-- Legacy link --></a>
 <h2 id="contentNegotiation">7.6 Content Negotiation</h2>
-Grails has built in support for <a href="http://en.wikipedia.org/wiki/Content_negotiation" target="blank">Content negotiation</a> using either the HTTP <code>Accept</code> header, an explicit format request parameter or the extension of a mapped URI.<p class="paragraph"/><h4>Configuring Mime Types</h4><p class="paragraph"/>Before you can start dealing with content negotiation you need to tell Grails what content types you wish to support. By default Grails comes configured with a number of different content types within <code>grails-app/conf/Config.groovy</code> using the <code>grails.mime.types</code> setting:<p class="paragraph"/><div class="code"><pre>grails.mime.types = &#91; // the first one is the <span class="java&#45;keyword">default</span> format
+Grails has built in support for <a href="http://en.wikipedia.org/wiki/Content_negotiation" target="blank">Content negotiation</a> using either the HTTP <code>Accept</code> header, an explicit format request parameter or the extension of a mapped URI.<p class="paragraph"/><h4>Configuring Mime Types</h4><p class="paragraph"/>Before you can start dealing with content negotiation you need to tell Grails what content types you wish to support. By default Grails comes configured with a number of different content types within <code>grails-app/conf/application.yml</code> using the <code>grails.mime.types</code> setting:<p class="paragraph"/><div class="code"><pre>grails:
+    mime:
+        types:
+            all: '&#42;/&#42;'
+            atom: application/atom+xml
+            css: text/css
+            csv: text/csv
+            form: application/x&#45;www&#45;form&#45;urlencoded
+            html: 
+              &#45; text/html
+              &#45; application/xhtml+xml
+            js: text/javascript
+            json:
+              &#45; application/json
+              &#45; text/json
+            multipartForm: multipart/form&#45;data
+            rss: application/rss+xml
+            text: text/plain
+            hal: 
+              &#45; application/hal+json
+              &#45; application/hal+xml
+            xml:
+              &#45; text/xml
+              &#45; application/xml</pre></div><p class="paragraph"/>The setting can also be done in <code>grails-app/conf/application.groovy</code> as shown below:<p class="paragraph"/><div class="code"><pre>grails.mime.types = &#91; // the first one is the <span class="java&#45;keyword">default</span> format
     all:           '&#42;/&#42;', // 'all' maps to '&#42;' or the first available format in withFormat
     atom:          'application/atom+xml',
     css:           'text/css',
@@ -155,7 +178,9 @@ Grails has built in support for <a href="http://en.wikipedia.org/wiki/Content_ne
     hal:           &#91;'application/hal+json','application/hal+xml'&#93;,
     xml:           &#91;'text/xml', 'application/xml'&#93;
 &#93;</pre></div><p class="paragraph"/>The above bit of configuration allows Grails to detect to format of a request containing either the 'text/xml' or 'application/xml' media types as simply 'xml'. You can add your own types by simply adding new entries into the map.
-The first one is the default format.<p class="paragraph"/><h4>Content Negotiation using the format parameter</h4><p class="paragraph"/>Let's say a controller action can return a resource in a variety of formats: HTML, XML, and JSON. What format will the client get? The easiest and most reliable way for the client to control this is through a <code>format</code> URL parameter.<p class="paragraph"/>So if you, as a browser or some other client, want a resource as XML, you can use a URL like this:<p class="paragraph"/><div class="code"><pre>http://my.domain.org/books?format=xml</pre></div><p class="paragraph"/>The result of this on the server side is a <code>format</code> property on the <code>response</code> object with the value <code>xml</code> . You could code your controller action to return XML based on this property, but you can also make use of the controller-specific <code>withFormat()</code> method:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.converters.JSON
+The first one is the default format.<p class="paragraph"/><h4>Content Negotiation using the format Request Parameter</h4><p class="paragraph"/>Let's say a controller action can return a resource in a variety of formats: HTML, XML, and JSON. What format will the client get? The easiest and most reliable way for the client to control this is through a <code>format</code> URL parameter.<p class="paragraph"/>So if you, as a browser or some other client, want a resource as XML, you can use a URL like this:<p class="paragraph"/><div class="code"><pre>http://my.domain.org/books?format=xml</pre></div><p class="paragraph"/>The result of this on the server side is a <code>format</code> property on the <code>response</code> object with the value <code>xml</code> .<p class="paragraph"/>You can also define this parameter in the <a href="../guide/single.html#urlmappings" class="guide">URL Mappings</a> definition:<p class="paragraph"/><div class="code"><pre><span class="java&#45;quote">"/book/list"</span>(controller:<span class="java&#45;quote">"book"</span>, action:<span class="java&#45;quote">"list"</span>) &#123;
+    format = <span class="java&#45;quote">"xml"</span>
+&#125;</pre></div><p class="paragraph"/>You could code your controller action to return XML based on this property, but you can also make use of the controller-specific <code>withFormat()</code> method:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.converters.JSON
 <span class="java&#45;keyword">import</span> grails.converters.XML<p class="paragraph"/>class BookController &#123;<p class="paragraph"/>    def list() &#123;
         def books = Book.list()<p class="paragraph"/>        withFormat &#123;
             html bookList: books
@@ -181,8 +206,6 @@ If the accept header is used but contains no registered content types, Grails wi
     json &#123;
         // read JSON
     &#125;
-&#125;</pre></div><p class="paragraph"/><h4>Content Negotiation with the format Request Parameter</h4><p class="paragraph"/>If fiddling with request headers if not your favorite activity you can override the format used by specifying a <code>format</code> request parameter:<p class="paragraph"/><div class="code"><pre>/book/list?format=xml</pre></div><p class="paragraph"/>You can also define this parameter in the <a href="../guide/single.html#urlmappings" class="guide">URL Mappings</a> definition:<p class="paragraph"/><div class="code"><pre><span class="java&#45;quote">"/book/list"</span>(controller:<span class="java&#45;quote">"book"</span>, action:<span class="java&#45;quote">"list"</span>) &#123;
-    format = <span class="java&#45;quote">"xml"</span>
 &#125;</pre></div><p class="paragraph"/><h4>Content Negotiation with URI Extensions</h4><p class="paragraph"/>Grails also supports content negotiation using URI extensions. For example given the following URI:<p class="paragraph"/><div class="code"><pre>/book/list.xml</pre></div><p class="paragraph"/>This works as a result of the default URL Mapping definition which is:<p class="paragraph"/><div class="code"><pre><span class="java&#45;quote">"/$controller/$action?/$id?(.$format)?"</span>&#123;</pre></div><p class="paragraph"/>Note the inclusion of the <code>format</code> variable in the path. If you do not wish to use content negotiation via the file extension then simply remove this part of the URL mapping:<p class="paragraph"/><div class="code"><pre><span class="java&#45;quote">"/$controller/$action?/$id?"</span>&#123;</pre></div><p class="paragraph"/>
 <h4>Testing Content Negotiation</h4><p class="paragraph"/>To test content negotiation in a unit or integration test (see the section on <a href="../guide/single.html#testing" class="guide">Testing</a>) you can either manipulate the incoming request headers:<p class="paragraph"/><div class="code"><pre>void testJavascriptOutput() &#123;
     def controller = <span class="java&#45;keyword">new</span> TestController()
@@ -218,9 +241,6 @@ If the accept header is used but contains no registered content types, Grails wi
                         
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
-                            </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
                             </div>
@@ -273,7 +293,7 @@ If the accept header is used but contains no registered content types, Grails wi
                             <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/docs.html">docs</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -310,6 +330,9 @@ If the accept header is used but contains no registered content types, Grails wi
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stop-app.html">stop-app</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>

@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>The Grails Framework 3.0.2</title>
+    <title>The Grails Framework 3.0.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -137,7 +137,45 @@ Results in:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag
         <span class="xml&#45;tag">&#60;script src=<span class="xml&#45;quote">"myscript.js"</span> /&#62;</span>
    <span class="xml&#45;tag">&#60;/head&#62;</span>
    <span class="xml&#45;tag">&#60;body onload=<span class="xml&#45;quote">"alert('hello');"</span>&#62;</span>Page to be decorated<span class="xml&#45;tag">&#60;/body&#62;</span>
-<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/><h2>Source</h2><p class="paragraph"/>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>Another example with more options used is below:<p class="paragraph"/>We have a layout gsp file <code>container.gsp</code><p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;section&#62;</span>
+    <span class="xml&#45;tag">&#60;header&#62;</span>
+      <span class="xml&#45;tag">&#60;g:pageProperty name=<span class="xml&#45;quote">"page.title"</span>/&#62;</span>
+    <span class="xml&#45;tag">&#60;/header&#62;</span><p class="paragraph"/>    <span class="xml&#45;tag">&#60;section&#62;</span>
+        <span class="xml&#45;tag">&#60;g:layoutBody /&#62;</span>
+    <span class="xml&#45;tag">&#60;/section&#62;</span>
+<span class="xml&#45;tag">&#60;/section&#62;</span></pre></div><p class="paragraph"/>The layout is applied to a sub-part of the <code>gsp</code> file using <code>applyLayout</code> tag.<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+<span class="xml&#45;tag">&#60;head&#62;</span>
+    <span class="xml&#45;tag">&#60;title&#62;</span>Title 1<span class="xml&#45;tag">&#60;/title&#62;</span>
+<span class="xml&#45;tag">&#60;/head&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;body&#62;</span>
+   <span class="xml&#45;tag">&#60;section class=<span class="xml&#45;quote">"major&#45;part left&#45;part"</span>&#62;</span>
+      <span class="xml&#45;tag">&#60;g:applyLayout name=<span class="xml&#45;quote">"container"</span>&#62;</span>
+         <span class="xml&#45;tag">&#60;content tag=<span class="xml&#45;quote">"title"</span>&#62;</span>
+            Title 2
+         <span class="xml&#45;tag">&#60;/content&#62;</span>
+         Some other things
+      <span class="xml&#45;tag">&#60;/g:applyLayout&#62;</span>
+   <span class="xml&#45;tag">&#60;/section&#62;</span>
+<span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>This will result in the below page.<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+<span class="xml&#45;tag">&#60;head&#62;</span>
+    <span class="xml&#45;tag">&#60;title&#62;</span>Title 1<span class="xml&#45;tag">&#60;/title&#62;</span>
+<span class="xml&#45;tag">&#60;/head&#62;</span><p class="paragraph"/><span class="xml&#45;tag">&#60;body&#62;</span>
+   <span class="xml&#45;tag">&#60;section class=<span class="xml&#45;quote">"major&#45;part left&#45;part"</span>&#62;</span>
+      <span class="xml&#45;tag">&#60;section&#62;</span>
+         <span class="xml&#45;tag">&#60;header&#62;</span>
+            Title 2
+         <span class="xml&#45;tag">&#60;/header&#62;</span><p class="paragraph"/>         <span class="xml&#45;tag">&#60;section&#62;</span>
+            Some other things
+         <span class="xml&#45;tag">&#60;/section&#62;</span>
+      <span class="xml&#45;tag">&#60;/section&#62;</span>
+   <span class="xml&#45;tag">&#60;/section&#62;</span>
+<span class="xml&#45;tag">&#60;/body&#62;</span>
+<span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>Notice how "Title 2" from the <code>content</code> tag was picked via <code>page.title</code> and the rest was picked up by <code>&#60;g:layoutBody /&#62;</code>. You can have any number of such <code>content</code> tags with different tag values (e.g. <code>tag="grails"</code>) and then use them in your layouts via the <code>pageProperty</code> tag.<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Attributes
+<ul class="star">
+<li><code>name</code> (required) - The property name</li>
+<li><code>default</code> (optional) - The default value to use if the property is null. (defaults to null)</li>
+<li><code>writeEntireProperty</code> (optional) - If true, writes the property in the form 'foo = "bar"', otherwise renders 'bar'. (defaults to false)</li>
+</ul><p class="paragraph"/><h2>Source</h2><p class="paragraph"/>
 
             </div>
         </td>
@@ -155,9 +193,6 @@ Results in:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
-                            </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
                             </div>
@@ -210,7 +245,7 @@ Results in:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag
                             <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/docs.html">docs</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -247,6 +282,9 @@ Results in:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stop-app.html">stop-app</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>

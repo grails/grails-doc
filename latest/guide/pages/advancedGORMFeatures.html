@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>6.5 Advanced GORM Features 3.0.2</title>
+    <title>6.5 Advanced GORM Features 3.0.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.3</p>
 
                     
                 </div>
@@ -417,11 +417,12 @@ class Person &#123;
 
 <a name="5.5.2.2 Caching Strategy"><!-- Legacy link --></a>
 <h2 id="caching">6.5.2.2 Caching Strategy</h2>
-<h4>Setting up caching</h4><p class="paragraph"/><a href="http://www.hibernate.org/" target="blank">Hibernate</a> features a second-level cache with a customizable cache provider. This needs to be configured in the <code>grails-app/conf/DataSource.groovy</code> file as follows:<p class="paragraph"/><div class="code"><pre>hibernate &#123;
-    cache.use_second_level_cache=<span class="java&#45;keyword">true</span>
-    cache.use_query_cache=<span class="java&#45;keyword">true</span>
-    cache.provider_class='org.hibernate.cache.EhCacheProvider'
-&#125;</pre></div><p class="paragraph"/>You can customize any of these settings, for example to use a distributed caching mechanism.<p class="paragraph"/><blockquote class="note">
+<h4>Setting up caching</h4><p class="paragraph"/><a href="http://www.hibernate.org/" target="blank">Hibernate</a> features a second-level cache with a customizable cache provider. This needs to be configured in the <code>grails-app/conf/application.yml</code> file as follows:<p class="paragraph"/><div class="code"><pre>hibernate:
+  cache:
+    use_second_level_cache: <span class="java&#45;keyword">true</span>
+    provider_class: net.sf.ehcache.hibernate.EhCacheProvider
+    region:
+       factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory</pre></div><p class="paragraph"/>You can customize any of these settings, for example to use a distributed caching mechanism.<p class="paragraph"/><blockquote class="note">
 For further reading on caching and in particular Hibernate's second-level cache, refer to the <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/performance.html#performance-cache" target="blank">Hibernate documentation</a> on the subject.
 </blockquote><p class="paragraph"/><h4>Caching instances</h4><p class="paragraph"/>Call the <code>cache</code> method in your mapping block to enable caching with the default settings:<p class="paragraph"/><div class="code"><pre>class Person &#123;
     &#8230;
@@ -453,7 +454,7 @@ In order for the results of the query to be cached, you must enable caching in y
 <li><code>read-only</code> - If your application needs to read but never modify instances of a persistent class, a read-only cache may be used.</li>
 <li><code>read-write</code> - If the application needs to update data, a read-write cache might be appropriate.</li>
 <li><code>nonstrict-read-write</code> - If the application only occasionally needs to update data (i.e. if it is very unlikely that two transactions would try to update the same item simultaneously) and strict transaction isolation is not required, a <code>nonstrict-read-write</code> cache might be appropriate.</li>
-<li><code>transactional</code> - The <code>transactional</code> cache strategy provides support for fully transactional cache providers such as JBoss TreeCache. Such a cache may only be used in a JTA environment and you must specify <code>hibernate.transaction.manager_lookup_class</code> in the <code>grails-app/conf/DataSource.groovy</code> file's <code>hibernate</code> config.</li>
+<li><code>transactional</code> - The <code>transactional</code> cache strategy provides support for fully transactional cache providers such as JBoss TreeCache. Such a cache may only be used in a JTA environment and you must specify <code>hibernate.transaction.manager_lookup_class</code> in the <code>grails-app/conf/application.groovy</code> file's <code>hibernate</code> config.</li>
 </ul><p class="paragraph"/>
 
 <a name="5.5.2.3 Inheritance Strategies"><!-- Legacy link --></a>
@@ -690,7 +691,7 @@ Because the value of a derived property is generated in the database and depends
 
 <a name="5.5.2.12 Custom Naming Strategy"><!-- Legacy link --></a>
 <h2 id="customNamingStrategy">6.5.2.12 Custom Naming Strategy</h2>
-By default Grails uses Hibernate's <code>ImprovedNamingStrategy</code> to convert domain class Class and field names to SQL table and column names by converting from camel-cased Strings to ones that use underscores as word separators. You can customize these on a per-class basis in the <code>mapping</code> closure but if there's a consistent pattern you can specify a different <code>NamingStrategy</code> class to use.<p class="paragraph"/>Configure the class name to be used in <code>grails-app/conf/DataSource.groovy</code> in the <code>hibernate</code> section, e.g.<p class="paragraph"/><div class="code"><pre>dataSource &#123;
+By default Grails uses Hibernate's <code>ImprovedNamingStrategy</code> to convert domain class Class and field names to SQL table and column names by converting from camel-cased Strings to ones that use underscores as word separators. You can customize these on a per-class basis in the <code>mapping</code> closure but if there's a consistent pattern you can specify a different <code>NamingStrategy</code> class to use.<p class="paragraph"/>Configure the class name to be used in <code>grails-app/conf/application.groovy</code> in the <code>hibernate</code> section, e.g.<p class="paragraph"/><div class="code"><pre>dataSource &#123;
     pooled = <span class="java&#45;keyword">true</span>
     dbCreate = <span class="java&#45;quote">"create&#45;drop"</span>
     &#8230;
@@ -759,9 +760,6 @@ These mappings will not work for default unidirectional one-to-many or many-to-m
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
-                            </div>
-                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
                             </div>
                             
@@ -813,7 +811,7 @@ These mappings will not work for default unidirectional one-to-many or many-to-m
                             <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/docs.html">docs</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -850,6 +848,9 @@ These mappings will not work for default unidirectional one-to-many or many-to-m
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stop-app.html">stop-app</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>

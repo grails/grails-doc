@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>14.3 Functional Testing 3.0.2</title>
+    <title>14.3 Functional Testing 3.0.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.3</p>
 
                     
                 </div>
@@ -140,13 +140,13 @@ function addJsClass() {
                 
 <a name="12.3 Functional Testing"><!-- Legacy link --></a>
 <h2 id="functionalTesting">14.3 Functional Testing</h2>
-Functional tests involve making HTTP requests against the running application and verifying the resultant behaviour. The functional testing phase differs from the integration phase in that the Grails application is now listening and responding to actual HTTP requests. This is useful for end-to-end testing scenarios, such as making REST calls against a JSON API.<p class="paragraph"/>Grails by default ships with support for writing functional tests using the <a href="http://www.gebish.org" target="blank">Geb framework</a>. To create a functional test you can use the <code>create-functional-test</code> command which will create a new functional test:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;functional&#45;test MyFunctional</pre></div><p class="paragraph"/>The above command will create a new Spock spec called <code>MyFunctionalSpec.groovy</code> in the <code>src/test/groovy</code> directory. The test is annotated with the <a href="http://grails.org/doc/3.0.x/api/grails/test/mixin/integration/Integration.html" class="api">Integration</a> annotation to indicate it is a integration test and extends the <code>GebSpec</code> super class:<p class="paragraph"/><div class="code"><pre>@Integration
+Functional tests involve making HTTP requests against the running application and verifying the resultant behaviour. The functional testing phase differs from the integration phase in that the Grails application is now listening and responding to actual HTTP requests. This is useful for end-to-end testing scenarios, such as making REST calls against a JSON API.<p class="paragraph"/>Grails by default ships with support for writing functional tests using the <a href="http://www.gebish.org" target="blank">Geb framework</a>. To create a functional test you can use the <code>create-functional-test</code> command which will create a new functional test:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;functional&#45;test MyFunctional</pre></div><p class="paragraph"/>The above command will create a new Spock spec called <code>MyFunctionalSpec.groovy</code> in the <code>src/integration-test/groovy</code> directory. The test is annotated with the <a href="http://grails.org/doc/3.0.x/api/grails/test/mixin/integration/Integration.html" class="api">Integration</a> annotation to indicate it is a integration test and extends the <code>GebSpec</code> super class:<p class="paragraph"/><div class="code"><pre>@Integration
 class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p class="paragraph"/>    def setup() &#123;
     &#125;<p class="paragraph"/>    def cleanup() &#123;
     &#125;<p class="paragraph"/>    void <span class="java&#45;quote">"Test the home page renders correctly"</span>() &#123;
         when:<span class="java&#45;quote">"The home page is visited"</span>
             go '/'<p class="paragraph"/>        then:<span class="java&#45;quote">"The title is correct"</span>
-          &#36;('title').text() == <span class="java&#45;quote">"Welcome to Grails"</span>
+            &#36;('title').text() == <span class="java&#45;quote">"Welcome to Grails"</span>
     &#125;
 &#125;</pre></div><p class="paragraph"/>When the test is run the application container will be loaded up in the background and you can send requests to the running application using the Geb API.<p class="paragraph"/>Note that the application is only loaded once for the entire test run, so functional tests share the state of the application across the whole suite.<p class="paragraph"/>In addition the application is loaded in the JVM as the test, this means that the test has full access to the application state and can interact directly with data services such as GORM to setup and cleanup test data.<p class="paragraph"/>The <code>Integration</code> annotation supports an optional <code>applicationClass</code> attribute which may be used to specify the application class to use for the functional test.  The class must extend <a href="http://grails.org/doc/3.0.x/api/grails/boot/config/GrailsAutoConfiguration.html" class="api">GrailsAutoConfiguration</a>.<p class="paragraph"/><div class="code"><pre>@Integration(applicationClass=com.demo.Application)
 class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p class="paragraph"/>    // ...<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/>If the <code>applicationClass</code> is not specified then the test runtime environment will attempt to locate the application class dynamically which can be problematic in multiproject builds where multiple application classes may be present.
@@ -174,9 +174,6 @@ class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p cl
                         
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
-                            </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
                             </div>
@@ -229,7 +226,7 @@ class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p cl
                             <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/docs.html">docs</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -266,6 +263,9 @@ class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p cl
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stop-app.html">stop-app</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>

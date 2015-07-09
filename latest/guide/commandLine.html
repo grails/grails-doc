@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>5 The Command Line 3.0.2</title>
+    <title>5 The Command Line 3.0.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.3</p>
 
                     
                 </div>
@@ -169,7 +169,7 @@ function addJsClass() {
                 
 <a name="4. The Command Line"><!-- Legacy link --></a>
 <h1 id="commandLine">5 The Command Line</h1>
-Grails 3.0's command line system differs greatly from previous versions of Grails and features APIs for invoking Gradle for build related tasks, as well as performing code generation.<p class="paragraph"/>When you type:<p class="paragraph"/><div class="code"><pre>grails &#91;command name&#93;</pre></div><p class="paragraph"/>Grails searches the <a href="https://github.com/grails/grails-profile-repository" target="blank">profile repository</a> based on the profile of the current application. If the profile is for a web application then commmands a read from the web profile and the base profile which it inherits from.<p class="paragraph"/>Since command behavior is profile specific the web profile my provide different behavior for the <code>run-app</code> command then say a profile for running batch applications.<p class="paragraph"/>When you type the following command:<p class="paragraph"/><div class="code"><pre>grails run&#45;app</pre></div><p class="paragraph"/>It results in a search for the following files:
+Grails 3.0's command line system differs greatly from previous versions of Grails and features APIs for invoking Gradle for build related tasks, as well as performing code generation.<p class="paragraph"/>When you type:<p class="paragraph"/><div class="code"><pre>grails &#91;command name&#93;</pre></div><p class="paragraph"/>Grails searches the <a href="https://github.com/grails/grails-profile-repository" target="blank">profile repository</a> based on the profile of the current application. If the profile is for a web application then commands are read from the web profile and the base profile which it inherits from.<p class="paragraph"/>Since command behavior is profile specific the web profile may provide different behavior for the <code>run-app</code> command then say a profile for running batch applications.<p class="paragraph"/>When you type the following command:<p class="paragraph"/><div class="code"><pre>grails run&#45;app</pre></div><p class="paragraph"/>It results in a search for the following files:
 <ul class="star">
 <li><code>PROJECT_HOME/scripts/RunApp.groovy</code></li>
 <li><code>PROFILE_REPOSITORY_PATH/profiles/web/commands/run-app.groovy</code> (if the web profile is active)</li>
@@ -248,7 +248,7 @@ def overwrite = flag('force') ? <span class="java&#45;keyword">true</span> : <sp
 
 <h2 id="creatingCustomScripts">5.3 Creating Custom Scripts</h2>
 
-You can create your own Command scripts by running the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command from the root of your project. For example the following command:<p class="paragraph"/><div class="code"><pre>grails create&#45;script hello&#45;world</pre></div><p class="paragraph"/><p class="paragraph"/>Will create a script called <code>src/main/scripts/hello-world.groovy</code>. Each Command script is extends from the <a href="http://grails.org/doc/3.0.x/api/org/grails/cli/profile/commands/script/GroovyScriptCommmand.html" class="api">GroovyScriptCommmand</a> class and hence has all of the methods of that class available to it.<p class="paragraph"/><blockquote class="note">
+You can create your own Command scripts by running the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command from the root of your project. For example the following command will create a script called <code>src/main/scripts/hello-world.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails create&#45;script hello&#45;world</pre></div><p class="paragraph"/><blockquote class="note">
 In general Grails scripts should be used for scripting the Gradle based build system and code generation. Scripts cannot load application classes and in fact should not since Gradle is required to construct the application classpath.
 </blockquote><p class="paragraph"/>See below for an example script that prints 'Hello World':<p class="paragraph"/><div class="code"><pre>description <span class="java&#45;quote">"Example description"</span>, <span class="java&#45;quote">"grails hello&#45;world"</span><p class="paragraph"/>println <span class="java&#45;quote">"Hello World"</span></pre></div><p class="paragraph"/>The <code>description</code> method is used to define the output seen by <code>grails help</code> and to aid users of the script. The following is a more complete example of providing a description taken from the <code>generate-all</code> command:<p class="paragraph"/><div class="code"><pre>description( <span class="java&#45;quote">"Generates a controller that performs CRUD operations and the associated views"</span> ) &#123;
   usage <span class="java&#45;quote">"grails generate&#45;all &#91;DOMAIN CLASS&#93;"</span>
@@ -287,8 +287,8 @@ Dependencies for your project are defined in the <code>dependencies</code> block
   compile 'org.grails:grails&#45;web&#45;boot'<p class="paragraph"/>  compile 'org.grails.plugins:hibernate'
   compile 'org.grails.plugins:cache'
   compile 'org.hibernate:hibernate&#45;ehcache'<p class="paragraph"/>  runtime 'org.grails.plugins:asset&#45;pipeline'
-  runtime 'org.grails.plugins:scaffolding'<p class="paragraph"/>  testCompile <span class="java&#45;quote">"org.grails:grails&#45;plugin&#45;testing'
-  testCompile "</span>org.grails.plugins:geb'<p class="paragraph"/>  // Note: It is recommended to update to a more robust driver (Chrome, Firefox etc.)
+  runtime 'org.grails.plugins:scaffolding'<p class="paragraph"/>  testCompile 'org.grails:grails&#45;plugin&#45;testing'
+  testCompile 'org.grails.plugins:geb'<p class="paragraph"/>  // Note: It is recommended to update to a more robust driver (Chrome, Firefox etc.)
   testRuntime 'org.seleniumhq.selenium:selenium&#45;htmlunit&#45;driver:2.44.0'<p class="paragraph"/>  console 'org.grails:grails&#45;console'
 &#125;</pre></div><p class="paragraph"/>Note that version numbers are not present in the majority of the dependencies. This is thanks to the dependency management plugin which configures a Maven BOM that defines the default dependency versions for certain commonly used dependencies and plugins:<p class="paragraph"/><div class="code"><pre>dependencyManagement &#123;
     imports &#123;
@@ -353,9 +353,6 @@ apply plugin: <span class="java&#45;quote">"maven"</span></pre></div><p class="p
                             <div class="menu-item"><a href="../ref/Command%20Line/Usage.html">Usage</a></div>
                             
                             
-                            <div class="menu-item"><a href="../ref/Command%20Line/alias.html">alias</a>
-                            </div>
-                            
                             <div class="menu-item"><a href="../ref/Command%20Line/bug-report.html">bug-report</a>
                             </div>
                             
@@ -407,7 +404,7 @@ apply plugin: <span class="java&#45;quote">"maven"</span></pre></div><p class="p
                             <div class="menu-item"><a href="../ref/Command%20Line/dependency-report.html">dependency-report</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../ref/Command%20Line/doc.html">doc</a>
+                            <div class="menu-item"><a href="../ref/Command%20Line/docs.html">docs</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -444,6 +441,9 @@ apply plugin: <span class="java&#45;quote">"maven"</span></pre></div><p class="p
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/stop-app.html">stop-app</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/test-app.html">test-app</a>

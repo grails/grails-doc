@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>14.2 Integration Testing 3.0.2</title>
+    <title>14.2 Integration Testing 3.0.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.3</p>
 
                     
                 </div>
@@ -148,7 +148,44 @@ class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</spa
         expect:<span class="java&#45;quote">"fix me"</span>
             <span class="java&#45;keyword">true</span> == <span class="java&#45;keyword">false</span>
     &#125;
-&#125;</pre></div><p class="paragraph"/>The <code>Rollback</code> annotation ensures that each test methods runs in a transaction that is rolled back. Generally this is desirable because you do not want your tests depending on order or application state.<p class="paragraph"/>If you do have a series of tests that will share state you can remove the <code>Rollback</code> and the last test in the suite should feature the <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/test/annotation/DirtiesContext.html" class="api">DirtiesContext</a> annotation which will shutdown the environment and restart it fresh (note that this will have an impact on test run times).<p class="paragraph"/><h4>Autowiring</h4><p class="paragraph"/>To obtain a reference to a bean you can use the <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/beans/factory/annotation/Autowired.html" class="api">Autowired</a> annotation. For example:<p class="paragraph"/><div class="code"><pre>&#8230;
+&#125;</pre></div><p class="paragraph"/>The <code>Rollback</code> annotation ensures that each test methods runs in a transaction that is rolled back. Generally this is desirable because you do not want your tests depending on order or application state.<p class="paragraph"/><h4>Using Spring's Rollback annotation</h4>
+In Grails 3.0 tests rely on <code>grails.transaction.Rollback</code> annotation to bind the session in integration tests. But with this approach the <code>setup()</code> and <code>setupSpec()</code> method in the test is run prior to the transaction starting hence
+you would see <code>No Hibernate Session found</code> error while running integration test if <code>setup()</code> sets up data and persists them as shown in the below sample:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
+<span class="java&#45;keyword">import</span> grails.transaction.&#42;
+<span class="java&#45;keyword">import</span> spock.lang.&#42;<p class="paragraph"/>@Integration
+@Rollback
+class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    void setup() &#123;
+        // Below line would <span class="java&#45;keyword">throw</span> a Hibernate session not found error
+        <span class="java&#45;keyword">new</span> Book(name: 'Grails in Action').save(flush: <span class="java&#45;keyword">true</span>)
+    &#125;<p class="paragraph"/>    void <span class="java&#45;quote">"test something"</span>() &#123;
+        expect:
+        Book.count() == 1
+    &#125;
+&#125;</pre></div><p class="paragraph"/>To make sure the setup logic runs within the transaction you have to move it to be called from the method itself. Similar to usage of <code>setupData()</code> method shown below:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
+<span class="java&#45;keyword">import</span> grails.transaction.&#42;
+<span class="java&#45;keyword">import</span> spock.lang.&#42;<p class="paragraph"/>@Integration
+@Rollback
+class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    void setupData() &#123;
+        <span class="java&#45;keyword">new</span> Book(name: 'Grails in Action').save(flush: <span class="java&#45;keyword">true</span>)
+    &#125;<p class="paragraph"/>    void <span class="java&#45;quote">"test something"</span>() &#123;
+        given:
+        setupData()<p class="paragraph"/>        expect:
+        Book.count() == 1
+    &#125;
+&#125;</pre></div><p class="paragraph"/>Another approach could be to use Spring's <a href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/test/annotation/Rollback.html" target="blank">@Rollback</a> instead.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
+<span class="java&#45;keyword">import</span> org.springframework.test.annotation.Rollback
+<span class="java&#45;keyword">import</span> spock.lang.&#42;<p class="paragraph"/>@Integration
+@Rollback
+class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    void setup() &#123;
+        <span class="java&#45;keyword">new</span> Book(name: 'Grails in Action').save(flush: <span class="java&#45;keyword">true</span>)
+    &#125;<p class="paragraph"/>    void <span class="java&#45;quote">"test something"</span>() &#123;
+        expect:
+        Book.count() == 1
+    &#125;
+&#125;</pre></div><p class="paragraph"/><blockquote class="note">
+It isn't possible to make <code>grails.transaction.Rollback</code> behave the same way as Spring's Rollback annotation because <code>grails.transaction.Rollback</code> transforms the byte code of the class, eliminating the need for a proxy (which Spring's version requires).
+This has the downside that you cannot implement it differently for different cases (as Spring does for testing).
+</blockquote><p class="paragraph"/><h4>DirtiesContext</h4><p class="paragraph"/>If you do have a series of tests that will share state you can remove the <code>Rollback</code> and the last test in the suite should feature the <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/test/annotation/DirtiesContext.html" class="api">DirtiesContext</a> annotation which will shutdown the environment and restart it fresh (note that this will have an impact on test run times).<p class="paragraph"/><h4>Autowiring</h4><p class="paragraph"/>To obtain a reference to a bean you can use the <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/beans/factory/annotation/Autowired.html" class="api">Autowired</a> annotation. For example:<p class="paragraph"/><div class="code"><pre>&#8230;
 <span class="java&#45;keyword">import</span> org.springframework.beans.factory.annotation.&#42;<p class="paragraph"/>@Integration
 @Rollback
 class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    @Autowired
@@ -183,9 +220,6 @@ class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</spa
                         
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/alias.html">alias</a>
-                            </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/bug-report.html">bug-report</a>
                             </div>
@@ -238,7 +272,7 @@ class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</spa
                             <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/doc.html">doc</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/docs.html">docs</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -275,6 +309,9 @@ class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</spa
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/stop-app.html">stop-app</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>
