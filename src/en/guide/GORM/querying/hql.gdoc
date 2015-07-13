@@ -49,9 +49,15 @@ from Book as b, \\\
 where b.author = a and a.surname = ?", ['Smith'])
 {code}
 
-{note}
-Triple-quoted Groovy multiline Strings will NOT work with HQL queries.
-{note}
+or
+
+{code:java}
+def results = Book.findAll("""
+from Book as b,
+     Author as a
+where b.author = a and a.surname = ?", ['Smith']
+""")
+{code}
 
 h4. Pagination and Sorting
 
