@@ -226,8 +226,11 @@ The @AbstractPersistenceEvent@ class has many subclasses (@PreInsertEvent@, @Pos
 Once you have created your event listener you need to register it with the @ApplicationContext@. This can be done in @BootStrap.groovy@:
 
 {code}
+def grailsApplication
+
 def init = {
-    application.mainContext.eventTriggeringInterceptor.datastores.each { k, datastore ->
+    def applicationContext = grailsApplication.mainContext
+    applicationContext.eventTriggeringInterceptor.datastores.each { k, datastore ->
         applicationContext.addApplicationListener new MyPersistenceListener(datastore)
     }
 }
@@ -237,7 +240,7 @@ or use this in a plugin:
 
 {code}
 def doWithApplicationContext = { applicationContext ->
-    application.mainContext.eventTriggeringInterceptor.datastores.each { k, datastore ->
+    grailsApplication.mainContext.eventTriggeringInterceptor.datastores.each { k, datastore ->
         applicationContext.addApplicationListener new MyPersistenceListener(datastore)
     }
 }
