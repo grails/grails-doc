@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.1 Controllers 3.0.3</title>
+    <title>7.1 Controllers 3.0.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.3</p>
+                    <p><strong>Version:</strong> 3.0.2</p>
 
                     
                 </div>
@@ -151,31 +151,28 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0px"><a href="#redirectsAndChaining"><strong>7.4</strong><span>Redirects and Chaining</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#controllerInterceptors"><strong>7.5</strong><span>Controller Interceptors</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#dataBinding"><strong>7.5</strong><span>Data Binding</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#dataBinding"><strong>7.6</strong><span>Data Binding</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#xmlAndJSON"><strong>7.6</strong><span>XML and JSON Responses</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#xmlAndJSON"><strong>7.7</strong><span>XML and JSON Responses</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#moreOnJSONBuilder"><strong>7.7</strong><span>More on JSONBuilder</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#moreOnJSONBuilder"><strong>7.8</strong><span>More on JSONBuilder</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#uploadingFiles"><strong>7.8</strong><span>Uploading Files</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#uploadingFiles"><strong>7.9</strong><span>Uploading Files</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#commandObjects"><strong>7.9</strong><span>Command Objects</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#commandObjects"><strong>7.10</strong><span>Command Objects</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#formtokens"><strong>7.10</strong><span>Handling Duplicate Form Submissions</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#formtokens"><strong>7.11</strong><span>Handling Duplicate Form Submissions</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#typeConverters"><strong>7.11</strong><span>Simple Type Converters</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#typeConverters"><strong>7.12</strong><span>Simple Type Converters</span></a>
-                    </div>
-                    
-                    <div class="toc-item" style="margin-left:0px"><a href="#controllerExceptionHandling"><strong>7.13</strong><span>Declarative Controller Exception Handling</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#controllerExceptionHandling"><strong>7.12</strong><span>Declarative Controller Exception Handling</span></a>
                     </div>
                     
                 </div>
@@ -361,31 +358,8 @@ redirect(url: <span class="java&#45;quote">"http://grails.org"</span>)</pre></di
 &#125;</pre></div><p class="paragraph"/>Like the <code>redirect</code> method you can also pass parameters to the <code>chain</code> method:<p class="paragraph"/><div class="code"><pre>chain(action: <span class="java&#45;quote">"action1"</span>, model: &#91;one: 1&#93;, params: &#91;myparam: <span class="java&#45;quote">"param1"</span>&#93;)</pre></div>
 
 
-
-<h2 id="controllerInterceptors">7.1.5 Controller Interceptors</h2>
-Often it is useful to intercept processing based on either request, session or application state. This can be achieved with action interceptors. There are currently two types of interceptors: before and after.<p class="paragraph"/><blockquote class="note">
-If your interceptor is likely to apply to more than one controller, you are almost certainly better off writing a standalone <a href="../guide/single.html#interceptors" class="guide">Interceptor</a>. Standaline Interceptors can be applied to multiple controllers or URIs without the need to change the logic of each controller
-</blockquote><p class="paragraph"/><h4>Before Interception</h4><p class="paragraph"/>The <code>beforeInterceptor</code> intercepts processing before the action is executed. If it returns <code>false</code> then the intercepted action will not be executed. The interceptor can be defined for all actions in a controller as follows:<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#123;
-    println <span class="java&#45;quote">"Tracing action $&#123;actionUri&#125;"</span>
-&#125;</pre></div><p class="paragraph"/>The above is declared inside the body of the controller definition.  It will be executed before all actions and does not interfere with processing. A common use case is very simplistic authentication:<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#91;action: <span class="java&#45;keyword">this</span>.&#38;auth, except: 'login'&#93;<p class="paragraph"/>// defined with <span class="java&#45;keyword">private</span> scope, so it's not considered an action
-<span class="java&#45;keyword">private</span> auth() &#123;
-    <span class="java&#45;keyword">if</span> (!session.user) &#123;
-        redirect(action: 'login')
-        <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">false</span>
-    &#125;
-&#125;<p class="paragraph"/>def login() &#123;
-    // display login page
-&#125;</pre></div><p class="paragraph"/>The above code defines a method called <code>auth</code>. A private method is used so that it is not exposed as an action to the outside world. The <code>beforeInterceptor</code> then defines an interceptor that is used on all actions  <em class="italic">except</em>  the login action and it executes the <code>auth</code> method. The <code>auth</code> method is referenced using Groovy's method pointer syntax. Within the method it detects whether there is a user in the session, and if not it redirects to the <code>login</code> action and returns <code>false</code>, causing the intercepted action to not be processed.<p class="paragraph"/><h4>After Interception</h4><p class="paragraph"/>Use the <code>afterInterceptor</code> property to define an interceptor that is executed after an action:<p class="paragraph"/><div class="code"><pre>def afterInterceptor = &#123; model &#45;&#62;
-    println <span class="java&#45;quote">"Tracing action $&#123;actionUri&#125;"</span>
-&#125;</pre></div><p class="paragraph"/>The after interceptor takes the resulting model as an argument and can hence manipulate the model or response.<p class="paragraph"/>An after interceptor may also modify the Spring MVC <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/web/servlet/ModelAndView.html" class="api">ModelAndView</a> object prior to rendering. In this case, the above example becomes:<p class="paragraph"/><div class="code"><pre>def afterInterceptor = &#123; model, modelAndView &#45;&#62;
-    println <span class="java&#45;quote">"Current view is $&#123;modelAndView.viewName&#125;"</span>
-    <span class="java&#45;keyword">if</span> (model.someVar) modelAndView.viewName = <span class="java&#45;quote">"/mycontroller/someotherview"</span>
-    println <span class="java&#45;quote">"View is now $&#123;modelAndView.viewName&#125;"</span>
-&#125;</pre></div><p class="paragraph"/>This allows the view to be changed based on the model returned by the current action. Note that the <code>modelAndView</code> may be <code>null</code> if the action being intercepted called <code>redirect</code> or <code>render</code>.<p class="paragraph"/><h4>Interception Conditions</h4><p class="paragraph"/>Rails users will be familiar with the authentication example and how the 'except' condition was used when executing the interceptor (interceptors are called 'filters' in Rails; this terminology conflicts with Servlet filter terminology in Java):<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#91;action: <span class="java&#45;keyword">this</span>.&#38;auth, except: 'login'&#93;</pre></div><p class="paragraph"/>This executes the interceptor for all actions except the specified action. A list of actions can also be defined as follows:<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#91;action: <span class="java&#45;keyword">this</span>.&#38;auth, except: &#91;'login', 'register'&#93;&#93;</pre></div><p class="paragraph"/>The other supported condition is 'only', this executes the interceptor for only the specified action(s):<p class="paragraph"/><div class="code"><pre>def beforeInterceptor = &#91;action: <span class="java&#45;keyword">this</span>.&#38;auth, only: &#91;'secure'&#93;&#93;</pre></div>
-
-
 <a name="7.1.6 Data Binding"><!-- Legacy link --></a>
-<h2 id="dataBinding">7.1.6 Data Binding</h2>
+<h2 id="dataBinding">7.1.5 Data Binding</h2>
 Data binding is the act of "binding" incoming request parameters onto the properties of an object or an entire graph of objects. Data binding should deal with all necessary type conversion since request parameters, which are typically delivered by a form submission, are always strings whilst the properties of a Groovy or Java object may well not be.<p class="paragraph"/><h4>Map Based Binding</h4><p class="paragraph"/>The data binder is capable of converting and assigning values in a Map to properties of an object.  The binder will associate entries in the Map to properties of the object using the keys in the Map that have values which correspond to property names on the object.  The following code demonstrates the basics:<p class="paragraph"/><div class="code"><pre>// grails&#45;app/domain/Person.groovy
 class Person &#123;
     <span class="java&#45;object">String</span> firstName
@@ -492,7 +466,9 @@ These forms of data binding in Grails are very convenient, but also indiscrimina
           noSelection=<span class="xml&#45;quote">"&#91;'null': ''&#93;"</span>/&#62;</span></pre></div><p class="paragraph"/>Will render a select box that will remove the association at <code>books0</code> if the empty option is chosen.<p class="paragraph"/>Binding to a <code>Map</code> property works the same way except that the list index in the parameter name is replaced by the map key:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:select name=<span class="xml&#45;quote">"images&#91;cover&#93;.id"</span>
           from=<span class="xml&#45;quote">"$&#123;Image.list()&#125;"</span>
           value=<span class="xml&#45;quote">"$&#123;book?.images&#91;cover&#93;?.id&#125;"</span>
-          noSelection=<span class="xml&#45;quote">"&#91;'null': ''&#93;"</span>/&#62;</span></pre></div><p class="paragraph"/>This would bind the selected image into the <code>Map</code> property <code>images</code> under a key of <code>"cover"</code>.<p class="paragraph"/>When binding to Maps, Arrays and Collections the data binder will automatically grow the size of the collections as necessary.  The default limit to how large the binder will grow a collection is 256.  If the data binder encounters an entry that requires the collection be grown beyond that limit, the entry is ignored.  The limit may be configured by assigning a value to the <code>grails.databinding.autoGrowCollectionLimit</code> property in <code>Config.groovy</code>.<p class="paragraph"/><div class="code"><pre>// grails&#45;app/conf/application.groovy<p class="paragraph"/>// the <span class="java&#45;keyword">default</span> value is 256
+          noSelection=<span class="xml&#45;quote">"&#91;'null': ''&#93;"</span>/&#62;</span></pre></div><p class="paragraph"/>This would bind the selected image into the <code>Map</code> property <code>images</code> under a key of <code>"cover"</code>.<p class="paragraph"/>When binding to Maps, Arrays and Collections the data binder will automatically grow the size of the collections as necessary.<p class="paragraph"/><blockquote class="note">
+The default limit to how large the binder will grow a collection is 256. If the data binder encounters an entry that requires the collection be grown beyond that limit, the entry is ignored.  The limit may be configured by assigning a value to the <code>grails.databinding.autoGrowCollectionLimit</code> property in <code>Config.groovy</code>.
+</blockquote><p class="paragraph"/><div class="code"><pre>// grails&#45;app/conf/application.groovy<p class="paragraph"/>// the <span class="java&#45;keyword">default</span> value is 256
 grails.databinding.autoGrowCollectionLimit = 128<p class="paragraph"/>// ...</pre></div><p class="paragraph"/><h4>Data binding with Multiple domain classes</h4><p class="paragraph"/>It is possible to bind data to multiple domain objects from the <a href="../ref/Controllers/params.html" class="controllers">params</a> object.<p class="paragraph"/>For example so you have an incoming request to:<p class="paragraph"/><div class="code"><pre>/book/save?book.title=The%20Stand&#38;author.name=Stephen%20King</pre></div><p class="paragraph"/>You'll notice the difference with the above request is that each parameter has a prefix such as <code>author.</code> or <code>book.</code> which is used to isolate which parameters belong to which type. Grails' <code>params</code> object is like a multi-dimensional hash and you can index into it to isolate only a subset of the parameters to bind.<p class="paragraph"/><div class="code"><pre>def b = <span class="java&#45;keyword">new</span> Book(params.book)</pre></div><p class="paragraph"/>Notice how we use the prefix before the first dot of the <code>book.title</code> parameter to isolate only parameters below this level to bind. We could do the same with an <code>Author</code> domain class:<p class="paragraph"/><div class="code"><pre>def a = <span class="java&#45;keyword">new</span> Author(params.author)</pre></div><p class="paragraph"/><h4>Data Binding and Action Arguments</h4><p class="paragraph"/>Controller action arguments are subject to request parameter data binding.  There are 2 categories of controller action arguments.  The first category is command objects.  Complex types are treated as command objects.  See the <a href="../guide/single.html#commandObjects" class="guide">Command Objects</a> section of the user guide for details.  The other category is basic object types.  Supported types are the 8 primitives, their corresponding type wrappers and <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/String.html" class="api">java.lang.String</a>.  The default behavior is to map request parameters to action arguments by name:<p class="paragraph"/><div class="code"><pre>class AccountingController &#123;<p class="paragraph"/>   // accountNumber will be initialized with the value of params.accountNumber
    // accountType will be initialized with params.accountType
    def displayInvoice(<span class="java&#45;object">String</span> accountNumber, <span class="java&#45;object">int</span> accountType) &#123;
@@ -665,7 +641,7 @@ Note that if an empty List is provided as a value for the <code>include</code> p
 
 
 
-<h2 id="xmlAndJSON">7.1.7 XML and JSON Responses</h2>
+<h2 id="xmlAndJSON">7.1.6 XML and JSON Responses</h2>
 <h4>Using the render method to output XML</h4><p class="paragraph"/>Grails supports a few different ways to produce XML and JSON responses. The first is the <a href="../ref/Controllers/render.html" class="controllers">render</a> method.<p class="paragraph"/>The <code>render</code> method can be passed a block of code to do mark-up building in XML:<p class="paragraph"/><div class="code"><pre>def list() &#123;<p class="paragraph"/>    def results = Book.list()<p class="paragraph"/>    render(contentType: <span class="java&#45;quote">"text/xml"</span>) &#123;
         books &#123;
             <span class="java&#45;keyword">for</span> (b in results) &#123;
@@ -718,7 +694,7 @@ For more information on XML marshalling see the section on <a href="../guide/sin
 
 
 <a name="7.1.8 More on JSONBuilder"><!-- Legacy link --></a>
-<h2 id="moreOnJSONBuilder">7.1.8 More on JSONBuilder</h2>
+<h2 id="moreOnJSONBuilder">7.1.7 More on JSONBuilder</h2>
 The previous section on on XML and JSON responses covered simplistic examples of rendering XML and JSON responses. Whilst the XML builder used by Grails is the standard <a href="http://groovy.codehaus.org/Reading+XML+using+Groovy's+XmlSlurper" target="blank">XmlSlurper</a> found in Groovy, the JSON builder is a custom implementation specific to Grails.<p class="paragraph"/><h4>JSONBuilder and Grails versions</h4><p class="paragraph"/>JSONBuilder behaves different depending on the version of Grails you use. For version below 1.2 the deprecated <a href="http://grails.org/doc/3.0.x/api/grails/web/JSONBuilder.html" class="api">grails.web.JSONBuilder</a> class is used. This section covers the usage of the Grails 1.2 JSONBuilder<p class="paragraph"/>For backwards compatibility the old <code>JSONBuilder</code> class is used with the <code>render</code> method for older applications; to use the newer/better <code>JSONBuilder</code> class set the following in <code>Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.json.legacy.builder = <span class="java&#45;keyword">false</span></pre></div><p class="paragraph"/><h4>Rendering Simple Objects</h4><p class="paragraph"/>To render a simple JSON object just set properties within the context of the Closure:<p class="paragraph"/><div class="code"><pre>render(contentType: <span class="java&#45;quote">"application/json"</span>) &#123;
     hello = <span class="java&#45;quote">"world"</span>
 &#125;</pre></div><p class="paragraph"/>The above will produce the JSON:<p class="paragraph"/><div class="code"><pre>&#123;<span class="java&#45;quote">"hello"</span>:<span class="java&#45;quote">"world"</span>&#125;</pre></div><p class="paragraph"/><h4>Rendering JSON Arrays</h4><p class="paragraph"/>To render a list of objects simple assign a list:<p class="paragraph"/><div class="code"><pre>render(contentType: <span class="java&#45;quote">"application/json"</span>) &#123;
@@ -756,7 +732,7 @@ result.render sw</pre></div>
 
 
 <a name="7.1.9 Uploading Files"><!-- Legacy link --></a>
-<h2 id="uploadingFiles">7.1.9 Uploading Files</h2>
+<h2 id="uploadingFiles">7.1.8 Uploading Files</h2>
 <h4>Programmatic File Uploads</h4><p class="paragraph"/>Grails supports file uploads using Spring's <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/web/multipart/MultipartHttpServletRequest.html" class="api">MultipartHttpServletRequest</a> interface. The first step for file uploading is to create a multipart form like this:<p class="paragraph"/><div class="code"><pre>Upload Form: <span class="xml&#45;tag">&#60;br /&#62;</span>
     <span class="xml&#45;tag">&#60;g:uploadForm action=<span class="xml&#45;quote">"upload"</span>&#62;</span>
         <span class="xml&#45;tag">&#60;input type=<span class="xml&#45;quote">"file"</span> name=<span class="xml&#45;quote">"myFile"</span> /&#62;</span>
@@ -780,7 +756,7 @@ result.render sw</pre></div>
 
 
 <a name="7.1.10 Command Objects"><!-- Legacy link --></a>
-<h2 id="commandObjects">7.1.10 Command Objects</h2>
+<h2 id="commandObjects">7.1.9 Command Objects</h2>
 Grails controllers support the concept of command objects. A command object is a class that is used in conjunction with <a href="../guide/single.html#dataBinding" class="guide">data binding</a>, usually to allow validation of data that may not fit into an existing domain class.<p class="paragraph"/><blockquote class="note">
 Note: A class is only considered to be a command object when it is used as a parameter of an action.
 </blockquote><p class="paragraph"/><h4>Declaring Command Objects</h4><p class="paragraph"/>Command object classes are defined just like any other class.<p class="paragraph"/><div class="code"><pre>class LoginCommand <span class="java&#45;keyword">implements</span> grails.validation.Validateable &#123;
@@ -858,7 +834,7 @@ Note: A class is only considered to be a command object when it is used as a par
 
 
 <a name="7.1.11 Handling Duplicate Form Submissions"><!-- Legacy link --></a>
-<h2 id="formtokens">7.1.11 Handling Duplicate Form Submissions</h2>
+<h2 id="formtokens">7.1.10 Handling Duplicate Form Submissions</h2>
 Grails has built-in support for handling duplicate form submissions using the "Synchronizer Token Pattern". To get started you define a token on the <a href="../ref/Tags/form.html" class="tags">form</a> tag:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:form useToken=<span class="xml&#45;quote">"true"</span> ...&#62;</span></pre></div><p class="paragraph"/>Then in your controller code you can use the <a href="../ref/Controllers/withForm.html" class="controllers">withForm</a> method to handle valid and invalid requests:<p class="paragraph"/><div class="code"><pre>withForm &#123;
    // good request
 &#125;.invalidToken &#123;
@@ -871,14 +847,14 @@ The <a href="../ref/Controllers/withForm.html" class="controllers">withForm</a> 
 
 
 <a name="7.1.12 Simple Type Converters"><!-- Legacy link --></a>
-<h2 id="typeConverters">7.1.12 Simple Type Converters</h2>
+<h2 id="typeConverters">7.1.11 Simple Type Converters</h2>
 <h3>Type Conversion Methods</h3><p class="paragraph"/>If you prefer to avoid the overhead of <a href="../guide/single.html#dataBinding" class="guide">Data Binding</a> and simply want to convert incoming parameters (typically Strings) into another more appropriate type the <a href="../ref/Controllers/params.html" class="controllers">params</a> object has a number of convenience methods for each type:<p class="paragraph"/><div class="code"><pre>def total = params.<span class="java&#45;object">int</span>('total')</pre></div><p class="paragraph"/>The above example uses the <code>int</code> method, and there are also methods for <code>boolean</code>, <code>long</code>, <code>char</code>, <code>short</code> and so on. Each of these methods is null-safe and safe from any parsing errors, so you don't have to perform any additional checks on the parameters.<p class="paragraph"/>Each of the conversion methods allows a default value to be passed as an optional second argument.  The default value will be returned if a corresponding entry cannot be found in the map or if an error occurs during the conversion.  Example:<p class="paragraph"/><div class="code"><pre>def total = params.<span class="java&#45;object">int</span>('total', 42)</pre></div><p class="paragraph"/>These same type conversion methods are also available on the <code>attrs</code> parameter of GSP tags.<p class="paragraph"/><h3>Handling Multi Parameters</h3><p class="paragraph"/>A common use case is dealing with multiple request parameters of the same name. For example you could get a query string such as <code>?name=Bob&#38;name=Judy</code>.<p class="paragraph"/>In this case dealing with one parameter and dealing with many has different semantics since Groovy's iteration mechanics for <code>String</code> iterate over each character. To avoid this problem the <a href="../ref/Controllers/params.html" class="controllers">params</a> object provides a <code>list</code> method that always returns a list:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">for</span> (name in params.list('name')) &#123;
     println name
 &#125;</pre></div>
 
 
 
-<h2 id="controllerExceptionHandling">7.1.13 Declarative Controller Exception Handling</h2>
+<h2 id="controllerExceptionHandling">7.1.12 Declarative Controller Exception Handling</h2>
 Grails controllers support a simple mechanism for declarative exception handling.  If a controller declares a method that accepts a single argument and the argument type is <code>java.lang.Exception</code> or some subclass of <code>java.lang.Exception</code>, that method will be invoked any time an action in that controller throws an exception of that type.  See the following example.<p class="paragraph"/><div class="code"><pre>// grails&#45;app/controllers/demo/DemoController.groovy
 <span class="java&#45;keyword">package</span> demo<p class="paragraph"/>class DemoController &#123;<p class="paragraph"/>    def someAction() &#123;
         // <span class="java&#45;keyword">do</span> some work
@@ -1010,6 +986,9 @@ That controller will behave as if it were written something like this...<p class
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/help.html">help</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-templates.html">install-templates</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>

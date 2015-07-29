@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>6.4 Querying with GORM 3.0.3</title>
+    <title>6.4 Querying with GORM 3.0.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.3</p>
+                    <p><strong>Version:</strong> 3.0.2</p>
 
                     
                 </div>
@@ -491,12 +491,16 @@ def books = Book.findAll(<span class="java&#45;quote">"from Book as book where b
                    <span class="java&#45;quote">"where b.title like :search or b.author like :search"</span>,
                    &#91;search: <span class="java&#45;quote">"The Shi%"</span>&#93;)</pre></div><p class="paragraph"/><div class="code"><pre>def author = Author.findByName(<span class="java&#45;quote">"Stephen King"</span>)
 def books = Book.findAll(<span class="java&#45;quote">"from Book as book where book.author = :author"</span>,
-                         &#91;author: author&#93;)</pre></div><p class="paragraph"/><h4>Multiline Queries</h4><p class="paragraph"/>Use the line continuation character to separate the query across multiple lines:<p class="paragraph"/><div class="code"><pre>def results = Book.findAll(<span class="java&#45;quote">"&#92;
+                         &#91;author: author&#93;)</pre></div><p class="paragraph"/><h4>Multiline Queries</h4><p class="paragraph"/>-<blockquote class="note">
+-As of Grails 3.0.3, Triple-quoted Groovy multiline Strings now work properly with HQL queries.
+-</blockquote><p class="paragraph"/>Use the line continuation character to separate the query across multiple lines:<p class="paragraph"/><div class="code"><pre>def results = Book.findAll(<span class="java&#45;quote">"&#92;
 from Book as b, &#92;
      Author as a &#92;
-where b.author = a and a.surname = ?"</span>, &#91;'Smith'&#93;)</pre></div><p class="paragraph"/><blockquote class="note">
-Triple-quoted Groovy multiline Strings will NOT work with HQL queries.
-</blockquote><p class="paragraph"/><h4>Pagination and Sorting</h4><p class="paragraph"/>You can also perform pagination and sorting whilst using HQL queries. To do so simply specify the pagination options as a Map at the end of the method call and include an "ORDER BY" clause in the HQL:<p class="paragraph"/><div class="code"><pre>def results =
+where b.author = a and a.surname = ?"</span>, &#91;'Smith'&#93;)</pre></div><p class="paragraph"/>or<p class="paragraph"/><div class="code"><pre>def results = Book.findAll(<span class="java&#45;quote">""</span><span class="java&#45;quote">"
+from Book as b,
+     Author as a
+where b.author = a and a.surname = ?"</span>, &#91;'Smith'&#93;
+<span class="java&#45;quote">""</span>")</pre></div><p class="paragraph"/><h4>Pagination and Sorting</h4><p class="paragraph"/>You can also perform pagination and sorting whilst using HQL queries. To do so simply specify the pagination options as a Map at the end of the method call and include an "ORDER BY" clause in the HQL:<p class="paragraph"/><div class="code"><pre>def results =
       Book.findAll(<span class="java&#45;quote">"from Book as b where "</span> +
                    <span class="java&#45;quote">"b.title like 'Lord of the%' "</span> +
                    <span class="java&#45;quote">"order by b.title asc"</span>,
@@ -590,6 +594,9 @@ Triple-quoted Groovy multiline Strings will NOT work with HQL queries.
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/help.html">help</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-templates.html">install-templates</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>

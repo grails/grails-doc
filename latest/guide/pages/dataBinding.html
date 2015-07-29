@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.1.6 Data Binding 3.0.3</title>
+    <title>7.1.5 Data Binding 3.0.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -126,11 +126,11 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>7.1.6 Data Binding - Reference Documentation</h1>
+                    <h1>7.1.5 Data Binding - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.3</p>
+                    <p><strong>Version:</strong> 3.0.2</p>
 
                     
                 </div>
@@ -139,7 +139,7 @@ function addJsClass() {
 
                 
 <a name="7.1.6 Data Binding"><!-- Legacy link --></a>
-<h2 id="dataBinding">7.1.6 Data Binding</h2>
+<h2 id="dataBinding">7.1.5 Data Binding</h2>
 Data binding is the act of "binding" incoming request parameters onto the properties of an object or an entire graph of objects. Data binding should deal with all necessary type conversion since request parameters, which are typically delivered by a form submission, are always strings whilst the properties of a Groovy or Java object may well not be.<p class="paragraph"/><h4>Map Based Binding</h4><p class="paragraph"/>The data binder is capable of converting and assigning values in a Map to properties of an object.  The binder will associate entries in the Map to properties of the object using the keys in the Map that have values which correspond to property names on the object.  The following code demonstrates the basics:<p class="paragraph"/><div class="code"><pre>// grails&#45;app/domain/Person.groovy
 class Person &#123;
     <span class="java&#45;object">String</span> firstName
@@ -246,7 +246,9 @@ These forms of data binding in Grails are very convenient, but also indiscrimina
           noSelection=<span class="xml&#45;quote">"&#91;'null': ''&#93;"</span>/&#62;</span></pre></div><p class="paragraph"/>Will render a select box that will remove the association at <code>books0</code> if the empty option is chosen.<p class="paragraph"/>Binding to a <code>Map</code> property works the same way except that the list index in the parameter name is replaced by the map key:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:select name=<span class="xml&#45;quote">"images&#91;cover&#93;.id"</span>
           from=<span class="xml&#45;quote">"$&#123;Image.list()&#125;"</span>
           value=<span class="xml&#45;quote">"$&#123;book?.images&#91;cover&#93;?.id&#125;"</span>
-          noSelection=<span class="xml&#45;quote">"&#91;'null': ''&#93;"</span>/&#62;</span></pre></div><p class="paragraph"/>This would bind the selected image into the <code>Map</code> property <code>images</code> under a key of <code>"cover"</code>.<p class="paragraph"/>When binding to Maps, Arrays and Collections the data binder will automatically grow the size of the collections as necessary.  The default limit to how large the binder will grow a collection is 256.  If the data binder encounters an entry that requires the collection be grown beyond that limit, the entry is ignored.  The limit may be configured by assigning a value to the <code>grails.databinding.autoGrowCollectionLimit</code> property in <code>Config.groovy</code>.<p class="paragraph"/><div class="code"><pre>// grails&#45;app/conf/application.groovy<p class="paragraph"/>// the <span class="java&#45;keyword">default</span> value is 256
+          noSelection=<span class="xml&#45;quote">"&#91;'null': ''&#93;"</span>/&#62;</span></pre></div><p class="paragraph"/>This would bind the selected image into the <code>Map</code> property <code>images</code> under a key of <code>"cover"</code>.<p class="paragraph"/>When binding to Maps, Arrays and Collections the data binder will automatically grow the size of the collections as necessary.<p class="paragraph"/><blockquote class="note">
+The default limit to how large the binder will grow a collection is 256. If the data binder encounters an entry that requires the collection be grown beyond that limit, the entry is ignored.  The limit may be configured by assigning a value to the <code>grails.databinding.autoGrowCollectionLimit</code> property in <code>Config.groovy</code>.
+</blockquote><p class="paragraph"/><div class="code"><pre>// grails&#45;app/conf/application.groovy<p class="paragraph"/>// the <span class="java&#45;keyword">default</span> value is 256
 grails.databinding.autoGrowCollectionLimit = 128<p class="paragraph"/>// ...</pre></div><p class="paragraph"/><h4>Data binding with Multiple domain classes</h4><p class="paragraph"/>It is possible to bind data to multiple domain objects from the <a href="../ref/Controllers/params.html" class="controllers">params</a> object.<p class="paragraph"/>For example so you have an incoming request to:<p class="paragraph"/><div class="code"><pre>/book/save?book.title=The%20Stand&#38;author.name=Stephen%20King</pre></div><p class="paragraph"/>You'll notice the difference with the above request is that each parameter has a prefix such as <code>author.</code> or <code>book.</code> which is used to isolate which parameters belong to which type. Grails' <code>params</code> object is like a multi-dimensional hash and you can index into it to isolate only a subset of the parameters to bind.<p class="paragraph"/><div class="code"><pre>def b = <span class="java&#45;keyword">new</span> Book(params.book)</pre></div><p class="paragraph"/>Notice how we use the prefix before the first dot of the <code>book.title</code> parameter to isolate only parameters below this level to bind. We could do the same with an <code>Author</code> domain class:<p class="paragraph"/><div class="code"><pre>def a = <span class="java&#45;keyword">new</span> Author(params.author)</pre></div><p class="paragraph"/><h4>Data Binding and Action Arguments</h4><p class="paragraph"/>Controller action arguments are subject to request parameter data binding.  There are 2 categories of controller action arguments.  The first category is command objects.  Complex types are treated as command objects.  See the <a href="../guide/single.html#commandObjects" class="guide">Command Objects</a> section of the user guide for details.  The other category is basic object types.  Supported types are the 8 primitives, their corresponding type wrappers and <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/String.html" class="api">java.lang.String</a>.  The default behavior is to map request parameters to action arguments by name:<p class="paragraph"/><div class="code"><pre>class AccountingController &#123;<p class="paragraph"/>   // accountNumber will be initialized with the value of params.accountNumber
    // accountType will be initialized with params.accountType
    def displayInvoice(<span class="java&#45;object">String</span> accountNumber, <span class="java&#45;object">int</span> accountType) &#123;
@@ -505,6 +507,9 @@ Note that if an empty List is provided as a value for the <code>include</code> p
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/help.html">help</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-templates.html">install-templates</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>

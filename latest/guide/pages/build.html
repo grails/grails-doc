@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>22.2 Build From Source and Run Tests 3.0.3</title>
+    <title>22.2 Build From Source and Run Tests 3.0.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -128,7 +128,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.3</p>
+                    <p><strong>Version:</strong> 3.0.2</p>
 
                     
                 </div>
@@ -138,11 +138,11 @@ function addJsClass() {
                 
 
 <h2 id="build">22.2 Build From Source and Run Tests</h2>
-If you're interested in contributing fixes and features to the core framework, you will have to learn how to get hold of the project's source, build it and test it with your own applications. Before you start, make sure you have:
+If you're interested in contributing fixes and features to any part of grails, you will have to learn how to get hold of the project's source, build it and test it with your own applications. Before you start, make sure you have:
 <ul class="star">
-<li>A JDK (1.6 or above)</li>
+<li>A JDK (7 or above)</li>
 <li>A git client</li>
-</ul><p class="paragraph"/>Once you have all the pre-requisite packages installed, the next step is to download the Grails source code, which is hosted at <a href="http://github.com" target="blank">GitHub</a> in several repositories owned by the <a href="http://github.com/grails" target="blank">&#34;grails&#34; GitHub user</a>. This is a simple case of cloning the repository you're interested in. For example, to get the core framework run:<p class="paragraph"/><div class="code"><pre>git clone http://github.com/grails/grails&#45;core.git</pre></div><p class="paragraph"/>This will create a "grails-core" directory in your current working directory containing all the project source files. The next step is to get a Grails installation from the source.<p class="paragraph"/><h3>Creating a Grails installation</h3><p class="paragraph"/>If you look at the project structure, you'll see that it doesn't look much like a standard <code>GRAILS_HOME</code> installation. But, it's very simple to turn it into one. Just run this from the root directory of the project:<p class="paragraph"/><div class="code"><pre>./gradlew install</pre></div><p class="paragraph"/>This will fetch all the standard dependencies required by Grails and then build a <code>GRAILS_HOME</code> installation. Note that this target skips the extensive collection of Grails test classes, which can take some time to complete.<p class="paragraph"/>Once the above command has finished, simply set the <code>GRAILS_HOME</code> environment variable to the checkout directory and add the "bin" directory to your path. When you next type run the <code>grails</code> command, you'll be using the version you just built.<p class="paragraph"/><h3>Running the test suite</h3><p class="paragraph"/>All you have to do to run the full suite of tests is:<p class="paragraph"/><div class="code"><pre>./gradlew test</pre></div><p class="paragraph"/>These will take a while (15-30 mins), so consider running individual tests using the command line. For example, to run the test spec <code>BinaryPluginSpec</code> simply execute the following command:
+</ul><p class="paragraph"/>Once you have all the pre-requisite packages installed, the next step is to download the Grails source code, which is hosted at <a href="http://github.com" target="blank">GitHub</a> in several repositories owned by the <a href="http://github.com/grails" target="blank">&#34;grails&#34; GitHub user</a>. This is a simple case of cloning the repository you're interested in. For example, to get the core framework run:<p class="paragraph"/><div class="code"><pre>git clone http://github.com/grails/grails&#45;core.git</pre></div><p class="paragraph"/>This will create a "grails-core" directory in your current working directory containing all the project source files. The next step is to get a Grails installation from the source.<p class="paragraph"/><h3>Creating a Grails installation</h3><p class="paragraph"/>If you look at the project structure, you'll see that it doesn't look much like a standard <code>GRAILS_HOME</code> installation. But, it's very simple to turn it into one. Just run this from the root directory of the project:<p class="paragraph"/><div class="code"><pre>./gradlew install</pre></div><p class="paragraph"/>This will fetch all the standard dependencies required by Grails and then build a <code>GRAILS_HOME</code> installation. Note that this target skips the extensive collection of Grails test classes, which can take some time to complete.<p class="paragraph"/>Once the above command has finished, simply set the <code>GRAILS_HOME</code> environment variable to the checkout directory and add the "bin" directory to your path. When you next type <code>grails</code> command to run, you'll be using the version you just built.<p class="paragraph"/>If you are using <code>gvm</code> then that can also be used to work with this local installation via the following:<p class="paragraph"/><div class="code"><pre>gvm install grails dev /path/to/grails&#45;core</pre></div><p class="paragraph"/>Now you will have a dev version in your local which you can use to test your features.<p class="paragraph"/><h3>Running the test suite</h3><p class="paragraph"/>All you have to do to run the full suite of tests is:<p class="paragraph"/><div class="code"><pre>./gradlew test</pre></div><p class="paragraph"/>These will take a while (15-30 mins), so consider running individual tests using the command line. For example, to run the test spec <code>BinaryPluginSpec</code> simply execute the following command:
 <div class="code"><pre>./gradlew :grails&#45;core:test &#45;&#45;tests &#42;.BinaryPluginSpec</pre></div><p class="paragraph"/>Note that you need to specify the sub-project that the test case resides in, because the top-level "test" target won't work....<p class="paragraph"/><h3>Developing in IntelliJ IDEA</h3><p class="paragraph"/>You need to run the following gradle task:
 <div class="code"><pre>./gradlew idea</pre></div><p class="paragraph"/>Then open the project file which is generated in IDEA. Simple!<p class="paragraph"/><h3>Developing in STS / Eclipse</h3><p class="paragraph"/>You need to run the following gradle task:
 <div class="code"><pre>./gradlew cleanEclipse eclipse</pre></div><p class="paragraph"/>Before importing projects to STS do the following action:
@@ -246,6 +246,9 @@ If you're interested in contributing fixes and features to the core framework, y
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/help.html">help</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/install-templates.html">install-templates</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/list-plugins.html">list-plugins</a>
