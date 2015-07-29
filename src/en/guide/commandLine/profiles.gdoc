@@ -1,0 +1,113 @@
+When you create a Grails application with the [create-app|commandLine] command by default the "web" profile is used:
+
+{code}
+grails create-app myapp
+{code}
+
+You can specify a different profile with the profile argument:
+
+{code}
+grails create-app myapp --profile=web-plugin
+{code}
+
+Profiles encapsulate the project commands, templates and plugins that are designed to work for a given profile. They are stored in the [Grails Profile Repository|https://github.com/grails/grails-profile-repository] on Github.
+
+This repository is checked out locally and stored in the @USER_HOME/.grails/repository@ directory.
+
+h4. Understanding a Profile's Structure
+
+A profile is a simple directory that contains a @profile.yml@ file and directorys containing the "commands", "skeleton" and "templates" defined by the profile. Example:
+
+{code}
+web
+    * commands
+        * create-controller.yml
+        * run-app.groovy    
+        ...
+    * skeleton
+        * grails-app
+            * controllers
+            ...
+        * build.gradle
+    * templates
+        * artifacts
+            * Controller.groovy
+    * profile.yml
+{code}
+
+The above example is a snippet of structure of the 'web' profile. The @profile.yml@ file is defined as follows:
+
+{code}
+description: Profile for Web applications
+extends: base
+{code}
+
+As you can see it contains the description of the profile and a definition of which profiles this profile extends, since one profile can extend from another.
+
+When the @create-app@ command runs it takes the skeleton of the parent profiles and copies the skeletons into a new project structure. Child profiles overwrite files from the parent profile so if the parent defines a @build.gradle@ then the child profile will override the parent.
+
+h4. Defining Profile Commands
+
+A profile can define new commands that apply only to that profile using YAML or Groovy scripts. Below is an example of the [create-controller|commandLine] command defined in YAML:
+
+{code}
+description: 
+    - Creates a controller
+    - usage: 'create-controller [controller name]'
+    - completer: org.grails.cli.interactive.completers.DomainClassCompleter
+    - argument: "Controller Name"
+      description: "The name of the controller"     
+steps:
+ - command: render
+   template: templates/artifacts/Controller.groovy
+   destination: grails-app/controllers/@artifact.package.path@/@artifact.name@Controller.groovy
+ - command: render
+   template: templates/testing/Controller.groovy
+   destination: src/test/groovy/@artifact.package.path@/@artifact.name@ControllerSpec.groovy
+ - command: mkdir
+   location: grails-app/views/@artifact.propertyName@
+{code}
+
+Commands defined in YAML must define one or many steps. Each step is a command in itself. The available step types are:
+
+* @render@ - To render a template to a given destination (as seen in the previous example)
+* @mkdir@ - To make a directory specified by the @location@ parameter
+* @execute@ - To execute a command specified by the @class@ parameter. Must be a class that implements the [Command|api:org.grails.cli.profile.Command] interface.
+* @gradle@ - To execute one or many Gradle tasks specified by the @tasks@ parameter.
+
+For example to invoke a Gradle task, you can define the following YAML:
+
+{code} 
+description: Creates a WAR file for deployment to a container (like Tomcat)
+minArguments: 0
+usage: |
+ war
+steps:
+ - command: gradle
+   tasks:
+     - war
+{code}
+
+If you need more flexiblity than what the declarative YAML approach provides you can create Groovy script commands. Each Command script is extends from the [GroovyScriptCommmand|api:org.grails.cli.profile.commands.script.GroovyScriptCommmand] class and hence has all of the methods of that class available to it.
+
+The following is an example of the [create-script|commandLine] command written in Groovy:
+
+{code}
+description( "Creates a Grails script" ) {
+  usage "grails create-script [SCRIPT NAME]"
+  argument name:'Script Name', description:"The name of the script to create"
+  flag name:'force', description:"Whether to overwrite existing files"
+}
+
+def scriptName = args[0]
+def model = model(scriptName)
+def overwrite = flag('force') ? true : false
+
+render  template: template('artifacts/Script.groovy'), 
+        destination: file("src/main/scripts/${model.lowerCaseName}.groovy"),
+        model: model,
+        overwrite: overwrite
+{code}  
+
+For more information on creating Groovy commands see the following section on creating custom Grails scripts.   
+

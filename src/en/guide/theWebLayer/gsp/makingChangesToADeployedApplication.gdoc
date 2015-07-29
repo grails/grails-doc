@@ -1,6 +1,6 @@
 One of the main issues with deploying a Grails application (or typically any servlet-based one) is that any change to the views requires that you redeploy your whole application. If all you want to do is fix a typo on a page, or change an image link, it can seem like a lot of unnecessary work. For such simple requirements, Grails does have a solution: the  @grails.gsp.view.dir@  configuration setting.
 
-How does this work? The first step is to decide where the GSP files should go. Let's say we want to keep them unpacked in a  @/var/www/grails/my-app@  directory. We add these two lines to  @grails-app/conf/Config.groovy@ :
+How does this work? The first step is to decide where the GSP files should go. Let's say we want to keep them unpacked in a  @/var/www/grails/my-app@  directory. We add these two lines to  @grails-app/conf/application.groovy@ :
 {code}
 grails.gsp.enable.reload = true
 grails.gsp.view.dir = "/var/www/grails/my-app/"
@@ -25,7 +25,7 @@ One thing to bear in mind with this technique is that every time you modify a GS
 There are also some System properties to control GSP reloading:
 {table}
 *Name* | *Description* | *Default*
-grails.gsp.enable.reload | altervative system property for enabling the GSP reload mode without changing Config.groovy |
+grails.gsp.enable.reload | alternative system property for enabling the GSP reload mode without changing Config.groovy |
 grails.gsp.reload.interval | interval between checking the lastmodified time of the gsp source file, unit is milliseconds | 5000
 grails.gsp.reload.granularity | the number of milliseconds leeway to give before deciding a file is out of date. this is needed because different roundings usually cause a 1000ms difference in lastmodified times | 1000
 {table}

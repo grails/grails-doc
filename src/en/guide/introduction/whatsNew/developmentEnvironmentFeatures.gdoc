@@ -1,112 +1,15 @@
-h4. Interactive Mode and Console Enhancements
+h4. New Shell and Code Generation API
 
-Grails 2.0 features brand new console output that is more concise and user friendly to consume. An example of the new output when running tests can be seen below:
+Replacing Gant, Grails 3.0 features a new interactive command line shell that integrates closely with Gradle and provides APIs for writing scripts that interact with Gradle and perform code generation.
 
-!test-output.png!
+The new shell integrates closely with the concept of application profiles with each profile capable defining [profile specific commands|https://github.com/grails/grails-profile-repository/tree/master/profiles/web/commands]. As with previous versions of Grails, plugins can define new shell commands that can invoke Gradle or perform code generation and project automation tasks.
 
-In general Grails makes its best effort to display update information on a single line and only present the information that is crucial. This means that while in previous versions of Grails the [war|commandLine] command produced many lines of output, in Grails 2.0 only 1 line of output is produced:
+See the new guide on [Creating Custom Scripts|guide:creatingCustomScripts] for more information.
 
-!war-output.png!
+h4. Enhanced IDE Integration
 
-In addition simply typing 'grails' at the command line activates the new interactive mode which features TAB completion, command history and keeps the JVM running to ensure commands execute much quicker than otherwise
+Since Grails 3.0 is built on Gradle, you can now import a Grails project using IntelliJ community edition or GGTS's Gradle tooling support without the need for Grails specific tooling. Grails 3.0 plugins are published as simple JAR files greatly reducing the need for additional IDE support specific to Grails.
 
-!interactive-output.png!
+h4. Application Main Class
 
-For more information on the new features of the console refer to the section of the user guide that covers the [console and interactive mode|guide:interactiveMode].
-
-h4. Reloading Agent
-
-Grails 2.0 reloading mechanism no longer uses class loaders, but instead uses a JVM agent to reload changes to class files. This results in greatly improved reliability when reloading changes and also ensures that the class files stored in disk remain consistent with the class files loaded in memory, which reduces the need to run the [clean|commandLine] command.
-
-h4. New Test Report and Documentation Templates
-
-There are new templates for displaying test results that are clearer and more user friendly than the previous reports:
-
-!test-template.png!
-
-In addition, the Grails documentation engine has received a facelift with a new template for presenting Grails application and plugin documentation:
-
-!doc-template.png!
-
-See the section on the [documentation engine|guide:docengine] for more usage info.
-
-h4. Use a TOC for Project Docs
-
-The old documentation engine relied on you putting section numbers into the gdoc filenames. Although convenient, this effectively made it difficult to restructure your user guide by inserting new chapters and sections. In addition, any such restructuring or renaming of section titles resulted in breaking changes to the URLs.
-
-You can now use logical names for your gdoc files and define the structure and section titles in a YAML table-of-contents file, as described in the section on the [documentation engine|guide:docengine]. The logical names appear in the URLs, so as long as you don't change those, your URLs will always remain the same no matter how much restructuring or changing of titles you do.
-
-Grails 2.0 even provides a [migrate-docs|commandLine] command to aid you in migrating existing gdoc user guides.
-
-h4. Enhanced Error Reporting and Diagnosis
-
-Error reporting and problem diagnosis has been greatly improved with a new errors view that analyses stack traces and recursively displays problem areas in your code:
-
-!errors-view.png!
-
-In addition stack trace filtering has been further enhanced to display only relevant trace information:
-
-{code}
-   Line | Method
-->>   9 | getValue     in Book.groovy
-- - - - - - - - - - - - - - - - - - - - - - - - -
-|     7 | getBookValue in BookService.groovy
-|   886 | runTask . .  in ThreadPoolExecutor.java
-|   908 | run          in     ''
-^   662 | run . . . .  in Thread.java
-{code}
-
-h4. H2 Database and Console
-
-Grails 2.0 now uses the H2 database instead of HSQLDB, and enables the H2 database console in development mode (at the URI /dbconsole) so that the in-memory database can be easily queried from the browser:
-
-!h2-console.png!
-
-h4. Plugin Usage Tracking
-
-To enhance community awareness of the most popular plugins an opt-in plugin usage tracking system has been included where users can participate in providing feedback to the plugin community on which plugins are most popular.
-
-This will help drive the roadmap and increase support of key plugins while reducing the need to support older or less popular plugins thus helping plugin development teams focus their efforts.
-
-
-h4. Dependency Resolution Improvements
-
-There are numerous improvements to dependency resolution handling via Ivy including:
-
-* Grails now makes a best effort to cache the previous resolve and avoid resolving again unless you change @BuildConfig.groovy@.
-* Plugins dependencies now appear in the dependency report generated by @grails dependency-report@
-* Plugins published with the release plugin now publish their transitive plugin dependencies in the generated POM which are later resolved.
-* It is now possible to customize the ivy cache directory via @BuildConfig.groovy@
-
-{code}
-grails.project.dependency.resolution = {
-    cacheDir "target/ivy-cache"
-}
-{code}
-
-* You can change the ivy cache directory for all projects via @settings.groovy@
-
-{code}
-grails.dependency.cache.dir = "\${userHome}/.ivy2/cache"
-{code}
-
-* It is now possible to completely disable resolution from inherited repositories (repositories defined by other plugins):
-
-{code}
-grails.project.dependency.resolution = {
-
-    repositories {
-        inherits false // Whether to inherit repository definitions from plugins
-        ...
-    }
-    ...
-}
-{code}
-
-* It is now possible to easily disable checksum validation errors:
-
-{code}
-grails.project.dependency.resolution = {
-    checksums false // whether to verify checksums or not
-}
-{code}
+Each new Grails 3.0 project features an @Application@ class that has a traditional @static void main@ signature, meaning to run or debug a Grails 3.0 application from an IDE like IntelliJ or GGTS you can simply right-click on the @Application@ class and execute to start your Grails application. All Grails 3.0 tests can also just be run from the IDE directly without needing to resort to the command line (even integration / functional tests!).

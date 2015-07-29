@@ -1,10 +1,18 @@
-Grails applications are deployed as Web Application Archives (WAR files), and Grails includes the [war|commandLine] command for performing this task:
+Grails applications can be deployed in a number of different ways.
+
+If you are deploying to a traditional container (Tomcat, Jetty etc.) you can create a Web Application Archive (WAR file), and Grails includes the [war|commandLine] command for performing this task:
 
 {code}
 grails war
 {code}
 
-This will produce a WAR file under the @target@ directory which can then be deployed as per your container's instructions.
+This will produce a WAR file under the @build/libs@ directory which can then be deployed as per your container's instructions.
+
+Note that by default Grails will include an embeddable version of Tomcat inside the WAR file, this can cause problems if you deploy to a different version of Tomcat. If you don't intend to use the embedded container then you should change the scope of the Tomcat dependencies to @provided@ prior to deploying to your production container in @build.gradle@:
+
+{code}
+provided "org.springframework.boot:spring-boot-starter-tomcat"
+{code}
 
 Unlike most scripts which default to the @development@ environment unless overridden, the @war@ command runs in the @production@ environment by default. You can override this like any script by specifying the environment name, for example:
 
@@ -12,12 +20,16 @@ Unlike most scripts which default to the @development@ environment unless overri
 grails dev war
 {code}
 
-{warning}
-NEVER deploy Grails using the [run-app|commandLine] command as this command sets Grails up for auto-reloading at runtime which has a severe performance and scalability implications
-{warning}
+If you prefer not to operate a separate Servlet container then you can simply run the Grails WAR file as a regular Java application. Example:
+
+{code}
+grails war
+java -Dgrails.env=prod -jar build/libs/mywar-0.1.war
+{code}
+
 
 When deploying Grails you should always run your containers JVM with the @-server@ option and with sufficient memory allocation. A good set of VM flags would be:
 
 {code}
--server -Xmx512M -XX:MaxPermSize=256m
+-server -Xmx768M -XX:MaxPermSize=256m
 {code}

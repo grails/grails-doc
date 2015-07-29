@@ -1,29 +1,67 @@
-h4. Adding a new Script
+h4. Add Command Line Commands
 
-A plugin can add a new script simply by providing the relevant Gant script in its scripts directory:
+A plugin can add new commands to the Grails 3.0 interactive shell in one of two ways. First, using the [create-script|commandLine] you can create a code generation script which will become available to the application. The @create-script@ command will create the script in the @src/main/scripts@ directory:
 
 {code:java}
-+ MyPlugin.groovy
-   + scripts     <-- additional scripts here
-   + grails-app
-        + controllers
-        + services
-        + etc.
-    + lib
+ + src/main/scripts     <-- additional scripts here
+ + grails-app
+      + controllers
+      + services
+      + etc.
 {code}
+
+Code generation scripts can be used to create artefacts within the project tree and automate interactions with Gradle.
+
+If you want to create a new shell command that interacts with a loaded Grails application instance then you should use the @create-command@ command:
+
+{code}
+$ grails create-command MyExampleCommand
+{code}
+
+This will create a file called @grails-app/commands/PACKAGE_PATH/MyExampleCommand.groovy@ that extends [ApplicationCommand|api:grails.dev.commands.ApplicationCommand]:
+
+{code}
+import grails.dev.commands.*
+
+class MyExampleCommand implements ApplicationCommand {
+
+  boolean handle(ExecutionContext ctx) {
+      println "Hello World"
+      return true
+  }
+}
+{code}
+
+An @ApplicationCommand@ has access to the @GrailsApplication@ instance and is subject to autowiring like any other Spring bean.
+
+For each @ApplicationCommand@ present Grails will create a shell command and a Gradle task to invoke the @ApplicationCommand@. In the above example you can invoke the @MyExampleCommand@ class using either:
+
+{code}
+$ grails my-example
+{code}
+
+Or
+
+{code}
+$ gradle myExample
+{code}
+
+The Grails version is all lower case hyphen separated and excludes the "Command" suffix.
+
+The main difference between code generation scripts and @ApplicationCommand@ instances is that the latter has full access to the Grails application state and hence can be used to perform tasks that interactive with the database, call into GORM etc.
+
+In Grails 2.x Gant scripts could be used to perform both these tasks, in Grails 3.x code generation and interacting with runtime application state has been cleanly separated.
 
 h4. Adding a new grails-app artifact (Controller, Tag Library, Service, etc.)
 
-A plugin can add new artifacts by creating the relevant file within the @grails-app@ tree. Note that the plugin is loaded from where it is installed and not copied into the main application tree.
+A plugin can add new artifacts by creating the relevant file within the @grails-app@ tree.
 
 {code:java}
-+ ExamplePlugin.groovy
-   + scripts
-   + grails-app
-        + controllers  <-- additional controllers here
-        + services <-- additional services here
-        + etc.  <-- additional XXX here
-    + lib
+ + grails-app
+      + controllers  <-- additional controllers here
+      + services <-- additional services here
+      + etc.  <-- additional XXX here
+
 {code}
 
 h4. Providing Views, Templates and View resolution
@@ -44,18 +82,12 @@ h4. Excluded Artefacts
 
 By default Grails excludes the following files during the packaging process:
 
-* @grails-app/conf/BootStrap.groovy@
-* @grails-app/conf/BuildConfig.groovy@ (although it is used to generate @dependencies.groovy@)
-* @grails-app/conf/Config.groovy@
-* @grails-app/conf/DataSource.groovy@ (and any other @*DataSource.groovy@)
-* @grails-app/conf/UrlMappings.groovy@
+* @grails-app/conf/logback.groovy@
+* @grails-app/conf/application.yml@ (renamed to @plugin.yml@)
 * @grails-app/conf/spring/resources.groovy@
-* Everything within @/web-app/WEB-INF@
-* Everything within @/web-app/plugins/\*\*@
-* Everything within @/test/\*\*@
+* Everything within @/src/test/\*\*@
 * SCM management files within @\*\*/.svn/\*\*@ and @\*\*/CVS/\*\*@
 
-If your plugin requires files under the @web-app/WEB-INF@ directory it is recommended that you modify the plugin's @scripts/_Install.groovy@ Gant script to install these artefacts into the target project's directory tree.
 
 In addition, the default @UrlMappings.groovy@ file is excluded to avoid naming conflicts, however you are free to add a UrlMappings definition under a different name which *will* be included. For example a file called @grails-app/conf/BlogUrlMappings.groovy@ is fine.
 

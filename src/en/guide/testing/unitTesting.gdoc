@@ -35,33 +35,7 @@ Most testing can be achieved via the @TestFor@ annotation in combination with th
 
 The @TestFor@ annotation defines the class under test and will automatically create a field for the type of class under test. For example in the above case a "controller" field will be present, however if @TestFor@ was defined for a service a "service" field would be created and so on.
 
-The @Mock@ annotation creates mock version of any collaborators. There is an in-memory implementation of GORM that will simulate most interactions with the GORM API. For those interactions that are not automatically mocked you can use the built in support for defining mocks and stubs programmatically. For example:
-
-
-{code}
-import grails.test.mixin.TestFor
-import spock.lang.Specification
-
-@TestFor(BookController)
-@Mock(Book)
-class BookControllerSpec extends Specification {
-
-    void "test search"() {
-        given:
-        def searchMock = mockFor(SearchService)
-        searchMock.demand.searchWeb { String q -> ['first result', 'second result'] }
-        searchMock.demand.static.logResults { List results ->  }
-        controller.searchService = searchMock.createMock()
-
-        when:
-        controller.search()
-
-        then:
-        controller.response.text.contains "Found 2 results"
-    }
-}
-{code}
-
+The @Mock@ annotation creates mock version of any collaborators. There is an in-memory implementation of GORM that will simulate most interactions with the GORM API.
 
 h4. doWithSpring and doWithConfig callback methods, FreshRuntime annotation
 
@@ -143,7 +117,7 @@ class TestInstanceCallbacksSpec extends Specification {
     }
 
     def "doWithConfig callback is executed"(){
-        expect:        
+        expect:
         config.myConfigValue == 'Hello'
     }
 }
@@ -151,13 +125,13 @@ class TestInstanceCallbacksSpec extends Specification {
 
 
 
-You can use @[org.codehaus.groovy.grails.commons.InstanceFactoryBean|api:org.codehaus.groovy.grails.commons.InstanceFactoryBean]@ together with doWithSpring and the [FreshRuntime|api:grails.test.runtime.FreshRuntime] annotation to mock beans in tests.
+You can use @[org.grails.spring.beans.factory.InstanceFactoryBean|api:org.grails.spring.beans.factory.InstanceFactoryBean]@ together with doWithSpring and the [FreshRuntime|api:grails.test.runtime.FreshRuntime] annotation to mock beans in tests.
 
 {code}
 import grails.test.mixin.support.GrailsUnitTestMixin
 import grails.test.runtime.FreshRuntime
 
-import org.codehaus.groovy.grails.commons.InstanceFactoryBean
+import org.grails.spring.beans.factory.InstanceFactoryBean
 import org.junit.ClassRule
 
 import spock.lang.Shared
@@ -182,11 +156,38 @@ class MockedBeanSpec extends Specification {
 }
 {code}
 
+h4. The DirtiesRuntime annotation
+
+Test methods may be marked with the @[grails.test.runtime.DirtiesRuntime|api:grails.test.runtime.DirtiesRuntime]@ annotation to indicate that the test modifies the runtime in ways which might be problematic for other tests and as such the runtime should be refreshed after this test method runs.
+
+{code}
+import grails.test.mixin.TestFor
+import spock.lang.Specification
+import grails.test.runtime.DirtiesRuntime
+
+@TestFor(PersonController)
+class PersonControllerSpec extends Specification {
+
+    @DirtiesRuntime
+    void "a test method which modifies the runtime"() {
+        when:
+        Person.metaClass.someMethod = { ... }
+        // ...
+
+        then:
+        // ...
+    }
+
+    void "a test method which should not be affected by the previous test method"() {
+        // ...
+    }
+}
+{code}
 
 h4. Sharing test runtime grailsApplication instance and beans for several test classes
 
 It's possible to share a single grailsApplication instance and beans for several test classes.
-This feature is activated by the @[SharedRuntime|api:grails.test.runtime.SharedRuntime]@ annotation. This annotation takes an optional class parameter 
+This feature is activated by the @[SharedRuntime|api:grails.test.runtime.SharedRuntime]@ annotation. This annotation takes an optional class parameter
 implements @[SharedRuntimeConfigurer|api:grails.test.runtime.SharedRuntimeConfigurer]@ interface. All test classes referencing the same SharedRuntimeConfigurer implementation
 class will share the same runtime during a single test run.
 The value class for SharedRuntimeConfigurer annotation can also implement @[TestEventInterceptor|api:grails.test.runtime.TestEventInterceptor]@ . In this case the instance of the class
@@ -212,7 +213,3 @@ class LoadExternalBeansSpec extends Specification {
     }
 }
 {code}
-
-
-
-

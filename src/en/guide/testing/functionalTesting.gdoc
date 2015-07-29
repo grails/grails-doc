@@ -1,61 +1,49 @@
 Functional tests involve making HTTP requests against the running application and verifying the resultant behaviour. The functional testing phase differs from the integration phase in that the Grails application is now listening and responding to actual HTTP requests. This is useful for end-to-end testing scenarios, such as making REST calls against a JSON API.
 
-Grails does not ship with any support for writing functional tests directly, but there are several plugins available for this.
+Grails by default ships with support for writing functional tests using the [Geb framework|http://www.gebish.org]. To create a functional test you can use the @create-functional-test@ command which will create a new functional test:
 
-* @Canoo Webtest@ - "http://grails.org/plugin/webtest":http://grails.org/plugin/webtest
-* @G-Func@ - "http://grails.org/plugin/functional-test":http://grails.org/plugin/functional-test
-* @Geb@ - "http://grails.org/plugin/geb":http://grails.org/plugin/geb
-* @Selenium-RC@ - "http://grails.org/plugin/selenium-rc":http://grails.org/plugin/selenium-rc
-* @WebDriver@ - "http://grails.org/plugin/webdriver":http://grails.org/plugin/webdriver
-
-Consult the documentation for each plugin for its capabilities.
-
-h4. Common Options
-
-There are options that are common to all plugins that control how the Grails application is launched, if at all.
-
-h5. inline
-
-The @-inline@ option specifies that the grails application should be started inline (i.e. like @run-app@).
-
-*This option is implicitly set unless the @baseUrl@ or @war@ options are set*
-
-h5. war
-
-The @-war@ option specifies that the grails application should be packaged as a war and started. This is useful as it tests your application in a production-like state, but it has a longer startup time than the @-inline@ option. It also runs the war in a forked JVM, meaning that you cannot access any internal application objects.
-
-{code:java}
-grails test-app functional: -war
+{code}
+$ grails create-functional-test MyFunctional
 {code}
 
-Note that the same build/config options for the [run-war|commandLine] command apply to functional testing against the WAR.
+The above command will create a new Spock spec called @MyFunctionalSpec.groovy@ in the @src/integration-test/groovy@ directory. The test is annotated with the [Integration|api:grails.test.mixin.integration.Integration] annotation to indicate it is a integration test and extends the @GebSpec@ super class:
 
-h5. https
+{code}
+@Integration
+class HomeSpec extends GebSpec {
 
-The @-https@ option results in the application being able to receive https requests as well as http requests. It is compatible with both the @-inline@ and @-war@ options.
+    def setup() {
+    }
 
-{code:java}
-grails test-app functional: -https
+    def cleanup() {
+    }
+
+    void "Test the home page renders correctly"() {
+        when:"The home page is visited"
+            go '/'
+
+        then:"The title is correct"
+            \$('title').text() == "Welcome to Grails"
+    }
+}
+
 {code}
 
-Note that this does not change the test _base url_ to be https, it will still be http unless the @-httpsBaseUrl@ option is also given.
+When the test is run the application container will be loaded up in the background and you can send requests to the running application using the Geb API.
 
-h5. httpsBaseUrl
+Note that the application is only loaded once for the entire test run, so functional tests share the state of the application across the whole suite.
 
-The @-httpsBaseUrl@ causes the implicit base url to be used for tests to be a https url.
+In addition the application is loaded in the JVM as the test, this means that the test has full access to the application state and can interact directly with data services such as GORM to setup and cleanup test data.
 
-{code:java}
-grails test-app functional: -httpsBaseUrl
+The @Integration@ annotation supports an optional @applicationClass@ attribute which may be used to specify the application class to use for the functional test.  The class must extend [GrailsAutoConfiguration|api:grails.boot.config.GrailsAutoConfiguration].
+
+{code}
+@Integration(applicationClass=com.demo.Application)
+class HomeSpec extends GebSpec {
+
+    // ...
+
+}
 {code}
 
-This option is ignored if the @-baseUrl@ option is specified.
-
-h5. baseUrl
-
-The @baseUrl@ option allows the base url for tests to be specified.
-
-{code:java}
-grails test-app functional: -baseUrl=http://mycompany.com/grailsapp
-{code}
-
-This option will prevent the local grails application being started unless @-inline@ or @-war@ are given as well. To use a custom base url but still test against the local Grails application you *must* specify one of either the @-inline@ or @-war@ options.
+If the @applicationClass@ is not specified then the test runtime environment will attempt to locate the application class dynamically which can be problematic in multiproject builds where multiple application classes may be present.

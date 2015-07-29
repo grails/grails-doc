@@ -1,6 +1,6 @@
 Since Grails 1.2, the documentation engine that powers the creation of this documentation has been available for your own Grails projects.
 
-The documentation engine uses a variation on the [Textile|http://textile.sitemonks.com/] syntax to automatically create project documentation with smart linking, formatting etc.
+The documentation engine uses a variation on the [Textile|http://txstyle.org/] syntax to automatically create project documentation with smart linking, formatting etc.
 
 h4. Creating project documentation
 
@@ -45,7 +45,7 @@ Reference items appear in the Quick Reference section of the documentation. Each
 
 h4. Configuring Output Properties
 
-There are various properties you can set within your @grails-app/conf/Config.groovy@ file that customize the output of the documentation such as:
+There are various properties you can set within your @grails-app/conf/application.groovy@ file that customize the output of the documentation such as:
 
 * *grails.doc.title* - The title of the documentation
 * *grails.doc.subtitle* - The subtitle of the documentation
@@ -67,10 +67,16 @@ One of the simplest ways to customise the look of the generated guide is to prov
 
 h4. Generating Documentation
 
+Add the plugin in your @build.gradle@:
+
+{code}
+apply plugin: "org.grails.grails-doc"
+{code}
+
 Once you have created some documentation (refer to the syntax guide in the next chapter) you can generate an HTML version of the documentation using the command:
 
 {code}
-grails doc
+gradle docs
 {code}
 
 This command will output an @docs/manual/index.html@ which can be opened in a browser to view your documentation.
@@ -109,7 +115,7 @@ You can also link to internal images like so:
 \!someFolder/my_diagram.png\!
 {code}
 
-This will link to an image stored locally within your project. There is currently no default location for doc images, but you can specify one with the @grails.doc.images@ setting in Config.groovy like so:
+This will link to an image stored locally within your project. There is currently no default location for doc images, but you can specify one with the @grails.doc.images@ setting in application.groovy like so:
 
 {code}
 grails.doc.images = new File("src/docs/images")
@@ -122,13 +128,13 @@ h5. Linking
 There are several ways to create links with the documentation generator. A basic external link can either be defined using confluence or textile style markup:
 
 {code}
-[Pivotal|http://www.gopivotal.com/oss]
+[Pivotal|http://www.pivotal.io/oss]
 {code}
 
 or
 
 {code}
-"Pivotal":http://www.gopivotal.com/oss
+"Pivotal":http://www.pivotal.io/oss
 {code}
 
 For links to other sections inside the user guide you can use the @guide:@ prefix with the name of the section you want to link to:
@@ -153,7 +159,7 @@ Finally, to link to external APIs you can use the @api:@ prefix. For example:
 [String|api:java.lang.String]
 {code}
 
-The documentation engine will automatically create the appropriate javadoc link in this case. To add additional APIs to the engine you can configure them in @grails-app/conf/Config.groovy@. For example:
+The documentation engine will automatically create the appropriate javadoc link in this case. To add additional APIs to the engine you can configure them in @grails-app/conf/application.groovy@. For example:
 
 {code}
 grails.doc.api.org.hibernate=

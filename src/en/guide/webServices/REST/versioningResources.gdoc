@@ -64,19 +64,27 @@ Then override the renderer (see the section on "Customizing Response Rendering" 
 
 {code}
 import grails.rest.render.json.*
-import org.codehaus.groovy.grails.web.mime.*
+import grails.web.mime.*
 
 beans = {
-    bookRendererV1(JsonRenderer, myapp.v1.Book, new MimeType("application/vnd.books.org.book+json", [v:"1.0"])) 
-    bookRendererV2(JsonRenderer, myapp.v2.Book, new MimeType("application/vnd.books.org.book+json", [v:"2.0"])) 
+    bookRendererV1(JsonRenderer, myapp.v1.Book, new MimeType("application/vnd.books.org.book+json", [v:"1.0"]))
+    bookRendererV2(JsonRenderer, myapp.v2.Book, new MimeType("application/vnd.books.org.book+json", [v:"2.0"]))
 }
 {code}
+
+Then update the list of acceptable response formats in your controller:
+
+{code}
+class BookController extends RestfulController {
+    static responseFormats = ['json', 'xml', 'book', 'bookv2']
+
+    // ...
+}
+{code}
+
 
 Then using the @Accept@ header you can specify which version you need using the Mime Type:
 
 {code}
 $ curl -i -H "Accept: application/vnd.books.org.book+json;v=1.0" -X GET http://localhost:8080/myapp/books
 {code}
-
-
-

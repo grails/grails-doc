@@ -1,0 +1,31 @@
+When you create a new project with the [create-app|commandLine] command, a default @build.gradle@ is created. The default @build.gradle@ configures the build with a set of Gradle plugins that allow Gradle to build the Grails project:
+
+{code}
+plugins {
+    id "io.spring.dependency-management" version "0.3.1.RELEASE"
+}
+
+apply plugin: "spring-boot"
+apply plugin: "war"
+apply plugin: "asset-pipeline"
+apply plugin: "org.grails.grails-web"
+apply plugin: "org.grails.grails-gsp"
+apply plugin: "maven"
+{code}
+
+The default plugins are as follows:
+
+* @dependency-management@ - The [dependency management|https://plugins.gradle.org/plugin/io.spring.dependency-management] plugin allows Gradle to read Maven BOM files that define the default dependency versions used by Grails.
+* @spring-boot@ - The [Spring Boot|http://docs.spring.io/spring-boot/docs/current/reference/html/build-tool-plugins-gradle-plugin.html] Gradle plugin enhances the default packaging tasks provided by Gradle to allow for the creation of runnable JAR/WAR files.
+* @war@ - The [WAR plugin|http://www.gradle.org/docs/current/userguide/war_plugin.html] changes the packaging so that Gradle creates as WAR file from you application. You can comment out this plugin if you wish to create only a runnable JAR file for standalone deployment.
+* @asset-pipeline@ - The [asset pipeline|https://github.com/bertramdev/asset-pipeline-core] plugin enables the compilation of static assets (JavaScript, CSS etc.)
+* @maven@ - The [maven plugin|http://www.gradle.org/docs/current/userguide/maven_plugin.html] allows installing your application into a local maven repository
+
+Many of these are built in plugins provided by Gradle or third party plugins. The Gradle plugins that Grails provides are as follows:
+
+* @org.grails.grails-core@ - The primary Grails plugin for Gradle, included by all other plugins and designed to operate with all profiles.
+* @org.grails.grails-plugin@ - A plugin for Gradle for building Grails plugins.
+* @org.grails.grails-web@ - The Grails Web gradle plugin configures Gradle to understand the Grails conventions and directory structure.
+* @org.grails.grails-gsp@ - The Grails GSP plugin adds precompilation of GSP files for production deployments.
+* @org.grails.grails-doc@ - A plugin for Gradle for using Grails 2.0's documentation engine.
+

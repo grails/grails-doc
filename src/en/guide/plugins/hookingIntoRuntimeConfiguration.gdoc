@@ -2,18 +2,19 @@ Grails provides a number of hooks to leverage the different parts of the system 
 
 h4. Hooking into the Grails Spring configuration
 
-First, you can hook in Grails runtime configuration by providing a property called @doWithSpring@ which is assigned a block of code. For example the following snippet is from one of the core Grails plugins that provides [i18n|guide:i18n] support:
+First, you can hook in Grails runtime configuration overriding the @doWithSpring@ method from the [Plugin|api:grails.plugins.Plugin] class and returning a closure that defines additional beans. For example the following snippet is from one of the core Grails plugins that provides [i18n|guide:i18n] support:
 
 {code:java}
 import org.springframework.web.servlet.i18n.CookieLocaleResolver
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor
 import org.springframework.context.support.ReloadableResourceBundleMessageSource
+import grails.plugins.*
 
-class I18nGrailsPlugin {
+class I18nGrailsPlugin extends Plugin {
 
     def version = "0.1"
 
-    def doWithSpring = {
+    Closure doWithSpring() {{->
         messageSource(ReloadableResourceBundleMessageSource) {
             basename = "WEB-INF/grails-app/i18n/messages"
         }
@@ -21,96 +22,75 @@ class I18nGrailsPlugin {
             paramName = "lang"
         }
         localeResolver(CookieLocaleResolver)
-    }
+    }}
 }
 {code}
 
 This plugin configures the Grails @messageSource@ bean and a couple of other beans to manage Locale resolution and switching. It using the [Spring Bean Builder|guide:spring] syntax to do so.
 
-h4. Participating in web.xml Generation
+h4. Customizing the Servlet Environment
 
-Grails generates the @WEB-INF/web.xml@ file at load time, and although plugins cannot change this file directly, they can participate in the generation of the file. A plugin can provide a @doWithWebDescriptor@ property that is assigned a block of code that gets passed the @web.xml@ as an @XmlSlurper@ @GPathResult@.
+In previous versions of Grails it was possible to dynamically modify the generated @web.xml@. In Grails 3.x there is no @web.xml@ file and it is not possible to programmatically modify the @web.xml@ file anymore.
 
-h5. Add @servlet@ and @servlet-mapping@
+However, it is possible to perform the most commons tasks of modifying the Servlet environment in Grails 3.x.
 
-Consider this example from the @ControllersPlugin@:
+h4. Adding New Servlets
 
-{code:java}
-def doWithWebDescriptor = { webXml ->
+If you want to add a new Servlet instance the simplest way is simply to define a new Spring bean in the @doWithSpring@ method:
 
-    def mappingElement = webXml.'servlet-mapping'
+{code}
+Closure doWithSpring() {{->
+  myServlet(MyServlet)
+}}
+{code}
 
-    def lastMapping = mappingElement[mappingElement.size() - 1]
-    lastMapping + {
-        'servlet-mapping' {
-            'servlet-name'("grails")
-            'url-pattern'("*.dispatch")
-        }
-    }
+If you need to customize the servlet you can use Spring Boot's [ServletRegistrationBean|api:org.springframework.boot.context.embedded.ServletRegistrationBean]:
+
+{code}
+Closure doWithSpring() {{->
+  myServlet(ServletRegistrationBean, new MyServlet(), "/myServlet/*") {
+    loadOnStartup = 2
+  }
+}}
+{code}
+
+h4. Adding New Servlet Filters
+
+Just like Servlets, the simplest way to configure a new filter is to simply define a Spring bean:
+
+{code}
+Closure doWithSpring() {{->
+  myFilter(MyFilter)
+}}
+{code}
+
+However, if you want to control the order of filter registrations you will need to use Spring Boot's [FilterRegistrationBean|api:org.springframework.boot.context.embedded.FilterRegistrationBean]:
+
+{code}
+myFilter(FilterRegistrationBean) {
+    filter = bean(MyFilter)
+    urlPatterns = ['/*']
+    order = Ordered.HIGHEST_PRECEDENCE
 }
 {code}
 
-Here the plugin gets a reference to the last @<servlet-mapping>@ element and appends Grails' servlet after it using XmlSlurper's ability to programmatically modify XML using closures and blocks.
-
-h5. Add @filter@ and @filter-mapping@
-
-Adding a filter with its mapping works a little differently. The location of the @<filter>@ element doesn't matter since order is not important, so it's simplest to insert your custom filter definition immediately after the last @<context-param>@ element. Order _is_ important for mappings, but the usual approach is to add it immediately after the last @<filter>@ element like so:
-
-{code:java}
-def doWithWebDescriptor = { webXml ->
-
-    def contextParam = webXml.'context-param'
-
-    contextParam[contextParam.size() - 1] + {
-        'filter' {
-            'filter-name'('springSecurityFilterChain')
-            'filter-class'(DelegatingFilterProxy.name)
-        }
-    }
-
-    def filter = webXml.'filter'
-    filter[filter.size() - 1] + {
-        'filter-mapping'{
-            'filter-name'('springSecurityFilterChain')
-            'url-pattern'('/*')
-        }
-    }
-}
-{code}
-
-In some cases you need to ensure that your filter comes after one of the standard Grails filters, such as the Spring character encoding filter or the SiteMesh filter. Fortunately you can insert filter mappings immediately after the standard ones (more accurately, any that are in the template web.xml file) like so:
-
-{code:java}
-def doWithWebDescriptor = { webXml ->
-    ...
-
-    // Insert the Spring Security filter after the Spring
-    // character encoding filter.
-    def filter = webXml.'filter-mapping'.find {
-        it.'filter-name'.text() == "charEncodingFilter"
-    }
-
-    filter + {
-        'filter-mapping'{
-            'filter-name'('springSecurityFilterChain')
-            'url-pattern'('/*')
-        }
-    }
-}
-{code}
+{note}
+Grails' internal registered filters (@GrailsWebRequestFilter@, @HiddenHttpMethodFilter@ etc.) are defined by incrementing @HIGHEST_PRECEDENCE@ by 10 thus allowing several filters to be inserted before or between Grails' filters.
+{note}
 
 h4. Doing Post Initialisation Configuration
 
 Sometimes it is useful to be able do some runtime configuration after the Spring [ApplicationContext|api:org.springframework.context.ApplicationContext] has been built. In this case you can define a @doWithApplicationContext@ closure property.
 
 {code:java}
-class SimplePlugin {
+class SimplePlugin extends Plugin{
 
     def name = "simple"
     def version = "1.1"
 
-    def doWithApplicationContext = { appCtx ->
-        def sessionFactory = appCtx.sessionFactory
+    @Override
+    void doWithApplicationContext() {
+        def sessionFactory = applicationContext.sessionFactory
         // do something here with session factory
     }
 }

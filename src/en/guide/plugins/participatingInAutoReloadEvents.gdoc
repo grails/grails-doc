@@ -3,24 +3,19 @@ h4. Monitoring Resources for Changes
 Often it is valuable to monitor resources for changes and perform some action when they occur. This is how Grails implements advanced reloading of application state at runtime. For example, consider this simplified snippet from the Grails @ServicesPlugin@:
 
 {code:java}
-class ServicesGrailsPlugin {
+class ServicesGrailsPlugin extends Plugin {
     ...
     def watchedResources = "file:./grails-app/services/*Service.groovy"
 
     ...
-    def onChange = { event ->
+    void onChange( Map<String, Object> event) {
         if (event.source) {
-            def serviceClass = application.addServiceClass(event.source)
+            def serviceClass = grailsApplication.addServiceClass(event.source)
             def serviceName = "\${serviceClass.propertyName}"
-            def beans = beans {
+            beans {
                 "$serviceName"(serviceClass.getClazz()) { bean ->
                     bean.autowire =  true
                 }
-            }
-            if (event.ctx) {
-                event.ctx.registerBeanDefinition(
-                        serviceName,
-                        beans.getBeanDefinition(serviceName))
             }
         }
     }

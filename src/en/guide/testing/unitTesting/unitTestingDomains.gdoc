@@ -1,8 +1,8 @@
 h4. Overview
 
-Domain class interaction can be tested without involving a real database connection using @DomainClassUnitTestMixin@ or by using the @HibernateTestMixin@. 
+Domain class interaction can be tested without involving a real database connection using @DomainClassUnitTestMixin@ or by using the @HibernateTestMixin@.
 
-The GORM implementation in DomainClassUnitTestMixin is using a simple in-memory @ConcurrentHashMap@ implementation. Note that this has limitations compared to a real GORM implementation. 
+The GORM implementation in DomainClassUnitTestMixin is using a simple in-memory @ConcurrentHashMap@ implementation. Note that this has limitations compared to a real GORM implementation.
 
 A large, commonly-used portion of the GORM API can be mocked using @DomainClassUnitTestMixin@ including:
 
@@ -12,7 +12,7 @@ A large, commonly-used portion of the GORM API can be mocked using @DomainClassU
 * Query-by-example
 * GORM Events
 
-@HibernateTestMixin@ uses Hibernate 4 and a H2 in-memory database. This makes it possible to use all GORM features also in Grails unit tests. 
+@HibernateTestMixin@ uses Hibernate 4 and a H2 in-memory database. This makes it possible to use all GORM features also in Grails unit tests.
 
 All features of GORM for Hibernate can be tested within a @HibernateTestMixin@ unit test including:
 
@@ -21,7 +21,7 @@ All features of GORM for Hibernate can be tested within a @HibernateTestMixin@ u
 * dirty checking methods
 * any direct interaction with Hibernate
 
-The implementation behind @HibernateTestMixin@ takes care of setting up the Hibernate with the in-memory H2 database. It only configures the given domain classes for use in a unit test. The @Domain annotation is used to tell which domain classes should be configured. 
+The implementation behind @HibernateTestMixin@ takes care of setting up the Hibernate with the in-memory H2 database. It only configures the given domain classes for use in a unit test. The @Domain annotation is used to tell which domain classes should be configured.
 
 
 h4. DomainClassUnitTestMixin Basics
@@ -30,6 +30,7 @@ h4. DomainClassUnitTestMixin Basics
 
 {code:java}
 import grails.test.mixin.TestFor
+import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(BookController)
@@ -62,6 +63,7 @@ Tests for this action can be written as follows:
 
 {code:java}
 import grails.test.mixin.TestFor
+import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(BookController)
@@ -95,6 +97,7 @@ class BookControllerSpec extends Specification {
 
 {code:java}
 import grails.test.mixin.TestFor
+import grails.test.mixin.Mock
 import spock.lang.Specification
 
 @TestFor(BookController)
@@ -155,21 +158,19 @@ The @mockDomain@ method also includes an additional parameter that lets you pass
 
 h4. Testing Constraints
 
-There are 4 types of validateable classes:
+There are 3 types of validateable classes:
 
 # Domain classes
-# Classes marked with the @Validateable@ annotation
+# Classes which implement the @Validateable@ trait
 # Command Objects which have been made validateable automatically
-# Classes configured to be validateable via the @grails.validateable.classes@ property in @Config.groovy@
 
-The first 3 are easily testable in a unit test with no special configuration necessary as long as the test method is marked with @TestFor@ or explicitly applies the @GrailsUnitTestMixin@ using @TestMixin@.  See the examples below.
+These are all easily testable in a unit test with no special configuration necessary as long as the test method is marked with @TestFor@ or explicitly applies the @GrailsUnitTestMixin@ using @TestMixin@.  See the examples below.
 
 {code:java}
 // src/groovy/com/demo/MyValidateable.groovy
 package com.demo
 
-@grails.validation.Validateable
-class MyValidateable {
+class MyValidateable implements grails.validation.Validateable {
     String name
     Integer age
 
@@ -367,65 +368,6 @@ class MyCommandObjectSpec extends Specification {
 }
 {code}
 
-For validateable classes which are not one of the first 3 types listed above but are configured with the @grails.validateable.classes@ property in @Config.groovy@, one additional step is required to test validation.  @GrailsUnitTestMixin@ provides a method named @mockForConstraintsTests@ that will mock validation support for these classes.  See the example below.
-
-{code:java}
-// src/groovy/com/demo/Book.groovy
-package com.demo
-
-class Book {
-    String title
-    String author
-
-    static constraints = {
-        author minSize: 5
-    }
-}
-{code}
-
-{code:java}
-// grails-app/conf/Config.groovy
-grails.validateable.classes = [com.demo.Book]
-
-// ...
-{code}
-
-{code:java}
-// test/unit/com/demo/BookSpec.groovy
-package com.demo
-
-import grails.test.mixin.TestMixin
-import grails.test.mixin.support.GrailsUnitTestMixin
-import spock.lang.Specification
-
-@TestMixin(GrailsUnitTestMixin)
-class BookSpec extends Specification {
-
-    void 'Test validation'() {
-        given:
-        mockForConstraintsTests Book
-
-        when: 'the author name has only 4 characters'
-        def book = new Book()
-        book.author = 'Jeff'
-
-        then: 'validation should fail'
-        !book.validate()
-        book.hasErrors()
-        book.errors['author'] == 'minSize'
-
-        when: 'the author name has 5 characters'
-        book.author = 'Jacob'
-
-        then: 'validation should pass'
-        book.validate()
-        !book.hasErrors()
-    }
-}
-{code}
-
-Note that the @mockForConstraintsTests@ method changes the behavior of the errors object such that something like @book.errors['author']@ will evaluate to the name of the failed constraint, not a @org.springframework.validation.FieldError@ object.  This is convenient for unit tests.  If your unit test really does want a reference to the @org.springframework.validation.FieldError@ object use something like @book.errors.getFieldError('author')@.
-
 That's it for testing constraints. One final thing we would like to say is that testing the constraints in this way catches a common error: typos in the "constraints" property name which is a mistake that is easy to make and equally easy to overlook. A unit test for your constraints will highlight the problem straight away.
 
 
@@ -472,7 +414,7 @@ HibernateTestMixin is only supported with hibernate4 plugin versions >= 4.3.5.4 
 
 h4. Configuring domain classes for HibernateTestMixin tests
 
-The @grails.test.mixin.gorm.Domain@ annotation is used to configure the list of domain classes to configure for Hibernate sessionFactory instance that gets configured when the unit test runtime is initialized. 
+The @grails.test.mixin.gorm.Domain@ annotation is used to configure the list of domain classes to configure for Hibernate sessionFactory instance that gets configured when the unit test runtime is initialized.
 
 @Domain@ annotations will be collected from several locations:
 * the annotations on the test class

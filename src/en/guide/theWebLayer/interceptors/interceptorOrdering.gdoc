@@ -1,0 +1,52 @@
+Interceptors can be ordered by defining an @order@ property that defines a priority.
+
+For example:
+
+{code}
+class AuthInterceptor {
+
+  int order = HIGHEST_PRECEDENCE
+
+  ...
+}
+{code}
+
+The default value of the @order@ property is 0.
+
+The values @HIGHEST_PRECEDENCE@ and @LOWEST_PRECEDENCE@ can be used to define filters that should should run first or last respectively.
+
+Note that if you write an interceptor that is to be used by others it is better increment or decrement the @HIGHEST_PRECEDENCE@ and @LOWEST_PRECEDENCE@ to allow other interceptors to be inserted before or after the interceptor you are authoring:
+
+{code}
+int order = HIGHEST_PRECEDENCE + 50
+
+// or
+
+int order = LOWEST_PRECEDENCE - 50
+{code}
+
+To find out the computed order of interceptors you can add a debug logger to @logback.groovy@ as follows:
+
+{code}
+logger 'grails.artefact.Interceptor', DEBUG, ['STDOUT'], false
+{code}
+
+You can override any interceptors default order by using bean override configuration in @grails-app/conf/application.yml@:
+
+{code}
+beans:
+  authInterceptor:
+    order: 50
+{code}
+
+Or in @grails-app/conf/application.groovy@:
+
+{code}
+beans {
+  authInterceptor {
+    order = 50
+  }
+}
+{code}
+
+Thus giving you complete control over interceptor execution order.

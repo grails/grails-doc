@@ -12,7 +12,7 @@ Drivers typically come in the form of a JAR archive. It's best to use the depend
 
 If you can't use dependency resolution then just put the JAR in your project's @lib@ directory.
 
-Once you have the JAR resolved you need to get familiar Grails' DataSource descriptor file located at @grails-app/conf/DataSource.groovy@. This file contains the dataSource definition which includes the following settings:
+Once you have the JAR resolved you need to get familiar with how Grails manages its database configuration. The configuration can be maintained in either @grails-app/conf/application.groovy@ or @grails-app/conf/application.yml@. These files contain the dataSource definition which includes the following settings:
 
 * @driverClassName@ - The class name of the JDBC driver
 * @username@ - The username used to establish a JDBC connection
@@ -29,7 +29,7 @@ Once you have the JAR resolved you need to get familiar Grails' DataSource descr
 * @properties@ - Extra properties to set on the DataSource bean. See the [Tomcat Pool|http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes] documentation. There is also a Javadoc format [documentation of the properties|https://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/tomcat/jdbc/pool/PoolConfiguration.html].
 * @jmxExport@ - If @false@, will disable registration of JMX MBeans for all DataSources. By default JMX MBeans are added for DataSources with @jmxEnabled = true@ in properties.
 
-A typical configuration for MySQL may be something like:
+A typical configuration for MySQL in @application.groovy@ may be something like:
 
 {code:java}
 dataSource {
@@ -153,7 +153,7 @@ h4. More on dbCreate
 
 Hibernate can automatically create the database tables required for your domain model. You have some control over when and how it does this through the @dbCreate@ property, which can take these values:
 
-* *create* - Drops the existing schemaCreates the schema on startup, dropping existing tables, indexes, etc. first.
+* *create* - Drops the existing schema and creates the schema on startup, dropping existing tables, indexes, etc. first.
 * *create-drop* - Same as *create*, but also drops the tables when the application shuts down cleanly.
 * *update* - Creates missing tables and indexes, and updates the current schema without dropping any tables or data. Note that this can't properly handle many schema changes like column renames (you're left with the old column containing the existing data).
 * *validate* - Makes no changes to your database. Compares the configuration with the existing database schema and reports warnings.
