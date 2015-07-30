@@ -8,7 +8,7 @@ ext.checkOutDir = "${buildDir.path}/checkout"
 ext.outputDir = "${buildDir.path}/docs"
 ext.githubBranch = "3.0.x"
 
-ext.explicitGrailsHome = System.getProperty("grails.home")
+ext.explicitGrailsHome = System.getProperty("grails.home") ?: project.getProperty("grails.home")
 ext.grailsHome = explicitGrailsHome ? file(explicitGrailsHome).absolutePath : "$checkOutDir/grails-src"
 
 configurations {
@@ -60,7 +60,7 @@ fetchGrailsSource.onlyIf { !explicitGrailsHome }
 
 task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
     commandLine = ["./gradlew", "groovydoc", '--info', '--stacktrace']
-    workingDir = "${checkOutDir}/grails-src"
+    workingDir = grailsHome
     environment "GRADLE_OPTS", "-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
 }
 
