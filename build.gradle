@@ -56,7 +56,10 @@ task fetchGrailsSource << {
     println "Grails source code has been downloaded to ${relativePath(grailsHome)}"
 }
 
-fetchGrailsSource.onlyIf { !explicitGrailsHome }
+fetchGrailsSource.onlyIf { 
+    println "GRAILS HOME=$explicitGrailsHome"
+    return !explicitGrailsHome 
+}
 
 task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
     commandLine = ["./gradlew", "groovydoc", '--info', '--stacktrace']
