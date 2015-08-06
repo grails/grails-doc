@@ -90,6 +90,8 @@ def query = Person.where {
 }
 {code}
 
+
+
 h4. Query Composition
 
 Since the return value of the @where@ method is a [DetachedCriteria|guide:detachedCriteria] instance you can compose new queries from the original query:
@@ -249,6 +251,56 @@ Since the @property@ subquery returns multiple results, the criterion used compa
 Person.where {
     age < property(age).of { lastName == "Simpson" }
 }
+{code}
+
+
+h4. More Advanced Subqueries in GORM
+
+The support for subqueries has been extended. You can now use in  with nested subqueries
+
+{code}
+def results = Person.where {
+    firstName in where { age < 18 }.firstName
+}.list()
+{code}
+
+Criteria and where queries can be seamlessly mixed:
+
+{code}
+ def results = Person.withCriteria {
+    notIn "firstName", Person.where { age < 18 }.firstName
+ }
+{code}
+
+Subqueries can be used with projections:
+
+{code}
+def results = Person.where {
+    age > where { age > 18 }.avg('age')
+}
+{code}
+
+Correlated queries that span two domain classes can be used:
+{code}
+    def employees = Employee.where {
+    region.continent in ['APAC', "EMEA"]
+    }.id()
+    def results = Sale.where {
+    employee in employees && total > 100000
+    }.employee.list()
+{code}
+
+And support for aliases (cross query references) using simple variable declarations has been added to where queries:
+{code}
+def query = Employee.where {
+    def em1 = Employee
+    exists Sale.where {
+        def s1 = Sale
+        def em2 = employee
+        return em2.id == em1.id
+    }.id()
+}
+def results = query.list()
 {code}
 
 
