@@ -1,3 +1,4 @@
+{hidden}
 Grails' command line system is built on [Gant|http://gant.codehaus.org/] - a simple Groovy wrapper around [Apache Ant|http://ant.apache.org].
 
 However, Grails takes it further through the use of convention and the @grails@ command. When you type:
@@ -71,6 +72,86 @@ h4. non-interactive mode
 When you run a script manually and it prompts you for information, you can answer the questions and continue running the script. But when you run a script as part of an automated process, for example a continuous integration build server, there's no way to "answer" the questions. So you can pass the @\-\-non-interactive@ switch to the script command to tell Grails to accept the default answer for any questions, for example whether to install a missing plugin.
 
 For example:
+
+{code}
+grails war --non-interactive
+{code}
+
+{hidden}
+
+Grails的命令行系统是基于 [Gant|http://gant.codehaus.org/] 构建的。Gant是  [Apache Ant|http://ant.apache.org] 的Groovy封装。
+
+然而得益于约定以及  @grails@ 命令的使用，Grails能够实现更多。你可以输入：
+
+{code}
+grails [command name]
+{code}
+
+Grails会在下列文件夹中搜索Gant脚本来执行：
+
+* @USER_HOME/.grails/scripts@
+* @PROJECT_HOME/scripts@
+* @PROJECT_HOME/plugins/*/scripts@
+* @GRAILS_HOME/scripts@
+
+Grails也会将首字母小写的命令名称转换为驼峰命名，因此，输入：
+
+{code}
+grails run-app
+{code}
+
+会导致下列文件被搜索：
+
+* @USER_HOME/.grails/scripts/RunApp.groovy@
+* @PROJECT_HOME/scripts/RunApp.groovy@
+* @PLUGINS_HOME/*/scripts/RunApp.groovy@
+* @GLOBAL_PLUGINS_HOME/*/scripts/RunApp.groovy@
+* @GRAILS_HOME/scripts/RunApp.groovy@
+
+如果找到多个匹配，Grails会让你选择执行哪一个。
+
+Grails执行Gant脚本时会调用该脚本中定义的“默认”目标（target）。如果没有定义默认目标，Grails会返回一个错误并退出。
+
+想查看命令列表及获取命令相关帮助请输入：
+
+{code}
+grails help
+{code}
+
+这会打印出用法指导以及Grails可用命令的列表：
+
+{code}
+Usage (optionals marked with *):
+grails [environment]* [target] [arguments]*
+
+Examples:
+grails dev run-app
+grails create-app books
+
+Available Targets (type grails help 'target-name' for more info):
+grails bootstrap
+grails bug-report
+grails clean
+grails compile
+...
+{code}
+
+{note}
+可以查阅文档中“快速参考”菜单下的“命令行参考”以了解更多关于Grails命令的信息。
+{note}
+
+当运行Grails命令时，提供一些JVM自定义参数通常会很有帮助，例如运行 @run-app@ 命令的时候，你可能想要设置一个更大的堆内存上限。Grails命令会使用常规的 @JAVA_OPTS@ 环境变量，但你也可以指定Grails特有的环境变量：
+
+{code}
+export GRAILS_OPTS="-Xmx1G -Xms256m -XX:MaxPermSize=256m"
+grails run-app
+{code}
+
+h4. 非交互模式
+
+当你手动运行一个脚本的时候，它会提示你输入信息，对问题作出回答后脚本会继续运行。但是如果你的脚本作为自动化程序的一部分，比如一个持续集成构建服务器，那么你就没办法“回答”信息了。因此你可以给脚本命令传递一个 @\-\-non-interactive@ 开关，告知Grails对所有需要输入的地方采取默认设置，比如是否自动安装缺失的插件等。
+
+例如:
 
 {code}
 grails war --non-interactive
