@@ -1,7 +1,7 @@
 Grails User/Reference Guide
 ===========================
 
-This is the project for generating the [Grails user & reference guide][Grails Documentation] that explains how to build applications with the [Grails][Grails] framework. 
+This is the project for generating the [Grails user & reference guide][Grails Documentation] that explains how to build applications with the [Grails][Grails] framework.
 
 For contributing to grails docs look at [Building/Contibuting to Grails Documentation][Building/Contibuting to Grails Documentation]
 

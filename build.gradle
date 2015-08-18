@@ -56,9 +56,9 @@ task fetchGrailsSource << {
     println "Grails source code has been downloaded to ${relativePath(grailsHome)}"
 }
 
-fetchGrailsSource.onlyIf { 
+fetchGrailsSource.onlyIf {
     println "GRAILS HOME=$explicitGrailsHome"
-    return !explicitGrailsHome 
+    return !explicitGrailsHome
 }
 
 task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
@@ -93,35 +93,7 @@ task publishGuide(type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', '
 
 task publishPdf(type: grails.doc.gradle.PublishPdf, dependsOn: ['publishGuide'])
 
-tasks.addRule("Pattern: publishGuide_<lang>") { String taskName ->
-    def m = taskName =~ /publishGuide_(\w+)/
-    if (m) {
-        def lang = m[0][1]
-        task(taskName, type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs']) {
-            language = lang
-        }
-    }
-}
-
-tasks.addRule("Pattern: publishPdf_<lang>") { String taskName ->
-    def m = taskName =~ /publishPdf_(\w+)/
-    if (m) {
-        def lang = m[0][1]
-        task(taskName, type: grails.doc.gradle.PublishPdf, dependsOn: "publishGuide_${lang}") {
-            language = lang
-        }
-    }
-}
-
 task docs(dependsOn: ['publishPdf'])
-
-if (System.getProperty("all.langs")) {
-    for (f in new File(projectDir, "src").listFiles()) {
-        if (f.directory && !(f.name in ["en", "guide", "ref"])) {
-            docs.dependsOn << "publishPdf_${f.name}"
-        }
-    }
-}
 
 task dist(type: Zip, dependsOn: 'docs') {
     from outputDir
