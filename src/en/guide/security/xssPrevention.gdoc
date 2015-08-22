@@ -37,7 +37,7 @@ h4. Configuration
 
 It is recommended that you review the configuration of a newly created Grails application to garner an understanding of XSS prevention works in Grails.
 
-GSP features the ability to automatically HTML encode GSP expressions, and as of Grails 2.3 this is the default configuration.  The default configuration (found in @Config.groovy@) for a newly created Grails application can be seen below:
+GSP features the ability to automatically HTML encode GSP expressions, and as of Grails 2.3 this is the default configuration.  The default configuration (found in @application.groovy@) for a newly created Grails application can be seen below:
 
 {code}
     grails {
@@ -84,7 +84,7 @@ The 'raw' method is available in tag libraries, controllers and GSP pages.
 
 h4. Per Plugin Encoding
 
-Grails also features the ability to control the codecs used on a per plugin basis. For example if you have a plugin named @foo@ installed, then placing the following configuration in your application's @Config.groovy@ will disable encoding for only the @foo@ plugin
+Grails also features the ability to control the codecs used on a per plugin basis. For example if you have a plugin named @foo@ installed, then placing the following configuration in your @application.groovy@ will disable encoding for only the @foo@ plugin
 
 {code}
     foo.grails.views.gsp.codecs.expression = "none"
@@ -135,7 +135,7 @@ If a tag specifies a default encoding that differs from your requirements you ca
 
 h4. Default Encoding for All Output
 
-The default configuration for new applications is fine for most use cases, and backwards compatible with existing plugins and tag libraries. However, you can also make your application even more secure by configuring Grails to always encode all output at the end of a response. This is done using the @filteringCodecForContentType@ configuration in @Config.groovy@:
+The default configuration for new applications is fine for most use cases, and backwards compatible with existing plugins and tag libraries. However, you can also make your application even more secure by configuring Grails to always encode all output at the end of a response. This is done using the @filteringCodecForContentType@ configuration in @application.groovy@:
 
 {code}
     grails.views.gsp.filteringCodecForContentType.'text/html' = 'html'
