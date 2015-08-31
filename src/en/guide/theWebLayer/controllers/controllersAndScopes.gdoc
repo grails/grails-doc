@@ -57,6 +57,9 @@ Note that the attribute name can be anything you want, and the values are often 
 
 h4. Scoped Controllers
 
+Newly created applications have the @grails.controllers.defaultScope@ property set to a value of "singleton" in @application.yml@.  You may change this value to any
+of the supported scopes listed below.  If the property is not assigned a value at all, controllers will default to "prototype" scope.
+
 Supported controller scopes are:
 
 * @prototype@ (default) - A new controller will be created for each request (recommended for actions as Closure properties)
@@ -69,14 +72,13 @@ To enable one of the scopes, add a static @scope@ property to your class with on
 static scope = "singleton"
 {code}
 
-You can define the default strategy under in @application.groovy@ with the @grails.controllers.defaultScope@ key, for example:
+You can define the default strategy under in @application.yml@ with the @grails.controllers.defaultScope@ key, for example:
 
-{code:java}
-grails.controllers.defaultScope = "singleton"
 {code}
-
-Newly created applications have the @grails.controllers.defaultScope@ property set in @grails-app/conf/application.groovy@ with a value of "singleton".  You may change this value to any
-of the supported scopes listed above.  If the property is not assigned a value at all, controllers will default to "prototype" scope.
+grails:
+    controllers:
+        defaultScope: singleton
+{code}
 
 {note}
 Use scoped controllers wisely. For instance, we don't recommend having any properties in a singleton-scoped controller since they will be shared for _all_ requests.
