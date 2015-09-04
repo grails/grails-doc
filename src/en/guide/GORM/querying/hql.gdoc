@@ -40,6 +40,10 @@ def books = Book.findAll("from Book as book where book.author = :author",
 
 h4. Multiline Queries
 
+-{note}
+-As of Grails 3.0.3, Triple-quoted Groovy multiline Strings now work properly with HQL queries.
+-{note}
+
 Use the line continuation character to separate the query across multiple lines:
 
 {code:java}
@@ -49,9 +53,15 @@ from Book as b, \\\
 where b.author = a and a.surname = ?", ['Smith'])
 {code}
 
-{note}
-Triple-quoted Groovy multiline Strings will NOT work with HQL queries.
-{note}
+or
+
+{code:java}
+def results = Book.findAll("""
+from Book as b,
+     Author as a
+where b.author = a and a.surname = ?", ['Smith']
+""")
+{code}
 
 h4. Pagination and Sorting
 

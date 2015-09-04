@@ -8,7 +8,7 @@ ext.checkOutDir = "${buildDir.path}/checkout"
 ext.outputDir = "${buildDir.path}/docs"
 ext.githubBranch = "3.0.x"
 
-ext.explicitGrailsHome = System.getProperty("grails.home")
+ext.explicitGrailsHome = System.getProperty("grails.home") ?: project.getProperty("grails.home")
 ext.grailsHome = explicitGrailsHome ? file(explicitGrailsHome).absolutePath : "$checkOutDir/grails-src"
 
 configurations {
@@ -42,7 +42,7 @@ task fetchGrailsSource << {
     println "Downloading Grails source code. If you already have a copy " +
             "of the Grails source code checked out you can avoid this download " +
             "by setting the grails.home system property to point to your local " +
-            "copy of the source. See README.txt for more information."
+            "copy of the source. See README.md for more information."
 
     def zipFile = "${checkOutDir}/grails-src.zip"
     ant.get src: "http://github.com/grails/grails-core/zipball/${githubBranch}", dest: zipFile, verbose: true
@@ -56,11 +56,14 @@ task fetchGrailsSource << {
     println "Grails source code has been downloaded to ${relativePath(grailsHome)}"
 }
 
-fetchGrailsSource.onlyIf { !explicitGrailsHome }
+fetchGrailsSource.onlyIf {
+    println "GRAILS HOME=$explicitGrailsHome"
+    return !explicitGrailsHome
+}
 
 task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
     commandLine = ["./gradlew", "groovydoc", '--info', '--stacktrace']
-    workingDir = "${checkOutDir}/grails-src"
+    workingDir = grailsHome
     environment "GRADLE_OPTS", "-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
 }
 
@@ -90,35 +93,7 @@ task publishGuide(type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', '
 
 task publishPdf(type: grails.doc.gradle.PublishPdf, dependsOn: ['publishGuide'])
 
-tasks.addRule("Pattern: publishGuide_<lang>") { String taskName ->
-    def m = taskName =~ /publishGuide_(\w+)/
-    if (m) {
-        def lang = m[0][1]
-        task(taskName, type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs']) {
-            language = lang
-        }
-    }
-}
-
-tasks.addRule("Pattern: publishPdf_<lang>") { String taskName ->
-    def m = taskName =~ /publishPdf_(\w+)/
-    if (m) {
-        def lang = m[0][1]
-        task(taskName, type: grails.doc.gradle.PublishPdf, dependsOn: "publishGuide_${lang}") {
-            language = lang
-        }
-    }
-}
-
 task docs(dependsOn: ['publishPdf'])
-
-if (System.getProperty("all.langs")) {
-    for (f in new File(projectDir, "src").listFiles()) {
-        if (f.directory && !(f.name in ["en", "guide", "ref"])) {
-            docs.dependsOn << "publishPdf_${f.name}"
-        }
-    }
-}
 
 task dist(type: Zip, dependsOn: 'docs') {
     from outputDir
