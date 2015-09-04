@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>16.4 Authentication 3.0.2</title>
+    <title>16.4 Authentication 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -141,8 +141,8 @@ function addJsClass() {
 <a name="14.3 Authentication"><!-- Legacy link --></a>
 <h2 id="authentication">16.4 Authentication</h2>
 Grails has no default mechanism for authentication as it is possible to implement authentication in many different ways. It is however, easy to implement a simple authentication mechanism using <a href="../guide/single.html#interceptors" class="guide">interceptors</a>. This is sufficient for simple use cases but it's highly preferable to use an established security framework, for example by using the <a href="../guide/single.html#springSecurity" class="guide">Spring Security</a> or the <a href="../guide/single.html#shiro" class="guide">Shiro</a> plugin.<p class="paragraph"/>Interceptors let you apply authentication across all controllers or across a URI space. For example you can create a new set of filters in a class called <code>grails-app/controllers/SecurityInterceptor.groovy</code> by running:<p class="paragraph"/><div class="code"><pre>grails create&#45;interceptor security</pre></div><p class="paragraph"/>and implement your interception logic there:<p class="paragraph"/><div class="code"><pre>class SecurityInterceptor &#123;<p class="paragraph"/>    SecurityInterceptor() &#123;
-      matchAll()
-        except(controller:'user', action:'login')
+        matchAll()
+        .except(controller:'user', action:'login')
     &#125;<p class="paragraph"/>    <span class="java&#45;object">boolean</span> before() &#123;
         <span class="java&#45;keyword">if</span> (!session.user &#38;&#38; actionName != <span class="java&#45;quote">"login"</span>) &#123;
             redirect(controller: <span class="java&#45;quote">"user"</span>, action: <span class="java&#45;quote">"login"</span>)
@@ -216,6 +216,9 @@ Grails has no default mechanism for authentication as it is possible to implemen
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -884,6 +887,9 @@ Grails has no default mechanism for authentication as it is possible to implemen
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>

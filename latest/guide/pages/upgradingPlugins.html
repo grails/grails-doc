@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3.1 Upgrading Plugins 3.0.2</title>
+    <title>3.1 Upgrading Plugins 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -155,7 +155,7 @@ class QuartzGrailsPlugin &#123;
  &#8230;
 &#125;</pre></div><p class="paragraph"/>In addition you should remove the <code>version</code> property from the descriptor as this is now defined in <code>build.gradle</code>.<p class="paragraph"/><h4>Step 4 - Update the Gradle build with required dependencies</h4><p class="paragraph"/>The repositories and dependencies defined in <code>grails-app/conf/BuildConfig.groovy</code> of the original Grails 2.x plugin will need to be defined in <code>build.gradle</code> of the new Grails 3.x plugin:<p class="paragraph"/><div class="code"><pre>compile(<span class="java&#45;quote">"org.quartz&#45;scheduler:quartz:2.2.1"</span>) &#123;
     exclude group: 'slf4j&#45;api', module: 'c3p0'
-  &#125;</pre></div><p class="paragraph"/><h4>Step 5 - Modify Package Imports</h4><p class="paragraph"/>In Grails 3.x all internal APIs can be found in the <code>org.grails</code> package and public facing APIs in the <code>grails</code> package. The <code>org.codehaus.groovy.grails</code> package no longer exists.<p class="paragraph"/>All package declaration in sources should be modified for the new location of the respective classes. Example <code>org.codehaus.groovy.grails.commons.GrailsApplication</code> is now <code>grails.core.GrailsApplication</code>.<p class="paragraph"/><h4>Step 5 - Migrate Plugin Specific Config to application.yml</h4><p class="paragraph"/>Some plugins define a default configuration file. For example the Quartz plugin defines a file called <code>grails-app/conf/DefaultQuartzConfig.groovy</code>. In Grails 3.x this default configuration can be migrated to <code>grails-app/conf/application.yml</code> and it will automatically be loaded by Grails without requiring manual configuration merging.<p class="paragraph"/><h4>Step 6 - Register ArtefactHandler Definitions</h4><p class="paragraph"/>In Grails 3.x <a href="http://grails.org/doc/3.0.x/api/grails/core/ArtefactHandler.html" class="api">ArtefactHandler</a> definitions written in Java need to be declared in a file called <code>src/main/resources/META-INF/grails.factories</code> since these need to be known at compile time.<p class="paragraph"/><blockquote class="note">
+  &#125;</pre></div><p class="paragraph"/><h4>Step 5 - Modify Package Imports</h4><p class="paragraph"/>In Grails 3.x all internal APIs can be found in the <code>org.grails</code> package and public facing APIs in the <code>grails</code> package. The <code>org.codehaus.groovy.grails</code> package no longer exists.<p class="paragraph"/>All package declaration in sources should be modified for the new location of the respective classes. Example <code>org.codehaus.groovy.grails.commons.GrailsApplication</code> is now <code>grails.core.GrailsApplication</code>.<p class="paragraph"/><h4>Step 5 - Migrate Plugin Specific Config to application.yml</h4><p class="paragraph"/>Some plugins define a default configuration file. For example the Quartz plugin defines a file called <code>grails-app/conf/DefaultQuartzConfig.groovy</code>. In Grails 3.x this default configuration can be migrated to <code>grails-app/conf/application.yml</code> and it will automatically be loaded by Grails without requiring manual configuration merging.<p class="paragraph"/><h4>Step 6 - Register ArtefactHandler Definitions</h4><p class="paragraph"/>In Grails 3.x <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/core/ArtefactHandler.html" class="api">ArtefactHandler</a> definitions written in Java need to be declared in a file called <code>src/main/resources/META-INF/grails.factories</code> since these need to be known at compile time.<p class="paragraph"/><blockquote class="note">
 If the <code>ArtefactHandler</code> is written in Groovy this step can be skipped as Grails will automatically create the <code>grails.factories</code> file during compilation.
 </blockquote><p class="paragraph"/>The Quartz plugin requires the following definition to register the <code>ArtrefactHandler</code>:<p class="paragraph"/><div class="code"><pre>grails.core.ArtefactHandler=grails.plugins.quartz.JobArtefactHandler</pre></div><p class="paragraph"/><h4>Step 7 - Migrate Code Generation Scripts</h4><p class="paragraph"/>Many plugins previously defined command line scripts in Gant. In Grails 3.x command line scripts have been replaced by two new features: Code generation scripts and Gradle tasks.<p class="paragraph"/>If your script is doing simple code generation then for many cases a code generation script can replace an old Gant script.<p class="paragraph"/>The <code>create-job</code> script provided by the Quartz plugin in Grails 2.x was defined in <code>scripts/CreateJob.groovy</code> as:<p class="paragraph"/><div class="code"><pre>includeTargets &#60;&#60; grailsScript(<span class="java&#45;quote">"_GrailsCreateArtifacts"</span>)<p class="paragraph"/>target(createJob: <span class="java&#45;quote">"Creates a <span class="java&#45;keyword">new</span> Quartz scheduled job"</span>) &#123;
     depends(checkVersion, parseArguments)<p class="paragraph"/>    def type = <span class="java&#45;quote">"Job"</span>
@@ -170,7 +170,7 @@ If the <code>ArtefactHandler</code> is written in Groovy this step can be skippe
 &#125;<p class="paragraph"/>model = model( args&#91;0&#93; )
 render  template:<span class="java&#45;quote">"Job.groovy"</span>,
         destination: file( <span class="java&#45;quote">"grails&#45;app/jobs/$model.packagePath/$&#123;model.simpleName&#125;Job.groovy"</span>),
-        model: model</pre></div><p class="paragraph"/>Please refer to the documentation on <a href="../guide/single.html#creatingCustomScripts" class="guide">Creating Custom Scripts</a> for more information.<p class="paragraph"/><h4>Migrating More Complex Scripts Using Gradle Tasks</h4><p class="paragraph"/>Using the old Grails 2.x build system it was relatively common to spin up Grails inside the command line. In Grails 3.x it is not possible to load a Grails application within a code generation script created by the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command.<p class="paragraph"/>Instead a new mechanism specific to plugins exists via the <a href="../ref/Command Line/create-command.html" class="commandLine">create-command</a> command. The <code>create-command</code> command will create a new <a href="http://grails.org/doc/3.0.x/api/grails/dev/commands/ApplicationCommand.html" class="api">ApplicationCommand</a>, for example the following command will execute a query:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.dev.commands.&#42;
+        model: model</pre></div><p class="paragraph"/>Please refer to the documentation on <a href="../guide/single.html#creatingCustomScripts" class="guide">Creating Custom Scripts</a> for more information.<p class="paragraph"/><h4>Migrating More Complex Scripts Using Gradle Tasks</h4><p class="paragraph"/>Using the old Grails 2.x build system it was relatively common to spin up Grails inside the command line. In Grails 3.x it is not possible to load a Grails application within a code generation script created by the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command.<p class="paragraph"/>Instead a new mechanism specific to plugins exists via the <a href="../ref/Command Line/create-command.html" class="commandLine">create-command</a> command. The <code>create-command</code> command will create a new <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/dev/commands/ApplicationCommand.html" class="api">ApplicationCommand</a>, for example the following command will execute a query:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.dev.commands.&#42;
 <span class="java&#45;keyword">import</span> javax.sql.&#42;
 <span class="java&#45;keyword">import</span> groovy.sql.&#42;
 <span class="java&#45;keyword">import</span> org.springframework.beans.factory.annotation.&#42;<p class="paragraph"/>class RunQueryCommand <span class="java&#45;keyword">implements</span> ApplicationCommand &#123;<p class="paragraph"/>  @Autowired
@@ -240,6 +240,9 @@ $ gradle runQuery</pre></div><p class="paragraph"/><h4>Step 8 - Delete Files tha
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -908,6 +911,9 @@ $ gradle runQuery</pre></div><p class="paragraph"/><h4>Step 8 - Delete Files tha
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>

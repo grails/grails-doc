@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>16.3 Encoding and Decoding Objects 3.0.2</title>
+    <title>16.3 Encoding and Decoding Objects 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -150,7 +150,7 @@ Grails supports the concept of dynamic encode/decode methods.  A set of standard
     &#125;
 &#125;</pre></div><p class="paragraph"/><h4>Standard Codecs</h4><p class="paragraph"/><strong class="bold">HTMLCodec</strong><p class="paragraph"/>This codec performs HTML escaping and unescaping, so that values can be rendered safely in an HTML page without creating any HTML tags or damaging the page layout. For example, given a value "Don't you know that 2 &#62; 1?" you wouldn't be able to show this safely within an HTML page because the &#62; will look like it closes a tag, which is especially bad if you render this data within an attribute, such as the value attribute of an input field.<p class="paragraph"/>Example of usage:<p class="paragraph"/><div class="code"><pre>&#60;input name=<span class="java&#45;quote">"comment.message"</span> value=<span class="java&#45;quote">"$&#123;comment.message.encodeAsHTML()&#125;"</span>/&#62;</pre></div><p class="paragraph"/><blockquote class="note">
 Note that the HTML encoding does not re-encode apostrophe/single quote so you must use double quotes on attribute values to avoid text with apostrophes affecting your page.
-</blockquote><p class="paragraph"/>HTMLCodec defaults to HTML4 style escaping (legacy HTMLCodec implementation in Grails versions before 2.3.0) which escapes non-ascii characters.<p class="paragraph"/>You can use plain XML escaping instead of HTML4 escaping by setting this config property in Config.groovy:
+</blockquote><p class="paragraph"/>HTMLCodec defaults to HTML4 style escaping (legacy HTMLCodec implementation in Grails versions before 2.3.0) which escapes non-ascii characters.<p class="paragraph"/>You can use plain XML escaping instead of HTML4 escaping by setting this config property in <code>application.groovy</code>:
 <div class="code"><pre>grails.views.gsp.htmlcodec = 'xml'</pre></div><p class="paragraph"/>
 <strong class="bold">XMLCodec</strong><p class="paragraph"/>This codec performs XML escaping and unescaping. It escapes &#38; , &#60; , &#62; , " , ' , &#92;&#32;, @ , ` , non breaking space (&#92;&#117;00a0), line separator (&#92;&#117;2028) and paragraph separator (&#92;&#117;2029).<p class="paragraph"/>
 <strong class="bold">HTMLJSCodec</strong><p class="paragraph"/>This codec performs HTML and JS encoding. It is used for preventing some DOM-XSS vulnerabilities. See <a href="https://www.owasp.org/index.php/DOM_based_XSS_Prevention_Cheat_Sheet#RULE_.231_-_HTML_Escape_then_JavaScript_Escape_Before_Inserting_Untrusted_Data_into_HTML_Subcontext_within_the_Execution_Context" target="blank">OWASP - DOM based XSS Prevention Cheat Sheet</a> for guidelines of preventing DOM based XSS attacks.<p class="paragraph"/><strong class="bold">URLCodec</strong><p class="paragraph"/>URL encoding is required when creating URLs in links or form actions, or any time data is used to create a URL. It prevents illegal characters from getting into the URL and changing its meaning, for example "Apple &#38; Blackberry" is not going to work well as a parameter in a GET request as the ampersand will break parameter parsing.<p class="paragraph"/>Example of usage:<p class="paragraph"/><div class="code"><pre>&#60;a href=<span class="java&#45;quote">"/mycontroller/find?searchKey=$&#123;lastSearch.encodeAsURL()&#125;"</span>&#62;
@@ -211,6 +211,9 @@ Repeat last search
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -879,6 +882,9 @@ Repeat last search
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>

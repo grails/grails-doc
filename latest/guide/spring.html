@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>18 Grails and Spring 3.0.2</title>
+    <title>18 Grails and Spring 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -176,7 +176,7 @@ Grails is actually a <a href="http://www.springframework.org/docs/MVC-step-by-st
 <li>Transactions - Grails uses Spring's transaction management in <a href="../guide/single.html#GORM" class="guide">GORM</a></li>
 </ul><p class="paragraph"/>In other words Grails has Spring embedded running all the way through it.<p class="paragraph"/><h4>The Grails ApplicationContext</h4><p class="paragraph"/>Spring developers are often keen to understand how the Grails <code>ApplicationContext</code> instance is constructed. The basics of it are as follows.
 <ul class="star">
-<li>Grails constructs a parent <code>ApplicationContext</code> from the <code>web-app/WEB-INF/applicationContext.xml</code> file. This <code>ApplicationContext</code> configures the <a href="http://grails.org/doc/3.0.x/api/grails/core/GrailsApplication.html" class="api">GrailsApplication</a> instance and the <a href="http://grails.org/doc/3.0.x/api/grails/plugins/GrailsPluginManager.html" class="api">GrailsPluginManager</a>.</li>
+<li>Grails constructs a parent <code>ApplicationContext</code> from the <code>web-app/WEB-INF/applicationContext.xml</code> file. This <code>ApplicationContext</code> configures the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/core/GrailsApplication.html" class="api">GrailsApplication</a> instance and the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/plugins/GrailsPluginManager.html" class="api">GrailsPluginManager</a>.</li>
 <li>Using this <code>ApplicationContext</code> as a parent Grails' analyses the conventions with the <code>GrailsApplication</code> instance and constructs a child <code>ApplicationContext</code> that is used as the root <code>ApplicationContext</code> of the web application</li>
 </ul><p class="paragraph"/><h4>Configured Spring Beans</h4><p class="paragraph"/>Most of Grails' configuration happens at runtime. Each <a href="../guide/single.html#plugins" class="guide">plugin</a> may configure Spring beans that are registered in the <code>ApplicationContext</code>. For a reference as to which beans are configured, refer to the reference guide which describes each of the Grails plugins and which beans they configure.
 
@@ -256,7 +256,7 @@ If you define a bean in <code>resources.groovy</code> with the same name as one 
 
 <a name="16.3 Runtime Spring with the Beans DSL"><!-- Legacy link --></a>
 <h2 id="springdsl">18.3 Runtime Spring with the Beans DSL</h2>
-This Bean builder in Grails aims to provide a simplified way of wiring together dependencies that uses Spring at its core.<p class="paragraph"/>In addition, Spring's regular way of configuration (via XML and annotations) is static and difficult to modify and configure at runtime, other than programmatic XML creation which is both error prone and verbose. Grails' <a href="http://grails.org/doc/3.0.x/api/grails/spring/BeanBuilder.html" class="api">BeanBuilder</a> changes all that by making it possible to programmatically wire together components at runtime, allowing you to adapt the logic based on system properties or environment variables.<p class="paragraph"/>This enables the code to adapt to its environment and avoids unnecessary duplication of code (having different Spring configs for test, development and production environments)<p class="paragraph"/><h4>The BeanBuilder class</h4><p class="paragraph"/>Grails provides a <a href="http://grails.org/doc/3.0.x/api/grails/spring/BeanBuilder.html" class="api">grails.spring.BeanBuilder</a> class that uses dynamic Groovy to construct bean definitions. The basics are as follows:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.apache.commons.dbcp.BasicDataSource
+This Bean builder in Grails aims to provide a simplified way of wiring together dependencies that uses Spring at its core.<p class="paragraph"/>In addition, Spring's regular way of configuration (via XML and annotations) is static and difficult to modify and configure at runtime, other than programmatic XML creation which is both error prone and verbose. Grails' <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/spring/BeanBuilder.html" class="api">BeanBuilder</a> changes all that by making it possible to programmatically wire together components at runtime, allowing you to adapt the logic based on system properties or environment variables.<p class="paragraph"/>This enables the code to adapt to its environment and avoids unnecessary duplication of code (having different Spring configs for test, development and production environments)<p class="paragraph"/><h4>The BeanBuilder class</h4><p class="paragraph"/>Grails provides a <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/spring/BeanBuilder.html" class="api">grails.spring.BeanBuilder</a> class that uses dynamic Groovy to construct bean definitions. The basics are as follows:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.apache.commons.dbcp.BasicDataSource
 <span class="java&#45;keyword">import</span> org.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean
 <span class="java&#45;keyword">import</span> org.springframework.context.ApplicationContext
 <span class="java&#45;keyword">import</span> grails.spring.BeanBuilder<p class="paragraph"/>def bb = <span class="java&#45;keyword">new</span> BeanBuilder()<p class="paragraph"/>bb.beans &#123;<p class="paragraph"/>    dataSource(BasicDataSource) &#123;
@@ -518,6 +518,9 @@ Grails supports setting of bean properties via <a href="../guide/single.html#con
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -1186,6 +1189,9 @@ Grails supports setting of bean properties via <a href="../guide/single.html#con
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/fieldValue.html">fieldValue</a>

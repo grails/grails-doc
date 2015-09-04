@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>9 Web Services 3.0.2</title>
+    <title>9 Web Services 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -236,7 +236,7 @@ class Book &#123;<p class="paragraph"/>    <span class="java&#45;object">String<
 <div class="code"><pre>&#123;<span class="java&#45;quote">"id"</span>:1,<span class="java&#45;quote">"title"</span>:<span class="java&#45;quote">"The Stand"</span>&#125;</pre></div><p class="paragraph"/>If you wish to change the default to return JSON instead of XML, you can do this by setting the <code>formats</code> attribute of the <code>Resource</code> transformation:<p class="paragraph"/> <div class="code"><pre><span class="java&#45;keyword">import</span> grails.<span class="java&#45;keyword">rest</span>.&#42;<p class="paragraph"/>@Resource(uri='/books', formats=&#91;'json', 'xml'&#93;)
 class Book &#123;
     &#8230;
-&#125;</pre></div><p class="paragraph"/>With the above example JSON will be prioritized. The list that is passed should contain the names of the formats that the resource should expose. The names of formats are defined in the <code>grails.mime.types</code> setting of <code>Config.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.mime.types = &#91;
+&#125;</pre></div><p class="paragraph"/>With the above example JSON will be prioritized. The list that is passed should contain the names of the formats that the resource should expose. The names of formats are defined in the <code>grails.mime.types</code> setting of <code>application.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.mime.types = &#91;
     &#8230;
     json:          &#91;'application/json', 'text/json'&#93;,
     &#8230;
@@ -280,7 +280,7 @@ A common requirement with a REST API is to expose different versions at the same
     <span class="java&#45;keyword">static</span> namespace = 'v2'
 &#125;</pre></div><p class="paragraph"/>This approach has the disadvantage of requiring two different URI namespaces for your API.<p class="paragraph"/><h4>Versioning with the Accept-Version header</h4><p class="paragraph"/>As an alternative Grails supports the passing of an <code>Accept-Version</code> header from clients. For example you can define the following URL mappings:<p class="paragraph"/><div class="code"><pre><span class="java&#45;quote">"/books"</span>(version:'1.0', resources:<span class="java&#45;quote">"book"</span>, namespace:'v1')
 <span class="java&#45;quote">"/books"</span>(version:'2.0', resources:<span class="java&#45;quote">"book"</span>, namespace:'v2')</pre></div><p class="paragraph"/>
-Then in the client simply pass which version you need using the <code>Accept-Version</code> header:<p class="paragraph"/><div class="code"><pre>$ curl &#45;i &#45;H <span class="java&#45;quote">"Accept&#45;Version: 1.0"</span> &#45;X GET http://localhost:8080/myapp/books</pre></div><p class="paragraph"/><h4>Versioning using Hypermedia / Mime Types</h4><p class="paragraph"/>Another approach to versioning is to use Mime Type definitions to declare the version of your custom media types (see the section on "Hypermedia as the Engine of Application State" for more information about Hypermedia concepts). For example, in <code>Config.groovy</code> you can declare a custom Mime Type for your resource that includes a version parameter (the 'v' parameter):<p class="paragraph"/><div class="code"><pre>grails.mime.types = &#91;
+Then in the client simply pass which version you need using the <code>Accept-Version</code> header:<p class="paragraph"/><div class="code"><pre>$ curl &#45;i &#45;H <span class="java&#45;quote">"Accept&#45;Version: 1.0"</span> &#45;X GET http://localhost:8080/myapp/books</pre></div><p class="paragraph"/><h4>Versioning using Hypermedia / Mime Types</h4><p class="paragraph"/>Another approach to versioning is to use Mime Type definitions to declare the version of your custom media types (see the section on "Hypermedia as the Engine of Application State" for more information about Hypermedia concepts). For example, in <code>application.groovy</code> you can declare a custom Mime Type for your resource that includes a version parameter (the 'v' parameter):<p class="paragraph"/><div class="code"><pre>grails.mime.types = &#91;
     all: '&#42;/&#42;',
     book: <span class="java&#45;quote">"application/vnd.books.org.book+json;v=1.0"</span>,
     bookv2: <span class="java&#45;quote">"application/vnd.books.org.book+json;v=2.0"</span>,
@@ -740,7 +740,7 @@ Content&#45;Type: application/vnd.books.org.book+json;charset=ISO&#45;8859&#45;1
   <span class="java&#45;quote">"title"</span>: <span class="java&#45;quote">"&#34;The Stand&#34;"</span>
 &#125;</pre></div><p class="paragraph"/>
 <h4>Customizing Link Rendering</h4><p class="paragraph"/>An important aspect of HATEOAS is the usage of links that describe the transitions the client can use to interact with the REST API. By default the <code>HalJsonRenderer</code> will automatically create links for you for associations and to the resource itself (using the "self" relationship).<p class="paragraph"/>However you can customize link rendering using the <code>link</code> method that is added to all domain classes annotated with <code>grails.rest.Resource</code> or any class annotated with <code>grails.rest.Linkable</code>. For example, the <code>show</code> action can be modified as follows to provide a new link in the resulting output:<p class="paragraph"/><div class="code"><pre>def show(Book book) &#123;
-    book.link rel:'publisher', href: g.link(resource:<span class="java&#45;quote">"publisher"</span>, params:&#91;bookId: book.id&#93;)
+    book.link rel:'publisher', href: g.createLink(absolute: <span class="java&#45;keyword">true</span>, resource:<span class="java&#45;quote">"publisher"</span>, params:&#91;bookId: book.id&#93;)
     respond book
 &#125;</pre></div><p class="paragraph"/>Which will result in output such as:<p class="paragraph"/><div class="code"><pre>&#123;
   <span class="java&#45;quote">"_links"</span>: &#123;
@@ -984,6 +984,9 @@ No direct support is provided for RSS or Atom within Grails. You could construct
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -1652,6 +1655,9 @@ No direct support is provided for RSS or Atom within Grails. You could construct
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/fieldValue.html">fieldValue</a>

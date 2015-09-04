@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>9.1.7 Hypermedia as the Engine of Application State 3.0.2</title>
+    <title>9.1.7 Hypermedia as the Engine of Application State 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -344,7 +344,7 @@ Content&#45;Type: application/vnd.books.org.book+json;charset=ISO&#45;8859&#45;1
   <span class="java&#45;quote">"title"</span>: <span class="java&#45;quote">"&#34;The Stand&#34;"</span>
 &#125;</pre></div><p class="paragraph"/>
 <h4>Customizing Link Rendering</h4><p class="paragraph"/>An important aspect of HATEOAS is the usage of links that describe the transitions the client can use to interact with the REST API. By default the <code>HalJsonRenderer</code> will automatically create links for you for associations and to the resource itself (using the "self" relationship).<p class="paragraph"/>However you can customize link rendering using the <code>link</code> method that is added to all domain classes annotated with <code>grails.rest.Resource</code> or any class annotated with <code>grails.rest.Linkable</code>. For example, the <code>show</code> action can be modified as follows to provide a new link in the resulting output:<p class="paragraph"/><div class="code"><pre>def show(Book book) &#123;
-    book.link rel:'publisher', href: g.link(resource:<span class="java&#45;quote">"publisher"</span>, params:&#91;bookId: book.id&#93;)
+    book.link rel:'publisher', href: g.createLink(absolute: <span class="java&#45;keyword">true</span>, resource:<span class="java&#45;quote">"publisher"</span>, params:&#91;bookId: book.id&#93;)
     respond book
 &#125;</pre></div><p class="paragraph"/>Which will result in output such as:<p class="paragraph"/><div class="code"><pre>&#123;
   <span class="java&#45;quote">"_links"</span>: &#123;
@@ -456,6 +456,9 @@ Content&#45;Type: application/vnd.error+json;charset=ISO&#45;8859&#45;1<p class=
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -1124,6 +1127,9 @@ Content&#45;Type: application/vnd.error+json;charset=ISO&#45;8859&#45;1<p class=
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>

@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>14.1.1 Unit Testing Controllers 3.0.2</title>
+    <title>14.1.1 Unit Testing Controllers 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -269,6 +269,7 @@ class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specifi
 &#125;</pre></div><p class="paragraph"/>The <code>json</code> property is an instance of <code>org.codehaus.groovy.grails.web.json.JSONElement</code> which is a map-like structure that is useful for parsing JSON responses.<p class="paragraph"/><h4>Testing XML and JSON Requests</h4><p class="paragraph"/>Grails provides various convenient ways to automatically parse incoming XML and JSON packets. For example you can bind incoming JSON or XML requests using Grails' data binding:<p class="paragraph"/><div class="code"><pre>def consumeBook(Book b) &#123;
     render <span class="java&#45;quote">"The title is $&#123;b.title&#125;."</span>
 &#125;</pre></div><p class="paragraph"/>To test this Grails provides an easy way to specify an XML or JSON packet via the <code>xml</code> or <code>json</code> properties. For example the above action can be tested by specifying a String containing the XML:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+<span class="java&#45;keyword">import</span> grails.test.mixin.Mock
 <span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(SimpleController)
 @Mock(&#91;Book&#93;)
 class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specification &#123;
@@ -279,6 +280,7 @@ class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specifi
         response.text == 'The title is Wool.'
     &#125;
 &#125;</pre></div><p class="paragraph"/>Or alternatively a domain instance can be specified and it will be auto-converted into the appropriate XML request:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+<span class="java&#45;keyword">import</span> grails.test.mixin.Mock
 <span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(SimpleController)
 @Mock(&#91;Book&#93;)
 class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    void 'test consume book xml'() &#123;
@@ -288,6 +290,7 @@ class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specifi
         response.text == 'The title is Shift.'
     &#125;
 &#125;</pre></div><p class="paragraph"/>The same can be done for JSON requests:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+<span class="java&#45;keyword">import</span> grails.test.mixin.Mock
 <span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(SimpleController)
 @Mock(&#91;Book&#93;)
 class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    void 'test consume book json'() &#123;
@@ -518,6 +521,9 @@ class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specifi
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -1186,6 +1192,9 @@ class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specifi
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>

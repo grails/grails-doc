@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>4 Configuration 3.0.2</title>
+    <title>4 Configuration 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -208,17 +208,16 @@ It may seem odd that in a framework that embraces "convention-over-configuration
 <a name="3.1 Basic Configuration"><!-- Legacy link --></a>
 <h2 id="config">4.1 Basic Configuration</h2>
 Configuration in Grails is generally split across 2 areas: build configuration and runtime configuration.<p class="paragraph"/>Build configuration is generally done via Gradle and the <code>build.gradle</code> file. Runtime configuration is by default specified in YAML in the <code>grails-app/conf/application.yml</code> file.<p class="paragraph"/>If you prefer to use Grails 2.0-style Groovy configuration then you can create an additional <code>grails-app/conf/application.groovy</code> file to specify configuration using Groovy's <a href="http://groovy.codehaus.org/ConfigSlurper" target="blank">ConfigSlurper</a> syntax.<p class="paragraph"/>For Groovy configuration the following variables are available to the configuration script:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Variable</strong></th><th><strong class="bold">Description</strong></th></tr><tr class="table-odd"><td>userHome</td><td>Location of the home directory for the account that is running the Grails application.</td></tr><tr class="table-even"><td>grailsHome</td><td>Location of the directory where you installed Grails. If the <code>GRAILS_HOME</code> environment variable is set, it is used.</td></tr><tr class="table-odd"><td>appName</td><td>The application name as it appears in application.properties.</td></tr><tr class="table-even"><td>appVersion</td><td>The application version as it appears in application.properties.</td></tr></table><p class="paragraph"/>For example:<p class="paragraph"/><div class="code"><pre>my.tmp.dir = <span class="java&#45;quote">"&#36;&#123;userHome&#125;/.grails/tmp"</span></pre></div><p class="paragraph"/>
-If you want to read runtime configuration settings, i.e. those defined in <code>application.yml</code>, use the <a href="http://grails.org/doc/3.0.x/api/grails/core/GrailsApplication.html" class="api"><code>grailsApplication</code></a> object, which is available as a variable in controllers and tag libraries:<p class="paragraph"/><div class="code"><pre>class MyController &#123;
+If you want to read runtime configuration settings, i.e. those defined in <code>application.yml</code>, use the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/core/GrailsApplication.html" class="api"><code>grailsApplication</code></a> object, which is available as a variable in controllers and tag libraries:<p class="paragraph"/><div class="code"><pre>class MyController &#123;
     def hello() &#123;
         def recipient = grailsApplication.config.getProperty('foo.bar.hello')<p class="paragraph"/>        render <span class="java&#45;quote">"Hello $&#123;recipient&#125;"</span>
     &#125;
-&#125;</pre></div><p class="paragraph"/>The <code>config</code> property of the <code>grailsApplication</code> object is an instance of the <a href="http://grails.org/doc/3.0.x/api/grails/config/Config.html" class="api">Config</a> interface and provides a number of useful methods to read the configuration of the application.<p class="paragraph"/>Notice that the <code>Config</code> instance is a merged configuration based on Spring's <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/context/annotation/PropertySource.html" class="api">PropertySource</a> concept and reads configuration from the environment, system properties and the local application configuration merging them into a single object.<p class="paragraph"/>
-and can be easily injected into services and other Grails artifacts:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.core.&#42;<p class="paragraph"/>class MyService &#123;
+&#125;</pre></div><p class="paragraph"/>The <code>config</code> property of the <code>grailsApplication</code> object is an instance of the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/config/Config.html" class="api">Config</a> interface and provides a number of useful methods to read the configuration of the application.<p class="paragraph"/>Notice that the <code>Config</code> instance is a merged configuration based on Spring's <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/context/annotation/PropertySource.html" class="api">PropertySource</a> concept and reads configuration from the environment, system properties and the local application configuration merging them into a single object.<p class="paragraph"/><code>GrailsApplication</code> can be easily injected into services and other Grails artifacts:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.core.&#42;<p class="paragraph"/>class MyService &#123;
     GrailsApplication grailsApplication<p class="paragraph"/>    <span class="java&#45;object">String</span> greeting() &#123;
         def recipient = grailsApplication.config.getProperty('foo.bar.hello')
         <span class="java&#45;keyword">return</span> <span class="java&#45;quote">"Hello $&#123;recipient&#125;"</span>
     &#125;
-&#125;</pre></div><p class="paragraph"/>Finally, you can also use Spring's <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/beans/factory/annotation/Value.html" class="api">Value</a> annotation to dependency injection configuration values:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.springframework.beans.factory.annotation.&#42;<p class="paragraph"/>class MyController &#123;
+&#125;</pre></div><p class="paragraph"/>Finally, you can also use Spring's <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/beans/factory/annotation/Value.html" class="api">Value</a> annotation to inject configuration values:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.springframework.beans.factory.annotation.&#42;<p class="paragraph"/>class MyController &#123;
     @Value('$&#123;foo.bar.hello&#125;')
     <span class="java&#45;object">String</span> recipient<p class="paragraph"/>    def hello() &#123;
         render <span class="java&#45;quote">"Hello $&#123;recipient&#125;"</span>
@@ -279,7 +278,7 @@ Grails provides the following GORM configuration options:
 
 
 <h2 id="applicationClass">4.2 The Application Class</h2>
-Every new Grails application features an <code>Application</code> class witin the the <code>grails-app/init</code> directory.<p class="paragraph"/>The <code>Application</code> class subclasses the <a href="http://grails.org/doc/3.0.x/api/grails/boot/config/GrailsAutoConfiguration.html" class="api">GrailsAutoConfiguration</a> class and features a <code>static void main</code> method, meaning it can be run as a regular application.
+Every new Grails application features an <code>Application</code> class witin the the <code>grails-app/init</code> directory.<p class="paragraph"/>The <code>Application</code> class subclasses the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/boot/config/GrailsAutoConfiguration.html" class="api">GrailsAutoConfiguration</a> class and features a <code>static void main</code> method, meaning it can be run as a regular application.
 
 
 
@@ -305,7 +304,7 @@ There are several ways in which you can customize the <code>Application</code> c
 
 
 <h2 id="applicationLifeCycle">4.2.3 The Application LifeCycle</h2>
-The <code>Application</code> class also implements the <a href="http://grails.org/doc/3.0.x/api/grails/core/GrailsApplicationLifeCycle.html" class="api">GrailsApplicationLifeCycle</a> interface which all plugins implement.<p class="paragraph"/>This means that the <code>Application</code> class can be used to perform the same functions as a plugin. You can override the <a href="../guide/single.html#hookingIntoRuntimeConfiguration" class="guide">regular plugins hooks</a> such as <code>doWithSpring</code>, <code>doWithApplicationContext</code> and so on by overriding the appropriate method:<p class="paragraph"/><div class="code"><pre>class Application <span class="java&#45;keyword">extends</span> GrailsAutoConfiguration &#123;
+The <code>Application</code> class also implements the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/core/GrailsApplicationLifeCycle.html" class="api">GrailsApplicationLifeCycle</a> interface which all plugins implement.<p class="paragraph"/>This means that the <code>Application</code> class can be used to perform the same functions as a plugin. You can override the <a href="../guide/single.html#hookingIntoRuntimeConfiguration" class="guide">regular plugins hooks</a> such as <code>doWithSpring</code>, <code>doWithApplicationContext</code> and so on by overriding the appropriate method:<p class="paragraph"/><div class="code"><pre>class Application <span class="java&#45;keyword">extends</span> GrailsAutoConfiguration &#123;
     @Override
     Closure doWithSpring() &#123;
         &#123;&#45;&#62;
@@ -333,7 +332,7 @@ The <code>Application</code> class also implements the <a href="http://grails.or
         properties:
            jmxEnabled: <span class="java&#45;keyword">true</span>
            initialSize: 5
-        ...</pre></div><p class="paragraph"/>The above can expression in Groovy syntax in <code>application.groovy</code> as follows:<p class="paragraph"/><div class="code"><pre>dataSource &#123;
+        ...</pre></div><p class="paragraph"/>The above can be expressed in Groovy syntax in <code>application.groovy</code> as follows:<p class="paragraph"/><div class="code"><pre>dataSource &#123;
     pooled = <span class="java&#45;keyword">false</span>
     driverClassName = <span class="java&#45;quote">"org.h2.Driver"</span>
     username = <span class="java&#45;quote">"sa"</span>
@@ -358,7 +357,7 @@ environments &#123;
             url = <span class="java&#45;quote">"jdbc:h2:prodDb"</span>
         &#125;
     &#125;
-&#125;</pre></div><p class="paragraph"/>Notice how the common configuration is provided at the top level and then an <code>environments</code> block specifies per environment settings for the <code>dbCreate</code> and <code>url</code> properties of the <code>DataSource</code>.<p class="paragraph"/><h4>Packaging and Running for Different Environments</h4><p class="paragraph"/>Grails' <a href="../guide/single.html#commandLine" class="guide">command line</a> has built in capabilities to execute any command within the context of a specific environment. The format is:<p class="paragraph"/><div class="code"><pre>grails &#91;environment&#93; &#91;command name&#93;</pre></div><p class="paragraph"/>In addition, there are 3 preset environments known to Grails: <code>dev</code>, <code>prod</code>, and <code>test</code> for <code>development</code>, <code>production</code> and <code>test</code>. For example to create a WAR for the <code>test</code> environment you wound run:<p class="paragraph"/><div class="code"><pre>grails test war</pre></div><p class="paragraph"/>To target other environments you can pass a <code>grails.env</code> variable to any command:<p class="paragraph"/><div class="code"><pre>grails &#45;Dgrails.env=UAT run&#45;app</pre></div><p class="paragraph"/><h4>Programmatic Environment Detection</h4><p class="paragraph"/>Within your code, such as in a Gant script or a bootstrap class you can detect the environment using the <a href="http://grails.org/doc/3.0.x/api/grails/util/Environment.html" class="api">Environment</a> class:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.util.Environment<p class="paragraph"/>...<p class="paragraph"/><span class="java&#45;keyword">switch</span> (Environment.current) &#123;
+&#125;</pre></div><p class="paragraph"/>Notice how the common configuration is provided at the top level and then an <code>environments</code> block specifies per environment settings for the <code>dbCreate</code> and <code>url</code> properties of the <code>DataSource</code>.<p class="paragraph"/><h4>Packaging and Running for Different Environments</h4><p class="paragraph"/>Grails' <a href="../guide/single.html#commandLine" class="guide">command line</a> has built in capabilities to execute any command within the context of a specific environment. The format is:<p class="paragraph"/><div class="code"><pre>grails &#91;environment&#93; &#91;command name&#93;</pre></div><p class="paragraph"/>In addition, there are 3 preset environments known to Grails: <code>dev</code>, <code>prod</code>, and <code>test</code> for <code>development</code>, <code>production</code> and <code>test</code>. For example to create a WAR for the <code>test</code> environment you wound run:<p class="paragraph"/><div class="code"><pre>grails test war</pre></div><p class="paragraph"/>To target other environments you can pass a <code>grails.env</code> variable to any command:<p class="paragraph"/><div class="code"><pre>grails &#45;Dgrails.env=UAT run&#45;app</pre></div><p class="paragraph"/><h4>Programmatic Environment Detection</h4><p class="paragraph"/>Within your code, such as in a Gant script or a bootstrap class you can detect the environment using the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/util/Environment.html" class="api">Environment</a> class:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.util.Environment<p class="paragraph"/>...<p class="paragraph"/><span class="java&#45;keyword">switch</span> (Environment.current) &#123;
     <span class="java&#45;keyword">case</span> Environment.DEVELOPMENT:
         configureForDevelopment()
         <span class="java&#45;keyword">break</span>
@@ -387,9 +386,9 @@ environments &#123;
 
 <a name="3.3 The DataSource"><!-- Legacy link --></a>
 <h2 id="dataSource">4.4 The DataSource</h2>
-Since Grails is built on Java technology setting up a data source requires some knowledge of JDBC (the technology that doesn't stand for Java Database Connectivity).<p class="paragraph"/>If you use a database other than H2 you need a JDBC driver. For example for MySQL you would need <a href="http://www.mysql.com/downloads/connector/j/" target="blank">Connector/J</a><p class="paragraph"/>Drivers typically come in the form of a JAR archive. It's best to use the dependency resolution to resolve the jar if it's available in a Maven repository, for example you could add a dependency for the MySQL driver like this:<p class="paragraph"/><div class="code"><pre>dependencies &#123;
-        runtime 'mysql:mysql&#45;connector&#45;java:5.1.29'
-    &#125;</pre></div><p class="paragraph"/>If you can't use dependency resolution then just put the JAR in your project's <code>lib</code> directory.<p class="paragraph"/>Once you have the JAR resolved you need to get familiar with how Grails manages its database configuration. The configuration can be maintained in either <code>grails-app/conf/application.groovy</code> or <code>grails-app/conf/application.yml</code>. These files contain the dataSource definition which includes the following settings:
+Since Grails is built on Java technology setting up a data source requires some knowledge of JDBC (the technology that doesn't stand for Java Database Connectivity).<p class="paragraph"/>If you use a database other than H2 you need a JDBC driver. For example for MySQL you would need <a href="http://www.mysql.com/downloads/connector/j/" target="blank">Connector/J</a>.<p class="paragraph"/>Drivers typically come in the form of a JAR archive. It's best to use the dependency resolution to resolve the jar if it's available in a Maven repository, for example you could add a dependency for the MySQL driver like this:<p class="paragraph"/><div class="code"><pre>dependencies &#123;
+    runtime 'mysql:mysql&#45;connector&#45;java:5.1.29'
+&#125;</pre></div><p class="paragraph"/>If you can't use dependency resolution then just put the JAR in your project's <code>lib</code> directory.<p class="paragraph"/>Once you have the JAR resolved you need to get familiar with how Grails manages its database configuration. The configuration can be maintained in either <code>grails-app/conf/application.groovy</code> or <code>grails-app/conf/application.yml</code>. These files contain the dataSource definition which includes the following settings:
 <ul class="star">
 <li><code>driverClassName</code> - The class name of the JDBC driver</li>
 <li><code>username</code> - The username used to establish a JDBC connection</li>
@@ -557,7 +556,7 @@ The actual <code>dataSource</code> bean is wrapped in a transaction-aware proxy 
 
 <a name="3.3.5 Database Console"><!-- Legacy link --></a>
 <h2 id="databaseConsole">4.4.4 Database Console</h2>
-The <a href="http://h2database.com/html/quickstart.html#h2_console" target="blank">H2 database console</a> is a convenient feature of H2 that provides a web-based interface to any database that you have a JDBC driver for, and it's very useful to view the database you're developing against. It's especially useful when running against an in-memory database.<p class="paragraph"/>You can access the console by navigating to <strong class="bold">http://localhost:8080/appname/dbconsole</strong> in a browser. The URI can be configured using the <code>grails.dbconsole.urlRoot</code> attribute in Config.groovy and defaults to <code>'/dbconsole'</code>.<p class="paragraph"/>The console is enabled by default in development mode and can be disabled or enabled in other environments by using the <code>grails.dbconsole.enabled</code> attribute in Config.groovy. For example you could enable the console in production using<p class="paragraph"/><div class="code"><pre>environments &#123;
+The <a href="http://h2database.com/html/quickstart.html#h2_console" target="blank">H2 database console</a> is a convenient feature of H2 that provides a web-based interface to any database that you have a JDBC driver for, and it's very useful to view the database you're developing against. It's especially useful when running against an in-memory database.<p class="paragraph"/>You can access the console by navigating to <strong class="bold">http://localhost:8080/dbconsole</strong> in a browser. The URI can be configured using the <code>grails.dbconsole.urlRoot</code> attribute in <code>application.groovy</code> and defaults to <code>'/dbconsole'</code>.<p class="paragraph"/>The console is enabled by default in development mode and can be disabled or enabled in other environments by using the <code>grails.dbconsole.enabled</code> attribute in <code>application.groovy</code>. For example, you could enable the console in production like this:<p class="paragraph"/><div class="code"><pre>environments &#123;
     production &#123;
         grails.serverURL = <span class="java&#45;quote">"http://www.changeme.com"</span>
         grails.dbconsole.enabled = <span class="java&#45;keyword">true</span>
@@ -637,7 +636,7 @@ dataSources:
                 username: lookup
                 password: secret
                 url: jdbc:oracle:thin:@localhost:1521:lookup
-                dbCreate: update</pre></div><p class="paragraph"/>You can use the same or different databases as long as they're supported by Hibernate.<p class="paragraph"/><h4>Configuring Domain Classes</h4><p class="paragraph"/>If a domain class has no <code>DataSource</code> configuration, it defaults to the standard <code>'dataSource'</code>. Set the <code>datasource</code> property in the <code>mapping</code> block to configure a non-default <code>DataSource</code>. For example, if you want to use the <code>ZipCode</code> domain to use the <code>'lookup'</code> <code>DataSource</code>, configure it like this;<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
+                dbCreate: update</pre></div><p class="paragraph"/>You can use the same or different databases as long as they're supported by Hibernate.<p class="paragraph"/><h4>Configuring Domain Classes</h4><p class="paragraph"/>If a domain class has no <code>DataSource</code> configuration, it defaults to the standard <code>'dataSource'</code>. Set the <code>datasource</code> property in the <code>mapping</code> block to configure a non-default <code>DataSource</code>. For example, if you want to use the <code>ZipCode</code> domain to use the <code>'lookup'</code> <code>DataSource</code>, configure it like this:<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
       datasource 'lookup'
    &#125;
 &#125;</pre></div><p class="paragraph"/>A domain class can also use two or more <code>DataSource</code>s. Use the <code>datasources</code> property with a list of names to configure more than one, for example:<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
@@ -680,7 +679,7 @@ The exclude matching is done on the name of the transaction manager bean. The tr
 
 <a name="3.5 Versioning"><!-- Legacy link --></a>
 <h2 id="versioning">4.5 Versioning</h2>
-<h4>Detecting Versions at Runtime</h4><p class="paragraph"/>You can detect the application version using Grails' support for application metadata using the <a href="http://grails.org/doc/3.0.x/api/grails/core/GrailsApplication.html" class="api">GrailsApplication</a> class. For example within <a href="../guide/single.html#controllers" class="guide">controllers</a> there is an implicit <a href="../ref/Controllers/grailsApplication.html" class="controllers">grailsApplication</a> variable that can be used:<p class="paragraph"/><div class="code"><pre>def version = grailsApplication.metadata.getApplicationVersion()</pre></div><p class="paragraph"/>You can retrieve the version of Grails that is running with:<p class="paragraph"/><div class="code"><pre>def grailsVersion = grailsApplication.metadata.getGrailsVersion()</pre></div><p class="paragraph"/>or the <code>GrailsUtil</code> class:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.util.GrailsUtil
+<h4>Detecting Versions at Runtime</h4><p class="paragraph"/>You can detect the application version using Grails' support for application metadata using the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/core/GrailsApplication.html" class="api">GrailsApplication</a> class. For example within <a href="../guide/single.html#controllers" class="guide">controllers</a> there is an implicit <a href="../ref/Controllers/grailsApplication.html" class="controllers">grailsApplication</a> variable that can be used:<p class="paragraph"/><div class="code"><pre>def version = grailsApplication.metadata.getApplicationVersion()</pre></div><p class="paragraph"/>You can retrieve the version of Grails that is running with:<p class="paragraph"/><div class="code"><pre>def grailsVersion = grailsApplication.metadata.getGrailsVersion()</pre></div><p class="paragraph"/>or the <code>GrailsUtil</code> class:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.util.GrailsUtil
 &#8230;
 def grailsVersion = GrailsUtil.grailsVersion</pre></div>
 
@@ -800,6 +799,9 @@ Dependency resolution is handled by the <a href="http://gradle.org" target="blan
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -1468,6 +1470,9 @@ Dependency resolution is handled by the <a href="http://gradle.org" target="blan
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/fieldValue.html">fieldValue</a>

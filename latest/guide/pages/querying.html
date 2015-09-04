@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>6.4 Querying with GORM 3.0.2</title>
+    <title>6.4 Querying with GORM 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -232,7 +232,7 @@ Note that <code>rlike</code> queries are only supported if the underlying databa
      age in 18..65
 &#125;</pre></div><p class="paragraph"/>Finally, you can do <code>isNull</code> and <code>isNotNull</code> style queries by using <code>null</code> with regular comparison operators:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
      middleName == <span class="java&#45;keyword">null</span>
-&#125;</pre></div><p class="paragraph"/><h4>Query Composition</h4><p class="paragraph"/>Since the return value of the <code>where</code> method is a <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance you can compose new queries from the original query:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+&#125;</pre></div><p class="paragraph"/><p class="paragraph"/><h4>Query Composition</h4><p class="paragraph"/>Since the return value of the <code>where</code> method is a <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance you can compose new queries from the original query:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
      lastName == <span class="java&#45;quote">"Simpson"</span>
 &#125;
 def bartQuery = query.where &#123;
@@ -266,6 +266,28 @@ def query = Person.where(callable)</pre></div><p class="paragraph"/>As you can s
 &#125;</pre></div><p class="paragraph"/>Since the <code>property</code> subquery returns multiple results, the criterion used compares all results. For example the following query will find all people younger than people with the surname "Simpson":<p class="paragraph"/><div class="code"><pre>Person.where &#123;
     age &#60; property(age).of &#123; lastName == <span class="java&#45;quote">"Simpson"</span> &#125;
 &#125;</pre></div><p class="paragraph"/>
+<h4>More Advanced Subqueries in GORM</h4><p class="paragraph"/>The support for subqueries has been extended. You can now use in  with nested subqueries<p class="paragraph"/><div class="code"><pre>def results = Person.where &#123;
+    firstName in where &#123; age &#60; 18 &#125;.firstName
+&#125;.list()</pre></div><p class="paragraph"/>Criteria and where queries can be seamlessly mixed:<p class="paragraph"/><div class="code"><pre>def results = Person.withCriteria &#123;
+    notIn <span class="java&#45;quote">"firstName"</span>, Person.where &#123; age &#60; 18 &#125;.firstName
+ &#125;</pre></div><p class="paragraph"/>Subqueries can be used with projections:<p class="paragraph"/><div class="code"><pre>def results = Person.where &#123;
+    age &#62; where &#123; age &#62; 18 &#125;.avg('age')
+&#125;</pre></div><p class="paragraph"/>Correlated queries that span two domain classes can be used:
+<div class="code"><pre>def employees = Employee.where &#123;
+    region.continent in &#91;'APAC', <span class="java&#45;quote">"EMEA"</span>&#93;
+    &#125;.id()
+    def results = Sale.where &#123;
+    employee in employees &#38;&#38; total &#62; 100000
+    &#125;.employee.list()</pre></div><p class="paragraph"/>And support for aliases (cross query references) using simple variable declarations has been added to where queries:
+<div class="code"><pre>def query = Employee.where &#123;
+    def em1 = Employee
+    exists Sale.where &#123;
+        def s1 = Sale
+        def em2 = employee
+        <span class="java&#45;keyword">return</span> em2.id == em1.id
+    &#125;.id()
+&#125;
+def results = query.list()</pre></div><p class="paragraph"/>
 <h4>Other Functions</h4><p class="paragraph"/>There are several functions available to you within the context of a query. These are summarized in the table below:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">second</strong></td><td>The second of a date property</td></tr><tr class="table-even"><td><strong class="bold">minute</strong></td><td>The minute of a date property</td></tr><tr class="table-odd"><td><strong class="bold">hour</strong></td><td>The hour of a date property</td></tr><tr class="table-even"><td><strong class="bold">day</strong></td><td>The day of the month of a date property</td></tr><tr class="table-odd"><td><strong class="bold">month</strong></td><td>The month of a date property</td></tr><tr class="table-even"><td><strong class="bold">year</strong></td><td>The year of a date property</td></tr><tr class="table-odd"><td><strong class="bold">lower</strong></td><td>Converts a string property to upper case</td></tr><tr class="table-even"><td><strong class="bold">upper</strong></td><td>Converts a string property to lower case</td></tr><tr class="table-odd"><td><strong class="bold">length</strong></td><td>The length of a string property</td></tr><tr class="table-even"><td><strong class="bold">trim</strong></td><td>Trims a string property</td></tr></table><p class="paragraph"/><blockquote class="note">
 Currently functions can only be applied to properties or associations of domain classes. You cannot, for example, use a function on a result of a subquery. 
 </blockquote><p class="paragraph"/>For example the following query can be used to find all pet's born in 2011:<p class="paragraph"/><div class="code"><pre>def query = Pet.where &#123;
@@ -555,6 +577,9 @@ where b.author = a and a.surname = ?"</span>, &#91;'Smith'&#93;
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -1223,6 +1248,9 @@ where b.author = a and a.surname = ?"</span>, &#91;'Smith'&#93;
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>

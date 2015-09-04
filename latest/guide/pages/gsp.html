@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.2 Groovy Server Pages 3.0.2</title>
+    <title>7.2 Groovy Server Pages 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -235,7 +235,7 @@ Within the <code>&#60;% %&#62;</code> brackets you can declare variables:<p clas
 <li><code>application</code> - The <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/ServletContext.html" class="api">javax.servlet.ServletContext</a> instance</li>
 <li><code>applicationContext</code> The Spring <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/context/ApplicationContext.html" class="api">ApplicationContext</a> instance</li>
 <li><code>flash</code> - The <a href="../ref/Controllers/flash.html" class="controllers">flash</a> object</li>
-<li><code>grailsApplication</code> - The <a href="http://grails.org/doc/3.0.x/api/grails/core/GrailsApplication.html" class="api">GrailsApplication</a> instance</li>
+<li><code>grailsApplication</code> - The <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/core/GrailsApplication.html" class="api">GrailsApplication</a> instance</li>
 <li><code>out</code> - The response writer for writing to the output stream</li>
 <li><code>params</code> - The <a href="../ref/Controllers/params.html" class="controllers">params</a> object for retrieving request parameters</li>
 <li><code>request</code> - The <a href="http://download.oracle.com/javaee/1.4/api/javax/servlet/http/HttpServletRequest.html" class="api">HttpServletRequest</a> instance</li>
@@ -375,16 +375,15 @@ Grails also has the concept of templates. These are useful for partitioning your
 
 <a name="7.2.4 Layouts with Sitemesh"><!-- Legacy link --></a>
 <h2 id="layouts">7.2.4 Layouts with Sitemesh</h2>
-<h4>Creating Layouts</h4><p class="paragraph"/>Grails leverages <a href="http://www.opensymphony.com/sitemesh/" target="blank">Sitemesh</a>, a decorator engine, to support view layouts. Layouts are located in the <code>grails-app/views/layouts</code> directory. A typical layout can be seen below:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
+<h4>Creating Layouts</h4><p class="paragraph"/>Grails leverages <a href="http://sitemesh.org" target="blank">Sitemesh</a>, a decorator engine, to support view layouts. Layouts are located in the <code>grails-app/views/layouts</code> directory. A typical layout can be seen below:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;html&#62;</span>
     <span class="xml&#45;tag">&#60;head&#62;</span>
         <span class="xml&#45;tag">&#60;title&#62;</span><span class="xml&#45;tag">&#60;g:layoutTitle default=<span class="xml&#45;quote">"An example decorator"</span> /&#62;</span><span class="xml&#45;tag">&#60;/title&#62;</span>
         <span class="xml&#45;tag">&#60;g:layoutHead /&#62;</span>
     <span class="xml&#45;tag">&#60;/head&#62;</span>
     <span class="xml&#45;tag">&#60;body onload=<span class="xml&#45;quote">"$&#123;pageProperty(name:'body.onload')&#125;"</span>&#62;</span>
-        <span class="xml&#45;tag">&#60;div class=<span class="xml&#45;quote">"menu"</span>&#62;</span><span class="xml&#45;comment">&#60;!&#45;&#45;my common menu goes here&#45;&#45;&#62;</span><span class="xml&#45;tag">&#60;/menu&#62;</span>
-            <span class="xml&#45;tag">&#60;div class=<span class="xml&#45;quote">"body"</span>&#62;</span>
-                <span class="xml&#45;tag">&#60;g:layoutBody /&#62;</span>
-            <span class="xml&#45;tag">&#60;/div&#62;</span>
+        <span class="xml&#45;tag">&#60;div class=<span class="xml&#45;quote">"menu"</span>&#62;</span><span class="xml&#45;comment">&#60;!&#45;&#45;my common menu goes here&#45;&#45;&#62;</span><span class="xml&#45;tag">&#60;/div&#62;</span>
+        <span class="xml&#45;tag">&#60;div class=<span class="xml&#45;quote">"body"</span>&#62;</span>
+            <span class="xml&#45;tag">&#60;g:layoutBody /&#62;</span>
         <span class="xml&#45;tag">&#60;/div&#62;</span>
     <span class="xml&#45;tag">&#60;/body&#62;</span>
 <span class="xml&#45;tag">&#60;/html&#62;</span></pre></div><p class="paragraph"/>The key elements are the <a href="../ref/Tags/layoutHead.html" class="tags">layoutHead</a>, <a href="../ref/Tags/layoutTitle.html" class="tags">layoutTitle</a> and <a href="../ref/Tags/layoutBody.html" class="tags">layoutBody</a> tag invocations:
@@ -483,7 +482,7 @@ The trailing slash on the  <code>grails.gsp.view.dir</code>  value is important!
 <div class="code"><pre>mkdir &#45;p /<span class="java&#45;keyword">var</span>/www/grails/my&#45;app/grails&#45;app/views
 cp &#45;R grails&#45;app/views/&#42; /<span class="java&#45;keyword">var</span>/www/grails/my&#45;app/grails&#45;app/views</pre></div>
 The key point here is that you must retain the view directory structure, including the  <code>grails-app/views</code>  bit. So you end up with the path  <code>/var/www/grails/my-app/grails-app/views/...</code> .<p class="paragraph"/>One thing to bear in mind with this technique is that every time you modify a GSP, it uses up permgen space. So at some point you will eventually hit "out of permgen space" errors unless you restart the server. So this technique is not recommended for frequent or large changes to the views.<p class="paragraph"/>There are also some System properties to control GSP reloading:
-<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Name</strong></th><th><strong class="bold">Description</strong></th><th><strong class="bold">Default</strong></th></tr><tr class="table-odd"><td>grails.gsp.enable.reload</td><td>alternative system property for enabling the GSP reload mode without changing Config.groovy</td><td>&#160;</td></tr><tr class="table-even"><td>grails.gsp.reload.interval</td><td>interval between checking the lastmodified time of the gsp source file, unit is milliseconds</td><td>5000</td></tr><tr class="table-odd"><td>grails.gsp.reload.granularity</td><td>the number of milliseconds leeway to give before deciding a file is out of date. this is needed because different roundings usually cause a 1000ms difference in lastmodified times</td><td>1000</td></tr></table><p class="paragraph"/>GSP reloading is supported for precompiled GSPs since Grails 1.3.5 .
+<table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Name</strong></th><th><strong class="bold">Description</strong></th><th><strong class="bold">Default</strong></th></tr><tr class="table-odd"><td>grails.gsp.enable.reload</td><td>alternative system property for enabling the GSP reload mode without changing <code>application.groovy</code></td><td>&#160;</td></tr><tr class="table-even"><td>grails.gsp.reload.interval</td><td>interval between checking the lastmodified time of the gsp source file, unit is milliseconds</td><td>5000</td></tr><tr class="table-odd"><td>grails.gsp.reload.granularity</td><td>the number of milliseconds leeway to give before deciding a file is out of date. this is needed because different roundings usually cause a 1000ms difference in lastmodified times</td><td>1000</td></tr></table><p class="paragraph"/>GSP reloading is supported for precompiled GSPs since Grails 1.3.5 .
 
 
 <a name="7.2.8 GSP Debugging"><!-- Legacy link --></a>
@@ -491,7 +490,7 @@ The key point here is that you must retain the view directory structure, includi
 <h4>Viewing the generated source code</h4>
 <ul class="star">
 <li>Adding "?showSource=true" or "&#38;showSource=true" to the url shows the generated Groovy source code for the view instead of rendering it. It won't show the source code of included templates. This only works in development mode</li>
-<li>The saving of all generated source code can be activated by setting the property "grails.views.gsp.keepgenerateddir" (in Config.groovy) . It must point to a directory that exists and is writable.</li>
+<li>The saving of all generated source code can be activated by setting the property "grails.views.gsp.keepgenerateddir" (in <code>application.groovy</code>) . It must point to a directory that exists and is writable.</li>
 <li>During "grails war" gsp pre-compilation, the generated source code is stored in grails.project.work.dir/gspcompile (usually in ~/.grails/(grails_version)/projects/(project name)/gspcompile).</li>
 </ul><p class="paragraph"/><h4>Debugging GSP code with a debugger</h4>
 <ul class="star">
@@ -557,6 +556,9 @@ The debug templates -feature adds html comments to the output. The comments cont
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -1225,6 +1227,9 @@ The debug templates -feature adds html comments to the output. The comments cont
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Tags/fieldValue.html">fieldValue</a>

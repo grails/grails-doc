@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>10 Asynchronous Programming 3.0.2</title>
+    <title>10 Asynchronous Programming 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -237,7 +237,7 @@ def findBooks(<span class="java&#45;object">String</span> title) &#123;
 
 <a name="4.3 Hooking into Events"><!-- Legacy link --></a>
 <h2 id="events">10.2 Events</h2>
-Grails 3.0 introduces a new Events API based on <a href="https://github.com/reactor/reactor" target="blank">Reactor</a>.<p class="paragraph"/>All services and controllers in Grails 3.0 implement the <a href="http://grails.org/doc/3.0.x/api/grails/events/Events.html" class="api">Events</a> trait.<p class="paragraph"/>The <code>Events</code> trait allows the ability to consume and publish events that are handled by Reactor.<p class="paragraph"/>The default Reactor configuration utilises a thread pool backed event bus. You can however configure Reactor within <code>application.yml</code>, for example:<p class="paragraph"/><div class="code"><pre>reactor
+Grails 3.0 introduces a new Events API based on <a href="https://github.com/reactor/reactor" target="blank">Reactor</a>.<p class="paragraph"/>All services and controllers in Grails 3.0 implement the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/events/Events.html" class="api">Events</a> trait.<p class="paragraph"/>The <code>Events</code> trait allows the ability to consume and publish events that are handled by Reactor.<p class="paragraph"/>The default Reactor configuration utilises a thread pool backed event bus. You can however configure Reactor within <code>application.yml</code>, for example:<p class="paragraph"/><div class="code"><pre>reactor
     dispatchers:
         <span class="java&#45;keyword">default</span>: myExecutor
         myExecutor:
@@ -248,7 +248,7 @@ Grails 3.0 introduces a new Events API based on <a href="https://github.com/reac
 
 
 <h2 id="consuming">10.2.1 Consuming Events</h2>
-There are several ways to consume an event. As mentioned previously services and controllers implement the <a href="http://grails.org/doc/3.0.x/api/grails/events/Events.html" class="api">Events</a> trait.<p class="paragraph"/>The <code>Events</code> trait provides several methods to register event consumers. For example:<p class="paragraph"/><div class="code"><pre>on(<span class="java&#45;quote">"myEvent"</span>) &#123;
+There are several ways to consume an event. As mentioned previously services and controllers implement the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/events/Events.html" class="api">Events</a> trait.<p class="paragraph"/>The <code>Events</code> trait provides several methods to register event consumers. For example:<p class="paragraph"/><div class="code"><pre>on(<span class="java&#45;quote">"myEvent"</span>) &#123;
     println <span class="java&#45;quote">"Event fired!"</span>
 &#125;</pre></div><p class="paragraph"/>Note that if you wish a class (other than a controller or service) to be an event consumer you simply have to implement the <code>Events</code> trait and ensure the class is registered as a Spring bean.
 
@@ -295,7 +295,9 @@ person.firstName = <span class="java&#45;quote">"Bart"</span></pre></div><p clas
 
 
 <h2 id="asyncRequests">10.4 Asynchronous Request Handling</h2>
-If you are deploying to a Servlet 3.0 container such as Tomcat 7 and above then it is possible to deal with responses asynchronously.<p class="paragraph"/>In general for controller actions that execute quickly there is little benefit in handling requests asynchronously. However, for long running controller actions it is extremely beneficial.<p class="paragraph"/>The reason being that with an asynchronous / non-blocking response, the one thread == one request == one response relationship is broken. The container can keep a client response open and active, and at the same time return the thread back to the container to deal with another request, improving scalability.<p class="paragraph"/>For example, if you have 70 available container threads and an action takes a minute to complete, if the actions are not executed in a non-blocking fashion the likelihood of all 70 threads being occupied and the container not being able to respond is quite high and you should consider asynchronous request processing.<p class="paragraph"/>Since Grails 2.3, Grails features a simplified API for creating asynchronous responses built on the <code>Promise</code> mechanism discussed previously.<p class="paragraph"/>The implementation is based on Servlet 3.0 async so to enable the async features you need to set your servlet target version to 3.0 in BuildConfig.groovy:<p class="paragraph"/><div class="code"><pre>grails.servlet.version = <span class="java&#45;quote">"3.0"</span></pre></div><p class="paragraph"/><h4>Async Models</h4><p class="paragraph"/>A typical activity in a Grails controller is to produce a model (a map of key/value pairs) that can be rendered by a view.<p class="paragraph"/>If the model takes a while to produce then the server could arrive at a blocking state, impacting scalability. You tell Grails to build the model asynchronously by returning a <code>grails.async.PromiseMap</code> via the <code>Promises.tasks</code> method:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> <span class="java&#45;keyword">static</span> grails.async.Promises.&#42;
+If you are deploying to a Servlet 3.0 container such as Tomcat 7 and above then it is possible to deal with responses asynchronously.<p class="paragraph"/>In general for controller actions that execute quickly there is little benefit in handling requests asynchronously. However, for long running controller actions it is extremely beneficial.<p class="paragraph"/>The reason being that with an asynchronous / non-blocking response, the one thread == one request == one response relationship is broken. The container can keep a client response open and active, and at the same time return the thread back to the container to deal with another request, improving scalability.<p class="paragraph"/>For example, if you have 70 available container threads and an action takes a minute to complete, if the actions are not executed in a non-blocking fashion the likelihood of all 70 threads being occupied and the container not being able to respond is quite high and you should consider asynchronous request processing.<p class="paragraph"/>Since Grails 2.3, Grails features a simplified API for creating asynchronous responses built on the <code>Promise</code> mechanism discussed previously.<p class="paragraph"/>The implementation is based on Servlet 3.0 async. So, to enable the async features you need to set your servlet target version to 3.0 in application.yml:<p class="paragraph"/><div class="code"><pre>grails:
+    servlet:
+        version: 3.0</pre></div><p class="paragraph"/><h4>Async Models</h4><p class="paragraph"/>A typical activity in a Grails controller is to produce a model (a map of key/value pairs) that can be rendered by a view.<p class="paragraph"/>If the model takes a while to produce then the server could arrive at a blocking state, impacting scalability. You tell Grails to build the model asynchronously by returning a <code>grails.async.PromiseMap</code> via the <code>Promises.tasks</code> method:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> <span class="java&#45;keyword">static</span> grails.async.Promises.&#42;
 &#8230;
 def index() &#123;
    tasks books: Book.async.list(),
@@ -393,6 +395,9 @@ In addition to the higher level async features discussed earlier in the section,
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -1061,6 +1066,9 @@ In addition to the higher level async features discussed earlier in the section,
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/fieldValue.html">fieldValue</a>

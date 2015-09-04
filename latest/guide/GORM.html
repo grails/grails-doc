@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>6 Object Relational Mapping (GORM) 3.0.2</title>
+    <title>6 Object Relational Mapping (GORM) 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -501,7 +501,7 @@ p.save(flush: <span class="java&#45;keyword">true</span>)</pre></div><p class="p
 &#125;
 <span class="java&#45;keyword">catch</span> (ValidationException e) &#123;
     // deal with exception
-&#125;</pre></div><p class="paragraph"/>You can even change the default behaviour with a setting in <code>Config.groovy</code>, as described in the <a href="../guide/single.html#configGORM" class="guide">section on configuration</a>. Just remember that when you are saving domain instances that have been bound with data provided by the user, the likelihood of validation exceptions is quite high and you won't want those exceptions propagating to the end user.<p class="paragraph"/>You can find out more about the subtleties of saving data in <a href="http://blog.springsource.com/2010/06/23/gorm-gotchas-part-1/" target="blank">this article</a> - a must read!
+&#125;</pre></div><p class="paragraph"/>You can even change the default behaviour with a setting in <code>application.groovy</code>, as described in the <a href="../guide/single.html#configGORM" class="guide">section on configuration</a>. Just remember that when you are saving domain instances that have been bound with data provided by the user, the likelihood of validation exceptions is quite high and you won't want those exceptions propagating to the end user.<p class="paragraph"/>You can find out more about the subtleties of saving data in <a href="http://blog.springsource.com/2010/06/23/gorm-gotchas-part-1/" target="blank">this article</a> - a must read!
 
 
 <a name="5.3.2 Deleting Objects"><!-- Legacy link --></a>
@@ -689,7 +689,7 @@ Note that <code>rlike</code> queries are only supported if the underlying databa
      age in 18..65
 &#125;</pre></div><p class="paragraph"/>Finally, you can do <code>isNull</code> and <code>isNotNull</code> style queries by using <code>null</code> with regular comparison operators:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
      middleName == <span class="java&#45;keyword">null</span>
-&#125;</pre></div><p class="paragraph"/><h4>Query Composition</h4><p class="paragraph"/>Since the return value of the <code>where</code> method is a <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance you can compose new queries from the original query:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
+&#125;</pre></div><p class="paragraph"/><p class="paragraph"/><h4>Query Composition</h4><p class="paragraph"/>Since the return value of the <code>where</code> method is a <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance you can compose new queries from the original query:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
      lastName == <span class="java&#45;quote">"Simpson"</span>
 &#125;
 def bartQuery = query.where &#123;
@@ -723,6 +723,28 @@ def query = Person.where(callable)</pre></div><p class="paragraph"/>As you can s
 &#125;</pre></div><p class="paragraph"/>Since the <code>property</code> subquery returns multiple results, the criterion used compares all results. For example the following query will find all people younger than people with the surname "Simpson":<p class="paragraph"/><div class="code"><pre>Person.where &#123;
     age &#60; property(age).of &#123; lastName == <span class="java&#45;quote">"Simpson"</span> &#125;
 &#125;</pre></div><p class="paragraph"/>
+<h4>More Advanced Subqueries in GORM</h4><p class="paragraph"/>The support for subqueries has been extended. You can now use in  with nested subqueries<p class="paragraph"/><div class="code"><pre>def results = Person.where &#123;
+    firstName in where &#123; age &#60; 18 &#125;.firstName
+&#125;.list()</pre></div><p class="paragraph"/>Criteria and where queries can be seamlessly mixed:<p class="paragraph"/><div class="code"><pre>def results = Person.withCriteria &#123;
+    notIn <span class="java&#45;quote">"firstName"</span>, Person.where &#123; age &#60; 18 &#125;.firstName
+ &#125;</pre></div><p class="paragraph"/>Subqueries can be used with projections:<p class="paragraph"/><div class="code"><pre>def results = Person.where &#123;
+    age &#62; where &#123; age &#62; 18 &#125;.avg('age')
+&#125;</pre></div><p class="paragraph"/>Correlated queries that span two domain classes can be used:
+<div class="code"><pre>def employees = Employee.where &#123;
+    region.continent in &#91;'APAC', <span class="java&#45;quote">"EMEA"</span>&#93;
+    &#125;.id()
+    def results = Sale.where &#123;
+    employee in employees &#38;&#38; total &#62; 100000
+    &#125;.employee.list()</pre></div><p class="paragraph"/>And support for aliases (cross query references) using simple variable declarations has been added to where queries:
+<div class="code"><pre>def query = Employee.where &#123;
+    def em1 = Employee
+    exists Sale.where &#123;
+        def s1 = Sale
+        def em2 = employee
+        <span class="java&#45;keyword">return</span> em2.id == em1.id
+    &#125;.id()
+&#125;
+def results = query.list()</pre></div><p class="paragraph"/>
 <h4>Other Functions</h4><p class="paragraph"/>There are several functions available to you within the context of a query. These are summarized in the table below:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">second</strong></td><td>The second of a date property</td></tr><tr class="table-even"><td><strong class="bold">minute</strong></td><td>The minute of a date property</td></tr><tr class="table-odd"><td><strong class="bold">hour</strong></td><td>The hour of a date property</td></tr><tr class="table-even"><td><strong class="bold">day</strong></td><td>The day of the month of a date property</td></tr><tr class="table-odd"><td><strong class="bold">month</strong></td><td>The month of a date property</td></tr><tr class="table-even"><td><strong class="bold">year</strong></td><td>The year of a date property</td></tr><tr class="table-odd"><td><strong class="bold">lower</strong></td><td>Converts a string property to upper case</td></tr><tr class="table-even"><td><strong class="bold">upper</strong></td><td>Converts a string property to lower case</td></tr><tr class="table-odd"><td><strong class="bold">length</strong></td><td>The length of a string property</td></tr><tr class="table-even"><td><strong class="bold">trim</strong></td><td>Trims a string property</td></tr></table><p class="paragraph"/><blockquote class="note">
 Currently functions can only be applied to properties or associations of domain classes. You cannot, for example, use a function on a result of a subquery. 
 </blockquote><p class="paragraph"/>For example the following query can be used to find all pet's born in 2011:<p class="paragraph"/><div class="code"><pre>def query = Pet.where &#123;
@@ -1076,12 +1098,13 @@ no-arg version if no arguments are passed to <code>validate</code> but will fall
 &#125;<p class="paragraph"/>@Override
 <span class="java&#45;keyword">public</span> <span class="java&#45;object">boolean</span> supportsEventType(<span class="java&#45;object">Class</span>&#60;? <span class="java&#45;keyword">extends</span> ApplicationEvent&#62; eventType) &#123;
     <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">true</span>
-&#125;</pre></div><p class="paragraph"/>The <code>AbstractPersistenceEvent</code> class has many subclasses (<code>PreInsertEvent</code>, <code>PostInsertEvent</code> etc.) that provide further information specific to the event. A <code>cancel()</code> method is also provided on the event which allows you to veto an insert, update or delete operation.<p class="paragraph"/>Once you have created your event listener you need to register it with the <code>ApplicationContext</code>. This can be done in <code>BootStrap.groovy</code>:<p class="paragraph"/><div class="code"><pre>def init = &#123;
-    application.mainContext.eventTriggeringInterceptor.datastores.each &#123; k, datastore &#45;&#62;
+&#125;</pre></div><p class="paragraph"/>The <code>AbstractPersistenceEvent</code> class has many subclasses (<code>PreInsertEvent</code>, <code>PostInsertEvent</code> etc.) that provide further information specific to the event. A <code>cancel()</code> method is also provided on the event which allows you to veto an insert, update or delete operation.<p class="paragraph"/>Once you have created your event listener you need to register it with the <code>ApplicationContext</code>. This can be done in <code>BootStrap.groovy</code>:<p class="paragraph"/><div class="code"><pre>def grailsApplication<p class="paragraph"/>def init = &#123;
+    def applicationContext = grailsApplication.mainContext
+    applicationContext.eventTriggeringInterceptor.datastores.each &#123; k, datastore &#45;&#62;
         applicationContext.addApplicationListener <span class="java&#45;keyword">new</span> MyPersistenceListener(datastore)
     &#125;
 &#125;</pre></div><p class="paragraph"/>or use this in a plugin:<p class="paragraph"/><div class="code"><pre>def doWithApplicationContext = &#123; applicationContext &#45;&#62;
-    application.mainContext.eventTriggeringInterceptor.datastores.each &#123; k, datastore &#45;&#62;
+    grailsApplication.mainContext.eventTriggeringInterceptor.datastores.each &#123; k, datastore &#45;&#62;
         applicationContext.addApplicationListener <span class="java&#45;keyword">new</span> MyPersistenceListener(datastore)
     &#125;
 &#125;</pre></div><p class="paragraph"/><h4>Hibernate Events</h4><p class="paragraph"/>It is generally encouraged to use the non-Hibernate specific API described above, but if you need access to more detailed Hibernate events then you can define custom Hibernate-specific event listeners.<p class="paragraph"/>You can also register event handler classes in an application's <code>grails-app/conf/spring/resources.groovy</code> or in the <code>doWithSpring</code> closure in a plugin descriptor by registering a Spring bean named <code>hibernateEventListeners</code>. This bean has one property, <code>listenerMap</code> which specifies the listeners to register for various Hibernate events.<p class="paragraph"/>The values of the Map are instances of classes that implement one or more Hibernate listener interfaces. You can use one class that implements all of the required interfaces, or one concrete class per interface, or any combination. The valid Map keys and corresponding interfaces are listed here:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Name</strong></th><th><strong class="bold">Interface</strong></th></tr><tr class="table-odd"><td>auto-flush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/AutoFlushEventListener.html" class="api">AutoFlushEventListener</a></td></tr><tr class="table-even"><td>merge</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/MergeEventListener.html" class="api">MergeEventListener</a></td></tr><tr class="table-odd"><td>create</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PersistEventListener.html" class="api">PersistEventListener</a></td></tr><tr class="table-even"><td>create-onflush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PersistEventListener.html" class="api">PersistEventListener</a></td></tr><tr class="table-odd"><td>delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/DeleteEventListener.html" class="api">DeleteEventListener</a></td></tr><tr class="table-even"><td>dirty-check</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/DirtyCheckEventListener.html" class="api">DirtyCheckEventListener</a></td></tr><tr class="table-odd"><td>evict</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/EvictEventListener.html" class="api">EvictEventListener</a></td></tr><tr class="table-even"><td>flush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/FlushEventListener.html" class="api">FlushEventListener</a></td></tr><tr class="table-odd"><td>flush-entity</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/FlushEntityEventListener.html" class="api">FlushEntityEventListener</a></td></tr><tr class="table-even"><td>load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/LoadEventListener.html" class="api">LoadEventListener</a></td></tr><tr class="table-odd"><td>load-collection</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/InitializeCollectionEventListener.html" class="api">InitializeCollectionEventListener</a></td></tr><tr class="table-even"><td>lock</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/LockEventListener.html" class="api">LockEventListener</a></td></tr><tr class="table-odd"><td>refresh</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/RefreshEventListener.html" class="api">RefreshEventListener</a></td></tr><tr class="table-even"><td>replicate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/ReplicateEventListener.html" class="api">ReplicateEventListener</a></td></tr><tr class="table-odd"><td>save-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-even"><td>save</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-odd"><td>update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-even"><td>pre-load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreLoadEventListener.html" class="api">PreLoadEventListener</a></td></tr><tr class="table-odd"><td>pre-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreUpdateEventListener.html" class="api">PreUpdateEventListener</a></td></tr><tr class="table-even"><td>pre-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreDeleteEventListener.html" class="api">PreDeleteEventListener</a></td></tr><tr class="table-odd"><td>pre-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreInsertEventListener.html" class="api">PreInsertEventListener</a></td></tr><tr class="table-even"><td>pre-collection-recreate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionRecreateEventListener.html" class="api">PreCollectionRecreateEventListener</a></td></tr><tr class="table-odd"><td>pre-collection-remove</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionRemoveEventListener.html" class="api">PreCollectionRemoveEventListener</a></td></tr><tr class="table-even"><td>pre-collection-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionUpdateEventListener.html" class="api">PreCollectionUpdateEventListener</a></td></tr><tr class="table-odd"><td>post-load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostLoadEventListener.html" class="api">PostLoadEventListener</a></td></tr><tr class="table-even"><td>post-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostUpdateEventListener.html" class="api">PostUpdateEventListener</a></td></tr><tr class="table-odd"><td>post-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostDeleteEventListener.html" class="api">PostDeleteEventListener</a></td></tr><tr class="table-even"><td>post-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostInsertEventListener.html" class="api">PostInsertEventListener</a></td></tr><tr class="table-odd"><td>post-commit-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostUpdateEventListener.html" class="api">PostUpdateEventListener</a></td></tr><tr class="table-even"><td>post-commit-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostDeleteEventListener.html" class="api">PostDeleteEventListener</a></td></tr><tr class="table-odd"><td>post-commit-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostInsertEventListener.html" class="api">PostInsertEventListener</a></td></tr><tr class="table-even"><td>post-collection-recreate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionRecreateEventListener.html" class="api">PostCollectionRecreateEventListener</a></td></tr><tr class="table-odd"><td>post-collection-remove</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionRemoveEventListener.html" class="api">PostCollectionRemoveEventListener</a></td></tr><tr class="table-even"><td>post-collection-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionUpdateEventListener.html" class="api">PostCollectionUpdateEventListener</a></td></tr></table><p class="paragraph"/>For example, you could register a class <code>AuditEventListener</code> which implements <code>PostInsertEventListener</code>, <code>PostUpdateEventListener</code>, and <code>PostDeleteEventListener</code> using the following in an application:<p class="paragraph"/><div class="code"><pre>beans = &#123;<p class="paragraph"/>   auditListener(AuditEventListener)<p class="paragraph"/>   hibernateEventListeners(HibernateEventListeners) &#123;
@@ -1115,7 +1138,7 @@ None of this is necessary if you are happy to stick to the conventions defined b
         version <span class="java&#45;keyword">false</span>
         autoTimestamp <span class="java&#45;keyword">false</span>
     &#125;
-&#125;</pre></div><p class="paragraph"/>You can also configure global mappings in Config.groovy (or an external config file) using this setting:<p class="paragraph"/><div class="code"><pre>grails.gorm.<span class="java&#45;keyword">default</span>.mapping = &#123;
+&#125;</pre></div><p class="paragraph"/>You can also configure global mappings in <code>application.groovy</code> (or an external config file) using this setting:<p class="paragraph"/><div class="code"><pre>grails.gorm.<span class="java&#45;keyword">default</span>.mapping = &#123;
     version <span class="java&#45;keyword">false</span>
     autoTimestamp <span class="java&#45;keyword">false</span>
 &#125;</pre></div><p class="paragraph"/>It has the same syntax as the standard <code>mapping</code> block but it applies to all your domain classes! You can then override these defaults within the <code>mapping</code> block of a domain class.
@@ -1509,7 +1532,7 @@ You can sort objects using query arguments such as those found in the <a href=".
         flights sort: 'number', order: 'desc'
     &#125;
 &#125;</pre></div><p class="paragraph"/>In this case, the <code>flights</code> collection will always be sorted in descending order of flight number.<p class="paragraph"/><blockquote class="warning">
-These mappings will not work for default unidirectional one-to-many or many-to-many relationships because they involve a join table. See <a href="http://jira.codehaus.org/browse/GRAILS-4089" target="blank">this issue</a> for more details. Consider using a <code>SortedSet</code> or queries with sort parameters to fetch the data you need.
+These mappings will not work for default unidirectional one-to-many or many-to-many relationships because they involve a join table. See <a href="https://jira.grails.org/browse/GRAILS-4089" target="blank">this issue</a> for more details. Consider using a <code>SortedSet</code> or queries with sort parameters to fetch the data you need. 
 </blockquote>
 
 
@@ -1602,6 +1625,9 @@ Although constraints are covered in the <a href="../guide/single.html#constraint
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -2270,6 +2296,9 @@ Although constraints are covered in the <a href="../guide/single.html#constraint
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/fieldValue.html">fieldValue</a>

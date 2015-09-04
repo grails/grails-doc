@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>14 Testing 3.0.2</title>
+    <title>14 Testing 3.0.5</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.2</p>
+                    <p><strong>Version:</strong> 3.0.5</p>
 
                     
                 </div>
@@ -232,7 +232,7 @@ class StaticCallbacksSpec <span class="java&#45;keyword">extends</span> Specific
         config.myConfigValue == 'Hello'
     &#125;
 &#125;</pre></div><p class="paragraph"/>
-You can also use these callbacks without "static" together with the <code><a href="http://grails.org/doc/3.0.x/api/grails/test/runtime/FreshRuntime.html" class="api">grails.test.runtime.FreshRuntime</a></code> annotation.
+You can also use these callbacks without "static" together with the <code><a href="http://grails.github.io/grails-data-mapping/latest/api/grails/test/runtime/FreshRuntime.html" class="api">grails.test.runtime.FreshRuntime</a></code> annotation.
 In this case, a clean application context and grails application instance is initialized for each test method call.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.support.GrailsUnitTestMixin
 <span class="java&#45;keyword">import</span> grails.test.runtime.FreshRuntime;<p class="paragraph"/><span class="java&#45;keyword">import</span> org.junit.ClassRule
 <span class="java&#45;keyword">import</span> org.junit.rules.TestRule<p class="paragraph"/><span class="java&#45;keyword">import</span> spock.lang.Ignore;
@@ -255,7 +255,7 @@ class TestInstanceCallbacksSpec <span class="java&#45;keyword">extends</span> Sp
         expect:
         config.myConfigValue == 'Hello'
     &#125;
-&#125;</pre></div><p class="paragraph"/><p class="paragraph"/>You can use <code><a href="http://grails.org/doc/3.0.x/api/org/grails/spring/beans/factory/InstanceFactoryBean.html" class="api">org.grails.spring.beans.factory.InstanceFactoryBean</a></code> together with doWithSpring and the <a href="http://grails.org/doc/3.0.x/api/grails/test/runtime/FreshRuntime.html" class="api">FreshRuntime</a> annotation to mock beans in tests.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.support.GrailsUnitTestMixin
+&#125;</pre></div><p class="paragraph"/><p class="paragraph"/>You can use <code><a href="http://grails.org/doc/3.0.x/api/org/grails/spring/beans/factory/InstanceFactoryBean.html" class="api">org.grails.spring.beans.factory.InstanceFactoryBean</a></code> together with doWithSpring and the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/test/runtime/FreshRuntime.html" class="api">FreshRuntime</a> annotation to mock beans in tests.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.support.GrailsUnitTestMixin
 <span class="java&#45;keyword">import</span> grails.test.runtime.FreshRuntime<p class="paragraph"/><span class="java&#45;keyword">import</span> org.grails.spring.beans.factory.InstanceFactoryBean
 <span class="java&#45;keyword">import</span> org.junit.ClassRule<p class="paragraph"/><span class="java&#45;keyword">import</span> spock.lang.Shared
 <span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@FreshRuntime
@@ -270,7 +270,7 @@ class MockedBeanSpec <span class="java&#45;keyword">extends</span> Specification
         then:
         1 &#42; myService.prova() &#62;&#62; &#123; <span class="java&#45;keyword">true</span> &#125;
     &#125;
-&#125;</pre></div><p class="paragraph"/><h4>The DirtiesRuntime annotation</h4><p class="paragraph"/>Test methods may be marked with the <code><a href="http://grails.org/doc/3.0.x/api/grails/test/runtime/DirtiesRuntime.html" class="api">grails.test.runtime.DirtiesRuntime</a></code> annotation to indicate that the test modifies the runtime in ways which might be problematic for other tests and as such the runtime should be refreshed after this test method runs.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+&#125;</pre></div><p class="paragraph"/><h4>The DirtiesRuntime annotation</h4><p class="paragraph"/>Test methods may be marked with the <code><a href="http://grails.github.io/grails-data-mapping/latest/api/grails/test/runtime/DirtiesRuntime.html" class="api">grails.test.runtime.DirtiesRuntime</a></code> annotation to indicate that the test modifies the runtime in ways which might be problematic for other tests and as such the runtime should be refreshed after this test method runs.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
 <span class="java&#45;keyword">import</span> spock.lang.Specification
 <span class="java&#45;keyword">import</span> grails.test.runtime.DirtiesRuntime<p class="paragraph"/>@TestFor(PersonController)
 class PersonControllerSpec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    @DirtiesRuntime
@@ -283,10 +283,10 @@ class PersonControllerSpec <span class="java&#45;keyword">extends</span> Specifi
         // &#8230;
     &#125;
 &#125;</pre></div><p class="paragraph"/><h4>Sharing test runtime grailsApplication instance and beans for several test classes</h4><p class="paragraph"/>It's possible to share a single grailsApplication instance and beans for several test classes.
-This feature is activated by the <code><a href="http://grails.org/doc/3.0.x/api/grails/test/runtime/SharedRuntime.html" class="api">SharedRuntime</a></code> annotation. This annotation takes an optional class parameter
-implements <code><a href="http://grails.org/doc/3.0.x/api/grails/test/runtime/SharedRuntimeConfigurer.html" class="api">SharedRuntimeConfigurer</a></code> interface. All test classes referencing the same SharedRuntimeConfigurer implementation
+This feature is activated by the <code><a href="http://grails.github.io/grails-data-mapping/latest/api/grails/test/runtime/SharedRuntime.html" class="api">SharedRuntime</a></code> annotation. This annotation takes an optional class parameter
+implements <code><a href="http://grails.github.io/grails-data-mapping/latest/api/grails/test/runtime/SharedRuntimeConfigurer.html" class="api">SharedRuntimeConfigurer</a></code> interface. All test classes referencing the same SharedRuntimeConfigurer implementation
 class will share the same runtime during a single test run.
-The value class for SharedRuntimeConfigurer annotation can also implement <code><a href="http://grails.org/doc/3.0.x/api/grails/test/runtime/TestEventInterceptor.html" class="api">TestEventInterceptor</a></code> . In this case the instance of the class
+The value class for SharedRuntimeConfigurer annotation can also implement <code><a href="http://grails.github.io/grails-data-mapping/latest/api/grails/test/runtime/TestEventInterceptor.html" class="api">TestEventInterceptor</a></code> . In this case the instance of the class
 will be registered as a test event interceptor for the test runtime.<p class="paragraph"/>
 <h4>Loading application beans in unit tests</h4><p class="paragraph"/>Adding <code>static loadExternalBeans = true</code> field definition to a unit test class makes the Grails unit test runtime load all bean definitions from <code>grails-app/conf/spring/resources.groovy</code> and <code>grails-app/conf/spring/resources.xml</code> files.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> spock.lang.Issue
 <span class="java&#45;keyword">import</span> spock.lang.Specification
@@ -430,6 +430,7 @@ class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specifi
 &#125;</pre></div><p class="paragraph"/>The <code>json</code> property is an instance of <code>org.codehaus.groovy.grails.web.json.JSONElement</code> which is a map-like structure that is useful for parsing JSON responses.<p class="paragraph"/><h4>Testing XML and JSON Requests</h4><p class="paragraph"/>Grails provides various convenient ways to automatically parse incoming XML and JSON packets. For example you can bind incoming JSON or XML requests using Grails' data binding:<p class="paragraph"/><div class="code"><pre>def consumeBook(Book b) &#123;
     render <span class="java&#45;quote">"The title is $&#123;b.title&#125;."</span>
 &#125;</pre></div><p class="paragraph"/>To test this Grails provides an easy way to specify an XML or JSON packet via the <code>xml</code> or <code>json</code> properties. For example the above action can be tested by specifying a String containing the XML:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+<span class="java&#45;keyword">import</span> grails.test.mixin.Mock
 <span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(SimpleController)
 @Mock(&#91;Book&#93;)
 class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specification &#123;
@@ -440,6 +441,7 @@ class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specifi
         response.text == 'The title is Wool.'
     &#125;
 &#125;</pre></div><p class="paragraph"/>Or alternatively a domain instance can be specified and it will be auto-converted into the appropriate XML request:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+<span class="java&#45;keyword">import</span> grails.test.mixin.Mock
 <span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(SimpleController)
 @Mock(&#91;Book&#93;)
 class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    void 'test consume book xml'() &#123;
@@ -449,6 +451,7 @@ class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specifi
         response.text == 'The title is Shift.'
     &#125;
 &#125;</pre></div><p class="paragraph"/>The same can be done for JSON requests:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+<span class="java&#45;keyword">import</span> grails.test.mixin.Mock
 <span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(SimpleController)
 @Mock(&#91;Book&#93;)
 class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    void 'test consume book json'() &#123;
@@ -639,7 +642,9 @@ class SimpleTagLibSpec <span class="java&#45;keyword">extends</span> Specificati
     &#125;
 &#125;</pre></div><p class="paragraph"/>Adding the <code>TestFor</code> annotation to a TagLib class causes a new <code>tagLib</code> field to be automatically created for the TagLib class under test.
 The tagLib field can be used to test calling tags as function calls. The return value of a function call is either a <a href="http://grails.org/doc/3.0.x/api/org/grails/buffer/StreamCharBuffer.html" class="api">StreamCharBuffer</a> instance or
-the object returned from the tag closure when <a href="../guide/single.html#tagReturnValue" class="guide">returnObjectForTags</a> feature is used.<p class="paragraph"/>Note that if you are testing invocation of a custom tag from a controller you can combine the <code>ControllerUnitTestMixin</code> and the <code>GroovyPageUnitTestMixin</code> using the <code>Mock</code> annotation:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(SimpleController)
+the object returned from the tag closure when <a href="../guide/single.html#tagReturnValue" class="guide">returnObjectForTags</a> feature is used.<p class="paragraph"/>Note that if you are testing invocation of a custom tag from a controller you can combine the <code>ControllerUnitTestMixin</code> and the <code>GroovyPageUnitTestMixin</code> using the <code>Mock</code> annotation:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+<span class="java&#45;keyword">import</span> grails.test.mixin.Mock
+<span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(SimpleController)
 @Mock(SimpleTagLib)
 class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/><h4>Testing Custom Tags</h4><p class="paragraph"/>The core Grails tags don't need to be enabled during testing, however custom tag libraries do. The <code>GroovyPageUnitTestMixin</code> class provides a <code>mockTagLib()</code> method that you can use to mock a custom tag library. For example consider the following tag library:<p class="paragraph"/><div class="code"><pre>class SimpleTagLib &#123;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> namespace = 's'<p class="paragraph"/>    def hello = &#123; attrs, body &#45;&#62;
         out &#60;&#60; <span class="java&#45;quote">"Hello $&#123;attrs.name ?: 'World'&#125;"</span>
@@ -880,21 +885,21 @@ class PersonSpec <span class="java&#45;keyword">extends</span> Specification &#1
             Person.count() == 0
             sessionFactory != <span class="java&#45;keyword">null</span>
             transactionManager != <span class="java&#45;keyword">null</span>
-            session != <span class="java&#45;keyword">null</span>
+            hibernateSession != <span class="java&#45;keyword">null</span>
     &#125;
-&#125;</pre></div><p class="paragraph"/>This library dependency is required in grails-app/conf/BuildConfig.groovy for adding support for <code>HibernateTestMixin</code>.<p class="paragraph"/><div class="code"><pre>dependencies &#123;
-        test 'org.grails:grails&#45;datastore&#45;test&#45;support:1.0&#45;grails&#45;2.4'
-    &#125;</pre></div><p class="paragraph"/>HibernateTestMixin is only supported with hibernate4 plugin versions &#62;= 4.3.5.4 .
-<div class="code"><pre>plugins &#123;
-        runtime ':hibernate4:4.3.5.4'
+&#125;</pre></div><p class="paragraph"/>This library dependency is required in build.gradle for adding support for <code>HibernateTestMixin</code>.<p class="paragraph"/><div class="code"><pre>dependencies &#123;
+        testCompile 'org.grails:grails&#45;datastore&#45;test&#45;support:4.0.4.RELEASE'
+    &#125;</pre></div><p class="paragraph"/>HibernateTestMixin is only supported with hibernate4 plugin versions &#62;= 4.3.8.1 .
+<div class="code"><pre>dependencies &#123;
+        compile <span class="java&#45;quote">"org.grails.plugins:hibernate:4.3.8.1"</span>
     &#125;</pre></div><p class="paragraph"/>
 <h4>Configuring domain classes for HibernateTestMixin tests</h4><p class="paragraph"/>The <code>grails.test.mixin.gorm.Domain</code> annotation is used to configure the list of domain classes to configure for Hibernate sessionFactory instance that gets configured when the unit test runtime is initialized.<p class="paragraph"/><code>Domain</code> annotations will be collected from several locations:
 <ul class="star">
 <li>the annotations on the test class</li>
 <li>the package annotations in the package-info.java/package-info.groovy file in the package of the test class</li>
 <li>each super class of the test class and their respective package annotations</li>
-<li>the possible <code><a href="http://grails.org/doc/3.0.x/api/grails/test/runtime/SharedRuntime.html" class="api">SharedRuntime</a></code> class</li>
-</ul><p class="paragraph"/><code>Domain</code> annotations can be shared by adding them as package annotations to package-info.java/package-info.groovy files or by adding them to a <code><a href="http://grails.org/doc/3.0.x/api/grails/test/runtime/SharedRuntime.html" class="api">SharedRuntime</a></code> class which has been added for the test.<p class="paragraph"/>It's not possible to use DomainClassUnitTestMixin's <code>Mock</code> annotation in HibernateTestMixin tests. Use the <code>Domain</code> annotation in the place of <code>Mock</code> in HibernateTestMixin tests.
+<li>the possible <code><a href="http://grails.github.io/grails-data-mapping/latest/api/grails/test/runtime/SharedRuntime.html" class="api">SharedRuntime</a></code> class</li>
+</ul><p class="paragraph"/><code>Domain</code> annotations can be shared by adding them as package annotations to package-info.java/package-info.groovy files or by adding them to a <code><a href="http://grails.github.io/grails-data-mapping/latest/api/grails/test/runtime/SharedRuntime.html" class="api">SharedRuntime</a></code> class which has been added for the test.<p class="paragraph"/>It's not possible to use DomainClassUnitTestMixin's <code>Mock</code> annotation in HibernateTestMixin tests. Use the <code>Domain</code> annotation in the place of <code>Mock</code> in HibernateTestMixin tests.
 
 <a name="12.1.4 Unit Testing Filters"><!-- Legacy link --></a>
 <h2 id="unitTestingFilters">14.1.4 Unit Testing Filters</h2>
@@ -908,9 +913,11 @@ Unit testing filters is typically a matter of testing a controller where a filte
         &#125;
     &#125;
 &#125;</pre></div><p class="paragraph"/>This filter interceptors the <code>list</code> action of the <code>simple</code> controller and redirects to the <code>book</code> controller. To test this filter you start off with a test that targets the <code>SimpleController</code> class and add the <code>CancellingFilters</code> as a mock collaborator:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+<span class="java&#45;keyword">import</span> grails.test.mixin.Mock
 <span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(SimpleController)
 @Mock(CancellingFilters)
 class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    // ...<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/>You can then implement a test that uses the <code>withFilters</code> method to wrap the call to an action in filter execution:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+<span class="java&#45;keyword">import</span> grails.test.mixin.Mock
 <span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(SimpleController)
 @Mock(CancellingFilters)
 class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    void <span class="java&#45;quote">"test list action is filtered"</span>() &#123;
@@ -929,6 +936,7 @@ class SimpleControllerSpec <span class="java&#45;keyword">extends</span> Specifi
 <h2 id="unitTestingURLMappings">14.1.5 Unit Testing URL Mappings</h2>
 <h4>The Basics</h4><p class="paragraph"/>Testing URL mappings can be done with the <code>TestFor</code> annotation testing a particular URL mappings class. For example to test the default URL mappings you can do the following:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> com.demo.SimpleController
 <span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+<span class="java&#45;keyword">import</span> grails.test.mixin.Mock
 <span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(UrlMappings)
 @Mock(SimpleController)
 class UrlMappingsSpec <span class="java&#45;keyword">extends</span> Specification &#123;
@@ -945,6 +953,7 @@ Note that since the default <code>UrlMappings</code> class is in the default pac
     <span class="java&#45;quote">"/actionTwo"</span>(controller: <span class="java&#45;quote">"simple"</span>, action: <span class="java&#45;quote">"action2"</span>)
 &#125;</pre></div><p class="paragraph"/>The following test can be written to assert these URL mappings:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> com.demo.SimpleController
 <span class="java&#45;keyword">import</span> grails.test.mixin.TestFor
+<span class="java&#45;keyword">import</span> grails.test.mixin.Mock
 <span class="java&#45;keyword">import</span> spock.lang.Specification<p class="paragraph"/>@TestFor(UrlMappings)
 @Mock(SimpleController)
 class UrlMappingsSpec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    void <span class="java&#45;quote">"test forward mappings"</span>() &#123;
@@ -987,7 +996,7 @@ class SomeControllerTests &#123;<p class="paragraph"/>    @BeforeClass
 
 <a name="12.2 Integration Testing"><!-- Legacy link --></a>
 <h2 id="integrationTesting">14.2 Integration Testing</h2>
-Integration tests differ from unit tests in that you have full access to the Grails environment within the test. You can create an integration test using the <a href="../ref/Command Line/create-integration-test.html" class="commandLine">create-integration-test</a> command:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;integration&#45;test Example</pre></div><p class="paragraph"/>The above command will create a new integration test at the location <code>src/integration-test/groovy/&#60;PACKAGE&#62;/ExampleSpec.groovy</code>.<p class="paragraph"/>Grails uses the test environment for integration tests and loads the application prior to the first test run. All tests use the same application state.<p class="paragraph"/><h4>Transactions</h4><p class="paragraph"/>Integration tests run inside a database transaction by default, which is rolled back at the end of the each test. This means that data saved during a test is not persisted to the database (which is shared across all tests). The default generated integration test template includes the <a href="http://grails.org/doc/3.0.x/api/grails/transaction/Rollback.html" class="api">Rollback</a> annotation:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
+Integration tests differ from unit tests in that you have full access to the Grails environment within the test. You can create an integration test using the <a href="../ref/Command Line/create-integration-test.html" class="commandLine">create-integration-test</a> command:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;integration&#45;test Example</pre></div><p class="paragraph"/>The above command will create a new integration test at the location <code>src/integration-test/groovy/&#60;PACKAGE&#62;/ExampleSpec.groovy</code>.<p class="paragraph"/>Grails uses the test environment for integration tests and loads the application prior to the first test run. All tests use the same application state.<p class="paragraph"/><h4>Transactions</h4><p class="paragraph"/>Integration tests run inside a database transaction by default, which is rolled back at the end of the each test. This means that data saved during a test is not persisted to the database (which is shared across all tests). The default generated integration test template includes the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/transaction/Rollback.html" class="api">Rollback</a> annotation:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
 <span class="java&#45;keyword">import</span> grails.transaction.&#42;
 <span class="java&#45;keyword">import</span> spock.lang.&#42;<p class="paragraph"/>@Integration
 @Rollback
@@ -1047,7 +1056,7 @@ class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</spa
 
 <a name="12.3 Functional Testing"><!-- Legacy link --></a>
 <h2 id="functionalTesting">14.3 Functional Testing</h2>
-Functional tests involve making HTTP requests against the running application and verifying the resultant behaviour. The functional testing phase differs from the integration phase in that the Grails application is now listening and responding to actual HTTP requests. This is useful for end-to-end testing scenarios, such as making REST calls against a JSON API.<p class="paragraph"/>Grails by default ships with support for writing functional tests using the <a href="http://www.gebish.org" target="blank">Geb framework</a>. To create a functional test you can use the <code>create-functional-test</code> command which will create a new functional test:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;functional&#45;test MyFunctional</pre></div><p class="paragraph"/>The above command will create a new Spock spec called <code>MyFunctionalSpec.groovy</code> in the <code>src/integration-test/groovy</code> directory. The test is annotated with the <a href="http://grails.org/doc/3.0.x/api/grails/test/mixin/integration/Integration.html" class="api">Integration</a> annotation to indicate it is a integration test and extends the <code>GebSpec</code> super class:<p class="paragraph"/><div class="code"><pre>@Integration
+Functional tests involve making HTTP requests against the running application and verifying the resultant behaviour. The functional testing phase differs from the integration phase in that the Grails application is now listening and responding to actual HTTP requests. This is useful for end-to-end testing scenarios, such as making REST calls against a JSON API.<p class="paragraph"/>Grails by default ships with support for writing functional tests using the <a href="http://www.gebish.org" target="blank">Geb framework</a>. To create a functional test you can use the <code>create-functional-test</code> command which will create a new functional test:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;functional&#45;test MyFunctional</pre></div><p class="paragraph"/>The above command will create a new Spock spec called <code>MyFunctionalSpec.groovy</code> in the <code>src/integration-test/groovy</code> directory. The test is annotated with the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/test/mixin/integration/Integration.html" class="api">Integration</a> annotation to indicate it is a integration test and extends the <code>GebSpec</code> super class:<p class="paragraph"/><div class="code"><pre>@Integration
 class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p class="paragraph"/>    def setup() &#123;
     &#125;<p class="paragraph"/>    def cleanup() &#123;
     &#125;<p class="paragraph"/>    void <span class="java&#45;quote">"Test the home page renders correctly"</span>() &#123;
@@ -1055,7 +1064,7 @@ class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p cl
             go '/'<p class="paragraph"/>        then:<span class="java&#45;quote">"The title is correct"</span>
             &#36;('title').text() == <span class="java&#45;quote">"Welcome to Grails"</span>
     &#125;
-&#125;</pre></div><p class="paragraph"/>When the test is run the application container will be loaded up in the background and you can send requests to the running application using the Geb API.<p class="paragraph"/>Note that the application is only loaded once for the entire test run, so functional tests share the state of the application across the whole suite.<p class="paragraph"/>In addition the application is loaded in the JVM as the test, this means that the test has full access to the application state and can interact directly with data services such as GORM to setup and cleanup test data.<p class="paragraph"/>The <code>Integration</code> annotation supports an optional <code>applicationClass</code> attribute which may be used to specify the application class to use for the functional test.  The class must extend <a href="http://grails.org/doc/3.0.x/api/grails/boot/config/GrailsAutoConfiguration.html" class="api">GrailsAutoConfiguration</a>.<p class="paragraph"/><div class="code"><pre>@Integration(applicationClass=com.demo.Application)
+&#125;</pre></div><p class="paragraph"/>When the test is run the application container will be loaded up in the background and you can send requests to the running application using the Geb API.<p class="paragraph"/>Note that the application is only loaded once for the entire test run, so functional tests share the state of the application across the whole suite.<p class="paragraph"/>In addition the application is loaded in the JVM as the test, this means that the test has full access to the application state and can interact directly with data services such as GORM to setup and cleanup test data.<p class="paragraph"/>The <code>Integration</code> annotation supports an optional <code>applicationClass</code> attribute which may be used to specify the application class to use for the functional test.  The class must extend <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/boot/config/GrailsAutoConfiguration.html" class="api">GrailsAutoConfiguration</a>.<p class="paragraph"/><div class="code"><pre>@Integration(applicationClass=com.demo.Application)
 class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p class="paragraph"/>    // ...<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/>If the <code>applicationClass</code> is not specified then the test runtime environment will attempt to locate the application class dynamically which can be problematic in multiproject builds where multiple application classes may be present.
 
 
@@ -1107,6 +1116,9 @@ class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p cl
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-functional-test.html">create-functional-test</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/create-hibernate-cfg-xml.html">create-hibernate-cfg-xml</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-integration-test.html">create-integration-test</a>
@@ -1775,6 +1787,9 @@ class HomeSpec <span class="java&#45;keyword">extends</span> GebSpec &#123;<p cl
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/field.html">field</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Tags/fieldError.html">fieldError</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Tags/fieldValue.html">fieldValue</a>
