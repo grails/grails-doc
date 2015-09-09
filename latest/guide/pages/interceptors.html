@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.5 Interceptors 3.0.5</title>
+    <title>7.5 Interceptors 3.0.6</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.5</p>
+                    <p><strong>Version:</strong> 3.0.6</p>
 
                     
                 </div>
@@ -161,7 +161,7 @@ Grails provides standalone Interceptors using the <a href="../ref/Command Line/c
 
 
 <h2 id="definingInterceptors">7.5.1 Defining Interceptors</h2>
-By default interceptors will match the controllers with the same name. For example if you have an interceptor called <code>BookInterceptor</code> then all requests to the actions of the <code>BookController</code> will trigger the interceptor.<p class="paragraph"/>An <code>Interceptor</code> implements the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/artefact/Interceptor.html" class="api">Interceptor</a> trait and provides 3 methods that can be used to intercept requests:<p class="paragraph"/><div class="code"><pre>/&#42;&#42;
+By default interceptors will match the controllers with the same name. For example if you have an interceptor called <code>BookInterceptor</code> then all requests to the actions of the <code>BookController</code> will trigger the interceptor.<p class="paragraph"/>An <code>Interceptor</code> implements the <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/artefact/Interceptor.html" class="api">Interceptor</a> trait and provides 3 methods that can be used to intercept requests:<p class="paragraph"/><div class="code"><pre>/&#42;&#42;
  &#42; Executed before a matched action
  &#42;
  &#42; @<span class="java&#45;keyword">return</span> Whether the action should <span class="java&#45;keyword">continue</span> and execute
@@ -178,12 +178,12 @@ void afterView() &#123;&#125;</pre></div><p class="paragraph"/>As described abov
   model.foo = <span class="java&#45;quote">"bar"</span> // add a <span class="java&#45;keyword">new</span> model attribute called 'foo'
   view = 'alternate' // render a different view called 'alternate'
   <span class="java&#45;keyword">true</span>
-&#125;</pre></div><p class="paragraph"/>The <code>afterView</code> method is executed after view rendering completes. If an exception occurs, the exception is available using the <code>throwable</code> property of the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/artefact/Interceptor.html" class="api">Interceptor</a> trait.
+&#125;</pre></div><p class="paragraph"/>The <code>afterView</code> method is executed after view rendering completes. If an exception occurs, the exception is available using the <code>throwable</code> property of the <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/artefact/Interceptor.html" class="api">Interceptor</a> trait.
 
 
 
 <h2 id="interceptorMatching">7.5.2 Matching Requests with Inteceptors</h2>
-As mention in the previous section, by default an interceptor will match only requests to the associated controller by convention. However you can configure the interceptor to match any request using the <code>match</code> or <code>matchAll</code> methods defined in the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/artefact/Interceptor.html" class="api">Interceptor API</a>.<p class="paragraph"/>The matching methods return a <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/interceptors/Matcher.html" class="api">Matcher</a> instance which can be used to configure how the interceptor matches the request.<p class="paragraph"/>For example the following interceptor will match all requests except those to the <code>login</code> controller:<p class="paragraph"/><div class="code"><pre>class AuthInterceptor &#123;
+As mention in the previous section, by default an interceptor will match only requests to the associated controller by convention. However you can configure the interceptor to match any request using the <code>match</code> or <code>matchAll</code> methods defined in the <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/artefact/Interceptor.html" class="api">Interceptor API</a>.<p class="paragraph"/>The matching methods return a <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/interceptors/Matcher.html" class="api">Matcher</a> instance which can be used to configure how the interceptor matches the request.<p class="paragraph"/>For example the following interceptor will match all requests except those to the <code>login</code> controller:<p class="paragraph"/><div class="code"><pre>class AuthInterceptor &#123;
   AuthInterceptor() &#123;
     matchAll()
     .excludes(controller:<span class="java&#45;quote">"login"</span>)

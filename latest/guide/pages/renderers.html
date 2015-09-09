@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>9.1.6 Customizing Response Rendering 3.0.5</title>
+    <title>9.1.6 Customizing Response Rendering 3.0.6</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.5</p>
+                    <p><strong>Version:</strong> 3.0.6</p>
 
                     
                 </div>
@@ -185,7 +185,7 @@ render book as XML<p class="paragraph"/>// or render book as JSON</pre></div><p 
 
 
 <h2 id="objectMarshallers">9.1.6.2 Registering Custom Objects Marshallers</h2>
-Grails' Converters feature the notion of an <a href="http://grails.org/doc/3.0.x/api/org/grails/web/converters/marshaller/ObjectMarshaller.html" class="api">ObjectMarshaller</a> and each type can have a registered <code>ObjectMarshaller</code>. You can register custom <code>ObjectMarshaller</code> instances to completely customize response rendering. For example, you can define the following in <code>BootStrap.init</code>:<p class="paragraph"/><div class="code"><pre>XML.registerObjectMarshaller Book, &#123; Book book, XML xml &#45;&#62;
+Grails' Converters feature the notion of an <a href="http://grails.github.io/grails-doc/3.0.x/api/org/grails/web/converters/marshaller/ObjectMarshaller.html" class="api">ObjectMarshaller</a> and each type can have a registered <code>ObjectMarshaller</code>. You can register custom <code>ObjectMarshaller</code> instances to completely customize response rendering. For example, you can define the following in <code>BootStrap.init</code>:<p class="paragraph"/><div class="code"><pre>XML.registerObjectMarshaller Book, &#123; Book book, XML xml &#45;&#62;
   xml.attribute 'id', book.id
   xml.build &#123;
     title(book.title)
@@ -227,7 +227,7 @@ XML.createNamedConfig('adminApi') &#123;
 
 
 <h2 id="objectMarshallerInterface">9.1.6.4 Implementing the ObjectMarshaller Interface</h2>
-For more complex marshallers it is recommended you implement the <a href="http://grails.org/doc/3.0.x/api/org/grails/web/converters/marshaller/ObjectMarshaller.html" class="api">ObjectMarshaller</a> interface. For example given a domain class:<p class="paragraph"/><div class="code"><pre>class Book &#123;
+For more complex marshallers it is recommended you implement the <a href="http://grails.github.io/grails-doc/3.0.x/api/org/grails/web/converters/marshaller/ObjectMarshaller.html" class="api">ObjectMarshaller</a> interface. For example given a domain class:<p class="paragraph"/><div class="code"><pre>class Book &#123;
     <span class="java&#45;object">String</span> title
 &#125;</pre></div><p class="paragraph"/>By default the output when using:<p class="paragraph"/><div class="code"><pre>render book as XML</pre></div><p class="paragraph"/>Would look like:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;book id=<span class="xml&#45;quote">"1"</span>&#62;</span>
    <span class="xml&#45;tag">&#60;title&#62;</span>The Stand<span class="xml&#45;tag">&#60;/title&#62;</span>
@@ -237,7 +237,7 @@ For more complex marshallers it is recommended you implement the <a href="http:/
     Book book  = (Book)object
     converter.chars book.title
   &#125;
-&#125;</pre></div><p class="paragraph"/>And then register the marshaller with:<p class="paragraph"/><div class="code"><pre>XML.registerObjectMarshaller(<span class="java&#45;keyword">new</span> BookMarshaller())</pre></div><p class="paragraph"/>With the custom <code>ObjectMarshaller</code> in place, the output is now:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;book&#62;</span>The Stand<span class="xml&#45;tag">&#60;/book&#62;</span></pre></div><p class="paragraph"/><h4>Customizing the Name of the Root Element</h4><p class="paragraph"/>If you wish the customize the name of the surrounding element, you can implement <a href="http://grails.org/doc/3.0.x/api/org/grails/web/converters/marshaller/NameAwareMarshaller.html" class="api">NameAwareMarshaller</a>:<p class="paragraph"/><div class="code"><pre>class BookMarshaller <span class="java&#45;keyword">implements</span> ObjectMarshaller&#60;XML&#62;,NameAwareMarshaller &#123;<p class="paragraph"/>  ...<p class="paragraph"/>  <span class="java&#45;object">String</span> getElementName(<span class="java&#45;object">Object</span> o) &#123;
+&#125;</pre></div><p class="paragraph"/>And then register the marshaller with:<p class="paragraph"/><div class="code"><pre>XML.registerObjectMarshaller(<span class="java&#45;keyword">new</span> BookMarshaller())</pre></div><p class="paragraph"/>With the custom <code>ObjectMarshaller</code> in place, the output is now:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;book&#62;</span>The Stand<span class="xml&#45;tag">&#60;/book&#62;</span></pre></div><p class="paragraph"/><h4>Customizing the Name of the Root Element</h4><p class="paragraph"/>If you wish the customize the name of the surrounding element, you can implement <a href="http://grails.github.io/grails-doc/3.0.x/api/org/grails/web/converters/marshaller/NameAwareMarshaller.html" class="api">NameAwareMarshaller</a>:<p class="paragraph"/><div class="code"><pre>class BookMarshaller <span class="java&#45;keyword">implements</span> ObjectMarshaller&#60;XML&#62;,NameAwareMarshaller &#123;<p class="paragraph"/>  ...<p class="paragraph"/>  <span class="java&#45;object">String</span> getElementName(<span class="java&#45;object">Object</span> o) &#123;
     <span class="java&#45;keyword">return</span> 'custom&#45;book'
   &#125;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/>With the above change the output would now be:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;custom&#45;book&#62;</span>The Stand<span class="xml&#45;tag">&#60;/custom&#45;book&#62;</span></pre></div><p class="paragraph"/><h4>Outputting Markup Using the Converters API or Builder</h4><p class="paragraph"/>With the passed Converter object you can explicitly code to the Converters API to stream markup to the response:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">public</span> void marshalObject(<span class="java&#45;object">Object</span> object, XML converter) &#123;
   Book book = (Book)object<p class="paragraph"/>  converter.attribute 'id', book.id.toString()

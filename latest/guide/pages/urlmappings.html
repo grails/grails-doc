@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.4 URL Mappings 3.0.5</title>
+    <title>7.4 URL Mappings 3.0.6</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.5</p>
+                    <p><strong>Version:</strong> 3.0.6</p>
 
                     
                 </div>
@@ -376,7 +376,7 @@ URL Mappings also support named mappings, that is mappings which have a name ass
 
 
 <h2 id="customizingUrlFormat">7.4.12 Customizing URL Formats</h2>
-The default URL Mapping mechanism supports camel case names in the URLs.  The default URL for accessing an action named <code>addNumbers</code> in a controller named <code>MathHelperController</code> would be something like <code>/mathHelper/addNumbers</code>.  Grails allows for the customization of this pattern and provides an implementation which replaces the camel case convention with a hyphenated convention that would support URLs like <code>/math-helper/add-numbers</code>.  To enable hyphenated URLs assign a value of "hyphenated" to the <code>grails.web.url.converter</code> property in <code>grails-app/conf/application.groovy</code>.<p class="paragraph"/><div class="code"><pre>// grails&#45;app/conf/application.groovy<p class="paragraph"/>grails.web.url.converter = 'hyphenated'</pre></div><p class="paragraph"/>Arbitrary strategies may be plugged in by providing a class which implements the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/web/UrlConverter.html" class="api">UrlConverter</a> interface and adding an instance of that class to the Spring application context with the bean name of <code>grails.web.UrlConverter.BEAN_NAME</code>.  If Grails finds a bean in the context with that name, it will be used as the default converter and there is no need to assign a value to the <code>grails.web.url.converter</code> config property.<p class="paragraph"/><div class="code"><pre>// src/groovy/com/myapplication/MyUrlConverterImpl.groovy<p class="paragraph"/><span class="java&#45;keyword">package</span> com.myapplication<p class="paragraph"/>class MyUrlConverterImpl <span class="java&#45;keyword">implements</span> grails.web.UrlConverter &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> toUrlElement(<span class="java&#45;object">String</span> propertyOrClassName) &#123;
+The default URL Mapping mechanism supports camel case names in the URLs.  The default URL for accessing an action named <code>addNumbers</code> in a controller named <code>MathHelperController</code> would be something like <code>/mathHelper/addNumbers</code>.  Grails allows for the customization of this pattern and provides an implementation which replaces the camel case convention with a hyphenated convention that would support URLs like <code>/math-helper/add-numbers</code>.  To enable hyphenated URLs assign a value of "hyphenated" to the <code>grails.web.url.converter</code> property in <code>grails-app/conf/application.groovy</code>.<p class="paragraph"/><div class="code"><pre>// grails&#45;app/conf/application.groovy<p class="paragraph"/>grails.web.url.converter = 'hyphenated'</pre></div><p class="paragraph"/>Arbitrary strategies may be plugged in by providing a class which implements the <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/web/UrlConverter.html" class="api">UrlConverter</a> interface and adding an instance of that class to the Spring application context with the bean name of <code>grails.web.UrlConverter.BEAN_NAME</code>.  If Grails finds a bean in the context with that name, it will be used as the default converter and there is no need to assign a value to the <code>grails.web.url.converter</code> config property.<p class="paragraph"/><div class="code"><pre>// src/groovy/com/myapplication/MyUrlConverterImpl.groovy<p class="paragraph"/><span class="java&#45;keyword">package</span> com.myapplication<p class="paragraph"/>class MyUrlConverterImpl <span class="java&#45;keyword">implements</span> grails.web.UrlConverter &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> toUrlElement(<span class="java&#45;object">String</span> propertyOrClassName) &#123;
         // <span class="java&#45;keyword">return</span> some representation of a property or class name that should be used in URLs&#8230;
     &#125;
 &#125;</pre></div><p class="paragraph"/><div class="code"><pre>// grails&#45;app/conf/spring/resources.groovy<p class="paragraph"/>beans = &#123;

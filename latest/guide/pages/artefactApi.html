@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>17.10 The Artefact API 3.0.5</title>
+    <title>17.10 The Artefact API 3.0.6</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.5</p>
+                    <p><strong>Version:</strong> 3.0.6</p>
 
                     
                 </div>
@@ -156,7 +156,7 @@ You should by now understand that Grails has the concept of artefacts: special t
 
 
 <h2 id="queryingArtefacts">17.10.1 Asking About Available Artefacts</h2>
-As a plugin developer, it can be important for you to find out about what domain classes, controllers, or other types of artefact are available in an application. For example, the <a href="http://grails.org/plugin/searchable" target="blank">Searchable plugin</a> needs to know what domain classes exist so it can check them for any <code>searchable</code> properties and index the appropriate ones. So how does it do it? The answer lies with the <code>grailsApplication</code> object, and instance of <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/core/GrailsApplication.html" class="api">GrailsApplication</a> that's available automatically in controllers and GSPs and can be <a href="../guide/single.html#dependencyInjectionServices" class="guide">injected</a> everywhere else.<p class="paragraph"/>The <code>grailsApplication</code> object has several important properties and methods for querying artefacts. Probably the most common is the one that gives you all the classes of a particular artefact type:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">for</span> (cls in grailsApplication.&#60;artefactType&#62;Classes) &#123;
+As a plugin developer, it can be important for you to find out about what domain classes, controllers, or other types of artefact are available in an application. For example, the <a href="http://grails.org/plugin/searchable" target="blank">Searchable plugin</a> needs to know what domain classes exist so it can check them for any <code>searchable</code> properties and index the appropriate ones. So how does it do it? The answer lies with the <code>grailsApplication</code> object, and instance of <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/core/GrailsApplication.html" class="api">GrailsApplication</a> that's available automatically in controllers and GSPs and can be <a href="../guide/single.html#dependencyInjectionServices" class="guide">injected</a> everywhere else.<p class="paragraph"/>The <code>grailsApplication</code> object has several important properties and methods for querying artefacts. Probably the most common is the one that gives you all the classes of a particular artefact type:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">for</span> (cls in grailsApplication.&#60;artefactType&#62;Classes) &#123;
     &#8230;
 &#125;</pre></div><p class="paragraph"/>In this case, <code>artefactType</code> is the property name form of the artefact type. With core Grails you have:
 <ul class="star">
@@ -171,7 +171,7 @@ As a plugin developer, it can be important for you to find out about what domain
     &#8230;
 &#125;</pre></div><p class="paragraph"/>and for URL mappings:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">for</span> (cls in grailsApplication.urlMappingsClasses) &#123;
     &#8230;
-&#125;</pre></div><p class="paragraph"/>You need to be aware that the objects returned by these properties are not instances of <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Class.html" class="api">Class</a>. Instead, they are instances of <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/core/GrailsClass.html" class="api">GrailsClass</a> that has some particularly useful properties and methods, including one for the underlying <code>Class</code>:
+&#125;</pre></div><p class="paragraph"/>You need to be aware that the objects returned by these properties are not instances of <a href="http://docs.oracle.com/javase/6/docs/api/java/lang/Class.html" class="api">Class</a>. Instead, they are instances of <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/core/GrailsClass.html" class="api">GrailsClass</a> that has some particularly useful properties and methods, including one for the underlying <code>Class</code>:
 <ul class="star">
 <li><code>shortName</code> - the class name of the artefact without the package (equivalent of <code>Class.simpleName</code>).</li>
 <li><code>logicalPropertyName</code> - the artefact name in property form without the 'type' suffix. So <code>MyGreatController</code> becomes 'myGreat'.</li>
@@ -189,7 +189,7 @@ As a plugin developer, it can be important for you to find out about what domain
 Plugins can easily provide their own artefacts so that they can easily find out what implementations are available and take part in reloading. All you need to do is create an <code>ArtefactHandler</code> implementation and register it in your main plugin class:<p class="paragraph"/><div class="code"><pre>class MyGrailsPlugin &#123;
     def artefacts = &#91; org.somewhere.MyArtefactHandler &#93;
     &#8230;
-&#125;</pre></div><p class="paragraph"/>The <code>artefacts</code> list can contain either handler classes (as above) or instances of handlers.<p class="paragraph"/>So, what does an artefact handler look like? Well, put simply it is an implementation of the <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/core/ArtefactHandler.html" class="api">ArtefactHandler</a> interface. To make life a bit easier, there is a skeleton implementation that can readily be extended: <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/core/ArtefactHandlerAdapter.html" class="api">ArtefactHandlerAdapter</a>.<p class="paragraph"/>In addition to the handler itself, every new artefact needs a corresponding wrapper class that implements <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/core/GrailsClass.html" class="api">GrailsClass</a>. Again, skeleton implementations are available such as <a href="http://grails.org/doc/3.0.x/api/org/grails/core/AbstractInjectableGrailsClass.html" class="api">AbstractInjectableGrailsClass</a>, which is particularly useful as it turns your artefact into a Spring bean that is auto-wired, just like controllers and services.<p class="paragraph"/>The best way to understand how both the handler and wrapper classes work is to look at the Quartz plugin:
+&#125;</pre></div><p class="paragraph"/>The <code>artefacts</code> list can contain either handler classes (as above) or instances of handlers.<p class="paragraph"/>So, what does an artefact handler look like? Well, put simply it is an implementation of the <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/core/ArtefactHandler.html" class="api">ArtefactHandler</a> interface. To make life a bit easier, there is a skeleton implementation that can readily be extended: <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/core/ArtefactHandlerAdapter.html" class="api">ArtefactHandlerAdapter</a>.<p class="paragraph"/>In addition to the handler itself, every new artefact needs a corresponding wrapper class that implements <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/core/GrailsClass.html" class="api">GrailsClass</a>. Again, skeleton implementations are available such as <a href="http://grails.github.io/grails-doc/3.0.x/api/org/grails/core/AbstractInjectableGrailsClass.html" class="api">AbstractInjectableGrailsClass</a>, which is particularly useful as it turns your artefact into a Spring bean that is auto-wired, just like controllers and services.<p class="paragraph"/>The best way to understand how both the handler and wrapper classes work is to look at the Quartz plugin:
 <ul class="star">
 <li><a href="https://github.com/grails3-plugins/quartz/blob/master/src/main/groovy/grails/plugins/quartz/GrailsJobClass.java" target="blank">GrailsJobClass</a></li>
 <li><a href="https://github.com/grails3-plugins/quartz/blob/master/src/main/groovy/grails/plugins/quartz/DefaultGrailsJobClass.java" target="blank">DefaultGrailsJobClass</a></li>
