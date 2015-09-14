@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.1.7 More on JSONBuilder 3.0.5</title>
+    <title>7.1.7 More on JSONBuilder 3.0.7</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -30,7 +30,7 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from previous versions of Grails</span></a>
+                    <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 2.x</span></a>
                     </div>
                     
                     <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.5</p>
+                    <p><strong>Version:</strong> 3.0.7</p>
 
                     
                 </div>
@@ -140,7 +140,7 @@ function addJsClass() {
                 
 <a name="7.1.8 More on JSONBuilder"><!-- Legacy link --></a>
 <h2 id="moreOnJSONBuilder">7.1.7 More on JSONBuilder</h2>
-The previous section on on XML and JSON responses covered simplistic examples of rendering XML and JSON responses. Whilst the XML builder used by Grails is the standard <a href="http://groovy.codehaus.org/Reading+XML+using+Groovy's+XmlSlurper" target="blank">XmlSlurper</a> found in Groovy, the JSON builder is a custom implementation specific to Grails.<p class="paragraph"/><h4>JSONBuilder and Grails versions</h4><p class="paragraph"/>JSONBuilder behaves different depending on the version of Grails you use. For version below 1.2 the deprecated <a href="http://grails.github.io/grails-doc/latest/api/grails/web/JSONBuilder.html" class="api">grails.web.JSONBuilder</a> class is used. This section covers the usage of the Grails 1.2 JSONBuilder<p class="paragraph"/>For backwards compatibility the old <code>JSONBuilder</code> class is used with the <code>render</code> method for older applications; to use the newer/better <code>JSONBuilder</code> class set the following in <code>application.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.json.legacy.builder = <span class="java&#45;keyword">false</span></pre></div><p class="paragraph"/><h4>Rendering Simple Objects</h4><p class="paragraph"/>To render a simple JSON object just set properties within the context of the Closure:<p class="paragraph"/><div class="code"><pre>render(contentType: <span class="java&#45;quote">"application/json"</span>) &#123;
+The previous section on on XML and JSON responses covered simplistic examples of rendering XML and JSON responses. Whilst the XML builder used by Grails is the standard <a href="http://groovy.codehaus.org/Reading+XML+using+Groovy's+XmlSlurper" target="blank">XmlSlurper</a> found in Groovy, the JSON builder is a custom implementation specific to Grails.<p class="paragraph"/><h4>JSONBuilder and Grails versions</h4><p class="paragraph"/>JSONBuilder behaves different depending on the version of Grails you use. For version below 1.2 the deprecated <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/web/JSONBuilder.html" class="api">grails.web.JSONBuilder</a> class is used. This section covers the usage of the Grails 1.2 JSONBuilder<p class="paragraph"/>For backwards compatibility the old <code>JSONBuilder</code> class is used with the <code>render</code> method for older applications; to use the newer/better <code>JSONBuilder</code> class set the following in <code>application.groovy</code>:<p class="paragraph"/><div class="code"><pre>grails.json.legacy.builder = <span class="java&#45;keyword">false</span></pre></div><p class="paragraph"/><h4>Rendering Simple Objects</h4><p class="paragraph"/>To render a simple JSON object just set properties within the context of the Closure:<p class="paragraph"/><div class="code"><pre>render(contentType: <span class="java&#45;quote">"application/json"</span>) &#123;
     hello = <span class="java&#45;quote">"world"</span>
 &#125;</pre></div><p class="paragraph"/>The above will produce the JSON:<p class="paragraph"/><div class="code"><pre>&#123;<span class="java&#45;quote">"hello"</span>:<span class="java&#45;quote">"world"</span>&#125;</pre></div><p class="paragraph"/><h4>Rendering JSON Arrays</h4><p class="paragraph"/>To render a list of objects simple assign a list:<p class="paragraph"/><div class="code"><pre>render(contentType: <span class="java&#45;quote">"application/json"</span>) &#123;
     categories = &#91;'a', 'b', 'c'&#93;
