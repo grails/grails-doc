@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>10.2 Events 3.0.7</title>
+    <title>10.2 Events 3.0.8</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -130,7 +130,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.0.7</p>
+                    <p><strong>Version:</strong> 3.0.8</p>
 
                     
                 </div>
@@ -143,6 +143,15 @@ function addJsClass() {
                     </div>
                     
                     <div class="toc-item" style="margin-left:0px"><a href="#notifying"><strong>10.2</strong><span>Event Notification</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#annotations"><strong>10.3</strong><span>Reactor Spring Annotations</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#gormEvents"><strong>10.4</strong><span>Events from GORM</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#springEvents"><strong>10.5</strong><span>Events from Spring</span></a>
                     </div>
                     
                 </div>
@@ -164,8 +173,18 @@ Grails 3.0 introduces a new Events API based on <a href="https://github.com/reac
 <h2 id="consuming">10.2.1 Consuming Events</h2>
 There are several ways to consume an event. As mentioned previously services and controllers implement the <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/events/Events.html" class="api">Events</a> trait.<p class="paragraph"/>The <code>Events</code> trait provides several methods to register event consumers. For example:<p class="paragraph"/><div class="code"><pre>on(<span class="java&#45;quote">"myEvent"</span>) &#123;
     println <span class="java&#45;quote">"Event fired!"</span>
-&#125;</pre></div><p class="paragraph"/>Note that if you wish a class (other than a controller or service) to be an event consumer you simply have to implement the <code>Events</code> trait and ensure the class is registered as a Spring bean.
-
+&#125;</pre></div><p class="paragraph"/>Note that if you wish a class (other than a controller or service) to be an event consumer you simply have to implement the <code>Events</code> trait and ensure the class is registered as a Spring bean.<p class="paragraph"/>For example given the following class:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.events.&#42;
+<span class="java&#45;keyword">import</span> javax.annotation.&#42;<p class="paragraph"/>class MyClass <span class="java&#45;keyword">implements</span> Events &#123;<p class="paragraph"/>	@PostConstruct
+	void init() &#123;
+		on(<span class="java&#45;quote">"myEvent"</span>) &#123;
+		    println <span class="java&#45;quote">"Event fired!"</span>
+		&#125;		
+	&#125;	
+&#125;</pre></div><p class="paragraph"/>You can override <code>doWithSpring</code> in your <code>Application</code> class to register it as a Spring bean (or annotate it with <code>Component</code>):<p class="paragraph"/><div class="code"><pre>Closure doWithSpring() &#123;
+        &#123;&#45;&#62;
+    		myClass(MyClass)
+        &#125;
+    &#125;</pre></div>
 
 
 <h2 id="notifying">10.2.2 Event Notification</h2>
@@ -174,6 +193,37 @@ sendAndReceive <span class="java&#45;quote">"myEvent"</span>, <span class="java&
     println <span class="java&#45;quote">"Got response!"</span>
 &#125;</pre></div>
 
+
+
+<h2 id="annotations">10.2.3 Reactor Spring Annotations</h2>
+Reactor provides a few useful annotations that can be used for declaratively consuming events in a Grails service.<p class="paragraph"/>To declare an event consumer use the <code>Consumer</code> annotation:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> reactor.spring.context.annotation.&#42;<p class="paragraph"/>@Consumer
+class MyService &#123;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/>Then to register to listen for an event use the <code>Selector</code> annotation:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> reactor.spring.context.annotation.&#42;<p class="paragraph"/>@Consumer
+class MyService &#123;
+	@Selector('my.event')
+	void myEventListener(<span class="java&#45;object">Object</span> data) &#123;
+		println <span class="java&#45;quote">"GOT EVENT $data"</span>
+	&#125;
+&#125;</pre></div>
+
+
+<h2 id="gormEvents">10.2.4 Events from GORM</h2>
+GORM defines a <a href="http://grails.github.io/grails-data-mapping/latest/api/org/grails/datastore/mapping/engine/event/package-summary.html" target="blank">number of useful events</a> that you can listen for.<p class="paragraph"/>Each event is translated into a key that starts with <code>gorm:</code>. For example:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.grails.datastore.mapping.engine.event.&#42;
+...<p class="paragraph"/>on(<span class="java&#45;quote">"gorm:preInsert"</span>) &#123; PreInsertEvent event &#45;&#62;
+	println <span class="java&#45;quote">"GOT EVENT $event"</span>
+&#125;</pre></div><p class="paragraph"/><blockquote class="note">
+ These events are triggered asynchronously, and so cannot cancel or manipulate the persistence operations. If you want to do that see the section on <a href="../guide/single.html#eventsAutoTimestamping" class="guide">Events & Auto Timestamping</a> in the GORM docs
+</blockquote>
+
+
+
+<h2 id="springEvents">10.2.5 Events from Spring</h2>
+Spring also fires a number of useful events. All events in the <code>org.springframework</code> package are prefixed with <code>spring:</code>.<p class="paragraph"/>For example:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.springframework.web.context.support.&#42;
+<span class="java&#45;keyword">import</span> org.springframework.boot.context.event.&#42;
+...<p class="paragraph"/>on(<span class="java&#45;quote">"spring:applicationStarted"</span>) &#123; ApplicationStartedEvent event &#45;&#62;
+	// fired when the application starts
+&#125;<p class="paragraph"/>on(<span class="java&#45;quote">"spring:servletRequestHandled"</span>) &#123; RequestHandledEvent event &#45;&#62;
+	// fired each time a request is handled
+&#125;</pre></div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
