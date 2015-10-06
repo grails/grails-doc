@@ -9,3 +9,30 @@ on("myEvent") {
 {code}
 
 Note that if you wish a class (other than a controller or service) to be an event consumer you simply have to implement the @Events@ trait and ensure the class is registered as a Spring bean.
+
+For example given the following class:
+
+{code}
+import grails.events.*
+import javax.annotation.*
+
+class MyClass implements Events {
+
+	@PostConstruct
+	void init() {
+		on("myEvent") {
+		    println "Event fired!"
+		}		
+	}	
+}
+{code}
+
+You can override @doWithSpring@ in your @Application@ class to register it as a Spring bean (or annotate it with @Component@):
+
+{code}
+    Closure doWithSpring() {
+        {->
+    		myClass(MyClass)
+        }
+    }
+ {code}
