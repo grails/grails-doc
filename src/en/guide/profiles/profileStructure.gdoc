@@ -21,11 +21,15 @@ web
     * profile.yml
 {code}
 
-The above example is a snippet of structure of the 'web' profile. The @profile.yml@ file is used to describe the profile and control how a the build is configured. The @profile.yml@ can contain the following child elements.
+The above example is a snippet of structure of the 'web' profile. The @profile.yml@ file is used to describe the profile and control how a the build is configured. 
+
+h4. Understanding the profile.yml descriptor
+
+The @profile.yml@ can contain the following child elements.
 
 h4. 1) repositories
 
-A list of Maven repositories. Example:
+A list of Maven repositories to include in the generated build. Example:
 
 {code}
 repositories:
@@ -34,7 +38,7 @@ repositories:
 
 h4. 2) build.plugins
 
-A list of Gradle plugins to configure. Example:
+A list of Gradle plugins to configure in the generated build. Example:
 
 {code}
 build:
@@ -81,6 +85,12 @@ features:
 {code}
 
 
-As you can see it contains the description of the profile and a definition of which profiles this profile extends, since one profile can extend from another.
+h4. What happens when a profile is used?
 
-When the @create-app@ command runs it takes the skeleton of the parent profiles and copies the skeletons into a new project structure. Child profiles overwrite files from the parent profile so if the parent defines a @build.gradle@ then the child profile will override the parent.
+When the @create-app@ command runs it takes the skeleton of the parent profiles and copies the skeletons into a new project structure. 
+
+The @build.gradle@ file is generated as is result of obtaining all of the dependency information defined in the @profile.yml@ files and produces the required dependencies.
+
+The command will also merge any @build.gradle@ files defined within a profile and its parent profiles.
+
+The @grails-app/conf/application.yml@ file is also merged into a a single YAML file taking into account the profile and all of the parent profiles.
