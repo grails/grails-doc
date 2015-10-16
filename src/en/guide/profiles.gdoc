@@ -1,0 +1,53 @@
+When you create a Grails application with the [create-app|commandLine] command by default the "web" profile is used:
+
+{code}
+grails create-app myapp
+{code}
+
+You can specify a different profile with the profile argument:
+
+{code}
+grails create-app myapp --profile=web-api
+{code}
+
+Profiles encapsulate the project commands, templates and plugins that are designed to work for a given profile. The source for the profiles can be found [on Github|https://github.com/grails/grails-profile-repository], whilst the profiles themselves are published as JAR files to the Grails central repository.
+
+To find out what profiles are available use the [list-profiles|commandLine] command:
+
+{code}
+$ grails list-profiles
+{code}
+
+For more information on a particular profile use the [profile-info|commandLine] command:
+
+{code}
+$ grails profile-info web-api
+{code}
+
+
+h4. Profile Repositories
+
+By default Grails will resolve profiles from the [Grails central repository|https://repo.grails.org/grails/core/org/grails/profiles/]. However, you can define additional profile repositories in the @USER_HOME/grails/settings.groovy@ file:
+
+{code}
+grails {
+  profiles {
+    repositories {
+      myRepo {
+        url = "http://foo.com/repo"
+        snapshotsEnabled = true
+      }
+    }
+  }
+}
+{code}
+
+{note}
+Note that Grails uses Aether to resolve profiles, as a Gradle instance is not yet available when the @create-app@ command is executed. This means that you can also define repositories and more advanced configuration (proxies, authentication etc.) in your @USER_HOME/.m2/settings.xml@ file if you wish.
+{note}
+
+
+
+
+
+
