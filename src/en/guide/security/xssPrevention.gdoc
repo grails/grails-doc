@@ -37,26 +37,19 @@ h4. Configuration
 
 It is recommended that you review the configuration of a newly created Grails application to garner an understanding of XSS prevention works in Grails.
 
-GSP features the ability to automatically HTML encode GSP expressions, and as of Grails 2.3 this is the default configuration.  The default configuration (found in @application.groovy@) for a newly created Grails application can be seen below:
+GSP features the ability to automatically HTML encode GSP expressions, and as of Grails 2.3 this is the default configuration.  The default configuration (found in @application.yml@) for a newly created Grails application can be seen below:
 
 {code}
-    grails {
-        views {
-            gsp {
-                encoding = 'UTF-8'
-                htmlcodec = 'xml' // use xml escaping instead of HTML4 escaping
-                codecs {
-                    expression = 'html' // escapes values inside ${}
-                    scriptlet = 'html' // escapes output from scriptlets in GSPs
-                    taglib = 'none' // escapes output from taglibs
-                    staticparts = 'none' // escapes output from static template parts
-                }
-            }
-            // escapes all not-encoded output at final stage of outputting
-            // filteringCodecForContentType.'text/html' = 'html'
-            }
-        }
-    }
+grails:
+    views:
+        gsp:
+            encoding: UTF-8
+            htmlcodec: xml # use xml escaping instead of HTML4 escaping
+            codecs:
+                expression: html # escapes values inside ${}
+                scriptlets: html # escapes output from scriptlets in GSPs
+                taglib: none # escapes output from taglibs
+                staticparts: none # escapes output from static template parts
 {code}
 
 GSP features several codecs that it uses when writing the page to the response. The codecs are configured in the @codecs@ block and are described below:
