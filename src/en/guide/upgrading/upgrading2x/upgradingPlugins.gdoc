@@ -65,7 +65,27 @@ h4. Step 5 - Migrate Plugin Specific Config to application.yml
 
 Some plugins define a default configuration file. For example the Quartz plugin defines a file called @grails-app/conf/DefaultQuartzConfig.groovy@. In Grails 3.x this default configuration can be migrated to @grails-app/conf/application.yml@ and it will automatically be loaded by Grails without requiring manual configuration merging.
 
-h4. Step 6 - Register ArtefactHandler Definitions
+h4. Step 6 - Update plugin exclusions
+
+Old plugins may have a @pluginExcludes@ property defined that lists the patterns for any files that should not be included in the plugin package. This is normally used to exclude artifacts such as domain classes that are used in the plugin's integration tests. You generally don't want these polluting the target application.
+
+This property is no longer sufficient in Grails 3, and nor can you use source paths. Instead, you must specify patterns that match the paths of the compiled classes. For example, imagine you have some test domain classes in the @grails-app/domain/plugin/tests@ directory. You should first change the @pluginExcludes@ value to
+
+{code}
+def pluginExcludes = ["plugin/test/**"]
+{code}
+
+and then add this block to the build file:
+
+{code}
+jar {
+    exclude "plugin/test/**"
+}
+{code}
+
+The easiest way to ensure these patterns work effectively is to put all your non-packaged class into a distinct Java package so that there is a clean separation between the main plugin classes and the rest.
+
+h4. Step 7 - Register ArtefactHandler Definitions
 
 In Grails 3.x [ArtefactHandler|api:grails.core.ArtefactHandler] definitions written in Java need to be declared in a file called @src/main/resources/META-INF/grails.factories@ since these need to be known at compile time.
 
@@ -79,7 +99,7 @@ The Quartz plugin requires the following definition to register the @ArtrefactHa
 grails.core.ArtefactHandler=grails.plugins.quartz.JobArtefactHandler
 {code}
 
-h4. Step 7 - Migrate Code Generation Scripts
+h4. Step 8 - Migrate Code Generation Scripts
 
 Many plugins previously defined command line scripts in Gant. In Grails 3.x command line scripts have been replaced by two new features: Code generation scripts and Gradle tasks.
 
