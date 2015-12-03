@@ -2,9 +2,26 @@ Generally to upgrade an application from Grails 3.0 you can simply modify the ve
 
 There are however some differences to Grails 3.0.x that are documented below.
 
+h4. Hibernate Plugin
+
+For the GORM 5 release the @hibernate@ plugin has been renamed to @hibernate4@ (and there are @hibernate3@ and @hibernate5@ versions too). You should change your @build.gradle@ to reflect that:
+
+{code}
+compile 'org.grails.plugins:hibernate4'
+{code}
+
 h4. Spring Boot 1.3 and Spring 4.2
 
 Grails 3.1 ships with upgraded third party libraries that may require changes. See the [Spring Boot upgrade notes|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.3-Release-Notes] for information.
+
+Unlike Spring Boot 1.2, Spring Boot 1.3 no longer uses the [Gradle Application Plugin|https://docs.gradle.org/current/userguide/application_plugin.html] so if you relied on any behavior the application plugin then the plugin will need to be re-applied to your @build.gradle@.
+
+Spring Boot 1.3 also uses Spring Security 4.x by default, so if you project depends on Spring Security 3.x you have to force a downgrade. For example:
+
+{code}
+compile 'org.springframework.security:spring-security-core:3.2.9.RELEASE'
+compile 'org.springframework.security:spring-security-web:3.2.9.RELEASE'
+{code}
 
 h4. Resource annotation defaults to JSON instead of XML
 
