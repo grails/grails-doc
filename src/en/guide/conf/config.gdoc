@@ -35,6 +35,28 @@ class MyController {
 
 The @config@ property of the @grailsApplication@ object is an instance of the [Config|api:grails.config.Config] interface and provides a number of useful methods to read the configuration of the application.
 
+In particular, the @getProperty@ method (seen above) is useful for efficiently retrieving configuration properties, while specifying the property type (the default type is String) and/or providing a default fallback value.
+
+{code}
+class MyController {
+
+    def hello(Recipient recipient) {
+        //Retrieve Integer property 'foo.bar.max.hellos', otherwise use value of 5
+        def max = grailsApplication.config.getProperty('foo.bar.max.hellos', Integer, 5)
+
+        //Retrieve property 'foo.bar.greeting' without specifying type (default is String), otherwise use value "Hello"
+        def greeting = grailsApplication.config.getProperty('foo.bar.greeting', "Hello")
+
+        def message = (recipient.receivedHelloCount >= max) ?
+          "Sorry, you've been greeted the max number of times" :  "${greeting}, ${recipient}"
+        }
+
+        render message
+    }
+}
+{code}
+
+
 Notice that the @Config@ instance is a merged configuration based on Spring's [PropertySource|api:org.springframework.context.annotation.PropertySource] concept and reads configuration from the environment, system properties and the local application configuration merging them into a single object.
 
 @GrailsApplication@ can be easily injected into services and other Grails artifacts:
