@@ -1,0 +1,31 @@
+If you are using the REST of AngularJS profiles then the JSON views plugin will already be included and you can skip the remainder of this section. Otherwise you will need to modify your @build.gradle@ to include the necessary plugin to activate JSON views:
+
+{code}
+compile 'org.grails.plugins:views-json:1.0.0' // or whatever is the latest version
+{code}
+
+{note}
+Tip: The [source code repository for JSON views|https://github.com/grails/grails-views] can be found on Github if you are looking for more documentation and contributions
+{note}
+
+In order to compile JSON views for production deployment you should also activate the Gradle plugin by first modifying the @buildscript@ block:
+
+{code}
+buildscript {
+    ...
+    dependencies {
+        ...
+        classpath "org.grails.plugins:views-gradle:1.0.0.M1"
+    }
+}
+{code}
+
+Then apply the @org.grails.plugins.views-json@ Gradle plugin after any Grails core gradle plugins:
+
+{code}
+...
+apply plugin: "org.grails.grails-web"
+apply plugin: "org.grails.plugins.views-json"
+{code}
+
+This will add a compileGsonViews task to Gradle, which is invoked prior to creating the production JAR or WAR file.
