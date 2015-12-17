@@ -2,25 +2,40 @@ h3. Default Declarative Transactions
 
 Services are typically involved with coordinating logic between [domain classes|guide:GORM], and hence often involved with persistence that spans large operations. Given the nature of services, they frequently require transactional behaviour. You can use programmatic transactions with the [withTransaction|domainClasses] method, however this is repetitive and doesn't fully leverage the power of Spring's underlying transaction abstraction.
 
-Services enable transaction demarcation, which is a declarative way of defining which methods are to be made transactional. All services are transactional by default. To disable this set the @transactional@ property to @false@:
+Services enable transaction demarcation, which is a declarative way of defining which methods are to be made transactional. To enable transactions on a service use the @Transactional@ transform:
 
 {code:java}
+import grails.transaction.*
+
+@Transactional
 class CountryService {
-    static transactional = false
+    
 }
 {code}
-
-You may also set this property to @true@ to make it clear that the service is intentionally transactional.
-
-{warning}
-Warning: [dependency injection|guide:dependencyInjectionServices] is the *only* way that declarative transactions work. You will not get a transactional service if you use the @new@ operator such as @new BookService()@
-{warning}
 
 The result is that all methods are wrapped in a transaction and automatic rollback occurs if a method throws a runtime exception (i.e. one that extends @RuntimeException@) or an @Error@. The propagation level of the transaction is by default set to [PROPAGATION_REQUIRED|http://static.springsource.org/spring/docs/3.0.x/javadoc-api/org/springframework/transaction/TransactionDefinition.html#PROPAGATION_REQUIRED].
 
 {warning}
 Checked exceptions do *not* roll back transactions. Even though Groovy blurs the distinction between checked and unchecked exceptions, Spring isn't aware of this and its default behaviour is used, so it's important to understand the distinction between checked and unchecked exceptions.
 {warning}
+
+{warning}
+Warning: [dependency injection|guide:dependencyInjectionServices] is the *only* way that declarative transactions work. You will not get a transactional service if you use the @new@ operator such as @new BookService()@
+{warning}
+
+
+h4. The Transactional annotation vs the transactional property
+
+In previous versions of Grails prior to Grails 3.1, Grails created Spring proxies and used the @transactional@ property. These proxies are disabled by default in Grails 3.1 and above in favour of the transformation.
+
+If you wish to renable this feature then you must set @grails.spring.transactionManagement@ to true in @grails-app/conf/application.yml@ or @grails-app/conf/application.groovy@
+
+{note}
+In addition, prior to Grails 3.1 services were transactional by default, as of Grails 3.1 they are only transactional if the @\@Transactional@ transformation is applied.
+{note}
+
+You may also set this property to @true@ to make it clear that the service is intentionally transactional.
+
 
 h3. Custom Transaction Configuration
 
@@ -37,7 +52,7 @@ Annotating a service method with @Transactional@ disables the default Grails tra
 In this example @listBooks@ uses a read-only transaction, @updateBook@ uses a default read-write transaction, and @deleteBook@ is not transactional (probably not a good idea given its name).
 
 {code}
-import org.springframework.transaction.annotation.Transactional
+import grails.transaction.Transactional
 
 class BookService {
 
@@ -60,7 +75,7 @@ class BookService {
 You can also annotate the class to define the default transaction behavior for the whole service, and then override that default per-method. For example, this service is equivalent to one that has no annotations (since the default is implicitly @transactional=true@):
 
 {code}
-import org.springframework.transaction.annotation.Transactional
+import grails.transaction.Transactional
 
 @Transactional
 class BookService {
@@ -82,7 +97,7 @@ class BookService {
 This version defaults to all methods being read-write transactional (due to the class-level annotation), but the @listBooks@ method overrides this to use a read-only transaction:
 
 {code}
-import org.springframework.transaction.annotation.Transactional
+import grails.transaction.Transactional
 
 @Transactional
 class BookService {
@@ -104,6 +119,6 @@ class BookService {
 
 Although @updateBook@ and @deleteBook@ aren't annotated in this example, they inherit the configuration from the class-level annotation.
 
-For more information refer to the section of the Spring user guide on [Using \@Transactional|http://static.springsource.org/spring/docs/3.0.x/spring-framework-reference/html/transaction.html#transaction-declarative-annotations].
+For more information refer to the section of the Spring user guide on [Using \@Transactional|http://docs.spring.io/spring/docs/current/spring-framework-reference/html/transaction.html#transaction-declarative-annotations].
 
 Unlike Spring you do not need any prior configuration to use @Transactional@; just specify the annotation as needed and Grails will detect them up automatically.
