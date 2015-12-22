@@ -2,6 +2,19 @@ Generally to upgrade an application from Grails 3.0 you can simply modify the ve
 
 There are however some differences to Grails 3.0.x that are documented below.
 
+h4. GORM 5 Upgrade
+
+Grails 3.1 ships with GORM 5, which is a near complete rewrite of GORM ontop of Groovy traits and is not binary compatible with the previous version of GORM.
+
+If you receive an error such as:
+
+{code}
+Caused by: java.lang.ClassNotFoundException: org.grails.datastore.gorm.GormEntity$Trait$FieldHelper
+    ... 8 more
+{code}
+
+You are using a plugin or class that was compiled with a previous version of GORM and these will need to be recompiled to be Grails 3.1 and GORM 5 compatible.
+
 h4. Hibernate Plugin
 
 For the GORM 5 release the @hibernate@ plugin has been renamed to @hibernate4@ (and there are @hibernate3@ and @hibernate5@ versions too). You should change your @build.gradle@ to reflect that:
