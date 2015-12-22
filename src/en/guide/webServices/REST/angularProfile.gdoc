@@ -1,0 +1,73 @@
+Since Grails 3.1, Grails supports a profile for creating applications with AngularJS that provides a more focused set of dependencies and commands. The angular profile inherits from the REST profile and therefore has all of the commands and properties that the REST profile has.
+
+To get started with the Angular profile create an application with by specifying @angular@ as the name of the profile:
+
+{code}
+$ grails create-app my-api --profile angular
+{code}
+
+This will create a new Grails application that provides the following features:
+
+* Default set of commands for creating Angular artefacts
+* Gradle plugin to manage client side dependencies
+* Gradle plugin to execute client side unit tests
+* Asset Pipeline plugins to ease development
+
+By default the Angular profile includes GSP support in order to render the index page. This is necessary because the profile is designed around asset pipeline.
+
+The new commands are:
+
+* @create-ng-component@
+* @create-ng-controller@
+* @create-ng-directive@
+* @create-ng-domain@
+* @create-ng-module@
+* @create-ng-service@
+
+
+h4. Project structure
+
+The Angular profile is designed around a specific project structure. The @create-ng@ commands will automatically create modules where they do not exist.
+
+Example:
+{code}
+$ grails create-ng-controller foo
+{code}
+
+This will produce a fooController.js file in @grails-app/assets/javascripts/${default package name}/controllers@.
+
+{code}
+$ grails create-ng-domain foo.bar
+{code}
+
+This will produce a Bar.js file in @grails-app/assets/javascripts/foo/domains@. It will also create the "foo" module if it does not already exist.
+
+{code}
+$ grails create-ng-service foo.bar --type constant
+{code}
+
+This will produce a bar.js file in @grails-app/assets/javascripts/foo/services@. It will also create the "foo" module if it does not already exist. The @create-ng-service@ command accepts a flag @-type@. The types that can be used are:
+
+* service
+* factory _default_
+* value
+* provider
+* constant
+
+Along with the artefacts themselves, the profile will also produce a skeleton unit test file under @src/test/assets@ for each create command
+
+h4. Client side dependencies
+
+The [Gradle Bower Plugin|https://github.com/craigburke/bower-installer-gradle/] is used to manage dependencies with bower. Visit the plugin documentation to learn how to use the plugin.
+
+h4. Unit Testing
+
+The [Gradle Karma Plugin|https://github.com/craigburke/karma-gradle] is used to execute client side unit tests. All generated tests are written with Jasmine. Visit the plugin documentation to learn how to use the plugin.
+
+h4. Asset Pipeline
+
+The Angular profile includes several asset pipeline plugins to make development easier.
+
+* [JS Closure Wrap Asset Pipeline|https://github.com/craigburke/js-closure-wrap-asset-pipeline] will wrap your Angular code in immediately invoked function expressions.
+* [Annotate Asset Pipeline|https://github.com/craigburke/angular-annotate-asset-pipeline] will annotate your dependencies to be safe for minification.
+* [Template Asset Pipeline|https://github.com/craigburke/angular-template-asset-pipeline] will put your templates into the @$templateCache@ to prevent http requests to retrieve the templates.

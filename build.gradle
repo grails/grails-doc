@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: "base"
 
 version = project.getProperty("grails.version")
@@ -62,7 +64,12 @@ fetchGrailsSource.onlyIf {
 }
 
 task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
-    commandLine = ["./gradlew", "groovydoc", '--info', '--stacktrace']
+    String command = "./gradlew"
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        command = "gradlew.bat"
+    }
+
+    commandLine = [command, "groovydoc", '--info', '--stacktrace']
     workingDir = grailsHome
     environment "GRADLE_OPTS", "-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
 }
