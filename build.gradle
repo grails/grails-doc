@@ -44,9 +44,17 @@ task fetchGrailsSource << {
             "by setting the grails.home system property to point to your local " +
             "copy of the source. See README.md for more information."
 
-    def zipFile = "${checkOutDir}/grails-src.zip"
-    ant.get src: "http://github.com/grails/grails-core/zipball/${githubBranch}", dest: zipFile, verbose: true
 
+    def zipFile = "${checkOutDir}/grails-src.zip"
+
+    def tag = System.getenv('TRAVIS_TAG')
+    if(tag) {
+        ant.get src: "https://github.com/grails/grails-core/archive/${tag}.zip", dest: zipFile, verbose: true
+    }
+    else {
+        ant.get src: "http://github.com/grails/grails-core/zipball/${githubBranch}"
+    }
+    
     ant.unzip src: zipFile, dest: checkOutDir, {
         mapper type: "regexp", from: "(grails-grails-core-\\S*?/)(.*)", to: "grails-src/\\2"
     }
