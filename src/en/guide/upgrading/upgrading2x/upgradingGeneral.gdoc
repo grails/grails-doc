@@ -1,0 +1,86 @@
+There are other miscellaneous changes between Grails 2.x and Grails 3.x that it will help to be aware of when migrating your applications and plugins. Minor changes may be required if any of the below apply.
+
+h4. Domain classes
+
+The [Constraints|guide:constraints] section of a [Domain Class|guide:domainClasses] (or other validateable object) looks like this:
+{code}
+static constraints = {
+  name nullable: true, blank: false
+  myField nullable: true
+  another unique: true
+}
+{code}
+
+In Grails 2.x you could declare a property in the [Constraints|guide:constraints] block with no constraints. (You might list all of your fields within the constraints block, and over time add and remove constraints from these. Some fields could have no constraints.)
+
+Fields declared in the @constraints { ... }@ block having no arguments are not allowed in Grails 3.x. (These are considered to be configuration DSL method calls, not fields.)
+
+Example from Grails 2.x (NB. the following syntax is *no longer* supported):
+{code}
+static constraints = {
+  name nullable: true, blank: false
+  mySimpleProperty()                  // <- This property
+  anotherProperty unique: true
+}
+{code}
+
+@mySimpleProperty()@ in the above example works in Grails 2.x but will not work in Grails 3.x.
+
+Either *do not declare the property within the constraints block* (if there are no constraints to specify for it), or alternatively, if you want to keep the entry, then change your declaration to *declare an empty map argument*:
+
+Example for Grails 3.x:
+{code}
+static constraints = {
+  mySimpleProperty [:]                // <- Declare an empty map argument instead of ()
+}
+{code}
+
+If such declarations have not yet been changed then a log message like this emits on startup:
+{code}
+ORM Mapping Invalid: Specified config option [mySimpleProperty] does not exist for class [example.MyDomainClass]
+{code}
+
+h4. Multi-project builds (Grails 2.x inline plugins)
+
+If your application has internal plugins or other projects on which it depends (perhaps that change frequently during development) then it might be a good idea to structure your project as a Gradle *multi-project build*. (This concept also replaces the 'inline plugins' strategy for including project dependencies or plugins in builds, that existed in Grails 2.x.) IDEs with Gradle support can import multi-project builds.
+
+It might be during the Grails 2.x to 3.x migration that you decide you need or want to use a multi-project build for your Grails project.
+
+Sample multi-project structure:
+
+{code:java}
++ example
+    + example-app   <-- Main app
+    + example-core  <-- Shared code plugin
+    + example-ast   <-- AST transformations plugin 
+{code}
+
+How to configure this is documented in the [Plugins|guide:plugins] section under the heading 'Inline Plugins in Grails 3.0'.
+
+h4. Migrating from Grails 2.x to Grails 3.1+
+
+During the progress of migrating code from Grails 2.4 to Grails 3.1+ you will be migrating to GORM 5 or higher and other newer framework library versions, so you could encounter some of the differences mentioned in the section [Upgrading from Grails 3.0|guide:upgrading3x] with your application or with migrated plugins. It is advisable to also familiarise yourself with that section.
+
+h4. AST Transformations
+
+If your application contains AST transformations, please be aware that, for these to be applied to your application code, they must now be contained *within a plugin*. (In Grails 2.x it was possible to pre-compile AST transformations and apply them within your application by hooking into compile events in @_Events.groovy@. This is no longer supported. Move your AST Transform and any associated annotations into a plugin for this purpose.)
+
+There are two AST patterns on which you can base migration of your AST transformer code:
+
+* Groovy way: Use Groovy AST transformation annotations.
+* Grails way: Use Grails AST transformer annotations.
+
+h5. Groovy AST transformations
+
+* Import @org.codehaus.groovy.transform.GroovyASTTransformation@
+* Annotate your transformation class with @GroovyASTTransformation(phase=CompilePhase.CANONICALIZATION)@
+* A useful example app can be found here: https://github.com/jeffbrown/grails3ast
+
+h5. Grails AST transformations
+
+* Import @grails.compiler.ast.AstTransformer@
+* Annotate your transformation class with @AstTransformer@
+* Implement applicable interfaces, particularly if you are transforming Artefacts, e.g. @implements GrailsArtefactClassInjector, AnnotatedClassInjector@
+* Your Transformer class must reside in a package under *org.grails.compiler*, otherwise it will not be detected. Example: *org.grails.compiler.myapp*
+* Examples can be found in the Grails source code
+* Example reference: https://github.com/grails/grails-core/blob/master/grails-plugin-controllers/src/main/groovy/org/grails/compiler/web/ControllerActionTransformer.java
