@@ -88,6 +88,87 @@ compile "org.grails.plugins:quartz:0.1"
 In Grails 2.x plugins were packaged as ZIP files, however in Grails 3.x plugins are simple JAR files that can be added to the classpath of the IDE.
 {note}
 
+
+h4. Plugins and Multi-Project Builds
+
+If you wish to setup a plugin as part of a multi project build then follow these steps.
+
+*Step 1: Create the application and the plugin*
+
+Using the @grails@ command create an application and a plugin:
+
+{code}
+$ grails create-app myapp
+$ grails create-app myplugin
+{code}
+
+*Step 2: Create a settings.gradle file*
+
+In the same directory create a @settings.gradle@ file with the following contents:
+
+{code} 
+include "myapp", "myplugin"
+{code} 
+
+The directory structure should be as follows:
+
+{code} 
+PROJECT_DIR
+  - settings.gradle
+  - myapp
+    - build.gradle
+  - myplugin
+    - build.gradle
+{code} 
+
+*Step 3: Declare a project dependency on the plugin* 
+
+Within the @build.gradle@ of the application declare a dependency on the plugin within the @plugins@ block:
+
+{code}
+grails {
+    plugins {
+        compile project(':myplugin')
+    }
+}
+{code} 
+
+{note}
+You can also declare the dependency within the @dependencies@ block, however you will not get subproject reloading if you do this!
+{note}
+
+*Step 4: Run the application*
+
+Now run the application using the @grails run-app@ command from the root of the application directory, you can use the @verbose@ flag to see the Gradle output:
+
+{code}
+$ cd myapp
+$ grails run-app -verbose
+{code}
+
+You will notice from the Gradle output that plugins sources are built and placed on the classpath of your application:
+
+{code}
+:myplugin:compileAstJava UP-TO-DATE
+:myplugin:compileAstGroovy UP-TO-DATE
+:myplugin:processAstResources UP-TO-DATE
+:myplugin:astClasses UP-TO-DATE
+:myplugin:compileJava UP-TO-DATE
+:myplugin:configScript UP-TO-DATE
+:myplugin:compileGroovy
+:myplugin:copyAssets UP-TO-DATE
+:myplugin:copyCommands UP-TO-DATE
+:myplugin:copyTemplates UP-TO-DATE
+:myplugin:processResources
+:myapp:compileJava UP-TO-DATE
+:myapp:compileGroovy
+:myapp:processResources UP-TO-DATE
+:myapp:classes
+:myapp:findMainClass
+:myapp:bootRun
+Grails application running at http://localhost:8080 in environment: development
+{code}
+
 h4. Notes on excluded Artefacts
 
 Although the [create-plugin|commandLine] command creates certain files for you so that the plugin can be run as a Grails application, not all of these files are included when packaging a plugin. The following is a list of artefacts created, but not included by [package-plugin|commandLine]:
