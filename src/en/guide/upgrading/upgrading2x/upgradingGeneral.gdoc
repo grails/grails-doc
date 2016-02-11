@@ -57,7 +57,7 @@ During the progress of migrating code from Grails 2.4 to Grails 3.1+, your proje
 
 h4. AST Transformations
 
-If your application contains AST transformations, please be aware that for these to be applied to your application code, they must now be contained *within a plugin*. (In Grails 2.x it was possible to pre-compile AST transformations then apply them to your application code by hooking into compile events in @_Events.groovy@. This is no longer supported. Move your AST Transformation classes and associated annotations into a plugin for this purpose.)
+If your application contains AST transformations, please be aware that for these to be applied to your application code, they must now be contained *within a plugin*. (In Grails 2.x it was possible to pre-compile AST transformations then apply them to your application code by hooking into compile events in @_Events.groovy@. This is no longer possible. Move your AST Transformation classes and associated annotations into a plugin for this purpose.)
 
 There are two AST patterns on which you can base migration of your AST transformer code:
 
@@ -91,22 +91,22 @@ Refer to the [Deployment guide|guide:deployingAnApplication] for further details
 
 h4. Multiple datasources
 
-If your application uses multiple datasources, then be aware that the way these are declared in @application.yml@ or @application.groovy@ (previously in @DataSources.groovy@) has changed.
+If your application uses multiple datasources, then be aware that the way these are declared in @application.yml@ or @application.groovy@ (previously @DataSources.groovy@) has changed.
 
-If there is more than one DataSource in an application, there is now a @dataSources { ... }@ configuration section to contain them. Previously multiple dataSource declarations with an underscore and suffix were used, e.g. @dataSource_lookup { ... }@.
+If there is more than one DataSource in an application there is now a @dataSources { ... }@ configuration block to contain them all. Previously, multiple @dataSource@ declarations were used, with an underscore and suffix on the additional datasources, e.g. @dataSource_lookup { ... }@.
 
-Please refer to the current examples in the user guide section on [Multiple Datasources|guide:multipleDatasources].
+Please refer to the user guide section on [Multiple Datasources|guide:multipleDatasources] for examples.
 
 h4. Improvements to dependency injection
 
-In your Grails 2.x app you may have used Spring @\@Autowired@ in a few situations, such as dependency injection into certain base classes, and for typed field dependency injection. Example:
+In your Grails 2.x app you may have used Spring @\@Autowired@ in a few situations, such as dependency injection into certain base classes, and for typed field dependency injection. For example:
 
 {code}
 @Autowired
 org.quartz.Scheduler quartzScheduler
 {code}
 
-Grails now has support for dependency injection into typed fields in addition to traditional untyped @def@ fields, following the usual Grails conventions of field name matching bean property name. Example:
+Grails now has support for dependency injection into typed fields in addition to untyped @def@ fields, following the usual Grails conventions of field name matching the bean property name. Example:
 
 {code}
 GrailsApplication grailsApplication
