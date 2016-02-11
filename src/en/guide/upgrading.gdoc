@@ -31,13 +31,15 @@ The location of certain files have changed or been replaced with other files in 
 @grails-app/conf/BootStrap.groovy@ | @grails-app/init/BootStrap.groovy@ | Moved since grails-app/conf is not a source directory anymore
 @scripts@ | @src/main/scripts@ | Moved for consistency with Gradle
 @src/groovy@ | @src/main/groovy@ | Moved for consistency with Gradle
-@src/java@ | @src/main/groovy@ | Moved for consistency with Gradle
+@src/java@ | @src/main/groovy@ (yes, groovy!) | Moved for consistency with Gradle
 @test/unit@ | @src/test/groovy@ | Moved for consistency with Gradle
 @test/integration@ | @src/integration-test/groovy@ | Moved for consistency with Gradle
 @web-app@ | @src/main/webapp@ or @src/main/resources/@ | Moved for consistency with Gradle 
 @\*GrailsPlugin.groovy@ | @src/main/groovy@ | The plugin descriptor moved to a source directory
 {table}
 
+It is recommended to merge any code in @src/java@ into the Groovy code in @src/main/groovy@. (Cross-compilation works well and grouping all of the source together usually makes sense.) You can create a @src/main/java@ directory if you want to and it will be used but there is not much benefit in separating Groovy and Java source (with the Java source being compiled before the Groovy).
+   
 @src/main/resources/public@ is recommended as @src/main/webapp@ only gets included in WAR packaging but not in JAR packaging.
 
 For plugins the plugin descriptor (a Groovy file ending with "GrailsPlugin") which was previously located in the root of the plugin directory should be moved to the @src/main/groovy@ directory under an appropriate package.
