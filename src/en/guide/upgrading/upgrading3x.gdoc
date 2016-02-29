@@ -142,6 +142,17 @@ compile 'org.springframework.security:spring-security-core:3.2.9.RELEASE'
 compile 'org.springframework.security:spring-security-web:3.2.9.RELEASE'
 {code}
 
+h4. Gradle @run@ task no longer available by default
+
+Because the Gradle @run@ task for application startup was provided by the [Gradle Application Plugin|https://docs.gradle.org/current/userguide/application_plugin.html] (see above), it is no longer available by default. If you use Gradle to start up your application, use the @bootRun@ task instead, or re-apply the Application plugin in your @build.gradle@.
+
+Note: If you don't have need of the Gradle Application plugin's features, but have custom Gradle tasks or IDE configurations that depend on @run@, you can supply your own @run@ task that depends on @bootRun@ in your @build.gradle@:
+
+{code}
+task run(dependsOn: ['bootRun'])
+{code}
+
+
 h4. Resource annotation defaults to JSON instead of XML
 
 The [Resource|api:grails.rest.Resource] annotation applied to domain classes defaults to XML in Grails 3.0.x, but in Grails 3.1.x and above it defaults to JSON.
