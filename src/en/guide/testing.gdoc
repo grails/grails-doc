@@ -96,54 +96,50 @@ This will run the @testLogin@ test in the @SimpleController@ tests. You can spec
 grails test-app some.org.* SimpleController.testLogin BookController
 {code}
 
-h4. Targeting Test Types and/or Phases
-
-In addition to targeting certain tests, you can also target test _types_ and/or _phases_ by using the @phase:type@ syntax.
-
 {note}
-Grails organises tests by phase and by type. A test phase relates to the state of the Grails application during the tests, and the type relates to the testing mechanism.
-
-Grails comes with support for 4 test phases (@unit@, @integration@, @functional@ and @other@) and JUnit test types for the @unit@ and @integration@ phases. These test types have the same name as the phase.
-
-Testing plugins may provide new test phases or new test types for existing phases. Refer to the plugin documentation.
+In Grails 2.x, adding @-rerun@ as an argument would only run those tests which failed in the previous test-app run. This argument is no longer supported.
 {note}
 
-To execute the JUnit @integration@ tests you can run:
+h4. Debugging
+
+In order to debug your tests via a remote debugger, you can add @--debug-jvm@ after @grails@ in any commands, like so:
 
 {code}
-grails test-app integration:integration
+grails --debug-jvm test-app
 {code}
 
-Both @phase@ and @type@ are optional. Their absence acts as a wildcard. The following command will run all test types in the @unit@ phase:
+This will open the default Java remote debugging port, 5005, for you to attach a remote debugger from your editor / IDE of choice.
+
+{note}
+This differs from Grails 2.3 and previous, where the @grails-debug@ command existed.
+{note}
+
+h4. Targeting Test Phases
+
+In addition to targeting certain tests, you can also target test _phases._ By default Grails has two testing phases @unit@ and @integration.@
+
+{note}
+Grails 2.x uses @phase:type@ syntax. In Grails 3.0 it was removed, because it made no sense in Gradle context.
+{note}
+
+To execute @unit@ tests you can run:
 
 {code}
-grails test-app unit:
+grails test-app -unit
 {code}
 
-The Grails [Spock Plugin|http://grails.org/plugin/spock] is one plugin that adds new test types to Grails. It adds a @spock@ test type to the @unit@, @integration@ and @functional@ phases. To run all spock tests in all phases you would run the following:
+To run @integration@ tests you would run...
 
 {code}
-grails test-app :spock
+grails test-app -integration
 {code}
 
-To run the all of the spock tests in the @functional@ phase you would run...
+h4. Targeting Tests When Using Phases
+
+Test and phase targeting can be applied at the same time:
 
 {code}
-grails test-app functional:spock
+grails test-app some.org.**.* -unit
 {code}
 
-More than one pattern can be specified...
-
-{code}
-grails test-app unit:spock integration:spock
-{code}
-
-h4. Targeting Tests in Types and/or Phases
-
-Test and type/phase targetting can be applied at the same time:
-
-{code}
-grails test-app integration: unit: some.org.**.*
-{code}
-
-This would run all tests in the @integration@ and @unit@ phases that are in the package @some.org@ or a subpackage.
+This would run all tests in the @unit@ phase that are in the package @some.org@ or a subpackage.

@@ -26,7 +26,7 @@ You can try it out by adding some test data to @BootStrap.groovy@:
     }
 {code}
 
-And then hitting the URL http://localhost:8080/myapp/books/1, which will render the response like:
+And then hitting the URL http://localhost:8080/books/1, which will render the response like:
 
 {code}
 <?xml version="1.0" encoding="UTF-8"?>
@@ -35,7 +35,7 @@ And then hitting the URL http://localhost:8080/myapp/books/1, which will render 
 </book>
 {code}
 
-If you change the URL to @http://localhost:8080/myapp/books/1.json@ you will get a JSON response such as:
+If you change the URL to @http://localhost:8080/books/1.json@ you will get a JSON response such as:
 
 
 {code}
@@ -53,7 +53,7 @@ class Book {
 }
 {code}
 
-With the above example JSON will be prioritized. The list that is passed should contain the names of the formats that the resource should expose. The names of formats are defined in the @grails.mime.types@ setting of @Config.groovy@:
+With the above example JSON will be prioritized. The list that is passed should contain the names of the formats that the resource should expose. The names of formats are defined in the @grails.mime.types@ setting of @application.groovy@:
 
 {code}
 grails.mime.types = [
@@ -69,7 +69,7 @@ See the section on [Configuring Mime Types|guide:contentNegotiation] in the user
 Instead of using the file extension in the URI, you can also obtain a JSON response using the ACCEPT header. Here's an example using the Unix @curl@ tool:
 
 {code}
-$ curl -i -H "Accept: application/json" localhost:8080/myapp/books/1
+$ curl -i -H "Accept: application/json" localhost:8080/books/1
 {"id":1,"title":"The Stand"}
 {code}
 
@@ -78,7 +78,7 @@ This works thanks to Grails' [Content Negotiation|guide:contentNegotiation] feat
 You can create a new resource by issuing a @POST@ request:
 
 {code}
-$ curl -i -X POST -H "Content-Type: application/json" -d '{"title":"Along Came A Spider"}' localhost:8080/myapp/books
+$ curl -i -X POST -H "Content-Type: application/json" -d '{"title":"Along Came A Spider"}' localhost:8080/books
 HTTP/1.1 201 Created
 Server: Apache-Coyote/1.1
 ...
@@ -87,7 +87,7 @@ Server: Apache-Coyote/1.1
 Updating can be done with a @PUT@ request:
 
 {code}
-$ curl -i -X PUT -H "Content-Type: application/json" -d '{"title":"Along Came A Spider"}' localhost:8080/myapp/books/1
+$ curl -i -X PUT -H "Content-Type: application/json" -d '{"title":"Along Came A Spider"}' localhost:8080/books/1
 HTTP/1.1 200 OK
 Server: Apache-Coyote/1.1
 ...
@@ -96,7 +96,7 @@ Server: Apache-Coyote/1.1
 Finally a resource can be deleted with @DELETE@ request:
 
 {code}
-$ curl -i -X DELETE localhost:8080/myapp/books/1
+$ curl -i -X DELETE localhost:8080/books/1
 HTTP/1.1 204 No Content
 Server: Apache-Coyote/1.1
 ...

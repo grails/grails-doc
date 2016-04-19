@@ -1,0 +1,62 @@
+h1. create-command
+
+h2. Purpose
+
+The @create-command@ command creates a new Grails Gradle task and shell command that can be run with the @grails@ command from a terminal window.
+
+h2. Examples
+
+The command:
+
+{code:java}
+grails create-command MyExample
+{code}
+
+Creates a class called @grails-app/commands/PACKAGE_PATH/MyExampleCommand.groovy@ such as:
+
+{code:java}
+import grails.dev.commands.*
+
+class MyExampleCommand implements ApplicationCommand {
+
+  boolean handle(ExecutionContext ctx) {
+      def dataSource = applicationContext.getBean(DataSource)
+      return true
+  }
+}
+
+{code}
+
+The command can then be run with:
+
+{code:java}
+grails my-example
+{code}
+
+Or as a Gradle task:
+
+{code:java}
+gradle myExample
+{code}
+
+Note that the plugin should be on both the build classpath and the runtime classpath in @build.gradle@:
+
+{code}
+buildscript {
+  ...
+  dependencies {
+    classpath "org.grails.plugins:myplugin:0.1-SNAPSHOT"
+  }
+  ...
+  dependencies {
+    runtime "org.grails.plugins:myplugin:0.1-SNAPSHOT"
+  }
+}
+{code}
+
+
+h2. Description
+
+In order to separate the code generation and build layer, in Grails 3.x scripts created with @create-script@ do not have access to the running application instance.
+
+Instead, Grails 3.x features a new concept called an [ApplicationCommand|api:grails.dev.commands.ApplicationCommand] that is invoked via Gradle to perform tasks such as interact with the database etc.

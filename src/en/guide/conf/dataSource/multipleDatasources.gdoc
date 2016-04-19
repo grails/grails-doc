@@ -2,89 +2,88 @@ By default all domain classes share a single @DataSource@ and a single database,
 
 h4. Configuring Additional DataSources
 
-The default @DataSource@ configuration in @grails-app/conf/DataSource.groovy@ looks something like this:
+The default @DataSource@ configuration in @grails-app/conf/application.yml@ looks something like this:
 
 {code}
-dataSource {
-    pooled = true
-    driverClassName = "org.h2.Driver"
-    username = "sa"
-    password = ""
-}
-hibernate {
-    cache.use_second_level_cache = true
-    cache.use_query_cache = true
-    cache.provider_class = 'net.sf.ehcache.hibernate.EhCacheProvider'
-}
+---
+dataSource:
+    pooled: true
+    jmxExport: true
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
 
-environments {
-    development {
-        dataSource {
-            dbCreate = "create-drop"
-            url = "jdbc:h2:mem:devDb"
-        }
-    }
-    test {
-        dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:mem:testDb"
-        }
-    }
-    production {
-        dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:prodDb"
-        }
-    }
-}
+environments:
+    development:
+        dataSource:
+            dbCreate: create-drop
+            url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+    test:
+        dataSource:
+            dbCreate: update
+            url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+    production:
+        dataSource:
+            dbCreate: update
+            url: jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+            properties:
+               jmxEnabled: true
+               initialSize: 5
 {code}
 
-This configures a single @DataSource@ with the Spring bean named @dataSource@. To configure extra @DataSource@s, add another @dataSource@ block (at the top level, in an environment block, or both, just like the standard @DataSource@ definition) with a custom name, separated by an underscore. For example, this configuration adds a second @DataSource@, using MySQL in the development environment and Oracle in production:
+This configures a single @DataSource@ with the Spring bean named @dataSource@. To configure extra @DataSource@s, add a @dataSources@ block (at the top level, in an environment block, or both, just like the standard @DataSource@ definition) with a custom name. For example, this configuration adds a second @DataSource@, using MySQL in the development environment and Oracle in production:
 
 {code}
-environments {
-    development {
-        dataSource {
-            dbCreate = "create-drop"
-            url = "jdbc:h2:mem:devDb"
-        }
-        dataSource_lookup {
-            dialect = org.hibernate.dialect.MySQLInnoDBDialect
-            driverClassName = 'com.mysql.jdbc.Driver'
-            username = 'lookup'
-            password = 'secret'
-            url = 'jdbc:mysql://localhost/lookup'
-            dbCreate = 'update'
-        }
-    }
-    test {
-        dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:mem:testDb"
-        }
-    }
-    production {
-        dataSource {
-            dbCreate = "update"
-            url = "jdbc:h2:prodDb"
-        }
-        dataSource_lookup {
-            dialect = org.hibernate.dialect.Oracle10gDialect
-            driverClassName = 'oracle.jdbc.driver.OracleDriver'
-            username = 'lookup'
-            password = 'secret'
-            url = 'jdbc:oracle:thin:@localhost:1521:lookup'
-            dbCreate = 'update'
-        }
-    }
-}
+---
+dataSources:
+    dataSource:
+        pooled: true
+        jmxExport: true
+        driverClassName: org.h2.Driver
+        username: sa
+        password:
+    lookup:
+        dialect: org.hibernate.dialect.MySQLInnoDBDialect
+        driverClassName: com.mysql.jdbc.Driver
+        username: lookup
+        password: secret
+        url: jdbc:mysql://localhost/lookup
+        dbCreate: update
+
+environments:
+    development:
+        dataSources:
+            dataSource:
+                dbCreate: create-drop
+                url: jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+    test:
+        dataSources:
+            dataSource:
+                dbCreate: update
+                url: jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+    production:
+        dataSources:
+            dataSource:
+                dbCreate: update
+                url: jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE
+                properties:
+                   jmxEnabled: true
+                   initialSize: 5
+                   ...
+            lookup:
+                dialect: org.hibernate.dialect.Oracle10gDialect
+                driverClassName: oracle.jdbc.driver.OracleDriver
+                username: lookup
+                password: secret
+                url: jdbc:oracle:thin:@localhost:1521:lookup
+                dbCreate: update
 {code}
 
 You can use the same or different databases as long as they're supported by Hibernate.
 
 h4. Configuring Domain Classes
 
-If a domain class has no @DataSource@ configuration, it defaults to the standard @'dataSource'@. Set the @datasource@ property in the @mapping@ block to configure a non-default @DataSource@. For example, if you want to use the @ZipCode@ domain to use the @'lookup'@ @DataSource@, configure it like this;
+If a domain class has no @DataSource@ configuration, it defaults to the standard @'dataSource'@. Set the @datasource@ property in the @mapping@ block to configure a non-default @DataSource@. For example, if you want to use the @ZipCode@ domain to use the @'lookup'@ @DataSource@, configure it like this:
 
 {code}
 class ZipCode {
@@ -163,9 +162,9 @@ As you can see, you add the @DataSource@ to the method call in both the static c
 
 h4. Hibernate Mapped Domain Classes
 
-You can also partition annotated Java classes into separate datasources. Classes using the default datasource are registered in @grails-app/conf/hibernate/hibernate.cfg.xml@. To specify that an annotated class uses a non-default datasource, create a @hibernate.cfg.xml@ file for that datasource with the file name prefixed with the datasource name.
+You can also partition annotated Java classes into separate datasources. Classes using the default datasource are registered in @grails-app/conf/hibernate.cfg.xml@. To specify that an annotated class uses a non-default datasource, create a @hibernate.cfg.xml@ file for that datasource with the file name prefixed with the datasource name.
 
-For example if the @Book@ class is in the default datasource, you would register that in @grails-app/conf/hibernate/hibernate.cfg.xml@:
+For example if the @Book@ class is in the default datasource, you would register that in @grails-app/conf/hibernate.cfg.xml@:
 
 {code:xml}
 <?xml version='1.0' encoding='UTF-8'?>
@@ -179,7 +178,7 @@ For example if the @Book@ class is in the default datasource, you would register
 </hibernate-configuration>
 {code}
 
-and if the @Library@ class is in the "ds2" datasource, you would register that in @grails-app/conf/hibernate/ds2_hibernate.cfg.xml@:
+and if the @Library@ class is in the "ds2" datasource, you would register that in @grails-app/conf/ds2_hibernate.cfg.xml@:
 
 {code:xml}
 <?xml version='1.0' encoding='UTF-8'?>

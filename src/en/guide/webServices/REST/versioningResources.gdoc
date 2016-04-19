@@ -40,12 +40,12 @@ As an alternative Grails supports the passing of an @Accept-Version@ header from
 Then in the client simply pass which version you need using the @Accept-Version@ header:
 
 {code}
-$ curl -i -H "Accept-Version: 1.0" -X GET http://localhost:8080/myapp/books
+$ curl -i -H "Accept-Version: 1.0" -X GET http://localhost:8080/books
 {code}
 
 h4. Versioning using Hypermedia / Mime Types
 
-Another approach to versioning is to use Mime Type definitions to declare the version of your custom media types (see the section on "Hypermedia as the Engine of Application State" for more information about Hypermedia concepts). For example, in @Config.groovy@ you can declare a custom Mime Type for your resource that includes a version parameter (the 'v' parameter):
+Another approach to versioning is to use Mime Type definitions to declare the version of your custom media types (see the section on "Hypermedia as the Engine of Application State" for more information about Hypermedia concepts). For example, in @application.groovy@ you can declare a custom Mime Type for your resource that includes a version parameter (the 'v' parameter):
 
 {code}
 grails.mime.types = [
@@ -64,19 +64,27 @@ Then override the renderer (see the section on "Customizing Response Rendering" 
 
 {code}
 import grails.rest.render.json.*
-import org.codehaus.groovy.grails.web.mime.*
+import grails.web.mime.*
 
 beans = {
-    bookRendererV1(JsonRenderer, myapp.v1.Book, new MimeType("application/vnd.books.org.book+json", [v:"1.0"])) 
-    bookRendererV2(JsonRenderer, myapp.v2.Book, new MimeType("application/vnd.books.org.book+json", [v:"2.0"])) 
+    bookRendererV1(JsonRenderer, myapp.v1.Book, new MimeType("application/vnd.books.org.book+json", [v:"1.0"]))
+    bookRendererV2(JsonRenderer, myapp.v2.Book, new MimeType("application/vnd.books.org.book+json", [v:"2.0"]))
 }
 {code}
+
+Then update the list of acceptable response formats in your controller:
+
+{code}
+class BookController extends RestfulController {
+    static responseFormats = ['json', 'xml', 'book', 'bookv2']
+
+    // ...
+}
+{code}
+
 
 Then using the @Accept@ header you can specify which version you need using the Mime Type:
 
 {code}
-$ curl -i -H "Accept: application/vnd.books.org.book+json;v=1.0" -X GET http://localhost:8080/myapp/books
+$ curl -i -H "Accept: application/vnd.books.org.book+json;v=1.0" -X GET http://localhost:8080/books
 {code}
-
-
-

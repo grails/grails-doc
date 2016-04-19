@@ -1,14 +1,16 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: "base"
 
-version = System.getProperty("grails.version") ?: "2.4.4.BUILD-SNAPSHOT"
+version = project.getProperty("grails.version")
 
 archivesBaseName = "grails-docs"
 
 ext.checkOutDir = "${buildDir.path}/checkout"
 ext.outputDir = "${buildDir.path}/docs"
-ext.githubBranch = "2.4.x"
+ext.githubBranch = "3.0.x"
 
-ext.explicitGrailsHome = System.getProperty("grails.home")
+ext.explicitGrailsHome = System.getProperty("grails.home") ?: (project.hasProperty('grails.home') ? project.getProperty("grails.home") : null)
 ext.grailsHome = explicitGrailsHome ? file(explicitGrailsHome).absolutePath : "$checkOutDir/grails-src"
 
 configurations {
@@ -22,9 +24,13 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.grails:grails-docs:2.4.4.BUILD-SNAPSHOT"
-        classpath 'org.codehaus.groovy:groovy-all:2.3.0'
+        classpath "org.grails:grails-docs:3.0.0"
+        classpath 'org.codehaus.groovy:groovy-all:2.4.0'
     }
+}
+
+task buildscriptDependencies(type: DependencyReportTask) {
+    configurations = [buildscript.configurations.classpath]
 }
 
 // use jsoup in PdfBuilder for cleaning input html
@@ -38,24 +44,42 @@ task fetchGrailsSource << {
     println "Downloading Grails source code. If you already have a copy " +
             "of the Grails source code checked out you can avoid this download " +
             "by setting the grails.home system property to point to your local " +
-            "copy of the source. See README.txt for more information."
+            "copy of the source. See README.md for more information."
+
 
     def zipFile = "${checkOutDir}/grails-src.zip"
-    ant.get src: "http://github.com/grails/grails-core/zipball/${githubBranch}", dest: zipFile, verbose: true
 
+    def tag = System.getenv('TRAVIS_TAG')
+    if(tag) {
+        ant.get src: "https://github.com/grails/grails-core/archive/${tag}.zip", dest: zipFile, verbose: true
+    }
+    else {
+        ant.get src: "http://github.com/grails/grails-core/zipball/${githubBranch}", dest: zipFile, verbose: true
+    }
+    
     ant.unzip src: zipFile, dest: checkOutDir, {
         mapper type: "regexp", from: "(grails-grails-core-\\S*?/)(.*)", to: "grails-src/\\2"
     }
 
+    ant.chmod(file:"${checkOutDir}/grails-src/gradlew", perm:700)
+
     println "Grails source code has been downloaded to ${relativePath(grailsHome)}"
 }
 
-fetchGrailsSource.onlyIf { !explicitGrailsHome }
+fetchGrailsSource.onlyIf {
+    println "GRAILS HOME=$explicitGrailsHome"
+    return !explicitGrailsHome
+}
 
-task apiDocs(type: GradleBuild, dependsOn: 'fetchGrailsSource') {
-    tasks = ["groovydoc"]
-    buildFile = "${project.grailsHome}/build.gradle"
-    startParameter.excludedTaskNames = ['compileGroovy', 'compileUaaGroovy', 'compileJsp21Groovy', 'compileAstGroovy', 'jar']
+task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
+    String command = "./gradlew"
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        command = "gradlew.bat"
+    }
+
+    commandLine = [command, "groovydoc", '--info', '--stacktrace']
+    workingDir = grailsHome
+    environment "GRADLE_OPTS", "-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
 }
 
 apiDocs.onlyIf { !System.getProperty("disable.groovydocs") }
@@ -69,50 +93,22 @@ task migrate(type: grails.doc.gradle.MigrateLegacyDocs)
 
 task publishGuide(type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs']) {
     def searchDirs = project.file(project.grailsHome).listFiles().findAll {
-        new File(it, "src/main/groovy/org/codehaus/groovy/grails").exists()
+        new File(it, "src/main/groovy/org/grails").exists()
     }.collect {
-        new File(it, "src/main/groovy/org/codehaus/groovy/grails")
+        new File(it, "src/main/groovy/org/grails")
     }
 
     // No language setting because we want the English guide to be
     // generated with a 'en' in the path, but the source is in 'en'
     // so that it's easy to track with git.
     sourceDir = new File(projectDir, "src/en")
-    propertiesFiles = [ new File(project.grailsHome, "build.properties") ]
+    propertiesFiles = [ new File(projectDir, "gradle.properties") ]
     macros = [ new grails.doc.macros.GspTagSourceMacro(searchDirs) ]
 }
 
 task publishPdf(type: grails.doc.gradle.PublishPdf, dependsOn: ['publishGuide'])
 
-tasks.addRule("Pattern: publishGuide_<lang>") { String taskName ->
-    def m = taskName =~ /publishGuide_(\w+)/
-    if (m) {
-        def lang = m[0][1]
-        task(taskName, type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs']) {
-            language = lang
-        }
-    }
-}
-
-tasks.addRule("Pattern: publishPdf_<lang>") { String taskName ->
-    def m = taskName =~ /publishPdf_(\w+)/
-    if (m) {
-        def lang = m[0][1]
-        task(taskName, type: grails.doc.gradle.PublishPdf, dependsOn: "publishGuide_${lang}") {
-            language = lang
-        }
-    }
-}
-
 task docs(dependsOn: ['publishPdf'])
-
-if (System.getProperty("all.langs")) {
-    for (f in new File(projectDir, "src").listFiles()) {
-        if (f.directory && !(f.name in ["en", "guide", "ref"])) {
-            docs.dependsOn << "publishPdf_${f.name}"
-        }
-    }
-}
 
 task dist(type: Zip, dependsOn: 'docs') {
     from outputDir

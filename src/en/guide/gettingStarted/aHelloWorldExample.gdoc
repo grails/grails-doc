@@ -17,7 +17,7 @@ Don't forget that in the interactive console, we have auto-completion on command
 
 The above command will create a new [controller|guide:controllers] in the @grails-app/controllers/helloworld@ directory called @HelloController.groovy@. Why the extra @helloworld@ directory? Because in Java land, it's strongly recommended that all classes are placed into packages, so Grails defaults to the application name if you don't provide one. The reference page for [create-controller|commandLine] provides more detail on this.
 
-We now have a controller so let's add an action to generate the "Hello World!" page. The code looks like this: 
+We now have a controller so let's add an action to generate the "Hello World!" page. The code looks like this:
 
 {code:java}
 package helloworld
@@ -37,10 +37,19 @@ Job done. To see your application in action, you just need to start up a server 
 bc.
 grails> run-app
 
-This will start an embedded server on port 8080 that hosts your application. You should now be able to access your application at the URL [http://localhost:8080/helloworld/|http://localhost:8080/helloworld/] - try it!
+This will start an embedded server on port 8080 that hosts your application. You should now be able to access your application at the URL [http://localhost:8080/|http://localhost:8080/] - try it!
+
+Note that in previous versions of Grails the context path was by default the name of the application. If you wish to restore this behavior you can configure a context path in @grails-app/conf/application.yml@:
+
+{code}
+server:
+    'contextPath': '/helloworld'
+{code}
+
+With the above configuration in place the server will instead startup at the URL [http://localhost:8080/helloworld/|http://localhost:8080/helloworld/].
 
 {note}
-If you see the error "Server failed to start for port 8080: Address already in use", then it means another server is running on that port. You can easily work around this by running your server on a different port using @-Dserver.port=9090 run-app@. '9090' is just an example: you can pretty much choose anything within the range 1024 to 49151.
+If you see the error "Server failed to start for port 8080: Address already in use", then it means another server is running on that port. You can easily work around this by running your server on a different port using @run-app -port=9090@. '9090' is just an example: you can pretty much choose anything within the range 1024 to 49151.
 {note}
 
 The result will look something like this:
@@ -50,4 +59,3 @@ The result will look something like this:
 This is the Grails intro page which is rendered by the @grails-app/view/index.gsp@ file. It detects the presence of your controllers and provides links to them. You can click on the "HelloController" link to see our custom page containing the text "Hello World!". Voila! You have your first working Grails application.
 
 One final thing: a controller can contain many actions, each of which corresponds to a different page (ignoring AJAX at this point). Each page is accessible via a unique URL that is composed from the controller name and the action name: /<appname>/<controller>/<action>. This means you can access the Hello World page via [/helloworld/hello/index|http://localhost:8080/helloworld/hello/index], where 'hello' is the controller name (remove the 'Controller' suffix from the class name and lower-case the first letter) and 'index' is the action name. But you can also access the page via the same URL without the action name: this is because 'index' is the _default action_. See the end of the [controllers and actions|guide:understandingControllersAndActions] section of the user guide to find out more on default actions.
-

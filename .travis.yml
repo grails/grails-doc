@@ -1,0 +1,25 @@
+script: ./travis-build.sh
+sudo: false
+jdk:
+- openjdk7
+env:
+  global:
+  - GRADLE_OPTS="-server -Xmx1024M -Xms768M -XX:PermSize=256m -XX:MaxPermSize=512m"
+  - GIT_NAME="Graeme Rocher"
+  - GIT_EMAIL="graeme.rocher@gmail.com"
+  - secure: SdGzn2ItEkM0UGzByv/0yXLO7g9iJYmrSIgQ3a1yZXvOerQOLuOwwTZIJ4LUBJpJcQRhiAff1HidN/6fAGAd4mwgoQcX1kKdrRHIl0oG7V7DC9YRytPko/gasQ6aPoR3GBBpLqx8hIjGYbVKIrPWgMSRRA7DSvbzI5XlOgAX1Dg=
+  - secure: R9aL92lh09LniCTbiZuuikiWHXL4ik/DDAKe7NLanqpI126vs5Y9zd56JifgN8Mp7sEbwlaM4RzFXpgkdl57FZqdDzC04ljeqy9Z4CmGthUCF2o2exV98HFWxrL6J18OH5zVSBtZJN0ANcgdJ3/+vMuk2wyS61qhl36uiUM66tM=
+cache:
+  directories:
+  - $HOME/.gradle/wrapper
+  - $HOME/.gradle/caches
+deploy:
+  provider: releases
+  api_key:
+    secure: OXqyhH6/rK9rmiApnm+8smg/+rjdM3T28/4ZUzbdibYZNSagVAMniDgndZIwt198jDvAPxf9jadN1G3OD5BLkW0wUWvAfYAtxAwOe6dzgcsMavdTxoBJnjXBc4XqFXSDhWTO4cd4vQ5Wx6cyvbUY5xgyREpvEP7oRUgQ0RJo9q8=
+  file: build/distributions/grails-docs-${TRAVIS_TAG:1}.zip
+  skip_cleanup: true
+  on:
+    repo: grails/grails-doc
+    tags: true
+    all_branches: true

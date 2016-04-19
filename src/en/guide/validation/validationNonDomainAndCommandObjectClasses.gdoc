@@ -1,8 +1,8 @@
 [Domain classes|guide:domainClasses] and [command objects|guide:commandObjects] support validation by default.  Other classes may be made validateable by defining the static @constraints@ property in the class (as described above) and then telling the framework about them.  It is important that the application register the validateable classes with the framework.  Simply defining the @constraints@ property is not sufficient.
 
-h4. The Validateable Annotation
+h4. The Validateable Trait
 
-Classes which define the static @constraints@ property and are annotated with @Validateable can be made validateable by the framework. Consider this example:
+Classes which define the static @constraints@ property and implement the [Validateable|api:grails.validation.Validateable] trait will be validateable. Consider this example:
 
 {code:java}
 // src/groovy/com/mycompany/myapp/User.groovy
@@ -10,8 +10,7 @@ package com.mycompany.myapp
 
 import grails.validation.Validateable
 
-@Validateable
-class User {
+class User implements Validateable {
     ...
 
     static constraints = {
@@ -21,12 +20,4 @@ class User {
         age min: 18
     }
 }
-{code}
-
-h4. Registering Validateable Classes
-
-If a class is not marked with @Validateable, it may still be made validateable by the framework. The steps required to do this are to define the static @constraints@ property in the class (as described above) and then telling the framework about the class by assigning a value to the @grails.validateable.classes@ property in @Config.groovy@:
-
-{code:java}
-grails.validateable.classes = [com.mycompany.myapp.User, com.mycompany.dto.Account]
 {code}

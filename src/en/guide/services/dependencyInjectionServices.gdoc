@@ -27,6 +27,47 @@ To be consistent with standard JavaBean conventions, if the first 2 letters of t
 See section 8.8 of the JavaBean specification for more information on de-capitalization rules.
 {note}
 
+{note}
+Only the top level object is subjected to injection as traversing all nested objects to perform injection would be a performance issue.
+{note}
+
+Be careful when injecting the non-default datasources. For example, using this config:
+
+{code}
+dataSources:
+    dataSource:
+        pooled: true
+        jmxExport: true
+	.....
+    secondary:
+        pooled: true
+        jmxExport: true
+	.....
+
+{code}
+
+You can inject the primary @dataSource@ like you would expect:
+
+{code:java}
+class BookSqlService {
+
+      def dataSource
+}
+{code}
+
+But to inject the @secondary@ datasource, you have to use Spring's @Autowired@ injection or @resources.groovy@.
+
+{code:java}
+class BookSqlSecondaryService {
+
+  @Autowired
+  @Qualifier('dataSource_secondary')
+  def dataSource2    
+}
+
+{code}
+
+
 h4. Dependency Injection and Services
 
 You can inject services in other services with the same technique. If you had an @AuthorService@ that needed to use the @BookService@, declaring the @AuthorService@ as follows would allow that:
