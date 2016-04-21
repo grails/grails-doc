@@ -3,8 +3,19 @@ h1. schema-export
 h2. Purpose
 
 Uses Hibernate's SchemaExport tool to generate DDL or export the schema.
+NOTE: As of Grails 3, the Hibernate plugin is not by default on the build classpath. You need to add it to the build classpath to get the command working.
 
 h2. Examples
+
+{code:java}
+//Add Hibernate to the build classpath
+buildscript {
+    dependencies {
+        classpath "org.grails.plugins:hibernate:4.3.8.0"
+    }
+}
+{code}
+
 
 {code:java}
 grails schema-export
@@ -30,3 +41,4 @@ Arguments:
 * @stdout@ - Passing 'stdout' will cause the script to dump the ddl to stdout.
 * @filename@ - The name of the file to write the ddl to.  The default is ddl.sql in the project's 'target' directory.
 * @datasource@ - The @DataSource@ name suffix; defaults to the default @DataSource@ if not specified
+
