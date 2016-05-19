@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>6 Application Profiles 3.1.6</title>
+    <title>6 Application Profiles 3.1.7</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.1.6</p>
+                    <p><strong>Version:</strong> 3.1.7</p>
 
                     
                 </div>
@@ -167,19 +167,33 @@ function addJsClass() {
 
 <h1 id="profiles">6 Application Profiles</h1>
 When you create a Grails application with the <a href="../ref/Command Line/create-app.html" class="commandLine">create-app</a> command by default the "web" profile is used:<p class="paragraph"/><div class="code"><pre>grails create&#45;app myapp</pre></div><p class="paragraph"/>You can specify a different profile with the profile argument:<p class="paragraph"/><div class="code"><pre>grails create&#45;app myapp &#45;&#45;profile=<span class="java&#45;keyword">rest</span>&#45;api</pre></div><p class="paragraph"/>Profiles encapsulate the project commands, templates and plugins that are designed to work for a given profile. The source for the profiles can be found <a href="https://github.com/grails/grails-profile-repository" target="blank">on Github</a>, whilst the profiles themselves are published as JAR files to the Grails central repository.<p class="paragraph"/>To find out what profiles are available use the <a href="../ref/Command Line/list-profiles.html" class="commandLine">list-profiles</a> command:<p class="paragraph"/><div class="code"><pre>$ grails list&#45;profiles</pre></div><p class="paragraph"/>For more information on a particular profile use the <a href="../ref/Command Line/profile-info.html" class="commandLine">profile-info</a> command:<p class="paragraph"/><div class="code"><pre>$ grails profile&#45;info <span class="java&#45;keyword">rest</span>&#45;api</pre></div><p class="paragraph"/>
-<h4>Profile Repositories</h4><p class="paragraph"/>By default Grails will resolve profiles from the <a href="https://repo.grails.org/grails/core/org/grails/profiles/" target="blank">Grails central repository</a>. However, you can define additional profile repositories in the <code>USER_HOME/grails/settings.groovy</code> file:<p class="paragraph"/><div class="code"><pre>grails &#123;
+<h4>Profile Repositories</h4><p class="paragraph"/>By default Grails will resolve profiles from the <a href="https://repo.grails.org/grails/core/org/grails/profiles/" target="blank">Grails central repository</a>. However, you can override what repositories will be searched by specifying repositories in the <code>USER_HOME/grails/settings.groovy</code> file.<p class="paragraph"/>If you want profiles to be resolved with a custom repository in addition to the Grails central repository, you must specify Grails central in the file as well:<p class="paragraph"/><div class="code"><pre>grails &#123;
   profiles &#123;
     repositories &#123;
       myRepo &#123;
         url = <span class="java&#45;quote">"http://foo.com/repo"</span>
         snapshotsEnabled = <span class="java&#45;keyword">true</span>
       &#125;
+      grailsCentral &#123;
+        url = <span class="java&#45;quote">"https://repo.grails.org/grails/core"</span>
+        snapshotsEnabled = <span class="java&#45;keyword">true</span>
+      &#125;
     &#125;
   &#125;
 &#125;</pre></div><p class="paragraph"/><blockquote class="note">
 Note that Grails uses Aether to resolve profiles, as a Gradle instance is not yet available when the <code>create-app</code> command is executed. This means that you can also define repositories and more advanced configuration (proxies, authentication etc.) in your <code>USER_HOME/.m2/settings.xml</code> file if you wish.
-</blockquote><p class="paragraph"/><p class="paragraph"/><p class="paragraph"/>
-
+</blockquote><p class="paragraph"/>
+<h4>Profile Defaults</h4><p class="paragraph"/>To create an application that uses a custom profile, you must specify the full artifact.<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app myapp &#45;&#45;profile=com.mycompany.grails.profiles:myprofile:1.0.0</pre></div><p class="paragraph"/>To make this process easier, you can define defaults for a given profile in the <code>USER_HOME/grails/settings.groovy</code> file.<p class="paragraph"/><div class="code"><pre>grails &#123;
+  profiles &#123;
+    myprofile &#123;
+      groupId = <span class="java&#45;quote">"com.mycompany.grails.profiles"</span>
+      version = <span class="java&#45;quote">"1.0.0"</span>
+    &#125;
+    repositories &#123;
+      &#8230;
+    &#125;
+  &#125;
+&#125;</pre></div><p class="paragraph"/>With the default values specified, the command to create an application using that profile becomes:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app myapp &#45;&#45;profile=myprofile</pre></div><p class="paragraph"/>
 
 
 <h2 id="creatingProfiles">6.1 Creating Profiles</h2>
