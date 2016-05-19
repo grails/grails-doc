@@ -15,3 +15,19 @@ class CreditCardPayment extends Payment {
 {code}
 
 The mapping of the root @Payment@ class specifies that it will not be using @table-per-hierarchy@ mapping for all child classes.
+
+Alternatively, you can use a @table-per-concrete-class@ inheritance strategy where each concrete class will have its own table with columns for all properties of the class, including inherited properties:
+
+{code:java}
+class Payment {
+    Integer amount
+
+    static mapping = {
+        tablePerConcreteClass true
+    }
+}
+
+class CreditCardPayment extends Payment {
+    String cardNumber
+}
+{code}
