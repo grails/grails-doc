@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>11 Asynchronous Programming 3.1.8</title>
+    <title>11 Asynchronous Programming 3.1.9</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.1.8</p>
+                    <p><strong>Version:</strong> 3.1.9</p>
 
                     
                 </div>
@@ -227,8 +227,8 @@ map&#91;'two'&#93; = &#123; 4 &#42; 4 &#125;
 map&#91;'three'&#93; = &#123; 8 &#42; 8 &#125;
 map.onComplete &#123; Map results &#45;&#62;
   assert &#91;one:4,two:16,three:64&#93; == results
-&#125;</pre></div><p class="paragraph"/><h3>Promise Factories</h3><p class="paragraph"/>The <code>Promises</code> class uses a <code>grails.async.PromiseFactory</code> instance to create <code>Promise</code> instances.<p class="paragraph"/>The default implementation uses the GPars concurrency library and is called <code>org.grails.async.factory.gpars.GparsPromiseFactory</code>, however it is possible to swap implementations by setting the <code>Promises.promiseFactory</code> variable.<p class="paragraph"/>One common use case for this is unit testing, typically you do not want promises to execute asynchronously during unit tests, as this makes tests harder to write. For this purpose Grails ships with a <code>org.grails.async.factory.SynchronousPromiseFactory</code> instance that makes it easier to test promises:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.grails.async.factory.&#42;
-<span class="java&#45;keyword">import</span> grails.async.&#42;<p class="paragraph"/>Promises.promiseFactory = <span class="java&#45;keyword">new</span> SynchronousPromiseFactory()</pre></div><p class="paragraph"/>Grails also has a <code>org.grails.async.factory.reactor.ReactorPromiseFactory</code> which allows you to use the <a href="https://github.com/reactor/reactor" target="blank">Reactor</a>. You can use it by settings <code>Promises.promiseFactory</code> as given above.<p class="paragraph"/>Using the <code>PromiseFactory</code> mechanism it is theoretically possible to plug in other concurrency libraries into the Grails framework. For this you need to override the two interfaces <code>grails.async.Promise</code> and <code>grails.async.PromiseFactory</code>.<p class="paragraph"/><h3>DelegateAsync Transformation</h3><p class="paragraph"/>It is quite common to require both synchronous and asynchronous versions of the same API. Developing both can result in a maintenance problem as typically the asynchronous API would simply delegate to the synchronous version.<p class="paragraph"/>The <code>DelegateAsync</code> transformation is designed to mitigate this problem by transforming any synchronous API into an asynchronous one.<p class="paragraph"/>For example, consider the following service:<p class="paragraph"/><div class="code"><pre>class BookService &#123;	
+&#125;</pre></div><p class="paragraph"/><h3>Promise Factories</h3><p class="paragraph"/>The <code>Promises</code> class uses a <code>grails.async.PromiseFactory</code> instance to create <code>Promise</code> instances.<p class="paragraph"/>The default implementation uses <a href="http://projectreactor.io" target="blank">Project Reactor</a> and is called <code>org.grails.async.factory.reactor.ReactorPromiseFactory</code>, however it is possible to swap implementations by setting the <code>Promises.promiseFactory</code> variable.<p class="paragraph"/>One common use case for this is unit testing, typically you do not want promises to execute asynchronously during unit tests, as this makes tests harder to write. For this purpose Grails ships with a <code>org.grails.async.factory.SynchronousPromiseFactory</code> instance that makes it easier to test promises:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.grails.async.factory.&#42;
+<span class="java&#45;keyword">import</span> grails.async.&#42;<p class="paragraph"/>Promises.promiseFactory = <span class="java&#45;keyword">new</span> SynchronousPromiseFactory()</pre></div><p class="paragraph"/>Using the <code>PromiseFactory</code> mechanism it is theoretically possible to plug in other concurrency libraries into the Grails framework. For this you need to override the two interfaces <code>grails.async.Promise</code> and <code>grails.async.PromiseFactory</code>.<p class="paragraph"/><h3>DelegateAsync Transformation</h3><p class="paragraph"/>It is quite common to require both synchronous and asynchronous versions of the same API. Developing both can result in a maintenance problem as typically the asynchronous API would simply delegate to the synchronous version.<p class="paragraph"/>The <code>DelegateAsync</code> transformation is designed to mitigate this problem by transforming any synchronous API into an asynchronous one.<p class="paragraph"/>For example, consider the following service:<p class="paragraph"/><div class="code"><pre>class BookService &#123;	
     List&#60;Book&#62; findBooks(<span class="java&#45;object">String</span> title) &#123;
       // implementation
     &#125;
