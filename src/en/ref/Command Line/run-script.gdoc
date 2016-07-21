@@ -1,0 +1,44 @@
+h1. run-script
+
+h2. Purpose
+
+Execute Groovy script(s) in the context of a Grails environment
+
+h2. Examples
+
+{code:java}
+// run a single script in the dev environment
+grails run-script src/main/scripts/helloWorld.groovy
+
+// run multiple scripts in the prod environment
+grails prod run-script src/main/scripts/hello.groovy src/main/scripts/world.groovy
+
+// run a single script in the dev environment and don't run Bootstrap
+grails run-script src/main/scripts/helloWorld.groovy
+
+// run with Gradle
+./gradlew runScript -Pargs="src/main/scripts/helloWorld.groovy" -Dgrails.env=prod
+{code}
+
+h2. Description
+
+Usage:
+{code:java}
+grails [env]* run-script [scripts]
+{code}
+
+Arguments:
+
+* @scripts@ - Which scripts to run
+
+Variables:
+
+The @ctx@ variable is injected into all scripts and is an instance of the @ApplicationContext@
+
+{note}
+Scripts are executed in the context of a persistent session
+{note}
+
+{note}
+The default package is imported by default (@grails.codegen.defaultPackage@)
+{note}
