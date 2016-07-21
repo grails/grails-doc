@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>8 The Web Layer 3.1.9</title>
+    <title>8 The Web Layer 3.2.0.M2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.1.9</p>
+                    <p><strong>Version:</strong> 3.2.0.M2</p>
 
                     
                 </div>
@@ -602,7 +602,7 @@ assert album.players.drums.name == 'Phil Collins'</pre></div><p class="paragraph
     b.properties = params
     b.save()
 &#125;</pre></div><p class="paragraph"/>This has the same effect as using the implicit constructor.<p class="paragraph"/>When binding an empty String (a String with no characters in it, not even spaces), the data binder will convert the empty String to null.  This simplifies the most common case where the intent is to treat an empty form field as having the value null since there isn't a way to actually submit a null as a request parameter.  When this behavior is not desirable the application may assign the value directly.<p class="paragraph"/>The mass property binding mechanism will by default automatically trim all Strings at binding time.  To disable this behavior set the <code>grails.databinding.trimStrings</code> property to false in <code>grails-app/conf/application.groovy</code>.<p class="paragraph"/><div class="code"><pre>// the <span class="java&#45;keyword">default</span> value is <span class="java&#45;keyword">true</span>
-grails.databinding.trimStrings = <span class="java&#45;keyword">false</span><p class="paragraph"/>// ...</pre></div><p class="paragraph"/>The mass property binding mechanism will by default automatically convert all empty Strings to null at binding time.  To disable this behavior set the <code>grails.databinding.convertEmptyStringsToNull</code> property to false in <code>grials-app/conf/application.groovy</code>.<p class="paragraph"/><div class="code"><pre>// the <span class="java&#45;keyword">default</span> value is <span class="java&#45;keyword">true</span>
+grails.databinding.trimStrings = <span class="java&#45;keyword">false</span><p class="paragraph"/>// ...</pre></div><p class="paragraph"/>The mass property binding mechanism will by default automatically convert all empty Strings to null at binding time.  To disable this behavior set the <code>grails.databinding.convertEmptyStringsToNull</code> property to false in <code>grails-app/conf/application.groovy</code>.<p class="paragraph"/><div class="code"><pre>// the <span class="java&#45;keyword">default</span> value is <span class="java&#45;keyword">true</span>
 grails.databinding.convertEmptyStringsToNull = <span class="java&#45;keyword">false</span><p class="paragraph"/>// ...</pre></div><p class="paragraph"/>The order of events is that the String trimming happens and then null conversion happens so if <code>trimStrings</code> is <code>true</code> and <code>convertEmptyStringsToNull</code> is <code>true</code>, not only will empty Strings be converted to null but also blank Strings.  A blank String is any String such that the <code>trim()</code> method returns an empty String.<p class="paragraph"/><blockquote class="warning">
 These forms of data binding in Grails are very convenient, but also indiscriminate. In other words, they will bind  <em class="italic">all</em>  non-transient, typed instance properties of the target object, including ones that you may not want bound. Just because the form in your UI doesn't submit all the properties, an attacker can still send malign data via a raw HTTP request. Fortunately, Grails also makes it easy to protect against such attacks - see the section titled "Data Binding and Security concerns" for more information.
 </blockquote><p class="paragraph"/><h4>Data binding and Single-ended Associations</h4><p class="paragraph"/>If you have a <code>one-to-one</code> or <code>many-to-one</code> association you can use Grails' data binding capability to update these relationships too. For example if you have an incoming request such as:<p class="paragraph"/><div class="code"><pre>/book/save?author.id=20</pre></div><p class="paragraph"/>Grails will automatically detect the <code>.id</code> suffix on the request parameter and look up the <code>Author</code> instance for the given id when doing data binding such as:<p class="paragraph"/><div class="code"><pre>def b = <span class="java&#45;keyword">new</span> Book(params)</pre></div><p class="paragraph"/>An association property can be set to <code>null</code> by passing the literal <code>String</code> "null". For example:<p class="paragraph"/><div class="code"><pre>/book/save?author.id=<span class="java&#45;keyword">null</span></pre></div><p class="paragraph"/><h4>Data Binding and Many-ended Associations</h4><p class="paragraph"/>If you have a one-to-many or many-to-many association there are different techniques for data binding depending of the association type.<p class="paragraph"/>If you have a <code>Set</code> based association (the default for a <code>hasMany</code>) then the simplest way to populate an association is to send a list of identifiers. For example consider the usage of <code>&#60;g:select&#62;</code> below:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:select name=<span class="xml&#45;quote">"books"</span>
@@ -1631,7 +1631,8 @@ If your error-handling controller action throws an exception as well, you'll end
 <h2 id="mappingHTTP">8.4.7 Mapping to HTTP methods</h2>
 URL mappings can also be configured to map based on the HTTP method (GET, POST, PUT or DELETE). This is very useful for RESTful APIs and for restricting mappings based on HTTP method.<p class="paragraph"/>As an example the following mappings provide a RESTful API URL mappings for the <code>ProductController</code>:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">static</span> mappings = &#123;
    <span class="java&#45;quote">"/product/$id"</span>(controller:<span class="java&#45;quote">"product"</span>, action: <span class="java&#45;quote">"update"</span>, method: <span class="java&#45;quote">"PUT"</span>) 
-&#125;</pre></div>
+&#125;</pre></div><p class="paragraph"/>Note that if you specify a HTTP method other than GET in your URL mapping, you also have to specify it when creating the corresponding link by passing the <code>method</code> argument to <code>g:link</code> or <code>g:createLink</code> to get a link of the desired format.
+
 
 <a name="7.4.8 Mapping Wildcards"><!-- Legacy link --></a>
 <h2 id="mappingWildcards">8.4.8 Mapping Wildcards</h2>
@@ -2045,6 +2046,9 @@ If the accept header is used but contains no registered content types, Grails wi
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/schema-export.html">schema-export</a>
