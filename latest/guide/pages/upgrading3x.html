@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3.2 Upgrading from Grails 3.0 3.2.0.M2</title>
+    <title>3.1 Upgrading from Grails 3.0 3.1.9</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -129,11 +129,11 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>3.2 Upgrading from Grails 3.0 - Reference Documentation</h1>
+                    <h1>3.1 Upgrading from Grails 3.0 - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.M2</p>
+                    <p><strong>Version:</strong> 3.1.9</p>
 
                     
                 </div>
@@ -142,7 +142,7 @@ function addJsClass() {
 
                 
 
-<h2 id="upgrading3x">3.2 Upgrading from Grails 3.0</h2>
+<h2 id="upgrading3x">3.1 Upgrading from Grails 3.0</h2>
 Generally to upgrade an application from Grails 3.0 you can simply modify the version of Grails in <code>gradle.properties</code>.<p class="paragraph"/>There are however some differences to Grails 3.0.x that are documented below.<p class="paragraph"/><h4>GORM 5 Upgrade</h4><p class="paragraph"/>Grails 3.1 ships with GORM 5, which is a near complete rewrite of GORM ontop of Groovy traits and is not binary compatible with the previous version of GORM.<p class="paragraph"/>If you receive an error such as:<p class="paragraph"/><div class="code"><pre>Caused by: java.lang.ClassNotFoundException: org.grails.datastore.gorm.GormEntity$Trait$FieldHelper
     &#8230; 8 more</pre></div><p class="paragraph"/>You are using a plugin or class that was compiled with a previous version of GORM and these will need to be recompiled to be Grails 3.1 and GORM 5 compatible.<p class="paragraph"/><h4>Hibernate Plugin</h4><p class="paragraph"/>For the GORM 5 release the <code>hibernate</code> plugin has been renamed to <code>hibernate4</code> (and there are <code>hibernate3</code> and <code>hibernate5</code> versions too). You should change your <code>build.gradle</code> to reflect that:<p class="paragraph"/><div class="code"><pre>compile 'org.grails.plugins:hibernate4'</pre></div><p class="paragraph"/>
 <h4>Static Resources Path</h4><p class="paragraph"/>The default path for static resources resolved from <code>src/main/resources/public</code> has been changed to be nested under the <code>static/*</code> pattern instead of directly under the root of the application. For example a link in GSP pages such as:<p class="paragraph"/><div class="code"><pre>$&#123;g.resource(dir:'files', file:'mydoc.pdf')&#125;</pre></div><p class="paragraph"/>Will produce a URI such as <code>/static/files/mydoc.pdf</code> instead of <code>/files/mydoc.pdf</code>. If you wish to revert to the previous behavior you can configure this in <code>application.yml</code>:<p class="paragraph"/><div class="code"><pre>grails:
@@ -291,9 +291,6 @@ class MyDomainClass &#123;&#125;</pre></div><p class="paragraph"/>This will rest
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
