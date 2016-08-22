@@ -2,9 +2,9 @@ h4. New default date data binding format
 
 Dates formatted like "1970-01-01T00:00:00.000Z" will now be successfully parsed by default. The format is used by common JavaScript libraries.
 
-h4. The `run-script` command from Grails 2 is back
+h4. The @run-script@ command from Grails 2 is back
 
-The `run-script` command makes a return! It is now possible to run Groovy scripts that are wrapped in a Grails context using Grails 3:
+The @run-script@ command makes a return! It is now possible to run Groovy scripts that are wrapped in a Grails context using Grails 3:
 
 {code}
 $ grails run-script my-groovy-script.groovy
@@ -14,8 +14,16 @@ Refer to the [run-script|commandLine] documentation for more information.
 
 h4. REST Profile Refinements
 
-The REST profile has been further refined including more sensible `UrlMappings` and mime type configuration designed specifically for REST applications.
+The REST profile has been further refined including more sensible @UrlMappings@ and mime type configuration designed specifically for REST applications.
 
 h4. Ability to skip the Bootstrap process with a system property
 
 When the Grails runtime is started, it will now execute @*Bootstrap.groovy@ classes conditionally. If the system property @grails.bootstrap.skip@ is set to @true@, the classes will _not_ be executed for that run.
+
+h4. Changes to data binding with the body of a request
+
+To be more inline with the [HTTP/1.1|https://tools.ietf.org/html/rfc2616#section-4.3] specification, request bodies in GET and DELETE requests will be ignored for data binding. The request body will also be ignored if the specified content length is 0.
+
+h4. Profile improvements
+
+It is now possible to specify credentials for repositories used for profile resolution in your @settings.groovy@ file. See the [section on profiles|guide:profiles] for documentation.
