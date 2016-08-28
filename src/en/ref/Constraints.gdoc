@@ -144,3 +144,23 @@ format | Specify a display format for types that accept one, such as dates. For 
 password | Boolean indicating whether this is property should be displayed with a password field. Only works on fields that would normally be displayed with a text field.
 widget | Controls what widget is used to display the property. For example, 'textarea' will force the scaffolding to use a <textArea> tag.
 {table}
+
+h2. Programmatic usage
+
+You can access a domain's constraints programmatically in another context by accessing the **constrainedProperties** 
+static property of a domain.
+
+{code}
+class User {
+    String firstName
+    String middleName
+    
+    static constraints = {
+        firstName blank: false, nullable: false
+        middleName blank: true, nullable: true
+    }
+}
+{code}
+
+In the example above, accessing **User.constrainedProperties.firstName.blank** would yield **false**, while 
+**User.constrainedProperties.middleName.blank** would yield **true**.
