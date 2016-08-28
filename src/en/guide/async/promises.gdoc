@@ -139,7 +139,7 @@ h3. Promise Factories
 
 The @Promises@ class uses a @grails.async.PromiseFactory@ instance to create @Promise@ instances.
 
-The default implementation uses the GPars concurrency library and is called @org.grails.async.factory.gpars.GparsPromiseFactory@, however it is possible to swap implementations by setting the @Promises.promiseFactory@ variable.
+The default implementation uses [Project Reactor|http://projectreactor.io] and is called @org.grails.async.factory.reactor.ReactorPromiseFactory@, however it is possible to swap implementations by setting the @Promises.promiseFactory@ variable.
 
 One common use case for this is unit testing, typically you do not want promises to execute asynchronously during unit tests, as this makes tests harder to write. For this purpose Grails ships with a @org.grails.async.factory.SynchronousPromiseFactory@ instance that makes it easier to test promises:
 
@@ -149,8 +149,6 @@ import grails.async.*
 
 Promises.promiseFactory = new SynchronousPromiseFactory()
 {code}
-
-Grails also has a @org.grails.async.factory.reactor.ReactorPromiseFactory@ which allows you to use the [Reactor|https://github.com/reactor/reactor]. You can use it by settings @Promises.promiseFactory@ as given above.
 
 Using the @PromiseFactory@ mechanism it is theoretically possible to plug in other concurrency libraries into the Grails framework. For this you need to override the two interfaces @grails.async.Promise@ and @grails.async.PromiseFactory@.
 
