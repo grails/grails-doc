@@ -119,3 +119,21 @@ Although @updateBook@ and @deleteBook@ aren't annotated in this example, they in
 For more information refer to the section of the Spring user guide on [Using \@Transactional|http://docs.spring.io/spring/docs/current/spring-framework-reference/html/transaction.html#transaction-declarative-annotations].
 
 Unlike Spring you do not need any prior configuration to use @Transactional@; just specify the annotation as needed and Grails will detect them up automatically.
+
+h4. Transaction status
+
+An instance of [TransactionStatus|api:org.springframework.transaction.TransactionStatus] is available by default in Grails transactional service methods.
+
+Example:
+
+{code}
+import grails.transaction.Transactional
+
+@Transactional
+class BookService {
+
+    def deleteBook() {
+        transactionStatus.setRollbackOnly()
+    }
+}
+{code}
