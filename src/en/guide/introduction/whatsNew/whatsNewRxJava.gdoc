@@ -1,0 +1,45 @@
+In addition to [RxGORM|http://gorm.grails.org/6.0.x/rx/manual], support for [RxJava|http://reactivex.io] has been added to the Grails framework via an [RxJava plugin|https://grails.org/plugins.html#plugin/rxjava]
+
+h4. Reactive controllers with RxJava
+
+The RxJava plugin allows you to return `Observable` responses from controllers and integrates seamlessly with RxGORM to make it possible handle requests reactively, in a non-blocking manner. For example:
+
+{code}
+def show() {
+    String author = params.author 
+    Book.get(params.id)
+            .map { Book book ->
+        rx.render view:"book", model:[book:book, author:author] 
+    }
+}
+{code}
+
+h4. Server Sent Events with RxJava
+
+It is now possibly to easily issue responses that return [Server Sent Events|https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events] with Grails and RxJava:
+
+{code}
+def index() {
+    rx.stream { Subscriber subscriber -> 
+       for(i in (0..5)) {
+           if(i % 2 == 0) {
+               subscriber.onNext(
+                   rx.render("Tick") 
+               )
+           }
+           else {
+               subscriber.onNext(
+                   rx.render("Tock")
+               )
+
+           }
+           sleep 1000 
+       }
+       subscriber.onCompleted() 
+   }
+}
+{code}
+
+{note}
+See the [sample application|https://github.com/grails-plugins/grails-rxjava/tree/master/examples/server-sent-event-example] for a demonstration of Server Sent Events in action
+{note}
