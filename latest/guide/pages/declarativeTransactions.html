@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>13.1 Declarative Transactions 3.1.10</title>
+    <title>13.1 Declarative Transactions 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.1.10</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -189,8 +189,11 @@ class BookService &#123;<p class="paragraph"/>    @Transactional(readOnly = <spa
     &#125;<p class="paragraph"/>    def deleteBook() &#123;
         // &#8230;
     &#125;
-&#125;</pre></div><p class="paragraph"/>Although <code>updateBook</code> and <code>deleteBook</code> aren't annotated in this example, they inherit the configuration from the class-level annotation.<p class="paragraph"/>For more information refer to the section of the Spring user guide on <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/transaction.html#transaction-declarative-annotations" target="blank">Using @Transactional</a>.<p class="paragraph"/>Unlike Spring you do not need any prior configuration to use <code>Transactional</code>; just specify the annotation as needed and Grails will detect them up automatically.
-
+&#125;</pre></div><p class="paragraph"/>Although <code>updateBook</code> and <code>deleteBook</code> aren't annotated in this example, they inherit the configuration from the class-level annotation.<p class="paragraph"/>For more information refer to the section of the Spring user guide on <a href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/transaction.html#transaction-declarative-annotations" target="blank">Using @Transactional</a>.<p class="paragraph"/>Unlike Spring you do not need any prior configuration to use <code>Transactional</code>; just specify the annotation as needed and Grails will detect them up automatically.<p class="paragraph"/><h4>Transaction status</h4><p class="paragraph"/>An instance of <a href="http://docs.spring.io/spring/docs/4.0.x/javadoc-api/org/springframework/transaction/TransactionStatus.html" class="api">TransactionStatus</a> is available by default in Grails transactional service methods.<p class="paragraph"/>Example:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.transaction.Transactional<p class="paragraph"/>@Transactional
+class BookService &#123;<p class="paragraph"/>    def deleteBook() &#123;
+        transactionStatus.setRollbackOnly()
+    &#125;
+&#125;</pre></div>
 
 <a name="11.1.1 Transactions Rollback and the Session"><!-- Legacy link --></a>
 <h2 id="transactionsRollbackAndTheSession">13.1.1 Transactions Rollback and the Session</h2>
@@ -378,6 +381,9 @@ This is the optimal solution as it requires fewer queries then the following sug
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

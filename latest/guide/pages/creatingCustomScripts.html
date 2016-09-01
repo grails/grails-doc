@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>5.2 Creating Custom Scripts 3.1.10</title>
+    <title>5.2 Creating Custom Scripts 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.1.10</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -150,8 +150,30 @@ In general Grails scripts should be used for scripting the Gradle based build sy
   usage <span class="java&#45;quote">"grails generate&#45;all &#91;DOMAIN CLASS&#93;"</span>
   flag name:'force', description:<span class="java&#45;quote">"Whether to overwrite existing files"</span>
   argument name:'Domain <span class="java&#45;object">Class</span>', description:'The name of the domain class'
-&#125;</pre></div><p class="paragraph"/>As you can see this description profiles usage instructions, a flag and an argument. This allows the command to be used as follows:<p class="paragraph"/><div class="code"><pre>grails generate&#45;all MyClass &#45;&#45;force</pre></div><p class="paragraph"/><p class="paragraph"/>
-
+&#125;</pre></div><p class="paragraph"/>As you can see this description profiles usage instructions, a flag and an argument. This allows the command to be used as follows:<p class="paragraph"/><div class="code"><pre>grails generate&#45;all MyClass &#45;&#45;force</pre></div><p class="paragraph"/><h4>Template Generation</h4><p class="paragraph"/>Plugins and applications that need to define template generation tasks can do so using scripts. A example of this is the Scaffolding plugin which defines the <code>generate-all</code> and <code>generate-controllers</code> commands.<p class="paragraph"/>Every Grails script implements the <a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/cli/profile/commands/templates/TemplateRenderer.html" class="api">TemplateRenderer</a> interface which makes it trivial to render templates to the users project workspace.<p class="paragraph"/>The following is an example of the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command written in Groovy:<p class="paragraph"/><div class="code"><pre>description( <span class="java&#45;quote">"Creates a Grails script"</span> ) &#123;
+  usage <span class="java&#45;quote">"grails create&#45;script &#91;SCRIPT NAME&#93;"</span>
+  argument name:'Script Name', description:<span class="java&#45;quote">"The name of the script to create"</span>
+  flag name:'force', description:<span class="java&#45;quote">"Whether to overwrite existing files"</span>
+&#125;<p class="paragraph"/>def scriptName = args&#91;0&#93;
+def model = model(scriptName)
+def overwrite = flag('force') ? <span class="java&#45;keyword">true</span> : <span class="java&#45;keyword">false</span><p class="paragraph"/>render  template: template('artifacts/Script.groovy'),
+        destination: file(<span class="java&#45;quote">"src/main/scripts/$&#123;model.lowerCaseName&#125;.groovy"</span>),
+        model: model,
+        overwrite: overwrite</pre></div><p class="paragraph"/>If a script is defined in a plugin or profile, the <code>template(String)</code> method will search for the template in the application before using the template provided by your plugin or profile. This allows users of your plugin or profile to customize what gets generated.<p class="paragraph"/>It is common to provide an easy way to allow users to copy the templates from your plugin or profile. Here is one example on how the angular scaffolding copies templates.<p class="paragraph"/><div class="code"><pre>templates(<span class="java&#45;quote">"angular/&#42;&#42;/&#42;"</span>).each &#123; Resource r &#45;&#62;
+    <span class="java&#45;object">String</span> path = r.URL.toString().replaceAll(/^.&#42;?META&#45;INF/, <span class="java&#45;quote">"src/main"</span>)
+    <span class="java&#45;keyword">if</span> (path.endsWith('/')) &#123;
+        mkdir(path)
+    &#125; <span class="java&#45;keyword">else</span> &#123;
+        File to = <span class="java&#45;keyword">new</span> File(path)
+        SpringIOUtils.copy(r, to)
+        println(<span class="java&#45;quote">"Copied $&#123;r.filename&#125; to location $&#123;to.canonicalPath&#125;"</span>)
+    &#125;
+&#125;</pre></div><p class="paragraph"/><h4>The "model"</h4><p class="paragraph"/>Executing the <code>model</code> method with a <code>Class</code>/<code>String</code>/<code>File</code>/<code>Resource</code> will return an instance of <a href="http://grails.github.io/grails-doc/3.2.x/api/grails/codegen/model/Model.html" class="api">Model</a>. The model contains several properties that can help you generate code.<p class="paragraph"/>Example:<p class="paragraph"/><div class="code"><pre>def domain = model(com.foo.Bar)<p class="paragraph"/>domain.className == <span class="java&#45;quote">"FooBar"</span>
+domain.fullName == <span class="java&#45;quote">"com.foo.FooBar"</span>
+domain.packageName == <span class="java&#45;quote">"com.foo"</span>
+domain.packagePath == <span class="java&#45;quote">"com/foo"</span>
+domain.propertyName == <span class="java&#45;quote">"fooBar"</span>
+domain.lowerCaseName == <span class="java&#45;quote">"foo&#45;bar"</span></pre></div><p class="paragraph"/>In addition, an <code>asMap</code> method is available to turn all of the properties into a map to pass to the <code>render</code> method.<p class="paragraph"/><h4>Working with files</h4><p class="paragraph"/>All scripts have access to methods on the <a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/cli/profile/commands/io/FileSystemInteraction.html" class="api">FileSystemInteraction</a> class. It contains helpful methods to copy, delete, and create files.<p class="paragraph"/>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
@@ -270,6 +292,9 @@ In general Grails scripts should be used for scripting the Gradle based build sy
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

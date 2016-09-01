@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>10.1 REST 3.1.10</title>
+    <title>10.1 REST 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.1.10</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -328,7 +328,7 @@ Note that the <code>create</code> and <code>edit</code> actions are only needed 
     &#125;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/>The example above subclasses <code>RestfulController</code> and overrides the protected <code>queryForResource</code> method to customize the query for the resource to take into account the parent resource.<p class="paragraph"/><h4>Customizing Data Binding In A RestfulController Subclass</h4><p class="paragraph"/>The RestfulController class contains code which does data binding for actions like <code>save</code> and <code>update</code>.  The class defines a <code>getObjectToBind()</code> method which returns a value which will be used as the source for data binding.  For example, the update action does something like this...<p class="paragraph"/><div class="code"><pre>class RestfulController&#60;T&#62; &#123;<p class="paragraph"/>    def update() &#123;
         T instance = // retrieve instance from the database...<p class="paragraph"/>        instance.properties = getObjectToBind()<p class="paragraph"/>        // &#8230;
     &#125;<p class="paragraph"/>    // &#8230;
-&#125;</pre></div><p class="paragraph"/>By default the <code>getObjectToBind()</code> method returns the <a href="../ref/Controllers/request.html" class="controllers">request</a> object.  When the <code>request</code> object is used as the binding source, if the request has a body then the body will be parsed and its contents will be used to do the data binding, otherwise the request parameters will be used to do the data binding.  Subclasses of RestfulController may override the <code>getObjectToBind()</code> method and return anything that is a valid binding source, including a <a href="http://docs.oracle.com/javase/6/docs/api/java/util/Map.html" class="api">Map</a> or a <a href="http://grails.github.io/grails-doc/3.0.x/api/org/grails/databinding/DataBindingSource.html" class="api">DataBindingSource</a>.  For most use cases binding the request is appropriate but the <code>getObjectToBind()</code> method allows for changing that behavior where desired.<p class="paragraph"/><h4>Using custom subclass of RestfulController with Resource annotation</h4><p class="paragraph"/>You can also customize the behaviour of the controller that backs the Resource annotation.<p class="paragraph"/>The class must provide a constructor that takes a domain class as it's argument. The second constructor is required for supporting Resource annotation with readOnly=true.<p class="paragraph"/>This is a template that can be used for subclassed RestfulController classes used in Resource annotations:
+&#125;</pre></div><p class="paragraph"/>By default the <code>getObjectToBind()</code> method returns the <a href="../ref/Controllers/request.html" class="controllers">request</a> object.  When the <code>request</code> object is used as the binding source, if the request has a body then the body will be parsed and its contents will be used to do the data binding, otherwise the request parameters will be used to do the data binding.  Subclasses of RestfulController may override the <code>getObjectToBind()</code> method and return anything that is a valid binding source, including a <a href="http://docs.oracle.com/javase/6/docs/api/java/util/Map.html" class="api">Map</a> or a <a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/databinding/DataBindingSource.html" class="api">DataBindingSource</a>.  For most use cases binding the request is appropriate but the <code>getObjectToBind()</code> method allows for changing that behavior where desired.<p class="paragraph"/><h4>Using custom subclass of RestfulController with Resource annotation</h4><p class="paragraph"/>You can also customize the behaviour of the controller that backs the Resource annotation.<p class="paragraph"/>The class must provide a constructor that takes a domain class as it's argument. The second constructor is required for supporting Resource annotation with readOnly=true.<p class="paragraph"/>This is a template that can be used for subclassed RestfulController classes used in Resource annotations:
 <div class="code"><pre>class SubclassRestfulController&#60;T&#62; <span class="java&#45;keyword">extends</span> RestfulController&#60;T&#62; &#123;
     SubclassRestfulController(<span class="java&#45;object">Class</span>&#60;T&#62; domainClass) &#123;
         <span class="java&#45;keyword">this</span>(domainClass, <span class="java&#45;keyword">false</span>)
@@ -383,10 +383,10 @@ def save(Book book) &#123;
         &#125;
         '&#42;' &#123; render status: CREATED &#125;
     &#125;</pre></div><p class="paragraph"/>In the case of HTML a redirect is issued to the originating resource and for other formats a status code of 201 (CREATED) is returned.<p class="paragraph"/><h4>Implementing the 'update' action</h4><p class="paragraph"/>
-The <code>update</code> action updates an existing resource representations and is largely similar to the <code>save</code> action. First define the method signature:<p class="paragraph"/><div class="code"><pre>@Transactional
+The <code>update</code> action updates an existing resource representation and is largely similar to the <code>save</code> action. First define the method signature:<p class="paragraph"/><div class="code"><pre>@Transactional
 def update(Book book) &#123;
     &#8230;
-&#125;</pre></div><p class="paragraph"/>If the resource exists then Grails will load the resource, otherwise null we passed. In the case of null, you should return a 404:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">if</span>(book == <span class="java&#45;keyword">null</span>) &#123;
+&#125;</pre></div><p class="paragraph"/>If the resource exists then Grails will load the resource, otherwise null is passed. In the case of null, you should return a 404:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">if</span>(book == <span class="java&#45;keyword">null</span>) &#123;
         render status: NOT_FOUND
     &#125;
     <span class="java&#45;keyword">else</span> &#123;
@@ -403,7 +403,7 @@ withFormat &#123;
         redirect book 
     &#125;
     '&#42;' &#123; render status: OK &#125;
-&#125;</pre></div><p class="paragraph"/>In the case of HTML a redirect is issued to the originating resource and for other formats a status code of 200 (OK) is returned.<p class="paragraph"/><h4>Implementing the 'delete' action</h4><p class="paragraph"/>The <code>delete</code> action deletes an existing resource. The implementation is largely similar to the <code>update</code> action, expect the <code>delete()</code> method is called instead:<p class="paragraph"/><div class="code"><pre>book.delete flush:<span class="java&#45;keyword">true</span>
+&#125;</pre></div><p class="paragraph"/>In the case of HTML a redirect is issued to the originating resource and for other formats a status code of 200 (OK) is returned.<p class="paragraph"/><h4>Implementing the 'delete' action</h4><p class="paragraph"/>The <code>delete</code> action deletes an existing resource. The implementation is largely similar to the <code>update</code> action, except the <code>delete()</code> method is called instead:<p class="paragraph"/><div class="code"><pre>book.delete flush:<span class="java&#45;keyword">true</span>
 withFormat &#123;
     html &#123; 
         flash.message = message(code: '<span class="java&#45;keyword">default</span>.deleted.message', args: &#91;message(code: 'Book.label', <span class="java&#45;keyword">default</span>: 'Book'), book.id&#93;)
@@ -415,22 +415,23 @@ withFormat &#123;
 
 
 <h2 id="generatingRestControllers">10.1.5.3 Generating a REST controller using scaffolding</h2>
-To see some of these concepts in action and help you get going the <a href="http://grails.org/plugin/scaffolding" target="blank">Scaffolding plugin</a>, version 2.0 and above, can generate a REST ready controller for you, simply run the command:<p class="paragraph"/><div class="code"><pre>$ grails generate&#45;controller &#91;Domain <span class="java&#45;object">Class</span> Name&#93;</pre></div>
+To see some of these concepts in action and help you get going, the <a href="http://grails.org/plugin/scaffolding" target="blank">Scaffolding plugin</a>, version 2.0 and above, can generate a REST ready controller for you. Simply run the command:<p class="paragraph"/><div class="code"><pre>$ grails generate&#45;controller &#91;Domain <span class="java&#45;object">Class</span> Name&#93;</pre></div>
+
 
 
 <h2 id="restProfile">10.1.6 The REST Profile</h2>
-Since Grails 3.1, Grails supports a tailored profile for creating REST applications that provides a more focused set of dependencies and commands.<p class="paragraph"/>To get started with the REST profile create an application with by specifying <code>rest-api</code> as the name of the profile:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app my&#45;api &#45;&#45;profile <span class="java&#45;keyword">rest</span>&#45;api</pre></div><p class="paragraph"/>This will create a new REST application that provides the following features:
+Since Grails 3.1, Grails supports a tailored profile for creating REST applications that provides a more focused set of dependencies and commands.<p class="paragraph"/>To get started with the REST profile, create an application specifying <code>rest-api</code> as the name of the profile:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app my&#45;api &#45;&#45;profile <span class="java&#45;keyword">rest</span>&#45;api</pre></div><p class="paragraph"/>This will create a new REST application that provides the following features:
 <ul class="star">
 <li>Default set of commands for creating and generating REST endpoints</li>
 <li>Defaults to using JSON views for rendering responses (see the next section)</li>
-<li>Few plugins than the default Grails plugin (no GSP, no Asset Pipeline, Nothing HTML related)</li>
+<li>Few plugins than the default Grails plugin (no GSP, no Asset Pipeline, nothing HTML related)</li>
 </ul><p class="paragraph"/>You will notice for example in the <code>grails-app/views</code> directory that there are <code>*.gson</code> files for rendering the default index page and as well as any 404 and 500 errors.<p class="paragraph"/>If you issue the following set of commands:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;domain&#45;class book
 $ grails generate&#45;all my.api.Book</pre></div><p class="paragraph"/>Instead of CRUD HTML interface a REST endpoint is generated that produces JSON responses. In addition, the generated functional and unit tests by default test the REST endpoint.<p class="paragraph"/>
 
 
 
 <h2 id="angularProfile">10.1.7 The Angular Profile</h2>
-Since Grails 3.1, Grails supports a profile for creating applications with AngularJS that provides a more focused set of dependencies and commands. The angular profile inherits from the REST profile and therefore has all of the commands and properties that the REST profile has.<p class="paragraph"/>To get started with the Angular profile create an application with by specifying <code>angular</code> as the name of the profile:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app my&#45;api &#45;&#45;profile angular</pre></div><p class="paragraph"/>This will create a new Grails application that provides the following features:
+Since Grails 3.1, Grails supports a profile for creating applications with AngularJS that provides a more focused set of dependencies and commands. The angular profile inherits from the REST profile and therefore has all of the commands and properties that the REST profile has.<p class="paragraph"/>To get started with the Angular profile, create an application specifying <code>angular</code> as the name of the profile:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app my&#45;api &#45;&#45;profile angular</pre></div><p class="paragraph"/>This will create a new Grails application that provides the following features:
 <ul class="star">
 <li>Default set of commands for creating Angular artefacts</li>
 <li>Gradle plugin to manage client side dependencies</li>
@@ -454,7 +455,7 @@ By default the angular profile will create files in the <code>javascripts</code>
 <li>value</li>
 <li>provider</li>
 <li>constant</li>
-</ul><p class="paragraph"/>Along with the artefacts themselves, the profile will also produce a skeleton unit test file under <code>src/test/javascripts</code> for each create command<p class="paragraph"/><h4>Client side dependencies</h4><p class="paragraph"/>The <a href="https://github.com/craigburke/bower-installer-gradle/" target="blank">Gradle Bower Plugin</a> is used to manage dependencies with bower. Visit the plugin documentation to learn how to use the plugin.<p class="paragraph"/><h4>Unit Testing</h4><p class="paragraph"/>The <a href="https://github.com/craigburke/karma-gradle" target="blank">Gradle Karma Plugin</a> is used to execute client side unit tests. All generated tests are written with Jasmine. Visit the plugin documentation to learn how to use the plugin.<p class="paragraph"/><h4>Asset Pipeline</h4><p class="paragraph"/>The Angular profile includes several asset pipeline plugins to make development easier.
+</ul><p class="paragraph"/>Along with the artefacts themselves, the profile will also produce a skeleton unit test file under <code>src/test/javascripts</code> for each create command.<p class="paragraph"/><h4>Client side dependencies</h4><p class="paragraph"/>The <a href="https://github.com/craigburke/bower-installer-gradle/" target="blank">Gradle Bower Plugin</a> is used to manage dependencies with bower. Visit the plugin documentation to learn how to use the plugin.<p class="paragraph"/><h4>Unit Testing</h4><p class="paragraph"/>The <a href="https://github.com/craigburke/karma-gradle" target="blank">Gradle Karma Plugin</a> is used to execute client side unit tests. All generated tests are written with Jasmine. Visit the plugin documentation to learn how to use the plugin.<p class="paragraph"/><h4>Asset Pipeline</h4><p class="paragraph"/>The Angular profile includes several asset pipeline plugins to make development easier.
 <ul class="star">
 <li><a href="https://github.com/craigburke/js-closure-wrap-asset-pipeline" target="blank">JS Closure Wrap Asset Pipeline</a> will wrap your Angular code in immediately invoked function expressions.</li>
 <li><a href="https://github.com/craigburke/angular-annotate-asset-pipeline" target="blank">Annotate Asset Pipeline</a> will annotate your dependencies to be safe for minification.</li>
@@ -531,7 +532,7 @@ Typically your model may involve one or many domain instances. JSON views provid
 <h2 id="jsonViewsTemplatesAndConventions">10.1.8.5 JSON Views by Convention</h2>
 There are a few useful conventions you can follow when creating JSON views. For example if you have a domain class called <code>Book</code>, then creating a template located at <code>grails-app/views/book/_book.gson</code> and using the <a href="../ref/Controllers/respond.html" class="controllers">respond</a> method will result in rendering the template:<p class="paragraph"/><div class="code"><pre>def show(<span class="java&#45;object">Long</span> id) &#123;
     respond Book.get(id)
-&#125;</pre></div><p class="paragraph"/>In addition if an error occurs during validation by default Grails will try to render a template called <code>grails-app/views/book/_errors.gson</code>, otherwise it will try ty render <code>grails-app/views/errors/_errors.gson</code> if the former doesn't exist.<p class="paragraph"/>This is useful because when persisting objects you can <code>respond</code> with validation errors to render these aforementioned templates:<p class="paragraph"/><div class="code"><pre>@Transactional
+&#125;</pre></div><p class="paragraph"/>In addition if an error occurs during validation by default Grails will try to render a template called <code>grails-app/views/book/_errors.gson</code>, otherwise it will try to render <code>grails-app/views/errors/_errors.gson</code> if the former doesn't exist.<p class="paragraph"/>This is useful because when persisting objects you can <code>respond</code> with validation errors to render these aforementioned templates:<p class="paragraph"/><div class="code"><pre>@Transactional
 def save(Book book) &#123;
     <span class="java&#45;keyword">if</span> (book.hasErrors()) &#123;
         transactionStatus.setRollbackOnly()
@@ -541,6 +542,7 @@ def save(Book book) &#123;
         // valid object
     &#125;
 &#125;</pre></div><p class="paragraph"/>If a validation error occurs in the above example the <code>grails-app/views/book/_errors.gson</code> template will be rendered.<p class="paragraph"/>For more information on JSON views (and Markup views), see the <a href="https://github.com/grails/grails-views" target="blank">README and documentation included with the Github project</a>.
+
 
 
 <h2 id="renderers">10.1.9 Customizing Response Rendering</h2>
@@ -884,7 +886,7 @@ The framework provides a sophisticated but simple mechanism for binding REST req
         //
         // the code above represents what the framework will
         // have done. There is no need to write that code.<p class="paragraph"/>        // ...<p class="paragraph"/>    &#125;
-&#125;</pre></div><p class="paragraph"/>The data binding depends on an instance of the <a href="http://grails.github.io/grails-doc/3.0.x/api/org/grails/databinding/DataBindingSource.html" class="api">DataBindingSource</a> interface created by an instance of the <a href="http://grails.github.io/grails-doc/3.0.x/api/org/grails/databinding/bindingsource/DataBindingSourceCreator.html" class="api">DataBindingSourceCreator</a> interface.  The specific implementation of <code>DataBindingSourceCreator</code> will be selected based on the <code>contentType</code> of the request.  Several implementations are provided to handle common content types.  The default implementations will be fine for most use cases.  The following table lists the content types which are supported by the core framework and which <code>DataBindingSourceCreator</code> implementations are used for each. All of the implementation classes are in the <code>org.grails.databinding.bindingsource</code> package.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Content Type(s)</th><th>Bean Name</th><th>DataBindingSourceCreator Impl.</th></tr><tr class="table-odd"><td>application/xml, text/xml</td><td>xmlDataBindingSourceCreator</td><td>XmlDataBindingSourceCreator</td></tr><tr class="table-even"><td>application/json, text/json</td><td>jsonDataBindingSourceCreator</td><td>JsonDataBindingSourceCreator</td></tr><tr class="table-odd"><td>application/hal+json</td><td>halJsonDataBindingSourceCreator</td><td>HalJsonDataBindingSourceCreator</td></tr><tr class="table-even"><td>application/hal+xml</td><td>halXmlDataBindingSourceCreator</td><td>HalXmlDataBindingSourceCreator</td></tr></table><p class="paragraph"/>In order to provide your own <code>DataBindingSourceCreator</code> for any of those content types, write a class which implements
+&#125;</pre></div><p class="paragraph"/>The data binding depends on an instance of the <a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/databinding/DataBindingSource.html" class="api">DataBindingSource</a> interface created by an instance of the <a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/databinding/bindingsource/DataBindingSourceCreator.html" class="api">DataBindingSourceCreator</a> interface.  The specific implementation of <code>DataBindingSourceCreator</code> will be selected based on the <code>contentType</code> of the request.  Several implementations are provided to handle common content types.  The default implementations will be fine for most use cases.  The following table lists the content types which are supported by the core framework and which <code>DataBindingSourceCreator</code> implementations are used for each. All of the implementation classes are in the <code>org.grails.databinding.bindingsource</code> package.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Content Type(s)</th><th>Bean Name</th><th>DataBindingSourceCreator Impl.</th></tr><tr class="table-odd"><td>application/xml, text/xml</td><td>xmlDataBindingSourceCreator</td><td>XmlDataBindingSourceCreator</td></tr><tr class="table-even"><td>application/json, text/json</td><td>jsonDataBindingSourceCreator</td><td>JsonDataBindingSourceCreator</td></tr><tr class="table-odd"><td>application/hal+json</td><td>halJsonDataBindingSourceCreator</td><td>HalJsonDataBindingSourceCreator</td></tr><tr class="table-even"><td>application/hal+xml</td><td>halXmlDataBindingSourceCreator</td><td>HalXmlDataBindingSourceCreator</td></tr></table><p class="paragraph"/>In order to provide your own <code>DataBindingSourceCreator</code> for any of those content types, write a class which implements
 <code>DataBindingSourceCreator</code> and register an instance of that class in the Spring application context.  If you
 are replacing one of the existing helpers, use the corresponding bean name from above.  If you are providing a
 helper for a content type other than those accounted for by the core framework, the bean name may be anything that
@@ -909,7 +911,7 @@ you like but you should take care not to conflict with one of the bean names abo
      &#42; @<span class="java&#45;keyword">return</span> a DataBindingSource
      &#42;/
     DataBindingSource createDataBindingSource(MimeType mimeType, <span class="java&#45;object">Object</span> bindingTarget, <span class="java&#45;object">Object</span> bindingSource)
-&#125;</pre></div><p class="paragraph"/><a href="http://grails.github.io/grails-doc/3.0.x/api/org/grails/databinding/bindingsource/AbstractRequestbodyDataBindingSourceCreator.html" class="api">AbstractRequestBodyDataBindingSourceCreator</a>
+&#125;</pre></div><p class="paragraph"/><a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/databinding/bindingsource/AbstractRequestbodyDataBindingSourceCreator.html" class="api">AbstractRequestBodyDataBindingSourceCreator</a>
 is an abstract class designed to be extended to simplify writing custom <code>DataBindingSourceCreator</code> classes.  Classes which
 extend <code>AbstractRequestbodyDatabindingSourceCreator</code> need to implement a method named <code>createBindingSource</code>
 which accepts an <code>InputStream</code> as an argument and returns a <code>DataBindingSource</code> as well as implementing the <code>getMimeTypes</code>
@@ -1070,6 +1072,9 @@ to deal with a request which has a <code>contentType</code> of "text/custom+demo
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

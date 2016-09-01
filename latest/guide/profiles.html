@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>6 Application Profiles 3.1.10</title>
+    <title>6 Application Profiles 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.1.10</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -167,7 +167,7 @@ function addJsClass() {
 
 <h1 id="profiles">6 Application Profiles</h1>
 When you create a Grails application with the <a href="../ref/Command Line/create-app.html" class="commandLine">create-app</a> command by default the "web" profile is used:<p class="paragraph"/><div class="code"><pre>grails create&#45;app myapp</pre></div><p class="paragraph"/>You can specify a different profile with the profile argument:<p class="paragraph"/><div class="code"><pre>grails create&#45;app myapp &#45;&#45;profile=<span class="java&#45;keyword">rest</span>&#45;api</pre></div><p class="paragraph"/>Profiles encapsulate the project commands, templates and plugins that are designed to work for a given profile. The source for the profiles can be found <a href="https://github.com/grails/grails-profile-repository" target="blank">on Github</a>, whilst the profiles themselves are published as JAR files to the Grails central repository.<p class="paragraph"/>To find out what profiles are available use the <a href="../ref/Command Line/list-profiles.html" class="commandLine">list-profiles</a> command:<p class="paragraph"/><div class="code"><pre>$ grails list&#45;profiles</pre></div><p class="paragraph"/>For more information on a particular profile use the <a href="../ref/Command Line/profile-info.html" class="commandLine">profile-info</a> command:<p class="paragraph"/><div class="code"><pre>$ grails profile&#45;info <span class="java&#45;keyword">rest</span>&#45;api</pre></div><p class="paragraph"/>
-<h4>Profile Repositories</h4><p class="paragraph"/>By default Grails will resolve profiles from the <a href="https://repo.grails.org/grails/core/org/grails/profiles/" target="blank">Grails central repository</a>. However, you can override what repositories will be searched by specifying repositories in the <code>USER_HOME/grails/settings.groovy</code> file.<p class="paragraph"/>If you want profiles to be resolved with a custom repository in addition to the Grails central repository, you must specify Grails central in the file as well:<p class="paragraph"/><div class="code"><pre>grails &#123;
+<h4>Profile Repositories</h4><p class="paragraph"/>By default Grails will resolve profiles from the <a href="https://repo.grails.org/grails/core/org/grails/profiles/" target="blank">Grails central repository</a>. However, you can override what repositories will be searched by specifying repositories in the <code>USER_HOME/.grails/settings.groovy</code> file.<p class="paragraph"/>If you want profiles to be resolved with a custom repository in addition to the Grails central repository, you must specify Grails central in the file as well:<p class="paragraph"/><div class="code"><pre>grails &#123;
   profiles &#123;
     repositories &#123;
       myRepo &#123;
@@ -182,8 +182,19 @@ When you create a Grails application with the <a href="../ref/Command Line/creat
   &#125;
 &#125;</pre></div><p class="paragraph"/><blockquote class="note">
 Note that Grails uses Aether to resolve profiles, as a Gradle instance is not yet available when the <code>create-app</code> command is executed. This means that you can also define repositories and more advanced configuration (proxies, authentication etc.) in your <code>USER_HOME/.m2/settings.xml</code> file if you wish.
-</blockquote><p class="paragraph"/>
-<h4>Profile Defaults</h4><p class="paragraph"/>To create an application that uses a custom profile, you must specify the full artifact.<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app myapp &#45;&#45;profile=com.mycompany.grails.profiles:myprofile:1.0.0</pre></div><p class="paragraph"/>To make this process easier, you can define defaults for a given profile in the <code>USER_HOME/grails/settings.groovy</code> file.<p class="paragraph"/><div class="code"><pre>grails &#123;
+</blockquote><p class="paragraph"/>It is also possible to store simple credentials for profile repositories directly in the <code>USER_HOME/.grails/settings.groovy</code> file.<p class="paragraph"/><div class="code"><pre>grails &#123;
+  profiles &#123;
+    repositories &#123;
+      myRepo &#123;
+        url = <span class="java&#45;quote">"http://foo.com/repo"</span>
+        snapshotsEnabled = <span class="java&#45;keyword">true</span>
+        username = <span class="java&#45;quote">"user"</span>
+        password = <span class="java&#45;quote">"pass"</span>
+      &#125;
+      &#8230;
+    &#125;
+  &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Profile Defaults</h4><p class="paragraph"/>To create an application that uses a custom profile, you must specify the full artifact.<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app myapp &#45;&#45;profile=com.mycompany.grails.profiles:myprofile:1.0.0</pre></div><p class="paragraph"/>To make this process easier, you can define defaults for a given profile in the <code>USER_HOME/grails/settings.groovy</code> file.<p class="paragraph"/><div class="code"><pre>grails &#123;
   profiles &#123;
     myprofile &#123;
       groupId = <span class="java&#45;quote">"com.mycompany.grails.profiles"</span>
@@ -219,7 +230,8 @@ build:
         &#45; org.grails.grails&#45;core
 dependencies:
     compile:
-        &#45; <span class="java&#45;quote">"org.mycompany:myplugin:1.0.1"</span></pre></div><p class="paragraph"/>With the above configuration in place you can publish the profile to your local repository with <code>gradle install</code>:<p class="paragraph"/><div class="code"><pre>$ gradle install</pre></div><p class="paragraph"/>Your profile is now usable with the <code>create-app</code> command:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app myapp &#45;&#45;profile mycompany</pre></div><p class="paragraph"/>With the above command the application will be created with the "mycompany" profile which includes an additinal dependency on the "myplugin" plugin and also includes the "hibernate" and "asset-pipeline" features (more on features later).<p class="paragraph"/>Note that if you customize the dependency coordinates of the profile (group, version etc.) then you may need to use the fully qualified coordinates to create an application:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app myapp &#45;&#45;profile com.mycompany:mycompany:1.0.1</pre></div>
+        &#45; <span class="java&#45;quote">"org.mycompany:myplugin:1.0.1"</span></pre></div><p class="paragraph"/>With the above configuration in place you can publish the profile to your local repository with <code>gradle install</code>:<p class="paragraph"/><div class="code"><pre>$ gradle install</pre></div><p class="paragraph"/>Your profile is now usable with the <code>create-app</code> command:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app myapp &#45;&#45;profile mycompany</pre></div><p class="paragraph"/>With the above command the application will be created with the "mycompany" profile which includes an additional dependency on the "myplugin" plugin and also includes the "hibernate" and "asset-pipeline" features (more on features later).<p class="paragraph"/>Note that if you customize the dependency coordinates of the profile (group, version etc.) then you may need to use the fully qualified coordinates to create an application:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;app myapp &#45;&#45;profile com.mycompany:mycompany:1.0.1</pre></div>
+
 
 
 <h2 id="profileInheritance">6.2 Profile Inheritance</h2>
@@ -247,7 +259,7 @@ One profile can extend one or many different parent profiles. To define profile 
   license = 'Apache&#45;2.0'
 &#125;</pre></div><p class="paragraph"/><blockquote class="note">
 The <code>githubSlug</code> argument should point to the path to your Github repository. For example if your repository is located at <code>https://github.com/foo/bar</code> then your <code>githubSlug</code> is <code>foo/bar</code>
-</blockquote><p class="paragraph"/>With this in place you can run <code>gradle publishProfile</code> to publish your profile:<p class="paragraph"/><div class="code"><pre>$ gradle publishProfile</pre></div><p class="paragraph"/>The profile will be uploaded to Bintray. You can then go the the <a href="https://bintray.com/grails/profiles" target="blank">Grails profiles repository</a> and request to have your profile included by clicking "Include My Package" button on Bintray's interface (you must be logged in to see this).<p class="paragraph"/><h4>Publishing Profiles to an Internal Repository</h4><p class="paragraph"/>The aforementioned <code>grails-profile-publish</code> plugin configures <a href="https://docs.gradle.org/current/userguide/publishing_maven.html" target="blank">Gradle&#39;s Maven Publish plugin</a>. In order to publish to an internal repository all you need to do is define the repository in <code>build.gradle</code>. For example:<p class="paragraph"/><div class="code"><pre>publishing &#123;
+</blockquote><p class="paragraph"/>With this in place you can run <code>gradle publishProfile</code> to publish your profile:<p class="paragraph"/><div class="code"><pre>$ gradle publishProfile</pre></div><p class="paragraph"/>The profile will be uploaded to Bintray. You can then go to the <a href="https://bintray.com/grails/profiles" target="blank">Grails profiles repository</a> and request to have your profile included by clicking "Include My Package" button on Bintray's interface (you must be logged in to see this).<p class="paragraph"/><h4>Publishing Profiles to an Internal Repository</h4><p class="paragraph"/>The aforementioned <code>grails-profile-publish</code> plugin configures <a href="https://docs.gradle.org/current/userguide/publishing_maven.html" target="blank">Gradle&#39;s Maven Publish plugin</a>. In order to publish to an internal repository all you need to do is define the repository in <code>build.gradle</code>. For example:<p class="paragraph"/><div class="code"><pre>publishing &#123;
     repositories &#123;
         maven &#123;
             credentials &#123;
@@ -278,7 +290,7 @@ A profile is a simple directory that contains a <code>profile.yml</code> file an
     &#42; templates
         &#42; artifacts
             &#42; Controller.groovy
-    &#42; profile.yml</pre></div><p class="paragraph"/>The above example is a snippet of structure of the 'web' profile. The <code>profile.yml</code> file is used to describe the profile and control how a the build is configured.<p class="paragraph"/><h4>Understanding the profile.yml descriptor</h4><p class="paragraph"/>The <code>profile.yml</code> can contain the following child elements.<p class="paragraph"/><h4>1) repositories</h4><p class="paragraph"/>A list of Maven repositories to include in the generated build. Example:<p class="paragraph"/><div class="code"><pre>repositories:
+    &#42; profile.yml</pre></div><p class="paragraph"/>The above example is a snippet of structure of the 'web' profile. The <code>profile.yml</code> file is used to describe the profile and control how the build is configured.<p class="paragraph"/><h4>Understanding the profile.yml descriptor</h4><p class="paragraph"/>The <code>profile.yml</code> can contain the following child elements.<p class="paragraph"/><h4>1) repositories</h4><p class="paragraph"/>A list of Maven repositories to include in the generated build. Example:<p class="paragraph"/><div class="code"><pre>repositories:
     &#45; <span class="java&#45;quote">"https://repo.grails.org/grails/core"</span></pre></div><p class="paragraph"/><h4>2) build.repositories</h4><p class="paragraph"/>A list of Maven repositories to include in the buildscript section of the generated build. Example:<p class="paragraph"/><div class="code"><pre>build:
     repositories:
         &#45; <span class="java&#45;quote">"https://repo.grails.org/grails/core"</span></pre></div><p class="paragraph"/><h4>3) build.plugins</h4><p class="paragraph"/>A list of Gradle plugins to configure in the generated build. Example:<p class="paragraph"/><div class="code"><pre>build:
@@ -298,7 +310,7 @@ A profile is a simple directory that contains a <code>profile.yml</code> file an
     defaults: 
         &#45; hibernate
         &#45; asset&#45;pipeline</pre></div><p class="paragraph"/>
-<h4>What happens when a profile is used?</h4><p class="paragraph"/>When the <code>create-app</code> command runs it takes the skeleton of the parent profiles and copies the skeletons into a new project structure.<p class="paragraph"/>The <code>build.gradle</code> file is generated as is result of obtaining all of the dependency information defined in the <code>profile.yml</code> files and produces the required dependencies.<p class="paragraph"/>The command will also merge any <code>build.gradle</code> files defined within a profile and its parent profiles.<p class="paragraph"/>The <code>grails-app/conf/application.yml</code> file is also merged into a a single YAML file taking into account the profile and all of the parent profiles.
+<h4>What happens when a profile is used?</h4><p class="paragraph"/>When the <code>create-app</code> command runs it takes the skeleton of the parent profiles and copies the skeletons into a new project structure.<p class="paragraph"/>The <code>build.gradle</code> file is generated is result of obtaining all of the dependency information defined in the <code>profile.yml</code> files and produces the required dependencies.<p class="paragraph"/>The command will also merge any <code>build.gradle</code> files defined within a profile and its parent profiles.<p class="paragraph"/>The <code>grails-app/conf/application.yml</code> file is also merged into a single YAML file taking into account the profile and all of the parent profiles.
 
 
 
@@ -321,7 +333,7 @@ steps:
 <ul class="star">
 <li><code>render</code> - To render a template to a given destination (as seen in the previous example)</li>
 <li><code>mkdir</code> - To make a directory specified by the <code>location</code> parameter</li>
-<li><code>execute</code> - To execute a command specified by the <code>class</code> parameter. Must be a class that implements the <a href="http://grails.github.io/grails-doc/3.0.x/api/org/grails/cli/profile/Command.html" class="api">Command</a> interface.</li>
+<li><code>execute</code> - To execute a command specified by the <code>class</code> parameter. Must be a class that implements the <a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/cli/profile/Command.html" class="api">Command</a> interface.</li>
 <li><code>gradle</code> - To execute one or many Gradle tasks specified by the <code>tasks</code> parameter.</li>
 </ul><p class="paragraph"/>For example to invoke a Gradle task, you can define the following YAML:<p class="paragraph"/><div class="code"><pre>description: Creates a WAR file <span class="java&#45;keyword">for</span> deployment to a container (like Tomcat)
 minArguments: 0
@@ -330,7 +342,7 @@ usage: |
 steps:
  &#45; command: gradle
    tasks:
-     &#45; war</pre></div><p class="paragraph"/>If you need more flexiblity than what the declarative YAML approach provides you can create Groovy script commands. Each Command script is extends from the <a href="http://grails.github.io/grails-doc/3.0.x/api/org/grails/cli/profile/commands/script/GroovyScriptCommmand.html" class="api">GroovyScriptCommmand</a> class and hence has all of the methods of that class available to it.<p class="paragraph"/>The following is an example of the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command written in Groovy:<p class="paragraph"/><div class="code"><pre>description( <span class="java&#45;quote">"Creates a Grails script"</span> ) &#123;
+     &#45; war</pre></div><p class="paragraph"/>If you need more flexiblity than what the declarative YAML approach provides you can create Groovy script commands. Each Command script is extends from the <a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/cli/profile/commands/script/GroovyScriptCommmand.html" class="api">GroovyScriptCommmand</a> class and hence has all of the methods of that class available to it.<p class="paragraph"/>The following is an example of the <a href="../ref/Command Line/create-script.html" class="commandLine">create-script</a> command written in Groovy:<p class="paragraph"/><div class="code"><pre>description( <span class="java&#45;quote">"Creates a Grails script"</span> ) &#123;
   usage <span class="java&#45;quote">"grails create&#45;script &#91;SCRIPT NAME&#93;"</span>
   argument name:'Script Name', description:<span class="java&#45;quote">"The name of the script to create"</span>
   flag name:'force', description:<span class="java&#45;quote">"Whether to overwrite existing files"</span>
@@ -481,6 +493,9 @@ dependencies:
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/schema-export.html">schema-export</a>

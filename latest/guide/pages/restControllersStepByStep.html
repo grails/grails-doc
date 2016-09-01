@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>10.1.5.2 Implementing REST Controllers Step by Step 3.1.10</title>
+    <title>10.1.5.2 Implementing REST Controllers Step by Step 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.1.10</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -181,10 +181,10 @@ def save(Book book) &#123;
         &#125;
         '&#42;' &#123; render status: CREATED &#125;
     &#125;</pre></div><p class="paragraph"/>In the case of HTML a redirect is issued to the originating resource and for other formats a status code of 201 (CREATED) is returned.<p class="paragraph"/><h4>Implementing the 'update' action</h4><p class="paragraph"/>
-The <code>update</code> action updates an existing resource representations and is largely similar to the <code>save</code> action. First define the method signature:<p class="paragraph"/><div class="code"><pre>@Transactional
+The <code>update</code> action updates an existing resource representation and is largely similar to the <code>save</code> action. First define the method signature:<p class="paragraph"/><div class="code"><pre>@Transactional
 def update(Book book) &#123;
     &#8230;
-&#125;</pre></div><p class="paragraph"/>If the resource exists then Grails will load the resource, otherwise null we passed. In the case of null, you should return a 404:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">if</span>(book == <span class="java&#45;keyword">null</span>) &#123;
+&#125;</pre></div><p class="paragraph"/>If the resource exists then Grails will load the resource, otherwise null is passed. In the case of null, you should return a 404:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">if</span>(book == <span class="java&#45;keyword">null</span>) &#123;
         render status: NOT_FOUND
     &#125;
     <span class="java&#45;keyword">else</span> &#123;
@@ -201,7 +201,7 @@ withFormat &#123;
         redirect book 
     &#125;
     '&#42;' &#123; render status: OK &#125;
-&#125;</pre></div><p class="paragraph"/>In the case of HTML a redirect is issued to the originating resource and for other formats a status code of 200 (OK) is returned.<p class="paragraph"/><h4>Implementing the 'delete' action</h4><p class="paragraph"/>The <code>delete</code> action deletes an existing resource. The implementation is largely similar to the <code>update</code> action, expect the <code>delete()</code> method is called instead:<p class="paragraph"/><div class="code"><pre>book.delete flush:<span class="java&#45;keyword">true</span>
+&#125;</pre></div><p class="paragraph"/>In the case of HTML a redirect is issued to the originating resource and for other formats a status code of 200 (OK) is returned.<p class="paragraph"/><h4>Implementing the 'delete' action</h4><p class="paragraph"/>The <code>delete</code> action deletes an existing resource. The implementation is largely similar to the <code>update</code> action, except the <code>delete()</code> method is called instead:<p class="paragraph"/><div class="code"><pre>book.delete flush:<span class="java&#45;keyword">true</span>
 withFormat &#123;
     html &#123; 
         flash.message = message(code: '<span class="java&#45;keyword">default</span>.deleted.message', args: &#91;message(code: 'Book.label', <span class="java&#45;keyword">default</span>: 'Book'), book.id&#93;)
@@ -328,6 +328,9 @@ withFormat &#123;
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

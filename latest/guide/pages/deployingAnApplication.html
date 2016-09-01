@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>2.10 Deploying an Application 3.1.10</title>
+    <title>2.10 Deploying an Application 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.1.10</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -143,7 +143,9 @@ function addJsClass() {
                 
 <a name="2.10 Deploying an Application"><!-- Legacy link --></a>
 <h2 id="deployingAnApplication">2.10 Deploying an Application</h2>
-Grails applications can be deployed in a number of different ways.<p class="paragraph"/>If you are deploying to a traditional container (Tomcat, Jetty etc.) you can create a Web Application Archive (WAR file), and Grails includes the <a href="../ref/Command Line/war.html" class="commandLine">war</a> command for performing this task:<p class="paragraph"/><div class="code"><pre>grails war</pre></div><p class="paragraph"/>This will produce a WAR file under the <code>build/libs</code> directory which can then be deployed as per your container's instructions.<p class="paragraph"/>Note that by default Grails will include an embeddable version of Tomcat inside the WAR file, this can cause problems if you deploy to a different version of Tomcat. If you don't intend to use the embedded container then you should change the scope of the Tomcat dependencies to <code>provided</code> prior to deploying to your production container in <code>build.gradle</code>:<p class="paragraph"/><div class="code"><pre>provided <span class="java&#45;quote">"org.springframework.boot:spring&#45;boot&#45;starter&#45;tomcat"</span></pre></div><p class="paragraph"/>Unlike most scripts which default to the <code>development</code> environment unless overridden, the <code>war</code> command runs in the <code>production</code> environment by default. You can override this like any script by specifying the environment name, for example:<p class="paragraph"/><div class="code"><pre>grails dev war</pre></div><p class="paragraph"/>If you prefer not to operate a separate Servlet container then you can simply run the Grails WAR file as a regular Java application. Example:<p class="paragraph"/><div class="code"><pre>grails war
+Grails applications can be deployed in a number of different ways.<p class="paragraph"/>If you are deploying to a traditional container (Tomcat, Jetty etc.) you can create a Web Application Archive (WAR file), and Grails includes the <a href="../ref/Command Line/war.html" class="commandLine">war</a> command for performing this task:<p class="paragraph"/><div class="code"><pre>grails war</pre></div><p class="paragraph"/>This will produce a WAR file under the <code>build/libs</code> directory which can then be deployed as per your container's instructions.<p class="paragraph"/>Note that by default Grails will include an embeddable version of Tomcat inside the WAR file, this can cause problems if you deploy to a different version of Tomcat. If you don't intend to use the embedded container then you should change the scope of the Tomcat dependencies to <code>provided</code> prior to deploying to your production container in <code>build.gradle</code>:<p class="paragraph"/><div class="code"><pre>provided <span class="java&#45;quote">"org.springframework.boot:spring&#45;boot&#45;starter&#45;tomcat"</span></pre></div><p class="paragraph"/>If you are building a WAR file to deploy on Tomcat 7 then in addition you will need to change the target Tomcat version in the build. Grails is built against Tomcat 8 APIs by default.
+To target a Tomcat 7 container, insert a line to <code>build.gradle</code> above the <code>dependencies { }</code> section:
+<div class="code"><pre>ext&#91;'tomcat.version'&#93; = '7.0.59'</pre></div><p class="paragraph"/>Unlike most scripts which default to the <code>development</code> environment unless overridden, the <code>war</code> command runs in the <code>production</code> environment by default. You can override this like any script by specifying the environment name, for example:<p class="paragraph"/><div class="code"><pre>grails dev war</pre></div><p class="paragraph"/>If you prefer not to operate a separate Servlet container then you can simply run the Grails WAR file as a regular Java application. Example:<p class="paragraph"/><div class="code"><pre>grails war
 java &#45;Dgrails.env=prod &#45;jar build/libs/mywar&#45;0.1.war</pre></div><p class="paragraph"/>
 When deploying Grails you should always run your containers JVM with the <code>-server</code> option and with sufficient memory allocation. A good set of VM flags would be:<p class="paragraph"/><div class="code"><pre>&#45;server &#45;Xmx768M &#45;XX:MaxPermSize=256m</pre></div>
 
@@ -265,6 +267,9 @@ When deploying Grails you should always run your containers JVM with the <code>-
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>11.2 Events 3.1.10</title>
+    <title>11.2 Events 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.1.10</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -163,7 +163,7 @@ function addJsClass() {
                 
 <a name="4.3 Hooking into Events"><!-- Legacy link --></a>
 <h2 id="events">11.2 Events</h2>
-Grails 3.0 introduces a new Events API based on <a href="https://github.com/reactor/reactor" target="blank">Reactor</a>.<p class="paragraph"/>All services and controllers in Grails 3.0 implement the <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/events/Events.html" class="api">Events</a> trait.<p class="paragraph"/>The <code>Events</code> trait allows the ability to consume and publish events that are handled by Reactor.<p class="paragraph"/>The default Reactor configuration utilises a thread pool backed event bus. You can however configure Reactor within <code>application.yml</code>, for example:<p class="paragraph"/><div class="code"><pre>reactor:
+Grails 3.0 introduces a new Events API based on <a href="https://github.com/reactor/reactor" target="blank">Reactor</a>.<p class="paragraph"/>All services and controllers in Grails 3.0 implement the <a href="http://grails.github.io/grails-doc/3.2.x/api/grails/events/Events.html" class="api">Events</a> trait.<p class="paragraph"/>The <code>Events</code> trait allows the ability to consume and publish events that are handled by Reactor.<p class="paragraph"/>The default Reactor configuration utilises a thread pool backed event bus. You can however configure Reactor within <code>application.yml</code>, for example:<p class="paragraph"/><div class="code"><pre>reactor:
     dispatchers:
         <span class="java&#45;keyword">default</span>: myExecutor
         myExecutor:
@@ -174,7 +174,7 @@ Grails 3.0 introduces a new Events API based on <a href="https://github.com/reac
 
 
 <h2 id="consuming">11.2.1 Consuming Events</h2>
-There are several ways to consume an event. As mentioned previously services and controllers implement the <a href="http://grails.github.io/grails-doc/3.0.x/api/grails/events/Events.html" class="api">Events</a> trait.<p class="paragraph"/>The <code>Events</code> trait provides several methods to register event consumers. For example:<p class="paragraph"/><div class="code"><pre>on(<span class="java&#45;quote">"myEvent"</span>) &#123;
+There are several ways to consume an event. As mentioned previously services and controllers implement the <a href="http://grails.github.io/grails-doc/3.2.x/api/grails/events/Events.html" class="api">Events</a> trait.<p class="paragraph"/>The <code>Events</code> trait provides several methods to register event consumers. For example:<p class="paragraph"/><div class="code"><pre>on(<span class="java&#45;quote">"myEvent"</span>) &#123;
     println <span class="java&#45;quote">"Event fired!"</span>
 &#125;</pre></div><p class="paragraph"/>Note that if you wish a class (other than a controller or service) to be an event consumer you simply have to implement the <code>Events</code> trait and ensure the class is registered as a Spring bean.<p class="paragraph"/>For example given the following class:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.events.&#42;
 <span class="java&#45;keyword">import</span> javax.annotation.&#42;<p class="paragraph"/>class MyClass <span class="java&#45;keyword">implements</span> Events &#123;<p class="paragraph"/>	@PostConstruct
@@ -202,7 +202,7 @@ sendAndReceive <span class="java&#45;quote">"myEvent"</span>, <span class="java&
 Reactor provides a few useful annotations that can be used for declaratively consuming events in a Grails service.<p class="paragraph"/>To declare an event consumer use the <code>Consumer</code> annotation:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> reactor.spring.context.annotation.&#42;<p class="paragraph"/>@Consumer
 class MyService &#123;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/>Then to register to listen for an event use the <code>Selector</code> annotation:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> reactor.spring.context.annotation.&#42;<p class="paragraph"/>@Consumer
 class MyService &#123;
-	@Selector('my.event')
+	@Selector('myEvent')
 	void myEventListener(<span class="java&#45;object">Object</span> data) &#123;
 		println <span class="java&#45;quote">"GOT EVENT $data"</span>
 	&#125;
@@ -214,7 +214,7 @@ GORM defines a <a href="http://grails.github.io/grails-data-mapping/latest/api/o
 ...<p class="paragraph"/>on(<span class="java&#45;quote">"gorm:preInsert"</span>) &#123; PreInsertEvent event &#45;&#62;
 	println <span class="java&#45;quote">"GOT EVENT $event"</span>
 &#125;</pre></div><p class="paragraph"/><blockquote class="note">
- These events are triggered asynchronously, and so cannot cancel or manipulate the persistence operations. If you want to do that see the section on <a href="../guide/single.html#eventsAutoTimestamping" class="guide">Events & Auto Timestamping</a> in the GORM docs
+ These events are triggered asynchronously, and so cannot cancel or manipulate the persistence operations. If you want to do that see the section on <a href="http://gorm.grails.org/6.0.x/hibernate/manual/index.html#eventsAutoTimestamping" target="blank">Events &#38; Auto Timestamping</a> in the GORM docs
 </blockquote>
 
 
@@ -345,6 +345,9 @@ Spring also fires a number of useful events. All events in the <code>org.springf
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
