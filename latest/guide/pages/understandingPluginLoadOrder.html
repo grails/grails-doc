@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>18.9 Understanding Plugin Load Order 3.2.0.RC1</title>
+    <title>18.9 Understanding Plugin Load Order 3.1.11</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC1</p>
+                    <p><strong>Version:</strong> 3.1.11</p>
 
                     
                 </div>
@@ -162,8 +162,8 @@ def dependsOn = &#91;foo: <span class="java&#45;quote">"1.0 &#62; &#42;"</span>&
         sessionFactory = sessionFactory
     &#125;
     grailsUrlHandlerMapping.interceptors &#60;&#60; openSessionInViewInterceptor
-&#125;</pre></div><p class="paragraph"/>Here the Hibernate plugin will only register an <code>OpenSessionInViewInterceptor</code> if the <code>controllers</code> plugin has been loaded. The <code>manager</code> variable is an instance of the <a href="http://grails.github.io/grails-doc/3.2.x/api/grails/plugins/GrailsPluginManager.html" class="api">GrailsPluginManager</a> interface and it provides methods to interact with other plugins.<p class="paragraph"/>You can also use the <code>loadBefore</code> property to specify one or more plugins that your plugin should load before:<p class="paragraph"/><div class="code"><pre>def loadBefore = &#91;'rabbitmq'&#93;</pre></div><p class="paragraph"/><h4>Scopes and Environments</h4><p class="paragraph"/>It's not only plugin load order that you can control. You can also specify which environments your plugin should be loaded in and which scopes (stages of a build). Simply declare one or both of these properties in your plugin descriptor:<p class="paragraph"/><div class="code"><pre>def environments = &#91;'development', 'test', 'myCustomEnv'&#93;
-def scopes = &#91;excludes:'war'&#93;</pre></div><p class="paragraph"/>In this example, the plugin will only load in the 'development' and 'test' environments. Nor will it be packaged into the WAR file, because it's excluded from the 'war' phase. This allows <code>development-only</code> plugins to not be packaged for production use.<p class="paragraph"/>The full list of available scopes are defined by the enum <a href="http://grails.github.io/grails-doc/3.2.x/api/grails/util/BuildScope.html" class="api">BuildScope</a>, but here's a summary:
+&#125;</pre></div><p class="paragraph"/>Here the Hibernate plugin will only register an <code>OpenSessionInViewInterceptor</code> if the <code>controllers</code> plugin has been loaded. The <code>manager</code> variable is an instance of the <a href="http://grails.github.io/grails-doc/3.1.x/api/grails/plugins/GrailsPluginManager.html" class="api">GrailsPluginManager</a> interface and it provides methods to interact with other plugins.<p class="paragraph"/>You can also use the <code>loadBefore</code> property to specify one or more plugins that your plugin should load before:<p class="paragraph"/><div class="code"><pre>def loadBefore = &#91;'rabbitmq'&#93;</pre></div><p class="paragraph"/><h4>Scopes and Environments</h4><p class="paragraph"/>It's not only plugin load order that you can control. You can also specify which environments your plugin should be loaded in and which scopes (stages of a build). Simply declare one or both of these properties in your plugin descriptor:<p class="paragraph"/><div class="code"><pre>def environments = &#91;'development', 'test', 'myCustomEnv'&#93;
+def scopes = &#91;excludes:'war'&#93;</pre></div><p class="paragraph"/>In this example, the plugin will only load in the 'development' and 'test' environments. Nor will it be packaged into the WAR file, because it's excluded from the 'war' phase. This allows <code>development-only</code> plugins to not be packaged for production use.<p class="paragraph"/>The full list of available scopes are defined by the enum <a href="http://grails.github.io/grails-doc/3.1.x/api/grails/util/BuildScope.html" class="api">BuildScope</a>, but here's a summary:
 <ul class="star">
 <li><code>test</code> - when running tests</li>
 <li><code>functional-test</code> - when running functional tests</li>
@@ -295,9 +295,6 @@ def scopes = &#91;excludes:'war'&#93;</pre></div><p class="paragraph"/>In this e
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

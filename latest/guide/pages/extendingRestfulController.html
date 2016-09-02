@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>10.1.5.1 Extending the RestfulController super class 3.2.0.RC1</title>
+    <title>10.1.5.1 Extending the RestfulController super class 3.1.11</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC1</p>
+                    <p><strong>Version:</strong> 3.1.11</p>
 
                     
                 </div>
@@ -164,7 +164,7 @@ Note that the <code>create</code> and <code>edit</code> actions are only needed 
     &#125;<p class="paragraph"/>&#125;</pre></div><p class="paragraph"/>The example above subclasses <code>RestfulController</code> and overrides the protected <code>queryForResource</code> method to customize the query for the resource to take into account the parent resource.<p class="paragraph"/><h4>Customizing Data Binding In A RestfulController Subclass</h4><p class="paragraph"/>The RestfulController class contains code which does data binding for actions like <code>save</code> and <code>update</code>.  The class defines a <code>getObjectToBind()</code> method which returns a value which will be used as the source for data binding.  For example, the update action does something like this...<p class="paragraph"/><div class="code"><pre>class RestfulController&#60;T&#62; &#123;<p class="paragraph"/>    def update() &#123;
         T instance = // retrieve instance from the database...<p class="paragraph"/>        instance.properties = getObjectToBind()<p class="paragraph"/>        // &#8230;
     &#125;<p class="paragraph"/>    // &#8230;
-&#125;</pre></div><p class="paragraph"/>By default the <code>getObjectToBind()</code> method returns the <a href="../ref/Controllers/request.html" class="controllers">request</a> object.  When the <code>request</code> object is used as the binding source, if the request has a body then the body will be parsed and its contents will be used to do the data binding, otherwise the request parameters will be used to do the data binding.  Subclasses of RestfulController may override the <code>getObjectToBind()</code> method and return anything that is a valid binding source, including a <a href="http://docs.oracle.com/javase/6/docs/api/java/util/Map.html" class="api">Map</a> or a <a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/databinding/DataBindingSource.html" class="api">DataBindingSource</a>.  For most use cases binding the request is appropriate but the <code>getObjectToBind()</code> method allows for changing that behavior where desired.<p class="paragraph"/><h4>Using custom subclass of RestfulController with Resource annotation</h4><p class="paragraph"/>You can also customize the behaviour of the controller that backs the Resource annotation.<p class="paragraph"/>The class must provide a constructor that takes a domain class as it's argument. The second constructor is required for supporting Resource annotation with readOnly=true.<p class="paragraph"/>This is a template that can be used for subclassed RestfulController classes used in Resource annotations:
+&#125;</pre></div><p class="paragraph"/>By default the <code>getObjectToBind()</code> method returns the <a href="../ref/Controllers/request.html" class="controllers">request</a> object.  When the <code>request</code> object is used as the binding source, if the request has a body then the body will be parsed and its contents will be used to do the data binding, otherwise the request parameters will be used to do the data binding.  Subclasses of RestfulController may override the <code>getObjectToBind()</code> method and return anything that is a valid binding source, including a <a href="http://docs.oracle.com/javase/6/docs/api/java/util/Map.html" class="api">Map</a> or a <a href="http://grails.github.io/grails-doc/3.1.x/api/org/grails/databinding/DataBindingSource.html" class="api">DataBindingSource</a>.  For most use cases binding the request is appropriate but the <code>getObjectToBind()</code> method allows for changing that behavior where desired.<p class="paragraph"/><h4>Using custom subclass of RestfulController with Resource annotation</h4><p class="paragraph"/>You can also customize the behaviour of the controller that backs the Resource annotation.<p class="paragraph"/>The class must provide a constructor that takes a domain class as it's argument. The second constructor is required for supporting Resource annotation with readOnly=true.<p class="paragraph"/>This is a template that can be used for subclassed RestfulController classes used in Resource annotations:
 <div class="code"><pre>class SubclassRestfulController&#60;T&#62; <span class="java&#45;keyword">extends</span> RestfulController&#60;T&#62; &#123;
     SubclassRestfulController(<span class="java&#45;object">Class</span>&#60;T&#62; domainClass) &#123;
         <span class="java&#45;keyword">this</span>(domainClass, <span class="java&#45;keyword">false</span>)
@@ -296,9 +296,6 @@ class Book &#123;<p class="paragraph"/>    <span class="java&#45;object">String<
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
