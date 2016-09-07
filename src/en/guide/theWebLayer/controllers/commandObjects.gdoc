@@ -198,3 +198,63 @@ class DemoController {
     }
 }
 {code}
+
+h4. Working with Lists of Command Objects
+
+A common use case for command objects is a Command Object that contains a collection of another:
+
+{code:java}
+class DemoController {
+
+    def createAuthor(AuthorCommand command) {
+        // ...
+
+    }
+
+    class AuthorCommand {
+        String fullName
+        List<BookCommand> books = []
+    }
+
+    class BookCommand {
+        String title
+        String isbn
+    }
+}
+{code}
+
+On this example, we want to create an Author with multiple Books.
+
+In order to make this work from the UI layer, you can do the following in your GSP:
+
+{code:xml}
+<g:form name="submit-author-books" controller="demo" action="createAuthor">
+    <g:fieldValue name="fullName" value=""/>
+    <ul>
+        <li>
+            <g:fieldValue name="books[0].title" value=""/>
+            <g:fieldValue name=""books[0].isbn" value=""/>
+        </li>
+
+        <li>
+            <g:fieldValue name="books[1].title" value=""/>
+            <g:fieldValue name=""books[1].isbn" value=""/>
+        </li>
+    </ul>
+</g:form>
+{code}
+
+There is also support for JSON, so you can submit the following with correct databinding
+
+{code:json}
+{
+    "fullName": "Graeme Rocher",
+    "books": [{
+        "title": "The Definitive Guide to Grails",
+        "isbn": "1111-343455-1111"
+    }, {
+        "title": "The Definitive Guide to Grails 2",
+        "isbn": "1111-343455-1112"
+    }],
+}
+{code}
