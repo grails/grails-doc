@@ -1,0 +1,55 @@
+h4. Publishing Profiles to the Grails Central Repository
+
+Any profile created with the [create-profile|commandLine] command already comes configured with a @grails-profile-publish@ plugin defined in @build.gradle@:
+
+{code}
+apply plugin: "org.grails.grails-profile-publish"
+{code}
+
+To publish a profile using this plugin to the Grails central repository first upload the source to [Github|https://github.com] (closed source profiles will not be accepted). Then register for an account on [Bintray|https://bintray.com] and configure your keys as follows in the profile's @build.gradle@ file:
+
+{code}
+grailsPublish {
+  user = 'YOUR USERNAME'
+  key = 'YOUR KEY'
+  githubSlug = 'your-repo/your-profile'
+  license = 'Apache-2.0'
+}    
+{code}
+
+{note}
+The @githubSlug@ argument should point to the path to your Github repository. For example if your repository is located at @https://github.com/foo/bar@ then your @githubSlug@ is @foo/bar@
+{note}
+
+With this in place you can run @gradle publishProfile@ to publish your profile:
+
+{code}
+$ gradle publishProfile
+{code}
+
+The profile will be uploaded to Bintray. You can then go to the [Grails profiles repository|https://bintray.com/grails/profiles] and request to have your profile included by clicking "Include My Package" button on Bintray's interface (you must be logged in to see this).
+
+h4. Publishing Profiles to an Internal Repository
+
+The aforementioned @grails-profile-publish@ plugin configures [Gradle's Maven Publish plugin|https://docs.gradle.org/current/userguide/publishing_maven.html]. In order to publish to an internal repository all you need to do is define the repository in @build.gradle@. For example:
+
+{code}
+publishing {
+    repositories {
+        maven {
+            credentials {
+                username "foo"
+                password "bar"
+            }
+
+            url "http://foo.com/repo"
+        }
+    }  
+}
+{code}      
+
+Once configured you can publish your plugin with @gradle publish@:
+
+{code}
+$ gradle publish
+{code}          

@@ -19,16 +19,13 @@ if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then
 
 		version="$TRAVIS_TAG"
 		version=${version:1}
-    zipName="grails-docs-$version"
-    export RELEASE_FILE="${zipName}.zip"
+	    zipName="grails-docs-$version"
+	    export RELEASE_FILE="${zipName}.zip"
 
-		milestone=${version:5}
-		# if [[ -n $milestone ]]; then
-			git rm -rf latest/
-			mkdir -p latest
-			cp -r ../build/docs/. ./latest/
-			git add latest/*
-		# fi
+		git rm -rf latest/
+		mkdir -p latest
+		cp -r ../build/docs/. ./latest/
+		git add latest/*
 
 		majorVersion=${version:0:4}
 		majorVersion="${majorVersion}x"

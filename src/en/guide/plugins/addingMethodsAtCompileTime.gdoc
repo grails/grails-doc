@@ -1,8 +1,9 @@
-Grails 3.0 makes it easy to add new traits to existing artefact types from a plugin. For example say you wanted to add methods for manipulating dates to controllers. This can be done by first defining a trait in @src/main/groovy@:
+Grails 3.0 makes it easy to add new traits to existing artefact types from a plugin. For example say you wanted to add methods for manipulating dates to controllers. This can be done by defining a trait in @src/main/groovy@:
 
 {code}
 package myplugin
 
+@Enhances("Controller")
 trait DateTrait {
   Date currentDate() {
     return new Date()
@@ -10,7 +11,9 @@ trait DateTrait {
 }
 {code}
 
-Once you have a trait you must tell Grails which artefacts you want to inject the trait into at compile time. To do this you implement a [TraitInjector|api:grails.compiler.traits.TraitInjector]:
+The @\@Enhances@ annotation defines the types of artefacts that the trait should be applied to.
+
+As an alternative to using the @\@Enhances@ annotation above, you can implement a [TraitInjector|api:grails.compiler.traits.TraitInjector] to tell Grails which artefacts you want to inject the trait into at compile time:
 
 {code}
 package myplugin

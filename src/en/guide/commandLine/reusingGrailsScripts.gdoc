@@ -1,6 +1,6 @@
 Grails ships with a lot of command line functionality out of the box that you may find useful in your own scripts (See the command line reference in the reference guide for info on all the commands). 
 
-Any script you create an invoke another Grails script simply by invoking a method:
+Any script you create can invoke another Grails script simply by invoking a method:
 
 {code}
 testApp()
@@ -27,28 +27,3 @@ You can also invoke Ant tasks from scripts which can help if you need to writing
 {code}
 ant.mkdir(dir:"path")
 {code}
-
-h4. Template Generation
-
-Plugins and applications that need to define template generation tasks can do so using scripts. A example of this is the Scaffolding plugin which defines the @generate-all@ and @generate-controllers@ commands.
-
-Every Grails script implements the [TemplateRenderer|api:org.grails.cli.profile.commands.templates.TemplateRenderer] interface which makes it trivial to render templates to the users project workspace.
-
-The following is an example of the [create-script|commandLine] command written in Groovy:
-
-{code}
-description( "Creates a Grails script" ) {
-  usage "grails create-script [SCRIPT NAME]"
-  argument name:'Script Name', description:"The name of the script to create"
-  flag name:'force', description:"Whether to overwrite existing files"
-}
-
-def scriptName = args[0]
-def model = model(scriptName)
-def overwrite = flag('force') ? true : false
-
-render  template: template('artifacts/Script.groovy'), 
-        destination: file("src/main/scripts/${model.lowerCaseName}.groovy"),
-        model: model,
-        overwrite: overwrite
-{code}  

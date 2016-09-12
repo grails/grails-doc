@@ -1,0 +1,185 @@
+Generally to upgrade an application from Grails 3.0 you can simply modify the version of Grails in @gradle.properties@.
+
+There are however some differences to Grails 3.0.x that are documented below.
+
+h4. GORM 5 Upgrade
+
+Grails 3.1 ships with GORM 5, which is a near complete rewrite of GORM ontop of Groovy traits and is not binary compatible with the previous version of GORM.
+
+If you receive an error such as:
+
+{code}
+Caused by: java.lang.ClassNotFoundException: org.grails.datastore.gorm.GormEntity$Trait$FieldHelper
+    ... 8 more
+{code}
+
+You are using a plugin or class that was compiled with a previous version of GORM and these will need to be recompiled to be Grails 3.1 and GORM 5 compatible.
+
+h4. Hibernate Plugin
+
+For the GORM 5 release the @hibernate@ plugin has been renamed to @hibernate4@ (and there are @hibernate3@ and @hibernate5@ versions too). You should change your @build.gradle@ to reflect that:
+
+{code}
+compile 'org.grails.plugins:hibernate4'
+{code}
+
+
+h4. Static Resources Path
+
+The default path for static resources resolved from @src/main/resources/public@ has been changed to be nested under the @static/*@ pattern instead of directly under the root of the application. For example a link in GSP pages such as:
+
+{code}
+${g.resource(dir:'files', file:'mydoc.pdf')}
+{code}
+
+Will produce a URI such as @/static/files/mydoc.pdf@ instead of @/files/mydoc.pdf@. If you wish to revert to the previous behavior you can configure this in @application.yml@:
+
+{code}
+grails:
+    resources:
+        pattern: '/**'
+{code}
+
+h4. Filters Plugin Removed
+
+The Filters plugin was replaced by [Interceptors|guide:interceptors] in Grails 3.0.x, although the plugin was still present. In Grails 3.1.x the Filters plugin has been removed. If you still wish to use the filters plugin you can add a dependency on the previous version provided by Grails 3.0.x. For example:
+
+{code}
+compile 'org.grails:grails-plugin-filters:3.0.12'
+{code}
+
+You would also need to move the filters to any other source directory (e.g. @grails-app/controllers@) as @grails-app/conf@ is not considered a source directory anymore.
+
+h4. Spring Transactional Proxies
+
+Because the @grails.transactional.Transactional@ transform already provides the ability to create transactional services without the need for proxies, traditional support for transactional proxies has been disabled by default.
+
+This means that if you have any services that use the @transactional@ property and not the @Transactional@ annotation they will need to be altered. For example the following service:
+
+{code}
+class FooService {
+    static transactional = true
+}
+{code}
+
+Becomes:
+
+{code}
+import grails.transaction.Transactional
+
+@Transactional
+class FooService {
+    
+}
+{code}
+
+In addition because in previous versions of a Grails @transactional@ defaulted to @true@ any services that do not declare @transactional@ should be altered too.
+
+If you wish to revert to the previous behavior then transctional proxies can be re-enabled with the following configuration:
+
+{code}
+grails:
+    spring:
+        transactionManagement:
+            proxies: true
+{code}
+
+h4. JSON Converter changes
+
+The default JSON converter no longer includes the @class@ property by default. This can be re-enable with the following configuration:
+
+{code}
+grails:
+    converters:
+        domain:
+            include:
+                class: true
+{code}
+
+In addition the default JSON converter will no longer render the @id@ property if it is @null@.
+
+h4. JSON Builder Groovy Alignment
+
+The class @grails.web.JSONBuilder@ has been deprecated and replaced with [groovy.json.StreamingJsonBuilder|http://docs.groovy-lang.org/latest/html/gapi/groovy/json/StreamingJsonBuilder.html], the default JSON builder within Groovy. This avoids confusion with the differences between JSON builders and better aligns with Groovy's core libraries.
+
+This also means that any @render@ blocks that rendered JSON will need to be updated to use the [groovy.json.StreamingJsonBuilder|http://docs.groovy-lang.org/latest/html/gapi/groovy/json/StreamingJsonBuilder.html] syntax. For example the following code:
+
+{code}
+render(contentType:"application/json") {
+    title = "The Stand"
+}
+{code}
+
+Should instead be written as:
+
+{code}
+render(contentType:"application/json") {
+    title "The Stand"
+}
+{code}
+
+If you are upgrading and prefer to continue to use the previous implementation then you can re-enable the deprecated JSONBuilder with the following configuration:
+
+{code}
+grails:
+    json:
+        legacy:
+            builder: true
+{code}
+
+h4. JSON Views Replace JSON Converters
+
+With the addition of JSON views the previous API for using JSON converters is largely discouraged in favour of views. The converters plugin will in the future be separated into an external plugin and JSON views phased in to replace it. The JSON converter API is not deprecated, however JSON views provide a more fully featured, elegant API that is superior to writing JSON converters and/or marshallers.
+
+h4. Spring Boot 1.3 and Spring 4.2
+
+Grails 3.1 ships with upgraded third party libraries that may require changes. See the [Spring Boot upgrade notes|https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.3-Release-Notes] for information.
+
+Unlike Spring Boot 1.2, Spring Boot 1.3 no longer uses the [Gradle Application Plugin|https://docs.gradle.org/current/userguide/application_plugin.html] so if you relied on any behavior the application plugin then the plugin will need to be re-applied to your @build.gradle@.
+
+Spring Boot 1.3 also uses Spring Security 4.x by default, so if you project depends on Spring Security 3.x you have to force a downgrade. For example:
+
+{code}
+compile 'org.springframework.security:spring-security-core:3.2.9.RELEASE'
+compile 'org.springframework.security:spring-security-web:3.2.9.RELEASE'
+{code}
+
+h4. Gradle @run@ task no longer available by default
+
+Because the Gradle @run@ task for application startup was provided by the [Gradle Application Plugin|https://docs.gradle.org/current/userguide/application_plugin.html] (see above), it is no longer available by default. If you use Gradle to start up your application, use the @bootRun@ task instead, or re-apply the Application plugin in your @build.gradle@.
+
+Note: If you don't have need of the Gradle Application plugin's features, but have custom Gradle tasks or IDE configurations that depend on @run@, you can supply your own @run@ task that depends on @bootRun@ in your @build.gradle@:
+
+{code}
+task run(dependsOn: ['bootRun'])
+{code}
+
+
+h4. Resource annotation defaults to JSON instead of XML
+
+The [Resource|api:grails.rest.Resource] annotation applied to domain classes defaults to XML in Grails 3.0.x, but in Grails 3.1.x and above it defaults to JSON.
+
+If you use this annotation with the expecation of produces XML responses as the default you can modify the definition as follows:
+
+{code}
+import grails.rest.*
+
+@Resource(formats=['xml', 'json'])
+class MyDomainClass {}
+{code}
+
+This will restore the Grails 3.0.x behavior.
+
+h4. Geb and HTMLUnit 2.18
+
+If you use Geb with HTMLUnit (something that is not recommended, as a more native driver such as PhantomJS is recommended) you will need to upgrade your dependencies in @build.grade@:
+
+{code}
+    testRuntime 'org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1'
+    testRuntime 'net.sourceforge.htmlunit:htmlunit:2.18'
+{code}
+
+Note that there are also some changes in behavior in HTMLUnit 2.18 that may cause issues in existing tests including:
+
+* Expressions that evaluate the title (Example @$('title')@) now return blank and should be replaced with just @title@
+* If you return plain text in a response without surrounding HTML tags, these are no longer regarded as valid responses and should be wrapped in the required tags.

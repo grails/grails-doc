@@ -1,3 +1,5 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
 apply plugin: "base"
 
 version = project.getProperty("grails.version")
@@ -6,7 +8,7 @@ archivesBaseName = "grails-docs"
 
 ext.checkOutDir = "${buildDir.path}/checkout"
 ext.outputDir = "${buildDir.path}/docs"
-ext.githubBranch = "3.0.x"
+ext.githubBranch = "master"
 
 ext.explicitGrailsHome = System.getProperty("grails.home") ?: (project.hasProperty('grails.home') ? project.getProperty("grails.home") : null)
 ext.grailsHome = explicitGrailsHome ? file(explicitGrailsHome).absolutePath : "$checkOutDir/grails-src"
@@ -70,7 +72,12 @@ fetchGrailsSource.onlyIf {
 }
 
 task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
-    commandLine = ["./gradlew", "groovydoc", '--info', '--stacktrace']
+    String command = "./gradlew"
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        command = "gradlew.bat"
+    }
+
+    commandLine = [command, "groovydoc", '--info', '--stacktrace']
     workingDir = grailsHome
     environment "GRADLE_OPTS", "-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
 }
@@ -86,9 +93,9 @@ task migrate(type: grails.doc.gradle.MigrateLegacyDocs)
 
 task publishGuide(type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs']) {
     def searchDirs = project.file(project.grailsHome).listFiles().findAll {
-        new File(it, "src/main/groovy/org/codehaus/groovy/grails").exists()
+        new File(it, "src/main/groovy/org/grails").exists()
     }.collect {
-        new File(it, "src/main/groovy/org/codehaus/groovy/grails")
+        new File(it, "src/main/groovy/org/grails")
     }
 
     // No language setting because we want the English guide to be
