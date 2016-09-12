@@ -60,3 +60,33 @@ class Image {
    String myFile
 }
 {code}
+
+h4. Increase Upload Max File Size
+
+Grails default size for file uploads is 128000 (~128KB). When this limit is exceeded you'll see the following exception:
+
+{code:java}
+org.springframework.web.multipart.MultipartException: Could not parse multipart servlet request; nested exception is java.lang.IllegalStateException: org.apache.tomcat.util.http.fileupload.FileUploadBase$SizeLimitExceededException
+{code}
+
+You can configure the limit in your @application.yml@ as follows:
+
+{code:yml}
+grails:
+    controllers:
+        upload:
+            maxFileSize: 2000000
+            maxRequestSize: 2000000
+{code}
+
+@maxFileSize@ = The maximum size allowed for uploaded files.
+
+@maxRequestSize@ =  The maximum size allowed for multipart/form-data requests.
+
+You should keep in mind [OWASP recommendations - Unrestricted File Upload|https://www.owasp.org/index.php/Unrestricted_File_Upload]
+
+{note}
+Limit the file size to a maximum value in order to prevent denial of service attacks.
+{note}
+
+These limits exist to prevent DoS attacks and to enforce overall application performance (bigger request size == more memory used from the server)
