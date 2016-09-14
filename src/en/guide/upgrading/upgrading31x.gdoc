@@ -4,6 +4,21 @@ h4. Deprecated Classes and Methods Removed
 
 Classes and methods deprecated in Grails 3.0.x have been removed in Grails 3.2. This includes all classes in the @org.codehaus.groovy.grails@ package. If your application or plugin uses deprecated classes they should be updated to use non-deprecated replacements.
 
+h4. Slf4j Now Default
+
+The `log` property injected at compile time into all classes is now an Slf4j `Logger` instance and not an instance of the Commons Logging `Log` class.
+
+This should be a simple upgrade for most use cases, however this change does have some implications, for example it is no longer possible to pass non-string types to the log method. Example:
+
+{code}
+log.info "this works"
+Double notAString = 9.2
+log.info notAString
+{code}
+
+The latter call to the `info` method will throw an exception and `toString()` must be called to resolve the issue.
+
+
 h4. Spring 4.3 
 
 Grails 3.2 comes with Spring 4.3 which no longer supports Hibernate 3 and hence Grails 3.2 no longer supports Hibernate 3 either and you will need to upgrade to Hibernate 4 or above.
