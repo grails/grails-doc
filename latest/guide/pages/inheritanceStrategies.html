@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.5.2.3 Inheritance Strategies 3.1.11</title>
+    <title>7.5.2.3 Inheritance Strategies 3.2.0.RC2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.1.11</p>
+                    <p><strong>Version:</strong> 3.2.0.RC2</p>
 
                     
                 </div>
@@ -149,7 +149,13 @@ By default GORM classes use <code>table-per-hierarchy</code> inheritance mapping
     &#125;
 &#125;<p class="paragraph"/>class CreditCardPayment <span class="java&#45;keyword">extends</span> Payment &#123;
     <span class="java&#45;object">String</span> cardNumber
-&#125;</pre></div><p class="paragraph"/>The mapping of the root <code>Payment</code> class specifies that it will not be using <code>table-per-hierarchy</code> mapping for all child classes.
+&#125;</pre></div><p class="paragraph"/>The mapping of the root <code>Payment</code> class specifies that it will not be using <code>table-per-hierarchy</code> mapping for all child classes.<p class="paragraph"/>Alternatively, you can use a <code>table-per-concrete-class</code> inheritance strategy where each concrete class will have its own table with columns for all properties of the class, including inherited properties:<p class="paragraph"/><div class="code"><pre>class Payment &#123;
+    <span class="java&#45;object">Integer</span> amount<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        tablePerConcreteClass <span class="java&#45;keyword">true</span>
+    &#125;
+&#125;<p class="paragraph"/>class CreditCardPayment <span class="java&#45;keyword">extends</span> Payment &#123;
+    <span class="java&#45;object">String</span> cardNumber
+&#125;</pre></div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>

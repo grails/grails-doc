@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
     <head>
-        <title>The Grails Framework 3.1.11</title>
+        <title>The Grails Framework 3.2.0.RC2</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8" />
         <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8" />
@@ -98,7 +98,7 @@ function addJsClass(el) {
                         <div class="project">
                             <h1>The Grails Framework - Reference Documentation</h1>
                             <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
-                            <p><strong>Version:</strong> 3.1.11</p>
+                            <p><strong>Version:</strong> 3.2.0.RC2</p>
                             
                         </div>
 
@@ -1056,7 +1056,7 @@ It may seem odd that in a framework that embraces "convention-over-configuration
 
 <a name="3.1 Basic Configuration"><!-- Legacy link --></a>
 <h2 id="config">4.1 Basic Configuration</h2>
-Configuration in Grails is generally split across 2 areas: build configuration and runtime configuration.<p class="paragraph"/>Build configuration is generally done via Gradle and the <code>build.gradle</code> file. Runtime configuration is by default specified in YAML in the <code>grails-app/conf/application.yml</code> file.<p class="paragraph"/>If you prefer to use Grails 2.0-style Groovy configuration then you can create an additional <code>grails-app/conf/application.groovy</code> file to specify configuration using Groovy's <a href="http://groovy.codehaus.org/ConfigSlurper" target="blank">ConfigSlurper</a> syntax.<p class="paragraph"/>For Groovy configuration the following variables are available to the configuration script:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Variable</strong></th><th><strong class="bold">Description</strong></th></tr><tr class="table-odd"><td>userHome</td><td>Location of the home directory for the account that is running the Grails application.</td></tr><tr class="table-even"><td>grailsHome</td><td>Location of the directory where you installed Grails. If the <code>GRAILS_HOME</code> environment variable is set, it is used.</td></tr><tr class="table-odd"><td>appName</td><td>The application name as it appears in application.properties.</td></tr><tr class="table-even"><td>appVersion</td><td>The application version as it appears in application.properties.</td></tr></table><p class="paragraph"/>For example:<p class="paragraph"/><div class="code"><pre>my.tmp.dir = <span class="java&#45;quote">"&#36;&#123;userHome&#125;/.grails/tmp"</span></pre></div><p class="paragraph"/>
+Configuration in Grails is generally split across 2 areas: build configuration and runtime configuration.<p class="paragraph"/>Build configuration is generally done via Gradle and the <code>build.gradle</code> file. Runtime configuration is by default specified in YAML in the <code>grails-app/conf/application.yml</code> file.<p class="paragraph"/>If you prefer to use Grails 2.0-style Groovy configuration then you can create an additional <code>grails-app/conf/application.groovy</code> file to specify configuration using Groovy's <a href="http://groovy.codehaus.org/ConfigSlurper" target="blank">ConfigSlurper</a> syntax.<p class="paragraph"/>For Groovy configuration the following variables are available to the configuration script:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Variable</strong></th><th><strong class="bold">Description</strong></th></tr><tr class="table-odd"><td>userHome</td><td>Location of the home directory for the account that is running the Grails application.</td></tr><tr class="table-even"><td>grailsHome</td><td>Location of the directory where you installed Grails. If the <code>GRAILS_HOME</code> environment variable is set, it is used.</td></tr><tr class="table-odd"><td>appName</td><td>The application name as it appears in build.gradle.</td></tr><tr class="table-even"><td>appVersion</td><td>The application version as it appears in build.gradle.</td></tr></table><p class="paragraph"/>For example:<p class="paragraph"/><div class="code"><pre>my.tmp.dir = <span class="java&#45;quote">"&#36;&#123;userHome&#125;/.grails/tmp"</span></pre></div><p class="paragraph"/>
 If you want to read runtime configuration settings, i.e. those defined in <code>application.yml</code>, use the <a href="http://grails.github.io/grails-doc/3.1.x/api/grails/core/GrailsApplication.html" class="api"><code>grailsApplication</code></a> object, which is available as a variable in controllers and tag libraries:<p class="paragraph"/><div class="code"><pre>class MyController &#123;
     def hello() &#123;
         def recipient = grailsApplication.config.getProperty('foo.bar.hello')<p class="paragraph"/>        render <span class="java&#45;quote">"Hello $&#123;recipient&#125;"</span>
@@ -2921,7 +2921,13 @@ By default GORM classes use <code>table-per-hierarchy</code> inheritance mapping
     &#125;
 &#125;<p class="paragraph"/>class CreditCardPayment <span class="java&#45;keyword">extends</span> Payment &#123;
     <span class="java&#45;object">String</span> cardNumber
-&#125;</pre></div><p class="paragraph"/>The mapping of the root <code>Payment</code> class specifies that it will not be using <code>table-per-hierarchy</code> mapping for all child classes.
+&#125;</pre></div><p class="paragraph"/>The mapping of the root <code>Payment</code> class specifies that it will not be using <code>table-per-hierarchy</code> mapping for all child classes.<p class="paragraph"/>Alternatively, you can use a <code>table-per-concrete-class</code> inheritance strategy where each concrete class will have its own table with columns for all properties of the class, including inherited properties:<p class="paragraph"/><div class="code"><pre>class Payment &#123;
+    <span class="java&#45;object">Integer</span> amount<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
+        tablePerConcreteClass <span class="java&#45;keyword">true</span>
+    &#125;
+&#125;<p class="paragraph"/>class CreditCardPayment <span class="java&#45;keyword">extends</span> Payment &#123;
+    <span class="java&#45;object">String</span> cardNumber
+&#125;</pre></div>
 
 <a name="5.5.2.4 Custom Database Identity"><!-- Legacy link --></a>
 <h2 id="identity">7.5.2.4 Custom Database Identity</h2>
@@ -3895,6 +3901,34 @@ Note: A class is only considered to be a command object when it is used as a par
         // <span class="java&#45;keyword">this</span> will fail because it requires reading the body,
         // which has already been read.
         def json = request.JSON<p class="paragraph"/>        // ...<p class="paragraph"/>    &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Working with Lists of Command Objects</h4><p class="paragraph"/>A common use case for command objects is a Command Object that contains a collection of another:<p class="paragraph"/><div class="code"><pre>class DemoController &#123;<p class="paragraph"/>    def createAuthor(AuthorCommand command) &#123;
+        // ...<p class="paragraph"/>    &#125;<p class="paragraph"/>    class AuthorCommand &#123;
+        <span class="java&#45;object">String</span> fullName
+        List&#60;BookCommand&#62; books
+    &#125;<p class="paragraph"/>    class BookCommand &#123;
+        <span class="java&#45;object">String</span> title
+        <span class="java&#45;object">String</span> isbn
+    &#125;
+&#125;</pre></div><p class="paragraph"/>On this example, we want to create an Author with multiple Books.<p class="paragraph"/>In order to make this work from the UI layer, you can do the following in your GSP:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:form name=<span class="xml&#45;quote">"submit&#45;author&#45;books"</span> controller=<span class="xml&#45;quote">"demo"</span> action=<span class="xml&#45;quote">"createAuthor"</span>&#62;</span>
+    <span class="xml&#45;tag">&#60;g:fieldValue name=<span class="xml&#45;quote">"fullName"</span> value=<span class="xml&#45;quote">""</span>/&#62;</span>
+    <span class="xml&#45;tag">&#60;ul&#62;</span>
+        <span class="xml&#45;tag">&#60;li&#62;</span>
+            <span class="xml&#45;tag">&#60;g:fieldValue name=<span class="xml&#45;quote">"books&#91;0&#93;.title"</span> value=<span class="xml&#45;quote">""</span>/&#62;</span>
+            <span class="xml&#45;tag">&#60;g:fieldValue name=<span class="xml&#45;quote">"books&#91;0&#93;.isbn"</span> value=<span class="xml&#45;quote">""</span>/&#62;</span>
+        <span class="xml&#45;tag">&#60;/li&#62;</span><p class="paragraph"/>        <span class="xml&#45;tag">&#60;li&#62;</span>
+            <span class="xml&#45;tag">&#60;g:fieldValue name=<span class="xml&#45;quote">"books&#91;1&#93;.title"</span> value=<span class="xml&#45;quote">""</span>/&#62;</span>
+            <span class="xml&#45;tag">&#60;g:fieldValue name=<span class="xml&#45;quote">"books&#91;1&#93;.isbn"</span> value=<span class="xml&#45;quote">""</span>/&#62;</span>
+        <span class="xml&#45;tag">&#60;/li&#62;</span>
+    <span class="xml&#45;tag">&#60;/ul&#62;</span>
+<span class="xml&#45;tag">&#60;/g:form&#62;</span></pre></div><p class="paragraph"/>There is also support for JSON, so you can submit the following with correct databinding<p class="paragraph"/><div class="code"><pre>&#123;
+    <span class="java&#45;quote">"fullName"</span>: <span class="java&#45;quote">"Graeme Rocher"</span>,
+    <span class="java&#45;quote">"books"</span>: &#91;&#123;
+        <span class="java&#45;quote">"title"</span>: <span class="java&#45;quote">"The Definitive Guide to Grails"</span>,
+        <span class="java&#45;quote">"isbn"</span>: <span class="java&#45;quote">"1111&#45;343455&#45;1111"</span>
+    &#125;, &#123;
+        <span class="java&#45;quote">"title"</span>: <span class="java&#45;quote">"The Definitive Guide to Grails 2"</span>,
+        <span class="java&#45;quote">"isbn"</span>: <span class="java&#45;quote">"1111&#45;343455&#45;1112"</span>
+    &#125;&#93;,
 &#125;</pre></div>
 
 
@@ -4191,7 +4225,7 @@ The content to apply a layout to
 
 <a name="7.2.5 Static Resources"><!-- Legacy link --></a>
 <h2 id="resources">8.2.5 Static Resources</h2>
-Grails 2.0 integrates with the <a href="http://grails.org/plugin/asset-pipeline" target="blank">Asset Pipeline plugin</a> to provide sophisticated static asset management. This plugin is installed by default in new Grails applications.<p class="paragraph"/>The basic way to include a link to a static asset in your application is to use the <a href="../ref/Tags/resource.html" class="tags">resource</a> tag. This simple approach creates a URI pointing to the file.<p class="paragraph"/>However modern applications with dependencies on multiple JavaScript and CSS libraries and frameworks (as well as dependencies on multiple Grails plugins) require something more powerful.<p class="paragraph"/>The issues that the Asset-Pipeline plugin tackles are:
+Grails 3 integrates with the <a href="http://grails.org/plugin/asset-pipeline" target="blank">Asset Pipeline plugin</a> to provide sophisticated static asset management. This plugin is installed by default in new Grails applications.<p class="paragraph"/>The basic way to include a link to a static asset in your application is to use the <a href="../ref/Tags/resource.html" class="tags">resource</a> tag. This simple approach creates a URI pointing to the file.<p class="paragraph"/>However modern applications with dependencies on multiple JavaScript and CSS libraries and frameworks (as well as dependencies on multiple Grails plugins) require something more powerful.<p class="paragraph"/>The issues that the Asset-Pipeline plugin tackles are:
 <ul class="star">
 <li>Reduced Dependence - The plugin has compression, minification, and cache-digests built in.</li>
 <li>Easy Debugging - Makes for easy debugging by keeping files separate in development mode.</li>
@@ -5995,7 +6029,7 @@ Another important thing to note about errors in Grails is that error messages ar
         email email: <span class="java&#45;keyword">true</span>, blank: <span class="java&#45;keyword">false</span>
         age min: 18
     &#125;
-&#125;</pre></div><p class="paragraph"/>If a constraint is violated Grails will by convention look for a message code of the form:<p class="paragraph"/><div class="code"><pre>&#91;<span class="java&#45;object">Class</span> Name&#93;.&#91;Property Name&#93;.&#91;Constraint Code&#93;</pre></div><p class="paragraph"/>In the case of the <code>blank</code> constraint this would be <code>user.login.blank</code> so you would need a message such as the following in your <code>grails-app/i18n/messages.properties</code> file:<p class="paragraph"/><div class="code"><pre>user.login.blank=Your login name must be specified!</pre></div><p class="paragraph"/>The class name is looked for both with and without a package, with the packaged version taking precedence. So for example, com.mycompany.myapp.User.login.blank will be used before user.login.blank. This allows for cases where your domain class message codes clash with a plugin's.<p class="paragraph"/>For a reference on what codes are for which constraints refer to the reference guide for each constraint.<p class="paragraph"/><h4>Displaying Messages</h4><p class="paragraph"/>The <a href="../ref/Tags/renderErrors.html" class="tags">renderErrors</a> tag will automatically look up messages for you using the <a href="../ref/Tags/message.html" class="tags">message</a> tag. If you need more control of rendering you can handle this yourself:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:hasErrors bean=<span class="xml&#45;quote">"$&#123;user&#125;"</span>&#62;</span>
+&#125;</pre></div><p class="paragraph"/>If a constraint is violated Grails will by convention look for a message code of the form:<p class="paragraph"/><div class="code"><pre>&#91;<span class="java&#45;object">Class</span> Name&#93;.&#91;Property Name&#93;.&#91;Constraint Code&#93;</pre></div><p class="paragraph"/>In the case of the <code>blank</code> constraint this would be <code>user.login.blank</code> so you would need a message such as the following in your <code>grails-app/i18n/messages.properties</code> file:<p class="paragraph"/><div class="code"><pre>user.login.blank=Your login name must be specified!</pre></div><p class="paragraph"/>The class name is looked for both with and without a package, with the packaged version taking precedence. So for example, com.mycompany.myapp.User.login.blank will be used before user.login.blank. This allows for cases where your domain class message codes clash with a plugin's.<p class="paragraph"/>For a reference on what codes are for which constraints refer to the reference guide for each constraint (e.g. <a href="../ref/Constraints/blank.html" class="Constraints">blank</a>).<p class="paragraph"/><h4>Displaying Messages</h4><p class="paragraph"/>The <a href="../ref/Tags/renderErrors.html" class="tags">renderErrors</a> tag will automatically look up messages for you using the <a href="../ref/Tags/message.html" class="tags">message</a> tag. If you need more control of rendering you can handle this yourself:<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;g:hasErrors bean=<span class="xml&#45;quote">"$&#123;user&#125;"</span>&#62;</span>
   <span class="xml&#45;tag">&#60;ul&#62;</span>
    <span class="xml&#45;tag">&#60;g:eachError var=<span class="xml&#45;quote">"err"</span> bean=<span class="xml&#45;quote">"$&#123;user&#125;"</span>&#62;</span>
        <span class="xml&#45;tag">&#60;li&#62;</span><span class="xml&#45;tag">&#60;g:message error=<span class="xml&#45;quote">"$&#123;err&#125;"</span> /&#62;</span><span class="xml&#45;tag">&#60;/li&#62;</span>
@@ -7059,7 +7093,7 @@ class SomeControllerTests &#123;<p class="paragraph"/>    @BeforeClass
 
 <a name="12.2 Integration Testing"><!-- Legacy link --></a>
 <h2 id="integrationTesting">15.2 Integration Testing</h2>
-Integration tests differ from unit tests in that you have full access to the Grails environment within the test. You can create an integration test using the <a href="../ref/Command Line/create-integration-test.html" class="commandLine">create-integration-test</a> command:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;integration&#45;test Example</pre></div><p class="paragraph"/>The above command will create a new integration test at the location <code>src/integration-test/groovy/&#60;PACKAGE&#62;/ExampleSpec.groovy</code>.<p class="paragraph"/>Grails uses the test environment for integration tests and loads the application prior to the first test run. All tests use the same application state.<p class="paragraph"/><h4>Transactions</h4><p class="paragraph"/>Integration tests run inside a database transaction by default, which is rolled back at the end of the each test. This means that data saved during a test is not persisted to the database (which is shared across all tests). The default generated integration test template includes the <a href="http://grails.github.io/grails-doc/3.1.x/api/grails/transaction/Rollback.html" class="api">Rollback</a> annotation:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
+Integration tests differ from unit tests in that you have full access to the Grails environment within the test. You can create an integration test using the <a href="../ref/Command Line/create-integration-test.html" class="commandLine">create-integration-test</a> command:<p class="paragraph"/><div class="code"><pre>$ grails create&#45;integration&#45;test Example</pre></div><p class="paragraph"/>The above command will create a new integration test at the location <code>src/integration-test/groovy/&#60;PACKAGE&#62;/ExampleSpec.groovy</code>.<p class="paragraph"/>Grails uses the test environment for integration tests and loads the application prior to the first test run. All tests use the same application state.<p class="paragraph"/><h4>Transactions</h4><p class="paragraph"/>Integration test methods run inside their own database transaction by default, which is rolled back at the end of each test method. This means that data saved during a test is not persisted to the database (which is shared across all tests). The default generated integration test template includes the <a href="http://grails.github.io/grails-doc/3.1.x/api/grails/transaction/Rollback.html" class="api">Rollback</a> annotation:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
 <span class="java&#45;keyword">import</span> grails.transaction.&#42;
 <span class="java&#45;keyword">import</span> spock.lang.&#42;<p class="paragraph"/>@Integration
 @Rollback
@@ -7067,31 +7101,32 @@ class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</spa
         expect:<span class="java&#45;quote">"fix me"</span>
             <span class="java&#45;keyword">true</span> == <span class="java&#45;keyword">false</span>
     &#125;
-&#125;</pre></div><p class="paragraph"/>The <code>Rollback</code> annotation ensures that each test methods runs in a transaction that is rolled back. Generally this is desirable because you do not want your tests depending on order or application state.<p class="paragraph"/><h4>Using Spring's Rollback annotation</h4>
-In Grails 3.0 tests rely on <code>grails.transaction.Rollback</code> annotation to bind the session in integration tests. But with this approach the <code>setup()</code> and <code>setupSpec()</code> method in the test is run prior to the transaction starting hence
-you would see <code>No Hibernate Session found</code> error while running integration test if <code>setup()</code> sets up data and persists them as shown in the below sample:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
+&#125;</pre></div><p class="paragraph"/>The <code>Rollback</code> annotation ensures that each test method runs in a transaction that is rolled back. Generally this is desirable because you do not want your tests depending on order or application state.<p class="paragraph"/>In Grails 3.0 tests rely on <code>grails.transaction.Rollback</code> annotation to bind the session in integration tests. Though each test method transaction is rolled back, the <code>setup()</code> method uses a separate transaction that is not rolled back.
+Data will persist to the database and will need to be cleaned up manually if <code>setup()</code> sets up data and persists them as shown in the below sample:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
 <span class="java&#45;keyword">import</span> grails.transaction.&#42;
 <span class="java&#45;keyword">import</span> spock.lang.&#42;<p class="paragraph"/>@Integration
 @Rollback
 class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    void setup() &#123;
-        // Below line would <span class="java&#45;keyword">throw</span> a Hibernate session not found error
+        // Below line would persist and not roll back
         <span class="java&#45;keyword">new</span> Book(name: 'Grails in Action').save(flush: <span class="java&#45;keyword">true</span>)
     &#125;<p class="paragraph"/>    void <span class="java&#45;quote">"test something"</span>() &#123;
         expect:
         Book.count() == 1
     &#125;
-&#125;</pre></div><p class="paragraph"/>To make sure the setup logic runs within the transaction you have to move it to be called from the method itself. Similar to usage of <code>setupData()</code> method shown below:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
+&#125;</pre></div><p class="paragraph"/>To automatically roll back setup logic, any persistence operations need to be called from the test method itself so that they are run within the test method's rolled back transaction. Similar to usage of the <code>setupData()</code> method shown below:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
 <span class="java&#45;keyword">import</span> grails.transaction.&#42;
 <span class="java&#45;keyword">import</span> spock.lang.&#42;<p class="paragraph"/>@Integration
 @Rollback
 class <code>artifact.name</code>Spec <span class="java&#45;keyword">extends</span> Specification &#123;<p class="paragraph"/>    void setupData() &#123;
+        // Below line would roll back
         <span class="java&#45;keyword">new</span> Book(name: 'Grails in Action').save(flush: <span class="java&#45;keyword">true</span>)
     &#125;<p class="paragraph"/>    void <span class="java&#45;quote">"test something"</span>() &#123;
         given:
         setupData()<p class="paragraph"/>        expect:
         Book.count() == 1
     &#125;
-&#125;</pre></div><p class="paragraph"/>Another approach could be to use Spring's <a href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/test/annotation/Rollback.html" target="blank">@Rollback</a> instead.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
+&#125;</pre></div><p class="paragraph"/><h4>Using Spring's Rollback annotation</h4>
+Another transactional approach could be to use Spring's <a href="http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/test/annotation/Rollback.html" target="blank">@Rollback</a> instead.<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.test.mixin.integration.Integration
 <span class="java&#45;keyword">import</span> org.springframework.test.annotation.Rollback
 <span class="java&#45;keyword">import</span> spock.lang.&#42;<p class="paragraph"/>@Integration
 @Rollback
@@ -8086,8 +8121,8 @@ By default, the size of text areas in scaffolded views is defined in the CSS, so
     age(range:18..65)
 &#125;</pre></div><p class="paragraph"/>Restricting the size with a constraint also effects how many characters can be entered in the d view:<p class="paragraph"/><div class="code"><pre>def constraints = &#123;
     name(size:0..30)
-&#125;</pre></div><p class="paragraph"/><h4>Customizing the Scaffolding templates</h4><p class="paragraph"/>The templates used by Grails to generate the controller and views can be customized by installing the templates with the <a href="../ref/Command Line/install-templates.html" class="commandLine">install-templates</a> command.
-
+&#125;</pre></div><p class="paragraph"/><h4>The Fields Plugin</h4><p class="paragraph"/>The Grails scaffolding templates make use of the <a href="https://grails.org/plugin/fields" target="blank">The Fields Plugin</a>. Once you've generated the scaffold views, you can customize the forms and tables using the `Taglib` provided by the plugin (see the <a href="http://grails3-plugins.github.io/fields/snapshot/" target="blank">Fields plugin docs</a> for details).<p class="paragraph"/><div class="code"><pre><span class="xml&#45;tag">&#60;%&#45;&#45; Generate an HTML table from bookInstanceList, showing only 'title' and 'category' columns &#45;&#45;%&#62;</span>
+<span class="xml&#45;tag">&#60;f:table collection=<span class="xml&#45;quote">"bookInstanceList"</span> properties=<span class="xml&#45;quote">"&#91;'title', 'category'&#93;"</span>/&#62;</span></pre></div><p class="paragraph"/><h4>Customizing the Scaffolding templates</h4><p class="paragraph"/>The templates used by Grails to generate the controller and views can be customized by installing the templates with the <a href="../ref/Command Line/install-templates.html" class="commandLine">install-templates</a> command.<p class="paragraph"/>
 
 <a name="19. Deployment"><!-- Legacy link --></a>
 <h1 id="deployment">22 Deployment</h1>
