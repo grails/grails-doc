@@ -16,8 +16,17 @@ Double notAString = 9.2
 log.info notAString
 {code}
 
-The latter call to the `info` method will throw an exception and `toString()` must be called to resolve the issue.
+The latter call to the `info` method will throw an exception as it is not a String.
 
+Instead you should use Slf4j's formatting anchors to log. The advantage is the `toString()` method is not called unless the message will be logged.
+
+{code}
+log.info "{}", 9.2D
+log.debug "Key: {}, Value: {}", key, value
+log.error "{}", exception.message, exception
+{code}
+
+See the [Slf4j FAQ|http://www.slf4j.org/faq.html#string_or_object] for more information.
 
 h4. Spring 4.3 
 
