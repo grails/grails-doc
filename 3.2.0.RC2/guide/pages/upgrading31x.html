@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.2.4 Sets, Lists and Maps 3.2.0.RC2</title>
+    <title>3.1 Upgrading from Grails 3.1 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -118,22 +118,22 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
                 
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>7.2.4 Sets, Lists and Maps - Reference Documentation</h1>
+                    <h1>3.1 Upgrading from Grails 3.1 - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC2</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -141,46 +141,29 @@ function addJsClass() {
                 
 
                 
-<a name="5.2.4 Sets, Lists and Maps"><!-- Legacy link --></a>
-<h2 id="sets,ListsAndMaps">7.2.4 Sets, Lists and Maps</h2>
-<h4>Sets of Objects</h4><p class="paragraph"/>By default when you define a relationship with GORM it is a <code>java.util.Set</code> which is an unordered collection that cannot contain duplicates. In other words when you have:<p class="paragraph"/><div class="code"><pre>class Author &#123;
-    <span class="java&#45;keyword">static</span> hasMany = &#91;books: Book&#93;
-&#125;</pre></div><p class="paragraph"/>The books property that GORM injects is a <code>java.util.Set</code>. Sets guarantee uniqueness but not order, which may not be what you want. To have custom ordering you configure the Set as a <code>SortedSet</code>:<p class="paragraph"/><div class="code"><pre>class Author &#123;<p class="paragraph"/>    SortedSet books<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;books: Book&#93;
-&#125;</pre></div><p class="paragraph"/>In this case a <code>java.util.SortedSet</code> implementation is used which means you must implement <code>java.lang.Comparable</code> in your Book class:<p class="paragraph"/><div class="code"><pre>class Book <span class="java&#45;keyword">implements</span> Comparable &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> title
-    Date releaseDate = <span class="java&#45;keyword">new</span> Date()<p class="paragraph"/>    <span class="java&#45;object">int</span> compareTo(obj) &#123;
-        releaseDate.compareTo(obj.releaseDate)
-    &#125;
-&#125;</pre></div><p class="paragraph"/>The result of the above class is that the Book instances in the books collection of the Author class will be ordered by their release date.<p class="paragraph"/><h4>Lists of Objects</h4><p class="paragraph"/>To keep objects in the order which they were added and to be able to reference them by index like an array you can define your collection type as a <code>List</code>:<p class="paragraph"/><div class="code"><pre>class Author &#123;<p class="paragraph"/>    List books<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;books: Book&#93;
-&#125;</pre></div><p class="paragraph"/>In this case when you add new elements to the books collection the order is retained in a sequential list indexed from 0 so you can do:<p class="paragraph"/><div class="code"><pre>author.books&#91;0&#93; // get the first book</pre></div><p class="paragraph"/>The way this works at the database level is Hibernate creates a <code>books_idx</code> column where it saves the index of the elements in the collection to retain this order at the database level.<p class="paragraph"/>When using a <code>List</code>, elements must be added to the collection before being saved, otherwise Hibernate will throw an exception (<code>org.hibernate.HibernateException</code>: null index column for collection):<p class="paragraph"/><div class="code"><pre>// This won't work!
-def book = <span class="java&#45;keyword">new</span> Book(title: 'The Shining')
-book.save()
-author.addToBooks(book)<p class="paragraph"/>// Do it <span class="java&#45;keyword">this</span> way instead.
-def book = <span class="java&#45;keyword">new</span> Book(title: 'Misery')
-author.addToBooks(book)
-author.save()</pre></div><p class="paragraph"/><h4>Bags of Objects</h4><p class="paragraph"/>If ordering and uniqueness aren't a concern (or if you manage these explicitly) then you can use the Hibernate <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/collections.html" target="blank">Bag</a> type to represent mapped collections.<p class="paragraph"/>The only change required for this is to define the collection type as a <code>Collection</code>:<p class="paragraph"/><div class="code"><pre>class Author &#123;<p class="paragraph"/>   Collection books<p class="paragraph"/>   <span class="java&#45;keyword">static</span> hasMany = &#91;books: Book&#93;
-&#125;</pre></div><p class="paragraph"/>Since uniqueness and order aren't managed by Hibernate, adding to or removing from collections mapped as a Bag don't trigger a load of all existing instances from the database, so this approach will perform better and require less memory than using a <code>Set</code> or a <code>List</code>.<p class="paragraph"/><h4>Maps of Objects</h4><p class="paragraph"/>If you want a simple map of string/value pairs GORM can map this with the following:<p class="paragraph"/><div class="code"><pre>class Author &#123;
-    Map books // map of ISBN:book names
-&#125;<p class="paragraph"/>def a = <span class="java&#45;keyword">new</span> Author()
-a.books = &#91;<span class="java&#45;quote">"1590597583"</span>:<span class="java&#45;quote">"Grails Book"</span>&#93;
-a.save()</pre></div>
-In this case the key and value of the map MUST be strings.<p class="paragraph"/>If you want a Map of objects then you can do this:<p class="paragraph"/><div class="code"><pre>class Book &#123;<p class="paragraph"/>    Map authors<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;authors: Author&#93;
-&#125;<p class="paragraph"/>def a = <span class="java&#45;keyword">new</span> Author(name:<span class="java&#45;quote">"Stephen King"</span>)<p class="paragraph"/>def book = <span class="java&#45;keyword">new</span> Book()
-book.authors = &#91;stephen:a&#93;
-book.save()</pre></div><p class="paragraph"/>The static <code>hasMany</code> property defines the type of the elements within the Map. The keys for the map <strong class="bold">must</strong> be strings.<p class="paragraph"/><h4>A Note on Collection Types and Performance</h4><p class="paragraph"/>The Java <code>Set</code> type doesn't allow duplicates. To ensure uniqueness when adding an entry to a <code>Set</code> association Hibernate has to load the entire associations from the database. If you have a large numbers of entries in the association this can be costly in terms of performance.<p class="paragraph"/>The same behavior is required for <code>List</code> types, since Hibernate needs to load the entire association to maintain order. Therefore it is recommended that if you anticipate a large numbers of records in the association that you make the association bidirectional so that the link can be created on the inverse side. For example consider the following code:<p class="paragraph"/><div class="code"><pre>def book = <span class="java&#45;keyword">new</span> Book(title:<span class="java&#45;quote">"New Grails Book"</span>)
-def author = Author.get(1)
-book.author = author
-book.save()</pre></div><p class="paragraph"/>In this example the association link is being created by the child (Book) and hence it is not necessary to manipulate the collection directly resulting in fewer queries and more efficient code. Given an <code>Author</code> with a large number of associated <code>Book</code> instances if you were to write code like the following you would see an impact on performance:<p class="paragraph"/><div class="code"><pre>def book = <span class="java&#45;keyword">new</span> Book(title:<span class="java&#45;quote">"New Grails Book"</span>)
-def author = Author.get(1)
-author.addToBooks(book)
-author.save()</pre></div><p class="paragraph"/>You could also model the collection as a Hibernate Bag as described above.
+
+<h2 id="upgrading31x">3.1 Upgrading from Grails 3.1</h2>
+If you are upgrading from Grails 3.1 there are a few items to take into consideration.<p class="paragraph"/><h4>Deprecated Classes and Methods Removed</h4><p class="paragraph"/>Classes and methods deprecated in Grails 3.0.x have been removed in Grails 3.2. This includes all classes in the <code>org.codehaus.groovy.grails</code> package. If your application or plugin uses deprecated classes they should be updated to use non-deprecated replacements.<p class="paragraph"/><h4>Slf4j Now Default</h4><p class="paragraph"/>The `log` property injected at compile time into all classes is now an Slf4j `Logger` instance and not an instance of the Commons Logging `Log` class.<p class="paragraph"/>This should be a simple upgrade for most use cases, however this change does have some implications, for example it is no longer possible to pass non-string types to the log method. Example:<p class="paragraph"/><div class="code"><pre>log.info <span class="java&#45;quote">"<span class="java&#45;keyword">this</span> works"</span>
+<span class="java&#45;object">Double</span> notAString = 9.2
+log.info notAString</pre></div><p class="paragraph"/>The latter call to the `info` method will throw an exception as it is not a String.<p class="paragraph"/>Instead you should use Slf4j's formatting anchors to log. The advantage is the `toString()` method is not called unless the message will be logged.<p class="paragraph"/><div class="code"><pre>log.info <span class="java&#45;quote">"&#123;&#125;"</span>, 9.2D
+log.debug <span class="java&#45;quote">"Key: &#123;&#125;, Value: &#123;&#125;"</span>, key, value
+log.error <span class="java&#45;quote">"&#123;&#125;"</span>, exception.message, exception</pre></div><p class="paragraph"/>See the <a href="http://www.slf4j.org/faq.html#string_or_object" target="blank">Slf4j FAQ</a> for more information.<p class="paragraph"/><h4>Spring 4.3 </h4><p class="paragraph"/>Grails 3.2 comes with Spring 4.3 which no longer supports Hibernate 3 and hence Grails 3.2 no longer supports Hibernate 3 either and you will need to upgrade to Hibernate 4 or above.<p class="paragraph"/><h4>Spring Boot 1.4 </h4><p class="paragraph"/>Spring Boot 1.4, through its dependency management mechanism, enforces the upgrade for many depndencies. You should review your dependencies following the upgrade to ensure the new versions are compatible with your application.<p class="paragraph"/>Spring Boot 1.4 also deprecates many testing annotations (such as <code>WebIntegrationTest</code>).<p class="paragraph"/>See the <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.4-Release-Notes" target="blank">Spring Boot 1.4 release notes</a> for more information on the changes required at the Boot level.<p class="paragraph"/>
+<h4>Hibernate 4 Usage</h4><p class="paragraph"/>Related to Spring Boot 1.4, one important change is that Hibernate 5 is now the default version, so if you have declared a dependency on the `hibernate4` plugin in Grails such as:<p class="paragraph"/><div class="code"><pre>compile <span class="java&#45;quote">"org.grails.plugins:hibernate4"</span></pre></div><p class="paragraph"/>This will not be enough to ensure that Hibernate 4 is used. You must instead also directly declare the Hibernate 4 dependencies:<p class="paragraph"/><div class="code"><pre>dependencies &#123;
+    compile <span class="java&#45;quote">"org.grails.plugins:hibernate4"</span>
+    compile <span class="java&#45;quote">"org.hibernate:hibernate&#45;core:4.3.10.Final"</span>
+    compile <span class="java&#45;quote">"org.hibernate:hibernate&#45;ehcache:4.3.10.Final"</span>
+&#125;</pre></div><p class="paragraph"/><h4>GORM 6 Configuration Model</h4><p class="paragraph"/>In preparation for Hibernate 5.2 support the previous "SessionFactoryBean" notion has been removed. Now if you wish to customize <code>SessionFactory</code> creation you should instead register a custom <code>org.grails.orm.hibernate.connections.HibernateConnectionSourceFactory</code> in Spring.<p class="paragraph"/><h4>HibernateTestMixin Dependency Changes</h4><p class="paragraph"/>The `grails-datastore-test-support` dependency has been removed and the `HibernateTestMixin` class integrated directly into the plugin, so if you receive a resolve error remove the following dependency from your `build.gradle`:<p class="paragraph"/><div class="code"><pre>dependencies &#123;
+    testCompile <span class="java&#45;quote">"org.grails:grails&#45;datastore&#45;test&#45;support"</span>
+&#125;</pre></div><p class="paragraph"/><h4><code>application.groovy</code> Changes</h4><p class="paragraph"/>An improvement was added to make groovy configuration behave like yml configuration when it comes to the CLI. Previously, configuration values in <code>application.groovy</code> were not available to commands like <code>grails create-controller</code>. A side effect of this change causes an exception when those commands are executed if the configuration relies on classes in the runtime.<p class="paragraph"/><div class="code"><pre>Error occurred running Grails CLI: startup failed:
+script14738267015581837265078.groovy: 13: unable to resolve class com.foo.Bar</pre></div><p class="paragraph"/>The solution is to create a separate file called <code>runtime.groovy</code> in <code>grails-app/conf</code>. That file will not be parsed by the CLI and will only be included at runtime.
 
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
@@ -292,6 +275,9 @@ author.save()</pre></div><p class="paragraph"/>You could also model the collecti
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

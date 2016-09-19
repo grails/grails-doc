@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.4.2 Where Queries 3.2.0.RC2</title>
+    <title>3.1 Upgrading from Grails 3.1 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -118,22 +118,22 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
                 
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>7.4.2 Where Queries - Reference Documentation</h1>
+                    <h1>3.1 Upgrading from Grails 3.1 - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC2</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -142,115 +142,28 @@ function addJsClass() {
 
                 
 
-<h2 id="whereQueries">7.4.2 Where Queries</h2>
-The <code>where</code> method, introduced in Grails 2.0, builds on the support for <a href="../guide/single.html#detachedCriteria" class="guide">Detached Criteria</a> by providing an enhanced, compile-time checked query DSL for common queries. The <code>where</code> method is more flexible than dynamic finders, less verbose than criteria and provides a powerful mechanism to compose queries.<p class="paragraph"/><h4>Basic Querying</h4><p class="paragraph"/>The <code>where</code> method accepts a closure that looks very similar to Groovy's regular collection methods. The closure should define the logical criteria in regular Groovy syntax, for example:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-   firstName == <span class="java&#45;quote">"Bart"</span>
-&#125;
-Person bart = query.find()</pre></div><p class="paragraph"/>The returned object is a <code>DetachedCriteria</code> instance, which means it is not associated with any particular database connection or session. This means you can use the <code>where</code> method to define common queries at the class level:<p class="paragraph"/><div class="code"><pre>class Person &#123;
-    <span class="java&#45;keyword">static</span> simpsons = where &#123;
-         lastName == <span class="java&#45;quote">"Simpson"</span>
-    &#125;
-    &#8230;
-&#125;
-&#8230;
-Person.simpsons.each &#123;
-    println it.firstname
-&#125;</pre></div><p class="paragraph"/>Query execution is lazy and only happens upon usage of the <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance. If you want to execute a where-style query immediately there are variations of the <code>findAll</code> and <code>find</code> methods to accomplish this:<p class="paragraph"/><div class="code"><pre>def results = Person.findAll &#123;
-     lastName == <span class="java&#45;quote">"Simpson"</span>
-&#125;
-def results = Person.findAll(sort:<span class="java&#45;quote">"firstName"</span>) &#123;
-     lastName == <span class="java&#45;quote">"Simpson"</span>
-&#125;
-Person p = Person.find &#123; firstName == <span class="java&#45;quote">"Bart"</span> &#125;</pre></div><p class="paragraph"/>Each Groovy operator maps onto a regular criteria method. The following table provides a map of Groovy operators to methods:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Operator</th><th>Criteria Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">==</strong></td><td>eq</td><td>Equal to</td></tr><tr class="table-even"><td><strong class="bold">!=</strong></td><td>ne</td><td>Not equal to</td></tr><tr class="table-odd"><td><strong class="bold">&#62;</strong></td><td>gt</td><td>Greater than</td></tr><tr class="table-even"><td><strong class="bold">&#60;</strong></td><td>lt</td><td>Less than</td></tr><tr class="table-odd"><td><strong class="bold">&#62;=</strong></td><td>ge</td><td>Greater than or equal to</td></tr><tr class="table-even"><td><strong class="bold">&#60;=</strong></td><td>le</td><td>Less than or equal to</td></tr><tr class="table-odd"><td><strong class="bold">in</strong></td><td>inList</td><td>Contained within the given list</td></tr><tr class="table-even"><td><strong class="bold">==~</strong></td><td>like</td><td>Like a given string</td></tr><tr class="table-odd"><td><strong class="bold">=~</strong></td><td>ilike</td><td>Case insensitive like</td></tr></table><p class="paragraph"/>It is possible use regular Groovy comparison operators and logic to formulate complex queries:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-    (lastName != <span class="java&#45;quote">"Simpson"</span> &#38;&#38; firstName != <span class="java&#45;quote">"Fred"</span>) || (firstName == <span class="java&#45;quote">"Bart"</span> &#38;&#38; age &#62; 9)
-&#125;
-def results = query.list(sort:<span class="java&#45;quote">"firstName"</span>)</pre></div><p class="paragraph"/>The Groovy regex matching operators map onto like and ilike queries unless the expression on the right hand side is a <code>Pattern</code> object, in which case they map onto an <code>rlike</code> query:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-     firstName ==~ ~/B.+/
-&#125;</pre></div><p class="paragraph"/><blockquote class="note">
-Note that <code>rlike</code> queries are only supported if the underlying database supports regular expressions
-</blockquote><p class="paragraph"/>A <code>between</code> criteria query can be done by combining the <code>in</code> keyword with a range:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-     age in 18..65
-&#125;</pre></div><p class="paragraph"/>Finally, you can do <code>isNull</code> and <code>isNotNull</code> style queries by using <code>null</code> with regular comparison operators:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-     middleName == <span class="java&#45;keyword">null</span>
-&#125;</pre></div><p class="paragraph"/><p class="paragraph"/><h4>Query Composition</h4><p class="paragraph"/>Since the return value of the <code>where</code> method is a <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance you can compose new queries from the original query:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-     lastName == <span class="java&#45;quote">"Simpson"</span>
-&#125;
-def bartQuery = query.where &#123;
-     firstName == <span class="java&#45;quote">"Bart"</span>
-&#125;
-Person p = bartQuery.find()</pre></div><p class="paragraph"/>Note that you cannot pass a closure defined as a variable into the <code>where</code> method unless it has been explicitly cast to a <code>DetachedCriteria</code> instance. In other words the following will produce an error:<p class="paragraph"/><div class="code"><pre>def callable = &#123;
-    lastName == <span class="java&#45;quote">"Simpson"</span>
-&#125;
-def query = Person.where(callable)</pre></div><p class="paragraph"/>The above must be written as follows:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.gorm.DetachedCriteria<p class="paragraph"/>def callable = &#123;
-    lastName == <span class="java&#45;quote">"Simpson"</span>
-&#125; as DetachedCriteria&#60;Person&#62;
-def query = Person.where(callable)</pre></div><p class="paragraph"/>As you can see the closure definition is cast (using the Groovy <code>as</code> keyword) to a <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance targeted at the <code>Person</code> class.<p class="paragraph"/><h4>Conjunction, Disjunction and Negation</h4><p class="paragraph"/>As mentioned previously you can combine regular Groovy logical operators (<code>||</code> and <code>&#38;&#38;</code>) to form conjunctions and disjunctions:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-    (lastName != <span class="java&#45;quote">"Simpson"</span> &#38;&#38; firstName != <span class="java&#45;quote">"Fred"</span>) || (firstName == <span class="java&#45;quote">"Bart"</span> &#38;&#38; age &#62; 9)
-&#125;</pre></div><p class="paragraph"/>You can also negate a logical comparison using <code>!</code>:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-    firstName == <span class="java&#45;quote">"Fred"</span> &#38;&#38; !(lastName == 'Simpson')
-&#125;</pre></div><p class="paragraph"/><h4>Property Comparison Queries</h4><p class="paragraph"/>If you use a property name on both the left hand and right side of a comparison expression then the appropriate property comparison criteria is automatically used:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-   firstName == lastName
-&#125;</pre></div><p class="paragraph"/>The following table described how each comparison operator maps onto each criteria property comparison method:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Operator</th><th>Criteria Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">==</strong></td><td>eqProperty</td><td>Equal to</td></tr><tr class="table-even"><td><strong class="bold">!=</strong></td><td>neProperty</td><td>Not equal to</td></tr><tr class="table-odd"><td><strong class="bold">&#62;</strong></td><td>gtProperty</td><td>Greater than</td></tr><tr class="table-even"><td><strong class="bold">&#60;</strong></td><td>ltProperty</td><td>Less than</td></tr><tr class="table-odd"><td><strong class="bold">&#62;=</strong></td><td>geProperty</td><td>Greater than or equal to</td></tr><tr class="table-even"><td><strong class="bold">&#60;=</strong></td><td>leProperty</td><td>Less than or equal to</td></tr></table><p class="paragraph"/><h4>Querying Associations</h4><p class="paragraph"/>Associations can be queried by using the dot operator to specify the property name of the association to be queried:<p class="paragraph"/><div class="code"><pre>def query = Pet.where &#123;
-    owner.firstName == <span class="java&#45;quote">"Joe"</span> || owner.firstName == <span class="java&#45;quote">"Fred"</span>
-&#125;</pre></div><p class="paragraph"/>You can group multiple criterion inside a closure method call where the name of the method matches the association name:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-    pets &#123; name == <span class="java&#45;quote">"Jack"</span> || name == <span class="java&#45;quote">"Joe"</span> &#125;
-&#125;</pre></div><p class="paragraph"/>This technique can be combined with other top-level criteria:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-     pets &#123; name == <span class="java&#45;quote">"Jack"</span> &#125; || firstName == <span class="java&#45;quote">"Ed"</span>
-&#125;</pre></div><p class="paragraph"/>For collection associations it is possible to apply queries to the size of the collection:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-       pets.size() == 2
-&#125;</pre></div><p class="paragraph"/>The following table shows which operator maps onto which criteria method for each size() comparison:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Operator</th><th>Criteria Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">==</strong></td><td>sizeEq</td><td>The collection size is equal to</td></tr><tr class="table-even"><td><strong class="bold">!=</strong></td><td>sizeNe</td><td>The collection size is not equal to</td></tr><tr class="table-odd"><td><strong class="bold">&#62;</strong></td><td>sizeGt</td><td>The collection size is greater than</td></tr><tr class="table-even"><td><strong class="bold">&#60;</strong></td><td>sizeLt</td><td>The collection size is less than</td></tr><tr class="table-odd"><td><strong class="bold">&#62;=</strong></td><td>sizeGe</td><td>The collection size is greater than or equal to</td></tr><tr class="table-even"><td><strong class="bold">&#60;=</strong></td><td>sizeLe</td><td>The collection size is less than or equal to</td></tr></table><p class="paragraph"/>
-<h4>Subqueries</h4><p class="paragraph"/>It is possible to execute subqueries within where queries. For example to find all the people older than the average age the following query can be used:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">final</span> query = Person.where &#123;
-  age &#62; avg(age)
-&#125;</pre></div><p class="paragraph"/>The following table lists the possible subqueries:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">avg</strong></td><td>The average of all values</td></tr><tr class="table-even"><td><strong class="bold">sum</strong></td><td>The sum of all values</td></tr><tr class="table-odd"><td><strong class="bold">max</strong></td><td>The maximum value</td></tr><tr class="table-even"><td><strong class="bold">min</strong></td><td>The minimum value</td></tr><tr class="table-odd"><td><strong class="bold">count</strong></td><td>The count of all values</td></tr><tr class="table-even"><td><strong class="bold">property</strong></td><td>Retrieves a property of the resulting entities</td></tr></table><p class="paragraph"/>You can apply additional criteria to any subquery by using the <code>of</code> method and passing in a closure containing the criteria:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-  age &#62; avg(age).of &#123; lastName == <span class="java&#45;quote">"Simpson"</span> &#125; &#38;&#38; firstName == <span class="java&#45;quote">"Homer"</span>
-&#125;</pre></div><p class="paragraph"/>Since the <code>property</code> subquery returns multiple results, the criterion used compares all results. For example the following query will find all people younger than people with the surname "Simpson":<p class="paragraph"/><div class="code"><pre>Person.where &#123;
-    age &#60; property(age).of &#123; lastName == <span class="java&#45;quote">"Simpson"</span> &#125;
-&#125;</pre></div><p class="paragraph"/>
-<h4>More Advanced Subqueries in GORM</h4><p class="paragraph"/>The support for subqueries has been extended. You can now use in  with nested subqueries<p class="paragraph"/><div class="code"><pre>def results = Person.where &#123;
-    firstName in where &#123; age &#60; 18 &#125;.firstName
-&#125;.list()</pre></div><p class="paragraph"/>Criteria and where queries can be seamlessly mixed:<p class="paragraph"/><div class="code"><pre>def results = Person.withCriteria &#123;
-    notIn <span class="java&#45;quote">"firstName"</span>, Person.where &#123; age &#60; 18 &#125;.firstName
- &#125;</pre></div><p class="paragraph"/>Subqueries can be used with projections:<p class="paragraph"/><div class="code"><pre>def results = Person.where &#123;
-    age &#62; where &#123; age &#62; 18 &#125;.avg('age')
-&#125;</pre></div><p class="paragraph"/>Correlated queries that span two domain classes can be used:
-<div class="code"><pre>def employees = Employee.where &#123;
-    region.continent in &#91;'APAC', <span class="java&#45;quote">"EMEA"</span>&#93;
-    &#125;.id()
-    def results = Sale.where &#123;
-    employee in employees &#38;&#38; total &#62; 100000
-    &#125;.employee.list()</pre></div><p class="paragraph"/>And support for aliases (cross query references) using simple variable declarations has been added to where queries:
-<div class="code"><pre>def query = Employee.where &#123;
-    def em1 = Employee
-    exists Sale.where &#123;
-        def s1 = Sale
-        def em2 = employee
-        <span class="java&#45;keyword">return</span> em2.id == em1.id
-    &#125;.id()
-&#125;
-def results = query.list()</pre></div><p class="paragraph"/>
-<h4>Other Functions</h4><p class="paragraph"/>There are several functions available to you within the context of a query. These are summarized in the table below:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">second</strong></td><td>The second of a date property</td></tr><tr class="table-even"><td><strong class="bold">minute</strong></td><td>The minute of a date property</td></tr><tr class="table-odd"><td><strong class="bold">hour</strong></td><td>The hour of a date property</td></tr><tr class="table-even"><td><strong class="bold">day</strong></td><td>The day of the month of a date property</td></tr><tr class="table-odd"><td><strong class="bold">month</strong></td><td>The month of a date property</td></tr><tr class="table-even"><td><strong class="bold">year</strong></td><td>The year of a date property</td></tr><tr class="table-odd"><td><strong class="bold">lower</strong></td><td>Converts a string property to upper case</td></tr><tr class="table-even"><td><strong class="bold">upper</strong></td><td>Converts a string property to lower case</td></tr><tr class="table-odd"><td><strong class="bold">length</strong></td><td>The length of a string property</td></tr><tr class="table-even"><td><strong class="bold">trim</strong></td><td>Trims a string property</td></tr></table><p class="paragraph"/><blockquote class="note">
-Currently functions can only be applied to properties or associations of domain classes. You cannot, for example, use a function on a result of a subquery. 
-</blockquote><p class="paragraph"/>For example the following query can be used to find all pet's born in 2011:<p class="paragraph"/><div class="code"><pre>def query = Pet.where &#123;
-    year(birthDate) == 2011
-&#125;</pre></div><p class="paragraph"/>You can also apply functions to associations:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-    year(pets.birthDate) == 2009
-&#125;</pre></div><p class="paragraph"/>
-<h4>Batch Updates and Deletes</h4><p class="paragraph"/>Since each <code>where</code> method call returns a <a href="../guide/single.html#detachedCriteria" class="guide">DetachedCriteria</a> instance, you can use <code>where</code> queries to execute batch operations such as batch updates and deletes. For example, the following query will update all people with the surname "Simpson" to have the surname "Bloggs":<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-    lastName == 'Simpson'
-&#125;
-<span class="java&#45;object">int</span> total = query.updateAll(lastName:<span class="java&#45;quote">"Bloggs"</span>)</pre></div><p class="paragraph"/><blockquote class="note">
-Note that one limitation with regards to batch operations is that join queries (queries that query associations) are not allowed.
-</blockquote><p class="paragraph"/>To batch delete records you can use the <code>deleteAll</code> method:<p class="paragraph"/><div class="code"><pre>def query = Person.where &#123;
-    lastName == 'Simpson'
-&#125;
-<span class="java&#45;object">int</span> total = query.deleteAll()</pre></div>
+<h2 id="upgrading31x">3.1 Upgrading from Grails 3.1</h2>
+If you are upgrading from Grails 3.1 there are a few items to take into consideration.<p class="paragraph"/><h4>Deprecated Classes and Methods Removed</h4><p class="paragraph"/>Classes and methods deprecated in Grails 3.0.x have been removed in Grails 3.2. This includes all classes in the <code>org.codehaus.groovy.grails</code> package. If your application or plugin uses deprecated classes they should be updated to use non-deprecated replacements.<p class="paragraph"/><h4>Slf4j Now Default</h4><p class="paragraph"/>The `log` property injected at compile time into all classes is now an Slf4j `Logger` instance and not an instance of the Commons Logging `Log` class.<p class="paragraph"/>This should be a simple upgrade for most use cases, however this change does have some implications, for example it is no longer possible to pass non-string types to the log method. Example:<p class="paragraph"/><div class="code"><pre>log.info <span class="java&#45;quote">"<span class="java&#45;keyword">this</span> works"</span>
+<span class="java&#45;object">Double</span> notAString = 9.2
+log.info notAString</pre></div><p class="paragraph"/>The latter call to the `info` method will throw an exception as it is not a String.<p class="paragraph"/>Instead you should use Slf4j's formatting anchors to log. The advantage is the `toString()` method is not called unless the message will be logged.<p class="paragraph"/><div class="code"><pre>log.info <span class="java&#45;quote">"&#123;&#125;"</span>, 9.2D
+log.debug <span class="java&#45;quote">"Key: &#123;&#125;, Value: &#123;&#125;"</span>, key, value
+log.error <span class="java&#45;quote">"&#123;&#125;"</span>, exception.message, exception</pre></div><p class="paragraph"/>See the <a href="http://www.slf4j.org/faq.html#string_or_object" target="blank">Slf4j FAQ</a> for more information.<p class="paragraph"/><h4>Spring 4.3 </h4><p class="paragraph"/>Grails 3.2 comes with Spring 4.3 which no longer supports Hibernate 3 and hence Grails 3.2 no longer supports Hibernate 3 either and you will need to upgrade to Hibernate 4 or above.<p class="paragraph"/><h4>Spring Boot 1.4 </h4><p class="paragraph"/>Spring Boot 1.4, through its dependency management mechanism, enforces the upgrade for many depndencies. You should review your dependencies following the upgrade to ensure the new versions are compatible with your application.<p class="paragraph"/>Spring Boot 1.4 also deprecates many testing annotations (such as <code>WebIntegrationTest</code>).<p class="paragraph"/>See the <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-1.4-Release-Notes" target="blank">Spring Boot 1.4 release notes</a> for more information on the changes required at the Boot level.<p class="paragraph"/>
+<h4>Hibernate 4 Usage</h4><p class="paragraph"/>Related to Spring Boot 1.4, one important change is that Hibernate 5 is now the default version, so if you have declared a dependency on the `hibernate4` plugin in Grails such as:<p class="paragraph"/><div class="code"><pre>compile <span class="java&#45;quote">"org.grails.plugins:hibernate4"</span></pre></div><p class="paragraph"/>This will not be enough to ensure that Hibernate 4 is used. You must instead also directly declare the Hibernate 4 dependencies:<p class="paragraph"/><div class="code"><pre>dependencies &#123;
+    compile <span class="java&#45;quote">"org.grails.plugins:hibernate4"</span>
+    compile <span class="java&#45;quote">"org.hibernate:hibernate&#45;core:4.3.10.Final"</span>
+    compile <span class="java&#45;quote">"org.hibernate:hibernate&#45;ehcache:4.3.10.Final"</span>
+&#125;</pre></div><p class="paragraph"/><h4>GORM 6 Configuration Model</h4><p class="paragraph"/>In preparation for Hibernate 5.2 support the previous "SessionFactoryBean" notion has been removed. Now if you wish to customize <code>SessionFactory</code> creation you should instead register a custom <code>org.grails.orm.hibernate.connections.HibernateConnectionSourceFactory</code> in Spring.<p class="paragraph"/><h4>HibernateTestMixin Dependency Changes</h4><p class="paragraph"/>The `grails-datastore-test-support` dependency has been removed and the `HibernateTestMixin` class integrated directly into the plugin, so if you receive a resolve error remove the following dependency from your `build.gradle`:<p class="paragraph"/><div class="code"><pre>dependencies &#123;
+    testCompile <span class="java&#45;quote">"org.grails:grails&#45;datastore&#45;test&#45;support"</span>
+&#125;</pre></div><p class="paragraph"/><h4><code>application.groovy</code> Changes</h4><p class="paragraph"/>An improvement was added to make groovy configuration behave like yml configuration when it comes to the CLI. Previously, configuration values in <code>application.groovy</code> were not available to commands like <code>grails create-controller</code>. A side effect of this change causes an exception when those commands are executed if the configuration relies on classes in the runtime.<p class="paragraph"/><div class="code"><pre>Error occurred running Grails CLI: startup failed:
+script14738267015581837265078.groovy: 13: unable to resolve class com.foo.Bar</pre></div><p class="paragraph"/>The solution is to create a separate file called <code>runtime.groovy</code> in <code>grails-app/conf</code>. That file will not be parsed by the CLI and will only be included at runtime.
+
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
@@ -362,6 +275,9 @@ Note that one limitation with regards to batch operations is that join queries (
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

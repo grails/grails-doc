@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.5.2.6 Database Indices 3.2.0.RC2</title>
+    <title>1.1.2 RxJava Support 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -118,22 +118,20 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
-                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>7.5.2.6 Database Indices - Reference Documentation</h1>
+                    <h1>1.1.2 RxJava Support - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC2</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -141,27 +139,38 @@ function addJsClass() {
                 
 
                 
-<a name="5.5.2.6 Database Indices"><!-- Legacy link --></a>
-<h2 id="databaseIndices">7.5.2.6 Database Indices</h2>
-To get the best performance out of your queries it is often necessary to tailor the table index definitions. How you tailor them is domain specific and a matter of monitoring usage patterns of your queries. With GORM's DSL you can specify which columns are used in which indexes:<p class="paragraph"/><div class="code"><pre>class Person &#123;
-    <span class="java&#45;object">String</span> firstName
-    <span class="java&#45;object">String</span> address
-    <span class="java&#45;keyword">static</span> mapping = &#123;
-        table 'people'
-        version <span class="java&#45;keyword">false</span>
-        id column: 'person_id'
-        firstName column: 'First_Name', index: 'Name_Idx'
-        address column: 'Address', index: 'Name_Idx,Address_Index'
-    &#125;
-&#125;</pre></div><p class="paragraph"/>Note that you cannot have any spaces in the value of the <code>index</code> attribute; in this example <code>index:'Name_Idx, Address_Index'</code> will cause an error.
 
+<h2 id="whatsNewRxJava">1.1.2 RxJava Support</h2>
+In addition to <a href="http://gorm.grails.org/6.0.x/rx/manual" target="blank">RxGORM</a>, support for <a href="http://reactivex.io" target="blank">RxJava</a> has been added to the Grails framework via an <a href="https://grails.org/plugins.html#plugin/rxjava" target="blank">RxJava plugin</a><p class="paragraph"/><h4>Reactive controllers with RxJava</h4><p class="paragraph"/>The RxJava plugin allows you to return <code>Observable</code> responses from controllers and integrates seamlessly with RxGORM to make it possible handle requests reactively, in a non-blocking manner. For example:<p class="paragraph"/><div class="code"><pre>def show() &#123;
+    <span class="java&#45;object">String</span> author = params.author 
+    Book.get(params.id)
+            .map &#123; Book book &#45;&#62;
+        rx.render view:<span class="java&#45;quote">"book"</span>, model:&#91;book:book, author:author&#93; 
+    &#125;
+&#125;</pre></div><p class="paragraph"/><h4>Server Sent Events with RxJava</h4><p class="paragraph"/>It is now possible to easily issue responses that return <a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events" target="blank">Server Sent Events</a> with Grails and RxJava:<p class="paragraph"/><div class="code"><pre>def index() &#123;
+    rx.stream &#123; Subscriber subscriber &#45;&#62; 
+       <span class="java&#45;keyword">for</span>(i in (0..5)) &#123;
+           <span class="java&#45;keyword">if</span>(i % 2 == 0) &#123;
+               subscriber.onNext(
+                   rx.render(<span class="java&#45;quote">"Tick"</span>) 
+               )
+           &#125;
+           <span class="java&#45;keyword">else</span> &#123;
+               subscriber.onNext(
+                   rx.render(<span class="java&#45;quote">"Tock"</span>)
+               )<p class="paragraph"/>           &#125;
+           sleep 1000 
+       &#125;
+       subscriber.onCompleted() 
+   &#125;
+&#125;</pre></div><p class="paragraph"/><blockquote class="note">
+See the <a href="https://github.com/grails-plugins/grails-rxjava/tree/master/examples/server-sent-event-example" target="blank">sample application</a> for a demonstration of Server Sent Events in action
+</blockquote>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
-                
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
@@ -273,6 +282,9 @@ To get the best performance out of your queries it is often necessary to tailor 
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.5.2.12 Custom Naming Strategy 3.2.0.RC2</title>
+    <title>1.1.4 JSON Views 1.1 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -118,22 +118,20 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
-                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>7.5.2.12 Custom Naming Strategy - Reference Documentation</h1>
+                    <h1>1.1.4 JSON Views 1.1 - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC2</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -141,38 +139,37 @@ function addJsClass() {
                 
 
                 
-<a name="5.5.2.12 Custom Naming Strategy"><!-- Legacy link --></a>
-<h2 id="customNamingStrategy">7.5.2.12 Custom Naming Strategy</h2>
-By default Grails uses Hibernate's <code>ImprovedNamingStrategy</code> to convert domain class Class and field names to SQL table and column names by converting from camel-cased Strings to ones that use underscores as word separators. You can customize these on a per-class basis in the <code>mapping</code> closure but if there's a consistent pattern you can specify a different <code>NamingStrategy</code> class to use.<p class="paragraph"/>Configure the class name to be used in <code>grails-app/conf/application.groovy</code> in the <code>hibernate</code> section, e.g.<p class="paragraph"/><div class="code"><pre>dataSource &#123;
-    pooled = <span class="java&#45;keyword">true</span>
-    dbCreate = <span class="java&#45;quote">"create&#45;drop"</span>
-    &#8230;
-&#125;<p class="paragraph"/>hibernate &#123;
-    cache.use_second_level_cache = <span class="java&#45;keyword">true</span>
-    &#8230;
-    naming_strategy = com.myco.myproj.CustomNamingStrategy
-&#125;</pre></div><p class="paragraph"/>You can also specify the name of the class and it will be loaded for you:<p class="paragraph"/><div class="code"><pre>hibernate &#123;
-    &#8230;
-    naming_strategy = 'com.myco.myproj.CustomNamingStrategy'
-&#125;</pre></div><p class="paragraph"/>A third option is to provide an instance if there is some configuration required beyond calling the default constructor:<p class="paragraph"/><div class="code"><pre>hibernate &#123;
-    &#8230;
-    def strategy = <span class="java&#45;keyword">new</span> com.myco.myproj.CustomNamingStrategy()
-    // configure as needed
-    naming_strategy = strategy
-&#125;</pre></div><p class="paragraph"/>You can use an existing class or write your own, for example one that prefixes table names and column names:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">package</span> com.myco.myproj<p class="paragraph"/><span class="java&#45;keyword">import</span> org.hibernate.cfg.ImprovedNamingStrategy
-<span class="java&#45;keyword">import</span> org.hibernate.util.StringHelper<p class="paragraph"/>class CustomNamingStrategy <span class="java&#45;keyword">extends</span> ImprovedNamingStrategy &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> classToTableName(<span class="java&#45;object">String</span> className) &#123;
-        <span class="java&#45;quote">"table_"</span> + StringHelper.unqualify(className)
-    &#125;<p class="paragraph"/>    <span class="java&#45;object">String</span> propertyToColumnName(<span class="java&#45;object">String</span> propertyName) &#123;
-        <span class="java&#45;quote">"col_"</span> + StringHelper.unqualify(propertyName)
+
+<h2 id="whatsNewJSONViews">1.1.4 JSON Views 1.1</h2>
+<a href="http://views.grails.org/1.1.x" target="blank">Version 1.1</a> of the JSON Views plugin is included with Grails 3.2's "rest-api" profile and includes <a href="http://views.grails.org/1.1.x/#_version_history" target="blank">a number of new features</a>. Below are some of the highlights:<p class="paragraph"/><h4>Template Inheritance</h4><p class="paragraph"/>It is now possible for a child JSON template to specify a parent template, thus allowing better template composition. For example given the following parent:<p class="paragraph"/><div class="code"><pre>// grails&#45;app/views/_parent.gson
+model &#123;
+    <span class="java&#45;object">Object</span> object
+&#125;
+json &#123;
+    hal.links(object)
+    version <span class="java&#45;quote">"1.0"</span>
+&#125;</pre></div><p class="paragraph"/>A child template can be specified as follows:<p class="paragraph"/><div class="code"><pre>inherits template:<span class="java&#45;quote">"parent"</span>
+model &#123;
+    Person person
+&#125;
+json &#123;
+    name person.name
+&#125;</pre></div><p class="paragraph"/><h4>Global and Default Templates</h4><p class="paragraph"/>Global templates can now be created for any GORM custom types. This allows adding support for external libraries such as JodaTime or custom types provided by datastores such as MongoDB (example GeoJSON).<p class="paragraph"/>A global template is simply another JSON template that is named after the class name. See for example <a href="https://github.com/grails/grails-views/tree/master/json-templates/src/templates/grails/mongodb/geo" target="blank">the GeoJSON templates</a>.<p class="paragraph"/>In addition it is now possible to provide a fallback template named <code>/object/_object.gson</code> that is used if no other template is found.<p class="paragraph"/><h4>Better HAL Support</h4><p class="paragraph"/>The HAL support has been expanded and now includes greater control over <code>_embedded</code> and <code>_links</code>, for example:<p class="paragraph"/><div class="code"><pre>model &#123;
+    Book book
+&#125;
+json &#123;
+    hal.links(self: book )
+    hal.embedded(authors: book.authors)
+    hal.inline(book) &#123;
+        pages 300
     &#125;
-&#125;</pre></div><p class="paragraph"/>
+&#125;</pre></div><p class="paragraph"/>The HAL support has also been improved with support for HAL pagination.<p class="paragraph"/>
+
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
-                
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
@@ -284,6 +281,9 @@ By default Grails uses Hibernate's <code>ImprovedNamingStrategy</code> to conver
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

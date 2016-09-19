@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.5.2.2 Caching Strategy 3.2.0.RC2</title>
+    <title>1.1.6 Other Novelties 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -118,22 +118,20 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
-                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>7.5.2.2 Caching Strategy - Reference Documentation</h1>
+                    <h1>1.1.6 Other Novelties - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC2</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -141,54 +139,14 @@ function addJsClass() {
                 
 
                 
-<a name="5.5.2.2 Caching Strategy"><!-- Legacy link --></a>
-<h2 id="caching">7.5.2.2 Caching Strategy</h2>
-<h4>Setting up caching</h4><p class="paragraph"/><a href="http://www.hibernate.org/" target="blank">Hibernate</a> features a second-level cache with a customizable cache provider. This needs to be configured in the <code>grails-app/conf/application.yml</code> file as follows:<p class="paragraph"/><div class="code"><pre>hibernate:
-  cache:
-    use_second_level_cache: <span class="java&#45;keyword">true</span>
-    provider_class: net.sf.ehcache.hibernate.EhCacheProvider
-    region:
-       factory_class: org.hibernate.cache.ehcache.EhCacheRegionFactory</pre></div><p class="paragraph"/>You can customize any of these settings, for example to use a distributed caching mechanism.<p class="paragraph"/><blockquote class="note">
-For further reading on caching and in particular Hibernate's second-level cache, refer to the <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/performance.html#performance-cache" target="blank">Hibernate documentation</a> on the subject.
-</blockquote><p class="paragraph"/><h4>Caching instances</h4><p class="paragraph"/>Call the <code>cache</code> method in your mapping block to enable caching with the default settings:<p class="paragraph"/><div class="code"><pre>class Person &#123;
-    &#8230;
-    <span class="java&#45;keyword">static</span> mapping = &#123;
-        table 'people'
-        cache <span class="java&#45;keyword">true</span>
-    &#125;
-&#125;</pre></div><p class="paragraph"/>This will configure a 'read-write' cache that includes both lazy and non-lazy properties. You can customize this further:<p class="paragraph"/><div class="code"><pre>class Person &#123;
-    &#8230;
-    <span class="java&#45;keyword">static</span> mapping = &#123;
-        table 'people'
-        cache usage: 'read&#45;only', include: 'non&#45;lazy'
-    &#125;
-&#125;</pre></div><p class="paragraph"/><h4>Caching associations</h4><p class="paragraph"/>As well as the ability to use Hibernate's second level cache to cache instances you can also cache collections (associations) of objects. For example:<p class="paragraph"/><div class="code"><pre>class Person &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstName<p class="paragraph"/>    <span class="java&#45;keyword">static</span> hasMany = &#91;addresses: Address&#93;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
-        table 'people'
-        version <span class="java&#45;keyword">false</span>
-        addresses column: 'Address', cache: <span class="java&#45;keyword">true</span>
-    &#125;
-&#125;</pre></div><p class="paragraph"/><div class="code"><pre>class Address &#123;
-    <span class="java&#45;object">String</span> number
-    <span class="java&#45;object">String</span> postCode
-&#125;</pre></div><p class="paragraph"/>This will enable a 'read-write' caching mechanism on the <code>addresses</code> collection. You can also use:<p class="paragraph"/><div class="code"><pre>cache: 'read&#45;write' // or 'read&#45;only' or 'transactional'</pre></div><p class="paragraph"/>to further configure the cache usage.<p class="paragraph"/><h4>Caching Queries</h4><p class="paragraph"/>You can cache queries such as dynamic finders and criteria. To do so using a dynamic finder you can pass the <code>cache</code> argument:<p class="paragraph"/><div class="code"><pre>def person = Person.findByFirstName(<span class="java&#45;quote">"Fred"</span>, &#91;cache: <span class="java&#45;keyword">true</span>&#93;)</pre></div><p class="paragraph"/><blockquote class="note">
-In order for the results of the query to be cached, you must enable caching in your mapping as discussed in the previous section.
-</blockquote><p class="paragraph"/>You can also cache criteria queries:<p class="paragraph"/><div class="code"><pre>def people = Person.withCriteria &#123;
-    like('firstName', 'Fr%')
-    cache <span class="java&#45;keyword">true</span>
-&#125;</pre></div><p class="paragraph"/><h4>Cache usages</h4><p class="paragraph"/>Below is a description of the different cache settings and their usages:
-<ul class="star">
-<li><code>read-only</code> - If your application needs to read but never modify instances of a persistent class, a read-only cache may be used.</li>
-<li><code>read-write</code> - If the application needs to update data, a read-write cache might be appropriate.</li>
-<li><code>nonstrict-read-write</code> - If the application only occasionally needs to update data (i.e. if it is very unlikely that two transactions would try to update the same item simultaneously) and strict transaction isolation is not required, a <code>nonstrict-read-write</code> cache might be appropriate.</li>
-<li><code>transactional</code> - The <code>transactional</code> cache strategy provides support for fully transactional cache providers such as JBoss TreeCache. Such a cache may only be used in a JTA environment and you must specify <code>hibernate.transaction.manager_lookup_class</code> in the <code>grails-app/conf/application.groovy</code> file's <code>hibernate</code> config.</li>
-</ul><p class="paragraph"/>
+
+<h2 id="otherNovelties">1.1.6 Other Novelties</h2>
+<h4>New default date data binding format</h4><p class="paragraph"/>Dates formatted like "1970-01-01T00:00:00.000Z" will now be successfully parsed by default. The format is used by common JavaScript libraries.<p class="paragraph"/><h4>The <code>run-script</code> command from Grails 2 is back</h4><p class="paragraph"/>The <code>run-script</code> command makes a return! It is now possible to run Groovy scripts that are wrapped in a Grails context using Grails 3:<p class="paragraph"/><div class="code"><pre>$ grails run&#45;script my&#45;groovy&#45;script.groovy</pre></div><p class="paragraph"/>Refer to the <a href="../ref/Command Line/run-script.html" class="commandLine">run-script</a> documentation for more information.<p class="paragraph"/><h4>REST Profile Refinements</h4><p class="paragraph"/>The REST profile has been further refined including more sensible <code>UrlMappings</code> and mime type configuration designed specifically for REST applications.<p class="paragraph"/><h4>Ability to skip the Bootstrap process with a system property</h4><p class="paragraph"/>When the Grails runtime is started, it will now execute <code>*Bootstrap.groovy</code> classes conditionally. If the system property <code>grails.bootstrap.skip</code> is set to <code>true</code>, the classes will  <em class="italic">not</em>  be executed for that run.<p class="paragraph"/><h4>Changes to data binding with the body of a request</h4><p class="paragraph"/>To be more inline with the <a href="https://tools.ietf.org/html/rfc2616#section-4.3" target="blank">HTTP/1.1</a> specification, request bodies in GET and DELETE requests will be ignored for data binding. The request body will also be ignored if the specified content length is 0.<p class="paragraph"/><h4>Profile improvements</h4><p class="paragraph"/>It is now possible to specify credentials for repositories used for profile resolution in your <code>settings.groovy</code> file. See the <a href="../guide/single.html#profiles" class="guide">section on profiles</a> for documentation.
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
-                
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
@@ -300,6 +258,9 @@ In order for the results of the query to be cached, you must enable caching in y
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

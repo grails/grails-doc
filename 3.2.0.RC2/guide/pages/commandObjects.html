@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>8.1.9 Command Objects 3.2.0.RC2</title>
+    <title>8.1.9 Command Objects 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC2</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -211,7 +211,13 @@ Note: A class is only considered to be a command object when it is used as a par
 ~ &#36;
 &#36; curl &#45;H <span class="java&#45;quote">"Content&#45;Type: application/xml"</span> &#45;d '&#60;widget&#62;&#60;name&#62;Some Other Widget&#60;/name&#62;&#60;size&#62;2112&#60;/size&#62;&#60;/widget&#62;' localhost:8080/bodybind/demo/createWidget
  Name: Some Other Widget, Size: 2112
-~ &#36;</pre></div><p class="paragraph"/>Note that the body of the request is being parsed to make that work.  Any attempt to read the body of the request after that will fail since the corresponding input stream will be empty.  The controller action can either use a command object or it can parse the body of the request on its own (either directly, or by referring to something like request.JSON), but cannot do both.<p class="paragraph"/><div class="code"><pre>// grails&#45;app/controllers/bindingdemo/DemoController.groovy
+~ &#36;</pre></div><p class="paragraph"/><blockquote class="note">
+The request body will not be parsed under the following conditions:
+<ul class="star">
+<li>The request method is GET</li>
+<li>The request method is DELETE</li>
+<li>The content length is 0</li>
+</ul><p class="paragraph"/></blockquote><p class="paragraph"/>Note that the body of the request is being parsed to make that work.  Any attempt to read the body of the request after that will fail since the corresponding input stream will be empty.  The controller action can either use a command object or it can parse the body of the request on its own (either directly, or by referring to something like request.JSON), but cannot do both.<p class="paragraph"/><div class="code"><pre>// grails&#45;app/controllers/bindingdemo/DemoController.groovy
 <span class="java&#45;keyword">package</span> bindingdemo<p class="paragraph"/>class DemoController &#123;<p class="paragraph"/>    def createWidget(Widget w) &#123;
         // <span class="java&#45;keyword">this</span> will fail because it requires reading the body,
         // which has already been read.
@@ -364,6 +370,9 @@ Note: A class is only considered to be a command object when it is used as a par
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

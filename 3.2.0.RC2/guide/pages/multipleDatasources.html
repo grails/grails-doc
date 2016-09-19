@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>4.4.5 Multiple Datasources 3.2.0.RC2</title>
+    <title>4.4.5 Multiple Datasources 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC2</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -204,7 +204,8 @@ dataSources:
                 username: lookup
                 password: secret
                 url: jdbc:oracle:thin:@localhost:1521:lookup
-                dbCreate: update</pre></div><p class="paragraph"/>You can use the same or different databases as long as they're supported by Hibernate.<p class="paragraph"/><h4>Configuring Domain Classes</h4><p class="paragraph"/>If a domain class has no <code>DataSource</code> configuration, it defaults to the standard <code>'dataSource'</code>. Set the <code>datasource</code> property in the <code>mapping</code> block to configure a non-default <code>DataSource</code>. For example, if you want to use the <code>ZipCode</code> domain to use the <code>'lookup'</code> <code>DataSource</code>, configure it like this:<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
+                dbCreate: update</pre></div><p class="paragraph"/>You can use the same or different databases as long as they're supported by Hibernate.<p class="paragraph"/>If you need to inject the <code>lookup</code> datasource in a Grails artefact you can do it like this:<p class="paragraph"/><div class="code"><pre>def dataSource_lookup</pre></div><p class="paragraph"/>
+<h4>Configuring Domain Classes</h4><p class="paragraph"/>If a domain class has no <code>DataSource</code> configuration, it defaults to the standard <code>'dataSource'</code>. Set the <code>datasource</code> property in the <code>mapping</code> block to configure a non-default <code>DataSource</code>. For example, if you want to use the <code>ZipCode</code> domain to use the <code>'lookup'</code> <code>DataSource</code>, configure it like this:<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
       datasource 'lookup'
    &#125;
 &#125;</pre></div><p class="paragraph"/>A domain class can also use two or more <code>DataSource</code>s. Use the <code>datasources</code> property with a list of names to configure more than one, for example:<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
@@ -362,6 +363,9 @@ The exclude matching is done on the name of the transaction manager bean. The tr
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

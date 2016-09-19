@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.5.1 Events and Auto Timestamping 3.2.0.RC2</title>
+    <title>3.3.3 General Changes to be aware of when migrating apps 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -118,22 +118,22 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
                 
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>7.5.1 Events and Auto Timestamping - Reference Documentation</h1>
+                    <h1>3.3.3 General Changes to be aware of when migrating apps - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC2</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -141,150 +141,54 @@ function addJsClass() {
                 
 
                 
-<a name="5.5.1 Events and Auto Timestamping"><!-- Legacy link --></a>
-<h2 id="eventsAutoTimestamping">7.5.1 Events and Auto Timestamping</h2>
-GORM supports the registration of events as methods that get fired when certain events occurs such as deletes, inserts and updates. The following is a list of supported events:
+
+<h2 id="upgradingGeneral">3.3.3 General Changes to be aware of when migrating apps</h2>
+There are other miscellaneous changes between Grails 2.x and Grails 3.x that it may help to be aware of when migrating your applications and plugins. Minor changes may be required.<p class="paragraph"/><h4>Domain classes</h4><p class="paragraph"/>The <a href="../guide/single.html#constraints" class="guide">Constraints</a> section of a <a href="../guide/single.html#GORM" class="guide">Domain Class</a> (or other validateable object) looks like this:
+<div class="code"><pre><span class="java&#45;keyword">static</span> constraints = &#123;
+  name nullable: <span class="java&#45;keyword">true</span>, blank: <span class="java&#45;keyword">false</span>
+  myField nullable: <span class="java&#45;keyword">true</span>
+  another unique: <span class="java&#45;keyword">true</span>
+&#125;</pre></div><p class="paragraph"/>In Grails 2.x, fields with no constraints could be declared in the <a href="../guide/single.html#constraints" class="guide">Constraints</a> block, as a method call with no arguments. Example (NB. the following syntax is <strong class="bold">no longer</strong> supported):
+<div class="code"><pre><span class="java&#45;keyword">static</span> constraints = &#123;
+  name nullable: <span class="java&#45;keyword">true</span>, blank: <span class="java&#45;keyword">false</span>
+  mySimpleProperty()                  // &#60;&#45; A field that has no constraints. This syntax is not supported in Grails 3.
+  anotherProperty unique: <span class="java&#45;keyword">true</span>
+&#125;</pre></div><p class="paragraph"/>A different syntax has to be used in Grails 3. Either remove the field declaration from the constraints block (if there are no constraints to specify for it), or to keep the field placeholder, pass an empty map argument: <code>&#91;:&#93;</code> instead of <code>()</code>.<p class="paragraph"/>Replacement code for Grails 3.x:
+<div class="code"><pre><span class="java&#45;keyword">static</span> constraints = &#123;
+  name nullable: <span class="java&#45;keyword">true</span>, blank: <span class="java&#45;keyword">false</span>
+  mySimpleProperty &#91;:&#93;                // &#60;&#45; Empty map argument instead of ()
+  anotherProperty unique: <span class="java&#45;keyword">true</span>
+&#125;</pre></div><p class="paragraph"/>If such declarations have not yet been changed then a log message like this emits on startup:
+<div class="code"><pre>ORM Mapping Invalid: Specified config option &#91;mySimpleProperty&#93; does not exist <span class="java&#45;keyword">for</span> class &#91;example.MyDomainClass&#93;</pre></div><p class="paragraph"/><h4>Multi-project builds (Grails 2.x inline plugins)</h4><p class="paragraph"/>If your project had inline plugins in Grails 2.x, contains ASTs, or if your project is composed of several modules or related applications then you may decide to restructure your project as a Gradle <strong class="bold">multi-project build</strong>.<p class="paragraph"/>Sample multi-project structure:<p class="paragraph"/><div class="code"><pre>+ example
+    + example&#45;app   &#60;&#45;&#45; Main app
+    + example&#45;core  &#60;&#45;&#45; Shared code plugin
+    + example&#45;ast   &#60;&#45;&#45; AST transformations plugin</pre></div><p class="paragraph"/>How to configure this is documented in the <a href="../guide/single.html#plugins" class="guide">Plugins</a> section under the heading 'Inline Plugins in Grails 3.0'.<p class="paragraph"/><h4>Migrating from Grails 2.x to Grails 3.1+</h4><p class="paragraph"/>During the progress of migrating code from Grails 2.4 to Grails 3.1+, your project (and the plugins that your project depends on) will be moving to GORM 5 (or higher) and other newer library versions. You might also wish to familiarise yourself with the differences mentioned in the section <a href="../guide/single.html#upgrading3x" class="guide">Upgrading from Grails 3.0</a>.<p class="paragraph"/><h4>AST Transformations</h4><p class="paragraph"/>If your application contains AST transformations, please be aware that for these to be applied to your application code, they must now be contained <strong class="bold">within a plugin</strong>. (In Grails 2.x it was possible to pre-compile AST transformations then apply them to your application code by hooking into compile events in <code>_Events.groovy</code>. This is no longer possible. Move your AST Transformation classes and associated annotations into a plugin for this purpose.)<p class="paragraph"/>There are two AST patterns on which you can base migration of your AST transformer code:
 <ul class="star">
-<li><code>beforeInsert</code> - Executed before an object is initially persisted to the database.  If you return false, the insert will be cancelled.</li>
-<li><code>beforeUpdate</code> - Executed before an object is updated.  If you return false, the update will be cancelled.</li>
-<li><code>beforeDelete</code> - Executed before an object is deleted.  If you return false, the delete will be cancelled.</li>
-<li><code>beforeValidate</code> - Executed before an object is validated</li>
-<li><code>afterInsert</code> - Executed after an object is persisted to the database</li>
-<li><code>afterUpdate</code> - Executed after an object has been updated</li>
-<li><code>afterDelete</code> - Executed after an object has been deleted</li>
-<li><code>onLoad</code> - Executed when an object is loaded from the database</li>
-</ul><p class="paragraph"/>To add an event simply register the relevant method with your domain class.<p class="paragraph"/><blockquote class="warning">
-Do not attempt to flush the session within an event (such as with obj.save(flush:true)). Since events are fired during flushing this will cause a StackOverflowError.
-</blockquote><p class="paragraph"/><h3>Event types</h3><p class="paragraph"/><h4>The beforeInsert event</h4><p class="paragraph"/>Fired before an object is saved to the database<p class="paragraph"/><div class="code"><pre>class Person &#123;
-   <span class="java&#45;keyword">private</span> <span class="java&#45;keyword">static</span> <span class="java&#45;keyword">final</span> Date NULL_DATE = <span class="java&#45;keyword">new</span> Date(0)<p class="paragraph"/>   <span class="java&#45;object">String</span> firstName
-   <span class="java&#45;object">String</span> lastName
-   Date signupDate = NULL_DATE<p class="paragraph"/>   def beforeInsert() &#123;
-      <span class="java&#45;keyword">if</span> (signupDate == NULL_DATE) &#123;
-         signupDate = <span class="java&#45;keyword">new</span> Date()
-      &#125;
-   &#125;
-&#125;</pre></div><p class="paragraph"/><h4>The beforeUpdate event</h4><p class="paragraph"/>Fired before an existing object is updated<p class="paragraph"/><div class="code"><pre>class Person &#123;<p class="paragraph"/>   def securityService<p class="paragraph"/>   <span class="java&#45;object">String</span> firstName
-   <span class="java&#45;object">String</span> lastName
-   <span class="java&#45;object">String</span> lastUpdatedBy<p class="paragraph"/>   <span class="java&#45;keyword">static</span> constraints = &#123;
-      lastUpdatedBy nullable: <span class="java&#45;keyword">true</span>
-   &#125;<p class="paragraph"/>   def beforeUpdate() &#123;
-      lastUpdatedBy = securityService.currentAuthenticatedUsername()
-   &#125;
-&#125;</pre></div><p class="paragraph"/><h4>The beforeDelete event</h4><p class="paragraph"/>Fired before an object is deleted.<p class="paragraph"/><div class="code"><pre>class Person &#123;
-   <span class="java&#45;object">String</span> name<p class="paragraph"/>   def beforeDelete() &#123;
-      ActivityTrace.withNewSession &#123;
-         <span class="java&#45;keyword">new</span> ActivityTrace(eventName: <span class="java&#45;quote">"Person Deleted"</span>, data: name).save()
-      &#125;
-   &#125;
-&#125;</pre></div><p class="paragraph"/>Notice the usage of <code>withNewSession</code> method above. Since events are triggered whilst Hibernate is flushing using persistence methods like <code>save()</code> and <code>delete()</code> won't result in objects being saved unless you run your operations with a new <code>Session</code>.<p class="paragraph"/>Fortunately the <code>withNewSession</code> method lets you share the same transactional JDBC connection even though you're using a different underlying <code>Session</code>.<p class="paragraph"/><h4>The beforeValidate event</h4><p class="paragraph"/>Fired before an object is validated.<p class="paragraph"/><div class="code"><pre>class Person &#123;
-   <span class="java&#45;object">String</span> name<p class="paragraph"/>   <span class="java&#45;keyword">static</span> constraints = &#123;
-       name size: 5..45
-   &#125;<p class="paragraph"/>   def beforeValidate() &#123;
-       name = name?.trim()
-   &#125;
-&#125;</pre></div><p class="paragraph"/>The <code>beforeValidate</code> method is run before any validators are run.<p class="paragraph"/><blockquote class="note">
-Validation may run more often than you think. It is triggered by the <code>validate()</code> and <code>save()</code> methods as you'd expect, but it is also typically triggered just before the view is rendered as well. So when writing <code>beforeValidate()</code> implementations, make sure that they can handle being called multiple times with the same property values.
-</blockquote><p class="paragraph"/>GORM supports an overloaded version of <code>beforeValidate</code> which accepts a <code>List</code> parameter which may include
-the names of the properties which are about to be validated.  This version of <code>beforeValidate</code> will be called
-when the <code>validate</code> method has been invoked and passed a <code>List</code> of property names as an argument.<p class="paragraph"/><div class="code"><pre>class Person &#123;
-   <span class="java&#45;object">String</span> name
-   <span class="java&#45;object">String</span> town
-   <span class="java&#45;object">Integer</span> age<p class="paragraph"/>   <span class="java&#45;keyword">static</span> constraints = &#123;
-       name size: 5..45
-       age range: 4..99
-   &#125;<p class="paragraph"/>   def beforeValidate(List propertiesBeingValidated) &#123;
-      // <span class="java&#45;keyword">do</span> pre validation work based on propertiesBeingValidated
-   &#125;
-&#125;<p class="paragraph"/>def p = <span class="java&#45;keyword">new</span> Person(name: 'Jacob Brown', age: 10)
-p.validate(&#91;'age', 'name'&#93;)</pre></div><p class="paragraph"/><blockquote class="note">
-Note that when <code>validate</code> is triggered indirectly because of a call to the <code>save</code> method that
-the <code>validate</code> method is being invoked with no arguments, not a <code>List</code> that includes all of
-the property names.
-</blockquote><p class="paragraph"/>Either or both versions of <code>beforeValidate</code> may be defined in a domain class.  GORM will
-prefer the <code>List</code> version if a <code>List</code> is passed to <code>validate</code> but will fall back on the
-no-arg version if the <code>List</code> version does not exist.  Likewise, GORM will prefer the
-no-arg version if no arguments are passed to <code>validate</code> but will fall back on the
-<code>List</code> version if the no-arg version does not exist.  In that case, <code>null</code> is passed to <code>beforeValidate</code>.<p class="paragraph"/><h4>The onLoad/beforeLoad event</h4><p class="paragraph"/>Fired immediately before an object is loaded from the database:<p class="paragraph"/><div class="code"><pre>class Person &#123;
-   <span class="java&#45;object">String</span> name
-   Date dateCreated
-   Date lastUpdated<p class="paragraph"/>   def onLoad() &#123;
-      log.debug <span class="java&#45;quote">"Loading &#36;&#123;id&#125;"</span>
-   &#125;
-&#125;</pre></div><p class="paragraph"/><code>beforeLoad()</code> is effectively a synonym for <code>onLoad()</code>, so only declare one or the other.<p class="paragraph"/><h4>The afterLoad event</h4><p class="paragraph"/>Fired immediately after an object is loaded from the database:<p class="paragraph"/><div class="code"><pre>class Person &#123;
-   <span class="java&#45;object">String</span> name
-   Date dateCreated
-   Date lastUpdated<p class="paragraph"/>   def afterLoad() &#123;
-      name = <span class="java&#45;quote">"I'm loaded"</span>
-   &#125;
-&#125;</pre></div><p class="paragraph"/><h4>Custom Event Listeners</h4><p class="paragraph"/>As of Grails 2.0 there is a new API for plugins and applications to register and listen for persistence events. This API is not tied to Hibernate and also works for other persistence plugins such as the <a href="http://grails.org/plugin/mongodb" target="blank">MongoDB plugin for GORM</a>.<p class="paragraph"/>To use this API you need to subclass <code>AbstractPersistenceEventListener</code> (in package  <em class="italic">org.grails.datastore.mapping.engine.event</em> ) and implement the methods <code>onPersistenceEvent</code> and <code>supportsEventType</code>. You also must provide a reference to the datastore to the listener.  The simplest possible implementation can be seen below:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">public</span> MyPersistenceListener(<span class="java&#45;keyword">final</span> Datastore datastore) &#123;
-    <span class="java&#45;keyword">super</span>(datastore)
-&#125;<p class="paragraph"/>@Override
-<span class="java&#45;keyword">protected</span> void onPersistenceEvent(<span class="java&#45;keyword">final</span> AbstractPersistenceEvent event) &#123;
-    <span class="java&#45;keyword">switch</span>(event.eventType) &#123;
-        <span class="java&#45;keyword">case</span> PreInsert:
-            println <span class="java&#45;quote">"PRE INSERT &#36;&#123;event.entityObject&#125;"</span>
-        <span class="java&#45;keyword">break</span>
-        <span class="java&#45;keyword">case</span> PostInsert:
-            println <span class="java&#45;quote">"POST INSERT &#36;&#123;event.entityObject&#125;"</span>
-        <span class="java&#45;keyword">break</span>
-        <span class="java&#45;keyword">case</span> PreUpdate:
-            println <span class="java&#45;quote">"PRE UPDATE &#36;&#123;event.entityObject&#125;"</span>
-        <span class="java&#45;keyword">break</span>;
-        <span class="java&#45;keyword">case</span> PostUpdate:
-            println <span class="java&#45;quote">"POST UPDATE &#36;&#123;event.entityObject&#125;"</span>
-        <span class="java&#45;keyword">break</span>;
-        <span class="java&#45;keyword">case</span> PreDelete:
-            println <span class="java&#45;quote">"PRE DELETE &#36;&#123;event.entityObject&#125;"</span>
-        <span class="java&#45;keyword">break</span>;
-        <span class="java&#45;keyword">case</span> PostDelete:
-            println <span class="java&#45;quote">"POST DELETE &#36;&#123;event.entityObject&#125;"</span>
-        <span class="java&#45;keyword">break</span>;
-        <span class="java&#45;keyword">case</span> PreLoad:
-            println <span class="java&#45;quote">"PRE LOAD &#36;&#123;event.entityObject&#125;"</span>
-        <span class="java&#45;keyword">break</span>;
-        <span class="java&#45;keyword">case</span> PostLoad:
-            println <span class="java&#45;quote">"POST LOAD &#36;&#123;event.entityObject&#125;"</span>
-        <span class="java&#45;keyword">break</span>;
-    &#125;
-&#125;<p class="paragraph"/>@Override
-<span class="java&#45;keyword">public</span> <span class="java&#45;object">boolean</span> supportsEventType(<span class="java&#45;object">Class</span>&#60;? <span class="java&#45;keyword">extends</span> ApplicationEvent&#62; eventType) &#123;
-    <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">true</span>
-&#125;</pre></div><p class="paragraph"/>The <code>AbstractPersistenceEvent</code> class has many subclasses (<code>PreInsertEvent</code>, <code>PostInsertEvent</code> etc.) that provide further information specific to the event. A <code>cancel()</code> method is also provided on the event which allows you to veto an insert, update or delete operation.<p class="paragraph"/>Once you have created your event listener you need to register it with the <code>ApplicationContext</code>. This can be done in <code>BootStrap.groovy</code>:<p class="paragraph"/><div class="code"><pre>def grailsApplication<p class="paragraph"/>def init = &#123;
-    def applicationContext = grailsApplication.mainContext
-    applicationContext.eventTriggeringInterceptor.datastores.each &#123; k, datastore &#45;&#62;
-        applicationContext.addApplicationListener <span class="java&#45;keyword">new</span> MyPersistenceListener(datastore)
-    &#125;
-&#125;</pre></div><p class="paragraph"/>or use this in a plugin:<p class="paragraph"/><div class="code"><pre>def doWithApplicationContext = &#123; applicationContext &#45;&#62;
-    grailsApplication.mainContext.eventTriggeringInterceptor.datastores.each &#123; k, datastore &#45;&#62;
-        applicationContext.addApplicationListener <span class="java&#45;keyword">new</span> MyPersistenceListener(datastore)
-    &#125;
-&#125;</pre></div><p class="paragraph"/><h4>Hibernate Events</h4><p class="paragraph"/>It is generally encouraged to use the non-Hibernate specific API described above, but if you need access to more detailed Hibernate events then you can define custom Hibernate-specific event listeners.<p class="paragraph"/>You can also register event handler classes in an application's <code>grails-app/conf/spring/resources.groovy</code> or in the <code>doWithSpring</code> closure in a plugin descriptor by registering a Spring bean named <code>hibernateEventListeners</code>. This bean has one property, <code>listenerMap</code> which specifies the listeners to register for various Hibernate events.<p class="paragraph"/>The values of the Map are instances of classes that implement one or more Hibernate listener interfaces. You can use one class that implements all of the required interfaces, or one concrete class per interface, or any combination. The valid Map keys and corresponding interfaces are listed here:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Name</strong></th><th><strong class="bold">Interface</strong></th></tr><tr class="table-odd"><td>auto-flush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/AutoFlushEventListener.html" class="api">AutoFlushEventListener</a></td></tr><tr class="table-even"><td>merge</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/MergeEventListener.html" class="api">MergeEventListener</a></td></tr><tr class="table-odd"><td>create</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PersistEventListener.html" class="api">PersistEventListener</a></td></tr><tr class="table-even"><td>create-onflush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PersistEventListener.html" class="api">PersistEventListener</a></td></tr><tr class="table-odd"><td>delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/DeleteEventListener.html" class="api">DeleteEventListener</a></td></tr><tr class="table-even"><td>dirty-check</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/DirtyCheckEventListener.html" class="api">DirtyCheckEventListener</a></td></tr><tr class="table-odd"><td>evict</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/EvictEventListener.html" class="api">EvictEventListener</a></td></tr><tr class="table-even"><td>flush</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/FlushEventListener.html" class="api">FlushEventListener</a></td></tr><tr class="table-odd"><td>flush-entity</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/FlushEntityEventListener.html" class="api">FlushEntityEventListener</a></td></tr><tr class="table-even"><td>load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/LoadEventListener.html" class="api">LoadEventListener</a></td></tr><tr class="table-odd"><td>load-collection</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/InitializeCollectionEventListener.html" class="api">InitializeCollectionEventListener</a></td></tr><tr class="table-even"><td>lock</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/LockEventListener.html" class="api">LockEventListener</a></td></tr><tr class="table-odd"><td>refresh</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/RefreshEventListener.html" class="api">RefreshEventListener</a></td></tr><tr class="table-even"><td>replicate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/ReplicateEventListener.html" class="api">ReplicateEventListener</a></td></tr><tr class="table-odd"><td>save-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-even"><td>save</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-odd"><td>update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/SaveOrUpdateEventListener.html" class="api">SaveOrUpdateEventListener</a></td></tr><tr class="table-even"><td>pre-load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreLoadEventListener.html" class="api">PreLoadEventListener</a></td></tr><tr class="table-odd"><td>pre-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreUpdateEventListener.html" class="api">PreUpdateEventListener</a></td></tr><tr class="table-even"><td>pre-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreDeleteEventListener.html" class="api">PreDeleteEventListener</a></td></tr><tr class="table-odd"><td>pre-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreInsertEventListener.html" class="api">PreInsertEventListener</a></td></tr><tr class="table-even"><td>pre-collection-recreate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionRecreateEventListener.html" class="api">PreCollectionRecreateEventListener</a></td></tr><tr class="table-odd"><td>pre-collection-remove</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionRemoveEventListener.html" class="api">PreCollectionRemoveEventListener</a></td></tr><tr class="table-even"><td>pre-collection-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PreCollectionUpdateEventListener.html" class="api">PreCollectionUpdateEventListener</a></td></tr><tr class="table-odd"><td>post-load</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostLoadEventListener.html" class="api">PostLoadEventListener</a></td></tr><tr class="table-even"><td>post-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostUpdateEventListener.html" class="api">PostUpdateEventListener</a></td></tr><tr class="table-odd"><td>post-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostDeleteEventListener.html" class="api">PostDeleteEventListener</a></td></tr><tr class="table-even"><td>post-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostInsertEventListener.html" class="api">PostInsertEventListener</a></td></tr><tr class="table-odd"><td>post-commit-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostUpdateEventListener.html" class="api">PostUpdateEventListener</a></td></tr><tr class="table-even"><td>post-commit-delete</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostDeleteEventListener.html" class="api">PostDeleteEventListener</a></td></tr><tr class="table-odd"><td>post-commit-insert</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostInsertEventListener.html" class="api">PostInsertEventListener</a></td></tr><tr class="table-even"><td>post-collection-recreate</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionRecreateEventListener.html" class="api">PostCollectionRecreateEventListener</a></td></tr><tr class="table-odd"><td>post-collection-remove</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionRemoveEventListener.html" class="api">PostCollectionRemoveEventListener</a></td></tr><tr class="table-even"><td>post-collection-update</td><td><a href="http://docs.jboss.org/hibernate/core/3.6/javadocs/org/hibernate/event/PostCollectionUpdateEventListener.html" class="api">PostCollectionUpdateEventListener</a></td></tr></table><p class="paragraph"/>For example, you could register a class <code>AuditEventListener</code> which implements <code>PostInsertEventListener</code>, <code>PostUpdateEventListener</code>, and <code>PostDeleteEventListener</code> using the following in an application:<p class="paragraph"/><div class="code"><pre>beans = &#123;<p class="paragraph"/>   auditListener(AuditEventListener)<p class="paragraph"/>   hibernateEventListeners(HibernateEventListeners) &#123;
-      listenerMap = &#91;'post&#45;insert': auditListener,
-                     'post&#45;update': auditListener,
-                     'post&#45;delete': auditListener&#93;
-   &#125;
-&#125;</pre></div><p class="paragraph"/>or use this in a plugin:<p class="paragraph"/><div class="code"><pre>def doWithSpring = &#123;<p class="paragraph"/>   auditListener(AuditEventListener)<p class="paragraph"/>   hibernateEventListeners(HibernateEventListeners) &#123;
-      listenerMap = &#91;'post&#45;insert': auditListener,
-                     'post&#45;update': auditListener,
-                     'post&#45;delete': auditListener&#93;
-   &#125;
-&#125;</pre></div><p class="paragraph"/><h4>Automatic timestamping</h4><p class="paragraph"/>If you define a <code>dateCreated</code> property it will be set to the current date for you when you create new instances. Likewise, if you define a <code>lastUpdated</code> property it will be automatically be updated for you when you change persistent instances.<p class="paragraph"/>If this is not the behaviour you want you can disable this feature with:<p class="paragraph"/><div class="code"><pre>class Person &#123;
-   Date dateCreated
-   Date lastUpdated
-   <span class="java&#45;keyword">static</span> mapping = &#123;
-      autoTimestamp <span class="java&#45;keyword">false</span>
-   &#125;
-&#125;</pre></div><p class="paragraph"/><blockquote class="warning">
-If you have <code>nullable: false</code> constraints on either <code>dateCreated</code> or <code>lastUpdated</code>, your domain instances will fail validation - probably not what you want. Omit constraints from these properties unless you disable automatic timestamping.
-</blockquote>
+<li>Groovy way: Use Groovy AST transformation annotations.</li>
+<li>Grails way: Use Grails AST transformer annotations.</li>
+</ul><p class="paragraph"/><h5>Groovy AST transformations</h5>
+<ul class="star">
+<li>Import <code>org.codehaus.groovy.transform.GroovyASTTransformation</code></li>
+<li>Annotate your transformation class with <code>GroovyASTTransformation(phase=CompilePhase.CANONICALIZATION)</code></li>
+<li>A useful example app can be found here: <a href="https://github.com/jeffbrown/grails3ast" target="blank">grails3ast</a></li>
+</ul><p class="paragraph"/><h5>Grails AST transformations</h5>
+<ul class="star">
+<li>Import <code>grails.compiler.ast.AstTransformer</code></li>
+<li>Annotate your transformation class with <code>AstTransformer</code></li>
+<li>Implement applicable interfaces, particularly if you are transforming Artefacts, e.g. <code>implements GrailsArtefactClassInjector, AnnotatedClassInjector</code></li>
+<li>Your Transformer class must reside in a package under <strong class="bold">org.grails.compiler</strong>, otherwise it will not be detected. Example: <strong class="bold">org.grails.compiler.myapp</strong></li>
+<li>Examples can be found in the Grails source code</li>
+<li>Example reference: <a href="https://github.com/grails/grails-core/blob/master/grails-plugin-controllers/src/main/groovy/org/grails/compiler/web/ControllerActionTransformer.java" target="blank">ControllerActionTransformer.java</a></li>
+</ul><p class="paragraph"/><h4>Deployment to containers</h4><p class="paragraph"/>Grails uses Spring Boot to embed a Tomcat or Jetty instance by default. To build a war file for deployment to a container you will need to make a simple change to <code>build.gradle</code> (so that a container is not embedded).<p class="paragraph"/>If you deploy to a Tomcat 7 container then there is an additional step. Grails 3 is built against Tomcat 8 APIs by default. You will need to change the target Tomcat version in the build to 7.<p class="paragraph"/>There are standalone deployment options available.<p class="paragraph"/>Refer to the <a href="../guide/single.html#deployingAnApplication" class="guide">Deployment guide</a> for further details.<p class="paragraph"/><h4>Multiple datasources</h4><p class="paragraph"/>If your application uses multiple datasources, then be aware that the way these are declared in <code>application.yml</code> or <code>application.groovy</code> (previously <code>DataSources.groovy</code>) has changed.<p class="paragraph"/>If there is more than one DataSource in an application there is now a <code>dataSources { &#8230; }</code> configuration block to contain them all. Previously, multiple <code>dataSource</code> declarations were used, with an underscore and suffix on the additional datasources, e.g. <code>dataSource_lookup { &#8230; }</code>.<p class="paragraph"/>Please refer to the user guide section on <a href="../guide/single.html#multipleDatasources" class="guide">Multiple Datasources</a> for examples.<p class="paragraph"/><h4>Improvements to dependency injection</h4><p class="paragraph"/>In your Grails 2.x app you may have used Spring <code>&#64;Autowired</code> in a few situations, such as dependency injection into certain base classes, and for typed field dependency injection. For example:<p class="paragraph"/><div class="code"><pre>@Autowired
+org.quartz.Scheduler quartzScheduler</pre></div><p class="paragraph"/>Grails now has support for dependency injection into typed fields in addition to untyped <code>def</code> fields, following the usual Grails conventions of field name matching the bean property name. Example:<p class="paragraph"/><div class="code"><pre>GrailsApplication grailsApplication</pre></div><p class="paragraph"/>You may find that <code>&#64;Autowired</code> no longer works as it did previously in your code on artefacts or base classes, in certain scenarios, resulting in NULL for these fields. Changing these to a simple typed Grails dependency following the Grails naming convention and removing <code>&#64;Autowired</code> should resolve this.
 
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
@@ -396,6 +300,9 @@ If you have <code>nullable: false</code> constraints on either <code>dateCreated
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

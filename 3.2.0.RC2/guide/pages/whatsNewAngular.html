@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.4.4 Detached Criteria 3.2.0.RC2</title>
+    <title>1.1.3 AngularJS 1.0 Scaffolding 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -118,22 +118,20 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
-                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>7.4.4 Detached Criteria - Reference Documentation</h1>
+                    <h1>1.1.3 AngularJS 1.0 Scaffolding - Reference Documentation</h1>
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC2</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -142,68 +140,15 @@ function addJsClass() {
 
                 
 
-<h2 id="detachedCriteria">7.4.4 Detached Criteria</h2>
-Detached Criteria are criteria queries that are not associated with any given database session/connection. Supported since Grails 2.0, Detached Criteria queries have many uses including allowing you to create common reusable criteria queries, execute subqueries and execute batch updates/deletes.<p class="paragraph"/>
-<h4>Building Detached Criteria Queries</h4><p class="paragraph"/>The primary point of entry for using the Detached Criteria is the <code>grails.gorm.DetachedCriteria</code> class which accepts a domain class as the only argument to its constructor:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> grails.gorm.&#42;
-&#8230;
-def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person)</pre></div><p class="paragraph"/>Once you have obtained a reference to a detached criteria instance you can execute <a href="../guide/single.html#whereQueries" class="guide">where</a> queries or criteria queries to build up the appropriate query. To build a normal criteria query you can use the <code>build</code> method:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
-    eq 'lastName', 'Simpson'
-&#125;</pre></div><p class="paragraph"/>Note that methods on the <code>DetachedCriteria</code> instance <strong class="bold">do not</strong> mutate the original object but instead return a new query. In other words, you have to use the return value of the <code>build</code> method to obtain the mutated criteria object:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
-    eq 'lastName', 'Simpson'
-&#125;
-def bartQuery = criteria.build &#123;
-    eq 'firstName', 'Bart'
-&#125;</pre></div><p class="paragraph"/><h4>Executing Detached Criteria Queries</h4><p class="paragraph"/>Unlike regular criteria, Detached Criteria are lazy, in that no query is executed at the point of definition. Once a Detached Criteria query has been constructed then there are a number of useful query methods which are summarized in the table below:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">list</strong></td><td>List all matching entities</td></tr><tr class="table-even"><td><strong class="bold">get</strong></td><td>Return a single matching result</td></tr><tr class="table-odd"><td><strong class="bold">count</strong></td><td>Count all matching records</td></tr><tr class="table-even"><td><strong class="bold">exists</strong></td><td>Return true if any matching records exist</td></tr><tr class="table-odd"><td><strong class="bold">deleteAll</strong></td><td>Delete all matching records</td></tr><tr class="table-even"><td><strong class="bold">updateAll(Map)</strong></td><td>Update all matching records with the given properties</td></tr></table><p class="paragraph"/>As an example the following code will list the first 4 matching records sorted by the <code>firstName</code> property:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
-    eq 'lastName', 'Simpson'
-&#125;
-def results = criteria.list(max:4, sort:<span class="java&#45;quote">"firstName"</span>)</pre></div><p class="paragraph"/>You can also supply additional criteria to the list method:<p class="paragraph"/><div class="code"><pre>def results = criteria.list(max:4, sort:<span class="java&#45;quote">"firstName"</span>) &#123;
-    gt 'age', 30
-&#125;</pre></div><p class="paragraph"/>To retrieve a single result you can use the <code>get</code> or <code>find</code> methods (which are synonyms):<p class="paragraph"/><div class="code"><pre>Person p = criteria.find() // or criteria.get()</pre></div><p class="paragraph"/>The <code>DetachedCriteria</code> class itself also implements the <code>Iterable</code> interface which means that it can be treated like a list:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
-    eq 'lastName', 'Simpson'
-&#125;
-criteria.each &#123;
-    println it.firstName
-&#125;</pre></div><p class="paragraph"/>In this case the query is only executed when the <code>each</code> method is called. The same applies to all other Groovy collection iteration methods.<p class="paragraph"/>You can also execute dynamic finders on <code>DetachedCriteria</code> just like on domain classes. For example:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
-    eq 'lastName', 'Simpson'
-&#125;
-def bart = criteria.findByFirstName(<span class="java&#45;quote">"Bart"</span>)</pre></div><p class="paragraph"/><h4>Using Detached Criteria for Subqueries</h4><p class="paragraph"/>Within the context of a regular criteria query you can use <code>DetachedCriteria</code> to execute subquery. For example if you want to find all people who are older than the average age the following query will accomplish that:<p class="paragraph"/><div class="code"><pre>def results = Person.withCriteria &#123;
-     gt <span class="java&#45;quote">"age"</span>, <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
-         projections &#123;
-             avg <span class="java&#45;quote">"age"</span>
-         &#125;
-     &#125;
-     order <span class="java&#45;quote">"firstName"</span>
- &#125;</pre></div><p class="paragraph"/>Notice that in this case the subquery class is the same as the original criteria query class (i.e. <code>Person</code>) and hence the query can be shortened to:<p class="paragraph"/><div class="code"><pre>def results = Person.withCriteria &#123;
-     gt <span class="java&#45;quote">"age"</span>, &#123;
-         projections &#123;
-             avg <span class="java&#45;quote">"age"</span>
-         &#125;
-     &#125;
-     order <span class="java&#45;quote">"firstName"</span>
- &#125;</pre></div><p class="paragraph"/>If the subquery class differs from the original criteria query then you will have to use the original syntax.<p class="paragraph"/>In the previous example the projection ensured that only a single result was returned (the average age). If your subquery returns multiple results then there are different criteria methods that need to be used to compare the result. For example to find all the people older than the ages 18 to 65 a <code>gtAll</code> query can be used:<p class="paragraph"/><div class="code"><pre>def results = Person.withCriteria &#123;
-    gtAll <span class="java&#45;quote">"age"</span>, &#123;
-        projections &#123;
-            property <span class="java&#45;quote">"age"</span>
-        &#125;
-        between 'age', 18, 65
-    &#125;<p class="paragraph"/>    order <span class="java&#45;quote">"firstName"</span>
-&#125;</pre></div><p class="paragraph"/>The following table summarizes criteria methods for operating on subqueries that return multiple results:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Method</th><th>Description</th></tr><tr class="table-odd"><td><strong class="bold">gtAll</strong></td><td>greater than all subquery results</td></tr><tr class="table-even"><td><strong class="bold">geAll</strong></td><td>greater than or equal to all subquery results</td></tr><tr class="table-odd"><td><strong class="bold">ltAll</strong></td><td>less than all subquery results</td></tr><tr class="table-even"><td><strong class="bold">leAll</strong></td><td>less than or equal to all subquery results</td></tr><tr class="table-odd"><td><strong class="bold">eqAll</strong></td><td>equal to all subquery results</td></tr><tr class="table-even"><td><strong class="bold">neAll</strong></td><td>not equal to all subquery results</td></tr></table><p class="paragraph"/><h4>Batch Operations with Detached Criteria</h4><p class="paragraph"/>The <code>DetachedCriteria</code> class can be used to execute batch operations such as batch updates and deletes. For example, the following query will update all people with the surname "Simpson" to have the surname "Bloggs":<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
-    eq 'lastName', 'Simpson'
-&#125;
-<span class="java&#45;object">int</span> total = criteria.updateAll(lastName:<span class="java&#45;quote">"Bloggs"</span>)</pre></div><p class="paragraph"/><blockquote class="note">
-Note that one limitation with regards to batch operations is that join queries (queries that query associations) are not allowed within the <code>DetachedCriteria</code> instance. 
-</blockquote><p class="paragraph"/>To batch delete records you can use the <code>deleteAll</code> method:<p class="paragraph"/><div class="code"><pre>def criteria = <span class="java&#45;keyword">new</span> DetachedCriteria(Person).build &#123;
-    eq 'lastName', 'Simpson'
-&#125;
-<span class="java&#45;object">int</span> total = criteria.deleteAll()</pre></div>
-
+<h2 id="whatsNewAngular">1.1.3 AngularJS 1.0 Scaffolding</h2>
+The <code>angular</code> profile has been refined and now also includes a new <a href="https://grails.org/plugins.html#plugin/angular-scaffolding" target="blank">Angular Scaffolding</a> plugin.<p class="paragraph"/>The Angular scaffolding plugin adds an <code>ng-generate-all</code> command which will generate the necessary AngularJS 1.x client code to perform CRUD operations in conjunction with a Grails 3 backend.<p class="paragraph"/>Not only does this serve as a useful tool to get up and running quickly, but (like previous versions of scaffolding) it is a great way for developers to learn how to integrate AngularJS and Grails 3.<p class="paragraph"/><blockquote class="note">
+Support for Angular 2 is planned for the future.
+</blockquote>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
-                
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
@@ -315,6 +260,9 @@ Note that one limitation with regards to batch operations is that join queries (
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

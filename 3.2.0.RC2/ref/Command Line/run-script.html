@@ -2,12 +2,12 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>7.5.2.5 Composite Primary Keys 3.2.0.RC2</title>
+    <title>The Grails Framework 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
-    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
     <script type="text/javascript">
-function addJsClass() {
+function addJsClass(el) {
     var classes = document.body.className.split(" ");
     classes.push("js");
     document.body.className = classes.join(" ");
@@ -16,13 +16,14 @@ function addJsClass() {
 </head>
 
 <body class="body" onload="addJsClass();">
+
 <div id="navigation">
     <ul>
         <li>
             <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
                 <a href="../../guide/index.html" class="button">Table of contents</a>
 
-                <div id="nav-summary-childs" style="display:none;">
+                <div id="nav-summary-childs">
                     
                     <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction</span></a>
                     </div>
@@ -115,71 +116,24 @@ function addJsClass() {
 <table id="colset" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td id="col1">
-            <div id="main" class="corner-all">
-
-                
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
-                
+            <div id="main" class="reference corner-all">
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
-                
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
-                
+                <h1>run-script</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Execute Groovy script(s) in the context of a Grails environment.<p class="paragraph"/><blockquote class="warning">
+Groovy scripts intended to be executed this way cannot be located in <code>src/main/scripts</code> because that directory is reserved for CLI scripts created by <a href="../../ref/Command Line/create-script.html" class="commandLine">create-script</a>.
+</blockquote><p class="paragraph"/><h2>Examples</h2><p class="paragraph"/><div class="code"><pre>// run a single script in the dev environment
+grails run&#45;script scripts/helloWorld.groovy<p class="paragraph"/>// run multiple scripts in the prod environment
+grails prod run&#45;script scripts/hello.groovy scripts/world.groovy<p class="paragraph"/>// run a single script in the dev environment and don't run Bootstrap
+grails run&#45;script scripts/helloWorld.groovy<p class="paragraph"/>// run with Gradle
+./gradlew runScript &#45;Pargs=<span class="java&#45;quote">"scripts/helloWorld.groovy"</span> &#45;Dgrails.env=prod</pre></div><p class="paragraph"/>The paths are resolved relative to the base project path<p class="paragraph"/><h2>Description</h2><p class="paragraph"/>Usage:
+<div class="code"><pre>grails &#91;env&#93;&#42; run&#45;script &#91;scripts&#93;</pre></div><p class="paragraph"/>Arguments:
+<ul class="star">
+<li><code>scripts</code> - Which scripts to run</li>
+</ul><p class="paragraph"/>Variables:<p class="paragraph"/>The <code>ctx</code> variable is injected into all scripts and is an instance of the <code>ApplicationContext</code><p class="paragraph"/><blockquote class="note">
+Scripts are executed in the context of a persistent session. The default package is imported by default (<code>grails.codegen.defaultPackage</code>)
+</blockquote>
 
-
-                <div class="project">
-                    <h1>7.5.2.5 Composite Primary Keys - Reference Documentation</h1>
-
-                    <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
-
-                    <p><strong>Version:</strong> 3.2.0.RC2</p>
-
-                    
-                </div>
-
-                
-
-                
-<a name="5.5.2.5 Composite Primary Keys"><!-- Legacy link --></a>
-<h2 id="compositePrimaryKeys">7.5.2.5 Composite Primary Keys</h2>
-GORM supports the concept of composite identifiers (identifiers composed from 2 or more properties). It is not an approach we recommend, but is available to you if you need it:<p class="paragraph"/><div class="code"><pre><span class="java&#45;keyword">import</span> org.apache.commons.lang.builder.HashCodeBuilder<p class="paragraph"/>class Person <span class="java&#45;keyword">implements</span> Serializable &#123;<p class="paragraph"/>    <span class="java&#45;object">String</span> firstName
-    <span class="java&#45;object">String</span> lastName<p class="paragraph"/>    <span class="java&#45;object">boolean</span> equals(other) &#123;
-        <span class="java&#45;keyword">if</span> (!(other <span class="java&#45;keyword">instanceof</span> Person)) &#123;
-            <span class="java&#45;keyword">return</span> <span class="java&#45;keyword">false</span>
-        &#125;<p class="paragraph"/>        other.firstName == firstName &#38;&#38; other.lastName == lastName
-    &#125;<p class="paragraph"/>    <span class="java&#45;object">int</span> hashCode() &#123;
-        def builder = <span class="java&#45;keyword">new</span> HashCodeBuilder()
-        builder.append firstName
-        builder.append lastName
-        builder.toHashCode()
-    &#125;<p class="paragraph"/>    <span class="java&#45;keyword">static</span> mapping = &#123;
-        id composite: &#91;'firstName', 'lastName'&#93;
-    &#125;
-&#125;</pre></div><p class="paragraph"/>The above will create a composite id of the <code>firstName</code> and <code>lastName</code> properties of the Person class. To retrieve an instance by id you use a prototype of the object itself:<p class="paragraph"/><div class="code"><pre>def p = Person.get(<span class="java&#45;keyword">new</span> Person(firstName: <span class="java&#45;quote">"Fred"</span>, lastName: <span class="java&#45;quote">"Flintstone"</span>))
-println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with composite primary keys must implement the <code>Serializable</code> interface and override the <code>equals</code> and <code>hashCode</code> methods, using the properties in the composite key for the calculations. The example above uses a <code>HashCodeBuilder</code> for convenience but it's fine to implement it yourself.<p class="paragraph"/>Another important consideration when using composite primary keys is associations. If for example you have a many-to-one association where the foreign keys are stored in the associated table then 2 columns will be present in the associated table.<p class="paragraph"/>For example consider the following domain class:<p class="paragraph"/><div class="code"><pre>class Address &#123;
-    Person person
-&#125;</pre></div><p class="paragraph"/>In this case the <code>address</code> table will have an additional two columns called <code>person_first_name</code> and <code>person_last_name</code>. If you wish the change the mapping of these columns then you can do so using the following technique:<p class="paragraph"/><div class="code"><pre>class Address &#123;
-    Person person
-    <span class="java&#45;keyword">static</span> mapping = &#123;
-        columns &#123;
-		    person &#123;
-                column name: <span class="java&#45;quote">"FirstName"</span>
-                column name: <span class="java&#45;quote">"LastName"</span>
-			&#125;
-        &#125;
-    &#125;
-&#125;</pre></div>
-
-
-
-                <div style="clear:both;margin-top:15px;"></div>
-                
-                    <div class="toc-item prev-left"><a href="../../guide/profiles.html">&lt;&lt; <strong>6</strong><span>Application Profiles</span></a></div>
-                
-                    <div class="toc-item next-right"><a href="../../guide/theWebLayer.html"><strong>8</strong><span>The Web Layer</span> >></a></div>
-                
-                <div style="clear:both"></div>
             </div>
         </td>
         <td id="col2">
@@ -190,8 +144,10 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                 </div>
                 <div class="menu">
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Command Line</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Command Line</h1>
+                        <div class="menu-sub selected">
+                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
                             
@@ -291,6 +247,9 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
                             </div>
                             
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
+                            </div>
+                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
                             </div>
                             
@@ -309,11 +268,13 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                             <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Constraints</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Constraints</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Constraints/Usage.html">Usage</a></div>
                             
                             
@@ -377,11 +338,13 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                             <div class="menu-item"><a href="../../ref/Constraints/widget.html">widget</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Controllers</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Controllers</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Controllers/Usage.html">Usage</a></div>
                             
                             
@@ -457,11 +420,13 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                             <div class="menu-item"><a href="../../ref/Controllers/withFormat.html">withFormat</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Database Mapping</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Database Mapping</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Database%20Mapping/Usage.html">Usage</a></div>
                             
                             
@@ -534,11 +499,13 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                             <div class="menu-item"><a href="../../ref/Database%20Mapping/version.html">version</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Domain Classes</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Domain Classes</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Domain%20Classes/Usage.html">Usage</a></div>
                             
                             
@@ -725,11 +692,13 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                             <div class="menu-item"><a href="../../ref/Domain%20Classes/withTransaction.html">withTransaction</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Plug-ins</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Plug-ins</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Plug-ins/Usage.html">Usage</a></div>
                             
                             
@@ -769,11 +738,13 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                             <div class="menu-item"><a href="../../ref/Plug-ins/servlets.html">servlets</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Services</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Services</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
                             
                             
@@ -783,11 +754,13 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                             <div class="menu-item"><a href="../../ref/Services/transactional.html">transactional</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Servlet API</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Servlet API</h1>
+                        <div class="menu-sub">
+                            
                             
                             <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
                             </div>
@@ -801,11 +774,13 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                             <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tag Libraries</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Tag Libraries</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Tag%20Libraries/Usage.html">Usage</a></div>
                             
                             
@@ -836,11 +811,13 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                             <div class="menu-item"><a href="../../ref/Tag%20Libraries/session.html">session</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Tags</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Tags</h1>
+                        <div class="menu-sub">
+                            
                             
                             <div class="menu-item"><a href="../../ref/Tags/actionSubmit.html">actionSubmit</a>
                             </div>
@@ -1025,7 +1002,7 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
                             <div class="menu-item"><a href="../../ref/Tags/while.html">while</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
                 </div>
@@ -1039,7 +1016,8 @@ println p.firstName</pre></div><p class="paragraph"/>Domain classes mapped with 
     
 </div>
 
-<script type="text/javascript" src="../js/docs.js"></script>
+
+<script type="text/javascript" src="../../js/docs.js"></script>
 
 </body>
 </html>

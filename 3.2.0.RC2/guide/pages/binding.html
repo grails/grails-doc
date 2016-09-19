@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>10.1.11 Customizing Binding of Resources 3.2.0.RC2</title>
+    <title>10.1.11 Customizing Binding of Resources 3.2.0.RC1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC2</p>
+                    <p><strong>Version:</strong> 3.2.0.RC1</p>
 
                     
                 </div>
@@ -173,7 +173,7 @@ The framework provides a sophisticated but simple mechanism for binding REST req
         //
         // the code above represents what the framework will
         // have done. There is no need to write that code.<p class="paragraph"/>        // ...<p class="paragraph"/>    &#125;
-&#125;</pre></div><p class="paragraph"/>The data binding depends on an instance of the <a href="http://grails.github.io/grails-doc/3.1.x/api/org/grails/databinding/DataBindingSource.html" class="api">DataBindingSource</a> interface created by an instance of the <a href="http://grails.github.io/grails-doc/3.1.x/api/org/grails/databinding/bindingsource/DataBindingSourceCreator.html" class="api">DataBindingSourceCreator</a> interface.  The specific implementation of <code>DataBindingSourceCreator</code> will be selected based on the <code>contentType</code> of the request.  Several implementations are provided to handle common content types.  The default implementations will be fine for most use cases.  The following table lists the content types which are supported by the core framework and which <code>DataBindingSourceCreator</code> implementations are used for each. All of the implementation classes are in the <code>org.grails.databinding.bindingsource</code> package.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Content Type(s)</th><th>Bean Name</th><th>DataBindingSourceCreator Impl.</th></tr><tr class="table-odd"><td>application/xml, text/xml</td><td>xmlDataBindingSourceCreator</td><td>XmlDataBindingSourceCreator</td></tr><tr class="table-even"><td>application/json, text/json</td><td>jsonDataBindingSourceCreator</td><td>JsonDataBindingSourceCreator</td></tr><tr class="table-odd"><td>application/hal+json</td><td>halJsonDataBindingSourceCreator</td><td>HalJsonDataBindingSourceCreator</td></tr><tr class="table-even"><td>application/hal+xml</td><td>halXmlDataBindingSourceCreator</td><td>HalXmlDataBindingSourceCreator</td></tr></table><p class="paragraph"/>In order to provide your own <code>DataBindingSourceCreator</code> for any of those content types, write a class which implements
+&#125;</pre></div><p class="paragraph"/>The data binding depends on an instance of the <a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/databinding/DataBindingSource.html" class="api">DataBindingSource</a> interface created by an instance of the <a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/databinding/bindingsource/DataBindingSourceCreator.html" class="api">DataBindingSourceCreator</a> interface.  The specific implementation of <code>DataBindingSourceCreator</code> will be selected based on the <code>contentType</code> of the request.  Several implementations are provided to handle common content types.  The default implementations will be fine for most use cases.  The following table lists the content types which are supported by the core framework and which <code>DataBindingSourceCreator</code> implementations are used for each. All of the implementation classes are in the <code>org.grails.databinding.bindingsource</code> package.<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th>Content Type(s)</th><th>Bean Name</th><th>DataBindingSourceCreator Impl.</th></tr><tr class="table-odd"><td>application/xml, text/xml</td><td>xmlDataBindingSourceCreator</td><td>XmlDataBindingSourceCreator</td></tr><tr class="table-even"><td>application/json, text/json</td><td>jsonDataBindingSourceCreator</td><td>JsonDataBindingSourceCreator</td></tr><tr class="table-odd"><td>application/hal+json</td><td>halJsonDataBindingSourceCreator</td><td>HalJsonDataBindingSourceCreator</td></tr><tr class="table-even"><td>application/hal+xml</td><td>halXmlDataBindingSourceCreator</td><td>HalXmlDataBindingSourceCreator</td></tr></table><p class="paragraph"/>In order to provide your own <code>DataBindingSourceCreator</code> for any of those content types, write a class which implements
 <code>DataBindingSourceCreator</code> and register an instance of that class in the Spring application context.  If you
 are replacing one of the existing helpers, use the corresponding bean name from above.  If you are providing a
 helper for a content type other than those accounted for by the core framework, the bean name may be anything that
@@ -198,7 +198,7 @@ you like but you should take care not to conflict with one of the bean names abo
      &#42; @<span class="java&#45;keyword">return</span> a DataBindingSource
      &#42;/
     DataBindingSource createDataBindingSource(MimeType mimeType, <span class="java&#45;object">Object</span> bindingTarget, <span class="java&#45;object">Object</span> bindingSource)
-&#125;</pre></div><p class="paragraph"/><a href="http://grails.github.io/grails-doc/3.1.x/api/org/grails/databinding/bindingsource/AbstractRequestbodyDataBindingSourceCreator.html" class="api">AbstractRequestBodyDataBindingSourceCreator</a>
+&#125;</pre></div><p class="paragraph"/><a href="http://grails.github.io/grails-doc/3.2.x/api/org/grails/databinding/bindingsource/AbstractRequestbodyDataBindingSourceCreator.html" class="api">AbstractRequestBodyDataBindingSourceCreator</a>
 is an abstract class designed to be extended to simplify writing custom <code>DataBindingSourceCreator</code> classes.  Classes which
 extend <code>AbstractRequestbodyDatabindingSourceCreator</code> need to implement a method named <code>createBindingSource</code>
 which accepts an <code>InputStream</code> as an argument and returns a <code>DataBindingSource</code> as well as implementing the <code>getMimeTypes</code>
@@ -359,6 +359,9 @@ to deal with a request which has a <code>contentType</code> of "text/custom+demo
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
