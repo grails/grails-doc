@@ -11,7 +11,7 @@ h2. Examples
 respond Book.get(1) 
 
 // pick the best content type to respond with from the given formats
-respond Book.get(1), [formats:['xml', 'json']]
+respond Book.get(1), formats: ['xml', 'json']
 {code}
 
 h2. Description
@@ -21,10 +21,18 @@ The respond method uses [Content Negotiation|guide:contentNegotiation] to respon
 Parameters:
 
 * @object@ - The object to render
-* @arguments@ - A map of arguments. 
+* @arguments@ - Named arguments.
 
 Supported @arguments@:
 
 * @view@ - The view to use in case of HTML rendering
 * @model@ - The model to use in case of HTML rendering
+* @status@ - The response status
+* @formats@ - A list of formats to respond with
+* @includes@ - Properties to include if rendering with the converters API
+* @excludes@ - Properties to exclude if rendering with the converters API
+
+{warning}
+Due to the way Groovy works, while responding with a Map and arguments it is important to respond in this manner @respond([:], status: 200)@ instead of this manner @respond([:], [status: 200])@. Failure to do so will result in the arguments being reversed.
+{warning}
 
