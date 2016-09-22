@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>4.4 The DataSource 3.2.0.RC1</title>
+    <title>4.4 The DataSource 3.1.12</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC1</p>
+                    <p><strong>Version:</strong> 3.1.12</p>
 
                     
                 </div>
@@ -163,7 +163,7 @@ function addJsClass() {
                 
 <a name="3.3 The DataSource"><!-- Legacy link --></a>
 <h2 id="dataSource">4.4 The DataSource</h2>
-Since Grails is built on Java technology setting up a data source requires some knowledge of JDBC (the technology that stands for Java Database Connectivity).<p class="paragraph"/>If you use a database other than H2 you need a JDBC driver. For example for MySQL you would need <a href="http://www.mysql.com/downloads/connector/j/" target="blank">Connector/J</a>.<p class="paragraph"/>Drivers typically come in the form of a JAR archive. It's best to use the dependency resolution to resolve the jar if it's available in a Maven repository, for example you could add a dependency for the MySQL driver like this:<p class="paragraph"/><div class="code"><pre>dependencies &#123;
+Since Grails is built on Java technology setting up a data source requires some knowledge of JDBC (the technology that doesn't stand for Java Database Connectivity).<p class="paragraph"/>If you use a database other than H2 you need a JDBC driver. For example for MySQL you would need <a href="http://www.mysql.com/downloads/connector/j/" target="blank">Connector/J</a>.<p class="paragraph"/>Drivers typically come in the form of a JAR archive. It's best to use the dependency resolution to resolve the jar if it's available in a Maven repository, for example you could add a dependency for the MySQL driver like this:<p class="paragraph"/><div class="code"><pre>dependencies &#123;
     runtime 'mysql:mysql&#45;connector&#45;java:5.1.29'
 &#125;</pre></div><p class="paragraph"/>If you can't use dependency resolution then just put the JAR in your project's <code>lib</code> directory.<p class="paragraph"/>Once you have the JAR resolved you need to get familiar with how Grails manages its database configuration. The configuration can be maintained in either <code>grails-app/conf/application.groovy</code> or <code>grails-app/conf/application.yml</code>. These files contain the dataSource definition which includes the following settings:
 <ul class="star">
@@ -292,7 +292,7 @@ When configuring the DataSource do not include the type or the def keyword befor
 <li><strong class="bold">update</strong> - Creates missing tables and indexes, and updates the current schema without dropping any tables or data. Note that this can't properly handle many schema changes like column renames (you're left with the old column containing the existing data).</li>
 <li><strong class="bold">validate</strong> - Makes no changes to your database. Compares the configuration with the existing database schema and reports warnings.</li>
 <li>any other value - does nothing</li>
-</ul><p class="paragraph"/>You can also remove the <code>dbCreate</code> setting completely, which is recommended once your schema is relatively stable and definitely when your application and database are deployed in production. Database changes are then managed through proper migrations, either with SQL scripts or a migration tool like <a href="http://www.liquibase.org/" target="blank">Liquibase</a> (the <a href="http://grails.org/plugin/database-migration" target="blank">Database Migration</a> plugin uses Liquibase and is tightly integrated with Grails and GORM).
+</ul><p class="paragraph"/>Setting the <code>dbCreate</code> setting to 'none' is recommended once your schema is relatively stable and definitely when your application and database are deployed in production. Database changes are then managed through proper migrations, either with SQL scripts or a migration tool like <a href="http://www.liquibase.org/" target="blank">Liquibase</a> (the <a href="http://grails.org/plugin/database-migration" target="blank">Database Migration</a> plugin uses Liquibase and is tightly integrated with Grails and GORM).
 
 
 <a name="3.3.1 DataSources and Environments"><!-- Legacy link --></a>
@@ -347,7 +347,7 @@ The <a href="http://h2database.com/html/quickstart.html#h2_console" target="blan
     &#125;
 &#125;</pre></div><p class="paragraph"/><blockquote class="warning">
 If you enable the console in production be sure to guard access to it using a trusted security framework.
-</blockquote><p class="paragraph"/><h4>Configuration</h4><p class="paragraph"/>By default the console is configured for an H2 database which will work with the default settings if you haven't configured an external database - you just need to change the JDBC URL to <code>jdbc:h2:mem:devDB</code>. If you've configured an external database (e.g. MySQL, Oracle, etc.) then you can use the Saved Settings dropdown to choose a settings template and fill in the url and username/password information from your <code>application.groovy</code>.
+</blockquote><p class="paragraph"/><h4>Configuration</h4><p class="paragraph"/>By default the console is configured for an H2 database which will work with the default settings if you haven't configured an external database - you just need to change the JDBC URL to <code>jdbc:h2:mem:devDb</code>. If you've configured an external database (e.g. MySQL, Oracle, etc.) then you can use the Saved Settings dropdown to choose a settings template and fill in the url and username/password information from your <code>application.groovy</code>.
 
 
 <a name="3.3.6 Multiple Datasources"><!-- Legacy link --></a>
@@ -413,8 +413,9 @@ dataSources:
                 username: lookup
                 password: secret
                 url: jdbc:oracle:thin:@localhost:1521:lookup
-                dbCreate: update</pre></div><p class="paragraph"/>You can use the same or different databases as long as they're supported by Hibernate.<p class="paragraph"/>If you need to inject the <code>lookup</code> datasource in a Grails artefact you can do it like this:<p class="paragraph"/><div class="code"><pre>def dataSource_lookup</pre></div><p class="paragraph"/>
-<h4>Configuring Domain Classes</h4><p class="paragraph"/>If a domain class has no <code>DataSource</code> configuration, it defaults to the standard <code>'dataSource'</code>. Set the <code>datasource</code> property in the <code>mapping</code> block to configure a non-default <code>DataSource</code>. For example, if you want to use the <code>ZipCode</code> domain to use the <code>'lookup'</code> <code>DataSource</code>, configure it like this:<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
+                dbCreate: update</pre></div><p class="paragraph"/>You can use the same or different databases as long as they're supported by Hibernate.<p class="paragraph"/><blockquote class="note">
+While defining multiple data sources, one of them <strong class="bold"></strong>must<strong class="bold"></strong> be named "dataSource". This is required because Grails determines which data source is the default by determining which one is named "dataSource".
+</blockquote><p class="paragraph"/><h4>Configuring Domain Classes</h4><p class="paragraph"/>If a domain class has no <code>DataSource</code> configuration, it defaults to the standard <code>'dataSource'</code>. Set the <code>datasource</code> property in the <code>mapping</code> block to configure a non-default <code>DataSource</code>. For example, if you want to use the <code>ZipCode</code> domain to use the <code>'lookup'</code> <code>DataSource</code>, configure it like this:<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
       datasource 'lookup'
    &#125;
 &#125;</pre></div><p class="paragraph"/>A domain class can also use two or more <code>DataSource</code>s. Use the <code>datasources</code> property with a list of names to configure more than one, for example:<p class="paragraph"/><div class="code"><pre>class ZipCode &#123;<p class="paragraph"/>   <span class="java&#45;object">String</span> code<p class="paragraph"/>   <span class="java&#45;keyword">static</span> mapping = &#123;
@@ -572,9 +573,6 @@ The exclude matching is done on the name of the transaction manager bean. The tr
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

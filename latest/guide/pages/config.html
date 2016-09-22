@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>4.1 Basic Configuration 3.2.0.RC1</title>
+    <title>4.1 Basic Configuration 3.1.12</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
                     <p><strong>Authors:</strong> Graeme Rocher, Peter Ledbrook, Marc Palmer, Jeff Brown, Luke Daley, Burt Beckwith, Lari Hotari</p>
 
-                    <p><strong>Version:</strong> 3.2.0.RC1</p>
+                    <p><strong>Version:</strong> 3.1.12</p>
 
                     
                 </div>
@@ -161,11 +161,11 @@ function addJsClass() {
 <a name="3.1 Basic Configuration"><!-- Legacy link --></a>
 <h2 id="config">4.1 Basic Configuration</h2>
 Configuration in Grails is generally split across 2 areas: build configuration and runtime configuration.<p class="paragraph"/>Build configuration is generally done via Gradle and the <code>build.gradle</code> file. Runtime configuration is by default specified in YAML in the <code>grails-app/conf/application.yml</code> file.<p class="paragraph"/>If you prefer to use Grails 2.0-style Groovy configuration then you can create an additional <code>grails-app/conf/application.groovy</code> file to specify configuration using Groovy's <a href="http://groovy.codehaus.org/ConfigSlurper" target="blank">ConfigSlurper</a> syntax.<p class="paragraph"/>For Groovy configuration the following variables are available to the configuration script:<p class="paragraph"/><table class="wiki-table" cellpadding="0" cellspacing="0" border="0"><tr><th><strong class="bold">Variable</strong></th><th><strong class="bold">Description</strong></th></tr><tr class="table-odd"><td>userHome</td><td>Location of the home directory for the account that is running the Grails application.</td></tr><tr class="table-even"><td>grailsHome</td><td>Location of the directory where you installed Grails. If the <code>GRAILS_HOME</code> environment variable is set, it is used.</td></tr><tr class="table-odd"><td>appName</td><td>The application name as it appears in build.gradle.</td></tr><tr class="table-even"><td>appVersion</td><td>The application version as it appears in build.gradle.</td></tr></table><p class="paragraph"/>For example:<p class="paragraph"/><div class="code"><pre>my.tmp.dir = <span class="java&#45;quote">"&#36;&#123;userHome&#125;/.grails/tmp"</span></pre></div><p class="paragraph"/>
-If you want to read runtime configuration settings, i.e. those defined in <code>application.yml</code>, use the <a href="http://grails.github.io/grails-doc/3.2.x/api/grails/core/GrailsApplication.html" class="api"><code>grailsApplication</code></a> object, which is available as a variable in controllers and tag libraries:<p class="paragraph"/><div class="code"><pre>class MyController &#123;
+If you want to read runtime configuration settings, i.e. those defined in <code>application.yml</code>, use the <a href="http://grails.github.io/grails-doc/3.1.x/api/grails/core/GrailsApplication.html" class="api"><code>grailsApplication</code></a> object, which is available as a variable in controllers and tag libraries:<p class="paragraph"/><div class="code"><pre>class MyController &#123;
     def hello() &#123;
         def recipient = grailsApplication.config.getProperty('foo.bar.hello')<p class="paragraph"/>        render <span class="java&#45;quote">"Hello $&#123;recipient&#125;"</span>
     &#125;
-&#125;</pre></div><p class="paragraph"/>The <code>config</code> property of the <code>grailsApplication</code> object is an instance of the <a href="http://grails.github.io/grails-doc/3.2.x/api/grails/config/Config.html" class="api">Config</a> interface and provides a number of useful methods to read the configuration of the application.<p class="paragraph"/>In particular, the <code>getProperty</code> method (seen above) is useful for efficiently retrieving configuration properties, while specifying the property type (the default type is String) and/or providing a default fallback value.<p class="paragraph"/><div class="code"><pre>class MyController &#123;<p class="paragraph"/>    def hello(Recipient recipient) &#123;
+&#125;</pre></div><p class="paragraph"/>The <code>config</code> property of the <code>grailsApplication</code> object is an instance of the <a href="http://grails.github.io/grails-doc/3.1.x/api/grails/config/Config.html" class="api">Config</a> interface and provides a number of useful methods to read the configuration of the application.<p class="paragraph"/>In particular, the <code>getProperty</code> method (seen above) is useful for efficiently retrieving configuration properties, while specifying the property type (the default type is String) and/or providing a default fallback value.<p class="paragraph"/><div class="code"><pre>class MyController &#123;<p class="paragraph"/>    def hello(Recipient recipient) &#123;
         //Retrieve <span class="java&#45;object">Integer</span> property 'foo.bar.max.hellos', otherwise use value of 5
         def max = grailsApplication.config.getProperty('foo.bar.max.hellos', <span class="java&#45;object">Integer</span>, 5)<p class="paragraph"/>        //Retrieve property 'foo.bar.greeting' without specifying type (<span class="java&#45;keyword">default</span> is <span class="java&#45;object">String</span>), otherwise use value <span class="java&#45;quote">"Hello"</span>
         def greeting = grailsApplication.config.getProperty('foo.bar.greeting', <span class="java&#45;quote">"Hello"</span>)<p class="paragraph"/>        def message = (recipient.receivedHelloCount &#62;= max) ?
@@ -192,7 +192,7 @@ In Groovy code you must use single quotes around the string for the value of the
 <h2 id="ymlOptions">4.1.1 Options for the yml format Config</h2>
 <code>application.yml</code> was introduced in Grails 3.0 for an alternative format for the configuration tasks.<p class="paragraph"/><h3>Using system properties / command line arguments</h3><p class="paragraph"/>Suppose you are using the <code>JDBC_CONNECTION_STRING</code> command line argument and you want to access the same in the yml file then it can be done in the following manner:<p class="paragraph"/><div class="code"><pre>production:
     dataSource: 
-        url: '$&#123;JDBC_CONNECTION_STRING&#125;'</pre></div><p class="paragraph"/>Similarly system arguments can be accessed.<p class="paragraph"/>You will need to have this in <code>build.gradle</code> to modify the <code>bootRun</code> target if <code>grails run-app</code> is used to start the application<p class="paragraph"/><div class="code"><pre>bootRun &#123;
+        url: '$&#123;JDBC_CONNECTION_STRING&#125;'</pre></div><p class="paragraph"/>Similarly system arguments can be accessed.<p class="paragraph"/>You will need to have this in <code>build.gradle</code> to modify the <code>bootRun</code> target if <code>grails run-app</code> is used to start the application<p class="paragraph"/><div class="code"><pre>run &#123;
     systemProperties = <span class="java&#45;object">System</span>.properties
 &#125;</pre></div><p class="paragraph"/>For testing the following will need to change the <code>test</code> task as follows<p class="paragraph"/><div class="code"><pre>test &#123; 
     systemProperties = <span class="java&#45;object">System</span>.properties 
@@ -354,9 +354,6 @@ Grails provides the following GORM configuration options:
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

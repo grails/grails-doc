@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>The Grails Framework 3.2.0.RC1</title>
+    <title>The Grails Framework 3.1.12</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -122,15 +122,21 @@ function addJsClass(el) {
 
                 <h1>respond</h1><p class="paragraph"/><h2>Purpose</h2><p class="paragraph"/>Attempts to return the most appropriate type for the requested content type (specified by either the <code>Accept</code> header or file extension)<p class="paragraph"/><h2>Examples</h2><p class="paragraph"/><div class="code"><pre>// pick the best content type to respond with
 respond Book.get(1)<p class="paragraph"/>// pick the best content type to respond with from the given formats
-respond Book.get(1), &#91;formats:&#91;'xml', 'json'&#93;&#93;</pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>The respond method uses <a href="../../guide/single.html#contentNegotiation" class="guide">Content Negotiation</a> to respond with the most appropriate content type. See the documentation on <a href="../../guide/single.html#REST" class="guide">REST support</a> for more information.<p class="paragraph"/>Parameters:
+respond Book.get(1), formats: &#91;'xml', 'json'&#93;</pre></div><p class="paragraph"/><h2>Description</h2><p class="paragraph"/>The respond method uses <a href="../../guide/single.html#contentNegotiation" class="guide">Content Negotiation</a> to respond with the most appropriate content type. See the documentation on <a href="../../guide/single.html#REST" class="guide">REST support</a> for more information.<p class="paragraph"/>Parameters:
 <ul class="star">
 <li><code>object</code> - The object to render</li>
-<li><code>arguments</code> - A map of arguments.</li>
+<li><code>arguments</code> - Named arguments.</li>
 </ul><p class="paragraph"/>Supported <code>arguments</code>:
 <ul class="star">
 <li><code>view</code> - The view to use in case of HTML rendering</li>
 <li><code>model</code> - The model to use in case of HTML rendering</li>
-</ul><p class="paragraph"/>
+<li><code>status</code> - The response status</li>
+<li><code>formats</code> - A list of formats to respond with</li>
+<li><code>includes</code> - Properties to include if rendering with the converters API</li>
+<li><code>excludes</code> - Properties to exclude if rendering with the converters API</li>
+</ul><p class="paragraph"/><blockquote class="warning">
+Due to the way Groovy works, while responding with a Map and arguments it is important to respond in this manner <code>respond(:, status: 200)</code> instead of this manner <code>respond(:, status: 200)</code>. Failure to do so will result in the arguments being reversed.
+</blockquote><p class="paragraph"/>
             </div>
         </td>
         <td id="col2">
@@ -242,9 +248,6 @@ respond Book.get(1), &#91;formats:&#91;'xml', 'json'&#93;&#93;</pre></div><p cla
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
