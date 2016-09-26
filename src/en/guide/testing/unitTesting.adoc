@@ -6,8 +6,6 @@ Unit testing are tests at the "unit" level. In other words you are testing indiv
 
 Since Grails 2.0, a collection of unit testing mixins is provided by Grails that lets you enhance the behavior of a typical JUnit 3, JUnit 4 or Spock test. The following sections cover the usage of these mixins.
 
-NOTE: The previous JUnit 3-style `GrailsUnitTestCase` class hierarchy is still present in Grails for backwards compatibility, but is now deprecated. The previous documentation on the subject can be found in the http://grails.org/doc/1.3.x/guide/9.%20Testing.html[Grails 1.3.x documentation]
-
 You won't normally have to import any of the testing classes because Grails does that for you. But if you find that your IDE for example can't find the classes, here they all are:
 
 * `grails.test.mixin.TestFor`
@@ -32,8 +30,8 @@ Most testing can be achieved via the `TestFor` annotation in combination with th
 
 [source,groovy]
 ----
-\@TestFor(BookController)
-\@Mock([Book, Author, BookService])
+@TestFor(BookController)
+@Mock([Book, Author, BookService])
 ----
 
 The `TestFor` annotation defines the class under test and will automatically create a field for the type of class under test. For example in the above case a "controller" field will be present, however if `TestFor` was defined for a service a "service" field would be created and so on.
@@ -86,7 +84,7 @@ class StaticCallbacksSpec extends Specification {
 ----
 
 
-You can also use these callbacks without "static" together with the `http://docs.grails.org/latest/api/grails/test/runtime/FreshRuntime.html[grails.test.runtime.FreshRuntime]` annotation.
+You can also use these callbacks without "static" together with the http://docs.grails.org/latest/api/grails/test/runtime/FreshRuntime.html[FreshRuntime] annotation.
 In this case, a clean application context and grails application instance is initialized for each test method call.
 
 [source,groovy]
@@ -132,7 +130,7 @@ class TestInstanceCallbacksSpec extends Specification {
 
 
 
-You can use `http://docs.grails.org/latest/api/org/grails/spring/beans/factory/InstanceFactoryBean.html[org.grails.spring.beans.factory.InstanceFactoryBean]` together with doWithSpring and the http://docs.grails.org/latest/api/grails/test/runtime/FreshRuntime.html[FreshRuntime] annotation to mock beans in tests.
+You can use http://docs.grails.org/latest/api/org/grails/spring/beans/factory/InstanceFactoryBean.html[InstanceFactoryBean] together with doWithSpring and the http://docs.grails.org/latest/api/grails/test/runtime/FreshRuntime.html[FreshRuntime] annotation to mock beans in tests.
 
 [source,groovy]
 ----
@@ -168,7 +166,7 @@ class MockedBeanSpec extends Specification {
 ==== The DirtiesRuntime annotation
 
 
-Test methods may be marked with the `http://docs.grails.org/latest/api/grails/test/runtime/DirtiesRuntime.html[grails.test.runtime.DirtiesRuntime]` annotation to indicate that the test modifies the runtime in ways which might be problematic for other tests and as such the runtime should be refreshed after this test method runs.
+Test methods may be marked with the http://docs.grails.org/latest/api/grails/test/runtime/DirtiesRuntime.html[DirtiesRuntime] annotation to indicate that the test modifies the runtime in ways which might be problematic for other tests and as such the runtime should be refreshed after this test method runs.
 
 [source,groovy]
 ----
@@ -200,10 +198,10 @@ class PersonControllerSpec extends Specification {
 
 
 It's possible to share a single grailsApplication instance and beans for several test classes.
-This feature is activated by the `http://docs.grails.org/latest/api/grails/test/runtime/SharedRuntime.html[SharedRuntime]` annotation. This annotation takes an optional class parameter
-implements `http://docs.grails.org/latest/api/grails/test/runtime/SharedRuntimeConfigurer.html[SharedRuntimeConfigurer]` interface. All test classes referencing the same SharedRuntimeConfigurer implementation
+This feature is activated by the http://docs.grails.org/latest/api/grails/test/runtime/SharedRuntime.html[SharedRuntime] annotation. This annotation takes an optional class parameter
+implements http://docs.grails.org/latest/api/grails/test/runtime/SharedRuntimeConfigurer.html[SharedRuntimeConfigurer] interface. All test classes referencing the same SharedRuntimeConfigurer implementation
 class will share the same runtime during a single test run.
-The value class for SharedRuntimeConfigurer annotation can also implement `http://docs.grails.org/latest/api/grails/test/runtime/TestEventInterceptor.html[TestEventInterceptor]` . In this case the instance of the class
+The value class for SharedRuntimeConfigurer annotation can also implement http://docs.grails.org/latest/api/grails/test/runtime/TestEventInterceptor.html[TestEventInterceptor] . In this case the instance of the class
 will be registered as a test event interceptor for the test runtime.
 
 
