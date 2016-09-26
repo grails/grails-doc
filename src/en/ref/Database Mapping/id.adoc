@@ -1,0 +1,76 @@
+
+===== id
+
+
+
+===== Purpose
+
+
+Customizes the way the identifier for a domain class is generated
+
+
+===== Examples
+
+
+[source,java]
+----
+class Book {
+    static mapping = {
+        id generator: 'hilo',
+           params: [table: 'hi_value', column: 'next_value', max_lo: 100]
+    }
+}
+----
+
+
+===== Description
+
+
+Usage: `id(map)`
+
+Arguments:
+
+* `generator` (optional) - The name of the generator to use. Can be `increment`, `identity`, `sequence`, `hilo`, `seqhilo`, `uuid`, `guid`, `native`, `assigned`, `select`, `foreign` or `sequence-identity`. See http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/mapping.html#mapping-declaration-id-generator[Hibernate reference documentation] for more information.
+* `composite` (optional) - Takes a list of property names to use that form the composite identifier
+* `name` (optional) - The property name to use as the identifier
+* `params` (optional) - Any parameters to pass to the defined identity generator
+* `column` (optional) - The column name to map the identifier to. The remaining <<ref-database-mapping-column,column>> definition properties are also available.
+
+By default GORM uses the native strategy to generate a database identifier for each entity (typically an auto-incrementing column or a sequence). You can alter this with the `id` methods `generator` argument:
+
+[source,groovy]
+----
+static mapping = {
+    id generator: 'hilo',
+       params: [table: 'hi_value', column: 'next_value', max_lo: 100]
+}
+----
+
+You can also use the method to define a composite identifier:
+
+[source,groovy]
+----
+static mapping = {
+    id composite: ['title', 'author']
+}
+----
+
+or change the name of the property that defines the identifier:
+
+[source,groovy]
+----
+static mapping = {
+    id name: 'title'
+}
+----
+
+You can also alter the column definition:
+
+[source,groovy]
+----
+static mapping = {
+    id column: 'book_id', type: 'integer'
+}
+----
+
+See the section on <<identity,Custom Database Identity>> in the user guide for more information.

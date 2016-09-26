@@ -1,0 +1,50 @@
+
+===== executeUpdate
+
+
+
+===== Purpose
+
+
+Updates the database with http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/batch.html#batch-direct[DML-style operations]
+
+
+===== Examples
+
+
+[source,java]
+----
+Account.executeUpdate("delete Book b where b.pages > 100")
+
+Account.executeUpdate("delete Book b where b.title like ?",
+                      ['Groovy In Action'])
+
+Account.executeUpdate("delete Book b where b.author=?",
+                      [Author.load(1)])
+
+Account.executeUpdate("update Book b set b.title='Groovy In Action'" +
+                      "where b.title='GINA'")
+
+Account.executeUpdate("update Book b set b.title=:newTitle " +
+                      "where b.title=:oldTitle",
+                      [newTitle: 'Groovy In Action', oldTitle: 'GINA'])
+----
+
+
+===== Description
+
+
+<<GORM,GORM>> does not provide a `deleteAll` method as deleting data must be done with caution. To delete data you can use `executeUpdate`. The basic syntax is:
+
+[source,java]
+----
+Book.executeUpdate(String query)
+Book.executeUpdate(String query, List positionalParams)
+Book.executeUpdate(String query, Map namedParams)
+----
+
+Parameters:
+
+* `query` - An HQL query with DML-style operations
+* `positionalParams` - A `List` of parameters for a positional parameterized HQL query
+* `namedParams` - A `Map` of parameters for a named parameterized HQL query

@@ -1,0 +1,45 @@
+
+==== Form Basics
+
+
+GSP supports many different tags for working with HTML forms and fields, the most basic of which is the <<ref-tags-form,form>> tag. This is a controller/action aware version of the regular HTML form tag. The `url` attribute lets you specify which controller and action to map to:
+
+[source,xml]
+----
+<g:form name="myForm" url="[controller:'book',action:'list']">...</g:form>
+----
+
+In this case we create a form called `myForm` that submits to the `BookController`'s `list` action. Beyond that all of the usual HTML attributes apply.
+
+
+==== Form Fields
+
+
+In addition to easy construction of forms, GSP supports custom tags for dealing with different types of fields, including:
+
+* <<ref-tags-textField,textField>> - For input fields of type 'text'
+* <<ref-tags-passwordField,passwordField>> - For input fields of type 'password'
+* <<ref-tags-checkBox,checkBox>> - For input fields of type 'checkbox'
+* <<ref-tags-radio,radio>> - For input fields of type 'radio'
+* <<ref-tags-hiddenField,hiddenField>> - For input fields of type 'hidden'
+* <<ref-tags-select,select>> - For dealing with HTML select boxes
+
+Each of these allows GSP expressions for the value:
+
+[source,xml]
+----
+<g:textField name="myField" value="${myValue}" />
+----
+
+GSP also contains extended helper versions of the above tags such as <<ref-tags-radioGroup,radioGroup>> (for creating groups of <<ref-tags-radio,radio>> tags), <<ref-tags-localeSelect,localeSelect>>, <<ref-tags-currencySelect,currencySelect>> and <<ref-tags-timeZoneSelect,timeZoneSelect>> (for selecting locales, currencies and time zones respectively).
+
+
+==== Multiple Submit Buttons
+
+
+The age old problem of dealing with multiple submit buttons is also handled elegantly with Grails using the <<ref-tags-actionSubmit,actionSubmit>> tag. It is just like a regular submit, but lets you specify an alternative action to submit to:
+
+[source,xml]
+----
+<g:actionSubmit value="Some update label" action="update" />
+----

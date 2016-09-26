@@ -1,0 +1,67 @@
+
+===== redirect
+
+
+
+===== Purpose
+
+
+To redirect flow from one action to the next using an HTTP redirect.
+
+
+===== Examples
+
+
+[source,java]
+----
+redirect(action: "show")
+
+redirect(controller: "book", action: "list")
+
+redirect(controller: "book", action: "list", namespace: "publishing")
+
+redirect(controller: "book", action: "list", plugin: "publishingUtils")
+
+redirect(action: "show", id: 4, params: [author: "Stephen King"])
+
+redirect(controller: "book", action: "show", fragment: "profile")
+
+redirect(uri: "book/list")
+
+redirect(url: "http://www.blogjava.net/BlueSUN")
+----
+
+
+===== Description
+
+
+Redirects the current action to another action, optionally passing parameters and/or errors.  When issuing a redirect from a namespaced controller, the namespace for the target controller is implied to be that of the controller initiating the redirect.  To issue a redirect from a namespaced controller to a controller that is not in a namespace, the namespace must be explicitly specified with a value of `null` as shown below.
+
+[source,java]
+----
+class SomeController {
+    static namespace = 'someNamespace'
+
+    def index() {
+        // issue a redirect to PersonController which does not define a namespace
+        redirect action: 'list', controller: 'person', namespace: null
+    }
+}
+----
+
+
+===== Parameters
+
+
+* `action` (optional) - the name of the action to use in the link, if not specified the default action will be linked
+* `controller` (optional) - the name of the controller to use in the link, if not specified the current controller will be linked
+* `namespace` (optional) - the namespace of the controller to redirect to
+* `plugin` (optional) - the name of the plugin which provides the controller
+* `id` (optional) - the id to use in the link
+* `fragment` (optional) - The link fragment (often called anchor tag) to use
+* `mapping` (optional) - The <<namedMappings,named URL mapping>> to use to rewrite the link
+* `params` (optional) - a map containing request parameters
+* `url` (optional) - a map containing the action, controller, id etc.
+* `absolute` (optional) - If `true` will prefix the link target address with the value of the `grails.serverURL` property from `application.groovy`, or http://localhost:<port> if there is no value in `application.groovy` and not running in the production environment.
+* `base` (optional) - Sets the prefix to be added to the link target address, typically an absolute server URL. This overrides the behaviour of the `absolute` property if both are specified.
+* `permanent` (optional) - If `true` the redirect will be issued with a 301 HTTP status code (permanently moved), otherwise a 302 HTTP status code will be issued

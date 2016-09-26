@@ -1,0 +1,41 @@
+An example of the <<ref-domain-classes-delete,delete>> method can be seen below:
+
+[source,groovy]
+----
+def p = Person.get(1)
+p.delete()
+----
+
+As with saves, Hibernate will use transactional write-behind to perform the delete; to perform the delete in-place you can use the `flush` argument:
+
+[source,groovy]
+----
+def p = Person.get(1)
+p.delete(flush: true)
+----
+
+Using the `flush` argument lets you catch any errors that occur during a delete. A common error that may occur is if you violate a database constraint, although this is normally down to a programming or schema error. The following example shows how to catch a `DataIntegrityViolationException` that is thrown when you violate the database constraints:
+
+[source,java]
+----
+def p = Person.get(1)
+
+try {
+    p.delete(flush: true)
+}
+catch (org.springframework.dao.DataIntegrityViolationException e) {
+    flash.message = "Could not delete person ${p.name}"
+    redirect(action: "show", id: p.id)
+}
+----
+
+Note that Grails does not supply a `deleteAll` method as deleting data is discouraged and can often be avoided through boolean flags/logic.
+
+If you really need to batch delete data you can use the <<ref-domain-classes-executeUpdate,executeUpdate>> method to do batch DML statements:
+
+[source,groovy]
+----
+Customer.executeUpdate("delete Customer c where c.name = :oldName",
+                       [oldName: "Fred"])
+----
+

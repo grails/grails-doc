@@ -1,0 +1,29 @@
+
+===== lock
+
+
+
+===== Purpose
+
+
+The `lock` method obtains a pessimistic lock using an SQL `select ... for update`.
+
+
+===== Examples
+
+
+[source,java]
+----
+def book = Book.get(1)
+book.lock()
+----
+
+
+===== Description
+
+
+The `lock` method obtains a pessimistic lock on an instance, locking the row in the database with `select ... for update`. The `lock` method is equivalent to using Hibernate's http://docs.jboss.org/hibernate/orm/current/javadocs/org/hibernate/LockMode#UPGRADE.html[LockMode.UPGRADE] in combination with the http://docs.jboss.org/hibernate/orm/current/javadocs/org/hibernate/Session#lock(java/lang/Object, org/hibernate/LockMode).html[lock] method.
+
+The lock is automatically released when the transaction commits. In Grails this is typically after an action has finished executing.
+
+Refer to the section on <<locking,Optimistic and Pessimistic locking>> in the user guide for info.
