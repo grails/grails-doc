@@ -1,0 +1,39 @@
+
+===== Command Line Usage
+
+
+Grails incorporates the powerful build system http://groovy.codehaus.org/Gant[Gant], which is a Groovy wrapper around http://ant.apache.org[Apache Ant].
+
+The basic usage scenario is:
+
+[source,java]
+----
+grails <<environment>>* <<command name>>
+----
+
+Grails searches in the following directories for Gant scripts to execute:
+
+* `USER_HOME/.grails/scripts`
+* `PROJECT_HOME/src/main/scripts/`
+* `PROJECT_HOME/plugins/*/scripts`
+* `GRAILS_HOME/scripts`
+
+If multiple matches are found Grails will give you a choice of which one to execute.
+
+You can specify the environment that the command executes in with an optional environment parameter, either with one of the built-in environment names:
+
+[source,java]
+----
+grails dev run-app
+grails test run-app
+grails prod run-app
+----
+
+Or using a -D argument if the name is not one of the three standard names:
+
+[source,java]
+----
+grails -Dgrails.env=uat run-app
+----
+
+Refer to the user guide section on <<commandLine,The Command Line>> for more information.

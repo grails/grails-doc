@@ -1,0 +1,55 @@
+
+===== constraints
+
+
+
+===== Purpose
+
+
+Allows the definition of declarative validation constraints. See <<validation,Validation>> in the user guide.
+
+
+===== Examples
+
+
+[source,java]
+----
+class Book {
+
+    String title
+    Author author
+
+    static constraints = {
+        title blank: false, size: 5..150
+        author nullable: true
+    }
+}
+----
+
+
+===== Description
+
+
+Constraints are defined using the declarative constraints DSL as described in the <<validation,Validation>> section of the user guide. Once evaluated, validation can be applied through the use of the <<ref-domain-classes-validate,validate>> method:
+
+[source,java]
+----
+def b = new Book()
+assert !b.validate()
+----
+
+The static `constrainedProperties` property is a Map such that the keys in the Map are property names and the values associated with the keys are instances of http://docs.grails.org/latest/api/grails/validation/ConstrainedProperty.html[ConstrainedProperty]:
+
+[source,java]
+----
+def constraintsMap = Book.constrainedProperties
+for(entry in constraintsMap) {
+    // propertyName is a String
+    def propertyName = entry.key
+
+    // constrainedProperty is a ConstrainedProperty
+    def constrainedProperty = entry.value
+
+    // ...
+}
+----

@@ -1,0 +1,161 @@
+The previous section on on XML and JSON responses covered simplistic examples of rendering XML and JSON responses. Whilst the XML builder used by Grails is the standard http://groovy.codehaus.org/Reading+XML+using+Groovy's+XmlSlurper[XmlSlurper] found in Groovy, the JSON builder is a custom implementation specific to Grails.
+
+
+==== JSONBuilder and Grails versions
+
+
+JSONBuilder behaves different depending on the version of Grails you use. For version below 1.2 the deprecated http://docs.grails.org/latest/api/grails/web/JSONBuilder.html[grails.web.JSONBuilder] class is used. This section covers the usage of the Grails 1.2 JSONBuilder
+
+For backwards compatibility the old `JSONBuilder` class is used with the `render` method for older applications; to use the newer/better `JSONBuilder` class set the following in `application.groovy`:
+
+[source,groovy]
+----
+grails.json.legacy.builder = false
+----
+
+
+==== Rendering Simple Objects
+
+
+To render a simple JSON object just set properties within the context of the Closure:
+
+[source,groovy]
+----
+render(contentType: "application/json") {
+    hello = "world"
+}
+----
+
+The above will produce the JSON:
+
+[source,groovy]
+----
+{"world"}[hello] ----
+
+
+==== Rendering JSON Arrays
+
+
+To render a list of objects simple assign a list:
+
+[source,groovy]
+----
+render(contentType: "application/json") {
+    categories = ['a', 'b', 'c']
+}
+----
+
+This will produce:
+
+[source,groovy]
+----
+{["a","b","c"]}[categories] ----
+
+You can also render lists of complex objects, for example:
+
+[source,groovy]
+----
+render(contentType: "application/json") {
+    categories = [ { a = "A" }, { b = "B" } ]
+}
+----
+
+This will produce:
+
+[source,groovy]
+----
+{[[categories] {"A"}[a] , {"B"}][b] }
+----
+
+Use the special `element` method to return a list as the root:
+
+[source,groovy]
+----
+render(contentType: "application/json") {
+    element 1
+    element 2
+    element 3
+}
+----
+
+The above code produces:
+
+[source,groovy]
+----
+[1,2,3]
+----
+
+
+==== Rendering Complex Objects
+
+
+Rendering complex objects can be done with Closures. For example:
+
+[source,groovy]
+----
+render(contentType: "application/json") {
+    categories = ['a', 'b', 'c']
+    title = "Hello JSON"
+    information = {
+        pages = 10
+    }
+}
+----
+
+The above will produce the JSON:
+
+[source,groovy]
+----
+{["a","b","c"],"title":"Hello[categories] JSON",{"pages":10}}[information] ----
+
+
+==== Arrays of Complex Objects
+
+
+As mentioned previously you can nest complex objects within arrays using Closures:
+
+[source,groovy]
+----
+render(contentType: "application/json") {
+    categories = [ { a = "A" }, { b = "B" } ]
+}
+----
+
+You can use the `array` method to build them up dynamically:
+
+[source,groovy]
+----
+def results = Book.list()
+render(contentType: "application/json") {
+    books = array {
+        for (b in results) {
+            book title: b.title
+        }
+    }
+}
+----
+
+
+==== Direct JSONBuilder API Access
+
+
+If you don't have access to the `render` method, but still want to produce JSON you can use the API directly:
+
+[source,groovy]
+----
+def builder = new JSONBuilder()
+
+def result = builder.build {
+    categories = ['a', 'b', 'c']
+    title = "Hello JSON"
+    information = {
+        pages = 10
+    }
+}
+
+// prints the JSON text
+println result.toString()
+
+def sw = new StringWriter()
+result.render sw
+----

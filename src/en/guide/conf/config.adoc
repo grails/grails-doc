@@ -1,0 +1,101 @@
+Configuration in Grails is generally split across 2 areas: build configuration and runtime configuration.
+
+Build configuration is generally done via Gradle and the `build.gradle` file. Runtime configuration is by default specified in YAML in the `grails-app/conf/application.yml` file.
+
+If you prefer to use Grails 2.0-style Groovy configuration then you can create an additional `grails-app/conf/application.groovy` file to specify configuration using Groovy's http://groovy.codehaus.org/ConfigSlurper[ConfigSlurper] syntax.
+
+For Groovy configuration the following variables are available to the configuration script:
+
+[format="csv", options="header"]
+|===
+
+*Variable*,*Description*
+userHome,Location of the home directory for the account that is running the Grails application.
+grailsHome,Location of the directory where you installed Grails. If the `GRAILS_HOME` environment variable is set, it is used.
+appName,The application name as it appears in build.gradle.
+appVersion,The application version as it appears in build.gradle.
+|===
+
+For example:
+
+[source,groovy]
+----
+my.tmp.dir = "\${userHome}/.grails/tmp"
+----
+
+
+If you want to read runtime configuration settings, i.e. those defined in `application.yml`, use the http://docs.grails.org/latest/api/grails/core/GrailsApplication.html[`grailsApplication`] object, which is available as a variable in controllers and tag libraries:
+
+[source,groovy]
+----
+class MyController {
+    def hello() {
+        def recipient = grailsApplication.config.getProperty('foo.bar.hello')
+
+        render "Hello ${recipient}"
+    }
+}
+----
+
+The `config` property of the `grailsApplication` object is an instance of the http://docs.grails.org/latest/api/grails/config/Config.html[Config] interface and provides a number of useful methods to read the configuration of the application.
+
+In particular, the `getProperty` method (seen above) is useful for efficiently retrieving configuration properties, while specifying the property type (the default type is String) and/or providing a default fallback value.
+
+[source,groovy]
+----
+class MyController {
+
+    def hello(Recipient recipient) {
+        //Retrieve Integer property 'foo.bar.max.hellos', otherwise use value of 5
+        def max = grailsApplication.config.getProperty('foo.bar.max.hellos', Integer, 5)
+
+        //Retrieve property 'foo.bar.greeting' without specifying type (default is String), otherwise use value "Hello"
+        def greeting = grailsApplication.config.getProperty('foo.bar.greeting', "Hello")
+
+        def message = (recipient.receivedHelloCount >= max) ?
+          "Sorry, you've been greeted the max number of times" :  "${greeting}, ${recipient}"
+        }
+
+        render message
+    }
+}
+----
+
+
+Notice that the `Config` instance is a merged configuration based on Spring's http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/context/annotation/PropertySource.html[PropertySource] concept and reads configuration from the environment, system properties and the local application configuration merging them into a single object.
+
+`GrailsApplication` can be easily injected into services and other Grails artifacts:
+
+[source,groovy]
+----
+import grails.core.*
+
+class MyService {
+    GrailsApplication grailsApplication
+
+    String greeting() {
+        def recipient = grailsApplication.config.getProperty('foo.bar.hello')
+        return "Hello ${recipient}"
+    }
+}
+----
+
+Finally, you can also use Spring's http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/beans/factory/annotation/Value.html[Value] annotation to inject configuration values:
+
+[source,groovy]
+----
+import org.springframework.beans.factory.annotation.*
+
+class MyController {
+    @Value('${foo.bar.hello}')
+    String recipient
+
+    def hello() {
+        render "Hello ${recipient}"
+    }
+}
+----
+
+NOTE: In Groovy code you must use single quotes around the string for the value of the `Value` annotation otherwise it is interpreted as a GString not a Spring expression.
+
+As you can see, when accessing configuration settings you use the same dot notation as when you define them.
