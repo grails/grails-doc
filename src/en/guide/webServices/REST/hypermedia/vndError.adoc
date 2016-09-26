@@ -1,4 +1,4 @@
-<<ref-error-Vnd.Error,Vnd.Error>> is a standardised way of expressing an error response. 
+https://github.com/blongden/vnd.error[Vnd.Error] is a standardised way of expressing an error response.
 
 By default when a validation error occurs when attempting to POST new resources then the errors object will be sent back allow with a 422 respond code:
 
@@ -10,7 +10,7 @@ HTTP/1.1 422 Unprocessable Entity
 Server: Apache-Coyote/1.1
 Content-Type: application/json;charset=ISO-8859-1
 
-{[{"object":"rest.test.Book",[errors] "title",[field] null,[rejected-value] "Property[message] [title] of class [class rest.test.Book] cannot be null"}]}
+{"errors":[{"object":"rest.test.Book", "field":"title", "rejected-value":null, "message":"Property [title] of class [class rest.test.Book] cannot be null"}]}
 ----
 
 If you wish to change the format to Vnd.Error then simply register `grails.rest.render.errors.VndErrorJsonRenderer` bean in `grails-app/conf/spring/resources.groovy`:
@@ -36,7 +36,7 @@ Content-Type: application/vnd.error+json;charset=ISO-8859-1
 
 [
     {
-        "logref": "\"book.nullable\"",
+        "logref": "book.nullable,
         "message": "Property [title] of class [class rest.test.Book] cannot be null",
         "_links": {
             "resource": {
