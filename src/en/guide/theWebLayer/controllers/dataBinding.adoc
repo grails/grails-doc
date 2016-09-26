@@ -93,8 +93,8 @@ class Album {
 
 [source,java]
 ----
-def bindingMap = [name: 'Genesis', 
-                  'albums[0]': [title: 'Foxtrot', numberOfTracks: 6], 
+def bindingMap = [name: 'Genesis',
+                  'albums[0]': [title: 'Foxtrot', numberOfTracks: 6],
                   'albums<<1>>': [title: 'Nursery Cryme', numberOfTracks: 7]]
 
 def band = new Band(bindingMap)
@@ -127,9 +127,9 @@ def band = Band.get(someBandId)
 /*
  * This will find the Album in albums that has an id of 9 and will set its title
  * to 'The Lamb Lies Down On Broadway' and will find the Album in albums that has
- * an id of 4 and set its title to 'Selling England By The Pound'.  In both 
+ * an id of 4 and set its title to 'Selling England By The Pound'.  In both
  * cases if the Album cannot be found in albums then the album will be retrieved
- * from the database by id, the Album will be added to albums and will be updated 
+ * from the database by id, the Album will be added to albums and will be updated
  * with the values described above.  If a Album with the specified id cannot be
  * found in the database, then a binding error will be created and associated
  * with the band object.  More on binding errors later.
@@ -167,7 +167,7 @@ assert album.players.guitar.name == 'Steve Hackett'
 assert album.players.vocals.name == 'Peter Gabriel'
 assert album.players.keyboards.name == 'Tony Banks'
 ----
-  
+
 When updating an existing `Map`, if the key specified in the binding `Map` does not exist in the `Map` being bound to then a new value will be created and added to the `Map` with the specified key as in the following example:
 
 
@@ -227,7 +227,7 @@ The data binding happens within the code `new Book(params)`. By passing the <<re
 /book/save?title=The%20Stand&author=Stephen%20King
 ----
 
-Then the `title` and `author` request parameters would automatically be set on the domain class. You can use the <<ref-domain-classes-properties,properties>> property to perform data binding onto an existing instance:
+Then the `title` and `author` request parameters would automatically be set on the domain class. You can use the link:../ref/Domain%20Classes/properties.html[properties] property to perform data binding onto an existing instance:
 
 [source,java]
 ----
@@ -372,7 +372,7 @@ Binding to a `Map` property works the same way except that the list index in the
 
 This would bind the selected image into the `Map` property `images` under a key of `"cover"`.
 
-When binding to Maps, Arrays and Collections the data binder will automatically grow the size of the collections as necessary.  
+When binding to Maps, Arrays and Collections the data binder will automatically grow the size of the collections as necessary.
 
 NOTE: The default limit to how large the binder will grow a collection is 256. If the data binder encounters an entry that requires the collection be grown beyond that limit, the entry is ignored.  The limit may be configured by assigning a value to the `grails.databinding.autoGrowCollectionLimit` property in `application.groovy`.
 
@@ -461,7 +461,7 @@ class AccountingController {
 ==== Data binding and type conversion errors
 
 
-Sometimes when performing data binding it is not possible to convert a particular String into a particular target type. This results in a type conversion error. Grails will retain type conversion errors inside the <<ref-domain-classes-errors,errors>> property of a Grails domain class. For example:
+Sometimes when performing data binding it is not possible to convert a particular String into a particular target type. This results in a type conversion error. Grails will retain type conversion errors inside the link:../ref/Domain%20Classes/errors.html[errors] property of a Grails domain class. For example:
 
 [source,java]
 ----
@@ -490,7 +490,7 @@ if (b.hasErrors()) {
 }
 ----
 
-Although we have not yet covered error codes (for more information see the section on <<validation,Validation>>), for type conversion errors you would want a message from the `grails-app/i18n/messages.properties` file to use for the error. You can use a generic error message handler such as:
+Although we have not yet covered error codes (for more information see the section on link:validation.html[validation]), for type conversion errors you would want a message from the `grails-app/i18n/messages.properties` file to use for the error. You can use a generic error message handler such as:
 
 [source,java]
 ----
@@ -530,7 +530,7 @@ class SomeClass {
 NOTE: Note that data binding is only possible when the name of the request parameter matches with the field name in the class.
 Here, `name` from request parameters matches with `name` from `SomeClass`.
 
-The http://docs.grails.org/latest/api/org/grails/databinding/BindUsing.html[BindUsing] annotation may be used to define a custom binding mechanism for all of the fields on a particular class. When the annotation is applied to a class, the value assigned to the annotation should be a class which implements the http://docs.grails.org/latest/api/org/grails/databinding/BindingHelper.html[BindingHelper] interface.  An instance of that class will be used any time a value is bound to a property in the class that this annotation has been applied to. 
+The http://docs.grails.org/latest/api/org/grails/databinding/BindUsing.html[BindUsing] annotation may be used to define a custom binding mechanism for all of the fields on a particular class. When the annotation is applied to a class, the value assigned to the annotation should be a class which implements the http://docs.grails.org/latest/api/org/grails/databinding/BindingHelper.html[BindingHelper] interface.  An instance of that class will be used any time a value is bound to a property in the class that this annotation has been applied to.
 
 [source,java]
 ----
@@ -845,7 +845,7 @@ public interface DataBindingListener {
 
     /**
      * Called when data binding is about to start.
-     * 
+     *
      * @param target The object data binding is being imposed upon
      * @param errors the Spring Errors instance (a org.springframework.validation.BindingResult)
      * @return true if data binding should continue
@@ -874,7 +874,7 @@ public interface DataBindingListener {
 
     /**
      * Called after data binding has finished.
-     *  
+     *
      * @param target The object data binding is being imposed upon
      * @param errors the Spring Errors instance (a org.springframework.validation.BindingResult)
      */
