@@ -177,7 +177,7 @@ package bindingdemo
 class DemoController {
 
     def createWidget(Widget w) {
-        render "Name: \${w?.name}, Size: \${w?.size}"
+        render "Name: ${w?.name}, Size: ${w?.size}"
     }
 }
 
@@ -189,12 +189,11 @@ class Widget {
 
 [source,groovy]
 ----
-\$ curl -H "Content-Type: application/json" -d '{"Some[name] Widget","42"}'[size] localhost:8080/demo/createWidget
+$ curl -H "Content-Type: application/json" -d '{"Some[name] Widget","42"}'[size] localhost:8080/demo/createWidget
  Name: Some Widget, Size: 42
-~ \$
-\$ curl -H "Content-Type: application/xml" -d '<widget><name>Some Other Widget</name><size>2112</size></widget>' localhost:8080/bodybind/demo/createWidget
+
+$ curl -H "Content-Type: application/xml" -d '<widget><name>Some Other Widget</name><size>2112</size></widget>' localhost:8080/bodybind/demo/createWidget
  Name: Some Other Widget, Size: 2112
-~ \$
 ----
 
 Note that the body of the request is being parsed to make that work.  Any attempt to read the body of the request after that will fail since the corresponding input stream will be empty.  The controller action can either use a command object or it can parse the body of the request on its own (either directly, or by referring to something like request.JSON), but cannot do both.
