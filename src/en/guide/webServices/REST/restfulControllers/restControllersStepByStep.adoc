@@ -42,7 +42,7 @@ The key to implementing REST actions is the <<ref-controllers-respond,respond>> 
 ==== Implementing the 'index' action
 
 
-For example, to implement the `index` action, simply call the `respond` method passing the list of objects to respond with: 
+For example, to implement the `index` action, simply call the `respond` method passing the list of objects to respond with:
 
 [source,groovy]
 ----
@@ -54,7 +54,7 @@ def index(Integer max) {
 
 Note that in the above example we also use the `model` argument of the `respond` method to supply the total count. This is only required if you plan to support pagination via some user interface.
 
-The `respond` method will, using <<contentNegotiation,Content Negotiation>>, attempt to reply with the most appropriate response given the content type requested by the client (via the ACCEPT header or file extension).
+The `respond` method will, using link:theWebLayer.html#contentNegotiation[Content Negotiation], attempt to reply with the most appropriate response given the content type requested by the client (via the ACCEPT header or file extension).
 
 If the content type is established to be HTML then a model will be produced such that the action above would be the equivalent of writing:
 
@@ -116,7 +116,7 @@ Then the first thing to do is check whether the resource has any <<validation,va
 [source,groovy]
 ----
 if(book.hasErrors()) {
-    respond book.errors, view:'create' 
+    respond book.errors, view:'create'
 }
 else {
     ...
@@ -131,9 +131,9 @@ If there are no errors then the resource can be saved and an appropriate respons
 ----
 book.save flush:true
     withFormat {
-        html { 
+        html {
             flash.message = message(code: 'default.created.message', args: [message(code: 'book.label', default: 'Book'), book.id])
-            redirect book 
+            redirect book
         }
         '*' { render status: CREATED }
     }
@@ -173,7 +173,7 @@ Then once again check for errors <<validation,validation errors>> and if so resp
 [source,groovy]
 ----
 if(book.hasErrors()) {
-    respond book.errors, view:'edit' 
+    respond book.errors, view:'edit'
 }
 else {
     ...
@@ -188,9 +188,9 @@ If there are no errors then the resource can be saved and an appropriate respons
 ----
 book.save flush:true
 withFormat {
-    html { 
+    html {
         flash.message = message(code: 'default.updated.message', args: [message(code: 'book.label', default: 'Book'), book.id])
-        redirect book 
+        redirect book
     }
     '*' { render status: OK }
 }
@@ -208,11 +208,11 @@ The `delete` action deletes an existing resource. The implementation is largely 
 ----
 book.delete flush:true
 withFormat {
-    html { 
+    html {
         flash.message = message(code: 'default.deleted.message', args: [message(code: 'Book.label', default: 'Book'), book.id])
-        redirect action:"index", method:"GET" 
+        redirect action:"index", method:"GET"
     }
-    '*'{ render status: NO_CONTENT } 
+    '*'{ render status: NO_CONTENT }
 }
 ----
 

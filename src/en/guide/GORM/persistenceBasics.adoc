@@ -1,12 +1,12 @@
 A key thing to remember about Grails is that under the surface Grails is using http://www.hibernate.org/[Hibernate] for persistence. If you are coming from a background of using http://wiki.rubyonrails.org/rails/pages/ActiveRecord[ActiveRecord] or http://www.mybatis.org/[iBatis/MyBatis], Hibernate's "session" model may feel a little strange.
 
-Grails automatically binds a Hibernate session to the currently executing request. This lets you use the <<ref-domain-classes-save,save>> and <<ref-domain-classes-delete,delete>> methods as well as other GORM methods transparently.
+Grails automatically binds a Hibernate session to the currently executing request. This lets you use the link:../ref/Domain%20Classes/save.html[save] and link:../ref/Domain%20Classes/delete.html[delete] methods as well as other GORM methods transparently.
 
 
 ==== Transactional Write-Behind
 
 
-A useful feature of Hibernate over direct JDBC calls and even other frameworks is that when you call <<ref-domain-classes-save,save>> or <<ref-domain-classes-delete,delete>> it does not necessarily perform any SQL operations *at that point*. Hibernate batches up SQL statements and executes them as late as possible, often at the end of the request when flushing and closing the session. This is typically done for you automatically by Grails, which manages your Hibernate session.
+A useful feature of Hibernate over direct JDBC calls and even other frameworks is that when you call link:../ref/Domain%20Classes/save.html[save] or link:../ref/Domain%20Classes/delete.html[delete] it does not necessarily perform any SQL operations *at that point*. Hibernate batches up SQL statements and executes them as late as possible, often at the end of the request when flushing and closing the session. This is typically done for you automatically by Grails, which manages your Hibernate session.
 
 Hibernate caches database updates where possible, only actually pushing the changes when it knows that a flush is required, or when a flush is triggered programmatically. One common case where Hibernate will flush cached updates is when performing queries since the cached information might be included in the query results. But as long as you're doing non-conflicting saves, updates, and deletes, they'll be batched until the session is flushed. This can be a significant performance boost for applications that do a lot of database writes.
 
