@@ -1,4 +1,4 @@
-In addition to http://gorm.grails.org/6.0.x/rx/manual[RxGORM], support for http://reactivex.io[RxJava] has been added to the Grails framework via an <<ref-htmlpluginrxjava-RxJava plugin,RxJava plugin>>
+In addition to http://gorm.grails.org/6.0.x/rx/manual[RxGORM], support for http://reactivex.io[RxJava] has been added to the Grails framework via an https://grails.org/plugins.html#plugin/rxjava[RxJava plugin].
 
 
 ==== Reactive controllers with RxJava
@@ -9,10 +9,10 @@ The RxJava plugin allows you to return `Observable` responses from controllers a
 [source,groovy]
 ----
 def show() {
-    String author = params.author 
+    String author = params.author
     Book.get(params.id)
             .map { Book book ->
-        rx.render view:"book", model:[book:book, author:author] 
+        rx.render view:"book", model:[book:book, author:author]
     }
 }
 ----
@@ -21,16 +21,16 @@ def show() {
 ==== Server Sent Events with RxJava
 
 
-It is now possible to easily issue responses that return <<ref-orgen-us-docs-web-api-serversentevents-usingserversentevents-Server Sent Events,Server Sent Events>> with Grails and RxJava:
+It is now possible to easily issue responses that return https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events[Server Sent Events] with Grails and RxJava:
 
 [source,groovy]
 ----
 def index() {
-    rx.stream { Subscriber subscriber -> 
+    rx.stream { Subscriber subscriber ->
        for(i in (0..5)) {
            if(i % 2 == 0) {
                subscriber.onNext(
-                   rx.render("Tick") 
+                   rx.render("Tick")
                )
            }
            else {
@@ -39,11 +39,11 @@ def index() {
                )
 
            }
-           sleep 1000 
+           sleep 1000
        }
-       subscriber.onCompleted() 
+       subscriber.onCompleted()
    }
 }
 ----
 
-NOTE: See the <<ref-comgrailspluginsgrailsrxjavatreemasterexamplesserversenteventexample-sample application,sample application>> for a demonstration of Server Sent Events in action
+NOTE: See the https://github.com/grails-plugins/grails-rxjava/tree/master/examples/server-sent-event-example[sample application] for a demonstration of Server Sent Events in action
