@@ -2,7 +2,7 @@
 === Understanding Transactions and the Hibernate Session
 
 
-When using transactions there are important considerations you must take into account with regards to how the underlying persistence session is handled by Hibernate. When a transaction is rolled back the Hibernate session used by GORM is cleared. This means any objects within the session become detached and accessing uninitialized lazy-loaded collections will lead to `LazyInitializationException`s.
+When using transactions there are important considerations you must take into account with regards to how the underlying persistence session is handled by Hibernate. When a transaction is rolled back the Hibernate session used by GORM is cleared. This means any objects within the session become detached and accessing uninitialized lazy-loaded collections will lead to a `LazyInitializationException`.
 
 To understand why it is important that the Hibernate session is cleared. Consider the following example:
 
@@ -32,7 +32,7 @@ Author.withTransaction { status ->
 
 Only the second author would be saved since the first transaction rolls back the author `save()` by clearing the Hibernate session. If the Hibernate session were not cleared then both author instances would be persisted and it would lead to very unexpected results.
 
-It can, however, be frustrating to get `LazyInitializationException`s due to the session being cleared.
+It can, however, be frustrating to get a `LazyInitializationException` due to the session being cleared.
 
 For example, consider the following example:
 
@@ -67,7 +67,7 @@ class AuthorController {
 }
 ----
 
-In the above example the transaction will be rolled back if the `Author`'s age exceeds the maximum value defined in the `isTooOld()` method by throwing an `AuthorException`. The `AuthorException` references the author but when the `books` association is accessed a `LazyInitializationException` will be thrown because the underlying Hibernate session has been cleared.
+In the above example the transaction will be rolled back if the age of the `Author` age exceeds the maximum value defined in the `isTooOld()` method by throwing an `AuthorException`. The `AuthorException` references the author but when the `books` association is accessed a `LazyInitializationException` will be thrown because the underlying Hibernate session has been cleared.
 
 To solve this problem you have a number of options. One is to ensure you query eagerly to get the data you will need:
 
