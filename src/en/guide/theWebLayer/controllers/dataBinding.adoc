@@ -203,7 +203,7 @@ assert album.players.drums.name == 'Phil Collins'
 ==== Binding Request Data to the Model
 
 
-The <<ref-controllers-params,params>> object that is available in a controller has special behavior that helps convert dotted request parameter names into nested Maps that the data binder can work with.  For example, if a request includes request parameters named `person.homeAddress.country` and `person.homeAddress.city` with values 'USA' and 'St. Louis' respectively, `params` would include entries like these:
+The link:../ref/Controllers/params.html[params] object that is available in a controller has special behavior that helps convert dotted request parameter names into nested Maps that the data binder can work with.  For example, if a request includes request parameters named `person.homeAddress.country` and `person.homeAddress.city` with values 'USA' and 'St. Louis' respectively, `params` would include entries like these:
 
 [source,groovy]
 ----
@@ -220,7 +220,7 @@ def save() {
 }
 ----
 
-The data binding happens within the code `new Book(params)`. By passing the <<ref-controllers-params,params>> object to the domain class constructor Grails automatically recognizes that you are trying to bind from request parameters. So if we had an incoming request like:
+The data binding happens within the code `new Book(params)`. By passing the link:../ref/Controllers/params.html[params] object to the domain class constructor Grails automatically recognizes that you are trying to bind from request parameters. So if we had an incoming request like:
 
 [source,java]
 ----
@@ -390,7 +390,7 @@ grails.databinding.autoGrowCollectionLimit = 128
 ==== Data binding with Multiple domain classes
 
 
-It is possible to bind data to multiple domain objects from the <<ref-controllers-params,params>> object.
+It is possible to bind data to multiple domain objects from the link:../ref/Controllers/params.html[params] object.
 
 For example so you have an incoming request to:
 
@@ -440,7 +440,7 @@ For primitive arguments and arguments which are instances of any of the primitiv
 
 Since "bogusValue" cannot be converted to type int, the value of accountType will be zero, the controller's `errors.hasErrors()` will be true, the controller's `errors.errorCount` will be equal to 1 and the controller's `errors.getFieldError('accountType')` will contain the corresponding error.
 
-If the argument name does not match the name of the request parameter then the `\`grails.web.RequestParameter@ annotation may be applied to an argument to express the name of the request parameter which should be bound to that argument:
+If the argument name does not match the name of the request parameter then the `@grails.web.RequestParameter` annotation may be applied to an argument to express the name of the request parameter which should be bound to that argument:
 
 [source,java]
 ----
@@ -1023,4 +1023,4 @@ bindData(p, params, [include: ['firstName', 'lastName']])
 
 NOTE: Note that if an empty List is provided as a value for the `include` parameter then all fields will be subject to binding if they are not explicitly excluded.
 
-The <<ref-constraints-bindable,bindable>> constraint can be used to globally prevent data binding for certain properties.
+The link:../ref/Constraints/bindable.html[bindable] constraint can be used to globally prevent data binding for certain properties.
