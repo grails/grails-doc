@@ -183,7 +183,7 @@ The query above would return results like this:
 
 Each of the inner lists contains the 2 projected values for each `Box`, perimeter and area.
 
-NOTE: Note that if there are other references in scope wherever your criteria query is expressed that have names that conflict
+NOTE: If there are other references in scope wherever your criteria query is expressed that have names that conflict
 with any of the type constants described above, the code in your criteria will refer to those references, not the type
 constants provided by the DSL.  In the unlikely event of that happening you can disambiguate the conflict by referring
 to the fully qualified Hibernate type.  For example `StandardBasicTypes.INTEGER` instead of `INTEGER`.
@@ -256,7 +256,7 @@ def peopleWithShortFirstNames = c.list {
 ----
 
 
-NOTE: Note that the parameter there is SQL. The `first_name` attribute referenced in the example refers to the persistence model, not the object model like in HQL queries. The `Person` property named `firstName` is mapped to the `first_name` column in the database and you must refer to that in the `sqlRestriction` string.
+NOTE: The parameter to `sqlRestriction` is raw SQL. The `first_name` attribute referenced in the example refers to the persistence model, not the object model like in HQL queries. The `Person` property named `firstName` is mapped to the `first_name` column in the database and you must refer to that in the `sqlRestriction` string.
 
 Also note that the SQL used here is not necessarily portable across databases.
 
@@ -366,15 +366,15 @@ The build defaults to listing all the results and hence the above is equivalent 
 c.list { ... }
 ----
 
-[format="csv", options="header"]
+[format="csv", options="header", separator="|"]
 |===
 
-Method,Description
-*list*,This is the default method. It returns all matching rows.
-*get*,Returns a unique result set, i.e. just one row. The criteria has to be formed that way, that it only queries one row. This method is not to be confused with a limit to just the first row.
-*scroll*,Returns a scrollable result set.
-*listDistinct*,If subqueries or associations are used, one may end up with the same row multiple times in the result set, this allows listing only distinct entities and is equivalent to `DISTINCT_ROOT_ENTITY` of the http://docs.jboss.org/hibernate/orm/current/javadocs/org/hibernate/criterion/CriteriaSpecification.html[CriteriaSpecification] class.
-*count*,Returns the number of matching rows.
+Method|Description
+*list*|This is the default method. It returns all matching rows.
+*get*|Returns a unique result set, i.e. just one row. The criteria has to be formed that way, that it only queries one row. This method is not to be confused with a limit to just the first row.
+*scroll*|Returns a scrollable result set.
+*listDistinct*|If subqueries or associations are used, one may end up with the same row multiple times in the result set, this allows listing only distinct entities and is equivalent to `DISTINCT_ROOT_ENTITY` of the http://docs.jboss.org/hibernate/orm/current/javadocs/org/hibernate/criterion/CriteriaSpecification.html[CriteriaSpecification] class.
+*count*|Returns the number of matching rows.
 |===
 
 

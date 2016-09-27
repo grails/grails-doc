@@ -1,5 +1,5 @@
 
-==== Sets of Objects
+=== Sets of Objects
 
 
 By default when you define a relationship with GORM it is a `java.util.Set` which is an unordered collection that cannot contain duplicates. In other words when you have:
@@ -41,7 +41,7 @@ class Book implements Comparable {
 The result of the above class is that the Book instances in the books collection of the Author class will be ordered by their release date.
 
 
-==== Lists of Objects
+=== Lists of Objects
 
 
 To keep objects in the order which they were added and to be able to reference them by index like an array you can define your collection type as a `List`:
@@ -81,7 +81,7 @@ author.save()
 ----
 
 
-==== Bags of Objects
+=== Bags of Objects
 
 
 If ordering and uniqueness aren't a concern (or if you manage these explicitly) then you can use the Hibernate http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/collections.html[Bag] type to represent mapped collections.
@@ -101,7 +101,7 @@ class Author {
 Since uniqueness and order aren't managed by Hibernate, adding to or removing from collections mapped as a Bag don't trigger a load of all existing instances from the database, so this approach will perform better and require less memory than using a `Set` or a `List`.
 
 
-==== Maps of Objects
+=== Maps of Objects
 
 
 If you want a simple map of string/value pairs GORM can map this with the following:
@@ -139,7 +139,7 @@ book.save()
 The static `hasMany` property defines the type of the elements within the Map. The keys for the map *must* be strings.
 
 
-==== A Note on Collection Types and Performance
+=== A Note on Collection Types and Performance
 
 
 The Java `Set` type doesn't allow duplicates. To ensure uniqueness when adding an entry to a `Set` association Hibernate has to load the entire associations from the database. If you have a large numbers of entries in the association this can be costly in terms of performance.

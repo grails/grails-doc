@@ -22,7 +22,7 @@ class Flight {
 }
 ----
 
-If I now create an `Airport` and add some `Flight`s to it I can save the `Airport` and have the updates cascaded down to each flight, hence saving the whole object graph:
+If I now create an `Airport` and add some Flights to it I can save the `Airport` and have the updates cascaded down to each flight, hence saving the whole object graph:
 
 [source,groovy]
 ----
@@ -32,7 +32,7 @@ new Airport(name: "Gatwick")
         .save()
 ----
 
-Conversely if I later delete the `Airport` all `Flight`s associated with it will also be deleted:
+Conversely if I later delete the `Airport` all `Flight` instances associated with it will also be deleted:
 
 [source,groovy]
 ----
@@ -43,7 +43,7 @@ airport.delete()
 However, if I were to remove `belongsTo` then the above cascading deletion code *would not work*. To understand this better take a look at the summaries below that describe the default behaviour of GORM with regards to specific associations. Also read http://blog.springsource.com/2010/07/02/gorm-gotchas-part-2/[part 2] of the GORM Gotchas series of articles to get a deeper understanding of relationships and cascading.
 
 
-===== Bidirectional one-to-many with belongsTo
+=== Bidirectional one-to-many with belongsTo
 
 
 [source,groovy]
@@ -59,7 +59,7 @@ class B { static belongsTo = [a: A] }
 In the case of a bidirectional one-to-many where the many side defines a `belongsTo` then the cascade strategy is set to "ALL" for the one side and "NONE" for the many side.
 
 
-===== Unidirectional one-to-many
+=== Unidirectional one-to-many
 
 
 [source,groovy]
@@ -75,7 +75,7 @@ class B {  }
 In the case of a unidirectional one-to-many where the many side defines no belongsTo then the cascade strategy is set to "SAVE-UPDATE".
 
 
-===== Bidirectional one-to-many, no belongsTo
+=== Bidirectional one-to-many, no belongsTo
 
 
 [source,groovy]
@@ -91,7 +91,7 @@ class B { A a }
 In the case of a bidirectional one-to-many where the many side does not define a `belongsTo` then the cascade strategy is set to "SAVE-UPDATE" for the one side and "NONE" for the many side.
 
 
-===== Unidirectional one-to-one with belongsTo
+=== Unidirectional one-to-one with belongsTo
 
 
 [source,groovy]
