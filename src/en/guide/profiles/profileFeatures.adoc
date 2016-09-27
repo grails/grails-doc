@@ -2,14 +2,14 @@ A Profile feature is a shareable set of templates and dependencies that may span
 
 To create a feature use the `create-feature` command from the root directory of your profile:
 
-[source,groovy]
+[source,bash]
 ----
 $ grails create-feature myfeature
 ----
 
 This will create a `myfeature/feature.yml` file that looks like the following:
 
-[source,groovy]
+[source,yaml]
 ----
 description: Description of the feature
 # customize versions here
@@ -21,7 +21,7 @@ description: Description of the feature
 
 As a more concrete example. The following is the `feature.yml` file from the "asset-pipeline" feature:
 
-[source,groovy]
+[source,yaml]
 ----
 description: Adds Asset Pipeline to a Grails project
 build:
@@ -36,22 +36,22 @@ dependencies:
 
 The structure of a feature is as follows:
 
-[source,groovy]
+[source]
 ----
 FEATURE_DIR
-    * feature.yml
-    * skeleton
-        * grails-app
-            * conf
-                * application.yml
-        * build.gradle
+    feature.yml
+    skeleton/
+        grails-app/
+            conf/
+                application.yml
+        build.gradle
 ----
 
 The contents of the skeleton get copied into the application tree, whilst the `application.yml` and `build.gradle` get merged with their respective counterparts in the profile by used.
 
 With the `feature.yml` you can define additional dependencies. This allows users to create applications with optional features. For example:
 
-[source,groovy]
+[source,bash]
 ----
 $ grails create-app myapp --profile myprofile --features myfeature,hibernate
 ----
