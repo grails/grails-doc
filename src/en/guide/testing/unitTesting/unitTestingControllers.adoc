@@ -4,7 +4,7 @@
 
 You use the `grails.test.mixin.TestFor` annotation to unit test controllers. Using `TestFor` in this manner activates the `grails.test.mixin.web.ControllerUnitTestMixin` and its associated API. For example:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -23,7 +23,7 @@ NOTE: The `TestFor` annotation will also automatically annotate any public metho
 
 To test the simplest "Hello World"-style example you can do the following:
 
-[source,java]
+[source,groovy]
 ----
 // Test class
 class SimpleController {
@@ -33,7 +33,7 @@ class SimpleController {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -55,7 +55,7 @@ The `response` object is an instance of `GrailsMockHttpServletResponse` (from th
 
 For example to test a redirect you can use the `redirectedUrl` property:
 
-[source,java]
+[source,groovy]
 ----
 class SimpleController {
     def index() {
@@ -65,7 +65,7 @@ class SimpleController {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -85,7 +85,7 @@ class SimpleControllerSpec extends Specification {
 
 Many actions make use of the parameter data associated with the request. For example, the 'sort', 'max', and 'offset' parameters are quite common. Providing these in the test is as simple as adding appropriate values to a special `params` variable:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -108,7 +108,7 @@ class PersonControllerSpec extends Specification {
 
 You can even control what type of request the controller action sees by setting the `method` property of the mock request:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -129,7 +129,7 @@ class PersonControllerSpec extends Specification {
 
 This is particularly important if your actions do different things depending on the type of the request. Finally, you can mark a request as AJAX like so:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -157,7 +157,7 @@ You only need to do this though if the code under test uses the `xhr` property o
 
 To test view rendering you can inspect the state of the controller's `modelAndView` property (an instance of `org.springframework.web.servlet.ModelAndView`) or you can use the `view` and `model` properties provided by the mixin:
 
-[source,java]
+[source,groovy]
 ----
 class SimpleController {
     def home() {
@@ -167,7 +167,7 @@ class SimpleController {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -196,7 +196,7 @@ Unlike view rendering, template rendering will actually attempt to write the tem
 
 Consider the following controller action:
 
-[source,java]
+[source,groovy]
 ----
 class SimpleController {
     def display() {
@@ -207,7 +207,7 @@ class SimpleController {
 
 In this example the controller will look for a template in `grails-app/views/simple/_snippet.gsp`. You can test this as follows:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -227,7 +227,7 @@ class SimpleControllerSpec extends Specification {
 
 However, you may not want to render the real template, but just test that is was rendered. In this case you can provide mock Groovy Pages:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -252,7 +252,7 @@ class SimpleControllerSpec extends Specification {
 
 When a controller action returns a `java.util.Map` that `Map` may be inspected directly to assert that it contains the expected data:
 
-[source,java]
+[source,groovy]
 ----
 class SimpleController {
     def showBookDetails() {
@@ -261,7 +261,7 @@ class SimpleController {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -286,7 +286,7 @@ class SimpleControllerSpec extends Specification {
 
 XML and JSON response are also written directly to the response. Grails' mocking capabilities provide some conveniences for testing XML and JSON response. For example consider the following action:
 
-[source,java]
+[source,groovy]
 ----
 def renderXml() {
     render(contentType:"text/xml") {
@@ -297,7 +297,7 @@ def renderXml() {
 
 This can be tested using the `xml` property of the response:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -320,7 +320,7 @@ The `xml` property is a parsed result from Groovy's hhttp://groovy-lang.org/proc
 
 Testing JSON responses is pretty similar, instead you use the `json` property:
 
-[source,java]
+[source,groovy]
 ----
 // controller action
 def renderJson() {
@@ -330,7 +330,7 @@ def renderJson() {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -483,7 +483,7 @@ class SimpleControllerSpec extends Specification {
 
 You can test mime type handling and the `withFormat` method quite simply by setting the request's `contentType` attribute:
 
-[source,java]
+[source,groovy]
 ----
 // controller action
 def sayHello() {
@@ -496,7 +496,7 @@ def sayHello() {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -525,7 +525,7 @@ class SimpleControllerSpec extends Specification {
 
 There are constants provided by `ControllerUnitTestMixin` for all of the common common content types as shown below:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -578,7 +578,7 @@ ATOM_XML_CONTENT_TYPE,application/atom+xml
 
 Testing duplicate form submissions is a little bit more involved. For example if you have an action that handles a form such as:
 
-[source,java]
+[source,groovy]
 ----
 def handleForm() {
     withForm {
@@ -591,7 +591,7 @@ def handleForm() {
 
 you want to verify the logic that is executed on a good form submission and the logic that is executed on a duplicate submission. Testing the bad submission is simple. Just invoke the controller:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -611,7 +611,7 @@ class SimpleControllerSpec extends Specification {
 
 Testing the successful submission requires providing an appropriate `SynchronizerToken`:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -637,7 +637,7 @@ class SimpleControllerSpec extends Specification {
 
 If you test both the valid and the invalid request in the same test be sure to reset the response between executions of the controller:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -674,7 +674,7 @@ class SimpleControllerSpec extends Specification {
 
 You use the `GrailsMockMultipartFile` class to test file uploads. For example consider the following controller action:
 
-[source,java]
+[source,groovy]
 ----
 def uploadFile() {
     MultipartFile file = request.getFile("myFile")
@@ -684,7 +684,7 @@ def uploadFile() {
 
 To test this action you can register a `GrailsMockMultipartFile` with the request:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -714,7 +714,7 @@ The `GrailsMockMultipartFile` constructor arguments are the name and contents of
 
 Special support exists for testing command object handling with the `mockCommandObject` method. For example consider the following action:
 
-[source,java]
+[source,groovy]
 ----
 class SimpleController {
     def handleCommand(SimpleCommand simple) {
@@ -737,7 +737,7 @@ class SimpleCommand {
 
 To test this you mock the command object, populate it and then validate it as follows:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -773,7 +773,7 @@ class SimpleControllerSpec extends Specification {
 
 The testing framework also supports allowing Grails to create the command object instance automatically.  To test this invoke the no-arg version of the controller action method.  Grails will create an instance of the command object, perform data binding on it using the request parameters and validate the object just like it does in when the application is running.  See the test below.
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification
@@ -807,7 +807,7 @@ class SimpleControllerSpec extends Specification {
 
 The unit testing environment respects the link:../ref/Controllers/allowedMethods.html[allowedMethods] property in controllers.  If a controller action is limited to be accessed with certain request methods, the unit test must be constructed to deal with that.
 
-[source,java]
+[source,groovy]
 ----
 // grails-app/controllers/com/demo/DemoController.groovypackage com.demo
 
@@ -823,7 +823,7 @@ class DemoController {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 // test/unit/com/demo/DemoControllerSpec.groovy
 package com.demo
@@ -862,7 +862,7 @@ class DemoControllerSpec extends Specification {
 
 You can test calling tag libraries using `ControllerUnitTestMixin`, although the mechanism for testing the tag called varies from tag to tag. For example to test a call to the `message` tag, add a message to the `messageSource`. Consider the following action:
 
-[source,java]
+[source,groovy]
 ----
 def showMessage() {
     render g.message(code: "foo.bar")
@@ -871,7 +871,7 @@ def showMessage() {
 
 This can be tested as follows:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import spock.lang.Specification

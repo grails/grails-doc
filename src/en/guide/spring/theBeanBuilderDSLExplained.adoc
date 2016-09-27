@@ -3,7 +3,7 @@
 
 
 Constructor arguments can be defined using parameters to each bean-defining method. Put them after the first argument (the Class):
-[source,java]
+[source,groovy]
 ----
 bb.beans {
     exampleBean(MyExampleBean, "firstArgument", 2) {
@@ -14,7 +14,7 @@ bb.beans {
 
 This configuration corresponds to a `MyExampleBean` with a constructor that looks like this:
 
-[source,java]
+[source,groovy]
 ----
 MyExampleBean(String foo, int bar) {
    ...
@@ -27,7 +27,7 @@ MyExampleBean(String foo, int bar) {
 
 The first argument to the closure is a reference to the bean configuration instance, which you can use to configure factory methods and invoke any method on the http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/beans/factory/support/AbstractBeanDefinition.html[AbstractBeanDefinition] class:
 
-[source,java]
+[source,groovy]
 ----
 bb.beans {
     exampleBean(MyExampleBean) { bean ->
@@ -40,7 +40,7 @@ bb.beans {
 
 As an alternative you can also use the return value of the bean defining method to configure the bean:
 
-[source,java]
+[source,groovy]
 ----
 bb.beans {
     def example = exampleBean(MyExampleBean) {
@@ -56,7 +56,7 @@ bb.beans {
 
 Spring defines the concept of factory beans and often a bean is created not directly from a new instance of a Class, but from one of these factories. In this case the bean has no Class argument and instead you must pass the name of the factory bean to the bean defining method:
 
-[source,java]
+[source,groovy]
 ----
 bb.beans {
 
@@ -72,7 +72,7 @@ bb.beans {
 
 Another common approach is provide the name of the factory method to call on the factory bean. This can be done using Groovy's named parameter syntax:
 
-[source,java]
+[source,groovy]
 ----
 bb.beans {
 
@@ -94,7 +94,7 @@ Here the `getInstance` method on the `ExampleFactoryBean` bean will be called to
 
 Sometimes you don't know the name of the bean to be created until runtime. In this case you can use a string interpolation to invoke a bean defining method dynamically:
 
-[source,java]
+[source,groovy]
 ----
 def beanName = "example"
 bb.beans {
@@ -108,7 +108,7 @@ In this case the `beanName` variable defined earlier is used when invoking a bea
 
 Furthermore, because sometimes bean names are not known until runtime you may need to reference them by name when wiring together other beans, in this case using the `ref` method:
 
-[source,java]
+[source,groovy]
 ----
 def beanName = "example"
 bb.beans {
@@ -125,7 +125,7 @@ bb.beans {
 
 Here the example property of `AnotherBean` is set using a runtime reference to the `exampleBean`. The `ref` method can also be used to refer to beans from a parent `ApplicationContext` that is provided in the constructor of the `BeanBuilder`:
 
-[source,java]
+[source,groovy]
 ----
 ApplicationContext parent = ...//
 def bb = new BeanBuilder(parent)
@@ -144,7 +144,7 @@ Here the second parameter `true` specifies that the reference will look for the 
 
 You can use anonymous inner beans by setting a property of the bean to a block that takes an argument that is the bean type:
 
-[source,java]
+[source,groovy]
 ----
 bb.beans {
 
@@ -172,7 +172,7 @@ bb.beans {
 
 In the above example we set the `marge` bean's husband property to a block that creates an inner bean reference. Alternatively if you have a factory bean you can omit the type and just use the specified bean definition instead to setup the factory:
 
-[source,java]
+[source,groovy]
 ----
 bb.beans {
 
@@ -198,14 +198,14 @@ bb.beans {
 
 To create an abstract bean definition define a bean without a `Class` parameter:
 
-[source,java]
+[source,groovy]
 ----
 class HolyGrailQuest {
     def start() { println "lets begin" }
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 class KnightOfTheRoundTable {
 
@@ -223,7 +223,7 @@ class KnightOfTheRoundTable {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 import grails.spring.BeanBuilder
 
@@ -238,7 +238,7 @@ bb.beans {
 
 Here we define an abstract bean that has a `leader` property with the value of `"Lancelot"`. To use the abstract bean set it as the parent of the child bean:
 
-[source,java]
+[source,groovy]
 ----
 bb.beans {
     ...
@@ -255,7 +255,7 @@ NOTE: When using a parent bean you must set the parent property of the bean befo
 
 If you want an abstract bean that has a `Class` specified you can do it this way:
 
-[source,java]
+[source,groovy]
 ----
 import grails.spring.BeanBuilder
 
@@ -284,21 +284,21 @@ In this example we create an abstract bean of type `KnightOfTheRoundTable` and u
 
 Since Spring 2.0, users of Spring have had easier access to key features via XML namespaces. You can use a Spring namespace in BeanBuilder by declaring it with this syntax:
 
-[source,java]
+[source,groovy]
 ----
 xmlns context:"http://www.springframework.org/schema/context"
 ----
 
 and then invoking a method that matches the names of the Spring namespace tag and its associated attributes:
 
-[source,java]
+[source,groovy]
 ----
 context.'component-scan'('base-package': "my.company.domain")
 ----
 
 You can do some useful things with Spring namespaces, such as looking up a JNDI resource:
 
-[source,java]
+[source,groovy]
 ----
 xmlns jee:"http://www.springframework.org/schema/jee"
 
@@ -307,7 +307,7 @@ jee.'jndi-lookup'(id: "dataSource", 'jndi-name': "java:comp/env/myDataSource")
 
 This example will create a Spring bean with the identifier `dataSource` by performing a JNDI lookup on the given JNDI name. With Spring namespaces you also get full access to all of the powerful AOP support in Spring from BeanBuilder. For example given these two classes:
 
-[source,java]
+[source,groovy]
 ----
 class Person {
 
@@ -320,7 +320,7 @@ class Person {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 class BirthdayCardSender {
 
@@ -334,7 +334,7 @@ class BirthdayCardSender {
 
 You can define an aspect that uses a pointcut to detect whenever the `birthday()` method is called:
 
-[source,java]
+[source,groovy]
 ----
 xmlns aop:"http://www.springframework.org/schema/aop"
 

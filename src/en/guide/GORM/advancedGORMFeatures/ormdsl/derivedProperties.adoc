@@ -1,6 +1,6 @@
 A derived property is one that takes its value from a SQL expression, often but not necessarily based on the value of one or more other persistent properties.  Consider a Product class like this:
 
-[source,java]
+[source,groovy]
 ----
 class Product {
     Float price
@@ -11,7 +11,7 @@ class Product {
 
 If the `tax` property is derived based on the value of `price` and `taxRate` properties then is probably no need to persist the `tax` property.  The SQL used to derive the value of a derived property may be expressed in the ORM DSL like this:
 
-[source,java]
+[source,groovy]
 ----
 class Product {
     Float price
@@ -44,14 +44,14 @@ where
 
 Since the `tax` property is derived at runtime and not stored in the database it might seem that the same effect could be achieved by adding a method like `getTax()` to the `Product` class that simply returns the product of the `taxRate` and `price` properties.  With an approach like that you would give up the ability query the database based on the value of the `tax` property.  Using a derived property allows exactly that.  To retrieve all `Product` objects that have a `tax` value greater than 21.12 you could execute a query like this:
 
-[source,java]
+[source,groovy]
 ----
 Product.findAllByTaxGreaterThan(21.12)
 ----
 
 Derived properties may be referenced in the Criteria API:
 
-[source,java]
+[source,groovy]
 ----
 Product.withCriteria {
     gt 'tax', 21.12f

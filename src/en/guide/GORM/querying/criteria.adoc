@@ -33,7 +33,7 @@ If no records are found with the above criteria, an empty List is returned.
 
 As demonstrated in the previous example you can group criteria in a logical OR using an `or { }` block:
 
-[source,java]
+[source,groovy]
 ----
 or {
     between("balance", 500, 1000)
@@ -43,7 +43,7 @@ or {
 
 This also works with logical AND:
 
-[source,java]
+[source,groovy]
 ----
 and {
     between("balance", 500, 1000)
@@ -53,7 +53,7 @@ and {
 
 And you can also negate using logical NOT:
 
-[source,java]
+[source,groovy]
 ----
 not {
     between("balance", 500, 1000)
@@ -80,7 +80,7 @@ class Account {
 
 We can query this association by using the property name `transactions` as a builder node:
 
-[source,java]
+[source,groovy]
 ----
 def c = Account.createCriteria()
 def now = new Date()
@@ -94,7 +94,7 @@ def results = c.list {
 The above code will find all the `Account` instances that have performed `transactions` within the last 10 days.
 You can also nest such association queries within logical blocks:
 
-[source,java]
+[source,groovy]
 ----
 def c = Account.createCriteria()
 def now = new Date()
@@ -116,7 +116,7 @@ Here we find all accounts that have either performed transactions in the last 10
 
 Projections may be used to customise the results. Define a "projections" node within the criteria builder tree to use projections. There are equivalent methods within the projections node to the methods found in the Hibernate http://docs.jboss.org/hibernate/orm/current/javadocs/org/hibernate/criterion/Projections.html[Projections] class:
 
-[source,java]
+[source,groovy]
 ----
 def c = Account.createCriteria()
 
@@ -135,7 +135,7 @@ When multiple fields are specified in the projection, a List of values will be r
 
 The criteria DSL provides access to Hibernate's SQL projection API.
 
-[source,java]
+[source,groovy]
 ----
 // Box is a domain class...
 class Box {
@@ -144,7 +144,7 @@ class Box {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 // Use SQL projections to retrieve the perimeter and area of all of the Box instances...
 def c = Box.createCriteria()
@@ -190,7 +190,7 @@ to the fully qualified Hibernate type.  For example `StandardBasicTypes.INTEGER`
 
 If only 1 value is being projected, the alias and the type do not need to be included in a list.
 
-[source,java]
+[source,groovy]
 ----
 def results = c.list {
     projections {
@@ -203,7 +203,7 @@ That query would return a single result with the value of 84 as the total area o
 
 The DSL supports grouped projections with the `sqlGroupProjection` method.
 
-[source,java]
+[source,groovy]
 ----
 def results = c.list {
     projections {
@@ -234,7 +234,7 @@ of all of the boxes which have that width.
 
 You can access Hibernate's SQL Restrictions capabilities.
 
-[source,java]
+[source,groovy]
 ----
 def c = Person.createCriteria()
 
@@ -246,7 +246,7 @@ def peopleWithShortFirstNames = c.list {
 SQL Restrictions may be parameterized to deal with SQL injection vulnerabilities related to dynamic restrictions.
 
 
-[source,java]
+[source,groovy]
 ----
 def c = Person.createCriteria()
 
@@ -266,7 +266,7 @@ Also note that the SQL used here is not necessarily portable across databases.
 
 You can use Hibernate's http://docs.jboss.org/hibernate/orm/current/javadocs/org/hibernate/ScrollableResults.html[ScrollableResults] feature by calling the scroll method:
 
-[source,java]
+[source,groovy]
 ----
 def results = crit.scroll {
     maxResults(10)
@@ -294,7 +294,7 @@ Contrary to JDBC, columns of results are numbered from zero.
 
 If a node within the builder tree doesn't match a particular criterion it will attempt to set a property on the Criteria object itself. This allows full access to all the properties in this class. This example calls `setMaxResults` and `setFirstResult` on the http://docs.jboss.org/hibernate/orm/current/javadocs/org/hibernate/Criteria.html[Criteria] instance:
 
-[source,java]
+[source,groovy]
 ----
 import org.hibernate.FetchMode as FM
 ...
@@ -311,7 +311,7 @@ def results = c.list {
 
 In the section on <<fetching,Eager and Lazy Fetching>> we discussed how to declaratively specify fetching to avoid the N+1 SELECT problem. However, this can also be achieved using a criteria query:
 
-[source,java]
+[source,groovy]
 ----
 def criteria = Task.createCriteria()
 def tasks = criteria.list{
@@ -354,14 +354,14 @@ the `flights` collection would be loaded eagerly via a join even though the fetc
 
 If you invoke the builder with no method name such as:
 
-[source,java]
+[source,groovy]
 ----
 c { ... }
 ----
 
 The build defaults to listing all the results and hence the above is equivalent to:
 
-[source,java]
+[source,groovy]
 ----
 c.list { ... }
 ----
@@ -383,7 +383,7 @@ Method,Description
 
 You can combine multiple criteria closures in the following way:
 
-[source,java]
+[source,groovy]
 ----
 def emeaCriteria = {
     eq "region", "EMEA"

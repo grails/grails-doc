@@ -10,7 +10,7 @@ This enables the code to adapt to its environment and avoids unnecessary duplica
 
 Grails provides a http://docs.grails.org/latest/api/grails/spring/BeanBuilder.html[grails.spring.BeanBuilder] class that uses dynamic Groovy to construct bean definitions. The basics are as follows:
 
-[source,java]
+[source,groovy]
 ----
 import org.apache.commons.dbcp.BasicDataSource
 import org.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean
@@ -48,7 +48,7 @@ Bean references are resolved automatically using the name of the bean. This can 
 
 Certain special properties related to bean management can also be set by the builder, as seen in the following code:
 
-[source,java]
+[source,groovy]
 ----
 sessionFactory(ConfigurableLocalSessionFactoryBean) { bean ->
     // Autowiring behaviour. The other option is 'byType'. <<autowire>>
@@ -90,7 +90,7 @@ Include the `grails-spring-<version>.jar` file in your classpath to use BeanBuil
 
 Then create a `/WEB-INF/applicationContext.groovy` file that does the rest:
 
-[source,java]
+[source,groovy]
 ----
 import org.apache.commons.dbcp.BasicDataSource
 
@@ -110,7 +110,7 @@ beans {
 
 You can use the `BeanBuilder` class to load external Groovy scripts that define beans using the same path matching syntax defined here. For example:
 
-[source,java]
+[source,groovy]
 ----
 def bb = new BeanBuilder()
 bb.loadBeans("classpath:*SpringBeans.groovy")
@@ -120,7 +120,7 @@ def applicationContext = bb.createApplicationContext()
 
 Here the `BeanBuilder` loads all Groovy files on the classpath ending with `SpringBeans.groovy` and parses them into bean definitions. An example script can be seen below:
 
-[source,java]
+[source,groovy]
 ----
 import org.apache.commons.dbcp.BasicDataSource
 import org.grails.orm.hibernate.ConfigurableLocalSessionFactoryBean
@@ -148,7 +148,7 @@ beans {
 
 If you're loading beans from a script you can set the binding to use by creating a Groovy `Binding`:
 
-[source,java]
+[source,groovy]
 ----
 def binding = new Binding()
 binding.maxSize = 10000

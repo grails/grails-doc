@@ -66,14 +66,14 @@ Let's say a controller action can return a resource in a variety of formats: HTM
 
 So if you, as a browser or some other client, want a resource as XML, you can use a URL like this:
 
-[source,java]
+[source]
 ----
 http://my.domain.org/books?format=xml
 ----
 
 The result of this on the server side is a `format` property on the `response` object with the value `xml` .
 
-You can also define this parameter in the link:theWebLayer.html#urlmappings[URL Mappings]definition:
+You can also define this parameter in the link:theWebLayer.html#urlmappings[URL Mappings] definition:
 
 [source,groovy]
 ----
@@ -111,13 +111,14 @@ When no format matches explicitly, a `*` (wildcard) block can be used to handle 
 There is a special format, "all", that is handled differently from the explicit formats. If "all" is specified (normally this happens through the Accept header - see below), then the first block of `withFormat()` is executed when there isn't a `*` (wildcard) block available.
 
 You should not add an explicit "all" block. In this example, a format of "all" will trigger the `html` handler (`html` is the first block and there is no `*` block).
+
 [source,groovy]
 ----
 withFormat {
-            html bookList: books
-            json { render books as JSON }
-            xml { render books as XML }
-        }
+    html bookList: books
+    json { render books as JSON }
+    xml { render books as XML }
+}
 ----
 
 NOTE: When using link:../ref/Controllers/withFormat.html[withFormat] make sure it is the last call in your controller action as the return value of the `withFormat` method is used by the action to dictate what happens next.
@@ -128,14 +129,14 @@ NOTE: When using link:../ref/Controllers/withFormat.html[withFormat] make sure i
 
 Every incoming HTTP request has a special http://www.w3.org/Protocols/rfc2616/rfc2616-sec14.html[Accept] header that defines what media types (or mime types) a client can "accept". In older browsers this is typically:
 
-[source,java]
+[source]
 ----
 */*
 ----
 
 which simply means anything. However, newer browsers send more interesting values such as this one sent by Firefox:
 
-[source,groovy]
+[source]
 ----
 text/xml, application/xml, application/xhtml+xml, text/html;q=0.9, \
     text/plain;q=0.8, image/png, */*;q=0.5
@@ -188,21 +189,21 @@ request.withFormat {
 
 Grails also supports content negotiation using URI extensions. For example given the following URI:
 
-[source,java]
+[source]
 ----
 /book/list.xml
 ----
 
 This works as a result of the default URL Mapping definition which is:
 
-[source,java]
+[source,groovy]
 ----
 "/$controller/$action?/$id?(.$format)?"{
 ----
 
 Note the inclusion of the `format` variable in the path. If you do not wish to use content negotiation via the file extension then simply remove this part of the URL mapping:
 
-[source,java]
+[source,groovy]
 ----
 "/$controller/$action?/$id?"{
 ----

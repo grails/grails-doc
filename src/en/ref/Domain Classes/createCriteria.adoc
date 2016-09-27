@@ -12,7 +12,7 @@ Creates and returns an instance of Grails' http://grails.github.io/grails-data-m
 === Examples
 
 
-[source,java]
+[source,groovy]
 ----
 def c = Account.createCriteria()
 def results = c.list {
@@ -28,7 +28,7 @@ def results = c.list {
 
 To use pagination you would have to make another query to retrieve the total number of matching results. A better way is to pass the pagination values as arguments to the criteria method as shown below:
 
-[source,java]
+[source,groovy]
 ----
 def c = Account.createCriteria()
 def results = c.list (max: 10, offset: 10) {
@@ -43,7 +43,7 @@ def results = c.list (max: 10, offset: 10) {
 
 Because that query includes pagination parameters (max and offset), this will return a http://grails.github.io/grails-data-mapping/latest/api/grails/orm/PagedResultList.html[PagedResultList] which has a getTotalCount() method to return the total number of matching records for pagination. Two queries are still run, but they are run for you and the results and total count are combined in the `PagedResultList`.
 
-[source,java]
+[source,groovy]
 ----
 println "Rendering ${results.size()} Accounts of ${results.totalCount}"
 ----
@@ -70,14 +70,14 @@ WARNING: The `listDistinct()` method does not work well with the pagination opti
 
 If you invoke the builder with no method name
 
-[source,java]
+[source,groovy]
 ----
 c { ... }
 ----
 
 the `list()` method will be invoked automatically. In other words, it's the equivalent of
 
-[source,java]
+[source,groovy]
 ----
 c.list { ... }
 ----
@@ -240,7 +240,7 @@ cache `true`
 
 Criteria also support the notion of projections. A projection is used to change the nature of the results. For example the following query uses a projection to count the number of distinct `branch` names that exist for each `Account`:
 
-[source,java]
+[source,groovy]
 ----
 def c = Account.createCriteria()
 def branchCount = c.get {
@@ -256,43 +256,43 @@ The following table summarizes the different projections and what they do:
 |===
 
 Name,Description,Example
-*property*,Returns the given property in the returned results,[source,java]
+*property*,Returns the given property in the returned results,[source,groovy]
 ----
 property("firstName")
 ----
-*distinct*,Returns results using a single or collection of distinct property names,[source,java]
+*distinct*,Returns results using a single or collection of distinct property names,[source,groovy]
 ----
 distinct("fn") or distinct(['fn', 'ln'])
 ----
-*avg*,Returns the average value of the given property,[source,java]
+*avg*,Returns the average value of the given property,[source,groovy]
 ----
 avg("age")
 ----
-*count*,Returns the count of the given property name,[source,java]
+*count*,Returns the count of the given property name,[source,groovy]
 ----
 count("branch")
 ----
-*countDistinct*,Returns the count of the given property name for distinct rows,[source,java]
+*countDistinct*,Returns the count of the given property name for distinct rows,[source,groovy]
 ----
 countDistinct("branch")
 ----
-*groupProperty*,Groups the results by the given property,[source,java]
+*groupProperty*,Groups the results by the given property,[source,groovy]
 ----
 groupProperty("lastName")
 ----
-*max*,Returns the maximum value of the given property,[source,java]
+*max*,Returns the maximum value of the given property,[source,groovy]
 ----
 max("age")
 ----
-*min*,Returns the minimum value of the given property,[source,java]
+*min*,Returns the minimum value of the given property,[source,groovy]
 ----
 min("age")
 ----
-*sum*,Returns the sum of the given property,[source,java]
+*sum*,Returns the sum of the given property,[source,groovy]
 ----
 sum("balance")
 ----
-*rowCount*,Returns count of the number of rows returned,[source,java]
+*rowCount*,Returns count of the number of rows returned,[source,groovy]
 ----
 rowCount()
 ----

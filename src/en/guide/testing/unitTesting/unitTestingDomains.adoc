@@ -32,7 +32,7 @@ The implementation behind `HibernateTestMixin` takes care of setting up the Hibe
 
 `DomainClassUnitTestMixin` is typically used in combination with testing either a controller, service or tag library where the domain is a mock collaborator defined by the `Mock` annotation:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
@@ -47,7 +47,7 @@ class BookControllerSpec extends Specification {
 
 The example above tests the `SimpleController` class and mocks the behavior of the `Simple` domain class as well. For example consider a typical scaffolded `save` controller action:
 
-[source,java]
+[source,groovy]
 ----
 class BookController {
     def save() {
@@ -67,7 +67,7 @@ class BookController {
 
 Tests for this action can be written as follows:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
@@ -102,7 +102,7 @@ class BookControllerSpec extends Specification {
 
 `Mock` annotation also supports a list of mock collaborators if you have more than one domain to mock:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
@@ -117,7 +117,7 @@ class BookControllerSpec extends Specification {
 
 Alternatively you can also use the `DomainClassUnitTestMixin` directly with the `TestMixin` annotation and then call the `mockDomain` method to mock domains during your test:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import grails.test.mixin.TestMixin
@@ -158,7 +158,7 @@ class BookControllerSpec extends Specification {
 
 The `mockDomain` method also includes an additional parameter that lets you pass a Map of Maps to configure a domain, which is useful for fixture-like data:
 
-[source,java]
+[source,groovy]
 ----
 mockDomain(Book, [
             [title: "The Stand", pages: 1000],
@@ -178,7 +178,7 @@ There are 3 types of validateable classes:
 
 These are all easily testable in a unit test with no special configuration necessary as long as the test method is marked with `TestFor` or explicitly applies the `GrailsUnitTestMixin` using `TestMixin`.  See the examples below.
 
-[source,java]
+[source,groovy]
 ----
 // src/groovy/com/demo/MyValidateable.groovy
 package com.demo
@@ -194,7 +194,7 @@ class MyValidateable implements grails.validation.Validateable {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 // grails-app/domain/com/demo/Person.groovy
 package com.demo
@@ -208,7 +208,7 @@ class Person {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 // grails-app/controllers/com/demo/DemoController.groovy
 package com.demo
@@ -233,7 +233,7 @@ class MyCommandObject {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 // test/unit/com/demo/PersonSpec.groovy
 package com.demo
@@ -260,7 +260,7 @@ class PersonSpec extends Specification {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 // test/unit/com/demo/DemoControllerSpec.groovy
 package com.demo
@@ -291,7 +291,7 @@ class DemoControllerSpec extends Specification {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 // test/unit/com/demo/MyValidateableSpec.groovy
 package com.demo
@@ -340,7 +340,7 @@ class MyValidateableSpec extends Specification {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 // test/unit/com/demo/MyCommandObjectSpec.groovy
 package com.demo

@@ -2,7 +2,7 @@ You saw in an earlier section that you can use composition (with the `embedded` 
 
 The http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/mapping.html#mapping-types-custom[Hibernate reference manual] has some information on custom types, but here we will focus on how to map them in Grails. Let's start by taking a look at a simple domain class that uses an old-fashioned (pre-Java 1.5) type-safe enum class:
 
-[source,java]
+[source,groovy]
 ----
 class Book {
 
@@ -20,7 +20,7 @@ All we have done is declare the `rating` field the enum type and set the propert
 
 Custom types aren't limited to just a single column - they can be mapped to as many columns as you want. In such cases you explicitly define in the mapping what columns to use, since Hibernate can only use the property name for a single column. Fortunately, Grails lets you map multiple columns to a property using this syntax:
 
-[source,java]
+[source,groovy]
 ----
 class Book {
 
@@ -40,7 +40,7 @@ class Book {
 
 The above example will create "first_name" and "last_name" columns for the `author` property. You'll be pleased to know that you can also use some of the normal column/property mapping attributes in the column definitions. For example:
 
-[source,java]
+[source,groovy]
 ----
 column name: "first_name", index: "my_idx", unique: true
 ----
@@ -49,7 +49,7 @@ The column definitions do _not_ support the following attributes: `type`, `casca
 
 One thing to bear in mind with custom types is that they define the _SQL types_ for the corresponding database columns. That helps take the burden of configuring them yourself, but what happens if you have a legacy database that uses a different SQL type for one of the columns? In that case, override the column's SQL type using the `sqlType` attribute:
 
-[source,java]
+[source,groovy]
 ----
 class Book {
 

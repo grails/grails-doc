@@ -17,7 +17,7 @@ The `uploadForm` tag conveniently adds the `enctype="multipart/form-data"` attri
 
 There are then a number of ways to handle the file upload. One is to work with the Spring http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/multipart/MultipartFile.html[MultipartFile] instance directly:
 
-[source,java]
+[source,groovy]
 ----
 def upload() {
     def f = request.getFile('myFile')
@@ -40,7 +40,7 @@ This is convenient for doing transfers to other destinations and manipulating th
 
 File uploads can also be performed using data binding. Consider this `Image` domain class:
 
-[source,java]
+[source,groovy]
 ----
 class Image {
     byte[] myFile
@@ -54,7 +54,7 @@ class Image {
 
 If you create an image using the `params` object in the constructor as in the example below, Grails will automatically bind the file's contents as a `byte[]` to the `myFile` property:
 
-[source,java]
+[source,groovy]
 ----
 def img = new Image(params)
 ----
@@ -63,7 +63,7 @@ It's important that you set the link:../ref/Constraints/size.html[size] or link:
 
 It is also possible to set the contents of the file as a string by changing the type of the `myFile` property on the image to a String type:
 
-[source,java]
+[source,groovy]
 ----
 class Image {
    String myFile

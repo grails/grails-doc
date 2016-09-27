@@ -12,7 +12,7 @@ Customizes a column definition
 === Examples
 
 
-[source,java]
+[source,groovy]
 ----
 static mapping = {
         currency column: "currency", sqlType: "char", length: 3
@@ -40,7 +40,7 @@ Arguments:
 
 By default GORM uses the property name and type to determine how to map a property in the database. For example a `String` property is typically mapped as a `varchar(255)` column. You can customize these with column configuration arguments:
 
-[source,java]
+[source,groovy]
 ----
 static mapping = {
     currency column: "currency", sqlType: "char", length: 3
@@ -49,7 +49,7 @@ static mapping = {
 
 If you use a Hibernate <<ref-database-mapping-type,type>> that requires multiple column definitions you can use the `column` method to define each column:
 
-[source,java]
+[source,groovy]
 ----
 static mapping = {
     amount type: MonetaryUserType, {
@@ -62,7 +62,7 @@ static mapping = {
 Note that if you have a static method that is the same name as one of your properties you are trying to configure or you use the same property name as one of the static GORM methods this can lead to conflicts. To avoid this scenario scope the mapping configuration using the `delegate` property:
 
 
-[source,java]
+[source,groovy]
 ----
 static mapping = {
     delegate.currency column: "currency", sqlType: "char", length: 3

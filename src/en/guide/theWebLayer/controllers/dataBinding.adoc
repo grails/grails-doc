@@ -6,9 +6,9 @@ Data binding is the act of "binding" incoming request parameters onto the proper
 
 The data binder is capable of converting and assigning values in a Map to properties of an object.  The binder will associate entries in the Map to properties of the object using the keys in the Map that have values which correspond to property names on the object.  The following code demonstrates the basics:
 
-[source,java]
+[source,groovy]
+.grails-app/domain/Person.groovy
 ----
-// grails-app/domain/Person.groovy
 class Person {
     String firstName
     String lastName
@@ -16,7 +16,7 @@ class Person {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 def bindingMap = [firstName: 'Peter', lastName: 'Gabriel', age: 63]
 
@@ -29,7 +29,7 @@ assert person.age == 63
 
 To update properties of a domain object you may assign a Map to the `properties` property of the domain class:
 
-[source,java]
+[source,groovy]
 ----
 def bindingMap = [firstName: 'Peter', lastName: 'Gabriel', age: 63]
 
@@ -43,7 +43,7 @@ assert person.age == 63
 
 The binder can populate a full graph of objects using Maps of Maps.
 
-[source,java]
+[source,groovy]
 ----
 class Person {
     String firstName
@@ -58,7 +58,7 @@ class Address {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 def bindingMap = [firstName: 'Peter', lastName: 'Gabriel', age: 63, homeAddress: [county: 'Surrey', country: 'England'] ]
 
@@ -77,7 +77,7 @@ assert person.homeAddress.country == 'England'
 
 The data binder can populate and update Collections and Maps.  The following code shows a simple example of populating a `List` of objects in a domain class:
 
-[source,java]
+[source,groovy]
 ----
 class Band {
     String name
@@ -91,20 +91,20 @@ class Album {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 def bindingMap = [name: 'Genesis',
                   'albums[0]': [title: 'Foxtrot', numberOfTracks: 6],
-                  'albums<<1>>': [title: 'Nursery Cryme', numberOfTracks: 7]]
+                  'albums[1]': [title: 'Nursery Cryme', numberOfTracks: 7]]
 
 def band = new Band(bindingMap)
 
 assert band.name == 'Genesis'
 assert band.albums.size() == 2
-assert band.albums<<0>>.title == 'Foxtrot'
-assert band.albums<<0>>.numberOfTracks == 6
-assert band.albums<<1>>.title == 'Nursery Cryme'
-assert band.albums<<1>>.numberOfTracks == 7
+assert band.albums[0].title == 'Foxtrot'
+assert band.albums[0].numberOfTracks == 6
+assert band.albums[1].title == 'Nursery Cryme'
+assert band.albums[1].numberOfTracks == 7
 ----
 
 That code would work in the same way if `albums` were an array instead of a `List`.
@@ -114,13 +114,13 @@ Note that when binding to a `Set` the structure of the `Map` being bound to the 
 [source,groovy]
 ----
 /*
- * The value of the indexes 0 and 1 in albums<<0>> and albums<<1>> are arbitrary
+ * The value of the indexes 0 and 1 in albums[0] and albums[1] are arbitrary
  * values that can be anything as long as they are unique within the Map.
  * They do not correspond to the order of elements in albums because albums
  * is a Set.
  */
 def bindingMap = ['albums[0]': [id: 9, title: 'The Lamb Lies Down On Broadway']
-                  'albums<<1>>': [id: 4, title: 'Selling England By The Pound']]
+                  'albums[1]': [id: 4, title: 'Selling England By The Pound']]
 
 def band = Band.get(someBandId)
 
@@ -139,7 +139,7 @@ band.properties = bindingMap
 
 When binding to a `Map` the structure of the binding `Map` is the same as the structure of a `Map` used for binding to a `List` or a `Set` and the index inside of square brackets corresponds to the key in the `Map` being bound to.  See the following code:
 
-[source,java]
+[source,groovy]
 ----
 class Album {
     String title
@@ -156,8 +156,8 @@ class Player {
 ----
 def bindingMap = [title: 'The Lamb Lies Down On Broadway',
                   'players[guitar]': [name: 'Steve Hackett'],
-                  'players<<vocals>>': [name: 'Peter Gabriel'],
-                  'players<<keyboards>>': [name: 'Tony Banks']]
+                  'players[vocals]': [name: 'Peter Gabriel'],
+                  'players[keyboards]': [name: 'Tony Banks']]
 
 def album = new Album(bindingMap)
 
@@ -175,8 +175,8 @@ When updating an existing `Map`, if the key specified in the binding `Map` does 
 ----
 def bindingMap = [title: 'The Lamb Lies Down On Broadway',
                   'players[guitar]': [name: 'Steve Hackett'],
-                  'players<<vocals>>': [name: 'Peter Gabriel']
-                  'players<<keyboards>>': [name: 'Tony Banks']]
+                  'players[vocals]': [name: 'Peter Gabriel']
+                  'players[keyboards]': [name: 'Tony Banks']]
 
 def album = new Album(bindingMap)
 
@@ -187,7 +187,7 @@ assert album.players.vocals == 'Peter Gabriel'
 assert album.players.keyboards == 'Tony Banks'
 
 def updatedBindingMap = ['players[drums]': [name: 'Phil Collins'],
-                         'players<<keyboards>>': [name: 'Anthony George Banks']]
+                         'players[keyboards]': [name: 'Anthony George Banks']]
 
 album.properties = updatedBindingMap
 
@@ -212,7 +212,7 @@ The link:../ref/Controllers/params.html[params] object that is available in a co
 
 There are two ways to bind request parameters onto the properties of a domain class. The first involves using a domain classes' Map constructor:
 
-[source,java]
+[source,groovy]
 ----
 def save() {
     def b = new Book(params)
@@ -222,14 +222,14 @@ def save() {
 
 The data binding happens within the code `new Book(params)`. By passing the link:../ref/Controllers/params.html[params] object to the domain class constructor Grails automatically recognizes that you are trying to bind from request parameters. So if we had an incoming request like:
 
-[source,java]
+[source]
 ----
 /book/save?title=The%20Stand&author=Stephen%20King
 ----
 
 Then the `title` and `author` request parameters would automatically be set on the domain class. You can use the link:../ref/Domain%20Classes/properties.html[properties] property to perform data binding onto an existing instance:
 
-[source,java]
+[source,groovy]
 ----
 def save() {
     def b = Book.get(params.id)
@@ -244,7 +244,7 @@ When binding an empty String (a String with no characters in it, not even spaces
 
 The mass property binding mechanism will by default automatically trim all Strings at binding time.  To disable this behavior set the `grails.databinding.trimStrings` property to false in `grails-app/conf/application.groovy`.
 
-[source,java]
+[source,groovy]
 ----
 // the default value is true
 grails.databinding.trimStrings = false
@@ -254,7 +254,7 @@ grails.databinding.trimStrings = false
 
 The mass property binding mechanism will by default automatically convert all empty Strings to null at binding time.  To disable this behavior set the `grails.databinding.convertEmptyStringsToNull` property to false in `grials-app/conf/application.groovy`.
 
-[source,java]
+[source,groovy]
 ----
 // the default value is true
 grails.databinding.convertEmptyStringsToNull = false
@@ -272,21 +272,21 @@ WARNING: These forms of data binding in Grails are very convenient, but also ind
 
 If you have a `one-to-one` or `many-to-one` association you can use Grails' data binding capability to update these relationships too. For example if you have an incoming request such as:
 
-[source,java]
+[source]
 ----
 /book/save?author.id=20
 ----
 
 Grails will automatically detect the `.id` suffix on the request parameter and look up the `Author` instance for the given id when doing data binding such as:
 
-[source,java]
+[source,groovy]
 ----
 def b = new Book(params)
 ----
 
 An association property can be set to `null` by passing the literal `String` "null". For example:
 
-[source,java]
+[source]
 ----
 /book/save?author.id=null
 ----
@@ -313,11 +313,11 @@ However, if you have a scenario where you want to update the properties of the a
 
 [source,xml]
 ----
-<g:textField name="books<<0>>.title" value="the Stand" />
-<g:textField name="books<<1>>.title" value="the Shining" />
+<g:textField name="books[0].title" value="the Stand" />
+<g:textField name="books[1].title" value="the Shining" />
 ----
 
-However, with `Set` based association it is critical that you render the mark-up in the same order that you plan to do the update in. This is because a `Set` has no concept of order, so although we're referring to `books<<0>>` and `books<<1>>` it is not guaranteed that the order of the association will be correct on the server side unless you apply some explicit sorting yourself.
+However, with `Set` based association it is critical that you render the mark-up in the same order that you plan to do the update in. This is because a `Set` has no concept of order, so although we're referring to `books[0]` and `books[1]` it is not guaranteed that the order of the association will be correct on the server side unless you apply some explicit sorting yourself.
 
 This is not a problem if you use `List` based associations, since a `List` has a defined order and an index you can refer to. This is also true of `Map` based associations.
 
@@ -325,9 +325,9 @@ Note also that if the association you are binding to has a size of two and you r
 
 [source,xml]
 ----
-<g:textField name="books<<0>>.title" value="the Stand" />
-<g:textField name="books<<1>>.title" value="the Shining" />
-<g:textField name="books<<2>>.title" value="Red Madder" />
+<g:textField name="books[0].title" value="the Stand" />
+<g:textField name="books[1].title" value="the Shining" />
+<g:textField name="books[2].title" value="Red Madder" />
 ----
 
 Then Grails will automatically create a new instance for you at the defined position.
@@ -336,14 +336,14 @@ You can bind existing instances of the associated type to a `List` using the sam
 
 [source,xml]
 ----
-<g:select name="books<<0>>.id" from="${bookList}"
-          value="${author?.books<<0>>?.id}" />
+<g:select name="books[0].id" from="${bookList}"
+          value="${author?.books[0]?.id}" />
 
-<g:select name="books<<1>>.id" from="${bookList}"
-          value="${author?.books<<1>>?.id}" />
+<g:select name="books[1].id" from="${bookList}"
+          value="${author?.books[1]?.id}" />
 
-<g:select name="books<<2>>.id" from="${bookList}"
-          value="${author?.books<<2>>?.id}" />
+<g:select name="books[2].id" from="${bookList}"
+          value="${author?.books[2]?.id}" />
 ----
 
 Would allow individual entries in the `books List` to be selected separately.
@@ -352,21 +352,21 @@ Entries at particular indexes can be removed in the same way too. For example:
 
 [source,xml]
 ----
-<g:select name="books<<0>>.id"
+<g:select name="books[0].id"
           from="${Book.list()}"
-          value="${author?.books<<0>>?.id}"
+          value="${author?.books[0]?.id}"
           noSelection="['null': '']"/>
 ----
 
-Will render a select box that will remove the association at `books<<0>>` if the empty option is chosen.
+Will render a select box that will remove the association at `books[0]` if the empty option is chosen.
 
 Binding to a `Map` property works the same way except that the list index in the parameter name is replaced by the map key:
 
 [source,xml]
 ----
-<g:select name="images<<cover>>.id"
+<g:select name="images[cover].id"
           from="${Image.list()}"
-          value="${book?.images<<cover>>?.id}"
+          value="${book?.images[cover]?.id}"
           noSelection="['null': '']"/>
 ----
 
@@ -376,7 +376,7 @@ When binding to Maps, Arrays and Collections the data binder will automatically 
 
 NOTE: The default limit to how large the binder will grow a collection is 256. If the data binder encounters an entry that requires the collection be grown beyond that limit, the entry is ignored.  The limit may be configured by assigning a value to the `grails.databinding.autoGrowCollectionLimit` property in `application.groovy`.
 
-[source,java]
+[source,groovy]
 ----
 // grails-app/conf/application.groovy
 
@@ -394,21 +394,21 @@ It is possible to bind data to multiple domain objects from the link:../ref/Cont
 
 For example so you have an incoming request to:
 
-[source,java]
+[source,groovy]
 ----
 /book/save?book.title=The%20Stand&author.name=Stephen%20King
 ----
 
 You'll notice the difference with the above request is that each parameter has a prefix such as `author.` or `book.` which is used to isolate which parameters belong to which type. Grails' `params` object is like a multi-dimensional hash and you can index into it to isolate only a subset of the parameters to bind.
 
-[source,java]
+[source,groovy]
 ----
 def b = new Book(params.book)
 ----
 
 Notice how we use the prefix before the first dot of the `book.title` parameter to isolate only parameters below this level to bind. We could do the same with an `Author` domain class:
 
-[source,java]
+[source,groovy]
 ----
 def a = new Author(params.author)
 ----
@@ -419,7 +419,7 @@ def a = new Author(params.author)
 
 Controller action arguments are subject to request parameter data binding.  There are 2 categories of controller action arguments.  The first category is command objects.  Complex types are treated as command objects.  See the link:theWebLayer.html#commandObjects[Command Objects] section of the user guide for details.  The other category is basic object types.  Supported types are the 8 primitives, their corresponding type wrappers and https://docs.oracle.com/javase/8/docs/api/java/lang/String.html[java.lang.String].  The default behavior is to map request parameters to action arguments by name:
 
-[source,java]
+[source,groovy]
 ----
 class AccountingController {
 
@@ -433,7 +433,7 @@ class AccountingController {
 
 For primitive arguments and arguments which are instances of any of the primitive type wrapper classes a type conversion has to be carried out before the request parameter value can be bound to the action argument.  The type conversion happens automatically.  In a case like the example shown above, the `params.accountType` request parameter has to be converted to an `int`.  If type conversion fails for any reason, the argument will have its default value per normal Java behavior (null for type wrapper references, false for booleans and zero for numbers) and a corresponding error will be added to the `errors` property of the defining controller.
 
-[source,java]
+[source,groovy]
 ----
 /accounting/displayInvoice?accountNumber=B59786&accountType=bogusValue
 ----
@@ -442,7 +442,7 @@ Since "bogusValue" cannot be converted to type int, the value of accountType wil
 
 If the argument name does not match the name of the request parameter then the `@grails.web.RequestParameter` annotation may be applied to an argument to express the name of the request parameter which should be bound to that argument:
 
-[source,java]
+[source,groovy]
 ----
 import grails.web.RequestParameter
 
@@ -463,7 +463,7 @@ class AccountingController {
 
 Sometimes when performing data binding it is not possible to convert a particular String into a particular target type. This results in a type conversion error. Grails will retain type conversion errors inside the link:../ref/Domain%20Classes/errors.html[errors] property of a Grails domain class. For example:
 
-[source,java]
+[source,groovy]
 ----
 class Book {
     ...
@@ -473,14 +473,14 @@ class Book {
 
 Here we have a domain class `Book` that uses the `java.net.URL` class to represent URLs. Given an incoming request such as:
 
-[source,java]
+[source,groovy]
 ----
 /book/save?publisherURL=a-bad-url
 ----
 
 it is not possible to bind the string `a-bad-url` to the `publisherURL` property as a type mismatch error occurs. You can check for these like this:
 
-[source,java]
+[source,groovy]
 ----
 def b = new Book(params)
 
@@ -492,14 +492,14 @@ if (b.hasErrors()) {
 
 Although we have not yet covered error codes (for more information see the section on link:validation.html[validation]), for type conversion errors you would want a message from the `grails-app/i18n/messages.properties` file to use for the error. You can use a generic error message handler such as:
 
-[source,java]
+[source,groovy]
 ----
 typeMismatch.java.net.URL=The field {0} is not a valid URL
 ----
 
 Or a more specific one:
 
-[source,java]
+[source,groovy]
 ----
 typeMismatch.Book.publisherURL=The publisher URL you specified is not a valid URL
 ----
@@ -510,7 +510,7 @@ typeMismatch.Book.publisherURL=The publisher URL you specified is not a valid UR
 
 The http://docs.grails.org/latest/api/org/grails/databinding/BindUsing.html[BindUsing] annotation may be used to define a custom binding mechanism for a particular field in a class.  Any time data binding is being applied to the field the closure value of the annotation will be invoked with 2 arguments.  The first argument is the object that data binding is being applied to and the second argument is http://docs.grails.org/latest/api/org/grails/databinding/DataBindingSource.html[DataBindingSource] which is the data source for the data binding.  The value returned from the closure will be bound to the property.  The following example would result in the upper case version of the `name` value in the source being applied to the `name` field during data binding.
 
-[source,java]
+[source,groovy]
 ----
 import org.grails.databinding.BindUsing
 
@@ -532,7 +532,7 @@ Here, `name` from request parameters matches with `name` from `SomeClass`.
 
 The http://docs.grails.org/latest/api/org/grails/databinding/BindUsing.html[BindUsing] annotation may be used to define a custom binding mechanism for all of the fields on a particular class. When the annotation is applied to a class, the value assigned to the annotation should be a class which implements the http://docs.grails.org/latest/api/org/grails/databinding/BindingHelper.html[BindingHelper] interface.  An instance of that class will be used any time a value is bound to a property in the class that this annotation has been applied to.
 
-[source,java]
+[source,groovy]
 ----
 @BindUsing(SomeClassWhichImplementsBindingHelper)
 class SomeClass {
@@ -547,7 +547,7 @@ class SomeClass {
 
 The binder will do a lot of type conversion automatically.  Some applications may want to define their own mechanism for converting values and a simple way to do this is to write a class which implements http://docs.grails.org/latest/api/org/grails/databinding/converters/ValueConverter.html[ValueConverter] and register an instance of that class as a bean in the Spring application context.
 
-[source,java]
+[source,groovy]
 ----
 package com.myapp.converters
 
@@ -565,7 +565,7 @@ class AddressValueConverter implements ValueConverter {
 
     def convert(value) {
         def pieces = value.split(':')
-        new com.myapp.Address(city: pieces<<0>>, state: pieces<<1>>)
+        new com.myapp.Address(city: pieces[0], state: pieces[1])
     }
 
     Class<?> getTargetType() {
@@ -576,7 +576,7 @@ class AddressValueConverter implements ValueConverter {
 
 An instance of that class needs to be registered as a bean in the Spring application context.  The bean name is not important.  All beans that implemented ValueConverter will be automatically plugged in to the data binding process.
 
-[source,java]
+[source,groovy]
 ----
 // grails-app/conf/spring/resources.groovy
 
@@ -614,7 +614,7 @@ assert person.homeAddress.state = 'Missouri'
 
 A custom date format may be specified to be used when binding a String to a Date value by applying the http://docs.grails.org/latest/api/org/grails/databinding/BindingFormat.html[BindingFormat] annotation to a Date field.
 
-[source,java]
+[source,groovy]
 ----
 import org.grails.databinding.BindingFormat
 
@@ -626,7 +626,7 @@ class Person {
 
 A global setting may be configured in `application.groovy` to define date formats which will be used application wide when binding to Date.
 
-[source,java]
+[source,groovy]
 ----
 // grails-app/conf/application.groovy
 
@@ -643,7 +643,7 @@ The default formats that are used are "yyyy-MM-dd HH:mm:ss.S", "yyyy-MM-dd'T'hh:
 
 You may supply your own handler for the http://docs.grails.org/latest/api/org/grails/databinding/BindingFormat.html[BindingFormat] annotation by writing a class which implements the http://docs.grails.org/latest/api/org/grails/databinding/converters/FormattedValueConverter.html[FormattedValueConverter] interface and registering an instance of that class as a bean in the Spring application context.  Below is an example of a trivial custom String formatter that might convert the case of a String based on the value assigned to the BindingFormat annotation.
 
-[source,java]
+[source,groovy]
 ----
 package com.myapp.converters
 
@@ -668,7 +668,7 @@ class FormattedStringValueConverter implements FormattedValueConverter {
 
 An instance of that class needs to be registered as a bean in the Spring application context.  The bean name is not important.  All beans that implemented FormattedValueConverter will be automatically plugged in to the data binding process.
 
-[source,java]
+[source,groovy]
 ----
 // grails-app/conf/spring/resources.groovy
 
@@ -683,7 +683,7 @@ beans = {
 
 With that in place the `BindingFormat` annotation may be applied to String fields to inform the data binder to take advantage of the custom converter.
 
-[source,java]
+[source,groovy]
 ----
 import org.grails.databinding.BindingFormat
 
@@ -705,7 +705,7 @@ class Person {
 
 The `BindingFormat` annotation supports localized format strings by using the optional `code` attribute.  If a value is assigned to the code attribute that value will be used as the message code to retrieve the binding format string from the `messageSource` bean in the Spring application context and that lookup will be localized.
 
-[source,java]
+[source,groovy]
 ----
 import org.grails.databinding.BindingFormat
 
@@ -930,7 +930,7 @@ With `enableSpringEventAdapter` set to `true` instances of `BindEventListener` w
 
 There are situations where an application may want to use the data binder directly.  For example, to do binding in a Service on some arbitrary object which is not a domain class.  The following will not work because the `properties` property is read only.
 
-[source,java]
+[source,groovy]
 ----
 // src/groovy/bindingdemo/Widget.groovy
 package bindingdemo
@@ -941,7 +941,7 @@ class Widget {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 // grails-app/services/bindingdemo/WidgetService.groovy
 package bindingdemo
@@ -958,7 +958,7 @@ class WidgetService {
 
 An instance of the data binder is in the Spring application context with a bean name of `grailsWebDataBinder`.  That bean implements the http://docs.grails.org/latest/api/org/grails/databinding/DataBinder.html[DataBinder] interface.  The following code demonstrates using the data binder directly.
 
-[source,java]
+[source,groovy]
 ----
 // grails-app/services/bindingdmeo/WidgetService
 package bindingdemo
@@ -986,7 +986,7 @@ of the `bind` method.
 
 When batch updating properties from request parameters you need to be careful not to allow clients to bind malicious data to domain classes and be persisted in the database. You can limit what properties are bound to a given domain class using the subscript operator:
 
-[source,java]
+[source,groovy]
 ----
 def p = Person.get(1)
 
@@ -995,11 +995,11 @@ p.properties['firstName','lastName'] = params
 
 In this case only the `firstName` and `lastName` properties will be bound.
 
-Another way to do this is is to use link:theWebLayer.html#commandObjects[Command Objects] as the target of data binding instead of domain classes. Alternatively there is also the flexible <<ref-controllers-bindData,bindData>> method.
+Another way to do this is is to use link:theWebLayer.html#commandObjects[Command Objects] as the target of data binding instead of domain classes. Alternatively there is also the flexible link:../ref/Controllers/bindData.html[bindData] method.
 
 The `bindData` method allows the same data binding capability, but to arbitrary objects:
 
-[source,java]
+[source,groovy]
 ----
 def p = new Person()
 bindData(p, params)
@@ -1007,7 +1007,7 @@ bindData(p, params)
 
 The `bindData` method also lets you exclude certain parameters that you don't want updated:
 
-[source,java]
+[source,groovy]
 ----
 def p = new Person()
 bindData(p, params, [exclude: 'dateOfBirth'])
@@ -1015,12 +1015,12 @@ bindData(p, params, [exclude: 'dateOfBirth'])
 
 Or include only certain properties:
 
-[source,java]
+[source,groovy]
 ----
 def p = new Person()
 bindData(p, params, [include: ['firstName', 'lastName']])
 ----
 
-NOTE: Note that if an empty List is provided as a value for the `include` parameter then all fields will be subject to binding if they are not explicitly excluded.
+NOTE: If an empty List is provided as a value for the `include` parameter then all fields will be subject to binding if they are not explicitly excluded.
 
 The link:../ref/Constraints/bindable.html[bindable] constraint can be used to globally prevent data binding for certain properties.

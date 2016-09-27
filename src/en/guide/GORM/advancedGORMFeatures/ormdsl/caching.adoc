@@ -24,7 +24,7 @@ NOTE: For further reading on caching and in particular Hibernate's second-level 
 
 Call the `cache` method in your mapping block to enable caching with the default settings:
 
-[source,java]
+[source,groovy]
 ----
 class Person {
     ...
@@ -37,7 +37,7 @@ class Person {
 
 This will configure a 'read-write' cache that includes both lazy and non-lazy properties. You can customize this further:
 
-[source,java]
+[source,groovy]
 ----
 class Person {
     ...
@@ -54,7 +54,7 @@ class Person {
 
 As well as the ability to use Hibernate's second level cache to cache instances you can also cache collections (associations) of objects. For example:
 
-[source,java]
+[source,groovy]
 ----
 class Person {
 
@@ -70,7 +70,7 @@ class Person {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 class Address {
     String number
@@ -80,7 +80,7 @@ class Address {
 
 This will enable a 'read-write' caching mechanism on the `addresses` collection. You can also use:
 
-[source,java]
+[source,groovy]
 ----
 cache: 'read-write' // or 'read-only' or 'transactional'
 ----
@@ -93,7 +93,7 @@ to further configure the cache usage.
 
 You can cache queries such as dynamic finders and criteria. To do so using a dynamic finder you can pass the `cache` argument:
 
-[source,java]
+[source,groovy]
 ----
 def person = Person.findByFirstName("Fred", [cache: true])
 ----
@@ -102,7 +102,7 @@ NOTE: In order for the results of the query to be cached, you must enable cachin
 
 You can also cache criteria queries:
 
-[source,java]
+[source,groovy]
 ----
 def people = Person.withCriteria {
     like('firstName', 'Fr%')

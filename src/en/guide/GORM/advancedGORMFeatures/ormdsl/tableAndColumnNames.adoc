@@ -4,7 +4,7 @@
 
 The database table name which the class maps to can be customized using the `table` method:
 
-[source,java]
+[source,groovy]
 ----
 class Person {
     ...
@@ -22,7 +22,7 @@ In this case the class would be mapped to a table called `people` instead of the
 
 It is also possible to customize the mapping for individual columns onto the database. For example to change the name you can do:
 
-[source,java]
+[source,groovy]
 ----
 class Person {
 
@@ -43,7 +43,7 @@ Here `firstName` is a dynamic method within the `mapping` Closure that has a sin
 
 GORM supports configuration of Hibernate types with the DSL using the type attribute. This includes specifying user types that implement the Hibernate http://docs.jboss.org/hibernate/orm/current/javadocs/org/hibernate/usertype/UserType.html[org.hibernate.usertype.UserType] interface, which allows complete customization of how a type is persisted. As an example if you had a `PostCodeType` you could use it as follows:
 
-[source,java]
+[source,groovy]
 ----
 class Address {
 
@@ -58,7 +58,7 @@ class Address {
 
 Alternatively if you just wanted to map it to one of Hibernate's basic types other than the default chosen by Grails you could use:
 
-[source,java]
+[source,groovy]
 ----
 class Address {
 
@@ -81,7 +81,7 @@ See the Hibernate documentation regarding http://docs.jboss.org/hibernate/core/3
 
 In the case of associations it is also possible to configure the foreign keys used to map associations. In the case of a many-to-one or one-to-one association this is exactly the same as any regular column. For example consider the following:
 
-[source,java]
+[source,groovy]
 ----
 class Person {
 
@@ -104,7 +104,7 @@ By default the `address` association would map to a foreign key column called `a
 
 With a bidirectional one-to-many you can change the foreign key column used by changing the column name on the many side of the association as per the example in the previous section on one-to-one associations. However, with unidirectional associations the foreign key needs to be specified on the association itself. For example given a unidirectional one-to-many relationship between `Person` and `Address` the following code will change the foreign key in the `address` table:
 
-[source,java]
+[source,groovy]
 ----
 class Person {
 
@@ -122,7 +122,7 @@ class Person {
 
 If you don't want the column to be in the `address` table, but instead some intermediate join table you can use the `joinTable` parameter:
 
-[source,java]
+[source,groovy]
 ----
 class Person {
 
@@ -146,7 +146,7 @@ class Person {
 
 Grails, by default maps a many-to-many association using a join table. For example consider this many-to-many association:
 
-[source,java]
+[source,groovy]
 ----
 class Group {
     ...
@@ -154,7 +154,7 @@ class Group {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 class Person {
     ...
@@ -165,7 +165,7 @@ class Person {
 
 In this case Grails will create a join table called `group_person` containing foreign keys called `person_id` and `group_id` referencing the `person` and `group` tables. To change the column names you can specify a column within the mappings for each class.
 
-[source,java]
+[source,groovy]
 ----
 class Group {
    ...
@@ -183,7 +183,7 @@ class Person {
 
 You can also specify the name of the join table to use:
 
-[source,java]
+[source,groovy]
 ----
 class Group {
    ...

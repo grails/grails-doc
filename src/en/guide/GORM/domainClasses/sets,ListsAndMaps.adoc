@@ -60,7 +60,7 @@ In this case when you add new elements to the books collection the order is reta
 
 [source,groovy]
 ----
-author.books<<0>> // get the first book
+author.books[0] // get the first book
 ----
 
 The way this works at the database level is Hibernate creates a `books_idx` column where it saves the index of the elements in the collection to retain this order at the database level.
@@ -146,7 +146,7 @@ The Java `Set` type doesn't allow duplicates. To ensure uniqueness when adding a
 
 The same behavior is required for `List` types, since Hibernate needs to load the entire association to maintain order. Therefore it is recommended that if you anticipate a large numbers of records in the association that you make the association bidirectional so that the link can be created on the inverse side. For example consider the following code:
 
-[source,java]
+[source,groovy]
 ----
 def book = new Book(title:"New Grails Book")
 def author = Author.get(1)
@@ -156,7 +156,7 @@ book.save()
 
 In this example the association link is being created by the child (Book) and hence it is not necessary to manipulate the collection directly resulting in fewer queries and more efficient code. Given an `Author` with a large number of associated `Book` instances if you were to write code like the following you would see an impact on performance:
 
-[source,java]
+[source,groovy]
 ----
 def book = new Book(title:"New Grails Book")
 def author = Author.get(1)

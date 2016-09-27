@@ -9,7 +9,7 @@ As discussed in the section on <<fetching,Eager and Lazy fetching>>, GORM collec
 
 and they're used like this:
 
-[source,java]
+[source,groovy]
 ----
 class Person {
 
@@ -25,7 +25,7 @@ class Person {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 class Address {
     String street
@@ -33,7 +33,7 @@ class Address {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 class Pet {
     String name
@@ -72,14 +72,14 @@ In GORM, one-to-one and many-to-one associations are by default lazy. Non-lazy s
 
 Use the same technique as for lazy collections to make a one-to-one or many-to-one association non-lazy/eager:
 
-[source,java]
+[source,groovy]
 ----
 class Person {
     String firstName
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 class Address {
 
@@ -106,20 +106,20 @@ Consider the previous example but with a lazily-loaded `person` association: Hib
 
 Unfortunately this technique can produce surprising results. Consider the following example classes:
 
-[source,java]
+[source,groovy]
 ----
 class Pet {
     String name
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 class Dog extends Pet {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 class Person {
     String name
@@ -141,14 +141,14 @@ But this won't:
 ----
 def person = Person.get(1)
 assert person.pet instanceof Dog
-assert Pet.list()<<0>> instanceof Dog
+assert Pet.list()[0] instanceof Dog
 ----
 
 The second assertion fails, and to add to the confusion, this will work:
 
 [source,groovy]
 ----
-assert Pet.list()<<0>> instanceof Dog
+assert Pet.list()[0] instanceof Dog
 ----
 
 What's going on here? It's down to a combination of how proxies work and the guarantees that the Hibernate session makes. When you load the `Person` instance, Hibernate creates a proxy for its `pet` relation and attaches it to the session. Once that happens, whenever you retrieve that `Pet` instance with a query, a `get()`, or the `pet` relation _within the same session_ , Hibernate gives you the proxy.
@@ -157,18 +157,18 @@ Fortunately for us, GORM automatically unwraps the proxy when you use `get()` an
 
 You can protect yourself to a degree from this problem by using the `instanceOf` method by GORM:
 
-[source,java]
+[source,groovy]
 ----
 def person = Person.get(1)
-assert Pet.list()<<0>>.instanceOf(Dog)
+assert Pet.list()[0].instanceOf(Dog)
 ----
 
 However, it won't help here if casting is involved. For example, the following code will throw a `ClassCastException` because the first pet in the list is a proxy instance with a class that is neither `Dog` nor a sub-class of `Dog`:
 
-[source,java]
+[source,groovy]
 ----
 def person = Person.get(1)
-Dog pet = Pet.list()<<0>>
+Dog pet = Pet.list()[0]
 ----
 
 Of course, it's best not to use static types in this situation. If you use an untyped variable for the pet instead, you can access any `Dog` properties or methods on the instance without any problems.

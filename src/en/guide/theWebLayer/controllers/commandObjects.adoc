@@ -1,6 +1,6 @@
 Grails controllers support the concept of command objects. A command object is a class that is used in conjunction with link:theWebLayer.html#dataBinding[data binding], usually to allow validation of data that may not fit into an existing domain class.
 
-NOTE: Note: A class is only considered to be a command object when it is used as a parameter of an action.
+TIP: A class is only considered to be a command object when it is used as a parameter of an action.
 
 
 ==== Declaring Command Objects
@@ -8,7 +8,7 @@ NOTE: Note: A class is only considered to be a command object when it is used as
 
 Command object classes are defined just like any other class.
 
-[source,java]
+[source,groovy]
 ----
 class LoginCommand implements grails.validation.Validateable {
     String username
@@ -25,7 +25,7 @@ In this example, the command object class implements the `Validateable` trait. T
 
 By default, all `Validateable` object properties are `nullable: false` which matches the behavior of GORM domain objects. If you want a `Validateable` that has `nullable: true` properties by default, you can specify this by defining a `defaultNullable` method in the class:
 
-[source,java]
+[source,groovy]
 ----
 class AuthorSearchCommand implements grails.validation.Validateable {
     String  name
@@ -47,7 +47,7 @@ To use command objects, controller actions may optionally specify any number of 
 
 Before the controller action is executed Grails will automatically create an instance of the command object class and populate its properties by binding the request parameters.  If the command object class is marked with `Validateable` then the command object will be validated. For example:
 
-[source,java]
+[source,groovy]
 ----
 class LoginController {
 
@@ -76,7 +76,7 @@ Normally request parameter names will be mapped directly to property names in th
 
 In the example below a request parameter named `name` will be bound to the `name` property of the `Person` instance and a request parameter named `address.city` will be bound to the `city` property of the `address` property in the `Person`.
 
-[source,java]
+[source,groovy]
 ----
 class StoreController {
     def buy(Person buyer) {
@@ -96,7 +96,7 @@ class Address {
 
 A problem may arise if a controller action accepts multiple command objects which happen to contain the same property name.  Consider the following example.
 
-[source,java]
+[source,groovy]
 ----
 class StoreController {
     def buy(Person buyer, Product product) {
@@ -120,7 +120,7 @@ class Product {
 
 If there is a request parameter named `name` it isn't clear if that should represent the name of the `Product` or the name of the `Person`.  Another version of the problem can come up if a controller action accepts 2 command objects of the same type as shown below.
 
-[source,java]
+[source,groovy]
 ----
 class StoreController {
     def buy(Person buyer, Person seller, Product product) {
@@ -150,7 +150,7 @@ For example, the `product.name` request parameter will be bound to the `name` pr
 ==== Command Objects and Dependency Injection
 
 
-Command objects can participate in dependency injection. This is useful if your command object has some custom validation logic which uses a Grails <<services,service>>:
+Command objects can participate in dependency injection. This is useful if your command object has some custom validation logic which uses a Grails link:services.html[service]:
 
 [source,groovy]
 ----
@@ -177,9 +177,9 @@ In this example the command object interacts with the `loginService` bean which 
 
 When a request is made to a controller action which accepts a command object and the request contains a body, Grails will attempt to parse the body of the request based on the request content type and use the body to do data binding on the command object.  See the following example.
 
-[source,java]
+[source,groovy]
+.grails-app/controllers/bindingdemo/DemoController.groovy
 ----
-// grails-app/controllers/bindingdemo/DemoController.groovy
 package bindingdemo
 
 class DemoController {
@@ -195,7 +195,7 @@ class Widget {
 }
 ----
 
-[source,groovy]
+[source,bash]
 ----
 $ curl -H "Content-Type: application/json" -d '{"name":"Some Widget","42"}'[size] localhost:8080/demo/createWidget
  Name: Some Widget, Size: 42
@@ -207,8 +207,8 @@ $ curl -H "Content-Type: application/xml" -d '<widget><name>Some Other Widget</n
 Note that the body of the request is being parsed to make that work.  Any attempt to read the body of the request after that will fail since the corresponding input stream will be empty.  The controller action can either use a command object or it can parse the body of the request on its own (either directly, or by referring to something like request.JSON), but cannot do both.
 
 [source,groovy]
+.grails-app/controllers/bindingdemo/DemoController.groovy
 ----
-// grails-app/controllers/bindingdemo/DemoController.groovy
 package bindingdemo
 
 class DemoController {
@@ -230,7 +230,7 @@ class DemoController {
 
 A common use case for command objects is a Command Object that contains a collection of another:
 
-[source,java]
+[source,groovy]
 ----
 class DemoController {
 
@@ -261,13 +261,13 @@ In order to make this work from the UI layer, you can do the following in your G
     <g:fieldValue name="fullName" value=""/>
     <ul>
         <li>
-            <g:fieldValue name="books<<0>>.title" value=""/>
-            <g:fieldValue name="books<<0>>.isbn" value=""/>
+            <g:fieldValue name="books[0].title" value=""/>
+            <g:fieldValue name="books[0].isbn" value=""/>
         </li>
 
         <li>
-            <g:fieldValue name="books<<1>>.title" value=""/>
-            <g:fieldValue name="books<<1>>.isbn" value=""/>
+            <g:fieldValue name="books[1].title" value=""/>
+            <g:fieldValue name="books[1].isbn" value=""/>
         </li>
     </ul>
 </g:form>
