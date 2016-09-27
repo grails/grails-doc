@@ -2,7 +2,7 @@
 ==== Using the render method to output XML
 
 
-Grails supports a few different ways to produce XML and JSON responses. The first is the <<ref-controllers-render,render>> method.
+Grails supports a few different ways to produce XML and JSON responses. The first is the link:../ref/Controllers/render.html[render] method.
 
 The `render` method can be passed a block of code to do mark-up building in XML:
 
@@ -65,10 +65,8 @@ def list() {
     def results = Book.list()
 
     render(contentType: "application/json") {
-        books = array {
-            for (b in results) {
-                book title: b.title
-            }
+        books(results) { Book b ->
+            title b.title
         }
     }
 }
@@ -76,13 +74,15 @@ def list() {
 
 In this case the result would be something along the lines of:
 
-[source,groovy]
+[source,json]
 ----
 [
-    {"The[title] Stand"},
-    {"The[title] Shining"}
+    {"title":"The Stand"},
+    {"title":"Shining"}
 ]
 ----
+
+NOTE: This technique for rendering JSON may be ok for very simple responses, but in general you should favour the use of link:webServices.html#jsonViews[JSON Views] and use the view layer rather than embedding logic in your application.
 
 The same dangers with naming conflicts described above for XML also apply to JSON building.
 
@@ -90,7 +90,7 @@ The same dangers with naming conflicts described above for XML also apply to JSO
 ==== Automatic XML Marshalling
 
 
-Grails also supports automatic marshalling of <<GORM,domain classes>> to XML using special converters.
+Grails also supports automatic marshalling of link:GORM.html[domain classes] to XML using special converters.
 
 To start off with, import the `grails.converters` package into your controller:
 
@@ -108,7 +108,7 @@ render Book.list() as XML
 
 The resulting output would look something like the following::
 
-[source,groovy]
+[source,xml]
 ----
 <?xml version="1.0" encoding="ISO-8859-1"?>
 <list>
@@ -124,7 +124,7 @@ The resulting output would look something like the following::
 ----
 
 
-For more information on XML marshalling see the section on <<REST,REST>>
+For more information on XML marshalling see the section on link:webServices.html#REST[REST]
 
 
 ==== Automatic JSON Marshalling
@@ -139,13 +139,13 @@ render Book.list() as JSON
 
 The resulting output would look something like the following:
 
-[source,groovy]
+[source,json]
 ----
 [
-    {1,[id]      "Book",[class]      "Stephen[author] King",
-     "The[title] Stand"},
-    {2,[id]      "Book",[class]      "Stephen[author] King",
-     new[releaseDate] Date(1194127343161),
-     "The[title] Shining"}
+    {"id":1,"author":"Stephen King","title":"The Stand"}
+    {"id":2,"author":"Stephen King","title":"The Shining"},
  ]
 ----
+
+NOTE: This technique for rendering JSON may be ok for very simple responses, but in general you should favour the use of link:webServices.html#jsonViews[JSON Views] and use the view layer rather than embedding logic in your application.
+

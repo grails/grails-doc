@@ -6,7 +6,7 @@ Grails has built in support for http://en.wikipedia.org/wiki/Content_negotiation
 
 Before you can start dealing with content negotiation you need to tell Grails what content types you wish to support. By default Grails comes configured with a number of different content types within `grails-app/conf/application.yml` using the `grails.mime.types` setting:
 
-[source,java]
+[source,yaml]
 ----
 grails:
     mime:
@@ -16,7 +16,7 @@ grails:
             css: text/css
             csv: text/csv
             form: application/x-www-form-urlencoded
-            html: 
+            html:
               - text/html
               - application/xhtml+xml
             js: text/javascript
@@ -26,7 +26,7 @@ grails:
             multipartForm: multipart/form-data
             rss: application/rss+xml
             text: text/plain
-            hal: 
+            hal:
               - application/hal+json
               - application/hal+xml
             xml:
@@ -36,7 +36,7 @@ grails:
 
 The setting can also be done in `grails-app/conf/application.groovy` as shown below:
 
-[source,java]
+[source,groovy]
 ----
 grails.mime.types = [ // the first one is the default format
     all:           '*/*', // 'all' maps to '*' or the first available format in withFormat
@@ -71,11 +71,11 @@ So if you, as a browser or some other client, want a resource as XML, you can us
 http://my.domain.org/books?format=xml
 ----
 
-The result of this on the server side is a `format` property on the `response` object with the value `xml` . 
+The result of this on the server side is a `format` property on the `response` object with the value `xml` .
 
 You can also define this parameter in the <<urlmappings,URL Mappings>> definition:
 
-[source,java]
+[source,groovy]
 ----
 "/book/list"(controller:"book", action:"list") {
     format = "xml"
@@ -84,7 +84,7 @@ You can also define this parameter in the <<urlmappings,URL Mappings>> definitio
 
 You could code your controller action to return XML based on this property, but you can also make use of the controller-specific `withFormat()` method:
 
-[source,java]
+[source,groovy]
 ----
 import grails.converters.JSON
 import grails.converters.XML
@@ -106,9 +106,9 @@ class BookController {
 
 In this example, Grails will only execute the block inside `withFormat()` that matches the requested content type. So if the preferred format is `html` then Grails will execute the `html()` call only. Each 'block' can either be a map model for the corresponding view (as we are doing for 'html' in the above example) or a closure. The closure can contain any standard action code, for example it can return a model or render content directly.
 
-When no format matches explicitly, a `*` (wildcard) block can be used to handle all other formats. 
+When no format matches explicitly, a `*` (wildcard) block can be used to handle all other formats.
 
-There is a special format, "all", that is handled differently from the explicit formats. If "all" is specified (normally this happens through the Accept header - see below), then the first block of `withFormat()` is executed when there isn't a `*` (wildcard) block available.  
+There is a special format, "all", that is handled differently from the explicit formats. If "all" is specified (normally this happens through the Accept header - see below), then the first block of `withFormat()` is executed when there isn't a `*` (wildcard) block available.
 
 You should not add an explicit "all" block. In this example, a format of "all" will trigger the `html` handler (`html` is the first block and there is no `*` block).
 [source,groovy]
@@ -120,7 +120,7 @@ withFormat {
         }
 ----
 
-NOTE: When using <<ref-controllers-withFormat,withFormat>> make sure it is the last call in your controller action as the return value of the `withFormat` method is used by the action to dictate what happens next.
+NOTE: When using link:../ref/Controllers/withFormat.html[withFormat] make sure it is the last call in your controller action as the return value of the `withFormat` method is used by the action to dictate what happens next.
 
 
 ==== Using the Accept header
@@ -168,9 +168,9 @@ NOTE: If the accept header is used but contains no registered content types, Gra
 
 As of Grails 2.0, there is a separate notion of the _request_ format and the _response_ format. The request format is dictated by the `CONTENT_TYPE` header and is typically used to detect if the incoming request can be parsed into XML or JSON, whilst the response format uses the file extension, format parameter or ACCEPT header to attempt to deliver an appropriate response to the client.
 
-The <<ref-controllers-withFormat,withFormat>> available on controllers deals specifically with the response format. If you wish to add logic that deals with the request format then you can do so using a separate `withFormat` method available on the request:
+The link:../ref/Controllers/withFormat.html[withFormat] available on controllers deals specifically with the response format. If you wish to add logic that deals with the request format then you can do so using a separate `withFormat` method available on the request:
 
-[source,java]
+[source,groovy]
 ----
 request.withFormat {
     xml {
@@ -212,9 +212,9 @@ Note the inclusion of the `format` variable in the path. If you do not wish to u
 ==== Testing Content Negotiation
 
 
-To test content negotiation in a unit or integration test (see the section on <<testing,Testing>>) you can either manipulate the incoming request headers:
+To test content negotiation in a unit or integration test (see the section on link:testing.html[Testing]) you can either manipulate the incoming request headers:
 
-[source,java]
+[source,groovy]
 ----
 void testJavascriptOutput() {
     def controller = new TestController()
@@ -228,7 +228,7 @@ void testJavascriptOutput() {
 
 Or you can set the format parameter to achieve a similar effect:
 
-[source,java]
+[source,groovy]
 ----
 void testJavascriptOutput() {
     def controller = new TestController()

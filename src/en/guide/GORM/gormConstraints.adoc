@@ -44,9 +44,9 @@ This constraint would provide both the application-based validation we want and 
 ==== Constraints Affecting String Properties
 
 
-* <<ref-constraints-inList,inList>>
-* <<ref-constraints-maxSize,maxSize>>
-* <<ref-constraints-size,size>>
+* link:../ref/Constraints/inList.html[inList]
+* link:../ref/Constraints/maxSize.html[maxSize]
+* link:../ref/Constraints/size.html[size]
 
 If either the `maxSize` or the `size` constraint is defined, Grails sets the maximum column length based on the constraint value.
 
@@ -58,17 +58,17 @@ If the `inList` constraint is defined (and the `maxSize` and the `size` constrai
 ==== Constraints Affecting Numeric Properties
 
 
-* <<ref-constraints-min,min>>
-* <<ref-constraints-max,max>>
-* <<ref-constraints-range,range>>
+* link:../ref/Constraints/min.html[min]
+* link:../ref/Constraints/max.html[max]
+* link:../ref/Constraints/range.html[range]
 
 If the `max`, `min`, or `range` constraint is defined, Grails attempts to set the column precision based on the constraint value.  (The success of this attempted influence is largely dependent on how Hibernate interacts with the underlying DBMS.)
 
 In general, it's not advisable to combine the pair `min`/`max` and `range` constraints together on the same domain class property.  However, if both of these constraints is defined, then Grails uses the minimum precision value from the constraints.  (Grails uses the minimum of the two, because any length that exceeds that minimum precision will result in a validation error.)
 
-* <<ref-constraints-scale,scale>>
+* link:../ref/Constraints/scale.html[scale]
 
-If the scale constraint is defined, then Grails attempts to set the column <<ref-constraints-scale,scale>> based on the constraint value.  This rule only applies to floating point numbers (i.e., `java.lang.Float`, `java.Lang.Double`, `java.lang.BigDecimal`, or subclasses of `java.lang.BigDecimal`). The success of this attempted influence is largely dependent on how Hibernate interacts with the underlying DBMS.
+If the scale constraint is defined, then Grails attempts to set the column link:../ref/Constraints/scale.html[scale] based on the constraint value.  This rule only applies to floating point numbers (i.e., `java.lang.Float`, `java.Lang.Double`, `java.lang.BigDecimal`, or subclasses of `java.lang.BigDecimal`). The success of this attempted influence is largely dependent on how Hibernate interacts with the underlying DBMS.
 
 The constraints define the minimum/maximum numeric values, and Grails derives the maximum number of digits for use in the precision. Keep in mind that specifying only one of `min`/`max` constraints will not affect schema generation (since there could be large negative value of property with max:100, for example), unless the specified constraint value requires more digits than default Hibernate column precision is (19 at the moment). For example:
 
