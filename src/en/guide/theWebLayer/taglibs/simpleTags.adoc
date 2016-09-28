@@ -1,6 +1,6 @@
 As demonstrated in the previous example it is easy to write simple tags that have no body and just output content. Another example is a `dateFormat` style tag:
 
-[source,java]
+[source,groovy]
 ----
 def dateFormat = { attrs, body ->
     out << new java.text.SimpleDateFormat(attrs.format).format(attrs.date)
@@ -16,7 +16,7 @@ The above uses Java's `SimpleDateFormat` class to format a date and then write i
 
 With simple tags sometimes you need to write HTML mark-up to the response. One approach would be to embed the content directly:
 
-[source,java]
+[source,groovy]
 ----
 def formatBook = { attrs, body ->
     out << "<div id=\"${attrs.book.id}\">"
@@ -27,7 +27,7 @@ def formatBook = { attrs, body ->
 
 Although this approach may be tempting it is not very clean. A better approach would be to reuse the link:../ref/Tags/render.html[render] tag:
 
-[source,java]
+[source,groovy]
 ----
 def formatBook = { attrs, body ->
     out << render(template: "bookTemplate", model: [book: attrs.book])

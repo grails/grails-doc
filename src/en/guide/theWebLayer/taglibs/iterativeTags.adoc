@@ -1,6 +1,6 @@
 Iterative tags are easy too, since you can invoke the body multiple times:
 
-[source,java]
+[source,groovy]
 ----
 def repeat = { attrs, body ->
     attrs.times?.toInteger()?.times { num ->
@@ -20,14 +20,14 @@ In this example we check for a `times` attribute and if it exists convert it to 
 
 Notice how in this example we use the implicit `it` variable to refer to the current number. This works because when we invoked the body we passed in the current value inside the iteration:
 
-[source,java]
+[source,groovy]
 ----
 out << body(num)
 ----
 
 That value is then passed as the default variable `it` to the tag. However, if you have nested tags this can lead to conflicts, so you should instead name the variables that the body uses:
 
-[source,java]
+[source,groovy]
 ----
 def repeat = { attrs, body ->
     def var = attrs.var ?: "num"
@@ -39,12 +39,12 @@ def repeat = { attrs, body ->
 
 Here we check if there is a `var` attribute and if there is use that as the name to pass into the body invocation on this line:
 
-[source,java]
+[source,groovy]
 ----
 out << body((var):num)
 ----
 
-NOTE: Note the usage of the parenthesis around the variable name. If you omit these Groovy assumes you are using a String key and not referring to the variable itself.
+NOTE: Take notice to the usage of the parenthesis around the variable name. If you omit these Groovy assumes you are using a String key and not referring to the variable itself.
 
 Now we can change the usage of the tag as follows:
 

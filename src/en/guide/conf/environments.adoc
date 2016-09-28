@@ -1,10 +1,10 @@
 
-==== Per Environment Configuration
+=== Per Environment Configuration
 
 
-Grails supports the concept of per environment configuration. The `application.yml` and `application.groovy` files in the `grails-app/conf` directory can use per-environment configuration using either YAML or the syntax provided by http://groovy.codehaus.org/ConfigSlurper[ConfigSlurper]. As an example consider the following default `application.yml` definition provided by Grails:
+Grails supports the concept of per environment configuration. The `application.yml` and `application.groovy` files in the `grails-app/conf` directory can use per-environment configuration using either YAML or the syntax provided by http://docs.groovy-lang.org/latest/html/documentation/#_configslurper[ConfigSlurper]. As an example consider the following default `application.yml` definition provided by Grails:
 
-[source,groovy]
+[source,yaml]
 ----
 environments:
     development:
@@ -27,7 +27,7 @@ environments:
 
 The above can be expressed in Groovy syntax in `application.groovy` as follows:
 
-[source,java]
+[source,groovy]
 ----
 dataSource {
     pooled = false
@@ -60,37 +60,37 @@ environments {
 Notice how the common configuration is provided at the top level and then an `environments` block specifies per environment settings for the `dbCreate` and `url` properties of the `DataSource`.
 
 
-==== Packaging and Running for Different Environments
+=== Packaging and Running for Different Environments
 
 
 Grails' link:commandLine.html[command line] has built in capabilities to execute any command within the context of a specific environment. The format is:
 
-[source,java]
+[source,bash]
 ----
 grails <<environment>> <<command name>>
 ----
 
 In addition, there are 3 preset environments known to Grails: `dev`, `prod`, and `test` for `development`, `production` and `test`. For example to create a WAR for the `test` environment you wound run:
 
-[source,java]
+[source,bash]
 ----
 grails test war
 ----
 
 To target other environments you can pass a `grails.env` variable to any command:
 
-[source,java]
+[source,bash]
 ----
 grails -Dgrails.env=UAT run-app
 ----
 
 
-==== Programmatic Environment Detection
+=== Programmatic Environment Detection
 
 
-Within your code, such as in a Gant script or a bootstrap class you can detect the environment using the http://docs.grails.org/latest/api/grails/util/Environment.html[Environment] class:
+Within your code, such as in a Gant script or a bootstrap class you can detect the environment using the {apiDocs}grails/util/Environment.html[Environment] class:
 
-[source,java]
+[source,groovy]
 ----
 import grails.util.Environment
 
@@ -107,7 +107,7 @@ switch (Environment.current) {
 ----
 
 
-==== Per Environment Bootstrapping
+=== Per Environment Bootstrapping
 
 
 It's often desirable to run code when your application starts up on a per-environment basis. To do so you can use the `grails-app/init/BootStrap.groovy` file's support for per-environment execution:
@@ -128,7 +128,7 @@ def init = { ServletContext ctx ->
 ----
 
 
-==== Generic Per Environment Execution
+=== Generic Per Environment Execution
 
 
 The previous `BootStrap` example uses the `grails.util.Environment` class internally to execute. You can also use this class yourself to execute your own environment specific logic:

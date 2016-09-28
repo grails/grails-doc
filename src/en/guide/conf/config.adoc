@@ -2,18 +2,18 @@ Configuration in Grails is generally split across 2 areas: build configuration a
 
 Build configuration is generally done via Gradle and the `build.gradle` file. Runtime configuration is by default specified in YAML in the `grails-app/conf/application.yml` file.
 
-If you prefer to use Grails 2.0-style Groovy configuration then you can create an additional `grails-app/conf/application.groovy` file to specify configuration using Groovy's http://groovy.codehaus.org/ConfigSlurper[ConfigSlurper] syntax.
+If you prefer to use Grails 2.0-style Groovy configuration then you can create an additional `grails-app/conf/application.groovy` file to specify configuration using Groovy's http://docs.groovy-lang.org/latest/html/documentation/#_configslurper[ConfigSlurper] syntax.
 
 For Groovy configuration the following variables are available to the configuration script:
 
-[format="csv", options="header"]
+[format="csv", options="header", separator="|"]
 |===
 
-*Variable*,*Description*
-userHome,Location of the home directory for the account that is running the Grails application.
-grailsHome,Location of the directory where you installed Grails. If the `GRAILS_HOME` environment variable is set, it is used.
-appName,The application name as it appears in build.gradle.
-appVersion,The application version as it appears in build.gradle.
+*Variable*|*Description*
+userHome|Location of the home directory for the account that is running the Grails application.
+grailsHome|Location of the directory where you installed Grails. If the `GRAILS_HOME` environment variable is set, it is used.
+appName|The application name as it appears in build.gradle.
+appVersion|The application version as it appears in build.gradle.
 |===
 
 For example:
@@ -24,7 +24,7 @@ my.tmp.dir = "${userHome}/.grails/tmp"
 ----
 
 
-If you want to read runtime configuration settings, i.e. those defined in `application.yml`, use the http://docs.grails.org/latest/api/grails/core/GrailsApplication.html[`grailsApplication`] object, which is available as a variable in controllers and tag libraries:
+If you want to read runtime configuration settings, i.e. those defined in `application.yml`, use the {apiDocs}grails/core/GrailsApplication.html[grailsApplication] object, which is available as a variable in controllers and tag libraries:
 
 [source,groovy]
 ----
@@ -37,7 +37,7 @@ class MyController {
 }
 ----
 
-The `config` property of the `grailsApplication` object is an instance of the http://docs.grails.org/latest/api/grails/config/Config.html[Config] interface and provides a number of useful methods to read the configuration of the application.
+The `config` property of the `grailsApplication` object is an instance of the {apiDocs}grails/config/Config.html[Config] interface and provides a number of useful methods to read the configuration of the application.
 
 In particular, the `getProperty` method (seen above) is useful for efficiently retrieving configuration properties, while specifying the property type (the default type is String) and/or providing a default fallback value.
 

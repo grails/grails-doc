@@ -12,7 +12,7 @@ Saves a new domain class instance or updates a modified persistent instance in t
 === Examples
 
 
-[source,java]
+[source,groovy]
 ----
 def b = new Book(title: "The Shining")
 b.save()
@@ -24,14 +24,14 @@ b.save()
 
 The `save` method informs the persistence context that an instance should be saved or updated. The object will not be persisted immediately unless the `flush` argument is used:
 
-[source,java]
+[source,groovy]
 ----
 b.save(flush: true)
 ----
 
 The `save` method returns `null` if link:validation.html[validation] failed and the instance was not persisted, or the instance itself if successful. This lets you use "Groovy truth" (`null` is considered `false`) to write code like the following:
 
-[source,java]
+[source,groovy]
 ----
 if (!b.save()) {
     b.errors.allErrors.each {

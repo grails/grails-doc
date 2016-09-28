@@ -12,7 +12,7 @@ Renders different responses based on the incoming request `Accept` header, forma
 === Examples
 
 
-[source,java]
+[source,groovy]
 ----
 import grails.converters.XML
 
@@ -36,7 +36,7 @@ class BookController {
 
 The `withFormat` accepts a Closure which contains methods corresponding to the different content types you want to respond to. For example:
 
-[source,java]
+[source,groovy]
 ----
 withFormat {
     html bookList: books
@@ -61,7 +61,7 @@ will use the "xml" type handler for the request.
 
 Another important factor to note is that the `withFormat` method deals with the _response_ format and not the request format. As of Grails 2.0, there is a separate `withFormat` method made available on the `request` that you can use to handle the request format which is dictated by the `CONTENT_TYPE` header of the request:
 
-[source,java]
+[source,groovy]
 ----
 request.withFormat {
     form { .. }
@@ -74,7 +74,7 @@ NOTE: The request format of `form` is used for handling form submission in conte
 
 If you require that the model be lazily executed you can pass a Closure instead of a Map:
 
-[source,java]
+[source,groovy]
 ----
 withFormat {
     html { [bookList: Book.list()] }

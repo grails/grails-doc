@@ -12,7 +12,7 @@ The `namedQueries` static property defines named queries.  Named queries support
 === Examples
 
 
-[source,java]
+[source,groovy]
 ----
 class Publication {
 
@@ -46,7 +46,7 @@ class Publication {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 // get all recent publications...
 def recentPubs = Publication.recentPublications.list()
@@ -89,7 +89,7 @@ NOTE: Note that calling something like `Publication.recentPublications.get(42)` 
 
 Named criteria support `listDistinct()`:
 
-[source,java]
+[source,groovy]
 ----
 class PlantCategory {
 
@@ -108,7 +108,7 @@ class PlantCategory {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 class Plant {
     boolean goesInPatch
@@ -116,14 +116,14 @@ class Plant {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 PlantCategory.withPlantsInPatch.listDistinct()
 ----
 
 Named criteria support additional criteria being supplied at invocation time in the form of a criteria closure:
 
-[source,java]
+[source,groovy]
 ----
 // get all recent publications with author names beginning with Tony or Phil...
 def books = Publication.recentPublications {
@@ -145,7 +145,7 @@ def numberOfBooks = Publication.recentPublications.count {
 
 Named criteria may be chained together.  When criteria are chained together, the query will be generated as if all of the chained criteria had been combined in a single criteria closure.
 
-[source,java]
+[source,groovy]
 ----
 // recent publications with 'Book' in the title
 def books = Publication.recentPublications.publicationsWithBookInTitle.list()
@@ -158,7 +158,7 @@ def books = Publication.oldPublicationsLargerThan(500)
 
 When a named query involves a domain class relationship and the relationship class defines a named query, that named query may be accessed directly as a method call.  An example:
 
-[source,java]
+[source,groovy]
 ----
 class Author {
 
@@ -175,7 +175,7 @@ class Author {
 }
 ----
 
-[source,java]
+[source,groovy]
 ----
 class Publication {
 

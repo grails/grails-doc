@@ -12,7 +12,7 @@ If a codec contains an `encode` closure Grails will create a dynamic `encode` me
 
 The `HTMLCodec` and `URLCodec` classes also define a `decode` closure, so Grails attaches those with the names `decodeHTML` and `decodeURL` respectively. Dynamic codec methods may be invoked from anywhere in a Grails application. For example, consider a case where a report contains a property called 'description' which may contain special characters that must be escaped to be presented in an HTML document.  One way to deal with that in a GSP is to encode the description property using the dynamic encode method as shown below:
 
-[source,java]
+[source,groovy]
 ----
 ${report.description.encodeAsHTML()}
 ----
@@ -25,7 +25,7 @@ Decoding is performed using `value.decodeHTML()` syntax.
 
 A preferred way to use codecs is to use the codecLookup bean to get hold of `Encoder` and `Decoder` instances .
 
-[source,java]
+[source,groovy]
 ----
 package org.grails.encoder;
 
@@ -36,7 +36,7 @@ public interface CodecLookup {
 ----
 
 example of using `CodecLookup` and `Encoder` interface
-[source,java]
+[source,groovy]
 ----
 import org.grails.encoder.CodecLookup
 
@@ -59,7 +59,7 @@ This codec performs HTML escaping and unescaping, so that values can be rendered
 
 Example of usage:
 
-[source,java]
+[source,groovy]
 ----
 <input name="comment.message" value="${comment.message.encodeAsHTML()}"/>
 ----
@@ -90,7 +90,7 @@ URL encoding is required when creating URLs in links or form actions, or any tim
 
 Example of usage:
 
-[source,java]
+[source,groovy]
 ----
 <a href="/mycontroller/find?searchKey=${lastSearch.encodeAsURL()}">
 Repeat last search
@@ -101,7 +101,7 @@ Repeat last search
 
 Performs Base64 encode/decode functions. Example of usage:
 
-[source,java]
+[source,groovy]
 ----
 Your registration code is: ${user.registrationCode.encodeAsBase64()}
 ----
@@ -110,7 +110,7 @@ Your registration code is: ${user.registrationCode.encodeAsBase64()}
 
 Escapes Strings so they can be used as valid JavaScript strings. For example:
 
-[source,java]
+[source,groovy]
 ----
 Element.update('${elementId}',
     '${render(template: "/common/message").encodeAsJavaScript()}')
@@ -120,7 +120,7 @@ Element.update('${elementId}',
 
 Encodes byte arrays or lists of integers to lowercase hexadecimal strings, and can decode hexadecimal strings into byte arrays. For example:
 
-[source,java]
+[source,groovy]
 ----
 Selected colour: #${[255,127,255].encodeAsHex()}
 ----
@@ -129,7 +129,7 @@ Selected colour: #${[255,127,255].encodeAsHex()}
 
 Uses the MD5 algorithm to digest byte arrays or lists of integers, or the bytes of a string (in default system encoding), as a lowercase hexadecimal string. Example of usage:
 
-[source,java]
+[source,groovy]
 ----
 Your API Key: ${user.uniqueID.encodeAsMD5()}
 ----
@@ -138,7 +138,7 @@ Your API Key: ${user.uniqueID.encodeAsMD5()}
 
 Uses the MD5 algorithm to digest byte arrays or lists of integers, or the bytes of a string (in default system encoding), as a byte array. Example of usage:
 
-[source,java]
+[source,groovy]
 ----
 byte[] passwordHash = params.password.encodeAsMD5Bytes()
 ----
@@ -147,7 +147,7 @@ byte[] passwordHash = params.password.encodeAsMD5Bytes()
 
 Uses the SHA1 algorithm to digest byte arrays or lists of integers, or the bytes of a string (in default system encoding), as a lowercase hexadecimal string. Example of usage:
 
-[source,java]
+[source,groovy]
 ----
 Your API Key: ${user.uniqueID.encodeAsSHA1()}
 ----
@@ -156,7 +156,7 @@ Your API Key: ${user.uniqueID.encodeAsSHA1()}
 
 Uses the SHA1 algorithm to digest byte arrays or lists of integers, or the bytes of a string (in default system encoding), as a byte array. Example of usage:
 
-[source,java]
+[source,groovy]
 ----
 byte[] passwordHash = params.password.encodeAsSHA1Bytes()
 ----
@@ -165,7 +165,7 @@ byte[] passwordHash = params.password.encodeAsSHA1Bytes()
 
 Uses the SHA256 algorithm to digest byte arrays or lists of integers, or the bytes of a string (in default system encoding), as a lowercase hexadecimal string. Example of usage:
 
-[source,java]
+[source,groovy]
 ----
 Your API Key: ${user.uniqueID.encodeAsSHA256()}
 ----
@@ -174,7 +174,7 @@ Your API Key: ${user.uniqueID.encodeAsSHA256()}
 
 Uses the SHA256 algorithm to digest byte arrays or lists of integers, or the bytes of a string (in default system encoding), as a byte array. Example of usage:
 
-[source,java]
+[source,groovy]
 ----
 byte[] passwordHash = params.password.encodeAsSHA256Bytes()
 ----
@@ -185,7 +185,7 @@ byte[] passwordHash = params.password.encodeAsSHA256Bytes()
 
 Applications may define their own codecs and Grails will load them along with the standard codecs. A custom codec class must be defined in the `grails-app/utils/` directory and the class name must end with `Codec`. The codec may contain a `static` `encode` closure, a `static` `decode` closure or both. The closure must accept a single argument which will be the object that the dynamic method was invoked on. For Example:
 
-[source,java]
+[source,groovy]
 ----
 class PigLatinCodec {
   static encode = { str ->

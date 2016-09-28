@@ -4,7 +4,7 @@
 
 Hibernate, which is the technology underlying GORM domain classes, automatically escapes data when committing to database so this is not an issue. However it is still possible to write bad dynamic HQL code that uses unchecked request parameters. For example doing the following is vulnerable to HQL injection attacks:
 
-[source,java]
+[source,groovy]
 ----
 def vulnerable() {
     def books = Book.find("from Book as b where b.title ='" + params.title + "'")
@@ -13,7 +13,7 @@ def vulnerable() {
 
 or the analogous call using a GString:
 
-[source,java]
+[source,groovy]
 ----
 def vulnerable() {
     def books = Book.find("from Book as b where b.title ='${params.title}'")
@@ -22,7 +22,7 @@ def vulnerable() {
 
 Do *not* do this. Use named or positional parameters instead to pass in parameters:
 
-[source,java]
+[source,groovy]
 ----
 def safe() {
     def books = Book.find("from Book as b where b.title = ?",
@@ -32,7 +32,7 @@ def safe() {
 
 or
 
-[source,java]
+[source,groovy]
 ----
 def safe() {
     def books = Book.find("from Book as b where b.title = :title",
@@ -78,7 +78,7 @@ HTML/URL injection is easily handled with the <<codecs,codecs>> supplied by Grai
 
 Load balancers and other appliances are more likely to be useful here, but there are also issues relating to excessive queries for example where a link is created by an attacker to set the maximum value of a result set so that a query could exceed the memory limits of the server or slow the system down. The solution here is to always sanitize request parameters before passing them to dynamic finders or other GORM query methods:
 
-[source,java]
+[source,groovy]
 ----
 int limit = 100
 def safeMax = Math.min(params.max?.toInteger() ?: limit, limit) // limit to 100 results

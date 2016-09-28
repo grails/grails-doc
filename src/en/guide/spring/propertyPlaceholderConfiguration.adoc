@@ -2,7 +2,7 @@ Grails supports the notion of property placeholder configuration through an exte
 
 Settings defined in either hhttp://docs.groovy-lang.org/latest/html/gapi/groovy/util/ConfigSlurper.html[ConfigSlurper] scripts or Java properties files can be used as placeholder values for Spring configuration in `grails-app/conf/spring/resources.xml` and `grails-app/conf/spring/resources.groovy`. For example given the following entries in `grails-app/conf/application.groovy` (or an externalized config):
 
-[source,java]
+[source,groovy]
 ----
 database.driver="com.mysql.jdbc.Driver"
 database.dbname="mysql:mydb"
@@ -25,7 +25,7 @@ You can then specify placeholders in `resources.xml` as follows using the famili
 
 To specify placeholders in `resources.groovy` you need to use single quotes:
 
-[source,java]
+[source,groovy]
 ----
 dataSource(org.springframework.jdbc.datasource.DriverManagerDataSource) {
     driverClassName = '${database.driver}'
@@ -37,7 +37,7 @@ This sets the property value to a literal string which is later resolved against
 
 A better option for `resources.groovy` is to access properties through the `grailsApplication` variable:
 
-[source,java]
+[source,groovy]
 ----
 dataSource(org.springframework.jdbc.datasource.DriverManagerDataSource) {
     driverClassName = grailsApplication.config.database.driver
