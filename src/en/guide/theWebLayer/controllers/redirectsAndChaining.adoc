@@ -23,14 +23,6 @@ Internally the link:../ref/Controllers/redirect.html[redirect] method uses the {
 
 The `redirect` method expects one of:
 
-* Another closure within the same controller class:
-
-[source,groovy]
-----
-// Call the login action within the same class
-redirect(action: login)
-----
-
 * The name of an action (and controller name if the redirect isn't to an action in the current controller):
 
 [source,groovy]
@@ -54,6 +46,17 @@ redirect(uri: "/login.html")
 // Redirect to a URL
 redirect(url: "http://grails.org")
 ----
+
+* A link:GORM.html[domain class] instance:
+
+[source,groovy]
+----
+// Redirect to the domain instance
+Book book = ... // obtain a domain instance
+redirect book
+----
+
+In the above example Grails will construct a link using the domain class `id` (if present).
 
 Parameters can optionally be passed from one action to the next using the `params` argument of the method:
 
@@ -130,3 +133,5 @@ Like the `redirect` method you can also pass parameters to the `chain` method:
 ----
 chain(action: "action1", model: [one: 1], params: [myparam: "param1"])
 ----
+
+NOTE: The chain method uses the HTTP session and hence should only be used if your application is stateful.
