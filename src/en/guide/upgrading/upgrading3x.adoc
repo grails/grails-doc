@@ -43,7 +43,7 @@ ${g.resource(dir:'files', file:'mydoc.pdf')}
 
 Will produce a URI such as `/static/files/mydoc.pdf` instead of `/files/mydoc.pdf`. If you wish to revert to the previous behavior you can configure this in `application.yml`:
 
-[source,groovy]
+[source,yaml]
 ----
 grails:
     resources:
@@ -65,9 +65,9 @@ compile 'org.grails:grails-plugin-filters:3.0.12'
 ==== Spring Transactional Proxies
 
 
-Because the `grails.transactional.Transactional` transform already provides the ability to create transactional services without the need for proxies, traditional support for transactional proxies has been disabled by default.
+Because the `grails.transactional.Transactional` transform already provides the ability to create transactional services without the need for proxies, traditional support for transactional proxies has been disabled by default for new applications.
 
-This means that if you have any services that use the `transactional` property and not the `Transactional` annotation they will need to be altered. For example the following service:
+This means that if you have any services that use the `transactional` property and not the `Transactional` annotation they should be altered. For example the following service:
 
 [source,groovy]
 ----
@@ -90,14 +90,14 @@ class FooService {
 
 In addition because in previous versions of a Grails `transactional` defaulted to `true` any services that do not declare `transactional` should be altered too.
 
-If you wish to revert to the previous behavior then transctional proxies can be re-enabled with the following configuration:
+If you wish to adopt the new behavior then transctional proxies can be disabled with the following configuration:
 
 [source,groovy]
 ----
 grails:
     spring:
         transactionManagement:
-            proxies: true
+            proxies: false
 ----
 
 
@@ -106,7 +106,7 @@ grails:
 
 The default JSON converter no longer includes the `class` property by default. This can be re-enable with the following configuration:
 
-[source,groovy]
+[source,yaml]
 ----
 grails:
     converters:
@@ -143,7 +143,7 @@ render(contentType:"application/json") {
 
 If you are upgrading and prefer to continue to use the previous implementation then you can re-enable the deprecated JSONBuilder with the following configuration:
 
-[source,groovy]
+[source,yaml]
 ----
 grails:
     json:
@@ -174,7 +174,7 @@ compile 'org.springframework.security:spring-security-web:3.2.9.RELEASE'
 ----
 
 
-==== Gradle `run` task no longer available by default
+==== Gradle run task no longer available by default
 
 
 Because the Gradle `run` task for application startup was provided by the https://docs.gradle.org/current/userguide/application_plugin.html[Gradle Application Plugin] (see above), it is no longer available by default. If you use Gradle to start up your application, use the `bootRun` task instead, or re-apply the Application plugin in your `build.gradle`.
