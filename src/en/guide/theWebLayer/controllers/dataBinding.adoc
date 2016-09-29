@@ -377,9 +377,8 @@ When binding to Maps, Arrays and Collections the data binder will automatically 
 NOTE: The default limit to how large the binder will grow a collection is 256. If the data binder encounters an entry that requires the collection be grown beyond that limit, the entry is ignored.  The limit may be configured by assigning a value to the `grails.databinding.autoGrowCollectionLimit` property in `application.groovy`.
 
 [source,groovy]
+.grails-app/conf/application.groovy
 ----
-// grails-app/conf/application.groovy
-
 // the default value is 256
 grails.databinding.autoGrowCollectionLimit = 128
 
@@ -394,7 +393,7 @@ It is possible to bind data to multiple domain objects from the link:../ref/Cont
 
 For example so you have an incoming request to:
 
-[source,groovy]
+[source,bash]
 ----
 /book/save?book.title=The%20Stand&author.name=Stephen%20King
 ----
@@ -433,7 +432,7 @@ class AccountingController {
 
 For primitive arguments and arguments which are instances of any of the primitive type wrapper classes a type conversion has to be carried out before the request parameter value can be bound to the action argument.  The type conversion happens automatically.  In a case like the example shown above, the `params.accountType` request parameter has to be converted to an `int`.  If type conversion fails for any reason, the argument will have its default value per normal Java behavior (null for type wrapper references, false for booleans and zero for numbers) and a corresponding error will be added to the `errors` property of the defining controller.
 
-[source,groovy]
+[source,bash]
 ----
 /accounting/displayInvoice?accountNumber=B59786&accountType=bogusValue
 ----
@@ -473,7 +472,7 @@ class Book {
 
 Here we have a domain class `Book` that uses the `java.net.URL` class to represent URLs. Given an incoming request such as:
 
-[source,groovy]
+[source,bash]
 ----
 /book/save?publisherURL=a-bad-url
 ----
@@ -577,15 +576,11 @@ class AddressValueConverter implements ValueConverter {
 An instance of that class needs to be registered as a bean in the Spring application context.  The bean name is not important.  All beans that implemented ValueConverter will be automatically plugged in to the data binding process.
 
 [source,groovy]
+.grails-app/conf/spring/resources.groovy
 ----
-// grails-app/conf/spring/resources.groovy
-
 beans = {
-
     addressConverter com.myapp.converters.AddressValueConverter
-
     // ...
-
 }
 ----
 
@@ -627,15 +622,19 @@ class Person {
 A global setting may be configured in `application.groovy` to define date formats which will be used application wide when binding to Date.
 
 [source,groovy]
+.grails-app/conf/application.groovy
 ----
-// grails-app/conf/application.groovy
-
 grails.databinding.dateFormats = ['MMddyyyy', 'yyyy-MM-dd HH:mm:ss.S', "yyyy-MM-dd'T'hh:mm:ss'Z'"]
 ----
 
-The formats specified in `grails.databinding.dateFormats` will be attempted in the order in which they are included in the List.  If a property is marked with \`BindingFormat, the \`BindingFormat will take precedence over the values specified in `grails.databinding.dateFormats`.
+The formats specified in `grails.databinding.dateFormats` will be attempted in the order in which they are included in the List.  If a property is marked with `@BindingFormat`, the `@BindingFormat` will take precedence over the values specified in `grails.databinding.dateFormats`.
 
-The default formats that are used are "yyyy-MM-dd HH:mm:ss.S", "yyyy-MM-dd'T'hh:mm:ss'Z'" and "yyyy-MM-dd HH:mm:ss.S z".
+The formats configured by default are:
+
+* `yyyy-MM-dd HH:mm:ss.S`
+* `yyyy-MM-dd'T'hh:mm:ss'Z'`
+* `yyyy-MM-dd HH:mm:ss.S z`
+* `yyyy-MM-dd'T'HH:mm:ss.SSSX`
 
 
 ==== Custom Formatted Converters
@@ -669,15 +668,11 @@ class FormattedStringValueConverter implements FormattedValueConverter {
 An instance of that class needs to be registered as a bean in the Spring application context.  The bean name is not important.  All beans that implemented FormattedValueConverter will be automatically plugged in to the data binding process.
 
 [source,groovy]
+.grails-app/conf/spring/resources.groovy
 ----
-// grails-app/conf/spring/resources.groovy
-
 beans = {
-
     formattedStringConverter com.myapp.converters.FormattedStringValueConverter
-
     // ...
-
 }
 ----
 
@@ -737,8 +732,8 @@ A structured data binding editor is a helper class which can bind structured req
 The framework provides a structured editor for binding to `Date` objects.  An application may register its own structured editors for whatever types are appropriate.  Consider the following classes:
 
 [source,groovy]
+.src/main/groovy/databinding/Gadget.groovy
 ----
-// src/groovy/databinding/Gadget.groovy
 package databinding
 
 class Gadget {
@@ -748,8 +743,8 @@ class Gadget {
 ----
 
 [source,groovy]
+.src/main/groovy/databinding/Shape.groovy
 ----
-// src/groovy/databinding/Shape.groovy
 package databinding
 
 class Shape {
@@ -762,8 +757,8 @@ A `Gadget` has 2 `Shape` fields.  A `Shape` has an `area` property.  It may be t
 The way to register a structured editor with the data binding process is to add an instance of the {apiDocs}org/grails/databinding/TypedStructuredBindingEditor.html[org.grails.databinding.TypedStructuredBindingEditor] interface to the Spring application context.  The easiest way to implement the `TypedStructuredBindingEditor` interface is to extend the {apiDocs}org/grails/databinding/converters/AbstractStructuredBindingEditor.html[org.grails.databinding.converters.AbstractStructuredBindingEditor] abstract class and override the `getPropertyValue` method as shown below:
 
 [source,groovy]
+.src/main/groovy/databinding/converters/StructuredShapeEditor.groovy
 ----
-// src/groovy/databinding/converters/StructuredShapeEditor.groovy
 package databinding.converters
 
 import databinding.Shape
@@ -789,11 +784,10 @@ class StructuredShapeEditor extends AbstractStructuredBindingEditor<Shape> {
 An instance of that class needs to be registered with the Spring application context:
 
 [source,groovy]
+.grails-app/conf/spring/resources.groovy
 ----
-// grails-app/conf/spring/resources.groovy
 beans = {
     shapeEditor databinding.converters.StructuredShapeEditor
-
     // ...
 }
 ----
@@ -801,13 +795,12 @@ beans = {
 When the data binder binds to an instance of the `Gadget` class it will check to see if there are request parameters with names `compressedShape` and `expandedShape` which have a value of "struct" and if they do exist, that will trigger the use of the `StructuredShapeEditor`.  The individual components of the structure need to have parameter names of the form propertyName_structuredElementName.  In the case of the `Gadget` class above that would mean that the `compressedShape` request parameter should have a value of "struct" and the `compressedShape_width` and `compressedShape_height` parameters should have values which represent the width and the height of the compressed `Shape`.  Similarly, the `expandedShape` request parameter should have a value of "struct" and the `expandedShape_width` and `expandedShape_height` parameters should have values which represent the width and the height of the expanded `Shape`.
 
 [source,groovy]
+.grails-app/controllers/demo/DemoController.groovy
 ----
-// grails-app/controllers/demo/DemoController.groovy
 class DemoController {
 
     def createGadget(Gadget gadget) {
         /*
-
         /demo/createGadget?expandedShape=struct&expandedShape_width=80&expandedShape_height=30
                           &compressedShape=struct&compressedShape_width=10&compressedShape_height=3
 
@@ -815,9 +808,7 @@ class DemoController {
 
         // with the request parameters shown above gadget.expandedShape.area would be 2400
         // and gadget.compressedShape.area would be 30
-
         // ...
-
     }
 }
 ----
@@ -915,10 +906,9 @@ public interface BindEventListener {
 Support for `BindEventListener` is disabled by default.  To enable support assign a value of `true` to the `grails.databinding.enableSpringEventAdapter` property in `grails-app/conf/application.groovy`.
 
 [source,groovy]
+.grails-app/conf/application.groovy
 ----
-// grails-app/conf/application.groovy
 grails.databinding.enableSpringEventAdapter=true
-
 ...
 ----
 
@@ -931,8 +921,8 @@ With `enableSpringEventAdapter` set to `true` instances of `BindEventListener` w
 There are situations where an application may want to use the data binder directly.  For example, to do binding in a Service on some arbitrary object which is not a domain class.  The following will not work because the `properties` property is read only.
 
 [source,groovy]
+.src/main/groovy/bindingdemo/Widget.groovy
 ----
-// src/groovy/bindingdemo/Widget.groovy
 package bindingdemo
 
 class Widget {
@@ -942,8 +932,8 @@ class Widget {
 ----
 
 [source,groovy]
+.grails-app/services/bindingdemo/WidgetService.groovy
 ----
-// grails-app/services/bindingdemo/WidgetService.groovy
 package bindingdemo
 
 class WidgetService {
@@ -959,8 +949,8 @@ class WidgetService {
 An instance of the data binder is in the Spring application context with a bean name of `grailsWebDataBinder`.  That bean implements the {apiDocs}org/grails/databinding/DataBinder.html[DataBinder] interface.  The following code demonstrates using the data binder directly.
 
 [source,groovy]
+.grails-app/services/bindingdmeo/WidgetService
 ----
-// grails-app/services/bindingdmeo/WidgetService
 package bindingdemo
 
 import org.grails.databinding.SimpleMapDataBindingSource
