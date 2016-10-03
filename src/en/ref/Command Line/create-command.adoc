@@ -29,7 +29,21 @@ class MyExampleCommand implements ApplicationCommand {
 }
 ----
 
-The command can then be run with:
+Commands can be executed with the `runCommand` command.
+
+[source,groovy]
+----
+grails run-command myExample
+----
+
+Or as a Gradle task:
+
+[source,groovy]
+----
+gradle runCommand -Pargs="myExample"
+----
+
+If the command you are executing is defined in a plugin that you have declared a dependency on, then you can execute the command in short form like so:
 
 [source,groovy]
 ----
@@ -59,11 +73,8 @@ buildscript {
 }
 ----
 
-
-
 === Description
-
 
 In order to separate the code generation and build layer, in Grails 3.x scripts created with `create-script` do not have access to the running application instance.
 
-Instead, Grails 3.x features a new concept called an {apiDocs}grails/dev/commands/ApplicationCommand.html[ApplicationCommand] that is invoked via Gradle to perform tasks such as interact with the database etc.
+Instead, Grails 3.x features a new concept called an http://docs.grails.org/latest/api/grails/dev/commands/ApplicationCommand.html[ApplicationCommand] that is invoked via Gradle to perform tasks such as interact with the database etc.
