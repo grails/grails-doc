@@ -1,0 +1,41 @@
+There are several ways to consume an event. As mentioned previously services and controllers implement the http://docs.grails.org/latest/api/grails/events/Events.html[Events] trait.
+
+The `Events` trait provides several methods to register event consumers. For example:
+
+[source,groovy]
+----
+on("myEvent") {
+    println "Event fired!"
+}
+----
+
+Note that if you wish a class (other than a controller or service) to be an event consumer you simply have to implement the `Events` trait and ensure the class is registered as a Spring bean.
+
+For example given the following class:
+
+[source,groovy]
+----
+import grails.events.*
+import javax.annotation.*
+
+class MyClass implements Events {
+
+	@PostConstruct
+	void init() {
+		on("myEvent") {
+		    println "Event fired!"
+		}		
+	}	
+}
+----
+
+You can override `doWithSpring` in your `Application` class to register it as a Spring bean (or annotate it with `Component`):
+
+[source,groovy]
+----
+Closure doWithSpring() {
+        {->
+    		myClass(MyClass)
+        }
+    }
+----

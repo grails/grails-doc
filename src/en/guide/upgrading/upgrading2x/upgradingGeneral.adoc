@@ -1,0 +1,140 @@
+There are other miscellaneous changes between Grails 2.x and Grails 3.x that it may help to be aware of when migrating your applications and plugins. Minor changes may be required.
+
+
+==== Domain classes
+
+
+The <<constraints,Constraints>> section of a <<GORM,Domain Class>> (or other validateable object) looks like this:
+[source,groovy]
+----
+static constraints = {
+  name nullable: true, blank: false
+  myField nullable: true
+  another unique: true
+}
+----
+
+In Grails 2.x, fields with no constraints could be declared in the <<constraints,Constraints>> block, as a method call with no arguments. Example (NB. the following syntax is *no longer* supported):
+[source,groovy]
+----
+static constraints = {
+  name nullable: true, blank: false
+  mySimpleProperty()                  // <- A field that has no constraints. This syntax is not supported in Grails 3.
+  anotherProperty unique: true
+}
+----
+
+A different syntax has to be used in Grails 3. Either remove the field declaration from the constraints block (if there are no constraints to specify for it), or to keep the field placeholder, pass an empty map argument: `\[:\]` instead of `()`.
+
+Replacement code for Grails 3.x:
+[source,groovy]
+----
+static constraints = {
+  name nullable: true, blank: false
+  mySimpleProperty [:]                // <- Empty map argument instead of ()
+  anotherProperty unique: true
+}
+----
+
+If such declarations have not yet been changed then a log message like this emits on startup:
+[source,groovy]
+----
+ORM Mapping Invalid: Specified config option <<mySimpleProperty>> does not exist for class [example.MyDomainClass]
+----
+
+
+==== Multi-project builds (Grails 2.x inline plugins)
+
+
+If your project had inline plugins in Grails 2.x, contains ASTs, or if your project is composed of several modules or related applications then you may decide to restructure your project as a Gradle *multi-project build*.
+
+Sample multi-project structure:
+
+[source,java]
+----
++ example
+    + example-app   <-- Main app
+    + example-core  <-- Shared code plugin
+    + example-ast   <-- AST transformations plugin
+----
+
+How to configure this is documented in the <<plugins,Plugins>> section under the heading 'Inline Plugins in Grails 3.0'.
+
+
+==== Migrating from Grails 2.x to Grails 3.1+
+
+
+During the progress of migrating code from Grails 2.4 to Grails 3.1+, your project (and the plugins that your project depends on) will be moving to GORM 5 (or higher) and other newer library versions. You might also wish to familiarise yourself with the differences mentioned in the section <<upgrading3x,Upgrading from Grails 3.0>>.
+
+
+==== AST Transformations
+
+
+If your application contains AST transformations, please be aware that for these to be applied to your application code, they must now be contained *within a plugin*. (In Grails 2.x it was possible to pre-compile AST transformations then apply them to your application code by hooking into compile events in `_Events.groovy`. This is no longer possible. Move your AST Transformation classes and associated annotations into a plugin for this purpose.)
+
+There are two AST patterns on which you can base migration of your AST transformer code:
+
+* Groovy way: Use Groovy AST transformation annotations.
+* Grails way: Use Grails AST transformer annotations.
+
+
+===== Groovy AST transformations
+
+
+* Import `org.codehaus.groovy.transform.GroovyASTTransformation`
+* Annotate your transformation class with `GroovyASTTransformation(phase=CompilePhase.CANONICALIZATION)`
+* A useful example app can be found here: <<ref-comjeffbrowngrails3ast-grails3ast,grails3ast>>
+
+
+===== Grails AST transformations
+
+
+* Import `grails.compiler.ast.AstTransformer`
+* Annotate your transformation class with `AstTransformer`
+* Implement applicable interfaces, particularly if you are transforming Artefacts, e.g. `implements GrailsArtefactClassInjector, AnnotatedClassInjector`
+* Your Transformer class must reside in a package under *org.grails.compiler*, otherwise it will not be detected. Example: *org.grails.compiler.myapp*
+* Examples can be found in the Grails source code
+* Example reference: <<ref-java-ControllerActionTransformer.java,ControllerActionTransformer.java>>
+
+
+==== Deployment to containers
+
+
+Grails uses Spring Boot to embed a Tomcat or Jetty instance by default. To build a war file for deployment to a container you will need to make a simple change to `build.gradle` (so that a container is not embedded).
+
+If you deploy to a Tomcat 7 container then there is an additional step. Grails 3 is built against Tomcat 8 APIs by default. You will need to change the target Tomcat version in the build to 7. 
+
+There are standalone deployment options available.
+
+Refer to the <<deployingAnApplication,Deployment guide>> for further details.
+
+
+==== Multiple datasources
+
+
+If your application uses multiple datasources, then be aware that the way these are declared in `application.yml` or `application.groovy` (previously `DataSources.groovy`) has changed.
+
+If there is more than one DataSource in an application there is now a `dataSources { ... }` configuration block to contain them all. Previously, multiple `dataSource` declarations were used, with an underscore and suffix on the additional datasources, e.g. `dataSource_lookup { ... }`.
+
+Please refer to the user guide section on <<multipleDatasources,Multiple Datasources>> for examples.
+
+
+==== Improvements to dependency injection
+
+
+In your Grails 2.x app you may have used Spring `\`Autowired@ in a few situations, such as dependency injection into certain base classes, and for typed field dependency injection. For example:
+
+[source,groovy]
+----
+@Autowired
+org.quartz.Scheduler quartzScheduler
+----
+
+Grails now has support for dependency injection into typed fields in addition to untyped `def` fields, following the usual Grails conventions of field name matching the bean property name. Example:
+
+[source,groovy]
+----
+GrailsApplication grailsApplication
+----
+
+You may find that `\`Autowired` no longer works as it did previously in your code on artefacts or base classes, in certain scenarios, resulting in NULL for these fields. Changing these to a simple typed Grails dependency following the Grails naming convention and removing `\`Autowired` should resolve this.

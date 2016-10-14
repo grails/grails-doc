@@ -1,0 +1,44 @@
+=== Contributing Simple Changes
+
+The user guide is written using http://asciidoctor.org/docs/user-manual/[Asciidoctor]. The simplest way to contribute fixes is to simply click on the "Improve this doc" link that is to the right of each section of the documentation.
+
+This will link to the Github edit screen where you can make changes, preview them and create a pull request.
+
+=== Building the Guide
+
+If you want to make significant changes, such as changing the structure of the table of contents etc. then we recommend you build the user guide. To do that simply checkout the sources from github:
+
+[source,bash]
+----
+$ git clone https://github.com/grails/grails-doc/
+$ cd grails-doc
+----
+
+The source files can be found in the `src/en/guide` directory. Whilst the Table of Contents (TOC) is defined in the `src/en/guide/toc.yml` file.
+
+Each YAML key points to a Asciidoc template. For example consider the following YAML:
+
+[source,yaml]
+----
+introduction:
+  title: Introduction
+  whatsNew:
+    title: What's new in Grails 3.2?
+  ...
+----
+
+The `introduction` key points to `src/en/guide/introduction.adoc`. The `title` key defines the title that is dislayed in the TOC. Because `whatsNew` key is nested underneath the `introduction` key it points to `src/en/guide/introduction/whatsNew.adoc`, which is nested in a directory called `introduction`.
+
+Essentially, using the `toc.yml` file and the directory structure you can manipulate the structure of the user guide.
+
+To generate the documentation run the `publishGuide` task:
+
+[source,bash]
+----
+$ ./gradlew publishGuide -x apiDocs
+----
+
+NOTE: In the above example we skip the `apiDocs` task to speed up building of the guide, otherwise all Groovydoc documentation will be built too!
+
+Once the guide is built simply open the `build/docs/index.html` file in a browser to review your changes.
+

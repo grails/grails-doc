@@ -1,0 +1,156 @@
+Automated testing is a key part of Grails. Hence, Grails provides many ways to making testing easier from low level unit testing to high level functional tests. This section details the different capabilities that Grails offers for testing.
+
+The first thing to be aware of is that all of the `create-\*` and `generate-\*` commands create `unit` or `integration` tests automatically. For example if you run the link:../ref/Command%20Line/create-controller.html[create-controller] command as follows:
+
+[source,java]
+----
+grails create-controller com.acme.app.simple
+----
+
+Grails will create a controller at `grails-app/controllers/com/acme/app/SimpleController.groovy`, and also a unit test at `test/unit/com/acme/app/SimpleControllerTests.groovy`. What Grails won't do however is populate the logic inside the test! That is left up to you.
+
+NOTE: The default class name suffix is `Tests` but as of Grails 1.2.2, the suffix of `Test` is also supported.
+
+
+==== Running Tests
+
+
+Tests are run with the link:../ref/Command%20Line/test-app.html[test-app] command:
+
+[source,java]
+----
+grails test-app
+----
+
+The command will produce output such as:
+
+[source,java]
+----
+-------------------------------------------------------
+Running Unit Tests...
+Running test FooTests...FAILURE
+Unit Tests Completed in 464ms ...
+-------------------------------------------------------
+
+Tests failed: 0 errors, 1 failures
+----
+
+whilst showing the reason for each test failure.
+
+NOTE: You can force a clean before running tests by passing `-clean` to the `test-app` command.
+
+Grails writes both plain text and HTML test reports to the `target/test-reports` directory, along with the original XML files. The HTML reports are generally the best ones to look at.
+
+Using Grails' link:commandLine.html#interactiveMode[interactive mode] confers some distinct advantages when executing tests. First, the tests will execute significantly faster on the second and subsequent runs. Second, a shortcut is available to open the HTML reports in your browser:
+
+[source,java]
+----
+open test-report
+----
+
+You can also run your unit tests from within most IDEs.
+
+
+==== Targeting Tests
+
+
+You can selectively target the test(s) to be run in different ways. To run all tests for a controller named `SimpleController` you would run:
+
+[source,groovy]
+----
+grails test-app SimpleController
+----
+
+This will run any tests for the class named `SimpleController`. Wildcards can be used...
+
+[source,groovy]
+----
+grails test-app *Controller
+----
+
+This will test all classes ending in `Controller`. Package names can optionally be specified...
+
+[source,groovy]
+----
+grails test-app some.org.*Controller
+----
+
+or to run all tests in a package...
+
+[source,groovy]
+----
+grails test-app some.org.*
+----
+
+or to run all tests in a package including subpackages...
+
+[source,groovy]
+----
+grails test-app some.org.**.*
+----
+
+You can also target particular test methods...
+
+[source,groovy]
+----
+grails test-app SimpleController.testLogin
+----
+
+This will run the `testLogin` test in the `SimpleController` tests. You can specify as many patterns in combination as you like...
+
+[source,groovy]
+----
+grails test-app some.org.* SimpleController.testLogin BookController
+----
+
+NOTE: In Grails 2.x, adding `-rerun` as an argument would only run those tests which failed in the previous test-app run. This argument is no longer supported.
+
+
+==== Debugging
+
+
+In order to debug your tests via a remote debugger, you can add `--debug-jvm` after `grails` in any commands, like so:
+
+[source,groovy]
+----
+grails --debug-jvm test-app
+----
+
+This will open the default Java remote debugging port, 5005, for you to attach a remote debugger from your editor / IDE of choice.
+
+NOTE: This differs from Grails 2.3 and previous, where the `grails-debug` command existed.
+
+
+==== Targeting Test Phases
+
+
+In addition to targeting certain tests, you can also target test _phases._ By default Grails has two testing phases `unit` and `integration.`
+
+NOTE: Grails 2.x uses `phase:type` syntax. In Grails 3.0 it was removed, because it made no sense in Gradle context.
+
+To execute `unit` tests you can run:
+
+[source,groovy]
+----
+grails test-app -unit
+----
+
+To run `integration` tests you would run...
+
+[source,groovy]
+----
+grails test-app -integration
+----
+
+
+==== Targeting Tests When Using Phases
+
+
+Test and phase targeting can be applied at the same time:
+
+[source,groovy]
+----
+grails test-app some.org.**.* -unit
+----
+
+This would run all tests in the `unit` phase that are in the package `some.org` or a subpackage.

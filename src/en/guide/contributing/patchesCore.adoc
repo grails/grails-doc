@@ -1,0 +1,85 @@
+If you want to submit patches to the project, you simply need to fork the repository on GitHub rather than clone it directly. Then you will commit your changes to your fork and send a pull request for a core team member to review.
+
+
+=== Forking and Pull Requests
+
+One of the benefits of http://github.com[GitHub] is the way that you can easily contribute to a project by https://help.github.com/articles/fork-a-repo/[forking the repository] and https://help.github.com/articles/creating-a-pull-request/[sending pull requests] with your changes.
+
+What follows are some guidelines to help ensure that your pull requests are speedily dealt with and provide the information we need. They will also make your life easier!
+
+
+==== Make sure your fork is up to date
+
+
+Making changes to outdated sources is not a good idea. Someone else may have already made the change.
+[source,groovy]
+----
+git pull upstream master
+----
+
+
+==== Create a local branch for your changes
+
+
+Your life will be greatly simplified if you create a local branch to make your changes on. For example, as soon as you fork a repository and clone the fork locally, execute
+[source,groovy]
+----
+git checkout -b issue_123
+----
+
+This will create a new local branch called "issue_123" based off the "master" branch. Of course, you can name the branch whatever you like, but a good idea would be to reference the GitHub issue number that the change is relevant to. Each Pull Request should have its own branch.
+
+
+==== Create Github issues for non-trivial changes
+
+
+For any non-trivial changes, raise an issue on github if one doesn't already exist. That helps us keep track of what changes go into each new version of Grails.
+
+
+==== Include github issue ID in commit messages
+
+
+This may not seem particularly important, but having a github issue ID in a commit message means that we can find out at a later date why a change was made. Include the ID in any and all commits that relate to that issue. If a commit isn't related to an issue, then there's no need to include an issue ID.
+
+
+==== Make sure your fork is up to date again and rebase
+
+
+Since the core developers must merge your commits into the main repository, it makes life much easier if your fork on GitHub is up to date before you send a pull request.
+
+Let's say you have the main repository set up as a remote called "upstream" and you want to submit a pull request. Also, all your changes are currently on the local "issue_123" branch but not on "master". The first step involves pulling any changes from the main repository that have been added since you last fetched and merged:
+[source,groovy]
+----
+git checkout master
+git pull upstream master
+----
+
+This should complete without any problems or conflicts. Next, rebase your local branch against the now up-to-date master:
+[source,groovy]
+----
+git checkout issue_123
+git rebase master
+----
+
+What this does is rearrange the commits such that all of your changes come after the most recent one in master. Think adding some cards to the top of a deck rather than shuffling them into the pack.
+
+
+==== Push your branch to GitHub and send Pull Request
+
+
+Finally, you must push your changes to your fork on GitHub, otherwise the core developers won't be able to pick them up:
+
+[source,groovy]
+----
+git push origin issue_123
+----
+
+NOTE: You should not merge your branch to your forks master. If the Pull Request is not accepted, your master will then be out of sync with upstream forever.
+
+You're now ready to send the pull request from the GitHub user interface.
+
+
+==== Say what your pull request is for
+
+
+A pull request can contain any number of commits and it may be related to any number of issues. In the pull request message, please specify the IDs of all issues that the request relates to. Also give a brief description of the work you have done, such as: "I refactored the data binder and added support for custom number editors. Fixes #xxxx".

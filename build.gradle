@@ -1,6 +1,28 @@
+buildscript {
+    repositories {
+        mavenLocal()
+        maven { url = "http://repo.grails.org/grails/core" }
+    }
+
+    dependencies {
+        classpath "org.grails:grails-docs:${project.'grails.version'}"
+        classpath 'org.codehaus.groovy:groovy-all:2.4.0'
+        classpath "org.grails:gdoc-to-asciidoc:1.0.1"
+    }
+}
+
+plugins {
+    id 'org.asciidoctor.convert' version '1.5.3'
+}
+
+asciidoctorj {
+    version = '1.5.4'
+}
+
 import org.apache.tools.ant.taskdefs.condition.Os
 
 apply plugin: "base"
+apply plugin: "org.grails.grails-gdoc-to-asciidoc"
 
 version = project.getProperty("grails.version")
 
@@ -8,7 +30,7 @@ archivesBaseName = "grails-docs"
 
 ext.checkOutDir = "${buildDir.path}/checkout"
 ext.outputDir = "${buildDir.path}/docs"
-ext.githubBranch = "master"
+ext.githubBranch = "3.2.x"
 
 ext.explicitGrailsHome = System.getProperty("grails.home") ?: (project.hasProperty('grails.home') ? project.getProperty("grails.home") : null)
 ext.grailsHome = explicitGrailsHome ? file(explicitGrailsHome).absolutePath : "$checkOutDir/grails-src"
@@ -17,16 +39,21 @@ configurations {
     publish
 }
 
-buildscript {
-    repositories {
-        mavenLocal()
-        maven { url = "http://repo.grails.org/grails/core" }
-    }
-
-    dependencies {
-        classpath "org.grails:grails-docs:3.0.0"
-        classpath 'org.codehaus.groovy:groovy-all:2.4.0'
-    }
+gdoc2asciidoc {
+    apiLinks = ['org.hibernate':'http://docs.jboss.org/hibernate/orm/current/javadocs/',
+                'org.springframework.boot':'http://docs.spring.io/spring-boot/docs/current/api',
+                'org.springframework':'http://docs.spring.io/spring/docs/current/javadoc-api/',
+                'javax.servlet':'http://docs.oracle.com/javaee/1.4/api/',
+                'java.':'http://docs.oracle.com/javase/6/docs/api/',
+                'groovy.':'http://docs.groovy-lang.org/docs/latest/html/api/',
+                'org.codehaus.groovy.grails':"http://docs.grails.org/$githubBranch/api",
+                'grails.orm.':'http://gorm.grails.org/latest/api',
+                'grails.gorm.':'http://gorm.grails.org/latest/api',
+                'grails.':"http://docs.grails.org/$githubBranch/api",
+                'org.grails.':"http://docs.grails.org/$githubBranch/api"
+    ]
+    resourcesDir = file("resources")
+    srcDir = file("src/en")
 }
 
 task buildscriptDependencies(type: DependencyReportTask) {
@@ -82,6 +109,28 @@ task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
     environment "GRADLE_OPTS", "-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
 }
 
+asciidoctor {
+    resources {
+        from('resources')
+    }
+
+    options template_dirs: ["${projectDir}/src/docs/templates"]
+
+    attributes 'experimental'  : 'true',
+               'compat-mode'   : 'true',                              
+               'icons'         : 'font',
+               'linkcss'       : 'true',     
+               'docinfo1'      : '',   
+               'toc'           : 'left',  
+                // stylesdir: "${projectDir}/resources/css",
+                // stylesheet: 'style.css',               
+               'version'       : project.version,
+               'sourcedir'     : "$checkOutDir/grails-src"
+}
+
+
+asciidoctor.dependsOn(apiDocs)
+
 apiDocs.onlyIf { !System.getProperty("disable.groovydocs") }
 
 task copyApiDocs(type: Copy) {
@@ -101,8 +150,10 @@ task publishGuide(type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', '
     // No language setting because we want the English guide to be
     // generated with a 'en' in the path, but the source is in 'en'
     // so that it's easy to track with git.
+    sourceRepo = "https://github.com/grails/grails-doc/edit/$githubBranch/src/en"
     sourceDir = new File(projectDir, "src/en")
     propertiesFiles = [ new File(projectDir, "gradle.properties") ]
+    asciidoc = true
     macros = [ new grails.doc.macros.GspTagSourceMacro(searchDirs) ]
 }
 

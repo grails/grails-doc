@@ -1,0 +1,61 @@
+Another important thing to note about errors in Grails is that error messages are not hard coded anywhere. The http://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/validation/FieldError.html[FieldError] class in Spring resolves messages from message bundles using Grails' <<i18n,i18n>> support.
+
+
+==== Constraints and Message Codes
+
+
+The codes themselves are dictated by a convention. For example consider the constraints we looked at earlier:
+
+[source,java]
+----
+package com.mycompany.myapp
+
+class User {
+    ...
+
+    static constraints = {
+        login size: 5..15, blank: false, unique: true
+        password size: 5..15, blank: false
+        email email: true, blank: false
+        age min: 18
+    }
+}
+----
+
+If a constraint is violated Grails will by convention look for a message code of the form:
+
+[source,java]
+----
+<<Class Name>>.<<Property Name>>.<<Constraint Code>>
+----
+
+In the case of the `blank` constraint this would be `user.login.blank` so you would need a message such as the following in your `grails-app/i18n/messages.properties` file:
+
+[source,java]
+----
+user.login.blank=Your login name must be specified!
+----
+
+The class name is looked for both with and without a package, with the packaged version taking precedence. So for example, com.mycompany.myapp.User.login.blank will be used before user.login.blank. This allows for cases where your domain class message codes clash with a plugin's.
+
+For a reference on what codes are for which constraints refer to the reference guide for each constraint (e.g. link:../ref/Constraints/blank.html[blank]).
+
+
+==== Displaying Messages
+
+
+The link:../ref/Tags/renderErrors.html[renderErrors] tag will automatically look up messages for you using the link:../ref/Tags/message.html[message] tag. If you need more control of rendering you can handle this yourself:
+
+[source,xml]
+----
+<g:hasErrors bean="${user}">
+  <ul>
+   <g:eachError var="err" bean="${user}">
+       <li><g:message error="${err}" /></li>
+   </g:eachError>
+  </ul>
+</g:hasErrors>
+----
+
+In this example within the body of the link:../ref/Tags/eachError.html[eachError] tag we use the link:../ref/Tags/message.html[message] tag in combination with its `error` argument to read the message for the given error.
+
