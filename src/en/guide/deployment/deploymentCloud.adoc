@@ -1,20 +1,22 @@
 Grails apps can be deployed very easily to the cloud.
 
-h3. Boxfuse and Amazon Web Services
+=== Boxfuse and Amazon Web Services
 
-[Boxfuse|https://boxfuse.com] turns your Grails executable jar or war into a minimal VM image that can be deployed unchanged either on VirtualBox or on AWS. Boxfuse comes with deep integration for Grails and will use the information from your Grails configuration file to automatically configure ports and health check URLs. Boxfuse leverages this information both for the images it produces as well as for all the resources it provisions (instances, security groups, elastic load balancers, etc).
+https://boxfuse.com[Boxfuse] turns your Grails executable jar or war into a minimal VM image that can be deployed unchanged either on VirtualBox or on AWS. Boxfuse comes with deep integration for Grails and will use the information from your Grails configuration file to automatically configure ports and health check URLs. Boxfuse leverages this information both for the images it produces as well as for all the resources it provisions (instances, security groups, elastic load balancers, etc).
 
 Make sure you have created a Boxfuse account, connected it to your AWS account, and installed the latest version of the Boxfuse Client.
 
 Deploying your Grails app (packaged as a jar or war) to AWS with Boxfuse is then as simple as executing one command:
 
-{code}
+[source,groovy]
+----
 boxfuse run my-grails-app-1.0.jar -env=prod
-{code}
+----
 
 Boxfuse will create an image for your application, upload it, and then configure and start the necessary resources on AWS:
 
-{code:xml}
+[source,xml]
+----
 Creating myuser/my-grails-app ...
 Fusing Image for my-grails-app-1.0.jar ...
 Image fused in 00:05.089s (97828 K) -> myuser/my-grails-app:1.0
@@ -32,8 +34,8 @@ Payload started in 00:45.567s -> http://52.59.247.126:8080/health
 Remapping Elastic IP 52.29.77.147 to i-2c1daf90 ...
 Waiting 15s for AWS to complete Elastic IP Zero Downtime transition ...
 Deployment completed successfully. myuser/my-grails-app:1.0 is up and running at http://mygrailsapp-myuser.boxfuse.io:8080/
-{code}
+----
 
 Your Grails application should now be up and running on AWS.
 
-There's a [blog post on deploying Grails apps on AWS|https://boxfuse.com/blog/grails-aws] as well as documentation for the [Boxfuse Grails integration|https://boxfuse.com/docs/payloads/grails] on their website that will get you started in minutes.
+There's a https://boxfuse.com/blog/grails-aws[blog post on deploying Grails apps on AWS] as well as documentation for the https://boxfuse.com/docs/payloads/grails[Boxfuse Grails integration] on their website that will get you started in minutes.
