@@ -1,7 +1,29 @@
+==== AngularJS Scaffolding
+
 The `angular` profile has been refined and now also includes a new https://grails.org/plugins.html#plugin/angular-scaffolding[Angular Scaffolding] plugin.
 
 The Angular scaffolding plugin adds an `ng-generate-all` command which will generate the necessary AngularJS 1.x client code to perform CRUD operations in conjunction with a Grails 3 backend.
 
 Not only does this serve as a useful tool to get up and running quickly, but (like previous versions of scaffolding) it is a great way for developers to learn how to integrate AngularJS and Grails 3.
 
-TIP: Support for Angular 2 is planned for the future.
+==== Angular 2 Profile (3.2.1+)
+
+Starting with Grails 3.2.1, the Angular 2 profile is available for use. To create a fresh application:
+
+[source,bash]
+----
+grails create-app test-ng -profile angular2
+----
+
+A multi-project build will be created with a separate project for the client and server applications. To make things easier, the tasks `test`, `integrationTest`, and `bootRun` have been created in the client application to make executing those tasks easier across the whole application.
+
+Since Gradle executes tasks synchronously, and the `bootRun` task will never finish, it is important to execute it in parallel. At the root of the project:
+
+[source,bash]
+----
+./gradlew bootRun --parallel
+----
+
+This will start both the client and server side applications simultaneously.
+
+For more information on how the new profile works, see the link:webServices.html#angular2Profile[section in the user guide].
