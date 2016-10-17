@@ -101,21 +101,25 @@ You will notice that if `Book.list()` returns an empty list then the model varia
 ...
 ----
 
-If you wish to be more explicit and control the name of the model variable then you can pass the model directly using `respond` and a map argument:
+There are cases where you may wish to be more explicit and control the name of the model variable. For example if you have a domain inheritance hierarchy where a call to `list()` my return different child classes relying on automatic calculation may not be reliable.
+
+In this case you should pass the model directly using `respond` and a map argument:
 
 [source,groovy]
 ----
 respond bookList: Book.list()
 ----
 
-You can also add additional values to the calculated model by passing a `model` argument:
+TIP: When responding with any kind of mixed argument types in a collection, always use an explicit model name.
+
+If you simply wish to augment the calculated model then you can do so by passing a `model` argument:
 
 [source,groovy]
 ----
 respond Book.list(), [model: [bookCount: Book.count()]]
 ----
 
-The above example will produce a model like `[bookList:books, bookCount:totalBooks]`.
+The above example will produce a model like `[bookList:books, bookCount:totalBooks]`, where the calculated model is combined with the model passed in the `model` argument.
 
 ==== Using the render method to output JSON
 
