@@ -53,38 +53,7 @@ def list() {
 This is because there is local variable `books` which Groovy attempts to invoke as a method.
 
 
-==== Using the render method to output JSON
 
-
-The `render` method can also be used to output JSON:
-
-[source,groovy]
-----
-def list() {
-
-    def results = Book.list()
-
-    render(contentType: "application/json") {
-        books(results) { Book b ->
-            title b.title
-        }
-    }
-}
-----
-
-In this case the result would be something along the lines of:
-
-[source,json]
-----
-[
-    {"title":"The Stand"},
-    {"title":"Shining"}
-]
-----
-
-NOTE: This technique for rendering JSON may be ok for very simple responses, but in general you should favour the use of link:webServices.html#jsonViews[JSON Views] and use the view layer rather than embedding logic in your application.
-
-The same dangers with naming conflicts described above for XML also apply to JSON building.
 
 
 ==== Automatic XML Marshalling

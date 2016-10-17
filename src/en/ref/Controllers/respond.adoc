@@ -1,13 +1,8 @@
-
 == respond
-
-
 
 === Purpose
 
-
 Attempts to return the most appropriate type for the requested content type (specified by either the `Accept` header or file extension)
-
 
 === Examples
 
@@ -25,7 +20,21 @@ respond Book.get(1), formats: ['xml', 'json']
 === Description
 
 
-The respond method uses link:../../guide/theWebLayer.html#contentNegotiation[Content Negotiation] to respond with the most appropriate content type. See the documentation on link:../../guide/webServices.html#REST[REST support] for more information.
+The respond method uses link:{guidePath}/theWebLayer.html#contentNegotiation[Content Negotiation] to respond with the most appropriate content type. See the documentation on  link:{guidePath}/webServices.html#REST[REST support] for more information.
+
+If a view is picked for rendering then a model will automatically be calculated to pass to the view.
+
+The following table summarizes this convention:
+
+[cols="3*", options="header"]
+|===
+|Example|Argument Type|Calculated Model Variable
+|`respond Book.list()`|`java.util.List`|`bookList`
+|`respond Book.get(1)` |`example.Book`|`book`
+|`respond( [1,2] )` |`java.util.List`|`integerList`
+|`respond( [1,2] as Set )` |`java.util.Set`|`integerSet`
+|`respond( [1,2] as Integer[] )` |`Integer[]`|`integerArray`
+|===
 
 Parameters:
 
