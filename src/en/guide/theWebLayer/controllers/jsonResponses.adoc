@@ -2,7 +2,7 @@
 
 The `respond` method is the preferred way to return JSON and integrates with link:theWebLayer.html#contentNegotiation[Content Negotiation] and link:webServices.html#jsonViews[JSON Views].
 
-The `respond` method provides content negotiation strategies to intelligently produce an appropriate respond for the given client.
+The `respond` method provides content negotiation strategies to intelligently produce an appropriate response for the given client.
 
 For example given the following controller and action:
 
@@ -58,10 +58,9 @@ class BookController {
 
 In the above example Grails will respond by default with `json` if the media type to respond with cannot be calculated from the `Accept` header or file extension.
 
-
 ==== Using Views to Output JSON Responses
 
-If you define a view (either a GSP or a link:webServices.html#jsonViews[JSON View]) then Grails render the view when using the `respond` method by calculating a model from the argument passed to `respond`.
+If you define a view (either a GSP or a link:webServices.html#jsonViews[JSON View]) then Grails will render the view when using the `respond` method by calculating a model from the argument passed to `respond`.
 
 For example, in the previous listing, if you were to define `grails-app/views/index.gson` and `grails-app/views/index.gsp` views, these would be used if the client requested `application/json` or `text/html` media types respectively. Thus allowing you to define a single backend capible of serving responses to a web browser or representing your application's API.
 
@@ -73,6 +72,7 @@ The following table summarizes this convention:
 |===
 |Example|Argument Type|Calculated Model Variable
 |`respond Book.list()`|`java.util.List`|`bookList`
+|`respond( [] )`|`java.util.List`|`emptyList`
 |`respond Book.get(1)` |`example.Book`|`book`
 |`respond( [1,2] )` |`java.util.List`|`integerList`
 |`respond( [1,2] as Set )` |`java.util.Set`|`integerSet`
@@ -84,21 +84,31 @@ Using this convention you can reference the argument passed to `respond` from wi
 .grails-app/views/book/index.gson
 [source,groovy]
 ----
-@Field List<Book> bookList
+@Field List<Book> bookList = []
 
 json bookList, { Book book ->
     title book.title
 }
 ----
 
-If you wish to control the name of the model variable then you can pass the model directly using `respond` and a map argument:
+You will notice that if `Book.list()` returns an empty list then the model variable name is translated to `emptyList`. This is by design and you should provide a default value in the view if no model variable is specified, such as the `List` in the example above:
+
+.grails-app/views/book/index.gson
+[source,groovy]
+----
+// defaults to an empty list
+@Field List<Book> bookList = []
+...
+----
+
+If you wish to be more explicit and control the name of the model variable then you can pass the model directly using `respond` and a map argument:
 
 [source,groovy]
 ----
 respond bookList: Book.list()
 ----
 
-You can also add additional values to the model by passing a `model` argument:
+You can also add additional values to the calculated model by passing a `model` argument:
 
 [source,groovy]
 ----
