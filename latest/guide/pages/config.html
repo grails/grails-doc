@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>4.1 Basic Configuration 3.2.0</title>
+    <title>4.1 Basic Configuration 3.2.1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -129,14 +129,14 @@ function addJsClass() {
                 <div class="project">
                     <h1>4.1 Basic Configuration</h1>
 
-                    <p><strong>Version:</strong> 3.2.0</p>
+                    <p><strong>Version:</strong> 3.2.1</p>
                 </div>
 
                 
                 <div id="table-of-content">
                     <h2>Table of Contents</h2>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#ymlOptions"><strong>4.1</strong><span>Options for the yml format Config</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#ymlOptions"><strong>4.1</strong><span>Options for the YML format Config</span></a>
                     </div>
                     
                     <div class="toc-item" style="margin-left:0px"><a href="#builtInOptions"><strong>4.2</strong><span>Built in options</span></a>
@@ -146,6 +146,9 @@ function addJsClass() {
                     </div>
                     
                     <div class="toc-item" style="margin-left:0px"><a href="#configGORM"><strong>4.4</strong><span>GORM</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#proxyConfig"><strong>4.5</strong><span>Configuring an HTTP proxy</span></a>
                     </div>
                     
                 </div>
@@ -213,7 +216,7 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>If you want to read runtime configuration settings, i.e. those defined in <code>application.yml</code>, use the <a href="http://docs.grails.org/3.2.0/api/grails/core/GrailsApplication.html">grailsApplication</a> object, which is available as a variable in controllers and tag libraries:</p>
+<p>If you want to read runtime configuration settings, i.e. those defined in <code>application.yml</code>, use the <a href="http://docs.grails.org/3.2.1/api/grails/core/GrailsApplication.html">grailsApplication</a> object, which is available as a variable in controllers and tag libraries:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -227,7 +230,7 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>config</code> property of the <code>grailsApplication</code> object is an instance of the <a href="http://docs.grails.org/3.2.0/api/grails/config/Config.html">Config</a> interface and provides a number of useful methods to read the configuration of the application.</p>
+<p>The <code>config</code> property of the <code>grailsApplication</code> object is an instance of the <a href="http://docs.grails.org/3.2.1/api/grails/config/Config.html">Config</a> interface and provides a number of useful methods to read the configuration of the application.</p>
 </div>
 <div class="paragraph">
 <p>In particular, the <code>getProperty</code> method (seen above) is useful for efficiently retrieving configuration properties, while specifying the property type (the default type is String) and/or providing a default fallback value.</p>
@@ -306,7 +309,7 @@ In Groovy code you must use single quotes around the string for the value of the
 </div>
 
 
-<h2 id="ymlOptions">4.1.1 Options for the yml format Config</h2>
+<h2 id="ymlOptions">4.1.1 Options for the YML format Config</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/conf/config/ymlOptions.adoc"'>
@@ -480,6 +483,46 @@ If you prefer XML you can replace the <code>logback.groovy</code> file with a <c
 <p><code>grails.gorm.autoFlush</code> - If set to <code>true</code>, causes the <a href="../ref/Domain%20Classes/merge.html">merge</a>, <a href="../ref/Domain%20Classes/save.html">save</a> and <a href="../ref/Domain%20Classes/delete.html">delete</a> methods to flush the session, replacing the need to explicitly flush using <code>save(flush: true)</code>.</p>
 </li>
 </ul>
+</div>
+
+
+<h2 id="proxyConfig">4.1.5 Configuring an HTTP proxy</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/conf/config/proxyConfig.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>To setup Grails to use an HTTP proxy there are two steps. Firstly you need to configure the <code>grails</code> CLI to be aware of the proxy if you wish to use it to create applications and so on. This can be done using the <code>GRAILS_OPTS</code> environment variable, for example on Unix systems:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">export GRAILS_OPTS=&quot;-Dhttps.proxyHost=127.0.0.1 -Dhttps.proxyPort=3128 -Dhttp.proxyUser=test -Dhttp.proxyPassword=test&quot;</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The default profile repository is resolved over HTTPS so <code>https.proxyPort</code> and <code>https.proxyUser</code> are used, however the username and password are specified with <code>http.proxyUser</code> and <code>http.proxyPassword</code>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>For Windows systems the environment variable can be configured under <code>My Computer/Advanced/Environment Variables</code>.</p>
+</div>
+<div class="paragraph">
+<p>With this configuration in place the <code>grails</code> command can connect and authenticate via a proxy.</p>
+</div>
+<div class="paragraph">
+<p>Secondly, since Grails uses Gradle as the build system, you need to configure Gradle to authenticate via the proxy. For instructions on how to do this see the <a href="https://docs.gradle.org/current/userguide/build_environment.html#sec:accessing_the_web_via_a_proxy">Gradle user guide section on the topic</a>.</p>
 </div>
 
 
