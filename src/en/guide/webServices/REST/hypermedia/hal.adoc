@@ -58,6 +58,31 @@ beans = {
 }
 ----
 
+You will also need to update the acceptable response formats for the resource so that the HAL format is included. Not doing so will result in a 406 - Not Acceptable response being returned from the server. 
+
+This can be done by setting the `formats` attribute of the `Resource` transformation:
+
+[source,groovy]
+----
+import grails.rest.*
+
+@Resource(uri='/books', formats=['json', 'xml', 'hal'])
+class Book {
+    ...
+}
+----
+
+Or by updating the `responseFormats` in the controller:
+
+[source,groovy]
+----
+class BookController extends RestfulController {
+    static responseFormats = ['json', 'xml', 'hal']
+
+    // ...
+}
+----
+
 With the bean in place requesting the HAL content type will return HAL:
 
 [source,groovy]
