@@ -105,3 +105,31 @@ script14738267015581837265078.groovy: 13: unable to resolve class com.foo.Bar
 ----
 
 The solution is to create a separate file called `runtime.groovy` in `grails-app/conf`. That file will not be parsed by the CLI and will only be included at runtime.
+
+==== Stop using the default namespace
+
+Using the default package in places like `UrlMappings.groovy`, `BootStrap.groovy` or in a taglib can cause that code to fail or not execute at all when packaged in a JAR or WAR file. Make sure all Groovy/Java files start with the `package` statement and move any affected files to the respective folder. For example, change:
+
+[source,groovy]
+----
+class UrlMappings {
+
+    static mappings = {
+    
+    ...
+----
+
+to:
+
+[source,groovy]
+----
+package myapp
+
+class UrlMappings {
+
+    static mappings = {
+    
+    ...
+----
+
+and copy the file from `grails-app/controllers/UrlMappings.groovy` into `.grails-app/controllers/myapp/UrlMappings.groovy`
