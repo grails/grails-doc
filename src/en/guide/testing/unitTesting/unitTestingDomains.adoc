@@ -1,8 +1,6 @@
-
 ==== Overview
 
-
-Domain class interaction can be tested without involving a real database connection using `DomainClassUnitTestMixin` or by using the `HibernateTestMixin`.
+Domain class interaction can be tested without involving a real database connection using `DomainClassUnitTestMixin`.
 
 The GORM implementation in DomainClassUnitTestMixin is using a simple in-memory `ConcurrentHashMap` implementation. Note that this has limitations compared to a real GORM implementation.
 
@@ -14,21 +12,21 @@ A large, commonly-used portion of the GORM API can be mocked using `DomainClassU
 * Query-by-example
 * GORM Events
 
-`HibernateTestMixin` uses Hibernate 4 and a H2 in-memory database. This makes it possible to use all GORM features also in Grails unit tests.
+If you wish to test GORM using a real database then it is recommended to use one of the following super classes:
 
-All features of GORM for Hibernate can be tested within a `HibernateTestMixin` unit test including:
+* `grails.test.hibernate.HibernateSpec` - Sets up Hibernate for the current test
+* `grails.test.mongodb.MongoSpec` - Sets up MongoDB for the current test
+
+All features of GORM for Hibernate can be tested within a `HibernateSpec` unit test including:
 
 * String-based HQL queries
 * composite identifiers
 * dirty checking methods
 * any direct interaction with Hibernate
 
-The implementation behind `HibernateTestMixin` takes care of setting up the Hibernate with the in-memory H2 database. It only configures the given domain classes for use in a unit test. The @Domain annotation is used to tell which domain classes should be configured.
-
-
+The implementation behind `HibernateSpec` takes care of setting up the Hibernate with the in-memory H2 database.
 
 ==== DomainClassUnitTestMixin Basics
-
 
 `DomainClassUnitTestMixin` is typically used in combination with testing either a controller, service or tag library where the domain is a mock collaborator defined by the `Mock` annotation:
 
@@ -389,24 +387,20 @@ class MyCommandObjectSpec extends Specification {
 
 That's it for testing constraints. One final thing we would like to say is that testing the constraints in this way catches a common error: typos in the "constraints" property name which is a mistake that is easy to make and equally easy to overlook. A unit test for your constraints will highlight the problem straight away.
 
+==== HibernateSpec and MongoSpec Basics
 
 
-==== HibernateTestMixin Basics
-
-
-`HibernateTestMixin` allows Hibernate 4 to be used in Grails unit tests. It uses a H2 in-memory database.
+`HibernateSpec` allows Hibernate to be used in Grails unit tests. It uses a H2 in-memory database. The following documentation covers `HibernateSpec`, but the same concepts can be applied to `MongoSpec`.
 
 [source,groovy]
 ----
-import grails.test.mixin.TestMixin
-import grails.test.mixin.gorm.Domain
-import grails.test.mixin.hibernate.HibernateTestMixin
+package example
+
+import grails.test.hibernate.HibernateSpec
 import spock.lang.Specification
 
 
-@Domain(Person)
-@TestMixin(HibernateTestMixin)
-class PersonSpec extends Specification {
+class PersonSpec extends HibernateSpec {
 
     void "Test count people"() {
         expect: "Test execute Hibernate count query"
@@ -418,37 +412,51 @@ class PersonSpec extends Specification {
 }
 ----
 
-This library dependency is required in build.gradle for adding support for `HibernateTestMixin`.
+By default `HibernateSpec` will scan for domain classes within the package specified by the `grails.codegen.defaultPackage` configuration option or if not specified the same package as the test.
+
+==== Configuring domain classes for HibernateSpec tests
+
+If you only wish to test a limited set of domain classes you can override the `getDomainClasses` method to specify exactly which ones you wish to test:
 
 [source,groovy]
 ----
-dependencies {
-        testCompile 'org.grails:grails-datastore-test-support:4.0.4.RELEASE'
-    }
+package example
+
+import grails.test.hibernate.HibernateSpec
+
+class PersonSpec extends HibernateSpec {
+    ...
+
+    List<Class> getDomainClasses() { [ Person ] }
+}
 ----
 
-HibernateTestMixin is only supported with hibernate4 plugin versions >= 4.3.8.1 .
+==== Testing Controllers and Services with HibernateSpec
+
+If you wish to test a controller or a service with `HibernateSpec` generally you can combine `HibernateSpec` with Grails' default test mixins:
+
 [source,groovy]
 ----
-dependencies {
-        compile "org.grails.plugins:hibernate:4.3.8.1"
-    }
+package example
+
+import grails.test.hibernate.HibernateSpec
+
+@TestFor(BookController)
+class BookControllerUnitSpec extends HibernateSpec {
+
+    ...
+}
+----
+
+However, if the controller or service uses `@Transactional` you will need to assign the transaction manager within the unit test's `setup` method:
+
+[source,groovy]
+----
+def setup() {
+    controller.transactionManager = transactionManager
+}
 ----
 
 
 
-==== Configuring domain classes for HibernateTestMixin tests
 
-
-The `grails.test.mixin.gorm.Domain` annotation is used to configure the list of domain classes to configure for Hibernate sessionFactory instance that gets configured when the unit test runtime is initialized.
-
-`Domain` annotations will be collected from several locations:
-
-* the annotations on the test class
-* the package annotations in the package-info.java/package-info.groovy file in the package of the test class
-* each super class of the test class and their respective package annotations
-* the possible {apiDocs}grails/test/runtime/SharedRuntime.html[SharedRuntime] class
-
-`Domain` annotations can be shared by adding them as package annotations to `package-info.java`/`package-info.groovy` files or by adding them to a {apiDocs}grails/test/runtime/SharedRuntime.html[SharedRuntime] class which has been added for the test.
-
-It's not possible to use DomainClassUnitTestMixin's `Mock` annotation in HibernateTestMixin tests. Use the `Domain` annotation in the place of `Mock` in HibernateTestMixin tests.
