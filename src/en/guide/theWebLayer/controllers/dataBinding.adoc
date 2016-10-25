@@ -892,38 +892,6 @@ public interface DataBindingListener {
 
 Any bean in the Spring application context which implements that interface will automatically be registered with the data binder.  The {apiDocs}org/grails/databinding/events/DataBindingListenerAdapter.html[DataBindingListenerAdapter] class implements the `DataBindingListener` interface and provides default implementations for all of the methods in the interface so this class is well suited for subclassing so your listener class only needs to provide implementations for the methods your listener is interested in.
 
-The Grails data binder has limited support for the older http://docs.grails.org/3.1.x/apiorg/codehaus/groovy/grails/web/binding/BindEventListener.html[BindEventListener] style listeners.  `BindEventListener` looks like this:
-
-[source,groovy]
-----
-package org.codehaus.groovy.grails.web.binding;
-
-import org.springframework.beans.MutablePropertyValues;
-import org.springframework.beans.TypeConverter;
-
-public interface BindEventListener {
-
-    /**
-     * @param target The target to bind to
-     * @param source The source of the binding, typically a Map
-     * @param typeConverter The type converter to be used
-     */
-    void doBind(Object target, MutablePropertyValues source, TypeConverter typeConverter);
-}
-----
-
-Support for `BindEventListener` is disabled by default.  To enable support assign a value of `true` to the `grails.databinding.enableSpringEventAdapter` property in `grails-app/conf/application.groovy`.
-
-[source,groovy]
-----
-// grails-app/conf/application.groovy
-grails.databinding.enableSpringEventAdapter=true
-
-...
-----
-
-With `enableSpringEventAdapter` set to `true` instances of `BindEventListener` which are in the Spring application context will automatically be registered with the data binder.  Notice that the `MutablePropertyValues` and `TypeConverter` arguments to the `doBind` method in `BindEventListener` are Spring specific classes and are not relevant to the current data binder.  The event adapter will pass `null` values for those arguments.  The only real value passed into the `doBind` method will be the object being bound to.  This limited support is provided for backward compatibility and will be useful for a subset of scenarios.  Developers are encouraged to migrate their `BindEventListener` beans to the newer `DataBindingListener` model.
-
 
 ==== Using The Data Binder Directly
 
