@@ -36,3 +36,13 @@ class ControllerTraitInjector implements TraitInjector {
 ----
 
 The above `TraitInjector` will add the `DateTrait` to all controllers. The `getArtefactTypes` method defines the types of artefacts that the trait should be applied to.
+
+The framework discovers trait injectors by way of a `META-INF/grails.factories` descriptor that is in the .jar file.  This descriptor is automatically generated.  The descriptor generated for the code shown above would look like this:
+
+[source]
+----
+#Grails Factories File
+grails.compiler.traits.TraitInjector=myplugin.ControllerTraitInjector,myplugin.DateTraitTraitInjector
+----
+
+That file is generated automatically and added to the .jar file at build time.  If for any reason the application defines its own `grails.factories` file at `src/main/resources/META-INF/grails.factories`, it is important that the trait injectors be explicitly defined in that file.  The auto-generated metadata is only reliable if the application does not define its own `src/main/resources/META-INF/grails.factores` file.
