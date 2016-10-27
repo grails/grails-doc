@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>10.1.10 Hypermedia as the Engine of Application State 3.1.13</title>
+    <title>10.1.11 Hypermedia as the Engine of Application State 3.2.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -127,9 +127,9 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>10.1.10 Hypermedia as the Engine of Application State</h1>
+                    <h1>10.1.11 Hypermedia as the Engine of Application State</h1>
 
-                    <p><strong>Version:</strong> 3.1.13</p>
+                    <p><strong>Version:</strong> 3.2.2</p>
                 </div>
 
                 
@@ -150,10 +150,10 @@ function addJsClass() {
 
                 
 
-<h2 id="hypermedia">10.1.10 Hypermedia as the Engine of Application State</h2>
+<h2 id="hypermedia">10.1.11 Hypermedia as the Engine of Application State</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/webServices/REST/hypermedia.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/webServices/REST/hypermedia.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -167,10 +167,10 @@ function addJsClass() {
 </div>
 
 
-<h2 id="hal">10.1.10.1 HAL Support</h2>
+<h2 id="hal">10.1.11.1 HAL Support</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/webServices/REST/hypermedia/hal.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/webServices/REST/hypermedia/hal.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -233,6 +233,34 @@ function addJsClass() {
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">grails.rest.render.hal.*</span>
 beans = {
     halBookRenderer(HalJsonRenderer, rest.test.Book)
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You will also need to update the acceptable response formats for the resource so that the HAL format is included. Not doing so will result in a 406 - Not Acceptable response being returned from the server.</p>
+</div>
+<div class="paragraph">
+<p>This can be done by setting the <code>formats</code> attribute of the <code>Resource</code> transformation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">grails.rest.*</span>
+
+<span class="annotation">@Resource</span>(uri=<span class="string"><span class="delimiter">'</span><span class="content">/books</span><span class="delimiter">'</span></span>, formats=[<span class="string"><span class="delimiter">'</span><span class="content">json</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">xml</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">hal</span><span class="delimiter">'</span></span>])
+<span class="type">class</span> <span class="class">Book</span> {
+    ...
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or by updating the <code>responseFormats</code> in the controller:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">BookController</span> <span class="directive">extends</span> RestfulController {
+    <span class="directive">static</span> responseFormats = [<span class="string"><span class="delimiter">'</span><span class="content">json</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">xml</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">hal</span><span class="delimiter">'</span></span>]
+
+    <span class="comment">// ...</span>
 }</code></pre>
 </div>
 </div>
@@ -535,10 +563,10 @@ Content-Type: application/vnd.books.org.book+json;charset=ISO-8859-1
 </div>
 
 
-<h2 id="atom">10.1.10.2 Atom Support</h2>
+<h2 id="atom">10.1.11.2 Atom Support</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/webServices/REST/hypermedia/atom.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/webServices/REST/hypermedia/atom.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -585,10 +613,10 @@ beans = {
 </div>
 
 
-<h2 id="vndError">10.1.10.3 Vnd.Error Support</h2>
+<h2 id="vndError">10.1.11.3 Vnd.Error Support</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/webServices/REST/hypermedia/vndError.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/webServices/REST/hypermedia/vndError.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -773,6 +801,12 @@ Content-<span class="predefined-type">Type</span>: application/vnd.error+json;ch
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-command.html">run-command</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

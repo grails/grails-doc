@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>15.1.3 Unit Testing Domains 3.1.13</title>
+    <title>15.1.3 Unit Testing Domains 3.2.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -129,7 +129,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>15.1.3 Unit Testing Domains</h1>
 
-                    <p><strong>Version:</strong> 3.1.13</p>
+                    <p><strong>Version:</strong> 3.2.2</p>
                 </div>
 
                 
@@ -139,7 +139,7 @@ function addJsClass() {
 <h2 id="unitTestingDomains">15.1.3 Unit Testing Domains</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/testing/unitTesting/unitTestingDomains.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/testing/unitTesting/unitTestingDomains.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -148,7 +148,7 @@ function addJsClass() {
 <div class="sect3">
 <h4 id="_overview">Overview</h4>
 <div class="paragraph">
-<p>Domain class interaction can be tested without involving a real database connection using <code>DomainClassUnitTestMixin</code> or by using the <code>HibernateTestMixin</code>.</p>
+<p>Domain class interaction can be tested without involving a real database connection using <code>DomainClassUnitTestMixin</code>.</p>
 </div>
 <div class="paragraph">
 <p>The GORM implementation in DomainClassUnitTestMixin is using a simple in-memory <code>ConcurrentHashMap</code> implementation. Note that this has limitations compared to a real GORM implementation.</p>
@@ -176,10 +176,20 @@ function addJsClass() {
 </ul>
 </div>
 <div class="paragraph">
-<p><code>HibernateTestMixin</code> uses Hibernate 4 and a H2 in-memory database. This makes it possible to use all GORM features also in Grails unit tests.</p>
+<p>If you wish to test GORM using a real database then it is recommended to use one of the following super classes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>grails.test.hibernate.HibernateSpec</code> - Sets up Hibernate for the current test</p>
+</li>
+<li>
+<p><code>grails.test.mongodb.MongoSpec</code> - Sets up MongoDB for the current test</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p>All features of GORM for Hibernate can be tested within a <code>HibernateTestMixin</code> unit test including:</p>
+<p>All features of GORM for Hibernate can be tested within a <code>HibernateSpec</code> unit test including:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -198,7 +208,7 @@ function addJsClass() {
 </ul>
 </div>
 <div class="paragraph">
-<p>The implementation behind <code>HibernateTestMixin</code> takes care of setting up the Hibernate with the in-memory H2 database. It only configures the given domain classes for use in a unit test. The @Domain annotation is used to tell which domain classes should be configured.</p>
+<p>The implementation behind <code>HibernateSpec</code> takes care of setting up the Hibernate with the in-memory H2 database.</p>
 </div>
 </div>
 <div class="sect3">
@@ -220,7 +230,7 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>The example above tests the <code>SimpleController</code> class and mocks the behavior of the <code>Simple</code> domain class as well. For example consider a typical scaffolded <code>save</code> controller action:</p>
+<p>The example above tests the <code>BookController</code> class and mocks the behavior of the <code>Book</code> domain class as well. For example consider a typical scaffolded <code>save</code> controller action:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -335,7 +345,7 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>mockDomain</code> method also includes an additional parameter that lets you pass a Map of Maps to configure a domain, which is useful for fixture-like data:</p>
+<p>The <code>mockDomain</code> method also includes an additional parameter that lets you pass a List of Maps to configure a domain, which is useful for fixture-like data:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -368,9 +378,9 @@ function addJsClass() {
 <p>These are all easily testable in a unit test with no special configuration necessary as long as the test method is marked with <code>TestFor</code> or explicitly applies the <code>GrailsUnitTestMixin</code> using <code>TestMixin</code>.  See the examples below.</p>
 </div>
 <div class="listingblock">
+<div class="title">src/main/groovy/com/demo/MyValidateable.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// src/groovy/com/demo/MyValidateable.groovy</span>
-<span class="keyword">package</span> com.demo
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.demo
 
 <span class="type">class</span> <span class="class">MyValidateable</span> <span class="directive">implements</span> grails.validation.Validateable {
     <span class="predefined-type">String</span> name
@@ -384,9 +394,9 @@ function addJsClass() {
 </div>
 </div>
 <div class="listingblock">
+<div class="title">grails-app/domain/com/demo/Person.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// grails-app/domain/com/demo/Person.groovy</span>
-<span class="keyword">package</span> com.demo
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.demo
 
 <span class="type">class</span> <span class="class">Person</span> {
     <span class="predefined-type">String</span> name
@@ -398,9 +408,9 @@ function addJsClass() {
 </div>
 </div>
 <div class="listingblock">
+<div class="title">grails-app/controllers/com/demo/DemoController.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// grails-app/controllers/com/demo/DemoController.groovy</span>
-<span class="keyword">package</span> com.demo
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.demo
 
 <span class="type">class</span> <span class="class">DemoController</span> {
 
@@ -423,9 +433,9 @@ function addJsClass() {
 </div>
 </div>
 <div class="listingblock">
+<div class="title">test/unit/com/demo/PersonSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// test/unit/com/demo/PersonSpec.groovy</span>
-<span class="keyword">package</span> com.demo
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.demo
 
 <span class="keyword">import</span> <span class="include">grails.test.mixin.TestFor</span>
 <span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
@@ -450,9 +460,9 @@ function addJsClass() {
 </div>
 </div>
 <div class="listingblock">
+<div class="title">test/unit/com/demo/DemoControllerSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// test/unit/com/demo/DemoControllerSpec.groovy</span>
-<span class="keyword">package</span> com.demo
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.demo
 
 <span class="keyword">import</span> <span class="include">grails.test.mixin.TestFor</span>
 <span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
@@ -481,9 +491,9 @@ function addJsClass() {
 </div>
 </div>
 <div class="listingblock">
+<div class="title">test/unit/com/demo/MyValidateableSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// test/unit/com/demo/MyValidateableSpec.groovy</span>
-<span class="keyword">package</span> com.demo
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.demo
 
 <span class="keyword">import</span> <span class="include">grails.test.mixin.TestMixin</span>
 <span class="keyword">import</span> <span class="include">grails.test.mixin.support.GrailsUnitTestMixin</span>
@@ -530,9 +540,9 @@ function addJsClass() {
 </div>
 </div>
 <div class="listingblock">
+<div class="title">test/unit/com/demo/MyCommandObjectSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// test/unit/com/demo/MyCommandObjectSpec.groovy</span>
-<span class="keyword">package</span> com.demo
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.demo
 
 <span class="keyword">import</span> <span class="include">grails.test.mixin.TestMixin</span>
 <span class="keyword">import</span> <span class="include">grails.test.mixin.support.GrailsUnitTestMixin</span>
@@ -581,21 +591,19 @@ function addJsClass() {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hibernatetestmixin_basics">HibernateTestMixin Basics</h4>
+<h4 id="_hibernatespec_and_mongospec_basics">HibernateSpec and MongoSpec Basics</h4>
 <div class="paragraph">
-<p><code>HibernateTestMixin</code> allows Hibernate 4 to be used in Grails unit tests. It uses a H2 in-memory database.</p>
+<p><code>HibernateSpec</code> allows Hibernate to be used in Grails unit tests. It uses a H2 in-memory database. The following documentation covers <code>HibernateSpec</code>, but the same concepts can be applied to <code>MongoSpec</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">grails.test.mixin.TestMixin</span>
-<span class="keyword">import</span> <span class="include">grails.test.mixin.gorm.Domain</span>
-<span class="keyword">import</span> <span class="include">grails.test.mixin.hibernate.HibernateTestMixin</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example
+
+<span class="keyword">import</span> <span class="include">grails.test.hibernate.HibernateSpec</span>
 <span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
 
 
-<span class="annotation">@Domain</span>(Person)
-<span class="annotation">@TestMixin</span>(HibernateTestMixin)
-<span class="type">class</span> <span class="class">PersonSpec</span> <span class="directive">extends</span> Specification {
+<span class="type">class</span> <span class="class">PersonSpec</span> <span class="directive">extends</span> HibernateSpec {
 
     <span class="type">void</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Test count people</span><span class="delimiter">&quot;</span></span>() {
         <span class="key">expect</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Test execute Hibernate count query</span><span class="delimiter">&quot;</span></span>
@@ -608,55 +616,55 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>This library dependency is required in build.gradle for adding support for <code>HibernateTestMixin</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
-        testCompile <span class="string"><span class="delimiter">'</span><span class="content">org.grails:grails-datastore-test-support:4.0.4.RELEASE</span><span class="delimiter">'</span></span>
-    }</code></pre>
+<p>By default <code>HibernateSpec</code> will scan for domain classes within the package specified by the <code>grails.codegen.defaultPackage</code> configuration option or if not specified the same package as the test.</p>
 </div>
 </div>
+<div class="sect3">
+<h4 id="_configuring_domain_classes_for_hibernatespec_tests">Configuring domain classes for HibernateSpec tests</h4>
 <div class="paragraph">
-<p>HibernateTestMixin is only supported with hibernate4 plugin versions &gt;= 4.3.8.1 .</p>
+<p>If you only wish to test a limited set of domain classes you can override the <code>getDomainClasses</code> method to specify exactly which ones you wish to test:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
-        compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails.plugins:hibernate:4.3.8.1</span><span class="delimiter">&quot;</span></span>
-    }</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example
+
+<span class="keyword">import</span> <span class="include">grails.test.hibernate.HibernateSpec</span>
+
+<span class="type">class</span> <span class="class">PersonSpec</span> <span class="directive">extends</span> HibernateSpec {
+    ...
+
+    List&lt;<span class="predefined-type">Class</span>&gt; getDomainClasses() { [ Person ] }
+}</code></pre>
 </div>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_configuring_domain_classes_for_hibernatetestmixin_tests">Configuring domain classes for HibernateTestMixin tests</h4>
+<h4 id="_testing_controllers_and_services_with_hibernatespec">Testing Controllers and Services with HibernateSpec</h4>
 <div class="paragraph">
-<p>The <code>grails.test.mixin.gorm.Domain</code> annotation is used to configure the list of domain classes to configure for Hibernate sessionFactory instance that gets configured when the unit test runtime is initialized.</p>
+<p>If you wish to test a controller or a service with <code>HibernateSpec</code> generally you can combine <code>HibernateSpec</code> with Grails' default test mixins:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example
+
+<span class="keyword">import</span> <span class="include">grails.test.hibernate.HibernateSpec</span>
+
+<span class="annotation">@TestFor</span>(BookController)
+<span class="type">class</span> <span class="class">BookControllerUnitSpec</span> <span class="directive">extends</span> HibernateSpec {
+
+    ...
+}</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p><code>Domain</code> annotations will be collected from several locations:</p>
+<p>However, if the controller or service uses <code>@Transactional</code> you will need to assign the transaction manager within the unit test&#8217;s <code>setup</code> method:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p>the annotations on the test class</p>
-</li>
-<li>
-<p>the package annotations in the package-info.java/package-info.groovy file in the package of the test class</p>
-</li>
-<li>
-<p>each super class of the test class and their respective package annotations</p>
-</li>
-<li>
-<p>the possible <a href="http://docs.grails.org/3.1.13/api/grails/test/runtime/SharedRuntime.html">SharedRuntime</a> class</p>
-</li>
-</ul>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="function">setup</span>() {
+    controller.transactionManager = transactionManager
+}</code></pre>
 </div>
-<div class="paragraph">
-<p><code>Domain</code> annotations can be shared by adding them as package annotations to <code>package-info.java</code>/<code>package-info.groovy</code> files or by adding them to a <a href="http://docs.grails.org/3.1.13/api/grails/test/runtime/SharedRuntime.html">SharedRuntime</a> class which has been added for the test.</p>
-</div>
-<div class="paragraph">
-<p>It&#8217;s not possible to use DomainClassUnitTestMixin&#8217;s <code>Mock</code> annotation in HibernateTestMixin tests. Use the <code>Domain</code> annotation in the place of <code>Mock</code> in HibernateTestMixin tests.</p>
 </div>
 </div>
 
@@ -777,6 +785,12 @@ function addJsClass() {
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-command.html">run-command</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
