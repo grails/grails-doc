@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>The Grails Framework 3.1.14</title>
+    <title>The Grails Framework 3.2.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -124,7 +124,7 @@ function addJsClass(el) {
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
                 
                 <div class='contribute-btn'>
-                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/ref/Controllers/respond.adoc"'>
+                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/ref/Controllers/respond.adoc"'>
                         <i class='fa fa-pencil-square-o'></i> Improve this doc
                     </button>
                 </div>
@@ -156,6 +156,53 @@ respond <span class="predefined-type">Book</span>.get(<span class="integer">1</s
 <div class="paragraph">
 <p>The respond method uses <a href="../../guide/theWebLayer.html#contentNegotiation">Content Negotiation</a> to respond with the most appropriate content type. See the documentation on  <a href="../../guide/webServices.html#REST">REST support</a> for more information.</p>
 </div>
+<div class="paragraph">
+<p>If a view is picked for rendering then a model will automatically be calculated to pass to the view.</p>
+</div>
+<div class="paragraph">
+<p>The following table summarizes this convention:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Example</th>
+<th class="tableblock halign-left valign-top">Argument Type</th>
+<th class="tableblock halign-left valign-top">Calculated Model Variable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>respond Book.list()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>java.util.List</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>bookList</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>respond Book.get(1)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>example.Book</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>book</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>respond( [1,2] )</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>java.util.List</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>integerList</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>respond( [1,2] as Set )</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>java.util.Set</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>integerSet</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>respond( [1,2] as Integer[] )</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>Integer[]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>integerArray</code></p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
 <p>Parameters:</p>
 </div>
@@ -320,6 +367,12 @@ Due to the way Groovy works, while responding with a Map and arguments it is imp
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-command.html">run-command</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

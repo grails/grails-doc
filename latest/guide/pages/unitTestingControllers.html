@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>15.1.1 Unit Testing Controllers 3.1.14</title>
+    <title>15.1.1 Unit Testing Controllers 3.2.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -129,7 +129,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>15.1.1 Unit Testing Controllers</h1>
 
-                    <p><strong>Version:</strong> 3.1.14</p>
+                    <p><strong>Version:</strong> 3.2.3</p>
                 </div>
 
                 
@@ -139,7 +139,7 @@ function addJsClass() {
 <h2 id="unitTestingControllers">15.1.1 Unit Testing Controllers</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/testing/unitTesting/unitTestingControllers.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/testing/unitTesting/unitTestingControllers.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -393,7 +393,7 @@ The <code>TestFor</code> annotation will also automatically annotate any public 
 </div>
 </div>
 <div class="paragraph">
-<p>However, you may not want to render the real template, but just test that is was rendered. In this case you can provide mock Groovy Pages:</p>
+<p>However, you may not want to render the real template, but just test that it was rendered. In this case you can provide mock Groovy Pages:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -495,7 +495,7 @@ The <code>TestFor</code> annotation will also automatically annotate any public 
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// controller action</span>
 <span class="keyword">def</span> <span class="function">renderJson</span>() {
     render(<span class="key">contentType</span>:<span class="string"><span class="delimiter">&quot;</span><span class="content">application/json</span><span class="delimiter">&quot;</span></span>) {
-        book = <span class="string"><span class="delimiter">&quot;</span><span class="content">Great</span><span class="delimiter">&quot;</span></span>
+        book <span class="string"><span class="delimiter">&quot;</span><span class="content">Great</span><span class="delimiter">&quot;</span></span>
     }
 }</code></pre>
 </div>
@@ -513,7 +513,8 @@ The <code>TestFor</code> annotation will also automatically annotate any public 
         controller.renderJson()
 
         <span class="key">then</span>:
-        response.text == <span class="string"><span class="delimiter">'</span><span class="content">{&quot;Great&quot;}</span><span class="delimiter">'</span></span>[book]         response.json.book == <span class="string"><span class="delimiter">'</span><span class="content">Great</span><span class="delimiter">'</span></span>
+        response.text == <span class="string"><span class="delimiter">'</span><span class="content">{&quot;book&quot;:&quot;Great&quot;}</span><span class="delimiter">'</span></span>
+        response.json.book == <span class="string"><span class="delimiter">'</span><span class="content">Great</span><span class="delimiter">'</span></span>
     }
 }</code></pre>
 </div>
@@ -1000,7 +1001,7 @@ The <code>TestFor</code> annotation will also automatically annotate any public 
 </div>
 </div>
 <div class="paragraph">
-<p>The testing framework also supports allowing Grails to create the command object instance automatically.  To test this invoke the no-arg version of the controller action method.  Grails will create an instance of the command object, perform data binding on it using the request parameters and validate the object just like it does in when the application is running.  See the test below.</p>
+<p>The testing framework also supports allowing Grails to create the command object instance automatically. To test this invoke the no-arg version of the controller action method. Grails will create an instance of the command object, perform data binding on it using the request parameters and validate the object just like it does when the application is running. See the test below.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1037,8 +1038,9 @@ The <code>TestFor</code> annotation will also automatically annotate any public 
 <p>The unit testing environment respects the <a href="../ref/Controllers/allowedMethods.html">allowedMethods</a> property in controllers.  If a controller action is limited to be accessed with certain request methods, the unit test must be constructed to deal with that.</p>
 </div>
 <div class="listingblock">
+<div class="title">grails-app/controllers/com/demo/DemoController.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// grails-app/controllers/com/demo/DemoController.groovypackage com.demo</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.demo
 
 <span class="type">class</span> <span class="class">DemoController</span> {
 
@@ -1053,9 +1055,9 @@ The <code>TestFor</code> annotation will also automatically annotate any public 
 </div>
 </div>
 <div class="listingblock">
+<div class="title">src/test/groovy/com/demo/DemoControllerSpec.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// test/unit/com/demo/DemoControllerSpec.groovy</span>
-<span class="keyword">package</span> com.demo
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.demo
 
 <span class="keyword">import</span> <span class="include">grails.test.mixin.TestFor</span>
 <span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
@@ -1244,6 +1246,12 @@ The <code>TestFor</code> annotation will also automatically annotate any public 
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-command.html">run-command</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
