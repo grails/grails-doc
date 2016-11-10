@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>8.1.5 Data Binding 3.2.2</title>
+    <title>8.1.5 Data Binding 3.1.14</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -129,7 +129,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>8.1.5 Data Binding</h1>
 
-                    <p><strong>Version:</strong> 3.2.2</p>
+                    <p><strong>Version:</strong> 3.1.14</p>
                 </div>
 
                 
@@ -139,7 +139,7 @@ function addJsClass() {
 <h2 id="dataBinding">8.1.5 Data Binding</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/theWebLayer/controllers/dataBinding.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/theWebLayer/controllers/dataBinding.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -411,7 +411,7 @@ grails.databinding.trimStrings = <span class="predefined-constant">false</span>
 </div>
 </div>
 <div class="paragraph">
-<p>The mass property binding mechanism will by default automatically convert all empty Strings to null at binding time.  To disable this behavior set the <code>grails.databinding.convertEmptyStringsToNull</code> property to false in <code>grails-app/conf/application.groovy</code>.</p>
+<p>The mass property binding mechanism will by default automatically convert all empty Strings to null at binding time.  To disable this behavior set the <code>grails.databinding.convertEmptyStringsToNull</code> property to false in <code>grials-app/conf/application.groovy</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -573,9 +573,10 @@ The default limit to how large the binder will grow a collection is 256. If the 
 </table>
 </div>
 <div class="listingblock">
-<div class="title">grails-app/conf/application.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// the default value is 256</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// grails-app/conf/application.groovy</span>
+
+<span class="comment">// the default value is 256</span>
 grails.databinding.autoGrowCollectionLimit = <span class="integer">128</span>
 
 <span class="comment">// ...</span></code></pre>
@@ -592,7 +593,7 @@ grails.databinding.autoGrowCollectionLimit = <span class="integer">128</span>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">/book/save?book.title=The%20Stand&amp;author.name=Stephen%20King</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="regexp"><span class="delimiter">/</span><span class="content">book</span><span class="delimiter">/</span></span>save?book.title=The%<span class="integer">20</span>Stand&amp;author.name=Stephen%<span class="integer">20</span>King</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -634,7 +635,7 @@ grails.databinding.autoGrowCollectionLimit = <span class="integer">128</span>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">/accounting/displayInvoice?accountNumber=B59786&amp;accountType=bogusValue</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="regexp"><span class="delimiter">/</span><span class="content">accounting</span><span class="delimiter">/</span></span>displayInvoice?accountNumber=B59786&amp;accountType=bogusValue</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -676,7 +677,7 @@ grails.databinding.autoGrowCollectionLimit = <span class="integer">128</span>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">/book/save?publisherURL=a-bad-url</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="regexp"><span class="delimiter">/</span><span class="content">book</span><span class="delimiter">/</span></span>save?publisherURL=a-bad-url</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -712,11 +713,11 @@ grails.databinding.autoGrowCollectionLimit = <span class="integer">128</span>
 <div class="sect3">
 <h4 id="_the_bindusing_annotation">The BindUsing Annotation</h4>
 <div class="paragraph">
-<p>The <a href="http://docs.grails.org/3.2.2/api/grails/databinding/BindUsing.html">BindUsing</a> annotation may be used to define a custom binding mechanism for a particular field in a class.  Any time data binding is being applied to the field the closure value of the annotation will be invoked with 2 arguments.  The first argument is the object that data binding is being applied to and the second argument is <a href="http://docs.grails.org/3.2.2/api/grails/databinding/DataBindingSource.html">DataBindingSource</a> which is the data source for the data binding.  The value returned from the closure will be bound to the property.  The following example would result in the upper case version of the <code>name</code> value in the source being applied to the <code>name</code> field during data binding.</p>
+<p>The <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/BindUsing.html">BindUsing</a> annotation may be used to define a custom binding mechanism for a particular field in a class.  Any time data binding is being applied to the field the closure value of the annotation will be invoked with 2 arguments.  The first argument is the object that data binding is being applied to and the second argument is <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/DataBindingSource.html">DataBindingSource</a> which is the data source for the data binding.  The value returned from the closure will be bound to the property.  The following example would result in the upper case version of the <code>name</code> value in the source being applied to the <code>name</code> field during data binding.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">grails.databinding.BindUsing</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.grails.databinding.BindUsing</span>
 
 <span class="type">class</span> <span class="class">SomeClass</span> {
     <span class="annotation">@BindUsing</span>({obj, source -&gt;
@@ -745,7 +746,7 @@ Here, <code>name</code> from request parameters matches with <code>name</code> f
 </table>
 </div>
 <div class="paragraph">
-<p>The <a href="http://docs.grails.org/3.2.2/api/grails/databinding/BindUsing.html">BindUsing</a> annotation may be used to define a custom binding mechanism for all of the fields on a particular class. When the annotation is applied to a class, the value assigned to the annotation should be a class which implements the <a href="http://docs.grails.org/3.2.2/api/grails/databinding/BindingHelper.html">BindingHelper</a> interface.  An instance of that class will be used any time a value is bound to a property in the class that this annotation has been applied to.</p>
+<p>The <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/BindUsing.html">BindUsing</a> annotation may be used to define a custom binding mechanism for all of the fields on a particular class. When the annotation is applied to a class, the value assigned to the annotation should be a class which implements the <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/BindingHelper.html">BindingHelper</a> interface.  An instance of that class will be used any time a value is bound to a property in the class that this annotation has been applied to.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -760,13 +761,13 @@ Here, <code>name</code> from request parameters matches with <code>name</code> f
 <div class="sect3">
 <h4 id="_custom_data_converters">Custom Data Converters</h4>
 <div class="paragraph">
-<p>The binder will do a lot of type conversion automatically.  Some applications may want to define their own mechanism for converting values and a simple way to do this is to write a class which implements <a href="http://docs.grails.org/3.2.2/api/grails/databinding/converters/ValueConverter.html">ValueConverter</a> and register an instance of that class as a bean in the Spring application context.</p>
+<p>The binder will do a lot of type conversion automatically.  Some applications may want to define their own mechanism for converting values and a simple way to do this is to write a class which implements <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/converters/ValueConverter.html">ValueConverter</a> and register an instance of that class as a bean in the Spring application context.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.myapp.converters
 
-<span class="keyword">import</span> <span class="include">grails.databinding.converters.ValueConverter</span>
+<span class="keyword">import</span> <span class="include">org.grails.databinding.converters.ValueConverter</span>
 
 <span class="comment">/**
  * A custom converter which will convert String of the
@@ -793,11 +794,15 @@ Here, <code>name</code> from request parameters matches with <code>name</code> f
 <p>An instance of that class needs to be registered as a bean in the Spring application context.  The bean name is not important.  All beans that implemented ValueConverter will be automatically plugged in to the data binding process.</p>
 </div>
 <div class="listingblock">
-<div class="title">grails-app/conf/spring/resources.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">beans = {
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// grails-app/conf/spring/resources.groovy</span>
+
+beans = {
+
     addressConverter com.myapp.converters.AddressValueConverter
+
     <span class="comment">// ...</span>
+
 }</code></pre>
 </div>
 </div>
@@ -824,11 +829,11 @@ person.properties = [<span class="key">firstName</span>: <span class="string"><s
 <div class="sect3">
 <h4 id="_date_formats_for_data_binding">Date Formats For Data Binding</h4>
 <div class="paragraph">
-<p>A custom date format may be specified to be used when binding a String to a Date value by applying the <a href="http://docs.grails.org/3.2.2/api/grails/databinding/BindingFormat.html">BindingFormat</a> annotation to a Date field.</p>
+<p>A custom date format may be specified to be used when binding a String to a Date value by applying the <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/BindingFormat.html">BindingFormat</a> annotation to a Date field.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">grails.databinding.BindingFormat</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.grails.databinding.BindingFormat</span>
 
 <span class="type">class</span> <span class="class">Person</span> {
     <span class="annotation">@BindingFormat</span>(<span class="string"><span class="delimiter">'</span><span class="content">MMddyyyy</span><span class="delimiter">'</span></span>)
@@ -840,44 +845,29 @@ person.properties = [<span class="key">firstName</span>: <span class="string"><s
 <p>A global setting may be configured in <code>application.groovy</code> to define date formats which will be used application wide when binding to Date.</p>
 </div>
 <div class="listingblock">
-<div class="title">grails-app/conf/application.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails.databinding.dateFormats = [<span class="string"><span class="delimiter">'</span><span class="content">MMddyyyy</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">yyyy-MM-dd HH:mm:ss.S</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">yyyy-MM-dd'T'hh:mm:ss'Z'</span><span class="delimiter">&quot;</span></span>]</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// grails-app/conf/application.groovy</span>
+
+grails.databinding.dateFormats = [<span class="string"><span class="delimiter">'</span><span class="content">MMddyyyy</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">yyyy-MM-dd HH:mm:ss.S</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">&quot;</span><span class="content">yyyy-MM-dd'T'hh:mm:ss'Z'</span><span class="delimiter">&quot;</span></span>]</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The formats specified in <code>grails.databinding.dateFormats</code> will be attempted in the order in which they are included in the List.  If a property is marked with <code>@BindingFormat</code>, the <code>@BindingFormat</code> will take precedence over the values specified in <code>grails.databinding.dateFormats</code>.</p>
+<p>The formats specified in <code>grails.databinding.dateFormats</code> will be attempted in the order in which they are included in the List.  If a property is marked with `BindingFormat, the \`BindingFormat will take precedence over the values specified in `grails.databinding.dateFormats`.</p>
 </div>
 <div class="paragraph">
-<p>The formats configured by default are:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>yyyy-MM-dd HH:mm:ss.S</code></p>
-</li>
-<li>
-<p><code>yyyy-MM-dd&#8217;T&#8217;hh:mm:ss&#8217;Z'</code></p>
-</li>
-<li>
-<p><code>yyyy-MM-dd HH:mm:ss.S z</code></p>
-</li>
-<li>
-<p><code>yyyy-MM-dd&#8217;T&#8217;HH:mm:ss.SSSX</code></p>
-</li>
-</ul>
+<p>The default formats that are used are "yyyy-MM-dd HH:mm:ss.S", "yyyy-MM-dd&#8217;T&#8217;hh:mm:ss&#8217;Z'" and "yyyy-MM-dd HH:mm:ss.S z".</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_custom_formatted_converters">Custom Formatted Converters</h4>
 <div class="paragraph">
-<p>You may supply your own handler for the <a href="http://docs.grails.org/3.2.2/api/grails/databinding/BindingFormat.html">BindingFormat</a> annotation by writing a class which implements the <a href="http://docs.grails.org/3.2.2/api/grails/databinding/converters/FormattedValueConverter.html">FormattedValueConverter</a> interface and registering an instance of that class as a bean in the Spring application context.  Below is an example of a trivial custom String formatter that might convert the case of a String based on the value assigned to the BindingFormat annotation.</p>
+<p>You may supply your own handler for the <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/BindingFormat.html">BindingFormat</a> annotation by writing a class which implements the <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/converters/FormattedValueConverter.html">FormattedValueConverter</a> interface and registering an instance of that class as a bean in the Spring application context.  Below is an example of a trivial custom String formatter that might convert the case of a String based on the value assigned to the BindingFormat annotation.</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.myapp.converters
 
-<span class="keyword">import</span> <span class="include">grails.databinding.converters.FormattedValueConverter</span>
+<span class="keyword">import</span> <span class="include">org.grails.databinding.converters.FormattedValueConverter</span>
 
 <span class="type">class</span> <span class="class">FormattedStringValueConverter</span> <span class="directive">implements</span> FormattedValueConverter {
     <span class="keyword">def</span> <span class="function">convert</span>(value, <span class="predefined-type">String</span> format) {
@@ -900,11 +890,15 @@ person.properties = [<span class="key">firstName</span>: <span class="string"><s
 <p>An instance of that class needs to be registered as a bean in the Spring application context.  The bean name is not important.  All beans that implemented FormattedValueConverter will be automatically plugged in to the data binding process.</p>
 </div>
 <div class="listingblock">
-<div class="title">grails-app/conf/spring/resources.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">beans = {
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// grails-app/conf/spring/resources.groovy</span>
+
+beans = {
+
     formattedStringConverter com.myapp.converters.FormattedStringValueConverter
+
     <span class="comment">// ...</span>
+
 }</code></pre>
 </div>
 </div>
@@ -913,7 +907,7 @@ person.properties = [<span class="key">firstName</span>: <span class="string"><s
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">grails.databinding.BindingFormat</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.grails.databinding.BindingFormat</span>
 
 <span class="type">class</span> <span class="class">Person</span> {
     <span class="annotation">@BindingFormat</span>(<span class="string"><span class="delimiter">'</span><span class="content">UPPERCASE</span><span class="delimiter">'</span></span>)
@@ -934,7 +928,7 @@ person.properties = [<span class="key">firstName</span>: <span class="string"><s
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">grails.databinding.BindingFormat</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.grails.databinding.BindingFormat</span>
 
 <span class="type">class</span> <span class="class">Person</span> {
     <span class="annotation">@BindingFormat</span>(code=<span class="string"><span class="delimiter">'</span><span class="content">date.formats.birthdays</span><span class="delimiter">'</span></span>)
@@ -964,9 +958,9 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 <p>The framework provides a structured editor for binding to <code>Date</code> objects.  An application may register its own structured editors for whatever types are appropriate.  Consider the following classes:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/databinding/Gadget.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> databinding
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// src/groovy/databinding/Gadget.groovy</span>
+<span class="keyword">package</span> databinding
 
 <span class="type">class</span> <span class="class">Gadget</span> {
     <span class="predefined-type">Shape</span> expandedShape
@@ -975,9 +969,9 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/databinding/Shape.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> databinding
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// src/groovy/databinding/Shape.groovy</span>
+<span class="keyword">package</span> databinding
 
 <span class="type">class</span> <span class="class">Shape</span> {
     <span class="type">int</span> area
@@ -988,12 +982,12 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 <p>A <code>Gadget</code> has 2 <code>Shape</code> fields.  A <code>Shape</code> has an <code>area</code> property.  It may be that the application wants to accept request parameters like <code>width</code> and <code>height</code> and use those to calculate the <code>area</code> of a <code>Shape</code> at binding time.  A structured binding editor is well suited for that.</p>
 </div>
 <div class="paragraph">
-<p>The way to register a structured editor with the data binding process is to add an instance of the <a href="http://docs.grails.org/3.2.2/api/grails/databinding/TypedStructuredBindingEditor.html">grails.databinding.TypedStructuredBindingEditor</a> interface to the Spring application context.  The easiest way to implement the <code>TypedStructuredBindingEditor</code> interface is to extend the <a href="http://docs.grails.org/3.2.2/api/org/grails/databinding/converters/AbstractStructuredDateBindingEditor.html">org.grails.databinding.converters.AbstractStructuredBindingEditor</a> abstract class and override the <code>getPropertyValue</code> method as shown below:</p>
+<p>The way to register a structured editor with the data binding process is to add an instance of the <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/TypedStructuredBindingEditor.html">org.grails.databinding.TypedStructuredBindingEditor</a> interface to the Spring application context.  The easiest way to implement the <code>TypedStructuredBindingEditor</code> interface is to extend the <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/converters/AbstractStructuredBindingEditor.html">org.grails.databinding.converters.AbstractStructuredBindingEditor</a> abstract class and override the <code>getPropertyValue</code> method as shown below:</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/databinding/converters/StructuredShapeEditor.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> databinding.converters
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// src/groovy/databinding/converters/StructuredShapeEditor.groovy</span>
+<span class="keyword">package</span> databinding.converters
 
 <span class="keyword">import</span> <span class="include">databinding.Shape</span>
 
@@ -1019,10 +1013,11 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 <p>An instance of that class needs to be registered with the Spring application context:</p>
 </div>
 <div class="listingblock">
-<div class="title">grails-app/conf/spring/resources.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">beans = {
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// grails-app/conf/spring/resources.groovy</span>
+beans = {
     shapeEditor databinding.converters.StructuredShapeEditor
+
     <span class="comment">// ...</span>
 }</code></pre>
 </div>
@@ -1031,12 +1026,13 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 <p>When the data binder binds to an instance of the <code>Gadget</code> class it will check to see if there are request parameters with names <code>compressedShape</code> and <code>expandedShape</code> which have a value of "struct" and if they do exist, that will trigger the use of the <code>StructuredShapeEditor</code>.  The individual components of the structure need to have parameter names of the form propertyName_structuredElementName.  In the case of the <code>Gadget</code> class above that would mean that the <code>compressedShape</code> request parameter should have a value of "struct" and the <code>compressedShape_width</code> and <code>compressedShape_height</code> parameters should have values which represent the width and the height of the compressed <code>Shape</code>.  Similarly, the <code>expandedShape</code> request parameter should have a value of "struct" and the <code>expandedShape_width</code> and <code>expandedShape_height</code> parameters should have values which represent the width and the height of the expanded <code>Shape</code>.</p>
 </div>
 <div class="listingblock">
-<div class="title">grails-app/controllers/demo/DemoController.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">DemoController</span> {
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// grails-app/controllers/demo/DemoController.groovy</span>
+<span class="type">class</span> <span class="class">DemoController</span> {
 
     <span class="keyword">def</span> <span class="function">createGadget</span>(Gadget gadget) {
         <span class="comment">/*
+
         /demo/createGadget?expandedShape=struct&amp;expandedShape_width=80&amp;expandedShape_height=30
                           &amp;compressedShape=struct&amp;compressedShape_width=10&amp;compressedShape_height=3
 
@@ -1044,7 +1040,9 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 
         <span class="comment">// with the request parameters shown above gadget.expandedShape.area would be 2400</span>
         <span class="comment">// and gadget.compressedShape.area would be 30</span>
+
         <span class="comment">// ...</span>
+
     }
 }</code></pre>
 </div>
@@ -1056,21 +1054,14 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 <div class="sect3">
 <h4 id="_data_binding_event_listeners">Data Binding Event Listeners</h4>
 <div class="paragraph">
-<p>The <a href="http://docs.grails.org/3.2.2/api/grails/databinding/events/DataBindingListener.html">DataBindingListener</a> interface provides a mechanism for listeners to be notified of data binding events.  The interface looks like this:</p>
+<p>The <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/events/DataBindingListener.html">DataBindingListener</a> interface provides a mechanism for listeners to be notified of data binding events.  The interface looks like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> grails.databinding.events;
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> org.grails.databinding.events;
 
-<span class="keyword">import</span> <span class="include">grails.databinding.errors.BindingError</span>;
+<span class="keyword">import</span> <span class="include">org.grails.databinding.errors.BindingError</span>;
 
-<span class="comment">/**
- * A listener which will be notified of events generated during data binding.
- *
- * @author Jeff Brown
- * @since 3.0
- * @see DataBindingListenerAdapter
- */</span>
 <span class="directive">public</span> <span class="type">interface</span> DataBindingListener {
 
     <span class="comment">/**
@@ -1126,7 +1117,7 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Any bean in the Spring application context which implements that interface will automatically be registered with the data binder.  The <a href="http://docs.grails.org/3.2.2/api/grails/databinding/events/DataBindingListenerAdapter.html">DataBindingListenerAdapter</a> class implements the <code>DataBindingListener</code> interface and provides default implementations for all of the methods in the interface so this class is well suited for subclassing so your listener class only needs to provide implementations for the methods your listener is interested in.</p>
+<p>Any bean in the Spring application context which implements that interface will automatically be registered with the data binder.  The <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/events/DataBindingListenerAdapter.html">DataBindingListenerAdapter</a> class implements the <code>DataBindingListener</code> interface and provides default implementations for all of the methods in the interface so this class is well suited for subclassing so your listener class only needs to provide implementations for the methods your listener is interested in.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1135,9 +1126,9 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 <p>There are situations where an application may want to use the data binder directly.  For example, to do binding in a Service on some arbitrary object which is not a domain class.  The following will not work because the <code>properties</code> property is read only.</p>
 </div>
 <div class="listingblock">
-<div class="title">src/main/groovy/bindingdemo/Widget.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> bindingdemo
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// src/groovy/bindingdemo/Widget.groovy</span>
+<span class="keyword">package</span> bindingdemo
 
 <span class="type">class</span> <span class="class">Widget</span> {
     <span class="predefined-type">String</span> name
@@ -1146,9 +1137,9 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 </div>
 </div>
 <div class="listingblock">
-<div class="title">grails-app/services/bindingdemo/WidgetService.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> bindingdemo
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// grails-app/services/bindingdemo/WidgetService.groovy</span>
+<span class="keyword">package</span> bindingdemo
 
 <span class="type">class</span> <span class="class">WidgetService</span> {
 
@@ -1161,14 +1152,14 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>An instance of the data binder is in the Spring application context with a bean name of <code>grailsWebDataBinder</code>.  That bean implements the <a href="http://docs.grails.org/3.2.2/api/grails/databinding/DataBinder.html">DataBinder</a> interface.  The following code demonstrates using the data binder directly.</p>
+<p>An instance of the data binder is in the Spring application context with a bean name of <code>grailsWebDataBinder</code>.  That bean implements the <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/DataBinder.html">DataBinder</a> interface.  The following code demonstrates using the data binder directly.</p>
 </div>
 <div class="listingblock">
-<div class="title">grails-app/services/bindingdmeo/WidgetService</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> bindingdemo
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// grails-app/services/bindingdmeo/WidgetService</span>
+<span class="keyword">package</span> bindingdemo
 
-<span class="keyword">import</span> <span class="include">grails.databinding.SimpleMapDataBindingSource</span>
+<span class="keyword">import</span> <span class="include">org.grails.databinding.SimpleMapDataBindingSource</span>
 
 <span class="type">class</span> <span class="class">WidgetService</span> {
 
@@ -1183,7 +1174,7 @@ date.formats.birthdays=ddMMyyyy</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>See the <a href="http://docs.grails.org/3.2.2/api/grails/databinding/DataBinder.html">DataBinder</a> documentation for more information about overloaded versions
+<p>See the <a href="http://docs.grails.org/3.1.14/api/org/grails/databinding/DataBinder.html">DataBinder</a> documentation for more information about overloaded versions
 of the <code>bind</code> method.</p>
 </div>
 </div>
@@ -1366,12 +1357,6 @@ If an empty List is provided as a value for the <code>include</code> parameter t
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-command.html">run-command</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>

@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>13 The Service Layer 3.2.2</title>
+    <title>13 The Service Layer 3.1.14</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -129,7 +129,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>13 The Service Layer</h1>
 
-                    <p><strong>Version:</strong> 3.2.2</p>
+                    <p><strong>Version:</strong> 3.1.14</p>
                 </div>
 
                 
@@ -156,7 +156,7 @@ function addJsClass() {
 <h1 id="services">13 The Service Layer</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/services.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/services.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -207,7 +207,7 @@ If no package is specified with the create-service script, Grails automatically 
 <h2 id="declarativeTransactions">13.1 Declarative Transactions</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/services/declarativeTransactions.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/services/declarativeTransactions.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -420,7 +420,7 @@ Annotating a service method with <code>Transactional</code> disables the default
 <h2 id="transactionsRollbackAndTheSession">13.1.1 Transactions Rollback and the Session</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/services/declarativeTransactions/transactionsRollbackAndTheSession.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/services/declarativeTransactions/transactionsRollbackAndTheSession.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -623,7 +623,7 @@ This is the optimal solution as it requires fewer queries then the following sug
 <h2 id="scopedServices">13.2 Scoped Services</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/services/scopedServices.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/services/scopedServices.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -705,7 +705,7 @@ If non-singleton services are required, controller scope should be changed as we
 <h2 id="dependencyInjectionServices">13.3 Dependency Injection and Services</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/services/dependencyInjectionServices.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.1.x/src/en/guide/services/dependencyInjectionServices.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -766,46 +766,6 @@ Only the top level object is subjected to injection as traversing all nested obj
 </td>
 </tr>
 </table>
-</div>
-<div class="paragraph">
-<p>Be careful when injecting the non-default datasources. For example, using this config:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">dataSources</span>:
-    <span class="key">dataSource</span>:
-        <span class="key">pooled</span>: <span class="predefined-constant">true</span>
-        <span class="key">jmxExport</span>: <span class="predefined-constant">true</span>
-        .....
-    secondary:
-        <span class="key">pooled</span>: <span class="predefined-constant">true</span>
-        <span class="key">jmxExport</span>: <span class="predefined-constant">true</span>
-        .....</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can inject the primary <code>dataSource</code> like you would expect:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">BookSqlService</span> {
-
-      def dataSource
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>But to inject the <code>secondary</code> datasource, you have to use Spring&#8217;s <code>Autowired</code> injection or <code>resources.groovy</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="type">class</span> <span class="class">BookSqlSecondaryService</span> {
-
-  <span class="annotation">@Autowired</span>
-  <span class="annotation">@Qualifier</span>(<span class="string"><span class="delimiter">'</span><span class="content">dataSource_secondary</span><span class="delimiter">'</span></span>)
-  def dataSource2
-}</code></pre>
-</div>
 </div>
 </div>
 <div class="sect3">
@@ -975,12 +935,6 @@ Only the top level object is subjected to injection as traversing all nested obj
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/run-app.html">run-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/run-command.html">run-command</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/run-script.html">run-script</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/schema-export.html">schema-export</a>
