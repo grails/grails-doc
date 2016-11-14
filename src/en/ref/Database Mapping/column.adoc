@@ -1,0 +1,70 @@
+
+== column
+
+
+
+=== Purpose
+
+
+Customizes a column definition
+
+
+=== Examples
+
+
+[source,java]
+----
+static mapping = {
+        currency column: "currency", sqlType: "char", length: 3
+    }
+----
+
+
+=== Description
+
+
+Usage: `property_name(map)`
+
+Arguments:
+
+* `column` - The name of the column as a String
+* `sqlType` (optional) - The underlying SQL type
+* `enumType` (optional) - The enum type in for type-safe Enum properties. Either `ordinal` or `string`.
+* `index` (optional) - The index name
+* `unique` (optional) - Whether it is unique
+* `length` (optional) - The length of the column
+* `precision` (optional) - The precision of the column
+* `scale` (optional) - The scale of the column
+* `comment` (optional) - The comment for the column (used to create the table DDL)
+* `defaultValue` (optional) - The database default value
+
+By default GORM uses the property name and type to determine how to map a property in the database. For example a `String` property is typically mapped as a `varchar(255)` column. You can customize these with column configuration arguments:
+
+[source,java]
+----
+static mapping = {
+    currency column: "currency", sqlType: "char", length: 3
+}
+----
+
+If you use a Hibernate <<ref-database-mapping-type,type>> that requires multiple column definitions you can use the `column` method to define each column:
+
+[source,java]
+----
+static mapping = {
+    amount type: MonetaryUserType, {
+        column name: "value"
+        column name: "currency", sqlType: "char", length: 3
+    }
+}
+----
+
+Note that if you have a static method that is the same name as one of your properties you are trying to configure or you use the same property name as one of the static GORM methods this can lead to conflicts. To avoid this scenario scope the mapping configuration using the `delegate` property:
+
+
+[source,java]
+----
+static mapping = {
+    delegate.currency column: "currency", sqlType: "char", length: 3
+}
+----

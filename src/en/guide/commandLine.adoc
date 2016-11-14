@@ -1,0 +1,65 @@
+Grails 3.0's command line system differs greatly from previous versions of Grails and features APIs for invoking Gradle for build related tasks, as well as performing code generation.
+
+When you type:
+
+[source,groovy]
+----
+grails <<command name>>
+----
+
+Grails searches the http://bintray.com/grails/profiles[profile repository] based on the profile of the current application. If the profile is for a web application then commands are read from the web profile and the base profile which it inherits from.
+
+Since command behavior is profile specific the web profile may provide different behavior for the `run-app` command then say a profile for running batch applications.
+
+When you type the following command:
+
+[source,groovy]
+----
+grails run-app
+----
+
+It results in a search for the following files:
+
+* `PROJECT_HOME/scripts/RunApp.groovy`
+* `PROFILE_REPOSITORY_PATH/profiles/web/commands/run-app.groovy` (if the web profile is active)
+* `PROFILE_REPOSITORY_PATH/profiles/web/commands/run-app.yml` (for YAML defined commands)
+
+To get a list of all commands and some help about the available commands type:
+
+[source,groovy]
+----
+grails help
+----
+
+which outputs usage instructions and the list of commands Grails is aware of:
+
+[source,groovy]
+----
+grails <<environment>>* <<target>> <<arguments>>*'
+
+| Examples:
+$ grails dev run-app
+$ grails create-app books
+
+| Available Commands (type grails help 'command-name' for more info):
+| Command Name                          Command Description
+----------------------------------------------------------------------------------------------------
+clean                                   Cleans a Grails application's compiled sources
+compile                                 Compiles a Grails application
+...
+----
+
+NOTE: Refer to the Command Line reference in the Quick Reference menu of the reference guide for more information about individual commands
+
+
+==== non-interactive mode
+
+
+When you run a script manually and it prompts you for information, you can answer the questions and continue running the script. But when you run a script as part of an automated process, for example a continuous integration build server, there's no way to "answer" the questions. So you can pass the `\-\-non-interactive` switch to the script command to tell Grails to accept the default answer for any questions, for example whether to install a missing plugin.
+
+For example:
+
+[source,groovy]
+----
+grails war --non-interactive
+----

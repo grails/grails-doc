@@ -1,0 +1,44 @@
+
+== generate-views
+
+
+
+=== Purpose
+
+
+Generates GSP views for the given domain class
+
+
+=== Examples
+
+
+[source,java]
+----
+grails generate-views
+grails generate-views org.bookstore.Book
+grails generate-views "\*"
+----
+
+
+=== Description
+
+
+Grails supports a feature known as static scaffolding which involves the generation of a CRUD (Create/Read/Update/Delete) interface for a given domain class. Once generated, the controller and its views can be modified by you but they won't automatically update when you change the domain class.
+
+The `generate-views` command generates just the GSP views that implement CRUD for the given domain class. The argument is optional, but if you don't include it the command will ask you for the name of the domain class to scaffold. So for a domain class `org.bookstore.Book`, the command will generate the appropriate 'list', 'show', 'create' and 'edit' views in `grails-app/views/book`.
+
+Usage:
+
+[source,java]
+----
+grails generate-views <<domain class name>>
+----
+
+Fired Events:
+
+* `StatusUpdate` - When generation begins
+* `StatusFinal` - When generation completes
+
+Arguments:
+
+* `domain class name` - Either a domain class name (case-sensitive) or a wildcard (\*). If you specify the wildcard then views will be generated for _all_ domain classes.

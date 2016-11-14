@@ -1,0 +1,45 @@
+
+== respond
+
+
+
+=== Purpose
+
+
+Attempts to return the most appropriate type for the requested content type (specified by either the `Accept` header or file extension)
+
+
+=== Examples
+
+
+[source,java]
+----
+// pick the best content type to respond with
+respond Book.get(1)
+
+// pick the best content type to respond with from the given formats
+respond Book.get(1), formats: ['xml', 'json']
+----
+
+
+=== Description
+
+
+The respond method uses link:theWebLayer.html#contentNegotiation[Content Negotiation] to respond with the most appropriate content type. See the documentation on <<REST,REST support>> for more information.
+
+Parameters:
+
+* `object` - The object to render
+* `arguments` - Named arguments.
+
+Supported `arguments`:
+
+* `view` - The view to use in case of HTML rendering
+* `model` - The model to use in case of HTML rendering
+* `status` - The response status
+* `formats` - A list of formats to respond with
+* `includes` - Properties to include if rendering with the converters API
+* `excludes` - Properties to exclude if rendering with the converters API
+
+WARNING: Due to the way Groovy works, while responding with a Map and arguments it is important to respond in this manner `respond(\[:\], status: 200)` instead of this manner `respond(\[:\], \[status: 200\])`. Failure to do so will result in the arguments being reversed.
+

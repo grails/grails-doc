@@ -1,0 +1,80 @@
+Upgrading applications to Grails 3.x will require that you upgrade all plugins the application uses first, hence you should follow the steps in the previous section to first upgrade your plugins.
+
+
+==== Step 1 - Create a New Application
+
+
+Once the plugins are Grails 3.x compatible you can upgrade the application. To upgrade an application it is again best to create a new Grails 3 application using the "web" profile:
+
+[source,groovy]
+----
+$ grails create-app myapp
+$ cd myapp
+----
+
+
+==== Step 2 - Migrate Sources
+
+
+The next step is to copy the sources from the original Grails 2 application to the Grails 3 application:
+
+[source,groovy]
+----
+# first the sources
+cp -rf ../old_app/src/groovy/ src/main/groovy
+cp -rf ../old_app/src/java/ src/main/groovy
+cp -rf ../old_app/grails-app/ grails-app
+
+# then the tests
+cp -rf ../old_app/test/unit/ src/test/groovy
+mkdir -p src/integration-test/groovy
+cp -rf ../old_app/test/integration/ src/integration-test/groovy
+----
+
+
+==== Step 3 - Update the Gradle build with required dependencies
+
+
+The repositories and dependencies defined in `grails-app/conf/BuildConfig.groovy` of the original Grails 2.x application will need to be defined in `build.gradle` of the new Grails 3.x application.
+
+
+==== Step 4 - Modify Package Imports
+
+
+In Grails 3.x all internal APIs can be found in the `org.grails` package and public facing APIs in the `grails` package. The `org.codehaus.groovy.grails` package no longer exists.
+
+All package declaration in sources should be modified for the new location of the respective classes. Example `org.codehaus.groovy.grails.commons.GrailsApplication` is now `grails.core.GrailsApplication`.
+
+
+==== Step 5 - Migrate Configuration
+
+
+The configuration of the application will need to be migrated, this can normally be done by simply renaming `grails-app/conf/Config.groovy` to `grails-app/conf/application.groovy` and merging the content of `grails-app/conf/DataSource.groovy` into `grails-app/conf/application.groovy`.
+
+Note however that Log4j has been replaced by `grails-app/conf/logback.groovy` for logging, so any logging configuration in `grails-app/conf/Config.groovy` should be migrated to http://logback.qos.ch/manual/groovy.html[logback format].
+
+
+==== Step 6 - Migrate web.xml Modifications to Spring
+
+
+If you have a modified `web.xml` template then you will need to migrate this to Spring as Grails 3.x does not use a web.xml (although it is still possible to have on in `src/main/webapp/WEB-INF/web.xml`).
+
+New servlets and filters can be registered as Spring beans or with http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/context/embedded/ServletRegistrationBean.html[ServletRegistrationBean] and http://docs.spring.io/spring-boot/docs/current/api/org/springframework/boot/context/embedded/FilterRegistrationBean.html[FilterRegistrationBean] respectively.
+
+
+==== Step 7 - Migrate Static Assets not handled by Asset Pipeline
+
+
+If you have static assets in your `web-app` directory of your Grails 2.x application such as HTML files, TLDs etc. these need to be moved. For public assets such as static HTML pages and so on these should go in `src/main/resources/public`.
+
+TLD descriptors and non public assets should go in `src/main/resources/WEB-INF`.
+
+As noted earlier, `src/main/webapp` folder can also be used for this purpose but it is not recommended.
+
+
+==== Step 8 - Migrate Tests
+
+
+Once the package names are corrected unit tests will continue to run, however any tests that extend the deprecated and removed JUnit 3 hierarchy will need to be migrated to Spock or JUnit 4.
+
+Integration tests will need to be annotated with the http://docs.grails.org/latest/api/grails/test/mixin/integration/Integration.html[Integration] annotation and should not extend GroovyTestCase or any JUnit 3 super class.
