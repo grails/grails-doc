@@ -23,7 +23,7 @@ class LoginCommand implements grails.validation.Validateable {
 
 In this example, the command object class implements the `Validateable` trait. The `Validateable` trait allows the definition of link:validation.html#constraints[Constraints] just like in link:GORM.html[domain classes]. If the command object is defined in the same source file as the controller that is using it, Grails will automatically make it `Validateable`. It is not required that command object classes be validateable.
 
-By default, all `Validateable` object properties are `nullable: false` which matches the behavior of GORM domain objects. If you want a `Validateable` that has `nullable: true` properties by default, you can specify this by defining a `defaultNullable` method in the class:
+By default, all `Validateable` object properties which are not instances of `java.util.Collection` or `java.util.Map` are `nullable: false`.  Instances of `java.util.Collection` and `java.util.Map` default to `nullable: true`.  If you want a `Validateable` that has `nullable: true` properties by default, you can specify this by defining a `defaultNullable` method in the class:
 
 [source,groovy]
 ----
