@@ -8,6 +8,7 @@
 
 Creates and returns an instance of Grails' http://grails.github.io/grails-data-mapping/latest/api/grails/orm/HibernateCriteriaBuilder.html[HibernateCriteriaBuilder] that can be used to construct criteria queries.
 
+WARNING: Unit tests use an in-memory implementation of GORM without Hibernate, and as such, `createCriteria()` returns an instance of http://grails.github.io/grails-data-mapping/latest/api/grails/gorm/CriteriaBuilder.html[CriteriaBuilder], not HibernateCriteriaBuilder.
 
 === Examples
 
@@ -43,7 +44,7 @@ def results = c.list (max: 10, offset: 10) {
 }
 ----
 
-Because that query includes pagination parameters (max and offset), this will return a http://grails.github.io/grails-data-mapping/latest/api/grails/orm/PagedResultList.html[PagedResultList] which has a getTotalCount() method to return the total number of matching records for pagination. Two queries are still run, but they are run for you and the results and total count are combined in the `PagedResultList`.
+Because that query includes pagination parameters (max and offset), this will return a http://grails.github.io/grails-data-mapping/latest/api/grails/orm/PagedResultList.html[PagedResultList] which has a `getTotalCount()` method to return the total number of matching records for pagination. Two queries are still run, but they are run for you and the results and total count are combined in the `PagedResultList`.
 
 [source,groovy]
 ----
@@ -58,14 +59,14 @@ Criteria queries are a type-safe, advanced way to query that uses a Groovy build
 
 Method reference:
 
-[format="csv", options="header"]
+[cols="2*", options="header"]
 |===
 
-Method,Description
-*list*,The default method; returns all matching rows.
-*get*,Returns a unique result, i.e. just one row. The criteria has to be formed that way, that it only queries one row. This method is not to be confused with a limit to just the first row.
-*scroll*,Returns a scrollable result set
-*listDistinct*,If subqueries or associations are used, one may end up with the same row multiple times in the result set. In Hibernate one would do a "CriteriaSpecification.DISTINCT_ROOT_ENTITY". In Grails one can do it by just using this method.
+|Method,Description
+|*list*|The default method; returns all matching rows.
+|*get*|Returns a unique result, i.e. just one row. The criteria has to be formed that way, that it only queries one row. This method is not to be confused with a limit to just the first row.
+|*scroll*|Returns a scrollable result set
+|*listDistinct*|If subqueries or associations are used, one may end up with the same row multiple times in the result set. In Hibernate one would do a "CriteriaSpecification.DISTINCT_ROOT_ENTITY". In Grails one can do it by just using this method.
 |===
 
 WARNING: The `listDistinct()` method does not work well with the pagination options `maxResult` and `firstResult`. If you need distinct results with pagination, we currently recommend that you use HQL. You can find out more information from http://floledermann.blogspot.com/2007/10/solving-hibernate-criterias-distinct.html[this blog post].
