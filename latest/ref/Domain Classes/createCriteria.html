@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>The Grails Framework 3.2.3</title>
+    <title>The Grails Framework 3.2.4</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -138,6 +138,18 @@ function addJsClass(el) {
 <div class="paragraph">
 <p>Creates and returns an instance of Grails' <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/orm/HibernateCriteriaBuilder.html">HibernateCriteriaBuilder</a> that can be used to construct criteria queries.</p>
 </div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Unit tests use an in-memory implementation of GORM without Hibernate, and as such, <code>createCriteria()</code> returns an instance of <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/gorm/CriteriaBuilder.html">CriteriaBuilder</a>, not HibernateCriteriaBuilder.
+</td>
+</tr>
+</table>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_examples">Examples</h3>
@@ -175,7 +187,7 @@ function addJsClass(el) {
 </div>
 </div>
 <div class="paragraph">
-<p>Because that query includes pagination parameters (max and offset), this will return a <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/orm/PagedResultList.html">PagedResultList</a> which has a getTotalCount() method to return the total number of matching records for pagination. Two queries are still run, but they are run for you and the results and total count are combined in the <code>PagedResultList</code>.</p>
+<p>Because that query includes pagination parameters (max and offset), this will return a <a href="http://grails.github.io/grails-data-mapping/latest/api/grails/orm/PagedResultList.html">PagedResultList</a> which has a <code>getTotalCount()</code> method to return the total number of matching records for pagination. Two queries are still run, but they are run for you and the results and total count are combined in the <code>PagedResultList</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -198,30 +210,22 @@ function addJsClass(el) {
 </colgroup>
 <thead>
 <tr>
-<th class="tableblock halign-left valign-top">Method</th>
-<th class="tableblock halign-left valign-top">Description</th>
+<th class="tableblock halign-left valign-top">Method,Description</th>
+<th class="tableblock halign-left valign-top"><strong>list</strong></th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>list</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">The default method; returns all matching rows.</p></td>
-</tr>
-<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>get</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Returns a unique result</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">i.e. just one row. The criteria has to be formed that way</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">that it only queries one row. This method is not to be confused with a limit to just the first row.</p></td>
-</tr>
-<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Returns a unique result, i.e. just one row. The criteria has to be formed that way, that it only queries one row. This method is not to be confused with a limit to just the first row.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>scroll</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Returns a scrollable result set</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Returns a scrollable result set</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>listDistinct</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">If subqueries or associations are used</p></td>
 </tr>
 </tbody>
 </table>
