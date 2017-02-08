@@ -85,6 +85,18 @@ class Astronaut {
 // Note that argument 3 is the property value converted toString to avoid the unwanted formatting as described before.
 astronaut.yearOfFirstSpaceTravel.datePriorTo=The value {3} entered for the year of the first space travel is prior to the year of birth ({4}). Please correct the value.
 astronaut.yearOfFirstSpaceTravel.maybeABitTooYoung={3} years seems a bit young for travelling to space, dude!
+
+// Example 4: You may further encapsulate the validation logic in a service 
+
+class Astronaut {
+    def spaceService	// auto-injected service, and 'def' makes this field transient
+    Integer yearOfBirth
+    Integer yearOfFirstSpaceTravel
+
+    yearOfFirstSpaceTravel validator: { val, obj -> 
+        obj.spaceService.validateYearOfFirstSpaceTravel(val, obj)
+    }
+}
 ----
 
 
