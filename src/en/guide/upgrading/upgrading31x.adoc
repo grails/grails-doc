@@ -1,5 +1,11 @@
 If you are upgrading from Grails 3.1 there are a few items to take into consideration.
 
+==== Use WebPromises instead of Promises in Controllers
+
+In versions of Grails prior to 3.2, `grails.async.Promises` used to allow the use of `render` and other controller methods, however this was unsafe as the request thread may have finished prior to the task executing leading to unexpected errors.
+
+You should now instead use `grails.async.web.WebPromises` within a controller.
+
 
 ==== Deprecated Classes and Methods Removed
 
@@ -115,7 +121,7 @@ Using the default package in places like `UrlMappings.groovy`, `BootStrap.groovy
 class UrlMappings {
 
     static mappings = {
-    
+
     ...
 ----
 
@@ -128,7 +134,7 @@ package myapp
 class UrlMappings {
 
     static mappings = {
-    
+
     ...
 ----
 

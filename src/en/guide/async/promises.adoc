@@ -127,8 +127,8 @@ Working with `PromiseMap` instances is largely similar. Again you can either use
 ----
 import static grails.async.Promises.*
 
-def promiseList = tasks one:{ 2 * 2 }, 
-                        two:{ 4 * 4}, 
+def promiseList = tasks one:{ 2 * 2 },
+                        two:{ 4 * 4},
                         three:{ 8 * 8 }
 
 assert [one:4,two:16,three:64] == promiseList.get()
@@ -149,6 +149,35 @@ map.onComplete { Map results ->
 }
 ----
 
+=== Promises vs. WebPromises
+
+Since Grails 3.2.7, there are two factory classes for `Promise` instances. They are:
+
+* `grails.async.Promises` - general purpose and not web specified
+* `grails.async.web.WebPromises` - designed for creating asynchronous responses.
+
+Typically you use `WebPromises` within a controller, and its behaviour differs because Grails will automatically turn the request into an Servlet 3.x async request to execute the tasks created by `WebPromises`.
+
+The `Promises` factory class on the other hand is not web specific and will not create async requests.
+
+This also means that within the body of the task for `WebPromises` you can use controller methods such as `render` etc. For example the following works with `WebPromises`:
+
+[source,groovy]
+----
+import static grails.async.web.WebPromises.*
+class HelloController {
+
+    def sayHello(String message) {
+       task {
+           render "Hello $message"
+       }
+    }
+}
+----
+
+However, the above will fail with the regular `Promises` class.
+
+NOTE: In versions of Grails prior to 3.2.7, `Promises` used to allow the use of `render` and other controller methods, however this was unsafe as the request thread may have finished prior to the task executing leading to unexpected errors.
 
 === Promise Factories
 
@@ -181,7 +210,7 @@ For example, consider the following service:
 
 [source,groovy]
 ----
-class BookService {	
+class BookService {
     List<Book> findBooks(String title) {
       // implementation
     }
@@ -195,7 +224,7 @@ The `findBooks` method executes synchronously in the same thread as the caller. 
 import grails.async.*
 
 class AsyncBookService {
-   @DelegateAsync BookService bookService	
+   @DelegateAsync BookService bookService
 }
 ----
 
@@ -220,7 +249,7 @@ AsyncBookService asyncBookService
 def findBooks(String title) {
     asyncBookService.findBooks(title)
        .onComplete { List results ->
-          println "Books = ${results}"				
+          println "Books = ${results}"
        }
 }
 ----
