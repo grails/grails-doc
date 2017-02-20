@@ -22,7 +22,7 @@ if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then
 		zipName="grails-docs-$version"
 		export RELEASE_FILE="${zipName}.zip"
 
-		publishLatest=false
+		publishLatest=true
 		if $publishLatest ; then
 			git rm -rf latest/
 			mkdir -p latest
