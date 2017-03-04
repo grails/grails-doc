@@ -185,3 +185,23 @@ class User {
 
 In the example above, accessing `User.constrainedProperties.firstName.blank` would yield `false`, while
 `User.constrainedProperties.middleName.blank` would yield `true`.
+
+==== Command Objects
+
+Accessing the constraints on a command object is slightly different. You can access a command object's constraints programmatically in another context by accessing the `constraintsMap` static property of a class that implements {apiDocs}grails/validation/Validateable.html[Validateable]. That property is an instance of `Map<String, {apiDocs}grails/validation/ConstrainedProperty.html[ConstrainedProperty]>`
+
+[source,groovy]
+----
+class User implements Validateable {
+    String firstName
+    String middleName
+
+    static constraints = {
+        firstName blank: false, nullable: false
+        middleName blank: true, nullable: true
+    }
+}
+----
+
+In the example above, accessing `User.constraintsMap.firstName.blank` would yield `false`, while
+`User.constraintsMap.middleName.blank` would yield `true`.
