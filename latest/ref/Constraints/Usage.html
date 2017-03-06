@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>The Grails Framework 3.2.4</title>
+    <title>The Grails Framework 3.2.7</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -150,7 +150,7 @@ function addJsClass(el) {
 </div>
 </div>
 <div class="paragraph">
-<p>Refer to the user guide topic on <a href="../../guidevalidation.html#constraints">Constraints</a> for more information.</p>
+<p>Refer to the user guide topic on <a href="../../guide/validation.html#constraints">Constraints</a> for more information.</p>
 </div>
 </div>
 <div class="sect2">
@@ -298,7 +298,72 @@ static constraints = {
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">inList</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Validates that a value is within a range or collection of constrained values.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">`name(inList: \["Joe"</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>name(inList: ["Joe", "Fred", "Bob"])</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">matches</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validates that a String value matches a given regular expression.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>login(matches: "[a-zA-Z]+")</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">max</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validates that a value does not exceed the given maximum value.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>age(max: new Date())</code> <code>price(max: 999F)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">maxSize</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validates that a value&#8217;s size does not exceed the given maximum value.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>children(maxSize: 25)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">min</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validates that a value does not fall below the given minimum value.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>age(min: new Date())</code> <code>price(min: 0F)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">minSize</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validates that a value&#8217;s size does not fall below the given minimum value.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>children(minSize: 25)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">notEqual</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validates that that a property is not equal to the specified value</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>login(notEqual: "Bob")</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nullable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Allows a property to be set to <code>null</code> - defaults to <code>false</code>.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>age(nullable: true)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">range</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uses a Groovy range to ensure that a property&#8217;s value occurs within a specified range</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>age(range: 18..65)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">scale</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Set to the desired scale for floating point numbers (i.e., the number of digits to the right of the decimal point).</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>salary(scale: 2)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">size</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Uses a Groovy range to restrict the size of a collection or number or the length of a String.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>children(size: 5..15)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">unique</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Constrains a property as unique at the database level</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>login(unique: true)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">url</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Validates that a String value is a valid URL.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>homePage(url: true)</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">validator</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Adds custom validation to a field.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">See documentation</p></td>
 </tr>
 </tbody>
 </table>
@@ -322,23 +387,15 @@ static constraints = {
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">display</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean that determines whether the property is displayed in the scaffolding views. If <code>true</code> (the default)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean that determines whether the property is displayed in the scaffolding views. If <code>true</code> (the default), the property <em>is</em> displayed.</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the property <em>is</em> displayed.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">editable</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean that determines whether the property can be edited from the scaffolding views. If <code>false</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">the associated form fields are displayed in read-only mode.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Boolean that determines whether the property can be edited from the scaffolding views. If <code>false</code>, the associated form fields are displayed in read-only mode.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">format</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Specify a display format for types that accept one</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">such as dates. For example</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">'yyyy-MM-dd'.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specify a display format for types that accept one, such as dates. For example, 'yyyy-MM-dd'.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">password</p></td>
@@ -346,7 +403,7 @@ static constraints = {
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">widget</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Controls what widget is used to display the property. For example</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Controls what widget is used to display the property. For example, 'textarea' will force the scaffolding to use a &lt;textArea&gt; tag.</p></td>
 </tr>
 </tbody>
 </table>
@@ -354,7 +411,7 @@ static constraints = {
 <div class="sect2">
 <h3 id="_programmatic_access">Programmatic access</h3>
 <div class="paragraph">
-<p>You can access a domain&#8217;s constraints programmatically in another context by accessing the <code>constrainedProperties</code> static property of a domain class. That property is an instance of <code>Map&lt;String, <a href="http://docs.grails.org/3.2.4/api/grails/validation/ConstrainedProperty.html">ConstrainedProperty</a>&gt;</code>.</p>
+<p>You can access a domain&#8217;s constraints programmatically in another context by accessing the <code>constrainedProperties</code> static property of a domain class. That property is an instance of <code>Map&lt;String, <a href="http://docs.grails.org/3.2.7/api/grails/validation/ConstrainedProperty.html">ConstrainedProperty</a>&gt;</code>.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -372,6 +429,29 @@ static constraints = {
 <div class="paragraph">
 <p>In the example above, accessing <code>User.constrainedProperties.firstName.blank</code> would yield <code>false</code>, while
 <code>User.constrainedProperties.middleName.blank</code> would yield <code>true</code>.</p>
+</div>
+<div class="sect3">
+<h4 id="_command_objects">Command Objects</h4>
+<div class="paragraph">
+<p>Accessing the constraints on a command object is slightly different. You can access a command object&#8217;s constraints programmatically in another context by accessing the <code>constraintsMap</code> static property of a class that implements <a href="http://docs.grails.org/3.2.7/api/grails/validation/Validateable.html">Validateable</a>. That property is an instance of <code>Map&lt;String, <a href="http://docs.grails.org/3.2.7/api/grails/validation/ConstrainedProperty.html">ConstrainedProperty</a>&gt;</code></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">User</span> <span class="directive">implements</span> Validateable {
+    <span class="predefined-type">String</span> firstName
+    <span class="predefined-type">String</span> middleName
+
+    <span class="directive">static</span> constraints = {
+        firstName <span class="key">blank</span>: <span class="predefined-constant">false</span>, <span class="key">nullable</span>: <span class="predefined-constant">false</span>
+        middleName <span class="key">blank</span>: <span class="predefined-constant">true</span>, <span class="key">nullable</span>: <span class="predefined-constant">true</span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the example above, accessing <code>User.constraintsMap.firstName.blank</code> would yield <code>false</code>, while
+<code>User.constraintsMap.middleName.blank</code> would yield <code>true</code>.</p>
+</div>
 </div>
 </div>
             </div>

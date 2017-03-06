@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>11 Asynchronous Programming 3.2.4</title>
+    <title>11 Asynchronous Programming 3.2.7</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -129,7 +129,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>11 Asynchronous Programming</h1>
 
-                    <p><strong>Version:</strong> 3.2.4</p>
+                    <p><strong>Version:</strong> 3.2.7</p>
                 </div>
 
                 
@@ -378,6 +378,59 @@ map.onComplete { <span class="predefined-type">Map</span> results -&gt;
   <span class="keyword">assert</span> [<span class="key">one</span>:<span class="integer">4</span>,<span class="key">two</span>:<span class="integer">16</span>,<span class="key">three</span>:<span class="integer">64</span>] == results
 }</code></pre>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_promises_vs_webpromises">Promises vs. WebPromises</h3>
+<div class="paragraph">
+<p>Since Grails 3.2.7, there are two factory classes for <code>Promise</code> instances. They are:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>grails.async.Promises</code> - general purpose and not web specified</p>
+</li>
+<li>
+<p><code>grails.async.web.WebPromises</code> - designed for creating asynchronous responses.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Typically you use <code>WebPromises</code> within a controller, and its behaviour differs because Grails will automatically turn the request into an Servlet 3.x async request to execute the tasks created by <code>WebPromises</code>.</p>
+</div>
+<div class="paragraph">
+<p>The <code>Promises</code> factory class on the other hand is not web specific and will not create async requests.</p>
+</div>
+<div class="paragraph">
+<p>This also means that within the body of the task for <code>WebPromises</code> you can use controller methods such as <code>render</code> etc. For example the following works with <code>WebPromises</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">static</span> <span class="include">grails.async.web.WebPromises.*</span>
+<span class="type">class</span> <span class="class">HelloController</span> {
+
+    <span class="keyword">def</span> <span class="function">sayHello</span>(<span class="predefined-type">String</span> message) {
+       task {
+           render <span class="string"><span class="delimiter">&quot;</span><span class="content">Hello </span><span class="inline"><span class="inline-delimiter">$</span>message</span><span class="delimiter">&quot;</span></span>
+       }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>However, the above will fail with the regular <code>Promises</code> class.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In versions of Grails prior to 3.2.7, <code>Promises</code> used to allow the use of <code>render</code> and other controller methods, however this was unsafe as the request thread may have finished prior to the task executing leading to unexpected errors.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -650,7 +703,7 @@ Promises.promiseFactory = <span class="keyword">new</span> SynchronousPromiseFac
 <p>Grails 3.0 introduces a new Events API based on <a href="https://github.com/reactor/reactor">Reactor</a>.</p>
 </div>
 <div class="paragraph">
-<p>All services and controllers in Grails 3.0 implement the <a href="http://docs.grails.org/3.2.4/api/grails/events/Events.html">Events</a> trait.</p>
+<p>All services and controllers in Grails 3.0 implement the <a href="http://docs.grails.org/3.2.7/api/grails/events/Events.html">Events</a> trait.</p>
 </div>
 <div class="paragraph">
 <p>The <code>Events</code> trait allows the ability to consume and publish events that are handled by Reactor.</p>
@@ -681,7 +734,7 @@ Promises.promiseFactory = <span class="keyword">new</span> SynchronousPromiseFac
 
 
 <div class="paragraph">
-<p>There are several ways to consume an event. As mentioned previously services and controllers implement the <a href="http://docs.grails.org/3.2.4/api/grails/events/Events.html">Events</a> trait.</p>
+<p>There are several ways to consume an event. As mentioned previously services and controllers implement the <a href="http://docs.grails.org/3.2.7/api/grails/events/Events.html">Events</a> trait.</p>
 </div>
 <div class="paragraph">
 <p>The <code>Events</code> trait provides several methods to register event consumers. For example:</p>
@@ -956,7 +1009,7 @@ person.save()</code></pre>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> promise = Person.async.findByFirstName(<span class="string"><span class="delimiter">&quot;</span><span class="content">Homer</span><span class="delimiter">&quot;</span></span>)
 <span class="keyword">def</span> person = promise.get()
-person.merge()
+person = person.merge()
 person.firstName = <span class="string"><span class="delimiter">&quot;</span><span class="content">Bart</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
 </div>
@@ -1095,11 +1148,11 @@ def index() {
 <div class="sect3">
 <h4 id="_async_response_rendering">Async Response Rendering</h4>
 <div class="paragraph">
-<p>You can also write to the response asynchronously using promises in Grails 2.3 and above:</p>
+<p>You can also write to the response asynchronously using promises in Grails 2.3 and above and the <code>WebPromises</code> class:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">static</span> <span class="include">grails.async.Promises.*</span>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">static</span> <span class="include">grails.async.web.WebPromises.*</span>
 <span class="type">class</span> <span class="class">StockController</span> {
 
     <span class="keyword">def</span> <span class="function">stock</span>(<span class="predefined-type">String</span> ticker) {
