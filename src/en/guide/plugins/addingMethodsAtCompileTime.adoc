@@ -38,8 +38,8 @@ class ControllerTraitInjector implements TraitInjector {
 The above `TraitInjector` will add the `SomeTrait` to all controllers. The `getArtefactTypes` method defines the types of artefacts that the trait should be applied to.
 
 ==== Applying traits conditionally
-`TraitInjector` can implement `SupportsClassNode` interface to apply traits to only those artefacts which satisfy some requirements.
-For example, say you want to apply trait to an artefact only if artefact class has some annotation. it can be done as below
+A `TraitInjector` implementation can also implement the `SupportsClassNode` interface to apply traits to only those artefacts which satisfy a custom requirement.
+For example, if a trait should only be applied if the target artefact class has a specific annotation, it can be done as below
 
 
 [source,groovy]
@@ -65,7 +65,7 @@ class AnnotationBasedTraitInjector implements TraitInjector, SupportsClassNode {
 }
 ----
 
-Above `TraitInjector` will add the `SomeTrait` to only those controllers which has SomeAnnotation declared.
+Above `TraitInjector` will add the `SomeTrait` to only those controllers which has the SomeAnnotation declared.
 
 The framework discovers trait injectors by way of a `META-INF/grails.factories` descriptor that is in the .jar file.  This descriptor is automatically generated.  The descriptor generated for the code shown above would look like this:
 
