@@ -41,8 +41,8 @@ def list() {
     def books = Book.list()  // naming conflict here
 
     render(contentType: "text/xml") {
-        books {
-            for (b in results) {
+        books {                  // groovy will misinterpret here
+            for (b in books) {    
                 book(title: b.title)
             }
         }
@@ -50,8 +50,7 @@ def list() {
 }
 ----
 
-This is because there is local variable `books` which Groovy attempts to invoke as a method.
-
+In this case `books` is both a local variable and a Groovy method. This dual use results in a runtime exception being raissed when `render` is invoked.
 
 
 
