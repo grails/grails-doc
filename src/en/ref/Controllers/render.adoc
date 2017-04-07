@@ -60,12 +60,6 @@ render(contentType: "application/json") {
 // render with status code
 render(status: 503, text: 'Failed to update book ${b.id}')
 
-// Automatic marshalling of XML and JSON
-import grails.converters.*
-...
-render Book.list(params) as JSON
-render Book.get(params.id) as XML
-
 // render a file
 render(file: new File(absolutePath), fileName: "book.pdf")
 ----
@@ -90,7 +84,6 @@ Parameters:
 * `collection` (optional) - For rendering a template against each item in a collection
 * `contentType` (optional) - The contentType of the response
 * `encoding` (optional) - The encoding of the response
-* `converter` (as single non-named first parameter) - A Converter that should be rendered as Response
 * `plugin` (optional) - The plugin to look for the template in
 * `status` (optional) - The HTTP status code to use
 * `file` (optional) - The byte[], java.io.File, or inputStream you wish to send with the response
