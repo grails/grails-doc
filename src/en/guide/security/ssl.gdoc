@@ -1,0 +1,48 @@
+You can configure the embedded Tomcat server to use SSL in development mode. Typically with Tomcat you would edit the @server.xml@ file to define these properties. However in Grails you need to hook into Tomcat by configuring @grails-app/scripts/_Events.groovy@. In the example below I am using environment variables to pass in the values of the keystore and truststore. Notice also that we must add the keystore/truststore properties twice. Using
+
+{code:java}
+System.setProperty("javax.net.ssl.keyStore", "$keystorepath")
+{code}
+
+will define the keystore path for Grails. You will also need to also define the keystore/truststore paths for the Tomcat connector. Here is an example in @grails-app/scripts/_Events.groovy@:
+
+{code:java}
+import org.apache.catalina.connector.*
+import grails.util.Environment
+
+    eventConfigureTomcat = { org.apache.catalina.startup.Tomcat tomcat ->
+        if (Environment.getCurrent() == Environment.DEVELOPMENT) {
+            String keystorepass = System.getenv("KEY_STORE_PASS")
+            String keystorepath = System.getenv("KEY_STORE_PATH")
+            String truststorepass = System.getenv("TRUST_STORE_PASS")
+            String truststorepath = System.getenv("TRUST_STORE_PATH")
+
+            System.setProperty("javax.net.debug", "ssl") //use this to confirm grails adds proper keystore/truststore settings
+            System.setProperty("javax.net.ssl.keyStoreType", "jks")
+            System.setProperty("javax.net.ssl.keyStore", "$keystorepath")
+            System.setProperty("javax.net.ssl.keyStorePassword", "$keystorepass")
+            System.setProperty("javax.net.ssl.trustStoreType", "jks")
+            System.setProperty("javax.net.ssl.trustStore", "$truststorepath")
+            System.setProperty("javax.net.ssl.trustStorePassword", "$truststorepass")
+
+            def connector = new org.apache.catalina.connector.Connector()
+            connector.port = 8443
+            connector.protocol = 8443
+            connector.scheme = "https"
+            connector.setProperty("maxThreads", "150")
+            connector.setProperty("SSLEnabled", "true")
+            connector.setProperty("secure", "true")
+            connector.setProperty("clientAuth", "true")
+            connector.setProperty("sslProtocol", "TLS")
+            connector.setProperty("keystoreType", "JKS")
+            connector.setProperty("keystoreFile", "$keystorepath")
+            connector.setProperty("keystorePass", "$keystorepass")
+            connector.setProperty("truststoreType", "JKS")
+            connector.setProperty("truststoreFile", "$truststorepath")
+            connector.setProperty("truststorePass", "$truststorepass")
+
+            tomcat.service.addConnector connector
+            println "SSL configuration complete"
+        }
+    }
+{code}
