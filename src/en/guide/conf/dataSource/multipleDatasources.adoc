@@ -85,7 +85,6 @@ environments:
 
 You can use the same or different databases as long as they're supported by Hibernate.
 
-<<<<<<< HEAD
 If you need to inject the `lookup` datasource in a Grails artefact you can do it like this:
 
 [source,groovy]
@@ -93,9 +92,7 @@ If you need to inject the `lookup` datasource in a Grails artefact you can do it
 def dataSource_lookup
 ----
 
-=======
 NOTE: While defining multiple data sources, one of them **must** be named "dataSource". This is required because Grails determines which data source is the default by determining which one is named "dataSource".
->>>>>>> 3.1.x
 
 
 ==== Configuring Domain Classes
@@ -249,7 +246,7 @@ Note that the datasource specified in a service has no bearing on which datasour
 What you'll see is that if you have a Foo domain class in dataSource1 and a Bar domain class in dataSource2, and WahooService uses dataSource1, a service method that saves a new Foo and a new Bar will only be transactional for Foo since they share the datasource. The transaction won't affect the Bar instance. If you want both to be transactional you'd need to use two services and XA datasources for two-phase commit, e.g. with the Atomikos plugin.
 
 
-==== Transactions across multiple datasources 
+==== Transactions across multiple datasources
 
 
 Grails uses the Best Efforts 1PC pattern for handling transactions across multiple datasources.
@@ -260,7 +257,7 @@ The basic idea is to delay the commit of all resources as late as possible in a 
 
 The BE1PC implementation was added in Grails 2.3.6. . Before this change additional datasources didn't take part in transactions initiated in Grails. The transactions in additional datasources were basically in auto commit mode. In some cases this might be the wanted behavior. One reason might be performance: on the start of each new transaction, the BE1PC transaction manager creates a new transaction to each datasource. It's possible to leave an additional datasource out of the BE1PC transaction manager by setting `transactional = false` in the respective configuration block of the additional dataSource. Datasources with `readOnly = true` will also be left out of the chained transaction manager (since 2.3.7).
 
-By default, the BE1PC implementation will add all beans implementing the Spring `http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/transaction/PlatformTransactionManager.html[PlatformTransactionManager]` interface to the chained BE1PC transaction manager. For example, a possible `http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/jms/connection/JmsTransactionManager.html[JMSTransactionManager]` bean in the Grails application context would be added to the Grails BE1PC transaction manager's chain of transaction managers. 
+By default, the BE1PC implementation will add all beans implementing the Spring `http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/transaction/PlatformTransactionManager.html[PlatformTransactionManager]` interface to the chained BE1PC transaction manager. For example, a possible `http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/jms/connection/JmsTransactionManager.html[JMSTransactionManager]` bean in the Grails application context would be added to the Grails BE1PC transaction manager's chain of transaction managers.
 
 You can exclude transaction manager beans from the BE1PC implementation with the this configuration option:
 [source,groovy]
