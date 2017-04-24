@@ -18,6 +18,23 @@ Domain class autowiring is disabled by default due to its impact on performance.
 
 The default flush mode has been change to `COMMIT` due to the impact the previous flush mode `AUTO` has on read performance. You can switch back to `AUTO` use the `hibernate.flush.mode` setting in `application.yml`
 
+==== TransactionManager Chaining for Multiple Data Sources Disabled by Default
+
+In previous versions of Grails for multiple data sources a best effort transaction chain was used to attempt to manage a transaction across all configured data sources.
+
+As of Grails 3.3 this is disabled as it caused confusion since it isn't a true XA implementation and also impacts performance as for every transaction you have a transaction for each data source bound regardless if that is the actual requirement.
+
+If your application depends on this feature you can re-enable it with the following configuration:
+
+[source,yaml]
+----
+grails:
+  transaction:
+    chainedTransactionManagerPostProcessor:
+      enabled: true
+      blacklistPattern: '.*'
+----
+
 ==== Tomcat JDBC
 
 GORM 6.1 and above now supports multiple connection pool options, so the `tomcat-jdbc` dependency is now optional. If you are upgrading you may need to add it (or another pool implementation) to your `build.gradle`:

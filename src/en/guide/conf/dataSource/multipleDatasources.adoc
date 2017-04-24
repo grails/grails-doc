@@ -249,21 +249,40 @@ What you'll see is that if you have a Foo domain class in dataSource1 and a Bar 
 ==== Transactions across multiple datasources
 
 
-Grails uses the Best Efforts 1PC pattern for handling transactions across multiple datasources.
+Grails does not by default by default try to handle transactions that span multiple data sources.
 
-The http://www.javaworld.com/article/2077963/open-source-tools/distributed-transactions-in-spring--with-and-without-xa.html?page=2[Best Efforts 1PC pattern] is fairly general but can fail in some circumstances that the developer must be aware of. This is a non-XA pattern that involves a synchronized single-phase commit of a number of resources. Because the <<ref-orgwiki-twophasecommit-2PC,2PC>> is not used, it can never be as safe as an <<ref-orgwiki-x-open-xa-XA,XA>> transaction, but is often good enough if the participants are aware of the compromises.
+You can enable Grails to use the Best Effort 1PC pattern for handling transactions across multiple datasources. To do so you must set the `grails.transaction.chainedTransactionManagerPostProcessor.enabled` setting to `true` in `application.yml`:
+
+[source,yaml]
+----
+grails:
+  transaction:
+    chainedTransactionManagerPostProcessor:
+      enabled: true
+----
+
+The http://www.javaworld.com/article/2077963/open-source-tools/distributed-transactions-in-spring--with-and-without-xa.html?page=2[Best Efforts 1PC pattern] is fairly general but can fail in some circumstances that the developer must be aware of.
+
+
+This is a non-XA pattern that involves a synchronized single-phase commit of a number of resources. Because the <<ref-orgwiki-twophasecommit-2PC,2PC>> is not used, it can never be as safe as an <<ref-orgwiki-x-open-xa-XA,XA>> transaction, but is often good enough if the participants are aware of the compromises.
 
 The basic idea is to delay the commit of all resources as late as possible in a transaction so that the only thing that can go wrong is an infrastructure failure (not a business-processing error). Systems that rely on Best Efforts 1PC reason that infrastructure failures are rare enough that they can afford to take the risk in return for higher throughput. If business-processing services are also designed to be idempotent, then little can go wrong in practice.
 
 The BE1PC implementation was added in Grails 2.3.6. . Before this change additional datasources didn't take part in transactions initiated in Grails. The transactions in additional datasources were basically in auto commit mode. In some cases this might be the wanted behavior. One reason might be performance: on the start of each new transaction, the BE1PC transaction manager creates a new transaction to each datasource. It's possible to leave an additional datasource out of the BE1PC transaction manager by setting `transactional = false` in the respective configuration block of the additional dataSource. Datasources with `readOnly = true` will also be left out of the chained transaction manager (since 2.3.7).
 
-By default, the BE1PC implementation will add all beans implementing the Spring `http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/transaction/PlatformTransactionManager.html[PlatformTransactionManager]` interface to the chained BE1PC transaction manager. For example, a possible `http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/jms/connection/JmsTransactionManager.html[JMSTransactionManager]` bean in the Grails application context would be added to the Grails BE1PC transaction manager's chain of transaction managers.
+By default, the BE1PC implementation will add all beans implementing the Spring `link:{springapi}/org/springframework/transaction/PlatformTransactionManager.html[PlatformTransactionManager]` interface to the chained BE1PC transaction manager. For example, a possible `link:{springapi}/org/springframework/jms/connection/JmsTransactionManager.html[JMSTransactionManager]` bean in the Grails application context would be added to the Grails BE1PC transaction manager's chain of transaction managers.
 
 You can exclude transaction manager beans from the BE1PC implementation with the this configuration option:
-[source,groovy]
+
+[source,yaml]
 ----
-grails.transaction.chainedTransactionManagerPostProcessor.blacklistPattern = '.*'
+grails:
+  transaction:
+    chainedTransactionManagerPostProcessor:
+      enabled: true
+      blacklistPattern: '.*'
 ----
+
 The exclude matching is done on the name of the transaction manager bean. The transaction managers of datasources with `transactional = false` or `readOnly = true` will be skipped and using this configuration option is not required in that case.
 
 
@@ -272,6 +291,6 @@ The exclude matching is done on the name of the transaction manager bean. The tr
 
 When the Best Efforts 1PC pattern isn't suitable for handling transactions across multiple transactional resources (not only datasources), there are several options available for adding XA/2PC support to Grails applications.
 
-The http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/transaction.html#transaction-application-server-integration[Spring transactions documentation] contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name `transactionManager` manually in `resources.groovy` or `resources.xml` file.
+The link:{springdocs}/transaction.html#transaction-application-server-integration[Spring transactions documentation] contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name `transactionManager` manually in `resources.groovy` or `resources.xml` file.
 
-There is also http://grails.org/plugin/atomikos[Atomikos plugin] available for XA support in Grails applications.
+
