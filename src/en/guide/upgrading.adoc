@@ -45,6 +45,16 @@ GORM 6.1 and above now supports multiple connection pool options, so the `tomcat
 runtime 'org.apache.tomcat:tomcat-jdbc'
 ----
 
+=== Default Logger Name
+
+In previous versions of Grails, if you did not specify a logger in the controller, service, etc, a `log` variable was injected for you. The naming convention of that logger was `grails.app.${artefactType}.package.class`. For example:
+
+`grails.app.controllers.foo.bar.MyController`
+
+To make the logger names more intuitive as well as to increase consistency between custom code, plugin dependencies, and third party libraries, the `grails.app.${artefactType}` convention was removed. The same class as above will now be referenced the same way as any standard class. The way the `log` variable gets injected was also changed to defer to the Slf4j transformation. That means it is no longer necessary to check `if (log.isDebugEnabled())`.
+
+The downside of this change is that it isn't immediately simple to set up the same logging configuration for all controllers, for example. We think this can be solved with a package naming strategy that represents what your requirements are.
+
 === Dependency Alterations
 
 In an effort to trim the size of the produced WAR file by Grails several dependencies are no longer resolved transtively including:
@@ -65,7 +75,7 @@ If your application is referencing any of the classes within this package you wi
 
 === Reactor 2.x Deprecated and Removed
 
-Since Reactor 2.x is no longer being maintained and a new ink:{asyncdocs}[EventBus] abstraction has been implemented, Reactor 2.x and all its dependencies have been removed.
+Since Reactor 2.x is no longer being maintained and a new link:{asyncdocs}[EventBus] abstraction has been implemented, Reactor 2.x and all its dependencies have been removed.
 
 A compatibility layer has been provided to allow classes compiled with the previous version that uses Reactor to run, however all plugins and application code should be re-compiled and direct references to Reactor 2.x should be removed.
 
@@ -94,3 +104,32 @@ Several plugins and libraries have been separated from Grails core into standalo
 |https://github.com/grails/grails-events
 
 |===
+
+=== Grails Domain Class API Deprecated
+
+The legacy classes that represent domain classes and their properties have been deprecated in favor of the mapping context API. The internal implementation of the methods in those classes now delegates to the mapping context. Due to that change, information about your domain classes is not available until the application context is available.
+
+In previous versions of Grails it was possible to access link:api/grails/core/GrailsDomainClass.html[GrailsDomainClass] instances and inspect the link:api/grails/core/GrailsDomainClassProperty.html[GrailsDomainClassProperty] properties inside of the `doWithSpring` method in a plugin, for example.
+
+If you have code that follows that example, an error will be thrown that looks like "The method ... cannot be accessed before GORM has initialized". The solution is to move any logic that executes before the context is available to somewhere else that executes after the context is available.
+
+All code that uses the link:api/grails/core/GrailsDomainClass.html[GrailsDomainClass] or link:api/grails/core/GrailsDomainClassProperty.html[GrailsDomainClassProperty] classes should be re-written to use the mapping context api.
+
+To get started, inject the `grailsDomainClassMappingContext` bean. See the api documentation for more information on the link:{grails.gorm}org/grails/datastore/mapping/model/MappingContext.html[MappingContext], link:{grails.gorm}org/grails/datastore/mapping/model/PersistentEntity.html[PersistentEntity] (GrailsDomainClass), and link:{grails.gorm}org/grails/datastore/mapping/model/PersistentProperty.html[PersistentProperty] (GrailsDomainClassProperty).
+
+=== Task Groups
+
+Several tasks have had their groups changed to better reflect their purpose. If you're having trouble finding a task, look through the different groups.
+
+=== Legacy JSON Builder Option Removed
+
+In a previous version of Grails, the JSON builder used by default for rendering JSON inline was changed. The previous behavior of using converters to build the JSON was able to be re-enabled by setting `grails.json.legacy.builder` to true. In Grails 3.3 that setting has been removed and it is no longer possible to use the legacy converter API to render JSON inline via the `render` method.
+
+=== Datasource Plugin Revamp
+
+As a result of major changes to the dataSources plugin, beans for the lazy and unproxied representation of a dataSource are no longer available.
+
+Example:
+
+* dataSourceUnproxied
+* dataSourceLazy
