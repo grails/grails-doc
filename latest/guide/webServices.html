@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>10 Web Services 3.2.8</title>
+    <title>10 Web Services 3.2.9</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -129,7 +129,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>10 Web Services</h1>
 
-                    <p><strong>Version:</strong> 3.2.8</p>
+                    <p><strong>Version:</strong> 3.2.9</p>
                 </div>
 
                 
@@ -166,10 +166,10 @@ function addJsClass() {
                     <div class="toc-item" style="margin-left:10px"><a href="#restProfile"><strong>10.1.6</strong><span>The REST Profile</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#angularProfile"><strong>10.1.7</strong><span>The Angular Profile</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#angularJsProfile"><strong>10.1.7</strong><span>The AngularJS Profile</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#angular2Profile"><strong>10.1.8</strong><span>The Angular 2 Profile</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#angularProfile"><strong>10.1.8</strong><span>The Angular Profile</span></a>
                     </div>
                     
                     <div class="toc-item" style="margin-left:10px"><a href="#jsonViews"><strong>10.1.9</strong><span>JSON Views</span></a>
@@ -639,7 +639,7 @@ beans = {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">BookController</span> <span class="directive">extends</span> RestfulController {
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">BookController</span> <span class="directive">extends</span> RestfulController&lt;<span class="predefined-type">Book</span>&gt; {
     <span class="directive">static</span> responseFormats = [<span class="string"><span class="delimiter">'</span><span class="content">json</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">xml</span><span class="delimiter">'</span></span>]
     BookController() {
         <span class="local-variable">super</span>(<span class="predefined-type">Book</span>)
@@ -769,7 +769,7 @@ The <code>create</code> and <code>edit</code> actions are only needed if the con
 </div>
 </div>
 <div class="paragraph">
-<p>By default the <code>getObjectToBind()</code> method returns the <a href="../ref/Controllers/request.html">request</a> object.  When the <code>request</code> object is used as the binding source, if the request has a body then the body will be parsed and its contents will be used to do the data binding, otherwise the request parameters will be used to do the data binding.  Subclasses of RestfulController may override the <code>getObjectToBind()</code> method and return anything that is a valid binding source, including a <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html">Map</a> or a <a href="http://docs.grails.org/3.2.8/api/grails/databinding/DataBindingSource.html">DataBindingSource</a>.  For most use cases binding the request is appropriate but the <code>getObjectToBind()</code> method allows for changing that behavior where desired.</p>
+<p>By default the <code>getObjectToBind()</code> method returns the <a href="../ref/Controllers/request.html">request</a> object.  When the <code>request</code> object is used as the binding source, if the request has a body then the body will be parsed and its contents will be used to do the data binding, otherwise the request parameters will be used to do the data binding.  Subclasses of RestfulController may override the <code>getObjectToBind()</code> method and return anything that is a valid binding source, including a <a href="https://docs.oracle.com/javase/8/docs/api/java/util/Map.html">Map</a> or a <a href="http://docs.grails.org/3.2.9/api/grails/databinding/DataBindingSource.html">DataBindingSource</a>.  For most use cases binding the request is appropriate but the <code>getObjectToBind()</code> method allows for changing that behavior where desired.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1187,10 +1187,10 @@ $ grails generate-all my.api.Book</code></pre>
 </div>
 
 
-<h2 id="angularProfile">10.1.7 The Angular Profile</h2>
+<h2 id="angularJsProfile">10.1.7 The AngularJS Profile</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/webServices/REST/angularProfile.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/webServices/REST/angularJsProfile.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1200,11 +1200,11 @@ $ grails generate-all my.api.Book</code></pre>
 <p>Since Grails 3.1, Grails supports a profile for creating applications with AngularJS that provides a more focused set of dependencies and commands. The angular profile inherits from the REST profile and therefore has all of the commands and properties that the REST profile has.</p>
 </div>
 <div class="paragraph">
-<p>To get started with the Angular profile, create an application specifying <code>angular</code> as the name of the profile:</p>
+<p>To get started with the AngularJS profile, create an application specifying <code>angularjs</code> as the name of the profile:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ grails create-app my-api --profile angular</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">$ grails create-app my-api --profile angularjs</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1213,7 +1213,7 @@ $ grails generate-all my.api.Book</code></pre>
 <div class="ulist">
 <ul>
 <li>
-<p>Default set of commands for creating Angular artefacts</p>
+<p>Default set of commands for creating AngularJS artefacts</p>
 </li>
 <li>
 <p>Gradle plugin to manage client side dependencies</p>
@@ -1227,7 +1227,7 @@ $ grails generate-all my.api.Book</code></pre>
 </ul>
 </div>
 <div class="paragraph">
-<p>By default the Angular profile includes GSP support in order to render the index page. This is necessary because the profile is designed around asset pipeline.</p>
+<p>By default the AngularJS profile includes GSP support in order to render the index page. This is necessary because the profile is designed around asset pipeline.</p>
 </div>
 <div class="paragraph">
 <p>The new commands are:</p>
@@ -1257,7 +1257,7 @@ $ grails generate-all my.api.Book</code></pre>
 <div class="sect3">
 <h4 id="_project_structure">Project structure</h4>
 <div class="paragraph">
-<p>The Angular profile is designed around a specific project structure. The <code>create-ng</code> commands will automatically create modules where they do not exist.</p>
+<p>The AngularJS profile is designed around a specific project structure. The <code>create-ng</code> commands will automatically create modules where they do not exist.</p>
 </div>
 <div class="paragraph">
 <p>Example:</p>
@@ -1277,7 +1277,7 @@ $ grails generate-all my.api.Book</code></pre>
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-By default the angular profile will create files in the <code>javascripts</code> directory. You can change that behavior in your configuration with the key <code>grails.codegen.angular.assetDir</code>.
+By default the angularjs profile will create files in the <code>javascripts</code> directory. You can change that behavior in your configuration with the key <code>grails.codegen.angular.assetDir</code>.
 </td>
 </tr>
 </table>
@@ -1344,7 +1344,7 @@ By default the angular profile will create files in the <code>javascripts</code>
 <div class="sect3">
 <h4 id="_asset_pipeline">Asset Pipeline</h4>
 <div class="paragraph">
-<p>The Angular profile includes several asset pipeline plugins to make development easier.</p>
+<p>The AngularJS profile includes several asset pipeline plugins to make development easier.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1355,17 +1355,17 @@ By default the angular profile will create files in the <code>javascripts</code>
 <p><a href="https://github.com/craigburke/angular-annotate-asset-pipeline">Annotate Asset Pipeline</a> will annotate your dependencies to be safe for minification.</p>
 </li>
 <li>
-<p><a href="https://github.com/craigburke/angular-template-asset-pipeline">Template Asset Pipelin</a> will put your templates into the <code>$templateCache</code> to prevent http requests to retrieve the templates.</p>
+<p><a href="https://github.com/craigburke/angular-template-asset-pipeline">Template Asset Pipeline</a> will put your templates into the <code>$templateCache</code> to prevent http requests to retrieve the templates.</p>
 </li>
 </ul>
 </div>
 </div>
 
 
-<h2 id="angular2Profile">10.1.8 The Angular 2 Profile</h2>
+<h2 id="angularProfile">10.1.8 The Angular Profile</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/webServices/REST/angular2Profile.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/webServices/REST/angularProfile.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -1375,14 +1375,14 @@ By default the angular profile will create files in the <code>javascripts</code>
 <p>Since Grails 3.2.1, Grails supports a profile for creating applications with Angular that provides a more future facing setup.</p>
 </div>
 <div class="paragraph">
-<p>The biggest change in this profile is that the profile creates a multi project gradle build. This is the first profile to have done so. The Angular 2 profile relies on the <a href="https://github.com/angular/angular-cli">Angular CLI</a> to manage the client side application. The server side application is the same as an application created with the <code>rest-api</code> profile.</p>
+<p>The biggest change in this profile is that the profile creates a multi project gradle build. This is the first profile to have done so. The Angular profile relies on the <a href="https://github.com/angular/angular-cli">Angular CLI</a> to manage the client side application. The server side application is the same as an application created with the <code>rest-api</code> profile.</p>
 </div>
 <div class="paragraph">
-<p>To get started with the Angular 2 profile, create an application specifying <code>angular2</code> as the name of the profile:</p>
+<p>To get started with the Angular profile, create an application specifying <code>angular</code> as the name of the profile:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ grails create-app my-app --profile angular2</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">$ grails create-app my-app --profile angular</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1420,7 +1420,7 @@ settings.gradle</code></pre>
 <div class="sect3">
 <h4 id="_project_structure">Project Structure</h4>
 <div class="paragraph">
-<p>The Angular 2 profile is designed to be used with the <a href="https://github.com/angular/angular-cli">Angular CLI</a>. The CLI was used to create the client application side of the profile to start with. The CLI provides commands to do most of the things you would want to do with the client application, including creating components or services. Because of that, the profile itself provides no commands to do those same things.</p>
+<p>The Angular profile is designed to be used with the <a href="https://github.com/angular/angular-cli">Angular CLI</a>. The CLI was used to create the client application side of the profile to start with. The CLI provides commands to do most of the things you would want to do with the client application, including creating components or services. Because of that, the profile itself provides no commands to do those same things.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2660,7 +2660,7 @@ Content-<span class="predefined-type">Type</span>: application/vnd.error+json;ch
 </div>
 </div>
 <div class="paragraph">
-<p>The data binding depends on an instance of the <a href="http://docs.grails.org/3.2.8/api/grails/databinding/DataBindingSource.html">DataBindingSource</a> interface created by an instance of the <a href="http://docs.grails.org/3.2.8/api/org/grails/databinding/bindingsource/DataBindingSourceCreator.html">DataBindingSourceCreator</a> interface.  The specific implementation of <code>DataBindingSourceCreator</code> will be selected based on the <code>contentType</code> of the request.  Several implementations are provided to handle common content types.  The default implementations will be fine for most use cases.  The following table lists the content types which are supported by the core framework and which <code>DataBindingSourceCreator</code> implementations are used for each. All of the implementation classes are in the <code>org.grails.databinding.bindingsource</code> package.</p>
+<p>The data binding depends on an instance of the <a href="http://docs.grails.org/3.2.9/api/grails/databinding/DataBindingSource.html">DataBindingSource</a> interface created by an instance of the <a href="http://docs.grails.org/3.2.9/api/org/grails/databinding/bindingsource/DataBindingSourceCreator.html">DataBindingSourceCreator</a> interface.  The specific implementation of <code>DataBindingSourceCreator</code> will be selected based on the <code>contentType</code> of the request.  Several implementations are provided to handle common content types.  The default implementations will be fine for most use cases.  The following table lists the content types which are supported by the core framework and which <code>DataBindingSourceCreator</code> implementations are used for each. All of the implementation classes are in the <code>org.grails.databinding.bindingsource</code> package.</p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
@@ -2743,7 +2743,7 @@ you like but you should take care not to conflict with one of the bean names abo
 </div>
 </div>
 <div class="paragraph">
-<p><a href="http://docs.grails.org/3.2.8/api/org/grails/web/databinding/bindingsource/AbstractRequestBodyDataBindingSourceCreator.html">AbstractRequestBodyDataBindingSourceCreator</a>
+<p><a href="http://docs.grails.org/3.2.9/api/org/grails/web/databinding/bindingsource/AbstractRequestBodyDataBindingSourceCreator.html">AbstractRequestBodyDataBindingSourceCreator</a>
 is an abstract class designed to be extended to simplify writing custom <code>DataBindingSourceCreator</code> classes.  Classes which
 extend <code>AbstractRequestbodyDatabindingSourceCreator</code> need to implement a method named <code>createBindingSource</code>
 which accepts an <code>InputStream</code> as an argument and returns a <code>DataBindingSource</code> as well as implementing the <code>getMimeTypes</code>

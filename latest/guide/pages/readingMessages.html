@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>16.3 Reading Messages 3.2.8</title>
+    <title>16.3 Reading Messages 3.2.9</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -129,7 +129,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>16.3 Reading Messages</h1>
 
-                    <p><strong>Version:</strong> 3.2.8</p>
+                    <p><strong>Version:</strong> 3.2.9</p>
                 </div>
 
                 
@@ -181,9 +181,31 @@ function addJsClass() {
 </div>
 </div>
 <div class="sect3">
-<h4 id="_reading_messages_in_controllers_and_tag_libraries">Reading Messages in Controllers and Tag Libraries</h4>
+<h4 id="_reading_messages_in_grails_artifacts_with_messagesource">Reading Messages in Grails Artifacts with MessageSource</h4>
 <div class="paragraph">
-<p>It&#8217;s simple to read messages in a controller since you can invoke tags as methods:</p>
+<p>In a Grails artifact, you can inject <code>messageSource</code> and use the method <code>getMessage</code> with the arguments: message code, message arguments, default message and locale to retrieve a message.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.context.MessageSource</span>
+
+<span class="type">class</span> <span class="class">MyappController</span> {
+
+    MessageSource messageSource
+
+    <span class="keyword">def</span> <span class="function">show</span>() {
+        <span class="keyword">def</span> msg = messageSource.getMessage(<span class="string"><span class="delimiter">'</span><span class="content">my.localized.content</span><span class="delimiter">'</span></span>, [<span class="string"><span class="delimiter">'</span><span class="content">Juan</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">lunes</span><span class="delimiter">'</span></span>] <span class="keyword">as</span> <span class="predefined-type">Object</span><span class="type">[]</span>, <span class="string"><span class="delimiter">'</span><span class="content">Default Message</span><span class="delimiter">'</span></span>, request.locale)
+    }</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_reading_messages_in_controllers_and_tag_libraries_with_the_message_tag">Reading Messages in Controllers and Tag Libraries with the Message Tag</h4>
+<div class="paragraph">
+<p>Additionally, you can read a message inside Controllers and Tag Libraries with the <a href="http://docs.grails.org/latest/ref/Tags/message.html">Message Tag</a>. However, using the message tag relies on GSP support which a Grails application may not necessarily have; e.g. a rest application.</p>
+</div>
+<div class="paragraph">
+<p>In a controller, you can invoke tags as methods.</p>
 </div>
 <div class="listingblock">
 <div class="content">

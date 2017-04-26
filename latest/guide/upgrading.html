@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3 Upgrading 3.2.8</title>
+    <title>3 Upgrading 3.2.9</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -129,29 +129,32 @@ function addJsClass() {
                 <div class="project">
                     <h1>3 Upgrading</h1>
 
-                    <p><strong>Version:</strong> 3.2.8</p>
+                    <p><strong>Version:</strong> 3.2.9</p>
                 </div>
 
                 
                 <div id="table-of-content">
                     <h2>Table of Contents</h2>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#upgrading31x"><strong>3.1</strong><span>Upgrading from Grails 3.1</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#upgrading32x"><strong>3.1</strong><span>Upgrading from Grails 3.2</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#upgrading3x"><strong>3.2</strong><span>Upgrading from Grails 3.0</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#upgrading31x"><strong>3.2</strong><span>Upgrading from Grails 3.1</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#upgrading2x"><strong>3.3</strong><span>Upgrading from Grails 2.x</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#upgrading3x"><strong>3.3</strong><span>Upgrading from Grails 3.0</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#upgradingPlugins"><strong>3.3.1</strong><span>Upgrading Plugins</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#upgrading2x"><strong>3.4</strong><span>Upgrading from Grails 2.x</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#upgradingApps"><strong>3.3.2</strong><span>Upgrading Applications</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#upgradingPlugins"><strong>3.4.1</strong><span>Upgrading Plugins</span></a>
                     </div>
                     
-                    <div class="toc-item" style="margin-left:10px"><a href="#upgradingGeneral"><strong>3.3.3</strong><span>General Changes to be aware of when migrating apps</span></a>
+                    <div class="toc-item" style="margin-left:10px"><a href="#upgradingApps"><strong>3.4.2</strong><span>Upgrading Applications</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:10px"><a href="#upgradingGeneral"><strong>3.4.3</strong><span>General Changes to be aware of when migrating apps</span></a>
                     </div>
                     
                 </div>
@@ -393,7 +396,54 @@ function addJsClass() {
 </div>
 
 
-<h2 id="upgrading31x">3.1 Upgrading from Grails 3.1</h2>
+<h2 id="upgrading32x">3.1 Upgrading from Grails 3.2</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/upgrading/upgrading32x.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>If you are upgrading from Grails 3.2 there are a few items to take into consideration.</p>
+</div>
+<div class="sect3">
+<h4 id="_legacy_converters_api_separated_from_core">Legacy Converters API Separated From Core</h4>
+<div class="paragraph">
+<p>Since the addition of json views, the previous way to convert objects to JSON has been considered legacy. In Grails 3.3 the code to support the legacy converters has been moved out of core and into a separate plugin. That means that by default, code that uses <code>grails.converters.JSON</code> or <code>grails.converters.XML</code> will no longer work by default.</p>
+</div>
+<div class="paragraph">
+<p>Common usages of this feature are <code>render(book as JSON)</code>.</p>
+</div>
+<div class="paragraph">
+<p>If your codebase uses the legacy converters it is encouraged to convert the functionality to use JSON views, however you can add a dependency in your code to allow current usages of the converters to work again.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre>    compile "org.grails.plugins:grails-plugin-converters"</pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+The support to build JSON directly from the render method no longer supports the old API and any code that used it will need to be converted to use the <a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/json/StreamingJsonBuilder.html">groovy.json.StreamingJsonBuilder</a> syntax.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>The support for rendering with the previous API was disabled by default in 3.1 and was able be re-enabled with the <code>grails.json.legacy.builder: true</code> setting. That setting has been removed in Grails 3.3.</p>
+</div>
+</div>
+
+
+<h2 id="upgrading31x">3.2 Upgrading from Grails 3.1</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/upgrading/upgrading31x.adoc"'>
@@ -561,7 +611,7 @@ script14738267015581837265078.groovy: <span class="integer">13</span>: unable to
 </div>
 
 
-<h2 id="upgrading3x">3.2 Upgrading from Grails 3.0</h2>
+<h2 id="upgrading3x">3.3 Upgrading from Grails 3.0</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/upgrading/upgrading3x.adoc"'>
@@ -779,7 +829,7 @@ compile <span class="string"><span class="delimiter">'</span><span class="conten
 <div class="sect3">
 <h4 id="_resource_annotation_defaults_to_json_instead_of_xml">Resource annotation defaults to JSON instead of XML</h4>
 <div class="paragraph">
-<p>The <a href="http://docs.grails.org/3.2.8/api/grails/rest/Resource.html">Resource</a> annotation applied to domain classes defaults to XML in Grails 3.0.x, but in Grails 3.1.x and above it defaults to JSON.</p>
+<p>The <a href="http://docs.grails.org/3.2.9/api/grails/rest/Resource.html">Resource</a> annotation applied to domain classes defaults to XML in Grails 3.0.x, but in Grails 3.1.x and above it defaults to JSON.</p>
 </div>
 <div class="paragraph">
 <p>If you use this annotation with the expecation of produces XML responses as the default you can modify the definition as follows:</p>
@@ -838,7 +888,7 @@ script14738267015581837265078.groovy: <span class="integer">13</span>: unable to
 </div>
 
 
-<h2 id="upgrading2x">3.3 Upgrading from Grails 2.x</h2>
+<h2 id="upgrading2x">3.4 Upgrading from Grails 2.x</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/upgrading/upgrading2x.adoc"'>
@@ -852,7 +902,7 @@ script14738267015581837265078.groovy: <span class="integer">13</span>: unable to
 </div>
 
 
-<h2 id="upgradingPlugins">3.3.1 Upgrading Plugins</h2>
+<h2 id="upgradingPlugins">3.4.1 Upgrading Plugins</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/upgrading/upgrading2x/upgradingPlugins.adoc"'>
@@ -981,7 +1031,7 @@ class QuartzGrailsPlugin <span class="directive">extends</span> Plugin {
 <div class="sect3">
 <h4 id="_step_7_register_artefacthandler_definitions">Step 7 - Register ArtefactHandler Definitions</h4>
 <div class="paragraph">
-<p>In Grails 3.x <a href="http://docs.grails.org/3.2.8/api/grails/core/ArtefactHandler.html">ArtefactHandler</a> definitions written in Java need to be declared in a file called <code>src/main/resources/META-INF/grails.factories</code> since these need to be known at compile time.</p>
+<p>In Grails 3.x <a href="http://docs.grails.org/3.2.9/api/grails/core/ArtefactHandler.html">ArtefactHandler</a> definitions written in Java need to be declared in a file called <code>src/main/resources/META-INF/grails.factories</code> since these need to be known at compile time.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -1069,7 +1119,7 @@ render  <span class="key">template</span>:<span class="string"><span class="deli
 <p>Using the old Grails 2.x build system it was relatively common to spin up Grails inside the command line. In Grails 3.x it is not possible to load a Grails application within a code generation script created by the <a href="../ref/Command%20Line/create-script.html">create-script</a> command.</p>
 </div>
 <div class="paragraph">
-<p>Instead a new mechanism specific to plugins exists via the <a href="../ref/Command%20Line/create-command.html">create-command</a> command. The <code>create-command</code> command will create a new <a href="http://docs.grails.org/3.2.8/api/grails/dev/commands/ApplicationCommand.html">ApplicationCommand</a>, for example the following command will execute a query:</p>
+<p>Instead a new mechanism specific to plugins exists via the <a href="../ref/Command%20Line/create-command.html">create-command</a> command. The <code>create-command</code> command will create a new <a href="http://docs.grails.org/3.2.9/api/grails/dev/commands/ApplicationCommand.html">ApplicationCommand</a>, for example the following command will execute a query:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1126,7 +1176,7 @@ $ gradle runQuery</code></pre>
 </div>
 
 
-<h2 id="upgradingApps">3.3.2 Upgrading Applications</h2>
+<h2 id="upgradingApps">3.4.2 Upgrading Applications</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/upgrading/upgrading2x/upgradingApps.adoc"'>
@@ -1220,12 +1270,12 @@ cp -rf ../old_app/test/integration/ src/integration-test/groovy</code></pre>
 <p>Once the package names are corrected unit tests will continue to run, however any tests that extend the deprecated and removed JUnit 3 hierarchy will need to be migrated to Spock or JUnit 4.</p>
 </div>
 <div class="paragraph">
-<p>Integration tests will need to be annotated with the <a href="http://docs.grails.org/3.2.8/api/grails/test/mixin/integration/Integration.html">Integration</a> annotation and should not extend GroovyTestCase or any JUnit 3 super class.</p>
+<p>Integration tests will need to be annotated with the <a href="http://docs.grails.org/3.2.9/api/grails/test/mixin/integration/Integration.html">Integration</a> annotation and should not extend GroovyTestCase or any JUnit 3 super class.</p>
 </div>
 </div>
 
 
-<h2 id="upgradingGeneral">3.3.3 General Changes to be aware of when migrating apps</h2>
+<h2 id="upgradingGeneral">3.4.3 General Changes to be aware of when migrating apps</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/upgrading/upgrading2x/upgradingGeneral.adoc"'>
