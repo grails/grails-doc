@@ -46,6 +46,18 @@ Generates HTML selects.
 // book.category.F=Fantasy
 <g:select name="book.category" from="${['M', 'T', 'F']}"
           valueMessagePrefix="book.category" />
+          
+// create select which uses constraints of the domain class
+// example domain Book:
+//   String category
+//   static constraints = {
+//     category nullable: false, inList: ['M', 'T', 'F']
+//   }
+<g:select name="category" 
+          from="${book.constrainedProperties.category.inList}" 
+          value="${book?.category}" 
+          valueMessagePrefix="book.category"/>
+
 ----
 
 Example as a method call in GSP only:
