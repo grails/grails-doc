@@ -198,6 +198,15 @@ Generally all classes within the `org.grails.validation` package are now depreca
 
 To register a custom constraint you should now use the link:{gormapi}/org/grails/datastore/gorm/validation/constraints/registry/ConstraintRegistry.html[ConstraintRegistry] interface instead.
 
+The default link:{gormapi}/org/grails/datastore/mapping/validation/ValidatorRegistry.html[ValidatorRegistry] implements the `ConstraintRegistry` interface and can be autowired into any controller or service by declaring the following property:
+
+[source,groovy]
+----
+ValidatorRegistry gormValidatorRegistry
+...
+gormValidatorRegistry.addConstraint(MyConstraint)
+----
+
 === Grails' Transactional AST Transforms Deprecated
 
 The transaction management AST transforms that shipped as part of Grails have been ported to GORM and improved to make it possible to use them outside of Grails.
