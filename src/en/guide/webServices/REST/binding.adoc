@@ -9,7 +9,7 @@ The framework provides a sophisticated but simple mechanism for binding REST req
 </book>
 ----
 
-[source,java]
+[source,groovy]
 ----
 class BookController {
 
@@ -24,7 +24,7 @@ class BookController {
 
 Command objects will automatically be bound with the body of the request:
 
-[source,java]
+[source,groovy]
 ----
 class BookController {
     def createBook(BookCommand book) {
@@ -50,7 +50,7 @@ If the command object type is a domain class and the root element of the XML doc
 </book>
 ----
 
-[source,java]
+[source,groovy]
 ----
 class BookController {
     def updateBook(Book book) {
@@ -71,14 +71,14 @@ class BookController {
 }
 ----
 
-The data binding depends on an instance of the http://docs.grails.org/latest/api/org/grails/databinding/DataBindingSource.html[DataBindingSource] interface created by an instance of the http://docs.grails.org/latest/api/org/grails/databinding/bindingsource/DataBindingSourceCreator.html[DataBindingSourceCreator] interface.  The specific implementation of `DataBindingSourceCreator` will be selected based on the `contentType` of the request.  Several implementations are provided to handle common content types.  The default implementations will be fine for most use cases.  The following table lists the content types which are supported by the core framework and which `DataBindingSourceCreator` implementations are used for each. All of the implementation classes are in the `org.grails.databinding.bindingsource` package.
+The data binding depends on an instance of the {apiDocs}grails/databinding/DataBindingSource.html[DataBindingSource] interface created by an instance of the {apiDocs}org/grails/databinding/bindingsource/DataBindingSourceCreator.html[DataBindingSourceCreator] interface.  The specific implementation of `DataBindingSourceCreator` will be selected based on the `contentType` of the request.  Several implementations are provided to handle common content types.  The default implementations will be fine for most use cases.  The following table lists the content types which are supported by the core framework and which `DataBindingSourceCreator` implementations are used for each. All of the implementation classes are in the `org.grails.databinding.bindingsource` package.
 
 [format="csv", options="header"]
 |===
 
 Content Type(s),Bean Name,DataBindingSourceCreator Impl.
-application/xml, text/xml,xmlDataBindingSourceCreator,XmlDataBindingSourceCreator
-application/json, text/json,jsonDataBindingSourceCreator,JsonDataBindingSourceCreator
+"application/xml, text/xml",xmlDataBindingSourceCreator,XmlDataBindingSourceCreator
+"application/json, text/json",jsonDataBindingSourceCreator,JsonDataBindingSourceCreator
 application/hal+json,halJsonDataBindingSourceCreator,HalJsonDataBindingSourceCreator
 application/hal+xml,halXmlDataBindingSourceCreator,HalXmlDataBindingSourceCreator
 |===
@@ -91,7 +91,7 @@ you like but you should take care not to conflict with one of the bean names abo
 
 The `DataBindingSourceCreator` interface defines just 2 methods:
 
-[source,java]
+[source,groovy]
 ----
 package org.grails.databinding.bindingsource
 
@@ -125,7 +125,7 @@ interface DataBindingSourceCreator {
 }
 ----
 
-http://docs.grails.org/latest/api/org/grails/databinding/bindingsource/AbstractRequestbodyDataBindingSourceCreator.html[AbstractRequestBodyDataBindingSourceCreator]
+{apiDocs}org/grails/web/databinding/bindingsource/AbstractRequestBodyDataBindingSourceCreator.html[AbstractRequestBodyDataBindingSourceCreator]
 is an abstract class designed to be extended to simplify writing custom `DataBindingSourceCreator` classes.  Classes which
 extend `AbstractRequestbodyDatabindingSourceCreator` need to implement a method named `createBindingSource`
 which accepts an `InputStream` as an argument and returns a `DataBindingSource` as well as implementing the `getMimeTypes`
@@ -135,10 +135,9 @@ provides access to the body of the request.
 The code below shows a simple implementation.
 
 
-[source,java]
+[source,groovy]
+.src/main/groovy/com/demo/myapp/databinding/MyCustomDataBindingSourceCreator.groovy
 ----
-// MyCustomDataBindingSourceCreator.groovy in
-// src/groovy/com/demo/myapp/databinding
 package com.demo.myapp.databinding
 
 import grails.web.mime.MimeType
@@ -174,8 +173,8 @@ class MyCustomDataBindingSourceCreator extends AbstractRequestBodyDataBindingSou
             keyValuePairs.each { keyValuePair ->
                 if(keyValuePair?.trim()) {
                     def keyValuePieces = keyValuePair.split(':')
-                    def key = keyValuePieces<<0>>.trim()
-                    def value = keyValuePieces<<1>>.trim()
+                    def key = keyValuePieces[0].trim()
+                    def value = keyValuePieces[1].trim()
                     map<<key>> = value
                 }
             }
@@ -189,9 +188,9 @@ class MyCustomDataBindingSourceCreator extends AbstractRequestBodyDataBindingSou
 
 An instance of `MyCustomDataSourceCreator` needs to be registered in the spring application context.
 
-[source,java]
+[source,groovy]
+.grails-app/conf/spring/resources.groovy
 ----
-// grails-app/conf/spring/resources.groovy
 beans = {
 
     myCustomCreator com.demo.myapp.databinding.MyCustomDataBindingSourceCreator

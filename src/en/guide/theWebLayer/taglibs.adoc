@@ -2,7 +2,7 @@ Like http://www.oracle.com/technetwork/java/javaee/jsp/index.html[Java Server Pa
 
 Quite simply, to create a tag library create a Groovy class that ends with the convention `TagLib` and place it within the `grails-app/taglib` directory:
 
-[source,java]
+[source,groovy]
 ----
 class SimpleTagLib {
 
@@ -11,7 +11,7 @@ class SimpleTagLib {
 
 Now to create a tag create a Closure property that takes two arguments: the tag attributes and the body content:
 
-[source,java]
+[source,groovy]
 ----
 class SimpleTagLib {
     def simple = { attrs, body ->
@@ -22,7 +22,7 @@ class SimpleTagLib {
 
 The `attrs` argument is a Map of the attributes of the tag, whilst the `body` argument is a Closure that returns the body content when invoked:
 
-[source,java]
+[source,groovy]
 ----
 class SimpleTagLib {
     def emoticon = { attrs, body ->
@@ -38,11 +38,11 @@ As demonstrated above there is an implicit `out` variable that refers to the out
 <g:emoticon happy="true">Hi John</g:emoticon>
 ----
 
-NOTE: To help IDEs like Spring Tool Suite (STS) and others autocomplete tag attributes, you should add Javadoc comments to your tag closures with `@attr` descriptions. Since taglibs use Groovy code it can be difficult to reliably detect all usable attributes.
+NOTE: To help IDEs autocomplete tag attributes, you should add Javadoc comments to your tag closures with `@attr` descriptions. Since taglibs use Groovy code it can be difficult to reliably detect all usable attributes.
 
 For example:
 
-[source,java]
+[source,groovy]
 ----
 class SimpleTagLib {
 
@@ -60,7 +60,7 @@ class SimpleTagLib {
 
 and any mandatory attributes should include the REQUIRED keyword, e.g.
 
-[source,java]
+[source,groovy]
 ----
 class SimpleTagLib {
 

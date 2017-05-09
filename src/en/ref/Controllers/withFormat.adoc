@@ -6,13 +6,13 @@
 === Purpose
 
 
-Renders different responses based on the incoming request `Accept` header, format parameter or URI extension. See link:theWebLayer.html#contentNegotiation[Content Negotiation] for more information.
+Renders different responses based on the incoming request `Accept` header, format parameter or URI extension. See link:{guidePath}/theWebLayer.html#contentNegotiation[Content Negotiation] for more information.
 
 
 === Examples
 
 
-[source,java]
+[source,groovy]
 ----
 import grails.converters.XML
 
@@ -36,7 +36,7 @@ class BookController {
 
 The `withFormat` accepts a Closure which contains methods corresponding to the different content types you want to respond to. For example:
 
-[source,java]
+[source,groovy]
 ----
 withFormat {
     html bookList: books
@@ -45,7 +45,7 @@ withFormat {
 }
 ----
 
-Here we invoke three methods called `html`, `js` and `xml` that use mime type names configured in `grails-app/conf/application.groovy` (See link:theWebLayer.html#contentNegotiation[Content Negotiation] for more information). The call to `html` accepts a model (a Map) which is passed on to the view. Grails searches for a view called `grails-app/views/book/list.html.gsp` and if that is not found fallback to `grails-app/views/book/list.gsp`.
+Here we invoke three methods called `html`, `js` and `xml` that use mime type names configured in `grails-app/conf/application.groovy` (See link:{guidePath}/theWebLayer.html#contentNegotiation[Content Negotiation] for more information). The call to `html` accepts a model (a Map) which is passed on to the view. Grails searches for a view called `grails-app/views/book/list.html.gsp` and if that is not found fallback to `grails-app/views/book/list.gsp`.
 
 Note that the order of the types is significant if the request format is "all" or if more than one content type has the same "q" rating in the accept header. In the former case, the first type handler in the block is executed ("html" in the short example above). The latter case is more confusing because it only holds if there is more than one content type with the highest "q" rating for which you have a type handler *and* you have more than one type handler matching that "q" rating. For example if the request has "text/html" and "application/xml" with a "q" rating of 1.0, then this code:
 
@@ -61,7 +61,7 @@ will use the "xml" type handler for the request.
 
 Another important factor to note is that the `withFormat` method deals with the _response_ format and not the request format. As of Grails 2.0, there is a separate `withFormat` method made available on the `request` that you can use to handle the request format which is dictated by the `CONTENT_TYPE` header of the request:
 
-[source,java]
+[source,groovy]
 ----
 request.withFormat {
     form { .. }
@@ -74,7 +74,7 @@ NOTE: The request format of `form` is used for handling form submission in conte
 
 If you require that the model be lazily executed you can pass a Closure instead of a Map:
 
-[source,java]
+[source,groovy]
 ----
 withFormat {
     html { [bookList: Book.list()] }

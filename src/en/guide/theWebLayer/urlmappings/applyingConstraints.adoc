@@ -1,6 +1,6 @@
 URL Mappings also support Grails' unified link:validation.html#constraints[validation constraints] mechanism, which lets you further "constrain" how a URL is matched. For example, if we revisit the blog sample code from earlier, the mapping currently looks like this:
 
-[source,java]
+[source,groovy]
 ----
 static mappings = {
    "/$blog/$year?/$month?/$day?/$id?"(controller:"blog", action:"show")
@@ -9,21 +9,21 @@ static mappings = {
 
 This allows URLs such as:
 
-[source,java]
+[source]
 ----
 /graemerocher/2007/01/10/my_funky_blog_entry
 ----
 
 However, it would also allow:
 
-[source,java]
+[source]
 ----
 /graemerocher/not_a_year/not_a_month/not_a_day/my_funky_blog_entry
 ----
 
 This is problematic as it forces you to do some clever parsing in the controller code. Luckily, URL Mappings can be constrained to further validate the URL tokens:
 
-[source,java]
+[source,groovy]
 ----
 "/$blog/$year?/$month?/$day?/$id?" {
      controller = "blog"

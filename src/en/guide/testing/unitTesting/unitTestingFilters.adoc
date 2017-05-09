@@ -1,6 +1,6 @@
 Unit testing filters is typically a matter of testing a controller where a filter is a mock collaborator. For example consider the following filters class:
 
-[source,java]
+[source,groovy]
 ----
 class CancellingFilters {
     def filters = {
@@ -16,7 +16,7 @@ class CancellingFilters {
 
 This filter interceptors the `list` action of the `simple` controller and redirects to the `book` controller. To test this filter you start off with a test that targets the `SimpleController` class and add the `CancellingFilters` as a mock collaborator:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
@@ -33,7 +33,7 @@ class SimpleControllerSpec extends Specification {
 
 You can then implement a test that uses the `withFilters` method to wrap the call to an action in filter execution:
 
-[source,java]
+[source,groovy]
 ----
 import grails.test.mixin.TestFor
 import grails.test.mixin.Mock
@@ -57,7 +57,7 @@ class SimpleControllerSpec extends Specification {
 
 Note that the `action` parameter is required because it is unknown what the action to invoke is until the action is actually called. The `controller` parameter is optional and taken from the controller under test. If it is another controller you are testing then you can specify it:
 
-[source,java]
+[source,groovy]
 ----
 withFilters(controller:"book",action:"list") {
     controller.list()

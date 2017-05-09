@@ -18,22 +18,22 @@ When you type the following command:
 grails run-app
 ----
 
-It results in a search for the following files:
+It will first search the application, and then the profile for commands:
 
-* `PROJECT_HOME/scripts/RunApp.groovy`
-* `PROFILE_REPOSITORY_PATH/profiles/web/commands/run-app.groovy` (if the web profile is active)
-* `PROFILE_REPOSITORY_PATH/profiles/web/commands/run-app.yml` (for YAML defined commands)
+* `PROJECT_HOME/src/main/scripts/run-app.groovy`
+* `<<profile>>/commands/run-app.groovy`
+* `<<profile>>/commands/run-app.yml`
 
 To get a list of all commands and some help about the available commands type:
 
-[source,groovy]
+[source,bash]
 ----
 grails help
 ----
 
 which outputs usage instructions and the list of commands Grails is aware of:
 
-[source,groovy]
+[source,bash]
 ----
 grails <<environment>>* <<target>> <<arguments>>*'
 
@@ -52,10 +52,10 @@ compile                                 Compiles a Grails application
 NOTE: Refer to the Command Line reference in the Quick Reference menu of the reference guide for more information about individual commands
 
 
-==== non-interactive mode
+=== non-interactive mode
 
 
-When you run a script manually and it prompts you for information, you can answer the questions and continue running the script. But when you run a script as part of an automated process, for example a continuous integration build server, there's no way to "answer" the questions. So you can pass the `\-\-non-interactive` switch to the script command to tell Grails to accept the default answer for any questions, for example whether to install a missing plugin.
+When you run a script manually and it prompts you for information, you can answer the questions and continue running the script. But when you run a script as part of an automated process, for example a continuous integration build server, there's no way to "answer" the questions. So you can pass the `\--non-interactive` switch to the script command to tell Grails to accept the default answer for any questions, for example whether to install a missing plugin.
 
 For example:
 

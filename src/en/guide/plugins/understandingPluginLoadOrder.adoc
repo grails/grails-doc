@@ -4,7 +4,7 @@
 
 Plugins often depend on the presence of other plugins and can adapt depending on the presence of others. This is implemented with two properties. The first is called `dependsOn`. For example, take a look at this snippet from the Hibernate plugin:
 
-[source,java]
+[source,groovy]
 ----
 class HibernateGrailsPlugin {
 
@@ -23,7 +23,7 @@ The dependencies will be loaded before the Hibernate plugin and if all dependenc
 
 The `dependsOn` property also supports a mini expression language for specifying version ranges. A few examples of the syntax can be seen below:
 
-[source,java]
+[source,groovy]
 ----
 def dependsOn = [foo: "* > 1.0"]
 def dependsOn = [foo: "1.0 > 1.1"]
@@ -44,14 +44,14 @@ When the wildcard * character is used it denotes "any" version. The expression s
 
 Using `dependsOn` establishes a "hard" dependency in that if the dependency is not resolved, the plugin will give up and won't load.  It is possible though to have a weaker dependency using the `loadAfter` and `loadBefore` properties:
 
-[source,java]
+[source,groovy]
 ----
 def loadAfter = ['controllers']
 ----
 
 Here the plugin will be loaded after the `controllers` plugin if it exists, otherwise it will just be loaded. The plugin can then adapt to the presence of the other plugin, for example the Hibernate plugin has this code in its `doWithSpring` closure:
 
-[source,java]
+[source,groovy]
 ----
 if (manager?.hasGrailsPlugin("controllers")) {
     openSessionInViewInterceptor(OpenSessionInViewInterceptor) {
@@ -62,11 +62,11 @@ if (manager?.hasGrailsPlugin("controllers")) {
 }
 ----
 
-Here the Hibernate plugin will only register an `OpenSessionInViewInterceptor` if the `controllers` plugin has been loaded. The `manager` variable is an instance of the http://docs.grails.org/latest/api/grails/plugins/GrailsPluginManager.html[GrailsPluginManager] interface and it provides methods to interact with other plugins.
+Here the Hibernate plugin will only register an `OpenSessionInViewInterceptor` if the `controllers` plugin has been loaded. The `manager` variable is an instance of the {apiDocs}grails/plugins/GrailsPluginManager.html[GrailsPluginManager] interface and it provides methods to interact with other plugins.
 
 You can also use the `loadBefore` property to specify one or more plugins that your plugin should load before:
 
-[source,java]
+[source,groovy]
 ----
 def loadBefore = ['rabbitmq']
 ----
@@ -85,7 +85,7 @@ def scopes = [excludes:'war']
 
 In this example, the plugin will only load in the 'development' and 'test' environments. Nor will it be packaged into the WAR file, because it's excluded from the 'war' phase. This allows `development-only` plugins to not be packaged for production use.
 
-The full list of available scopes are defined by the enum http://docs.grails.org/latest/api/grails/util/BuildScope.html[BuildScope], but here's a summary:
+The full list of available scopes are defined by the enum {apiDocs}grails/util/BuildScope.html[BuildScope], but here's a summary:
 
 * `test` - when running tests
 * `functional-test` - when running functional tests

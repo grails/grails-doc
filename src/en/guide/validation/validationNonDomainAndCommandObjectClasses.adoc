@@ -1,14 +1,14 @@
-<<GORM,Domain classes>> and <<commandObjects,command objects>> support validation by default.  Other classes may be made validateable by defining the static `constraints` property in the class (as described above) and then telling the framework about them.  It is important that the application register the validateable classes with the framework.  Simply defining the `constraints` property is not sufficient.
+link:GORM.html[Domain classes] and link:theWebLayer.html#commandObjects[Command Objects] support validation by default.  Other classes may be made validateable by defining the static `constraints` property in the class (as described above) and then telling the framework about them.  It is important that the application register the validateable classes with the framework.  Simply defining the `constraints` property is not sufficient.
 
 
 ==== The Validateable Trait
 
 
-Classes which define the static `constraints` property and implement the http://docs.grails.org/latest/api/grails/validation/Validateable.html[Validateable] trait will be validateable. Consider this example:
+Classes which define the static `constraints` property and implement the {apiDocs}grails/validation/Validateable.html[Validateable] trait will be validateable. Consider this example:
 
-[source,java]
+[source,groovy]
+.src/main/groovy/com/mycompany/myapp/User.groovy
 ----
-// src/groovy/com/mycompany/myapp/User.groovy
 package com.mycompany.myapp
 
 import grails.validation.Validateable
@@ -24,3 +24,10 @@ class User implements Validateable {
     }
 }
 ----
+
+===== Programmatic access
+
+Accessing the constraints on a validateable object is slightly different. You can access a command object's constraints programmatically in another context by accessing the `constraintsMap` static property of the class. That property is an instance of `Map<String, {apiDocs}grails/validation/ConstrainedProperty.html[ConstrainedProperty]>`
+
+In the example above, accessing `User.constraintsMap.login.blank` would yield `false`, while
+`User.constraintsMap.login.unique` would yield `true`.

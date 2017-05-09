@@ -1,6 +1,6 @@
 http://stateless.co/hal_specification.html[HAL] is a standard exchange format commonly used when developing REST APIs that follow HATEOAS principals. An example HAL document representing a list of orders can be seen below:
 
-[source,groovy]
+[source,javascript]
 ----
 {
     "_links": {
@@ -55,6 +55,31 @@ To return HAL instead of regular JSON for a resource you can simply override the
 import grails.rest.render.hal.*
 beans = {
     halBookRenderer(HalJsonRenderer, rest.test.Book)
+}
+----
+
+You will also need to update the acceptable response formats for the resource so that the HAL format is included. Not doing so will result in a 406 - Not Acceptable response being returned from the server. 
+
+This can be done by setting the `formats` attribute of the `Resource` transformation:
+
+[source,groovy]
+----
+import grails.rest.*
+
+@Resource(uri='/books', formats=['json', 'xml', 'hal'])
+class Book {
+    ...
+}
+----
+
+Or by updating the `responseFormats` in the controller:
+
+[source,groovy]
+----
+class BookController extends RestfulController {
+    static responseFormats = ['json', 'xml', 'hal']
+
+    // ...
 }
 ----
 
@@ -265,14 +290,13 @@ NOTE: `application/vnd.books.org.booklist+json` is an example of a media-range (
 
 With this in place issuing a request for the new Mime Type returns the necessary HAL:
 
-[source,groovy]
+[source,bash]
 ----
 $ curl -i -H "Accept: application/vnd.books.org.book+json" http://localhost:8080/books/1
 
 HTTP/1.1 200 OK
 Server: Apache-Coyote/1.1
 Content-Type: application/vnd.books.org.book+json;charset=ISO-8859-1
-
 
 {
   "_links": {
@@ -305,7 +329,7 @@ def show(Book book) {
 
 Which will result in output such as:
 
-[source,groovy]
+[source,javascript]
 ----
 {
   "_links": {

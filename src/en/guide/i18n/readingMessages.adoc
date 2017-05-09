@@ -11,7 +11,7 @@ The most common place that you need messages is inside the view. Use the link:{g
 
 As long as you have a key in your `messages.properties` (with appropriate locale suffix) such as the one below then Grails will look up the message:
 
-[source,java]
+[source,groovy]
 ----
 my.localized.content=Hola, Me llamo John. Hoy es domingo.
 ----
@@ -25,18 +25,35 @@ Messages can also include arguments, for example:
 
 The message declaration specifies positional parameters which are dynamically specified:
 
-[source,java]
+[source,groovy]
 ----
 my.localized.content=Hola, Me llamo {0}. Hoy es {1}.
 ----
 
+==== Reading Messages in Grails Artifacts with MessageSource
 
-==== Reading Messages in Controllers and Tag Libraries
+In a Grails artifact, you can inject `messageSource` and use the method `getMessage` with the arguments: message code, message arguments, default message and locale to retrieve a message.
 
+[source,groovy]
+----
+import org.springframework.context.MessageSource
 
-It's simple to read messages in a controller since you can invoke tags as methods:
+class MyappController {
 
-[source,java]
+    MessageSource messageSource
+
+    def show() {
+        def msg = messageSource.getMessage('my.localized.content', ['Juan', 'lunes'] as Object[], 'Default Message', request.locale)
+    }
+----
+
+==== Reading Messages in Controllers and Tag Libraries with the Message Tag
+
+Additionally, you can read a message inside Controllers and Tag Libraries with the link:http://docs.grails.org/latest/ref/Tags/message.html[Message Tag]. However, using the message tag relies on GSP support which a Grails application may not necessarily have; e.g. a rest application.
+
+In a controller, you can invoke tags as methods.
+
+[source,groovy]
 ----
 def show() {
     def msg = message(code: "my.localized.content", args: ['Juan', 'lunes'])
@@ -45,7 +62,7 @@ def show() {
 
 The same technique can be used in link:theWebLayer.html#taglibs[tag libraries], but if your tag library uses a custom link:theWebLayer.html#namespaces[namespace] then you must prefix the call with `g.`:
 
-[source,java]
+[source,groovy]
 ----
 def myTag = { attrs, body ->
     def msg = g.message(code: "my.localized.content", args: ['Juan', 'lunes'])

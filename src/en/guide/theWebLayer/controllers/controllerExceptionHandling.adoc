@@ -1,8 +1,8 @@
 Grails controllers support a simple mechanism for declarative exception handling.  If a controller declares a method that accepts a single argument and the argument type is `java.lang.Exception` or some subclass of `java.lang.Exception`, that method will be invoked any time an action in that controller throws an exception of that type.  See the following example.
 
-[source,java]
+[source,groovy]
+.grails-app/controllers/demo/DemoController.groovy
 ----
-// grails-app/controllers/demo/DemoController.groovy
 package demo
 
 class DemoController {
@@ -29,9 +29,9 @@ class DemoController {
 That controller will behave as if it were written something like this...
 
 
-[source,java]
+[source,groovy]
+.grails-app/controllers/demo/DemoController.groovy
 ----
-// grails-app/controllers/demo/DemoController.groovy
 package demo
 
 class DemoController {
@@ -68,9 +68,9 @@ The exception handler methods can do anything that a controller action can do in
 
 One way to share exception handler methods across multiple controllers is to use inheritance.  Exception handler methods are inherited into subclasses so an application could define the exception handlers in an abstract class that multiple controllers extend from.  Another way to share exception handler methods across multiple controllers is to use a trait, as shown below...
 
-[source,java]
+[source,groovy]
+.src/main/groovy/com/demo/DatabaseExceptionHandler.groovy
 ----
-// src/groovy/com/demo/DatabaseExceptionHandler.groovy
 package com.demo
 
 trait DatabaseExceptionHandler {
@@ -84,9 +84,9 @@ trait DatabaseExceptionHandler {
 }
 ----
 
-[source,java]
+[source,groovy]
+.grails-app/controllers/com/demo/DemoController.groovy
 ----
-// grails-app/controllers/com/demo/DemoController.groovy
 package com.demo
 
 class DemoController implements DatabaseExceptionHandler {

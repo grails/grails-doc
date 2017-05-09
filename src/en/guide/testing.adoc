@@ -2,12 +2,12 @@ Automated testing is a key part of Grails. Hence, Grails provides many ways to m
 
 The first thing to be aware of is that all of the `create-\*` and `generate-\*` commands create `unit` or `integration` tests automatically. For example if you run the link:../ref/Command%20Line/create-controller.html[create-controller] command as follows:
 
-[source,java]
+[source,groovy]
 ----
 grails create-controller com.acme.app.simple
 ----
 
-Grails will create a controller at `grails-app/controllers/com/acme/app/SimpleController.groovy`, and also a unit test at `test/unit/com/acme/app/SimpleControllerTests.groovy`. What Grails won't do however is populate the logic inside the test! That is left up to you.
+Grails will create a controller at `grails-app/controllers/com/acme/app/SimpleController.groovy`, and also a unit test at `src/test/groovy/com/acme/app/SimpleControllerSpec.groovy`. What Grails won't do however is populate the logic inside the test! That is left up to you.
 
 NOTE: The default class name suffix is `Tests` but as of Grails 1.2.2, the suffix of `Test` is also supported.
 
@@ -17,14 +17,14 @@ NOTE: The default class name suffix is `Tests` but as of Grails 1.2.2, the suffi
 
 Tests are run with the link:../ref/Command%20Line/test-app.html[test-app] command:
 
-[source,java]
+[source,groovy]
 ----
 grails test-app
 ----
 
 The command will produce output such as:
 
-[source,java]
+[source,groovy]
 ----
 -------------------------------------------------------
 Running Unit Tests...
@@ -43,7 +43,7 @@ Grails writes both plain text and HTML test reports to the `target/test-reports`
 
 Using Grails' link:commandLine.html#interactiveMode[interactive mode] confers some distinct advantages when executing tests. First, the tests will execute significantly faster on the second and subsequent runs. Second, a shortcut is available to open the HTML reports in your browser:
 
-[source,java]
+[source,groovy]
 ----
 open test-report
 ----
@@ -104,6 +104,8 @@ grails test-app some.org.* SimpleController.testLogin BookController
 ----
 
 NOTE: In Grails 2.x, adding `-rerun` as an argument would only run those tests which failed in the previous test-app run. This argument is no longer supported.
+
+NOTE: In Grails 3.x, you might need to specify the package name before the class name, as well as append "Spec" to the end. For example, if you want to run the test for the ProductController, you should use `grails test-app *.ProductControllerSpec`. Note that the star can be used if you don't want to type the whole package hierarchy.
 
 
 ==== Debugging
