@@ -12,7 +12,14 @@ Notably `grails-datastore-gorm-async` is now optional and if you use the `task` 
 
 ==== Domain Autowiring Disabled
 
-Domain class autowiring is disabled by default due to its impact on performance. You can re-enable autowiring using the `grails.gorm.autowire` setting in `application.yml`.
+Domain class autowiring is disabled by default due to its impact on performance. You can re-enable autowiring for all domains using the `grails.gorm.autowire` setting in `application.yml` or just for specific domains like this:
+
+[source,groovy]
+----
+static mapping = {
+     autowire true
+}
+----
 
 ==== Flush Mode now COMMIT by Default
 
@@ -260,4 +267,3 @@ Several tasks have had their groups changed to better reflect their purpose. If 
 === Legacy JSON Builder Option Removed
 
 In a previous version of Grails, the JSON builder used by default for rendering JSON inline was changed. The previous behavior of using converters to build the JSON was able to be re-enabled by setting `grails.json.legacy.builder` to true. In Grails 3.3 that setting has been removed and it is no longer possible to use the legacy converter API to render JSON inline via the `render` method.
-
