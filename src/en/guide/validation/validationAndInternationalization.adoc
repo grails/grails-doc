@@ -22,12 +22,62 @@ class User {
 }
 ----
 
-If a constraint is violated Grails will by convention look for a message code of the form:
+If a constraint is violated, Grails looks by convention for a message code: 
 
-[source,groovy]
-----
-<<Class Name>>.<<Property Name>>.<<Constraint Code>>
-----
+[cols=2*,options="header"]
+|===
+|Constraint
+|Error Code
+
+|link:../ref/Constraints/blank.html[blank]
+|`className.propertyName.blank`
+
+|link:../ref/Constraints/creditCard.html[creditCard]
+|`className.propertyName.creditCard.invalid`
+
+|link:../ref/Constraints/email.html[email]
+|`className.propertyName.email.invalid`
+
+|link:../ref/Constraints/inList.html[inList]
+|`className.propertyName.not.inList`
+
+|link:../ref/Constraints/matches.html[matches]
+|`className.propertyName.matches.invalid`
+
+|link:../ref/Constraints/max.html[max]
+|`className.propertyName.max.exceeded`
+
+|link:../ref/Constraints/maxSize.html[maxSize]
+|`className.propertyName.maxSize.exceeded`
+
+|link:../ref/Constraints/min.html[min]
+|`className.propertyName.min.notmet`
+
+|link:../ref/Constraints/minSize.html[minSize]
+|`className.propertyName.minSize.notmet`
+
+|link:../ref/Constraints/notEqual.html[notEqual]
+|`className.propertyName.notEqual`
+
+|link:../ref/Constraints/nullable.html[nullable]
+|`className.propertyName.nullable`
+
+|link:../ref/Constraints/range.html[range]
+|`className.propertyName.range.toosmall` or `className.propertyName.range.toobig`
+
+|link:../ref/Constraints/size.html[size]
+|`className.propertyName.size.toosmall` or `className.propertyName.size.toobig`
+
+|link:../ref/Constraints/unique.html[unique]
+|`className.propertyName.unique`
+
+|link:../ref/Constraints/url.html[url]
+|`className.propertyName.url.invalid`
+
+|link:../ref/Constraints/validator.html[validator]
+|`classname.propertyName.` + String returned by Closure
+
+|===
 
 In the case of the `blank` constraint this would be `user.login.blank` so you would need a message such as the following in your `grails-app/i18n/messages.properties` file:
 
@@ -36,7 +86,7 @@ In the case of the `blank` constraint this would be `user.login.blank` so you wo
 user.login.blank=Your login name must be specified!
 ----
 
-The class name is looked for both with and without a package, with the packaged version taking precedence. So for example, com.mycompany.myapp.User.login.blank will be used before user.login.blank. This allows for cases where your domain class message codes clash with a plugin's.
+The class name is looked for both with and without a package, with the packaged version taking precedence. So for example, `com.mycompany.myapp.User.login.blank` will be used before `user.login.blank`. This allows for cases where your domain class message codes clash with a plugin's.
 
 For a reference on what codes are for which constraints refer to the reference guide for each constraint (e.g. link:../ref/Constraints/blank.html[blank]).
 
