@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>19 Grails and Spring 3.2.9</title>
+    <title>19 Grails and Spring 3.2.10</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -129,7 +129,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>19 Grails and Spring</h1>
 
-                    <p><strong>Version:</strong> 3.2.9</p>
+                    <p><strong>Version:</strong> 3.2.10</p>
                 </div>
 
                 
@@ -152,6 +152,9 @@ function addJsClass() {
                     </div>
                     
                     <div class="toc-item" style="margin-left:0px"><a href="#propertyOverrideConfiguration"><strong>19.6</strong><span>Property Override Configuration</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#actuators"><strong>19.7</strong><span>Spring Boot Actuators</span></a>
                     </div>
                     
                 </div>
@@ -215,7 +218,7 @@ function addJsClass() {
 <div class="ulist">
 <ul>
 <li>
-<p>GrailsAutoConfiguration registers GrailsApplicationPostProcessor bean. This bean configures the <a href="http://docs.grails.org/3.2.9/api/grails/core/GrailsApplication.html">GrailsApplication</a> instance and the <a href="http://docs.grails.org/3.2.9/api/grails/plugins/GrailsPluginManager.html">GrailsPluginManager</a>.</p>
+<p>GrailsAutoConfiguration registers GrailsApplicationPostProcessor bean. This bean configures the <a href="http://docs.grails.org/3.2.10/api/grails/core/GrailsApplication.html">GrailsApplication</a> instance and the <a href="http://docs.grails.org/3.2.10/api/grails/plugins/GrailsPluginManager.html">GrailsPluginManager</a>.</p>
 </li>
 <li>
 <p>GrailsApplicationPostProcessor also implements <code>BeanDefinitionRegistryPostProcessor</code>, during <code>postProcessBeanDefinitionRegistry</code> it  executes <code>grails-app/conf/spring/resources.groovy</code> from the current application and then invokes the <code>doWithSpring</code> method for each plugin to ensure all the bean definitions are registered with application context.</p>
@@ -466,7 +469,7 @@ If you define a bean in <code>resources.groovy</code> with the same name as one 
 <p>This Bean builder in Grails aims to provide a simplified way of wiring together dependencies that uses Spring at its core.</p>
 </div>
 <div class="paragraph">
-<p>In addition, Spring&#8217;s regular way of configuration (via XML and annotations) is static and difficult to modify and configure at runtime, other than programmatic XML creation which is both error prone and verbose. Grails' <a href="http://docs.grails.org/3.2.9/api/grails/spring/BeanBuilder.html">BeanBuilder</a> changes all that by making it possible to programmatically wire together components at runtime, allowing you to adapt the logic based on system properties or environment variables.</p>
+<p>In addition, Spring&#8217;s regular way of configuration (via XML and annotations) is static and difficult to modify and configure at runtime, other than programmatic XML creation which is both error prone and verbose. Grails' <a href="http://docs.grails.org/3.2.10/api/grails/spring/BeanBuilder.html">BeanBuilder</a> changes all that by making it possible to programmatically wire together components at runtime, allowing you to adapt the logic based on system properties or environment variables.</p>
 </div>
 <div class="paragraph">
 <p>This enables the code to adapt to its environment and avoids unnecessary duplication of code (having different Spring configs for test, development and production environments)</p>
@@ -474,7 +477,7 @@ If you define a bean in <code>resources.groovy</code> with the same name as one 
 <div class="sect3">
 <h4 id="_the_beanbuilder_class">The BeanBuilder class</h4>
 <div class="paragraph">
-<p>Grails provides a <a href="http://docs.grails.org/3.2.9/api/grails/spring/BeanBuilder.html">grails.spring.BeanBuilder</a> class that uses dynamic Groovy to construct bean definitions. The basics are as follows:</p>
+<p>Grails provides a <a href="http://docs.grails.org/3.2.10/api/grails/spring/BeanBuilder.html">grails.spring.BeanBuilder</a> class that uses dynamic Groovy to construct bean definitions. The basics are as follows:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1058,7 +1061,7 @@ aop {
 <p>Grails supports the notion of property placeholder configuration through an extended version of Spring&#8217;s <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/beans/factory/config/PropertyPlaceholderConfigurer.html">PropertyPlaceholderConfigurer</a>.</p>
 </div>
 <div class="paragraph">
-<p>Settings defined in either hhttp://docs.groovy-lang.org/latest/html/gapi/groovy/util/ConfigSlurper.html[ConfigSlurper] scripts or Java properties files can be used as placeholder values for Spring configuration in <code>grails-app/conf/spring/resources.xml</code> and <code>grails-app/conf/spring/resources.groovy</code>. For example given the following entries in <code>grails-app/conf/application.groovy</code> (or an externalized config):</p>
+<p>Settings defined in either <a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/util/ConfigSlurper.html">ConfigSlurper</a> scripts or Java properties files can be used as placeholder values for Spring configuration in <code>grails-app/conf/spring/resources.xml</code> and <code>grails-app/conf/spring/resources.groovy</code>. For example given the following entries in <code>grails-app/conf/application.groovy</code> (or an externalized config):</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1150,6 +1153,33 @@ database.dbname=<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">beans.bookService.webServiceURL=<span class="key">http</span>:<span class="comment">//www.amazon.com</span></code></pre>
+</div>
+</div>
+
+
+<h2 id="actuators">19.7 Spring Boot Actuators</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/spring/actuators.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p><a href="https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html">Spring Boot Actuator endpoints</a> allow you to monitor and interact with your application. Spring Boot includes a number of built-in endpoints. For example the <code>health</code> endpoint provides basic application health information.</p>
+</div>
+<div class="paragraph">
+<p>These endpoints are disabled by default since Grails 3.1.8.</p>
+</div>
+<div class="paragraph">
+<p>You can enable actuator endpoints in your <code>application.yml</code> as follows:</p>
+</div>
+<div class="listingblock">
+<div class="title">grails-app/conf/application.yml</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yml"><span class="key">endpoints</span>:
+    <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span></code></pre>
 </div>
 </div>
 
