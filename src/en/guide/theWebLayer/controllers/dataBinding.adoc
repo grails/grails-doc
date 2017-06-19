@@ -541,6 +541,35 @@ class SomeClass {
 ----
 
 
+==== The BindInitializer Annotation
+
+The {apiDocs}grails/databinding/BindInitializer.html[BindInitializer] annotation may be used to initialize an associated field in a class if it is undefined.  
+Unlike the {apiDocs}grails/databinding/BindUsing.html[BindUsing] annotation, databinding will continue binding all nested properties on this association. 
+
+[source,groovy]
+----
+import grails.databinding.BindInitializer
+
+class Account{}
+
+class User {
+  Account account
+
+  // BindInitializer expects you to return a instance of the type 
+  // where it's declared on. You can use source as a parameter, in this case user. 
+  @BindInitializer({user-> new Contact(account:user.account) })
+  Contact contact
+}
+class Contact{
+  Account account
+  String firstName
+}
+
+----
+ 
+NOTE: @BindInitializer only makes sense for associated entities, as per this use case. 
+
+
 ==== Custom Data Converters
 
 
