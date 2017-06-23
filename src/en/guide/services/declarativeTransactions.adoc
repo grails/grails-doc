@@ -8,7 +8,7 @@ Services enable transaction demarcation, which is a declarative way of defining 
 
 [source,groovy]
 ----
-import grails.transaction.*
+import grails.gorm.transactions.*
 
 @Transactional
 class CountryService {
@@ -39,15 +39,13 @@ NOTE: In addition, prior to Grails 3.1 services were transactional by default, a
 
 Grails also provides `@Transactional` and `@NotTransactional` annotations for cases where you need more fine-grained control over transactions at a per-method level or need to specify an alternative propagation level. For example, the `@NotTransactional` annotation can be used to mark a particular method to be skipped when a class is annotated with `@Transactional`.
 
-NOTE: The `grails.transaction.Transactional` annotation was first introduced in Grails 2.3. Prior to 2.3, Spring's @Transactional annotation was used.
-
 NOTE: Annotating a service method with `Transactional` disables the default Grails transactional behavior for that service (in the same way that adding `transactional=false` does) so if you use any annotations you must annotate all methods that require transactions.
 
 In this example `listBooks` uses a read-only transaction, `updateBook` uses a default read-write transaction, and `deleteBook` is not transactional (probably not a good idea given its name).
 
 [source,groovy]
 ----
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
 class BookService {
 
@@ -71,7 +69,7 @@ You can also annotate the class to define the default transaction behavior for t
 
 [source,groovy]
 ----
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
 @Transactional
 class BookService {
@@ -94,7 +92,7 @@ This version defaults to all methods being read-write transactional (due to the 
 
 [source,groovy]
 ----
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
 @Transactional
 class BookService {
@@ -130,7 +128,7 @@ Example:
 
 [source,groovy]
 ----
-import grails.transaction.Transactional
+import grails.gorm.transactions.Transactional
 
 @Transactional
 class BookService {

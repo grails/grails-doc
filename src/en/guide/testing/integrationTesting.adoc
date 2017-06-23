@@ -18,7 +18,7 @@ Integration test methods run inside their own database transaction by default, w
 [source,groovy]
 ----
 import grails.test.mixin.integration.Integration
-import grails.transaction.*
+import grails.gorm.transactions.*
 import spock.lang.*
 
 @Integration
@@ -36,13 +36,13 @@ class ExampleSpec extends Specification {
 
 The `Rollback` annotation ensures that each test method runs in a transaction that is rolled back. Generally this is desirable because you do not want your tests depending on order or application state.
 
-In Grails 3.0 tests rely on `grails.transaction.Rollback` annotation to bind the session in integration tests. Though each test method transaction is rolled back, the `setup()` method uses a separate transaction that is not rolled back.
+In Grails 3.0 tests rely on `grails.gorm.transactions.Rollback` annotation to bind the session in integration tests. Though each test method transaction is rolled back, the `setup()` method uses a separate transaction that is not rolled back.
 Data will persist to the database and will need to be cleaned up manually if `setup()` sets up data and persists them as shown in the below sample:
 
 [source,groovy]
 ----
 import grails.test.mixin.integration.Integration
-import grails.transaction.*
+import grails.gorm.transactions.*
 import spock.lang.*
 
 @Integration
@@ -66,7 +66,7 @@ To automatically roll back setup logic, any persistence operations need to be ca
 [source,groovy]
 ----
 import grails.test.mixin.integration.Integration
-import grails.transaction.*
+import grails.gorm.transactions.*
 import spock.lang.*
 
 @Integration
@@ -114,7 +114,7 @@ class BookSpec extends Specification {
 }
 ----
 
-NOTE: It isn't possible to make `grails.transaction.Rollback` behave the same way as Spring's Rollback annotation because `grails.transaction.Rollback` transforms the byte code of the class, eliminating the need for a proxy (which Spring's version requires).
+NOTE: It isn't possible to make `grails.gorm.transactions.Rollback` behave the same way as Spring's Rollback annotation because `grails.gorm.transactions.Rollback` transforms the byte code of the class, eliminating the need for a proxy (which Spring's version requires).
 This has the downside that you cannot implement it differently for different cases (as Spring does for testing).
 
 
