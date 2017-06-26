@@ -52,6 +52,38 @@ GORM 6.1 and above now supports multiple connection pool options, so the `tomcat
 runtime 'org.apache.tomcat:tomcat-jdbc'
 ----
 
+=== @TestMixin, @TestFor etc. Deprecated
+
+Since Grails 3.3, the https://testing.grails.org[Grails Testing Support Framework] is used for all unit tests. The new testing framework is much simpler and provides a set of traits that improve readability, debugging and code completion. An example hello world test can be seen below:
+
+[source,groovy]
+----
+import spock.lang.Specification
+import grails.testing.web.controllers.ControllerUnitTest
+
+class HelloControllerTests extends Specification implements ControllerUnitTest<HelloController> {
+
+    void "Test message action"() {
+        when:"The message action is invoked"
+        controller.message()
+
+        then:"Hello is returned"
+        response.text == 'Hello'
+    }
+}
+----
+
+For more information on writing tests with Grails Testing Support see the https://testing.grails.org[dedicated documentation].
+
+To simplify upgrades you can can still use the previous AST transformation based framework by adding the following dependency to your Grails application:
+
+.build.gradle
+[source,groovy]
+----
+testCompile "org.grails:grails-test-mixins:3.3.0.RC1"
+----
+
+
 === Default Logger Name
 
 In previous versions of Grails, if you did not specify a logger in the controller, service, etc, a `log` variable was injected for you. The naming convention of that logger was `grails.app.${artefactType}.package.class`. For example:
@@ -109,6 +141,11 @@ Several plugins and libraries have been separated from Grails core into standalo
 |`org.grails:grails-plugin-events`
 |`org.grails.plugins:events`
 |https://github.com/grails/grails-events
+
+|`org.grails:grails-plugin-testing`
+|`org.grails:grails-test-mixins`
+|https://github.com/grails-plugins/grails-test-mixin-plugin
+
 
 |===
 
