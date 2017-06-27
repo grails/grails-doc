@@ -12,12 +12,32 @@ Notably `grails-datastore-gorm-async` is now optional and if you use the `task` 
 
 ==== Domain Autowiring Disabled
 
-Domain class autowiring is disabled by default due to its impact on performance. You can re-enable autowiring for all domains using the `grails.gorm.autowire` setting in `application.yml` or just for specific domains like this:
+Domain class autowiring is disabled by default due to its impact on performance. You can re-enable autowiring for all domains using the http://gorm.grails.org/latest/hibernate/manual/index.html#_the_default_mapping_constraints[Default Mapping] setting:
 
-[source,groovy]
+[source, groovy]
+.grails-app/conf/application.groovy
 ----
-static mapping = {
-     autowire true
+grails.gorm.default.mapping = {
+        autowire true
+}
+----
+ 
+You can turn it on only for one domain class:
+
+[source, groovy]
+.grails-app/domain/demo/Book.groovy
+----
+class Book {
+    BookService bookService
+
+    String name
+
+    static mapping {
+       autowire true
+    }
+    ...
+    ..
+    .
 }
 ----
 
