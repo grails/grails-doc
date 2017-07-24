@@ -1,0 +1,54 @@
+Grails artifacts (controllers, services ...) get injected a `log` property automatically.
+
+Prior to Grails 3.3.0, the name of the
+logger for Grails Artifact followed the convention `grails.app.<type>.<className>`, where type is the
+type of the artifact, for example, `controllers` or `services`, and `className` is the fully
+qualified name of the artifact.
+
+Grails 3.3.x simplifies logger names as illustrated in the next table:
+
+[cols="6*"]
+|===
+|**Class Name**
+|**Package Name**
+|**Location**
+|**Annotated with `http://docs.groovy-lang.org/latest/html/gapi/groovy/util/logging/Slf4j.html[@Slf4j]`**
+|**Logger Name (Grails 3.3.x or higher)**
+|**Logger Name (Grails 3.2.x or lower)**
+
+|`BookController.groovy`
+|`com.company`
+|`grails-app/controllers/com/company`
+|NO
+|`com.company.BookController`
+|`grails.app.controllers.com.company.BookController`
+
+|`BookController.groovy`
+|`com.company`
+|`grails-app/controllers/com/company`
+|YES
+|`com.company.BookController`
+|`com.company.BookController`
+
+|`BookService.groovy`
+|`com.company`
+|`grails-app/services/com/company`
+|NO
+|`com.company.BookService`
+|`grails.app.services.com.company.BookService`
+
+|`BookService.groovy`
+|`com.company`
+|`grails-app/services/com/company`
+|YES
+|`com.company.BookService`
+|`com.company.BookService`
+
+|`BookDetail.groovy`
+|`com.company`
+|`src/main/groovy/com/company`
+|YES
+|`com.company.BookDetail`
+|`com.company.BookDetail`
+
+|===
