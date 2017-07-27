@@ -1,5 +1,6 @@
-Cross Site Scripting (XSS) attacks are a common attack vector for web applications. They typically involve submitting HTML or Javascript code in a form such that when that code is displayed, the browser does something nasty. It could be as simple as popping up an alert box, or it could be much worse. The solution is to escape all untrusted user input when it is displayed in a page. For example,
+Cross Site Scripting (XSS) attacks are a common attack vector for web applications. They typically involve submitting HTML or Javascript code in a form such that when that code is displayed, the browser does something nasty. It could be as simple as popping up an alert box, or it could be much worse like for example one could https://blog.codinghorror.com/protecting-your-cookies-httponly/[access other users session cookies.]
 
+The solution is to escape all untrusted user input when it is displayed in a page. For example,
 [source,groovy]
 ----
 <script>alert('Got ya!');</script>
@@ -41,6 +42,19 @@ It's difficult to make a solution that works for everyone, and so Grails provide
 
 
 It is recommended that you review the configuration of a newly created Grails application to garner an understanding of XSS prevention works in Grails.
+
+When you tag a cookie with the HttpOnly flag, it tells the browser that this particular cookie should only be accessed by the server. Any attempt to access the cookie from client script is strictly forbidden. This can be configured in the `application.yml` configuration file as seen below:
+
+[source,groovy]
+----
+server:
+    session:
+        cookie:
+            domain: example.org
+            http-only: true
+            path: /
+            secure: true
+----
 
 GSP features the ability to automatically HTML encode GSP expressions, and as of Grails 2.3 this is the default configuration.  The default configuration (found in `application.yml`) for a newly created Grails application can be seen below:
 
