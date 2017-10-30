@@ -74,11 +74,13 @@ class Astronaut {
 
     Integer yearOfBirth
     Integer yearOfFirstSpaceTravel
-
+    
+    static constraints = {
         yearOfFirstSpaceTravel validator: { val, obj ->
                 if (val < obj.yearOfBirth) ['datePriorTo', val.toString(), obj.yearOfBirth]
                 else if (val < (obj.yearOfBirth+18)) ['maybeABitTooYoung', val-obj.yearOfBirth]
         }
+    }
 }
 
 // Respective messages
