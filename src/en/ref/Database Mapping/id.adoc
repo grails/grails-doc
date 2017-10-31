@@ -15,9 +15,10 @@ Customizes the way the identifier for a domain class is generated
 [source,groovy]
 ----
 class Book {
+    String id
+    String title
     static mapping = {
-        id generator: 'hilo',
-           params: [table: 'hi_value', column: 'next_value', max_lo: 100]
+        id generator: 'uuid'
     }
 }
 ----
@@ -30,7 +31,10 @@ Usage: `id(map)`
 
 Arguments:
 
-* `generator` (optional) - The name of the generator to use. Can be `increment`, `identity`, `sequence`, `hilo`, `seqhilo`, `uuid`, `guid`, `native`, `assigned`, `select`, `foreign` or `sequence-identity`. See http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/mapping.html#mapping-declaration-id-generator[Hibernate reference documentation] for more information.
+* `generator` (optional) - The name of the generator to use. Can be `increment`, `identity`, `sequence`, `seqhilo`, `uuid`, `uuid.hex`,  `assigned`, `select`, `foreign`, `sequence-identity`, `enhanced-sequence` or `enhanced-table`. See http://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html#identifiers-generators[Hibernate reference documentation] for more information.
+
+WARNING: `hilo` generator was removed in Hibernate 5. See https://github.com/hibernate/hibernate-orm/blob/5.0/migration-guide.adoc[Hibernate 5 Migration Guide].
+
 * `composite` (optional) - Takes a list of property names to use that form the composite identifier
 * `name` (optional) - The property name to use as the identifier
 * `params` (optional) - Any parameters to pass to the defined identity generator
@@ -41,8 +45,7 @@ By default GORM uses the native strategy to generate a database identifier for e
 [source,groovy]
 ----
 static mapping = {
-    id generator: 'hilo',
-       params: [table: 'hi_value', column: 'next_value', max_lo: 100]
+    id generator: 'uuid'
 }
 ----
 
