@@ -38,6 +38,8 @@ password1 validator: { val, obj, errors ->
 
 // Example 1: Using the "implicit" argument 0 (property name)
 
+package demo
+
 class Person {
 
     String name
@@ -52,6 +54,7 @@ class Person {
 // person.name.entryMissing=Please enter a name in the field {0}
 
 // Example 2: Using the "implicit" arguments 0 (property name) and 2 (property value)
+package demo
 
 class Person {
 
@@ -64,29 +67,37 @@ class Person {
 }
 
 // This maps to a message
-// person.name.entryMissing=The value {2} entered in the field {0} is not valid because it lies in the future.
+person.yearOfBirth.yearTooBig=The value {2} entered in the field {0} is not valid because it lies in the future.
+// arguments are [property, class, value]. e.g. [yearOfBirth,class demo.Person, 2017]
 // You will note when using this kind of message on Integers that years are displayed as 1,990 instead of 1990.
 // This is addressed in the next example.
 
 // Example 3: Much more complex
+package demo
 
 class Astronaut {
 
     Integer yearOfBirth
     Integer yearOfFirstSpaceTravel
 
-        yearOfFirstSpaceTravel validator: { val, obj ->
-                if (val < obj.yearOfBirth) ['datePriorTo', val.toString(), obj.yearOfBirth]
-                else if (val < (obj.yearOfBirth+18)) ['maybeABitTooYoung', val-obj.yearOfBirth]
+    static constraints = {
+        yearOfFirstSpaceTravel validator: { Integer val, Astronaut obj ->
+            if (val < obj.yearOfBirth) {
+                return ['datePriorTo', val.toString(), obj.yearOfBirth.toString()]
+            } else if (val < (obj.yearOfBirth+18)) {
+                ['maybeABitTooYoung', (val - obj.yearOfBirth)]
+            }
         }
+    }
 }
 
 // Respective messages
 // Note that argument 3 is the property value converted toString to avoid the unwanted formatting as described before.
 astronaut.yearOfFirstSpaceTravel.datePriorTo=The value {3} entered for the year of the first space travel is prior to the year of birth ({4}). Please correct the value.
+// For yearOfBirth: 2017 and yearOfFirstSpaceTravel: 2012 arguments will be [yearOfFirstSpaceTravel,class demo.Astronaut,2012,2012,2017] 
 astronaut.yearOfFirstSpaceTravel.maybeABitTooYoung={3} years seems a bit young for travelling to space, dude!
+// For yearOfBirth: 2012 and yearOfFirstSpaceTravel: 2017 arguments will be [yearOfFirstSpaceTravel,class demo.Astronaut,2017,5] 
 ----
-
 
 === Description
 
