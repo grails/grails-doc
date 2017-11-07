@@ -52,3 +52,20 @@ class HomeSpec extends GebSpec {
 If the `applicationClass` is not specified then the test runtime environment will attempt to locate the application class dynamically which can be problematic in multiproject builds where multiple application classes may be present.
 
 When running the server port by default will be randomly assigned. The `Integration` annotation adds a property of `serverPort` to the test class that you can use if you want to know what port the application is running on this isn't needed if you are extending the `GebSpec` as shown above but can be useful information.
+
+If you want to run the tests on a fixed port (defined by the `server.port` configuration property), you need to manually annotate your test with `@SpringBootTest`:
+
+[source,groovy]
+----
+import grails.testing.mixin.integration.Integration
+import org.springframework.boot.test.context.SpringBootTest
+import spock.lang.Specification
+
+@Integration
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+class MySpec extends Specification {
+
+    // ...
+
+}
+----
