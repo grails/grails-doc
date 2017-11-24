@@ -8,43 +8,57 @@ echo "https://$GH_TOKEN:@github.com" > ~/.git-credentials
 
 export GRADLE_OPTS="-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
 
-./gradlew assemble --info --stacktrace
-
 if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then
 
-	# If there is a tag present then this becomes the latest
-	if [[ -n $TRAVIS_TAG ]]; then
-		git clone https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git -b gh-pages gh-pages --single-branch > /dev/null
-		cd gh-pages
+  # If there is a tag present then this becomes the latest
+  if [[ -n $TRAVIS_TAG ]]; then
 
-		version="$TRAVIS_TAG"
-		version=${version:1}
-		zipName="grails-docs-$version"
-		export RELEASE_FILE="${zipName}.zip"
+    ./gradlew assemble --info --stacktrace
 
-		publishLatest=true
-		if $publishLatest ; then
-			git rm -rf latest/
-			mkdir -p latest
-			cp -r ../build/docs/. ./latest/
-			git add latest/*
-		fi
+    git clone https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git -b gh-pages gh-pages --single-branch > /dev/null
+    cd gh-pages
 
-		majorVersion=${version:0:4}
-		majorVersion="${majorVersion}x"
+    version="$TRAVIS_TAG"
+    version=${version:1}
+    zipName="grails-docs-$version"
+    export RELEASE_FILE="${zipName}.zip"
 
-		mkdir -p "$version"
-		cp -r ../build/docs/. "./$version/"
-		git add "$version/*"
+    publishLatest=true
+    if $publishLatest ; then
+      git rm -rf latest/
+      mkdir -p latest
+      cp -r ../build/docs/. ./latest/
+      git add latest/*
+    fi
 
-		mkdir -p "$majorVersion"
-		cp -r ../build/docs/. "./$majorVersion/"
-		git add "$majorVersion/*"
-		git commit -a -m "Updating docs for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
-		git push origin HEAD
-		cd ..
-		rm -rf gh-pages
+    majorVersion=${version:0:4}
+    majorVersion="${majorVersion}x"
 
-	fi
+    mkdir -p "$version"
+    cp -r ../build/docs/. "./$version/"
+    git add "$version/*"
 
+    mkdir -p "$majorVersion"
+    cp -r ../build/docs/. "./$majorVersion/"
+    git add "$majorVersion/*"
+    git commit -a -m "Updating docs for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
+    git push origin HEAD
+    cd ..
+    rm -rf gh-pages
+  else
+ 
+    ./gradlew assemble -x apiDocs --info --stacktrace
+
+    git clone https://${GH_TOKEN}@github.com/${TRAVIS_REPO_SLUG}.git -b gh-pages gh-pages --single-branch > /dev/null
+    cd gh-pages
+
+    git rm -rf snapshot/
+    mkdir -p snapshot
+    cp -r ../build/docs/. ./snapshot
+    git add snapshot/*
+
+   git commit -a -m "Updating snapshot docs for Travis build: https://travis-ci.org/$TRAVIS_REPO_SLUG/builds/$TRAVIS_BUILD_ID"
+   git push origin HEAD
+ 
+  fi
 fi
