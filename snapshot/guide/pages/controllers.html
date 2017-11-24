@@ -577,11 +577,11 @@ The above does <em>not</em> reflect what you should use with the scaffolding vie
 
 
     <span class="keyword">def</span> <span class="function">accountsReceivable</span>() {
-        <span class="comment">// This will render grails-app/views/business/reporting/accounting.gsp</span>
+        <span class="comment">// This will render grails-app/views/business/reporting/numberCrunch.gsp</span>
         <span class="comment">// if it exists.</span>
 
-        <span class="comment">// If grails-app/views/business/reporting/accounting.gsp does not</span>
-        <span class="comment">// exist the fallback will be grails-app/views/reporting/accounting.gsp.</span>
+        <span class="comment">// If grails-app/views/business/reporting/numberCrunch.gsp does not</span>
+        <span class="comment">// exist the fallback will be grails-app/views/reporting/numberCrunch.gsp.</span>
 
         <span class="comment">// The namespaced GSP will take precedence over the non-namespaced GSP.</span>
 
@@ -1059,16 +1059,16 @@ band.properties = bindingMap</code></pre>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> bindingMap = [<span class="key">title</span>: <span class="string"><span class="delimiter">'</span><span class="content">The Lamb Lies Down On Broadway</span><span class="delimiter">'</span></span>,
                   <span class="string"><span class="delimiter">'</span><span class="content">players[guitar]</span><span class="delimiter">'</span></span>: [<span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Steve Hackett</span><span class="delimiter">'</span></span>],
-                  <span class="string"><span class="delimiter">'</span><span class="content">players[vocals]</span><span class="delimiter">'</span></span>: [<span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Peter Gabriel</span><span class="delimiter">'</span></span>]
+                  <span class="string"><span class="delimiter">'</span><span class="content">players[vocals]</span><span class="delimiter">'</span></span>: [<span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Peter Gabriel</span><span class="delimiter">'</span></span>],
                   <span class="string"><span class="delimiter">'</span><span class="content">players[keyboards]</span><span class="delimiter">'</span></span>: [<span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Tony Banks</span><span class="delimiter">'</span></span>]]
 
 <span class="keyword">def</span> album = <span class="keyword">new</span> Album(bindingMap)
 
 <span class="keyword">assert</span> album.title == <span class="string"><span class="delimiter">'</span><span class="content">The Lamb Lies Down On Broadway</span><span class="delimiter">'</span></span>
 <span class="keyword">assert</span> album.players.size() == <span class="integer">3</span>
-<span class="keyword">assert</span> album.players.guitar == <span class="string"><span class="delimiter">'</span><span class="content">Steve Hackett</span><span class="delimiter">'</span></span>
-<span class="keyword">assert</span> album.players.vocals == <span class="string"><span class="delimiter">'</span><span class="content">Peter Gabriel</span><span class="delimiter">'</span></span>
-<span class="keyword">assert</span> album.players.keyboards == <span class="string"><span class="delimiter">'</span><span class="content">Tony Banks</span><span class="delimiter">'</span></span>
+<span class="keyword">assert</span> album.players.guitar.name == <span class="string"><span class="delimiter">'</span><span class="content">Steve Hackett</span><span class="delimiter">'</span></span>
+<span class="keyword">assert</span> album.players.vocals.name  == <span class="string"><span class="delimiter">'</span><span class="content">Peter Gabriel</span><span class="delimiter">'</span></span>
+<span class="keyword">assert</span> album.players.keyboards.name  == <span class="string"><span class="delimiter">'</span><span class="content">Tony Banks</span><span class="delimiter">'</span></span>
 
 <span class="keyword">def</span> updatedBindingMap = [<span class="string"><span class="delimiter">'</span><span class="content">players[drums]</span><span class="delimiter">'</span></span>: [<span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Phil Collins</span><span class="delimiter">'</span></span>],
                          <span class="string"><span class="delimiter">'</span><span class="content">players[keyboards]</span><span class="delimiter">'</span></span>: [<span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Anthony George Banks</span><span class="delimiter">'</span></span>]]
@@ -2283,7 +2283,7 @@ This technique for rendering JSON may be ok for very simple responses, but in ge
 
 
 <div class="paragraph">
-<p>The previous section on on XML and JSON responses covered simplistic examples of rendering XML and JSON responses. Whilst the XML builder used by Grails is the standard <a href="http://groovy-lang.org/processing-xml.html#_xmlparser_and_xmlslurper">XmlSlurper</a> found in Groovy.</p>
+<p>The previous section on XML and JSON responses covered simplistic examples of rendering XML and JSON responses. Whilst the XML builder used by Grails is the standard <a href="http://groovy-lang.org/processing-xml.html#_xmlparser_and_xmlslurper">XmlSlurper</a> found in Groovy.</p>
 </div>
 <div class="paragraph">
 <p>For JSON, since Grails 3.1, Grails uses Groovy&#8217;s <a href="http://docs.groovy-lang.org/latest/html/documentation/core-domain-specific-languages.html#_streamingjsonbuilder">StreamingJsonBuilder</a> by default and you can refer to the <a href="http://docs.groovy-lang.org/latest/html/documentation/core-domain-specific-languages.html#_streamingjsonbuilder">Groovy documentation</a> and <a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/json/StreamingJsonBuilder.html">StreamingJsonBuilder</a> API documentation on how to use it.</p>
@@ -2684,10 +2684,22 @@ $ curl -H &quot;Content-Type: application/xml&quot; -d '&lt;widget&gt;&lt;name&g
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The request body will not be parsed under the following conditions:
-* The request method is GET
-* The request method is DELETE
-* The content length is 0
+<div class="paragraph">
+<p>The request body will not be parsed under the following conditions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The request method is GET</p>
+</li>
+<li>
+<p>The request method is DELETE</p>
+</li>
+<li>
+<p>The content length is 0</p>
+</li>
+</ul>
+</div>
 </td>
 </tr>
 </table>
