@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>3 Upgrading from Grails 3.2.x 3.3.0</title>
+    <title>3 Upgrading from Grails 3.2.x 3.3.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -126,7 +126,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>3 Upgrading from Grails 3.2.x</h1>
 
-                    <p><strong>Version:</strong> 3.3.0</p>
+                    <p><strong>Version:</strong> 3.3.2</p>
                 </div>
 
                 
@@ -223,7 +223,7 @@ For information on upgrading from versions of Grails prior to Grails 3.2.x, see 
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">grails</span>:
   <span class="key">transaction</span>:
-    <span class="key">chainedTransactionManagerPostProcessor</span>:
+    <span class="key">chainedTransactionManager</span>:
       <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span>
       <span class="key">blacklistPattern</span>: <span class="string"><span class="content">'.*'</span></span></code></pre>
 </div>
@@ -332,7 +332,7 @@ For information on upgrading from versions of Grails prior to Grails 3.2.x, see 
 <div class="sect2">
 <h3 id="_reactor_2_x_deprecated_and_removed">Reactor 2.x Deprecated and Removed</h3>
 <div class="paragraph">
-<p>Since Reactor 2.x is no longer being maintained and a new <a href="{asyncdocs}">EventBus</a> abstraction has been implemented, Reactor 2.x and all its dependencies have been removed.</p>
+<p>Since Reactor 2.x is no longer being maintained and a new <a href="http://async.grails.org/latest/api/grails/events/bus/EventBus.html">EventBus</a> abstraction has been implemented, Reactor 2.x and all its dependencies have been removed.</p>
 </div>
 <div class="paragraph">
 <p>A compatibility layer has been provided to allow classes compiled with the previous version that uses Reactor to run, however all plugins and application code should be re-compiled and direct references to Reactor 2.x should be removed.</p>
@@ -407,16 +407,16 @@ For information on upgrading from versions of Grails prior to Grails 3.2.x, see 
 <p>The internal implementation of the methods in those classes now delegates to the mapping context. Due to that change, information about your domain classes is not available until the application context is available.</p>
 </div>
 <div class="paragraph">
-<p>In previous versions of Grails it was possible to access <a href="{api}/grails/core/GrailsDomainClass.html">GrailsDomainClass</a> instances and inspect the <a href="{api}/grails/core/GrailsDomainClassProperty.html">GrailsDomainClassProperty</a> properties inside of the <code>doWithSpring</code> method in a plugin, for example.</p>
+<p>In previous versions of Grails it was possible to access <a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClass.html">GrailsDomainClass</a> instances and inspect the <a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClassProperty.html">GrailsDomainClassProperty</a> properties inside of the <code>doWithSpring</code> method in a plugin, for example.</p>
 </div>
 <div class="paragraph">
 <p>If you have code that follows that example, an error will be thrown that looks like "The method &#8230;&#8203; cannot be accessed before GORM has initialized". The solution is to move any logic that executes before the context is available to somewhere else that executes after the context is available.</p>
 </div>
 <div class="paragraph">
-<p>All code that uses the <a href="{api}/grails/core/GrailsDomainClass.html">GrailsDomainClass</a> or <a href="{api}/grails/core/GrailsDomainClassProperty.html">GrailsDomainClassProperty</a> classes should be re-written to use the mapping context api.</p>
+<p>All code that uses the <a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClass.html">GrailsDomainClass</a> or <a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClassProperty.html">GrailsDomainClassProperty</a> classes should be re-written to use the mapping context api.</p>
 </div>
 <div class="paragraph">
-<p>To get started, inject the <code>grailsDomainClassMappingContext</code> bean. See the api documentation for more information on the <a href="{gormapi}/org/grails/datastore/mapping/model/MappingContext.html">MappingContext</a>, <a href="{gormapi}/org/grails/datastore/mapping/model/PersistentEntity.html">PersistentEntity</a> (GrailsDomainClass), and <a href="{gormapi}/org/grails/datastore/mapping/model/PersistentProperty.html">PersistentProperty</a> (GrailsDomainClassProperty).</p>
+<p>To get started, inject the <code>grailsDomainClassMappingContext</code> bean. See the api documentation for more information on the <a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/MappingContext.html">MappingContext</a>, <a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/PersistentEntity.html">PersistentEntity</a> (GrailsDomainClass), and <a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/PersistentProperty.html">PersistentProperty</a> (GrailsDomainClassProperty).</p>
 </div>
 <div class="paragraph">
 <p>The following table summarizes the deprecations:</p>
@@ -435,17 +435,17 @@ For information on upgrading from versions of Grails prior to Grails 3.2.x, see 
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{api}/grails/core/GrailsDomainClass.html">GrailsDomainClass</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{gormapi}/org/grails/datastore/mapping/model/PersistentEntity.html">PersistentEntity</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClass.html">GrailsDomainClass</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/PersistentEntity.html">PersistentEntity</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{api}/grails/core/GrailsDomainClassProperty.html">GrailsDomainClassProperty</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{gormapi}/org/grails/datastore/mapping/model/PersistentProperty.html">PersistentProperty</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClassProperty.html">GrailsDomainClassProperty</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/PersistentProperty.html">PersistentProperty</a></p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>The <code>GrailsDomainClassProperty</code> interface had many more methods to evaluate the type of the property such as <code>isOneToOne</code>, <code>isOneToMany</code> etc. and while <code>PersistentProperty</code> does not provide direct equivalents you can use <code>instanceof</code> as a replacement using one of the subclasses found in the <a href="{gormapi}/org/grails/datastore/mapping/model/types/package-summary.html">org.grails.datastore.mapping.model.types</a> package.</p>
+<p>The <code>GrailsDomainClassProperty</code> interface had many more methods to evaluate the type of the property such as <code>isOneToOne</code>, <code>isOneToMany</code> etc. and while <code>PersistentProperty</code> does not provide direct equivalents you can use <code>instanceof</code> as a replacement using one of the subclasses found in the <a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/types/package-summary.html">org.grails.datastore.mapping.model.types</a> package.</p>
 </div>
 <div class="paragraph">
 <p>The following table summarizes this:</p>
@@ -512,24 +512,24 @@ For information on upgrading from versions of Grails prior to Grails 3.2.x, see 
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{api}/org/grails/validation/GrailsDomainClassValidator.html">GrailsDomainClassValidator</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{gormapi}/grails/gorm/validation/PersistentEntityValidator.html">PersistentEntityValidator</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/org/grails/validation/GrailsDomainClassValidator.html">GrailsDomainClassValidator</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/validation/PersistentEntityValidator.html">PersistentEntityValidator</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{api}/grails/validation/CascadingValidator.html">CascadingValidator</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{gormapi}/grails/gorm/validation/CascadingValidator.html">CascadingValidator</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/validation/CascadingValidator.html">CascadingValidator</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/validation/CascadingValidator.html">CascadingValidator</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{api}/grails/validation/ConstrainedProperty.html">ConstrainedProperty</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{gormapi}/grails/gorm/validation/ConstrainedProperty.html">ConstrainedProperty</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/validation/ConstrainedProperty.html">ConstrainedProperty</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/validation/ConstrainedProperty.html">ConstrainedProperty</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{api}/grails/validation/Constraint.html">Constraint</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{gormapi}/grails/gorm/validation/Constraint.html">Constraint</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/validation/Constraint.html">Constraint</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/validation/Constraint.html">Constraint</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{api}/grails/validation/AbstractConstraint.html">AbstractConstraint</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{gormapi}/org/grails/datastore/gorm/validation/constraints/AbstractConstraint.html">AbstractConstraint</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/validation/AbstractConstraint.html">AbstractConstraint</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/org/grails/datastore/gorm/validation/constraints/AbstractConstraint.html">AbstractConstraint</a></p></td>
 </tr>
 </tbody>
 </table>
@@ -537,10 +537,10 @@ For information on upgrading from versions of Grails prior to Grails 3.2.x, see 
 <p>Generally all classes within the <code>org.grails.validation</code> package are now deprecated.</p>
 </div>
 <div class="paragraph">
-<p>To register a custom constraint you should now use the <a href="{gormapi}/org/grails/datastore/gorm/validation/constraints/registry/ConstraintRegistry.html">ConstraintRegistry</a> interface instead.</p>
+<p>To register a custom constraint you should now use the <a href="http://gorm.grails.org/latest/api/org/grails/datastore/gorm/validation/constraints/registry/ConstraintRegistry.html">ConstraintRegistry</a> interface instead.</p>
 </div>
 <div class="paragraph">
-<p>The default <a href="{gormapi}/org/grails/datastore/mapping/validation/ValidatorRegistry.html">ValidatorRegistry</a> implements the <code>ConstraintRegistry</code> interface and can be autowired into any controller or service by declaring the following property:</p>
+<p>The default <a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/validation/ValidatorRegistry.html">ValidatorRegistry</a> implements the <code>ConstraintRegistry</code> interface and can be autowired into any controller or service by declaring the following property:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -575,16 +575,16 @@ gormValidatorRegistry.addConstraint(MyConstraint)</code></pre>
 </thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{api}/grails/transaction/Transactional.html">grails.transaction.Transactional</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{gormapi}/grails/gorm/transactions/Transactional.html">grails.gorm.transactions.Transactional</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/transaction/Transactional.html">grails.transaction.Transactional</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/transactions/Transactional.html">grails.gorm.transactions.Transactional</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{api}/grails/transaction/Rollback.html">grails.transaction.Rollback</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{gormapi}/grails/gorm/transactions/Rollback.html">grails.gorm.transactions.Rollback</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/transaction/Rollback.html">grails.transaction.Rollback</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/transactions/Rollback.html">grails.gorm.transactions.Rollback</a></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{api}/grails/transaction/NotTransactional.html">grails.transaction.NotTransactional</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="{gormapi}/grails/gorm/transactions/NotTransactional.html">grails.gorm.transactions.NotTransactional</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/transaction/NotTransactional.html">grails.transaction.NotTransactional</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/transactions/NotTransactional.html">grails.gorm.transactions.NotTransactional</a></p></td>
 </tr>
 </tbody>
 </table>

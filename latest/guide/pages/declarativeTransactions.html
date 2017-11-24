@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>13.1 Declarative Transactions 3.3.0</title>
+    <title>13.1 Declarative Transactions 3.3.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -126,14 +126,17 @@ function addJsClass() {
                 <div class="project">
                     <h1>13.1 Declarative Transactions</h1>
 
-                    <p><strong>Version:</strong> 3.3.0</p>
+                    <p><strong>Version:</strong> 3.3.2</p>
                 </div>
 
                 
                 <div id="table-of-content">
                     <h2>Table of Contents</h2>
                     
-                    <div class="toc-item" style="margin-left:0px"><a href="#transactionsRollbackAndTheSession"><strong>13.1</strong><span>Transactions Rollback and the Session</span></a>
+                    <div class="toc-item" style="margin-left:0px"><a href="#transactionsMultiDataSource"><strong>13.1</strong><span>Transactions and Multi-DataSources</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#transactionsRollbackAndTheSession"><strong>13.2</strong><span>Transactions Rollback and the Session</span></a>
                     </div>
                     
                 </div>
@@ -169,7 +172,7 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>The result is that all methods are wrapped in a transaction and automatic rollback occurs if a method throws a runtime exception (i.e. one that extends <code>RuntimeException</code>) or an <code>Error</code>. The propagation level of the transaction is by default set to <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/transaction/TransactionDefinition.html#PROPAGATION_REQUIRED">PROPAGATION_REQUIRED</a>.</p>
+<p>The result is that all methods are wrapped in a transaction and automatic rollback occurs if a method throws an exception (both Checked or Runtime exceptions) or an Error. The propagation level of the transaction is by default set to <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/transaction/TransactionDefinition.html#PROPAGATION_REQUIRED">PROPAGATION_REQUIRED</a>.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -178,7 +181,7 @@ function addJsClass() {
 <i class="fa icon-warning" title="Warning"></i>
 </td>
 <td class="content">
-Checked exceptions do <strong>not</strong> roll back transactions. Even though Groovy blurs the distinction between checked and unchecked exceptions, Spring isn&#8217;t aware of this and its default behaviour is used, so it&#8217;s important to understand the distinction between checked and unchecked exceptions.
+Version Grails 3.2.0 was the first version to use GORM 6 by default. Checked exceptions did not roll back transactions before GORM 6. Only a method which threw a runtime exception (i.e. one that extends RuntimeException) rollbacked a transaction.
 </td>
 </tr>
 </table>
@@ -201,7 +204,10 @@ Warning: <a href="#dependencyInjectionServices">dependency injection</a> is the 
 <p>In versions of Grails prior to Grails 3.1, Grails created Spring proxies and used the <code>transactional</code> property to enable and disable proxy creation. These proxies are disabled by default in applications created with Grails 3.1 and above in favor of the <code>@Transactional</code> transformation.</p>
 </div>
 <div class="paragraph">
-<p>If you wish to renable this feature (not recommended) then you must set <code>grails.spring.transactionManagement</code> to true or remove the configuration in <code>grails-app/conf/application.yml</code> or <code>grails-app/conf/application.groovy</code></p>
+<p>For versions of Grails 3.1.x and 3.2.x, if you wish to renable this feature (not recommended) then you must set <code>grails.spring.transactionManagement</code> to true or remove the configuration in <code>grails-app/conf/application.yml</code> or <code>grails-app/conf/application.groovy</code>.</p>
+</div>
+<div class="paragraph">
+<p>In Grails 3.3.x  Spring proxies for transaction management has been dropped completely, and you must use Grails' AST transforms. In Grails 3.3.x, if you wish to continue to use Spring proxies for transaction management you will have to configure them manually, using the appropriate Spring configuration.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -341,8 +347,78 @@ Annotating a service method with <code>Transactional</code> disables the default
 </div>
 </div>
 
+<a name="11.1.1 Transactions Multi-DataSource"><!-- Legacy link --></a>
+<h2 id="transactionsMultiDataSource">13.1.1 Transactions and Multi-DataSources</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/services/declarativeTransactions/transactionsMultiDataSource.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="paragraph">
+<p>Given two domain classes such as:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Movie</span> {
+    <span class="predefined-type">String</span> title
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Book</span> {
+    <span class="predefined-type">String</span> title
+
+    <span class="directive">static</span> mapping = {
+        datasource <span class="string"><span class="delimiter">'</span><span class="content">books</span><span class="delimiter">'</span></span>
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can supply the desired data source to <code>@Transactional</code> or <code>@ReadOnly</code> annotations.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">grails.gorm.transactions.ReadOnly</span>
+<span class="keyword">import</span> <span class="include">grails.gorm.transactions.Transactional</span>
+<span class="keyword">import</span> <span class="include">groovy.transform.CompileStatic</span>
+
+<span class="annotation">@CompileStatic</span>
+<span class="type">class</span> <span class="class">BookService</span> {
+
+    <span class="annotation">@ReadOnly</span>(<span class="string"><span class="delimiter">'</span><span class="content">books</span><span class="delimiter">'</span></span>)
+    <span class="predefined-type">List</span>&lt;<span class="predefined-type">Book</span>&gt; findAll() {
+        <span class="predefined-type">Book</span>.where {}.findAll()
+    }
+
+    <span class="annotation">@Transactional</span>(<span class="string"><span class="delimiter">'</span><span class="content">books</span><span class="delimiter">'</span></span>)
+    <span class="type">void</span> save(<span class="predefined-type">String</span> title) {
+        <span class="predefined-type">Book</span> book = <span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="key">title</span>: title)
+        book.save()
+        book
+    }
+}</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="annotation">@CompileStatic</span>
+<span class="type">class</span> <span class="class">MovieService</span> {
+
+    <span class="annotation">@ReadOnly</span>
+    <span class="predefined-type">List</span>&lt;Movie&gt; findAll() {
+        Movie.where {}.findAll()
+    }
+}</code></pre>
+</div>
+</div>
+
 <a name="11.1.1 Transactions Rollback and the Session"><!-- Legacy link --></a>
-<h2 id="transactionsRollbackAndTheSession">13.1.1 Transactions Rollback and the Session</h2>
+<h2 id="transactionsRollbackAndTheSession">13.1.2 Transactions Rollback and the Session</h2>
 
 <div class='contribute-btn'>
     <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.2.x/src/en/guide/services/declarativeTransactions/transactionsRollbackAndTheSession.adoc"'>

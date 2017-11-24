@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>8.4 CORS 3.3.0</title>
+    <title>8.4 CORS 3.3.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -126,7 +126,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>8.4 CORS</h1>
 
-                    <p><strong>Version:</strong> 3.3.0</p>
+                    <p><strong>Version:</strong> 3.3.2</p>
                 </div>
 
                 
@@ -192,7 +192,7 @@ function addJsClass() {
 </tbody>
 </table>
 <div class="paragraph">
-<p>Some of these settings come directly from Spring Boot and can change in future versions. See <a href="https://docs.spring.io/spring/docs/current/javadoc-api//org/springframework/web/cors/CorsConfiguration.html#applyPermitDefaultValues--" class="bare">https://docs.spring.io/spring/docs/current/javadoc-api//org/springframework/web/cors/CorsConfiguration.html#applyPermitDefaultValues--</a></p>
+<p>Some of these settings come directly from Spring Boot and can change in future versions. See <a href="https://docs.spring.io/spring/docs/current/javadoc-api//org/springframework/web/cors/CorsConfiguration.html#applyPermitDefaultValues">Spring CORS Configuration Documentation</a></p>
 </div>
 <div class="paragraph">
 <p>All of those settings can be easily overridden.</p>
@@ -203,7 +203,8 @@ function addJsClass() {
 <pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">grails</span>:
     <span class="key">cors</span>:
         <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span>
-        <span class="key">allowedOrigins</span>: <span class="string"><span class="content">[http://localhost:5000]</span></span></code></pre>
+        <span class="key">allowedOrigins</span>:
+            - <span class="string"><span class="content">http://localhost:5000</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -218,11 +219,13 @@ function addJsClass() {
 <pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">grails</span>:
     <span class="key">cors</span>:
         <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span>
-        <span class="key">allowedHeaders</span>: <span class="string"><span class="content">[Content-Type]</span></span>
+        <span class="key">allowedHeaders</span>:
+            - <span class="string"><span class="content">Content-Type</span></span>
         <span class="key">mappings</span>:
             <span class="error">/api/**</span>:
-                <span class="key">allowedOrigins</span>: <span class="string"><span class="content">[http://localhost:5000]</span></span>
-                <span class="error">//Other configurations not specified default to the global config</span></code></pre>
+                <span class="key">allowedOrigins</span>:
+                    - <span class="string"><span class="content">http://localhost:5000</span></span>
+                <span class="comment"># Other configurations not specified default to the global config</span></code></pre>
 </div>
 </div>
 <div class="admonitionblock warning">

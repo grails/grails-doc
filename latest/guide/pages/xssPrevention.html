@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>17.2 Cross Site Scripting (XSS) Prevention 3.3.0</title>
+    <title>17.2 Cross Site Scripting (XSS) Prevention 3.3.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -126,7 +126,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>17.2 Cross Site Scripting (XSS) Prevention</h1>
 
-                    <p><strong>Version:</strong> 3.3.0</p>
+                    <p><strong>Version:</strong> 3.3.2</p>
                 </div>
 
                 
@@ -143,7 +143,10 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Cross Site Scripting (XSS) attacks are a common attack vector for web applications. They typically involve submitting HTML or Javascript code in a form such that when that code is displayed, the browser does something nasty. It could be as simple as popping up an alert box, or it could be much worse. The solution is to escape all untrusted user input when it is displayed in a page. For example,</p>
+<p>Cross Site Scripting (XSS) attacks are a common attack vector for web applications. They typically involve submitting HTML or Javascript code in a form such that when that code is displayed, the browser does something nasty. It could be as simple as popping up an alert box, or it could be much worse like for example one could <a href="https://blog.codinghorror.com/protecting-your-cookies-httponly/">access other users session cookies.</a></p>
+</div>
+<div class="paragraph">
+<p>The solution is to escape all untrusted user input when it is displayed in a page. For example,</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -203,6 +206,20 @@ Although Grails plays it safe by default, that is no guarantee that your applica
 <h4 id="_configuration">Configuration</h4>
 <div class="paragraph">
 <p>It is recommended that you review the configuration of a newly created Grails application to garner an understanding of XSS prevention works in Grails.</p>
+</div>
+<div class="paragraph">
+<p>When you tag a cookie with the HttpOnly flag, it tells the browser that this particular cookie should only be accessed by the server. Any attempt to access the cookie from client script is strictly forbidden. This can be configured in the <code>application.yml</code> configuration file as seen below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="key">server</span>:
+    <span class="key">session</span>:
+        <span class="key">cookie</span>:
+            <span class="key">domain</span>: example.org
+            http-<span class="key">only</span>: <span class="predefined-constant">true</span>
+            <span class="key">path</span>: <span class="regexp"><span class="delimiter">/</span></span><span class="error">
+</span>            <span class="key">secure</span>: <span class="predefined-constant">true</span></code></pre>
+</div>
 </div>
 <div class="paragraph">
 <p>GSP features the ability to automatically HTML encode GSP expressions, and as of Grails 2.3 this is the default configuration.  The default configuration (found in <code>application.yml</code>) for a newly created Grails application can be seen below:</p>

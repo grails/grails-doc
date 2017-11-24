@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>The Grails Framework 3.3.0</title>
+    <title>The Grails Framework 3.3.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -141,9 +141,10 @@ function addJsClass(el) {
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Book</span> {
+    <span class="predefined-type">String</span> id
+    <span class="predefined-type">String</span> title
     <span class="directive">static</span> mapping = {
-        id <span class="key">generator</span>: <span class="string"><span class="delimiter">'</span><span class="content">hilo</span><span class="delimiter">'</span></span>,
-           <span class="key">params</span>: [<span class="key">table</span>: <span class="string"><span class="delimiter">'</span><span class="content">hi_value</span><span class="delimiter">'</span></span>, <span class="key">column</span>: <span class="string"><span class="delimiter">'</span><span class="content">next_value</span><span class="delimiter">'</span></span>, <span class="key">max_lo</span>: <span class="integer">100</span>]
+        id <span class="key">generator</span>: <span class="string"><span class="delimiter">'</span><span class="content">uuid</span><span class="delimiter">'</span></span>
     }
 }</code></pre>
 </div>
@@ -160,8 +161,24 @@ function addJsClass(el) {
 <div class="ulist">
 <ul>
 <li>
-<p><code>generator</code> (optional) - The name of the generator to use. Can be <code>increment</code>, <code>identity</code>, <code>sequence</code>, <code>hilo</code>, <code>seqhilo</code>, <code>uuid</code>, <code>guid</code>, <code>native</code>, <code>assigned</code>, <code>select</code>, <code>foreign</code> or <code>sequence-identity</code>. See <a href="http://docs.jboss.org/hibernate/core/3.6/reference/en-US/html/mapping.html#mapping-declaration-id-generator">Hibernate reference documentation</a> for more information.</p>
+<p><code>generator</code> (optional) - The name of the generator to use. Can be <code>increment</code>, <code>identity</code>, <code>sequence</code>, <code>seqhilo</code>, <code>uuid</code>, <code>uuid.hex</code>,  <code>assigned</code>, <code>select</code>, <code>foreign</code>, <code>sequence-identity</code>, <code>enhanced-sequence</code> or <code>enhanced-table</code>. See <a href="http://docs.jboss.org/hibernate/orm/current/userguide/html_single/Hibernate_User_Guide.html#identifiers-generators">Hibernate reference documentation</a> for more information.</p>
 </li>
+</ul>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<code>hilo</code> generator was removed in Hibernate 5. See <a href="https://github.com/hibernate/hibernate-orm/blob/5.0/migration-guide.adoc">Hibernate 5 Migration Guide</a>.
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
 <li>
 <p><code>composite</code> (optional) - Takes a list of property names to use that form the composite identifier</p>
 </li>
@@ -182,8 +199,7 @@ function addJsClass(el) {
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">static</span> mapping = {
-    id <span class="key">generator</span>: <span class="string"><span class="delimiter">'</span><span class="content">hilo</span><span class="delimiter">'</span></span>,
-       <span class="key">params</span>: [<span class="key">table</span>: <span class="string"><span class="delimiter">'</span><span class="content">hi_value</span><span class="delimiter">'</span></span>, <span class="key">column</span>: <span class="string"><span class="delimiter">'</span><span class="content">next_value</span><span class="delimiter">'</span></span>, <span class="key">max_lo</span>: <span class="integer">100</span>]
+    id <span class="key">generator</span>: <span class="string"><span class="delimiter">'</span><span class="content">uuid</span><span class="delimiter">'</span></span>
 }</code></pre>
 </div>
 </div>

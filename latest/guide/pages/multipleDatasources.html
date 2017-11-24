@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>4.4.5 Multiple Datasources 3.3.0</title>
+    <title>4.4.5 Multiple Datasources 3.3.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -126,7 +126,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>4.4.5 Multiple Datasources</h1>
 
-                    <p><strong>Version:</strong> 3.3.0</p>
+                    <p><strong>Version:</strong> 3.3.2</p>
                 </div>
 
                 
@@ -229,24 +229,11 @@ function addJsClass() {
 <p>You can use the same or different databases as long as they&#8217;re supported by Hibernate.</p>
 </div>
 <div class="paragraph">
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-If you need to inject the <code>lookup</code> datasource in a Grails artefact you can do it like this:</p>
-</div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>If you need to inject the <code>lookup</code> datasource in a Grails artefact, you can do it like this:
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 3.2.x</p>
+<p>If you need to inject the <code>lookup</code> datasource in a Grails artefact, you can do it like this:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="predefined-type">DataSource</span> dataSource_lookup</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-NOTE: While defining multiple data sources, one of them <strong>must</strong> be named "dataSource". This is required because Grails determines which data source is the default by determining which one is named "dataSource".</p>
-</div>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -256,8 +243,7 @@ NOTE: While defining multiple data sources, one of them <strong>must</strong> be
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-While defining multiple data sources, one of them <strong>must</strong> be named "dataSource". Grails uses that reserved name to determine which data source is the default.
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 3.2.x
+While defining multiple data sources, one of them <strong>must</strong> be named "dataSource". This is required because Grails determines which data source is the default by determining which one is named "dataSource".
 </td>
 </tr>
 </table>
@@ -424,22 +410,14 @@ zipCode.auditing.save()</code></pre>
 <div class="paragraph">
 <p>If you have a <code>Foo</code> domain class in <code>dataSource1</code> and a <code>Bar</code> domain class in <code>dataSource2</code>, if <code>WahooService</code> uses <code>dataSource1</code>, a service method that saves a new <code>Foo</code> and a new <code>Bar</code> will only be transactional for <code>Foo</code> since they share the same datasource. The transaction won&#8217;t affect the <code>Bar</code> instance. If you want both to be transactional you&#8217;d need to use two services and XA datasources for two-phase commit, e.g. with the Atomikos plugin.</p>
 </div>
-<div class="paragraph">
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-==== Transactions across multiple datasources</p>
 </div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>==== Transactions across multiple data sources
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 3.2.x</p>
-</div>
+<div class="sect3">
+<h4 id="_transactions_across_multiple_data_sources">Transactions across multiple data sources</h4>
 <div class="paragraph">
 <p>Grails does not by default by default try to handle transactions that span multiple data sources.</p>
 </div>
 <div class="paragraph">
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-You can enable Grails to use the Best Effort 1PC pattern for handling transactions across multiple datasources. To do so you must set the <code>grails.transaction.chainedTransactionManagerPostProcessor.enabled</code> setting to <code>true</code> in <code>application.yml</code>:</p>
+<p>You can enable Grails to use the Best Effort 1PC pattern for handling transactions across multiple datasources. To do so you must set the <code>grails.transaction.chainedTransactionManagerPostProcessor.enabled</code> setting to <code>true</code> in <code>application.yml</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -450,16 +428,10 @@ You can enable Grails to use the Best Effort 1PC pattern for handling transactio
 </div>
 </div>
 <div class="paragraph">
-<p>The <a href="http://www.javaworld.com/article/2077963/open-source-tools/distributed-transactions-in-spring&#8212;&#8203;with-and-without-xa.html?page=2">Best Efforts 1PC pattern</a> is fairly general but can fail in some circumstances that the developer must be aware of.</p>
+<p>The <a href="https://www.javaworld.com/article/2077963/open-source-tools/distributed-transactions-in-spring-with-and-without-xa.html">Best Efforts 1PC pattern</a> is fairly general but can fail in some circumstances that the developer must be aware of.</p>
 </div>
 <div class="paragraph">
 <p>This is a non-XA pattern that involves a synchronized single-phase commit of a number of resources. Because the <a href="#ref-orgwiki-twophasecommit-2PC">2PC</a> is not used, it can never be as safe as an <a href="#ref-orgwiki-x-open-xa-XA">XA</a> transaction, but is often good enough if the participants are aware of the compromises.</p>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>The <a href="http://www.javaworld.com/article/2077963/open-source-tools/distributed-transactions-in-spring&#8212;&#8203;with-and-without-xa.html?page=2">Best Efforts 1PC pattern</a> is fairly general but can fail in some circumstances that the developer must be aware of. This is a non-XA pattern that involves a synchronized single-phase commit of a number of resources. Because the <a href="https://en.wikipedia.org/wiki/Two-phase_commit">2PC</a> is not used, it can never be as safe as an <a href="https://en.wikipedia.org/wiki/X/Open_XA">XA</a> transaction, but is often good enough if the participants are aware of the compromises.
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 3.2.x</p>
 </div>
 <div class="paragraph">
 <p>The basic idea is to delay the commit of all resources as late as possible in a transaction so that the only thing that can go wrong is an infrastructure failure (not a business-processing error). Systems that rely on Best Efforts 1PC reason that infrastructure failures are rare enough that they can afford to take the risk in return for higher throughput. If business-processing services are also designed to be idempotent, then little can go wrong in practice.</p>
@@ -468,17 +440,10 @@ You can enable Grails to use the Best Effort 1PC pattern for handling transactio
 <p>The BE1PC implementation was added in Grails 2.3.6. . Before this change additional datasources didn&#8217;t take part in transactions initiated in Grails. The transactions in additional datasources were basically in auto commit mode. In some cases this might be the wanted behavior. One reason might be performance: on the start of each new transaction, the BE1PC transaction manager creates a new transaction to each datasource. It&#8217;s possible to leave an additional datasource out of the BE1PC transaction manager by setting <code>transactional = false</code> in the respective configuration block of the additional dataSource. Datasources with <code>readOnly = true</code> will also be left out of the chained transaction manager (since 2.3.7).</p>
 </div>
 <div class="paragraph">
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-By default, the BE1PC implementation will add all beans implementing the Spring <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api//org/springframework/transaction/PlatformTransactionManager.html">PlatformTransactionManager</a></code> interface to the chained BE1PC transaction manager. For example, a possible <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api//org/springframework/jms/connection/JmsTransactionManager.html">JMSTransactionManager</a></code> bean in the Grails application context would be added to the Grails BE1PC transaction manager&#8217;s chain of transaction managers.</p>
-</div>
-<div class="exampleblock">
-<div class="content">
-<div class="paragraph">
-<p>By default, the BE1PC implementation will add all beans implementing the Spring <a href="http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/transaction/PlatformTransactionManager.html">PlatformTransactionManager</a> interface to the chained BE1PC transaction manager. For example, a possible <a href="http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/jms/connection/JmsTransactionManager.html">JMSTransactionManager</a> bean in the Grails application context would be added to the Grails BE1PC transaction manager&#8217;s chain of transaction managers.
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 3.2.x</p>
+<p>By default, the BE1PC implementation will add all beans implementing the Spring <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api//org/springframework/transaction/PlatformTransactionManager.html">PlatformTransactionManager</a></code> interface to the chained BE1PC transaction manager. For example, a possible <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api//org/springframework/jms/connection/JmsTransactionManager.html">JMSTransactionManager</a></code> bean in the Grails application context would be added to the Grails BE1PC transaction manager&#8217;s chain of transaction managers.</p>
 </div>
 <div class="paragraph">
-<p>You can exclude transaction manager beans from the BE1PC implementation with the this configuration option:</p>
+<p>You can exclude transaction manager beans from the BE1PC implementation with this configuration option:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -492,21 +457,14 @@ By default, the BE1PC implementation will add all beans implementing the Spring 
 <div class="paragraph">
 <p>The exclude matching is done on the name of the transaction manager bean. The transaction managers of datasources with <code>transactional = false</code> or <code>readOnly = true</code> will be skipped and using this configuration option is not required in that case.</p>
 </div>
-<div class="paragraph">
-<p>==== XA and Two-phase Commit</p>
 </div>
+<div class="sect3">
+<h4 id="_xa_and_two_phase_commit">XA and Two-phase Commit</h4>
 <div class="paragraph">
 <p>When the Best Efforts 1PC pattern isn&#8217;t suitable for handling transactions across multiple transactional resources (not only datasources), there are several options available for adding XA/2PC support to Grails applications.</p>
 </div>
 <div class="paragraph">
-<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD
-The <a href="{springdocs}/transaction.html#transaction-application-server-integration">Spring transactions documentation</a> contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name <code>transactionManager</code> manually in <code>resources.groovy</code> or <code>resources.xml</code> file.</p>
-</div>
-</div>
-</div>
-<div class="paragraph">
-<p>The <a href="http://docs.spring.io/spring/docs/3.2.x/spring-framework-reference/html/transaction.html#transaction-application-server-integration">Spring transactions documentation</a> contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name <code>transactionManager</code> manually in <code>resources.groovy</code> or <code>resources.xml</code> file.
-&gt;&gt;&gt;&gt;&gt;&gt;&gt; 3.2.x</p>
+<p>The <a href="{springdocs}/transaction.html#transaction-application-server-integration">Spring transactions documentation</a> contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name <code>transactionManager</code> manually in <code>resources.groovy</code> or <code>resources.xml</code> file.</p>
 </div>
 </div>
 

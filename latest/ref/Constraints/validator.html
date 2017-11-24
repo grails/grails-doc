@@ -2,7 +2,7 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-    <title>The Grails Framework 3.3.0</title>
+    <title>The Grails Framework 3.3.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -163,6 +163,8 @@ password1 <span class="key">validator</span>: { val, obj, errors -&gt;
 
 <span class="comment">// Example 1: Using the &quot;implicit&quot; argument 0 (property name)</span>
 
+<span class="keyword">package</span> demo
+
 <span class="type">class</span> <span class="class">Person</span> {
 
     <span class="predefined-type">String</span> name
@@ -177,6 +179,7 @@ password1 <span class="key">validator</span>: { val, obj, errors -&gt;
 <span class="comment">// person.name.entryMissing=Please enter a name in the field {0}</span>
 
 <span class="comment">// Example 2: Using the &quot;implicit&quot; arguments 0 (property name) and 2 (property value)</span>
+<span class="keyword">package</span> demo
 
 <span class="type">class</span> <span class="class">Person</span> {
 
@@ -189,27 +192,36 @@ password1 <span class="key">validator</span>: { val, obj, errors -&gt;
 }
 
 <span class="comment">// This maps to a message</span>
-<span class="comment">// person.name.entryMissing=The value {2} entered in the field {0} is not valid because it lies in the future.</span>
+person.yearOfBirth.yearTooBig=The value {<span class="integer">2</span>} entered <span class="keyword">in</span> the field {<span class="integer">0</span>} is not valid because <span class="local-variable">it</span> lies <span class="keyword">in</span> the future.
+<span class="comment">// arguments are [property, class, value]. e.g. [yearOfBirth,class demo.Person, 2017]</span>
 <span class="comment">// You will note when using this kind of message on Integers that years are displayed as 1,990 instead of 1990.</span>
 <span class="comment">// This is addressed in the next example.</span>
 
 <span class="comment">// Example 3: Much more complex</span>
+<span class="keyword">package</span> demo
 
 <span class="type">class</span> <span class="class">Astronaut</span> {
 
     <span class="predefined-type">Integer</span> yearOfBirth
     <span class="predefined-type">Integer</span> yearOfFirstSpaceTravel
 
-        yearOfFirstSpaceTravel <span class="key">validator</span>: { val, obj -&gt;
-                <span class="keyword">if</span> (val &lt; obj.yearOfBirth) [<span class="string"><span class="delimiter">'</span><span class="content">datePriorTo</span><span class="delimiter">'</span></span>, val.toString(), obj.yearOfBirth]
-                <span class="keyword">else</span> <span class="keyword">if</span> (val &lt; (obj.yearOfBirth+<span class="integer">18</span>)) [<span class="string"><span class="delimiter">'</span><span class="content">maybeABitTooYoung</span><span class="delimiter">'</span></span>, val-obj.yearOfBirth]
+    <span class="directive">static</span> constraints = {
+        yearOfFirstSpaceTravel <span class="key">validator</span>: { <span class="predefined-type">Integer</span> val, Astronaut obj -&gt;
+            <span class="keyword">if</span> (val &lt; obj.yearOfBirth) {
+                <span class="keyword">return</span> [<span class="string"><span class="delimiter">'</span><span class="content">datePriorTo</span><span class="delimiter">'</span></span>, val.toString(), obj.yearOfBirth.toString()]
+            } <span class="keyword">else</span> <span class="keyword">if</span> (val &lt; (obj.yearOfBirth+<span class="integer">18</span>)) {
+                [<span class="string"><span class="delimiter">'</span><span class="content">maybeABitTooYoung</span><span class="delimiter">'</span></span>, (val - obj.yearOfBirth)]
+            }
         }
+    }
 }
 
 <span class="comment">// Respective messages</span>
 <span class="comment">// Note that argument 3 is the property value converted toString to avoid the unwanted formatting as described before.</span>
 astronaut.yearOfFirstSpaceTravel.datePriorTo=The value {<span class="integer">3</span>} entered <span class="keyword">for</span> the year of the first space travel is prior to the year of birth ({<span class="integer">4</span>}). Please correct the value.
-astronaut.yearOfFirstSpaceTravel.maybeABitTooYoung={<span class="integer">3</span>} years seems a bit young <span class="keyword">for</span> travelling to space, dude!</code></pre>
+<span class="comment">// For yearOfBirth: 2017 and yearOfFirstSpaceTravel: 2012 arguments will be [yearOfFirstSpaceTravel,class demo.Astronaut,2012,2012,2017]</span>
+astronaut.yearOfFirstSpaceTravel.maybeABitTooYoung={<span class="integer">3</span>} years seems a bit young <span class="keyword">for</span> travelling to space, dude!
+<span class="comment">// For yearOfBirth: 2012 and yearOfFirstSpaceTravel: 2017 arguments will be [yearOfFirstSpaceTravel,class demo.Astronaut,2017,5]</span></code></pre>
 </div>
 </div>
 </div>
