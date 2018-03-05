@@ -252,6 +252,49 @@ Refer to the Command Line reference in the Quick Reference menu of the reference
 </table>
 </div>
 <div class="sect2">
+<h3 id="_arguments">Arguments</h3>
+<div class="paragraph">
+<p>The <code>grails</code> command is a front to a <code>gradle</code> invocation, because of this there can be unexpected side-effects.
+For example, when executing <code>grails -Dapp.foo=bar run-app</code> the <code>app.foo</code> system property won&#8217;t be available to your application. This is because <code>bootRun</code> in your <code>build.gradle</code> configures the system properties.
+To make this work you can simply append all <code>System.properties</code> to <code>bootRun</code> in <code>build.gradle</code> like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">bootRun{
+    systemProperties <span class="predefined-type">System</span>.properties <span class="comment">// Please note not to use '=', because this will override all configured systemProperties. This will append them.</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or if you only want to pass through a limited set, you can prefix your system properties using an arbitrary prefix and configure <code>bootRun</code> like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">bootRun{
+    bootRun {
+        systemProperties <span class="predefined-type">System</span>.properties.inject([:]){acc,item-&gt; item.key.startsWith(<span class="string"><span class="delimiter">'</span><span class="content">boot.</span><span class="delimiter">'</span></span>)?acc &lt;&lt; [(item.key.substring(<span class="string"><span class="delimiter">'</span><span class="content">boot.</span><span class="delimiter">'</span></span>.length())):item.value]:acc }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example only system properties starting with <code>boot.</code> are passed through.</p>
+</div>
+<div class="paragraph">
+<p>Application and JVM arguments should be specified in <code>bootRun</code> as well.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">bootRun{
+    bootRun {
+        jvmArgs(<span class="string"><span class="delimiter">'</span><span class="content">-Dspring.output.ansi.enabled=always</span><span class="delimiter">'</span></span>)
+        args(<span class="string"><span class="delimiter">'</span><span class="content">--app.foo=bar</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">--app.bar=foo</span><span class="delimiter">'</span></span>) <span class="comment">// Override the `app.foo` and `app.bar` config options (`grailsApplication.config`)</span>
+    }
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_non_interactive_mode">non-interactive mode</h3>
 <div class="paragraph">
 <p>When you run a script manually and it prompts you for information, you can answer the questions and continue running the script. But when you run a script as part of an automated process, for example a continuous integration build server, there&#8217;s no way to "answer" the questions. So you can pass the <code>\--non-interactive</code> switch to the script command to tell Grails to accept the default answer for any questions, for example whether to install a missing plugin.</p>
