@@ -811,18 +811,6 @@ function addJsClass(el) {
 <p>With <a href="http://views.grails.org">JSON Views</a> now being the recommended way to render JSON. The converters plugin has been split out from core into <a href="https://github.com/grails-plugins/grails-plugin-converters">a separate project</a>.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_logger_name_changes">Logger name changes</h4>
-<div class="paragraph">
-<p>Grails logger names for artifacts have been simplifled from <code>grails.app.&lt;type&gt;.&lt;className&gt;</code> to use the the package name.</p>
-</div>
-<div class="paragraph">
-<p>For example <code>grails.app.controller.com.example.BookController</code> is now simply <code>com.example.BookController</code>.</p>
-</div>
-<div class="paragraph">
-<p>For more information see the <a href="http://docs.grails.org/3.3.x/guide/conf.html#loggerName">documentation</a>.</p>
-</div>
-</div>
 
 <a name="2. Getting Started"><!-- Legacy link --></a>
 <h1 id="gettingStarted">2 Getting Started</h1>
@@ -1165,7 +1153,7 @@ You can always open GSP files in the HTML editor if you just want highlighting i
 </table>
 </div>
 <div class="paragraph">
-<p>To get started with Intellij IDEA and Grails 3.0 simply go to <code>File / Open</code> and point IDEA at your <code>build.gradle</code> file to import and configure the project.</p>
+<p>To get started with Intellij IDEA and Grails 3.0 simply go to <code>File / Import Project</code> and point IDEA at your <code>build.gradle</code> file to import and configure the project.</p>
 </div>
 </div>
 <div class="sect3">
@@ -1710,13 +1698,10 @@ For information on upgrading from versions of Grails prior to Grails 3.2.x, see 
 <div class="sect2">
 <h3 id="_spring_boot_1_5_x">Spring Boot 1.5.x</h3>
 <div class="paragraph">
-<p>Spring Boot 1.5.x removes a number of deprecated classes, notably several of the classes within the <code>org.springframework.boot.context.embedded</code> package.</p>
+<p>Spring Boot 1.5.x removes a number of deprecated classes, notably all of the classes within the <code>org.springframework.boot.context.embedded</code> package.</p>
 </div>
 <div class="paragraph">
 <p>If your application is referencing any of the classes within this package you will need to alter your imports to use <code>org.springframework.boot.web.servlet</code> instead.</p>
-</div>
-<div class="paragraph">
-<p>All classes in the <code>org.springframework.boot.context.web</code> package have been deprecated and relocated per the Spring Boot 1.4 Release Notes.</p>
 </div>
 </div>
 <div class="sect2">
@@ -2240,6 +2225,13 @@ In Groovy code you must use single quotes around the string for the value of the
     systemProperties = <span class="predefined-type">System</span>.properties
 }</code></pre>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_external_configuration">External configuration</h3>
+<div class="paragraph">
+<p>Grails will read <code>application.(properties|yml)</code> from the <code>./config</code> or the current directory by default.
+As Grails is a SpringBoot configuration options are available as well, for documentation please consult: <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files" class="bare">https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files</a></p>
 </div>
 </div>
 
@@ -3205,15 +3197,15 @@ environments {
 <p>It&#8217;s tempting to switch to <code>update</code> so you retain existing data and only update the schema when your code changes, but Hibernate&#8217;s update support is very conservative. It won&#8217;t make any changes that could result in data loss, and doesn&#8217;t detect renamed columns or tables, so you&#8217;ll be left with the old one and will also have the new one.</p>
 </div>
 <div class="paragraph">
-<p>Grails supports migrations with Liquibase or Flyway via plugins.</p>
+<p>Grails supports migrations with Flyway or Liquibase via plugins.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="http://plugins.grails.org/plugin/grails/database-migration">Database Migration</a></p>
+<p><a href="https://grails.org/plugins.html#plugin/org.grails.plugins:grails-flyway">Flyway</a></p>
 </li>
 <li>
-<p><a href="http://plugins.grails.org/plugin/saw303/org.grails.plugins%3Agrails-flyway">Flyway</a></p>
+<p><a href="https://grails.org/plugins.html#plugin/database-migration">Database Migration</a></p>
 </li>
 </ul>
 </div>
@@ -4354,7 +4346,7 @@ apply <span class="key">plugin</span>:<span class="string"><span class="delimite
 <p><code>war</code> - The <a href="http://www.gradle.org/docs/current/userguide/war_plugin.html">WAR plugin</a> changes the packaging so that Gradle creates as WAR file from your application. You can comment out this plugin if you wish to create only a runnable JAR file for standalone deployment.</p>
 </li>
 <li>
-<p><code>asset-pipeline</code> - The <a href="https://grails.org/plugins.html#plugin/asset-pipeline">asset pipeline</a> plugin enables the compilation of static assets (JavaScript, CSS etc.)</p>
+<p><code>asset-pipeline</code> - The <a href="https://grails.org/plugins.html#plugin/asset-pipeline">asset pipeline</a>] plugin enables the compilation of static assets (JavaScript, CSS etc.)</p>
 </li>
 </ul>
 </div>
@@ -4904,7 +4896,7 @@ The <code>githubSlug</code> argument should point to the path to your Github rep
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">dependencies</span>:
     <span class="key">excludes</span>:
-        - <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails:hibernate:*</span><span class="delimiter">&quot;</span></span>
+        - <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails:hibernate</span><span class="delimiter">&quot;</span></span>
     <span class="key">build</span>:
         - <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails:grails-gradle-plugin:$grailsVersion</span><span class="delimiter">&quot;</span></span>
     <span class="key">compile</span>:
@@ -10404,10 +10396,10 @@ If the accept header is used but contains no registered content types, Grails wi
 <p><a href="http://docs.grails.org/3.3.2/api/grails/web/databinding/WebDataBinding.html">grails.web.databinding.WebDataBinding</a></p>
 </li>
 <li>
-<p><a href="http://gorm.grails.org/latest/api//org/grails/datastore/gorm/GormEntity.html">org.grails.datastore.gorm.GormEntity</a></p>
+<p>org.grails.datastore.gorm.GormEntity</p>
 </li>
 <li>
-<p><a href="http://gorm.grails.org/latest/api//org/grails/datastore/gorm/GormValidateable.html">org.grails.datastore.gorm.GormValidateable</a></p>
+<p>org.grails.datastore.gorm.GormValidateable</p>
 </li>
 </ul>
 </div>
@@ -10417,10 +10409,10 @@ If the accept header is used but contains no registered content types, Grails wi
 <div class="ulist">
 <ul>
 <li>
-<p><a href="http://gsp.grails.org/latest/api/grails/artefact/gsp/TagLibraryInvoker.html">grails.artefact.gsp.TagLibraryInvoker</a></p>
+<p><a href="http://docs.grails.org/3.3.2/api/grails/artefact/gsp/TagLibraryInvoker.html">grails.artefact.gsp.TagLibraryInvoker</a></p>
 </li>
 <li>
-<p><a href="http://async.grails.org/latest/api/grails/artefact/AsyncController.html">grails.artefact.AsyncController</a></p>
+<p><a href="http://docs.grails.org/3.3.2/api/grails/artefact/AsyncController.html">grails.artefact.AsyncController</a></p>
 </li>
 <li>
 <p><a href="http://docs.grails.org/3.3.2/api/grails/artefact/controller/RestResponder.html">grails.artefact.controller.RestResponder</a></p>
@@ -10446,7 +10438,17 @@ If the accept header is used but contains no registered content types, Grails wi
 <div class="ulist">
 <ul>
 <li>
-<p><a href="http://gsp.grails.org/latest/api/grails/artefact/TagLibrary.html">grails.artefact.TagLibrary</a></p>
+<p><a href="http://docs.grails.org/3.3.2/api/grails/artefact/TagLibrary.html">grails.artefact.TagLibrary</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_service_trait">Service Trait</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://docs.grails.org/3.3.2/api/grails/artefact/Service.html">grails.artefact.Service</a></p>
 </li>
 </ul>
 </div>
@@ -14391,17 +14393,6 @@ If non-singleton services are required, controller scope should be changed as we
 </tr>
 </table>
 </div>
-<div class="sect3">
-<h4 id="_lazy_initialization">Lazy initialization</h4>
-<div class="paragraph">
-<p>You can also configure whether the service is lazily initialized. By default, this is set to <code>true</code>, but you can disable this and make initialization eager with the <code>lazyInit</code> property:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="directive">static</span> lazyInit = <span class="predefined-constant">false</span></code></pre>
-</div>
-</div>
-</div>
 
 <a name="11.3 Dependency Injection and Services"><!-- Legacy link --></a>
 <h2 id="dependencyInjectionServices">13.3 Dependency Injection and Services</h2>
@@ -16887,7 +16878,7 @@ If you have created a Grails plugin and want it to be hosted in the central repo
 </ul>
 </div>
 <div class="paragraph">
-<p>The default <code>UrlMappings.groovy</code> file is not excluded, so remove any mappings that are not required for the plugin to work.  You are also free to add a UrlMappings definition under a different name which <strong>will</strong> be included. For example a file called <code>grails-app/controllers/BlogUrlMappings.groovy</code> is fine.</p>
+<p>In addition, the default <code>UrlMappings.groovy</code> file is excluded to avoid naming conflicts, however you are free to add a UrlMappings definition under a different name which <strong>will</strong> be included. For example a file called <code>grails-app/controllers/BlogUrlMappings.groovy</code> is fine.</p>
 </div>
 <div class="paragraph">
 <p>The list of excludes is extensible with the <code>pluginExcludes</code> property:</p>
