@@ -51,6 +51,44 @@ compile                                 Compiles a Grails application
 
 NOTE: Refer to the Command Line reference in the Quick Reference menu of the reference guide for more information about individual commands
 
+=== Arguments
+
+The `grails` command is a front to a `gradle` invocation, because of this there can be unexpected side-effects.
+For example, when executing `grails -Dapp.foo=bar run-app` the `app.foo` system property won't be available to your application. This is because `bootRun` in your `build.gradle` configures the system properties.
+To make this work you can simply append all `System.properties` to `bootRun` in `build.gradle` like:
+
+[source,groovy]
+----
+bootRun{
+    systemProperties System.properties // Please note not to use '=', because this will override all configured systemProperties. This will append them.
+}
+----
+
+Or if you only want to pass through a limited set, you can prefix your system properties using an arbitrary prefix and configure `bootRun` like:
+
+[source,groovy]
+----
+bootRun{
+    bootRun {
+        systemProperties System.properties.inject([:]){acc,item-> item.key.startsWith('boot.')?acc << [(item.key.substring('boot.'.length())):item.value]:acc }
+    }
+}
+----
+
+In this example only system properties starting with `boot.` are passed through.
+
+Application and JVM arguments should be specified in `bootRun` as well.
+
+[source,groovy]
+----
+bootRun{
+    bootRun {
+        jvmArgs('-Dspring.output.ansi.enabled=always')
+        args('--app.foo=bar','--app.bar=foo') // Override the `app.foo` and `app.bar` config options (`grailsApplication.config`)
+    }
+}
+----
+
 
 === non-interactive mode
 
