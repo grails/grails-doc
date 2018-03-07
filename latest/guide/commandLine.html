@@ -2,16 +2,16 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-82213539-2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="/cdn-cgi/apps/head/3cOPSgo5Omz84ycX7CvigfX4cpw.js"></script><script async src="https://www.googletagmanager.com/gtag/js?id=UA-82213539-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-  gtag('config', 'UA-82213539-2');
-</script>
-    <title>5 The Command Line 3.3.2</title>
+        gtag('config', 'UA-82213539-2');
+    </script>
+    <title>5 The Command Line 3.3.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>5 The Command Line</h1>
 
-                    <p><strong>Version:</strong> 3.3.2</p>
+                    <p><strong>Version:</strong> 3.3.3</p>
                 </div>
 
                 
@@ -259,6 +259,49 @@ Refer to the Command Line reference in the Quick Reference menu of the reference
 </td>
 </tr>
 </table>
+</div>
+<div class="sect2">
+<h3 id="_arguments">Arguments</h3>
+<div class="paragraph">
+<p>The <code>grails</code> command is a front to a <code>gradle</code> invocation, because of this there can be unexpected side-effects.
+For example, when executing <code>grails -Dapp.foo=bar run-app</code> the <code>app.foo</code> system property won&#8217;t be available to your application. This is because <code>bootRun</code> in your <code>build.gradle</code> configures the system properties.
+To make this work you can simply append all <code>System.properties</code> to <code>bootRun</code> in <code>build.gradle</code> like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">bootRun{
+    systemProperties <span class="predefined-type">System</span>.properties <span class="comment">// Please note not to use '=', because this will override all configured systemProperties. This will append them.</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or if you only want to pass through a limited set, you can prefix your system properties using an arbitrary prefix and configure <code>bootRun</code> like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">bootRun{
+    bootRun {
+        systemProperties <span class="predefined-type">System</span>.properties.inject([:]){acc,item-&gt; item.key.startsWith(<span class="string"><span class="delimiter">'</span><span class="content">boot.</span><span class="delimiter">'</span></span>)?acc &lt;&lt; [(item.key.substring(<span class="string"><span class="delimiter">'</span><span class="content">boot.</span><span class="delimiter">'</span></span>.length())):item.value]:acc }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In this example only system properties starting with <code>boot.</code> are passed through.</p>
+</div>
+<div class="paragraph">
+<p>Application and JVM arguments should be specified in <code>bootRun</code> as well.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">bootRun{
+    bootRun {
+        jvmArgs(<span class="string"><span class="delimiter">'</span><span class="content">-Dspring.output.ansi.enabled=always</span><span class="delimiter">'</span></span>)
+        args(<span class="string"><span class="delimiter">'</span><span class="content">--app.foo=bar</span><span class="delimiter">'</span></span>,<span class="string"><span class="delimiter">'</span><span class="content">--app.bar=foo</span><span class="delimiter">'</span></span>) <span class="comment">// Override the `app.foo` and `app.bar` config options (`grailsApplication.config`)</span>
+    }
+}</code></pre>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_non_interactive_mode">non-interactive mode</h3>
@@ -393,7 +436,7 @@ println <span class="string"><span class="delimiter">&quot;</span><span class="c
 <p>Plugins and applications that need to define template generation tasks can do so using scripts. A example of this is the Scaffolding plugin which defines the <code>generate-all</code> and <code>generate-controllers</code> commands.</p>
 </div>
 <div class="paragraph">
-<p>Every Grails script implements the <a href="http://docs.grails.org/3.3.2/api/org/grails/cli/profile/commands/templates/TemplateRenderer.html">TemplateRenderer</a> interface which makes it trivial to render templates to the users project workspace.</p>
+<p>Every Grails script implements the <a href="http://docs.grails.org/3.3.3/api/org/grails/cli/profile/commands/templates/TemplateRenderer.html">TemplateRenderer</a> interface which makes it trivial to render templates to the users project workspace.</p>
 </div>
 <div class="paragraph">
 <p>The following is an example of the <a href="../ref/Command%20Line/create-script.html">create-script</a> command written in Groovy:</p>
@@ -440,7 +483,7 @@ render  <span class="key">template</span>: template(<span class="string"><span c
 <div class="sect3">
 <h4 id="_the_model">The "model"</h4>
 <div class="paragraph">
-<p>Executing the <code>model</code> method with a <code>Class</code>/<code>String</code>/<code>File</code>/<code>Resource</code> will return an instance of <a href="http://docs.grails.org/3.3.2/api/grails/codegen/model/Model.html">Model</a>. The model contains several properties that can help you generate code.</p>
+<p>Executing the <code>model</code> method with a <code>Class</code>/<code>String</code>/<code>File</code>/<code>Resource</code> will return an instance of <a href="http://docs.grails.org/3.3.3/api/grails/codegen/model/Model.html">Model</a>. The model contains several properties that can help you generate code.</p>
 </div>
 <div class="paragraph">
 <p>Example:</p>
@@ -464,7 +507,7 @@ domain.lowerCaseName == <span class="string"><span class="delimiter">&quot;</spa
 <div class="sect3">
 <h4 id="_working_with_files">Working with files</h4>
 <div class="paragraph">
-<p>All scripts have access to methods on the <a href="http://docs.grails.org/3.3.2/api/org/grails/cli/profile/commands/io/FileSystemInteraction.html">FileSystemInteraction</a> class. It contains helpful methods to copy, delete, and create files.</p>
+<p>All scripts have access to methods on the <a href="http://docs.grails.org/3.3.3/api/org/grails/cli/profile/commands/io/FileSystemInteraction.html">FileSystemInteraction</a> class. It contains helpful methods to copy, delete, and create files.</p>
 </div>
 </div>
 

@@ -2,16 +2,16 @@
                       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-82213539-2"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script src="/cdn-cgi/apps/head/3cOPSgo5Omz84ycX7CvigfX4cpw.js"></script><script async src="https://www.googletagmanager.com/gtag/js?id=UA-82213539-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-  gtag('config', 'UA-82213539-2');
-</script>
-    <title>4.1 Basic Configuration 3.3.2</title>
+        gtag('config', 'UA-82213539-2');
+    </script>
+    <title>4.1 Basic Configuration 3.3.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>4.1 Basic Configuration</h1>
 
-                    <p><strong>Version:</strong> 3.3.2</p>
+                    <p><strong>Version:</strong> 3.3.3</p>
                 </div>
 
                 
@@ -231,7 +231,7 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>If you want to read runtime configuration settings, i.e. those defined in <code>application.yml</code>, use the <a href="http://docs.grails.org/3.3.2/api/grails/core/GrailsApplication.html">grailsApplication</a> object, which is available as a variable in controllers and tag libraries:</p>
+<p>If you want to read runtime configuration settings, i.e. those defined in <code>application.yml</code>, use the <a href="http://docs.grails.org/3.3.3/api/grails/core/GrailsApplication.html">grailsApplication</a> object, which is available as a variable in controllers and tag libraries:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -245,7 +245,7 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>config</code> property of the <code>grailsApplication</code> object is an instance of the <a href="http://docs.grails.org/3.3.2/api/grails/config/Config.html">Config</a> interface and provides a number of useful methods to read the configuration of the application.</p>
+<p>The <code>config</code> property of the <code>grailsApplication</code> object is an instance of the <a href="http://docs.grails.org/3.3.3/api/grails/config/Config.html">Config</a> interface and provides a number of useful methods to read the configuration of the application.</p>
 </div>
 <div class="paragraph">
 <p>In particular, the <code>getProperty</code> method (seen above) is useful for efficiently retrieving configuration properties, while specifying the property type (the default type is String) and/or providing a default fallback value.</p>
@@ -372,6 +372,13 @@ In Groovy code you must use single quotes around the string for the value of the
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_external_configuration">External configuration</h3>
+<div class="paragraph">
+<p>Grails will read <code>application.(properties|yml)</code> from the <code>./config</code> or the current directory by default.
+As Grails is a SpringBoot configuration options are available as well, for documentation please consult: <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files" class="bare">https://docs.spring.io/spring-boot/docs/current/reference/html/boot-features-external-config.html#boot-features-external-config-application-property-files</a></p>
+</div>
+</div>
 
 <a name="3.1.1 Built in options"><!-- Legacy link --></a>
 <h2 id="builtInOptions">4.1.2 Built in options</h2>
@@ -470,63 +477,98 @@ type of the artifact, for example, <code>controllers</code> or <code>services</c
 qualified name of the artifact.</p>
 </div>
 <div class="paragraph">
-<p>Grails 3.3.x simplifies logger names as illustrated in the next table:</p>
+<p>Grails 3.3.x simplifies logger names. The next examples illustrate the changes:</p>
+</div>
+<div class="paragraph">
+<p><code>BookController.groovy</code> located at <code>grails-app/controllers/com/company</code> NOT annotated with <code><a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/util/logging/Slf4j.html">@Slf4j</a></code></p>
 </div>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 16.6666%;">
-<col style="width: 16.6666%;">
-<col style="width: 16.6666%;">
-<col style="width: 16.6666%;">
-<col style="width: 16.667%;">
+<col style="width: 50%;">
+<col style="width: 50%;">
 </colgroup>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Class Name</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Package Name</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Location</strong></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Annotated with <code><a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/util/logging/Slf4j.html">@Slf4j</a></code></strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Logger Name (Grails 3.3.x or higher)</strong></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Logger Name (Grails 3.2.x or lower)</strong></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BookController.groovy</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails-app/controllers/com/company</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NO</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company.BookController</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.app.controllers.com.company.BookController</code></p></td>
 </tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>BookController.groovy</code> located at <code>grails-app/controllers/com/company</code> annotated with <code><a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/util/logging/Slf4j.html">@Slf4j</a></code></p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BookController.groovy</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails-app/controllers/com/company</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">YES</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Logger Name (Grails 3.3.x or higher)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Logger Name (Grails 3.2.x or lower)</strong></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company.BookController</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company.BookController</code></p></td>
 </tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>BookService.groovy</code> located at <code>grails-app/services/com/company</code> NOT annotated with <code><a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/util/logging/Slf4j.html">@Slf4j</a></code></p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BookService.groovy</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails-app/services/com/company</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">NO</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Logger Name (Grails 3.3.x or higher)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Logger Name (Grails 3.2.x or lower)</strong></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company.BookService</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.app.services.com.company.BookService</code></p></td>
 </tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>BookService.groovy</code> located at <code>grails-app/services/com/company</code> annotated with <code><a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/util/logging/Slf4j.html">@Slf4j</a></code></p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BookService.groovy</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails-app/services/com/company</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">YES</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Logger Name (Grails 3.3.x or higher)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Logger Name (Grails 3.2.x or lower)</strong></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company.BookService</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company.BookService</code></p></td>
 </tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><code>BookDetail.groovy</code> located at <code>src/main/groovy/com/company</code> annotated with <code><a href="http://docs.groovy-lang.org/latest/html/gapi/groovy/util/logging/Slf4j.html">@Slf4j</a></code></p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>BookDetail.groovy</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>src/main/groovy/com/company</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">YES</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Logger Name (Grails 3.3.x or higher)</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Logger Name (Grails 3.2.x or lower)</strong></p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company.BookDetail</code></p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock"><code>com.company.BookDetail</code></p></td>
 </tr>
