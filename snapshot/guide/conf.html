@@ -243,7 +243,37 @@ function addJsClass() {
 <p>Build configuration is generally done via Gradle and the <code>build.gradle</code> file. Runtime configuration is by default specified in YAML in the <code>grails-app/conf/application.yml</code> file.</p>
 </div>
 <div class="paragraph">
-<p>If you prefer to use Grails 2.0-style Groovy configuration then you can create an additional <code>grails-app/conf/application.groovy</code> file to specify configuration using Groovy&#8217;s <a href="http://docs.groovy-lang.org/latest/html/documentation/#_configslurper">ConfigSlurper</a> syntax.</p>
+<p>If you prefer to use Grails 2.0-style Groovy configuration then it is possible to specify configuration using Groovy&#8217;s <a href="http://docs.groovy-lang.org/latest/html/documentation/#_configslurper">ConfigSlurper</a> syntax. Two Groovy configuration files are available: <code>grails-app/conf/application.groovy</code> and <code>grails-app/conf/runtime.groovy</code>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Use <code>application.groovy</code> for configuration that doesn&#8217;t depend on application classes</p>
+</li>
+<li>
+<p>Use <code>runtime.groovy</code> for configuration that does depend on application classes</p>
+</li>
+</ol>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>This separation is necessary because configuration values defined in <code>application.groovy</code> are available to the Grails CLI, which needs to be able to load <code>application.groovy</code> before the application has been compiled. References to application classes in <code>application.groovy</code> will cause an exception when these commands are executed by the CLI:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Error occurred running Grails CLI:
+startup failed:script14738267015581837265078.groovy: 13: unable to resolve class com.foo.Bar</pre>
+</div>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>For Groovy configuration the following variables are available to the configuration script:</p>
@@ -1319,7 +1349,7 @@ When configuring the DataSource do not include the type or the def keyword befor
 </ul>
 </div>
 <div class="paragraph">
-<p>Setting the <code>dbCreate</code> setting to "none" is recommended once your schema is relatively stable and definitely when your application and database are deployed in production. Database changes are then managed through proper migrations, either with SQL scripts or a migration tool like <a href="https://flywaydb.org/">Flyway</a> or <a href="http://www.liquibase.org/">Liquibase</a>. The <a href="https://grails.org/plugins.html#plugin/database-migration">Database Migration</a> plugin uses Liquibase.</p>
+<p>Setting the <code>dbCreate</code> setting to "none" is recommended once your schema is relatively stable and definitely when your application and database are deployed in production. Database changes are then managed through proper migrations, either with SQL scripts or a migration tool like <a href="https://flywaydb.org/">Flyway</a> or <a href="http://www.liquibase.org/">Liquibase</a>. The <a href="http://plugins.grails.org/plugin/grails/database-migration">Database Migration</a> plugin uses Liquibase.</p>
 </div>
 </div>
 
@@ -1398,15 +1428,15 @@ environments {
 <p>It&#8217;s tempting to switch to <code>update</code> so you retain existing data and only update the schema when your code changes, but Hibernate&#8217;s update support is very conservative. It won&#8217;t make any changes that could result in data loss, and doesn&#8217;t detect renamed columns or tables, so you&#8217;ll be left with the old one and will also have the new one.</p>
 </div>
 <div class="paragraph">
-<p>Grails supports migrations with Flyway or Liquibase via plugins.</p>
+<p>Grails supports migrations with Liquibase or Flyway via plugins.</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><a href="https://grails.org/plugins.html#plugin/org.grails.plugins:grails-flyway">Flyway</a></p>
+<p><a href="http://plugins.grails.org/plugin/grails/database-migration">Database Migration</a></p>
 </li>
 <li>
-<p><a href="https://grails.org/plugins.html#plugin/database-migration">Database Migration</a></p>
+<p><a href="http://plugins.grails.org/plugin/saw303/org.grails.plugins%3Agrails-flyway">Flyway</a></p>
 </li>
 </ul>
 </div>
