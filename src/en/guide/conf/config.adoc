@@ -36,6 +36,8 @@ my.tmp.dir = "${userHome}/.grails/tmp"
 ----
 
 
+=== Accessing Configuration with GrailsApplication
+
 If you want to read runtime configuration settings, i.e. those defined in `application.yml`, use the {apiDocs}grails/core/GrailsApplication.html[grailsApplication] object, which is available as a variable in controllers and tag libraries:
 
 [source,groovy]
@@ -92,7 +94,34 @@ class MyService {
 }
 ----
 
-Finally, you can also use Spring's {springapi}org/springframework/beans/factory/annotation/Value.html[Value] annotation to inject configuration values:
+=== GrailsConfigurationAware Interface
+
+Accessing configuration dynamically at runtime can have a small affect on application performance. An alternative approach is to implement the {apiDocs}grails/core/support/GrailsConfigurationAware.html[GrailsConfigurationAware] interface, which provides a `setConfiguration` method that accepts the application configuration as a parameter when the class is initialized. You can then assign relevant configuration properties to instance properties on the class for later usage.
+
+The `Config` instance has the same properties and usage as the injected `GrailsApplication` config object. Here is the service class from the previous example, using `GrailsConfigurationAware` instead of injecting `GrailsApplication`:
+
+[source,groovy]
+----
+import grails.core.support.GrailsConfigurationAware
+
+class MyService implements GrailsConfigurationAware {
+
+    String recipient
+
+    String greeting() {
+        return "Hello ${recipient}"
+    }
+
+    void setConfiguration(Config config) {
+        recipient = config.getProperty('foo.bar.hello')
+    }
+
+}
+----
+
+=== Spring Value Annotation
+
+You can use Spring's {springapi}org/springframework/beans/factory/annotation/Value.html[Value] annotation to inject configuration values:
 
 [source,groovy]
 ----
