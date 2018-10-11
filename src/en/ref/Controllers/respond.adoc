@@ -16,6 +16,21 @@ respond Book.get(1)
 respond Book.get(1), formats: ['xml', 'json']
 ----
 
+If you simply wish to augment the calculated model then you can do so by passing a model argument:
+
+[source,groovy]
+----
+respond Book.list(), [model: [bookCount: Book.count()]]
+----
+
+The above example will produce a model like `[bookList:books, bookCount:totalBooks]`, where the calculated model is combined with the model passed in the `model` argument. You could also pass the `Map` to repond method such as  `respond([bookList:Book.list(), bookCount:Book.count()])`
+
+By default, the respond method will select the view based on `actionName`. But, if you wish to change the default view and use some other view then you could do so as:
+
+[source,groovy]
+----
+respond Book.list(), [view: 'other', model: [bookCount: Book.count()]]
+----
 
 === Description
 
@@ -41,10 +56,10 @@ Parameters:
 * `object` - The object to render
 * `arguments` - Named arguments.
 
-Supported `arguments`:
+Supported `arguments` (Named arguments):
 
-* `view` - The view to use in case of HTML rendering
-* `model` - The model to use in case of HTML rendering
+* `view` -  The view to delegate the rendering to
+* `model` - The additional model to use in rendering
 * `status` - The response status
 * `formats` - A list of formats to respond with
 * `includes` - Properties to include if rendering with the converters API
