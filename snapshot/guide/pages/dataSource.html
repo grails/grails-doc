@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>4.4 The DataSource 3.3.4</title>
+    <title>4.4 The DataSource 3.3.8</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>4.4 The DataSource</h1>
 
-                    <p><strong>Version:</strong> 3.3.4</p>
+                    <p><strong>Version:</strong> 3.3.8</p>
                 </div>
 
                 
@@ -234,6 +234,9 @@ function addJsClass() {
 <li>
 <p><code>jmxExport</code> - If <code>false</code>, will disable registration of JMX MBeans for all DataSources. By default JMX MBeans are added for DataSources with <code>jmxEnabled = true</code> in properties.</p>
 </li>
+<li>
+<p><code>type</code> - The connection pool class if you want to force Grails to use it when there are more than one available.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -249,6 +252,7 @@ function addJsClass() {
     dialect = org.hibernate.dialect.MySQL5InnoDBDialect
     username = <span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>
     password = <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>
+    type = <span class="string"><span class="delimiter">&quot;</span><span class="content">com.zaxxer.hikari.HikariDataSource</span><span class="delimiter">&quot;</span></span>
     properties {
        jmxEnabled = <span class="predefined-constant">true</span>
        initialSize = <span class="integer">5</span>
@@ -304,6 +308,7 @@ When configuring the DataSource do not include the type or the def keyword befor
     dialect = org.hibernate.dialect.MySQL5InnoDBDialect
     username = <span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>
     password = <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>
+    type = <span class="string"><span class="delimiter">&quot;</span><span class="content">com.zaxxer.hikari.HikariDataSource</span><span class="delimiter">&quot;</span></span>
     properties {
        <span class="comment">// Documentation for Tomcat JDBC Pool</span>
        <span class="comment">// http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes</span>
@@ -544,7 +549,27 @@ environments {
 <p>You can access the console by navigating to <a href="http://localhost:8080/dbconsole" class="bare">http://localhost:8080/dbconsole</a> in a browser. The URI can be configured using the <code>grails.dbconsole.urlRoot</code> attribute in <code>application.groovy</code> and defaults to <code>'/dbconsole'</code>.</p>
 </div>
 <div class="paragraph">
-<p>The console is enabled by default in development mode and can be disabled or enabled in other environments by using the <code>grails.dbconsole.enabled</code> attribute in <code>application.groovy</code>. For example, you could enable the console in production like this:</p>
+<p>The console is enabled by default in development mode and can be disabled or enabled in other environments by using the <code>grails.dbconsole.enabled</code> attribute in <code>application.yml</code> (or <code>application.groovy</code> for Grails 2.x). For example, you could enable the console in production like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">environments</span>:
+    <span class="key">production</span>:
+        <span class="key">grails</span>:
+            <span class="key">serverUrl</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.changeme.com</span><span class="delimiter">&quot;</span></span>
+            <span class="key">dbconsole</span>:
+                <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span>
+                <span class="key">urlRoot</span>: <span class="string"><span class="content">'/admin/dbconsole'</span></span>
+    <span class="key">development</span>:
+        <span class="key">grails</span>:
+            <span class="key">serverUrl</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">http://localhost:8080/${appName}</span><span class="delimiter">&quot;</span></span>
+    <span class="key">test</span>:
+        <span class="key">grails</span>:
+            <span class="key">serverUrl</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">http://localhost:8080/${appName}</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or for <code>application.groovy</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
