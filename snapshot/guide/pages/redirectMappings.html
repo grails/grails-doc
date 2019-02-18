@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>8.3.3 Redirects In URL Mappings 3.3.9</title>
+    <title>8.3.3 Redirects In URL Mappings 4.0.0.BUILD-SNAPSHOT</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.2.x</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.3.x</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>8.3.3 Redirects In URL Mappings</h1>
 
-                    <p><strong>Version:</strong> 3.3.9</p>
+                    <p><strong>Version:</strong> 4.0.0.BUILD-SNAPSHOT</p>
                 </div>
 
                 
@@ -145,7 +145,7 @@ function addJsClass() {
 <h2 id="redirectMappings">8.3.3 Redirects In URL Mappings</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/theWebLayer/urlmappings/redirectMappings.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/theWebLayer/urlmappings/redirectMappings.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -164,21 +164,13 @@ as an argument to the <code>redirect</code> method in a controller.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="string"><span class="delimiter">&quot;</span><span class="content">/viewBooks</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">uri</span>: <span class="string"><span class="delimiter">'</span><span class="content">/books/list</span><span class="delimiter">'</span></span>])
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="string"><span class="delimiter">&quot;</span><span class="content">/viewBooks</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: <span class="string"><span class="delimiter">'</span><span class="content">/books/list</span><span class="delimiter">'</span></span>)
 <span class="string"><span class="delimiter">&quot;</span><span class="content">/viewAuthors</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">author</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>])
 <span class="string"><span class="delimiter">&quot;</span><span class="content">/viewPublishers</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">publisher</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>, <span class="key">permanent</span>: <span class="predefined-constant">true</span>])</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Request parameters that were part of the original request will not be included in the redirect by default. To include
-them it is necessary to add the parameter <code>keepParamsWhenRedirect: true</code>.</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="string"><span class="delimiter">&quot;</span><span class="content">/viewBooks</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">uri</span>: <span class="string"><span class="delimiter">'</span><span class="content">/books/list</span><span class="delimiter">'</span></span>, <span class="key">keepParamsWhenRedirect</span>: <span class="predefined-constant">true</span>])
-<span class="string"><span class="delimiter">&quot;</span><span class="content">/viewAuthors</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">author</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>, <span class="key">keepParamsWhenRedirect</span>: <span class="predefined-constant">true</span>])
-<span class="string"><span class="delimiter">&quot;</span><span class="content">/viewPublishers</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">publisher</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>, <span class="key">permanent</span>: <span class="predefined-constant">true</span>, <span class="key">keepParamsWhenRedirect</span>: <span class="predefined-constant">true</span>])</code></pre>
-</div>
+<p>Request parameters that were part of the original request will be included in the redirect.</p>
 </div>
 
 
