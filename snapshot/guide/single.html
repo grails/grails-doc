@@ -1472,9 +1472,12 @@ gormVersion=7.0.0.RC1
 </div>
 </div>
 <div class="sect2">
-<h3 id="_spring_boot_developer_tools">Spring Boot Developer Tools</h3>
+<h3 id="_spring_boot_developer_tools_and_spring_loaded">Spring Boot Developer Tools and Spring Loaded</h3>
 <div class="paragraph">
-<p>Grails 4 applications include <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html">Spring Boot Developer Tools</a> dependencies in the <code>build.gradle</code> build script. If you are migrating a Grails 3.x app, please include the next set of dependencies:</p>
+<p>Previous versions of Grails used a reloading agent called <a href="https://github.com/spring-projects/spring-loaded">Spring Loaded</a>. Since this library is no longer maintained and does not support Java 11 support for Spring Loaded has been removed.</p>
+</div>
+<div class="paragraph">
+<p>As a replacement, Grails 4 applications include <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html">Spring Boot Developer Tools</a> dependencies in the <code>build.gradle</code> build script. If you are migrating a Grails 3.x app, please include the following set of dependencies:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -1500,8 +1503,34 @@ dependencies {
 </div>
 </div>
 <div class="paragraph">
-<p>You can use Spring Developer Tools in combination with a browser extension such as the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">Chrome LiveReload extension</a> to get automatic browser
-refresh when you change anything in your Grails application.</p>
+<p>Also you should configure the necessary excludes for Spring Developer Tools in <code>application.yml</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">spring</span>:
+    <span class="key">devtools</span>:
+        <span class="key">restart</span>:
+            <span class="key">exclude</span>:
+                - <span class="string"><span class="content">grails-app/views/**</span></span>
+                - <span class="string"><span class="content">grails-app/i18n/**</span></span>
+                - <span class="string"><span class="content">grails-app/conf/**</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The above configuration prevents the server from restarting when views or message bundles are changed.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+You can use Spring Developer Tools in combination with a browser extension such as the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">Chrome LiveReload extension</a> to get automatic browser
+refresh when you change anything in your Grails application.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect2">
