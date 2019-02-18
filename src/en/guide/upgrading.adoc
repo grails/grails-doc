@@ -85,9 +85,11 @@ management:
         enabled-by-default: false
 ----
 
-### Spring Boot Developer Tools
+### Spring Boot Developer Tools and Spring Loaded
 
-Grails 4 applications include https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html[Spring Boot Developer Tools] dependencies in the `build.gradle` build script. If you are migrating a Grails 3.x app, please include the next set of dependencies:
+Previous versions of Grails used a reloading agent called https://github.com/spring-projects/spring-loaded[Spring Loaded]. Since this library is no longer maintained and does not support Java 11 support for Spring Loaded has been removed.
+
+As a replacement, Grails 4 applications include https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html[Spring Boot Developer Tools] dependencies in the `build.gradle` build script. If you are migrating a Grails 3.x app, please include the following set of dependencies:
 
 [source, groovy]
 .build.gradle
@@ -112,7 +114,22 @@ dependencies {
 .
 ----
 
-You can use Spring Developer Tools in combination with a browser extension such as the https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei[Chrome LiveReload extension] to get automatic browser
+Also you should configure the necessary excludes for Spring Developer Tools in `application.yml`:
+
+[source,yaml]
+----
+spring:
+    devtools:
+        restart:
+            exclude:
+                - grails-app/views/**
+                - grails-app/i18n/**
+                - grails-app/conf/**
+----
+
+The above configuration prevents the server from restarting when views or message bundles are changed.
+
+NOTE: You can use Spring Developer Tools in combination with a browser extension such as the https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei[Chrome LiveReload extension] to get automatic browser
 refresh when you change anything in your Grails application.
 
 ### Spring Boot Gradle Plugin Changes
