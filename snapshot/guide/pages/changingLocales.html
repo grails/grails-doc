@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>16.2 Changing Locales 3.3.9</title>
+    <title>16.2 Changing Locales 4.0.0.BUILD-SNAPSHOT</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.2.x</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.3.x</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>16.2 Changing Locales</h1>
 
-                    <p><strong>Version:</strong> 3.3.9</p>
+                    <p><strong>Version:</strong> 4.0.0.BUILD-SNAPSHOT</p>
                 </div>
 
                 
@@ -145,14 +145,14 @@ function addJsClass() {
 <h2 id="changingLocales">16.2 Changing Locales</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/i18n/changingLocales.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/i18n/changingLocales.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>By default, the user locale is detected from the incoming <code>Accept-Language</code> header. You can provide users the capability to switch locales by simply passing a parameter called <code>lang</code> to Grails as a request parameter:</p>
+<p>By default the user locale is detected from the incoming <code>Accept-Language</code> header. However, you can provide users the capability to switch locales by simply passing a parameter called <code>lang</code> to Grails as a request parameter:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -160,53 +160,7 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>Grails will automatically switch the user&#8217;s locale and subsequent requests will use the switched locale.</p>
-</div>
-<div class="paragraph">
-<p>By default, Grails uses <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/servlet/i18n/SessionLocaleResolver.html">SessionLocaleResolver</a> as the <code>localeResolver</code> bean.</p>
-</div>
-<div class="paragraph">
-<p>You can change the default locale easily:</p>
-</div>
-<div class="listingblock">
-<div class="title">grails-app/conf/spring/resources.groovy</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.web.servlet.i18n.SessionLocaleResolver</span>
-
-beans = {
-    localeResolver(SessionLocaleResolver) {
-        defaultLocale= <span class="keyword">new</span> <span class="predefined-type">Locale</span>(<span class="string"><span class="delimiter">'</span><span class="content">es</span><span class="delimiter">'</span></span>)
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Other <code>localeResolver</code> are available. For example, you could use save the switched locale in a Cookie:</p>
-</div>
-<div class="listingblock">
-<div class="title">grails-app/conf/spring/resources.groovy</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.web.servlet.i18n.CookieLocaleResolver</span>
-
-beans = {
-    localeResolver(CookieLocaleResolver) {
-        defaultLocale= <span class="keyword">new</span> <span class="predefined-type">Locale</span>(<span class="string"><span class="delimiter">'</span><span class="content">es</span><span class="delimiter">'</span></span>)
-    }
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Or fix the locale:</p>
-</div>
-<div class="listingblock">
-<div class="title">grails-app/conf/spring/resources.groovy</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.web.servlet.i18n.FixedLocaleResolver</span>
-
-beans = {
-    localeResolver(FixedLocaleResolver, <span class="keyword">new</span> <span class="predefined-type">Locale</span>(<span class="string"><span class="delimiter">'</span><span class="content">de</span><span class="delimiter">'</span></span>))
-}</code></pre>
-</div>
+<p>Grails will automatically switch the user&#8217;s locale and store it in a cookie so subsequent requests will have the new header.</p>
 </div>
 
 
