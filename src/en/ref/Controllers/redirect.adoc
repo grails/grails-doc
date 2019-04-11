@@ -29,6 +29,8 @@ redirect(controller: "book", action: "show", fragment: "profile")
 redirect(uri: "book/list")
 
 redirect(url: "http://www.blogjava.net/BlueSUN")
+
+redirect(Book.get(1))
 ----
 
 
@@ -52,6 +54,7 @@ class SomeController {
 
 === Parameters
 
+`redirect(Map params)`
 
 * `action` (optional) - the name of the action to use in the link, if not specified the default action will be linked
 * `controller` (optional) - the name of the controller to use in the link, if not specified the current controller will be linked
@@ -65,3 +68,9 @@ class SomeController {
 * `absolute` (optional) - If `true` (default) will prefix the link target address with the value of the `grails.serverURL` property from `application.yml`, or http://localhost:<port> if there is no value in `application.yml` and not running in the production environment. If `false` a partial URI is generated for the `Location` header.
 * `base` (optional) - Sets the prefix to be added to the link target address, typically an absolute server URL. This overrides the behaviour of the `absolute` property if both are specified.
 * `permanent` (optional) - If `true` the redirect will be issued with a 301 HTTP status code (permanently moved), otherwise a 302 HTTP status code will be issued
+
+=== Domain Class
+
+`redirect(Object domainClass)`
+
+A special case is if a domain class is passed into `redirect` it will use the `LinkGenerator` to create the URL. For example `redirect(Book.get(1))` will generate a redirect to `/book/show/1`.
