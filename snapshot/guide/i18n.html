@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>16 Internationalization 4.0.0.RC2</title>
+    <title>16 Internationalization 3.3.10</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.3.x</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.2.x</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>16 Internationalization</h1>
 
-                    <p><strong>Version:</strong> 4.0.0.RC2</p>
+                    <p><strong>Version:</strong> 3.3.10</p>
                 </div>
 
                 
@@ -162,7 +162,7 @@ function addJsClass() {
 <h1 id="i18n">16 Internationalization</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/i18n.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/i18n.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -186,7 +186,7 @@ function addJsClass() {
 <h2 id="understandingMessageBundles">16.1 Understanding Message Bundles</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/i18n/understandingMessageBundles.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/i18n/understandingMessageBundles.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -228,14 +228,14 @@ function addJsClass() {
 <h2 id="changingLocales">16.2 Changing Locales</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/i18n/changingLocales.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/i18n/changingLocales.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>By default the user locale is detected from the incoming <code>Accept-Language</code> header. However, you can provide users the capability to switch locales by simply passing a parameter called <code>lang</code> to Grails as a request parameter:</p>
+<p>By default, the user locale is detected from the incoming <code>Accept-Language</code> header. You can provide users the capability to switch locales by simply passing a parameter called <code>lang</code> to Grails as a request parameter:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -243,14 +243,60 @@ function addJsClass() {
 </div>
 </div>
 <div class="paragraph">
-<p>Grails will automatically switch the user&#8217;s locale and store it in a cookie so subsequent requests will have the new header.</p>
+<p>Grails will automatically switch the user&#8217;s locale and subsequent requests will use the switched locale.</p>
+</div>
+<div class="paragraph">
+<p>By default, Grails uses <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/servlet/i18n/SessionLocaleResolver.html">SessionLocaleResolver</a> as the <code>localeResolver</code> bean.</p>
+</div>
+<div class="paragraph">
+<p>You can change the default locale easily:</p>
+</div>
+<div class="listingblock">
+<div class="title">grails-app/conf/spring/resources.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.web.servlet.i18n.SessionLocaleResolver</span>
+
+beans = {
+    localeResolver(SessionLocaleResolver) {
+        defaultLocale= <span class="keyword">new</span> <span class="predefined-type">Locale</span>(<span class="string"><span class="delimiter">'</span><span class="content">es</span><span class="delimiter">'</span></span>)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Other <code>localeResolver</code> are available. For example, you could use save the switched locale in a Cookie:</p>
+</div>
+<div class="listingblock">
+<div class="title">grails-app/conf/spring/resources.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.web.servlet.i18n.CookieLocaleResolver</span>
+
+beans = {
+    localeResolver(CookieLocaleResolver) {
+        defaultLocale= <span class="keyword">new</span> <span class="predefined-type">Locale</span>(<span class="string"><span class="delimiter">'</span><span class="content">es</span><span class="delimiter">'</span></span>)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or fix the locale:</p>
+</div>
+<div class="listingblock">
+<div class="title">grails-app/conf/spring/resources.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.web.servlet.i18n.FixedLocaleResolver</span>
+
+beans = {
+    localeResolver(FixedLocaleResolver, <span class="keyword">new</span> <span class="predefined-type">Locale</span>(<span class="string"><span class="delimiter">'</span><span class="content">de</span><span class="delimiter">'</span></span>))
+}</code></pre>
+</div>
 </div>
 
 <a name="13.3 Reading Messages"><!-- Legacy link --></a>
 <h2 id="readingMessages">16.3 Reading Messages</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/i18n/readingMessages.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/i18n/readingMessages.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -299,13 +345,14 @@ function addJsClass() {
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.context.MessageSource</span>
+<span class="keyword">import</span> <span class="include">org.springframework.context.i18n.LocaleContextHolder</span>
 
 <span class="type">class</span> <span class="class">MyappController</span> {
 
     MessageSource messageSource
 
     <span class="keyword">def</span> <span class="function">show</span>() {
-        <span class="keyword">def</span> msg = messageSource.getMessage(<span class="string"><span class="delimiter">'</span><span class="content">my.localized.content</span><span class="delimiter">'</span></span>, [<span class="string"><span class="delimiter">'</span><span class="content">Juan</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">lunes</span><span class="delimiter">'</span></span>] <span class="keyword">as</span> <span class="predefined-type">Object</span><span class="type">[]</span>, <span class="string"><span class="delimiter">'</span><span class="content">Default Message</span><span class="delimiter">'</span></span>, request.locale)
+        <span class="keyword">def</span> msg = messageSource.getMessage(<span class="string"><span class="delimiter">'</span><span class="content">my.localized.content</span><span class="delimiter">'</span></span>, [<span class="string"><span class="delimiter">'</span><span class="content">Juan</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">lunes</span><span class="delimiter">'</span></span>] <span class="keyword">as</span> <span class="predefined-type">Object</span><span class="type">[]</span>, <span class="string"><span class="delimiter">'</span><span class="content">Default Message</span><span class="delimiter">'</span></span>, LocaleContextHolder.locale)
     }</code></pre>
 </div>
 </div>
@@ -341,7 +388,7 @@ function addJsClass() {
 <h2 id="scaffoldingAndI18n">16.4 Scaffolding and i18n</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/i18n/scaffoldingAndI18n.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/i18n/scaffoldingAndI18n.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
