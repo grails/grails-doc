@@ -1168,10 +1168,10 @@ withFormat {
 
         HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/search?limit=25&amp;media=music&amp;entity=album&amp;term=</span><span class="inline"><span class="inline-delimiter">${</span>searchTerm<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>)
         HttpResponse&lt;<span class="predefined-type">String</span>&gt; resp = client.exchange(request, <span class="predefined-type">String</span>)
-        client.close()
+        client.close() <i class="conum" data-value="2"></i><b>(2)</b>
 
         <span class="predefined-type">String</span> json = resp.body()
-        ObjectMapper objectMapper = <span class="keyword">new</span> ObjectMapper() <i class="conum" data-value="2"></i><b>(2)</b>
+        ObjectMapper objectMapper = <span class="keyword">new</span> ObjectMapper() <i class="conum" data-value="3"></i><b>(3)</b>
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, <span class="predefined-constant">false</span>)
         <span class="predefined-type">SearchResult</span> searchResult = objectMapper.readValue(json, <span class="predefined-type">SearchResult</span>)
         searchResult.results
@@ -1186,6 +1186,10 @@ withFormat {
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The client should be closed using the <code>close</code> method to prevent thread leaking.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
 <td>Jackson&#8217;s <a href="https://fasterxml.github.io/jackson-databind/javadoc/2.9/com/fasterxml/jackson/databind/ObjectMapper.html">ObjectMapper</a> API can be used to map the raw JSON to POGOs, in this case <code>SearchResult</code></td>
 </tr>
 </table>
