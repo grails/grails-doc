@@ -26,17 +26,18 @@ There are a few ways by which you can obtain a reference to a https://docs.micro
 
         HttpRequest request = HttpRequest.GET("/search?limit=25&media=music&entity=album&term=${searchTerm}")
         HttpResponse<String> resp = client.exchange(request, String)
-        client.close()
+        client.close() //<2>
 
         String json = resp.body()
-        ObjectMapper objectMapper = new ObjectMapper() //<2>
+        ObjectMapper objectMapper = new ObjectMapper() //<3>
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
         SearchResult searchResult = objectMapper.readValue(json, SearchResult)
         searchResult.results
     }
 ----
 <1> Create a new instance of `HttpClient` with the `create` method, and convert to an instance of `BlockingHttpClient` with `toBlocking()`,
-<2> Jackson's https://fasterxml.github.io/jackson-databind/javadoc/2.9/com/fasterxml/jackson/databind/ObjectMapper.html[ObjectMapper] API can be used to map the raw JSON to POGOs, in this case `SearchResult`
+<2> The client should be closed using the `close` method to prevent thread leaking.
+<3> Jackson's https://fasterxml.github.io/jackson-databind/javadoc/2.9/com/fasterxml/jackson/databind/ObjectMapper.html[ObjectMapper] API can be used to map the raw JSON to POGOs, in this case `SearchResult`
 
 Consult the https://docs.micronaut.io/latest/guide/index.html#lowLevelHttpClient[Http Client section] of the https://docs.micronaut.io/latest/guide/index.html[Micronaut user guide] for more information on using the `HttpClient` low-level API.
 
