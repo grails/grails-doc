@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>10.10.2 Creating JSON Views 4.0.0.RC2</title>
+    <title>10.6 Calling REST Services with HttpClient 4.0.0.RC2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -133,7 +133,7 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>10.10.2 Creating JSON Views</h1>
+                    <h1>10.6 Calling REST Services with HttpClient</h1>
 
                     <p><strong>Version:</strong> 4.0.0.RC2</p>
                 </div>
@@ -142,63 +142,118 @@ function addJsClass() {
 
                 
 
-<h2 id="jsonViewsCreating">10.10.2 Creating JSON Views</h2>
+<h2 id="callingRestServices">10.6 Calling REST Services with HttpClient</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/REST/jsonViews/jsonViewsCreating.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/REST/callingRestServices.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
 <div class="paragraph">
-<p>JSON views go into the <code>grails-app/views</code> directory and end with the <code>.gson</code> suffix. They are regular Groovy scripts and can be opened in any Groovy editor.</p>
+<p>Calling Grails REST services - as well as third-party services - is very straightforward using the <a href="https://docs.micronaut.io/latest/guide/index.html#httpClient">Micronaut HTTP Client</a>. This HTTP client has both a low-level API and a higher level AOP-driven API, making it useful for both simple requests as well as building declarative, type-safe API layers.</p>
 </div>
 <div class="paragraph">
-<p>Example JSON view:</p>
+<p>To use the Micronaut HTTP client you must have the <code>micronaut-http-client</code> dependency on your classpath. Add the following dependency to your <code>build.gradle</code> file.</p>
 </div>
 <div class="listingblock">
+<div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">json.person {
-    name <span class="string"><span class="delimiter">&quot;</span><span class="content">bob</span><span class="delimiter">&quot;</span></span>
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">compile <span class="string"><span class="delimiter">'</span><span class="content">io.micronaut:micronaut-http-client</span><span class="delimiter">'</span></span></code></pre>
 </div>
 </div>
-<div class="admonitionblock tip">
+<div class="sect3">
+<h4 id="_low_level_api">Low-level API</h4>
+<div class="paragraph">
+<p>The <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/HttpClient.html">HttpClient</a> interface forms the basis for the low-level API. This interfaces declares methods to help ease executing HTTP requests and receive responses.</p>
+</div>
+<div class="paragraph">
+<p>The majority of the methods in the <code>HttpClient</code> interface returns Reactive Streams Publisher instances, and a sub-interface called RxHttpClient is included that provides a variation of the HttpClient interface that returns RxJava Flowable types. When using <code>HttpClient</code> in a blocking flow, you may wish to call <code>toBlocking()</code> to return an instance of <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/BlockingHttpClient.html">BlockingHttpClient</a>.</p>
+</div>
+<div class="paragraph">
+<p>There are a few ways by which you can obtain a reference to a <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/HttpClient.html">HttpClient</a>. The most simple way is using the <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/HttpClient.html#create-java.net.URL-">create</a> method</p>
+</div>
+<div class="listingblock">
+<div class="title">Creating an HTTP client</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">    <span class="predefined-type">List</span>&lt;Album&gt; searchWithApi(<span class="predefined-type">String</span> searchTerm) {
+        <span class="predefined-type">String</span> baseUrl = <span class="string"><span class="delimiter">&quot;</span><span class="content">https://itunes.apple.com/</span><span class="delimiter">&quot;</span></span>
+
+        HttpClient client = HttpClient.create(baseUrl.toURL()).toBlocking() <i class="conum" data-value="1"></i><b>(1)</b>
+
+        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/search?limit=25&amp;media=music&amp;entity=album&amp;term=</span><span class="inline"><span class="inline-delimiter">${</span>searchTerm<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>)
+        HttpResponse&lt;<span class="predefined-type">String</span>&gt; resp = client.exchange(request, <span class="predefined-type">String</span>)
+        client.close() <i class="conum" data-value="2"></i><b>(2)</b>
+
+        <span class="predefined-type">String</span> json = resp.body()
+        ObjectMapper objectMapper = <span class="keyword">new</span> ObjectMapper() <i class="conum" data-value="3"></i><b>(3)</b>
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, <span class="predefined-constant">false</span>)
+        <span class="predefined-type">SearchResult</span> searchResult = objectMapper.readValue(json, <span class="predefined-type">SearchResult</span>)
+        searchResult.results
+    }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
 <table>
 <tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-To open them in the Groovy editor in Intellij IDEA, double click on the file and when asked which file to associate it with, choose "Groovy"
-</td>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Create a new instance of <code>HttpClient</code> with the <code>create</code> method, and convert to an instance of <code>BlockingHttpClient</code> with <code>toBlocking()</code>,</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The client should be closed using the <code>close</code> method to prevent thread leaking.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Jackson&#8217;s <a href="https://fasterxml.github.io/jackson-databind/javadoc/2.9/com/fasterxml/jackson/databind/ObjectMapper.html">ObjectMapper</a> API can be used to map the raw JSON to POGOs, in this case <code>SearchResult</code></td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>The above JSON view produces:</p>
+<p>Consult the <a href="https://docs.micronaut.io/latest/guide/index.html#lowLevelHttpClient">Http Client section</a> of the <a href="https://docs.micronaut.io/latest/guide/index.html">Micronaut user guide</a> for more information on using the <code>HttpClient</code> low-level API.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_declarative_api">Declarative API</h4>
+<div class="paragraph">
+<p>A declarative HTTP client can be written by adding the <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/annotation/Client.html"><code>@Client</code></a> annotation to any interface or abstract class. Using Micronaut&#8217;s AOP support (see the Micronaut user guide section on <a href="https://docs.micronaut.io/latest/guide/index.html#introductionAdvice">Introduction Advice</a>), the abstract or interface methods will be implemented for you at compilation time as HTTP calls. Declarative clients can return data-bound POGOs (or POJOs) without requiring special handling from the calling code.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="json">{<span class="key"><span class="delimiter">&quot;</span><span class="content">person</span><span class="delimiter">&quot;</span></span>:{<span class="key"><span class="delimiter">&quot;</span><span class="content">name</span><span class="delimiter">&quot;</span></span>:<span class="string"><span class="delimiter">&quot;</span><span class="content">bob</span><span class="delimiter">&quot;</span></span>}}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.grails
+
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.annotation.Client</span>
+
+<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://itunes.apple.com/</span><span class="delimiter">&quot;</span></span>)
+<span class="type">interface</span> ItunesClient {
+
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/search?limit=25&amp;media=music&amp;entity=album&amp;term={term}</span><span class="delimiter">&quot;</span></span>)
+    <span class="predefined-type">SearchResult</span> search(<span class="predefined-type">String</span> term)
+}</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>There is an implicit <code>json</code> variable which is an instance of <a href="http://docs.groovy-lang.org/latest/html/api/groovy/json/StreamingJsonBuilder.html">StreamingJsonBuilder</a>.</p>
+<p>Note that HTTP client methods are annotated with the appropriate HTTP method, such as <code>@Get</code> or <code>@Post</code>.</p>
 </div>
 <div class="paragraph">
-<p>Example usages:</p>
+<p>To use a client like the one in the above example, simply inject an instance of the client into any bean using the <code>@Autowired</code> annotation.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">json(<span class="integer">1</span>,<span class="integer">2</span>,<span class="integer">3</span>) == <span class="string"><span class="delimiter">&quot;</span><span class="content">[1,2,3]</span><span class="delimiter">&quot;</span></span>
-json { name <span class="string"><span class="delimiter">&quot;</span><span class="content">Bob</span><span class="delimiter">&quot;</span></span> } == <span class="string"><span class="delimiter">'</span><span class="content">{&quot;name&quot;:&quot;Bob&quot;}</span><span class="delimiter">'</span></span>
-json([<span class="integer">1</span>,<span class="integer">2</span>,<span class="integer">3</span>]) { n <span class="local-variable">it</span> } == <span class="string"><span class="delimiter">'</span><span class="content">[{&quot;n&quot;:1},{&quot;n&quot;:2},{&quot;n&quot;:3}]</span><span class="delimiter">'</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="annotation">@Autowired</span>
+    ItunesClient itunesClient
+
+    <span class="predefined-type">List</span>&lt;Album&gt; searchAlbums(<span class="predefined-type">String</span> searchTerm) {
+        <span class="predefined-type">SearchResult</span> searchResult = itunesClient.search(searchTerm)
+        searchResult.results
+    }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Refer to the API documentation on <a href="http://docs.groovy-lang.org/latest/html/api/groovy/json/StreamingJsonBuilder.html">StreamingJsonBuilder</a> for more information about what is possible.</p>
+<p>For more details on writing and using declarative clients, consult the <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">Http Client section</a> of the <a href="https://docs.micronaut.io/latest/guide/index.html">Micronaut user guide</a>.</p>
+</div>
 </div>
 
 
