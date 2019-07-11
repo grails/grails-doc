@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>3 Upgrading from Grails 3.3.x 4.0.0.RC2</title>
+    <title>3 Upgrading from Grails 3.3.x 4.0.0</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>3 Upgrading from Grails 3.3.x</h1>
 
-                    <p><strong>Version:</strong> 4.0.0.RC2</p>
+                    <p><strong>Version:</strong> 4.0.0</p>
                 </div>
 
                 
@@ -397,6 +397,9 @@ bootJar.enabled = <span class="predefined-constant">false</span></code></pre>
 </div>
 </div>
 <div class="paragraph">
+<p>Due to changes in Gradle 5, <a href="https://docs.gradle.org/current/userguide/upgrading_version_4.html#rel5.0:pom_compile_runtime_separation">transitive dependencies are no longer resolved</a> for plugins. If your project makes use of a plugin that has transitive dependencies, you will need to add those explicitly to your <code>build.gradle</code> file.</p>
+</div>
+<div class="paragraph">
 <p>If you customized your app&#8217;s build, other migrations may be necessary. Please check
 <a href="https://docs.gradle.org/current/userguide/upgrading_version_4.html">Gradle Upgrading your build</a> documentation.</p>
 </div>
@@ -596,9 +599,8 @@ environments {
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_deprecated_classes">Deprecated classes</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_deprecated_classes">Deprecated classes</h3>
 <div class="paragraph">
 <p>The following classes, which were deprecated in Grails 3.x, have been removed in Grails 4. Please, check the list below to find a suitable replacement:</p>
 </div>
@@ -834,17 +836,15 @@ environments {
 </tr>
 </tbody>
 </table>
+</div>
 <div class="sect2">
 <h3 id="_grails_java8">Grails-Java8</h3>
 <div class="paragraph">
 <p>For those who have added a dependency on the <code>grails-java8</code> plugin, all you should need to do is simply remove the dependency. All of the classes in the plugin have been moved out to their respective projects.</p>
 </div>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_profiles_deprecation">Profiles Deprecation</h2>
-<div class="sectionbody">
+<div class="sect2">
+<h3 id="_profiles_deprecation">Profiles Deprecation</h3>
 <div class="paragraph">
 <p>A few of the profiles supported in Grails 3.x will no longer be maintained going forward and as a result it is no longer possible to create applications when them in the shorthand form. When upgrading existing projects, it will be necessary to supply the version for these profiles.</p>
 </div>
@@ -861,6 +861,11 @@ environments {
 </li>
 </ul>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_scheduled_methods">Scheduled Methods</h3>
+<div class="paragraph">
+<p>In Grails 3 no configuration or additional changes were necessary to use the Spring <code>@Scheduled</code> annotation. In Grails 4 you must apply the <code>@EnableScheduling</code> annotation to your application class in order for scheduling to work.</p>
 </div>
 </div>
 
