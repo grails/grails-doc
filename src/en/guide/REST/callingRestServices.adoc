@@ -52,12 +52,14 @@ package example.grails
 import io.micronaut.http.annotation.Get
 import io.micronaut.http.client.annotation.Client
 
-@Client("https://itunes.apple.com/")
-interface ItunesClient {
 
-    @Get("/search?limit=25&media=music&entity=album&term={term}")
-    SearchResult search(String term)
+@Client("https://start.grails.org")
+interface GrailsAppForgeClient {
+
+    @Get("/{version}/profiles")
+    List<Map> profiles(String version)
 }
+
 ----
 
 Note that HTTP client methods are annotated with the appropriate HTTP method, such as `@Get` or `@Post`.
@@ -66,12 +68,10 @@ To use a client like the one in the above example, simply inject an instance of 
 
 [source,groovy]
 ----
-  @Autowired
-    ItunesClient itunesClient
+  @Autowired GrailsAppForgeClient appForgeClient
 
-    List<Album> searchAlbums(String searchTerm) {
-        SearchResult searchResult = itunesClient.search(searchTerm)
-        searchResult.results
+    List<Map> profiles(String grailsVersion) {
+        respond appForgeClient.profiles(grailsVersion)
     }
 ----
 
