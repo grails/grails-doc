@@ -27,6 +27,7 @@ Once you have the JAR resolved you need to get familiar with how Grails manages 
 * `persistenceInterceptor` - The default datasource is automatically wired up to the persistence interceptor, other datasources are not wired up automatically unless this is set to `true`
 * `properties` - Extra properties to set on the DataSource bean. See the http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes[Tomcat Pool] documentation. There is also a Javadoc format https://tomcat.apache.org/tomcat-7.0-doc/api/org/apache/tomcat/jdbc/pool/PoolConfiguration.html[documentation of the properties].
 * `jmxExport` - If `false`, will disable registration of JMX MBeans for all DataSources. By default JMX MBeans are added for DataSources with `jmxEnabled = true` in properties.
+* `type` - The connection pool class if you want to force Grails to use it when there are more than one available.
 
 A typical configuration for MySQL in `application.groovy` may be something like:
 
@@ -40,6 +41,7 @@ dataSource {
     dialect = org.hibernate.dialect.MySQL5InnoDBDialect
     username = "username"
     password = "password"
+    type = "com.zaxxer.hikari.HikariDataSource"
     properties {
        jmxEnabled = true
        initialSize = 5
@@ -83,6 +85,7 @@ dataSource {
     dialect = org.hibernate.dialect.MySQL5InnoDBDialect
     username = "username"
     password = "password"
+    type = "com.zaxxer.hikari.HikariDataSource"
     properties {
        // Documentation for Tomcat JDBC Pool
        // http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes
