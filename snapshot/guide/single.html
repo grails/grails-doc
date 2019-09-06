@@ -946,6 +946,18 @@ If you see the error "Server failed to start for port 8080: Address already in u
 </tr>
 </table>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+On Windows, if you see the error "&gt; A problem occurred starting process 'command 'C:\path\to\java.exe''", run it again with the <code>--stacktrace</code> flag. If the root error is "Caused by: java.io.IOException: CreateProcess error=206, The filename or extension is too long", add <code>grails { pathingJar = true }</code> to your <code>build.gradle</code> file. This is a known limitation with Windows.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>The result will look something like this:</p>
 </div>
@@ -1069,7 +1081,7 @@ You can always open GSP files in the HTML editor if you just want highlighting i
 <p><code>controllers</code> - <a href="theWebLayer.html#controllers">Web controllers</a> - The C in MVC.</p>
 </li>
 <li>
-<p><code>domain</code> - The <a href="GORM.html">application domain</a>.</p>
+<p><code>domain</code> - The <a href="GORM.html">application domain</a>. - The M in MVC</p>
 </li>
 <li>
 <p><code>i18n</code> - Support for <a href="i18n.html">internationalization (i18n)</a>.</p>
@@ -3109,6 +3121,9 @@ switch (Environment.current) {
 <li>
 <p><code>jmxExport</code> - If <code>false</code>, will disable registration of JMX MBeans for all DataSources. By default JMX MBeans are added for DataSources with <code>jmxEnabled = true</code> in properties.</p>
 </li>
+<li>
+<p><code>type</code> - The connection pool class if you want to force Grails to use it when there are more than one available.</p>
+</li>
 </ul>
 </div>
 <div class="paragraph">
@@ -3124,6 +3139,7 @@ switch (Environment.current) {
     dialect = org.hibernate.dialect.MySQL5InnoDBDialect
     username = <span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>
     password = <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>
+    type = <span class="string"><span class="delimiter">&quot;</span><span class="content">com.zaxxer.hikari.HikariDataSource</span><span class="delimiter">&quot;</span></span>
     properties {
        jmxEnabled = <span class="predefined-constant">true</span>
        initialSize = <span class="integer">5</span>
@@ -3179,6 +3195,7 @@ When configuring the DataSource do not include the type or the def keyword befor
     dialect = org.hibernate.dialect.MySQL5InnoDBDialect
     username = <span class="string"><span class="delimiter">&quot;</span><span class="content">username</span><span class="delimiter">&quot;</span></span>
     password = <span class="string"><span class="delimiter">&quot;</span><span class="content">password</span><span class="delimiter">&quot;</span></span>
+    type = <span class="string"><span class="delimiter">&quot;</span><span class="content">com.zaxxer.hikari.HikariDataSource</span><span class="delimiter">&quot;</span></span>
     properties {
        <span class="comment">// Documentation for Tomcat JDBC Pool</span>
        <span class="comment">// http://tomcat.apache.org/tomcat-7.0-doc/jdbc-pool.html#Common_Attributes</span>
@@ -3419,7 +3436,27 @@ environments {
 <p>You can access the console by navigating to <a href="http://localhost:8080/dbconsole" class="bare">http://localhost:8080/dbconsole</a> in a browser. The URI can be configured using the <code>grails.dbconsole.urlRoot</code> attribute in <code>application.groovy</code> and defaults to <code>'/dbconsole'</code>.</p>
 </div>
 <div class="paragraph">
-<p>The console is enabled by default in development mode and can be disabled or enabled in other environments by using the <code>grails.dbconsole.enabled</code> attribute in <code>application.groovy</code>. For example, you could enable the console in production like this:</p>
+<p>The console is enabled by default in development mode and can be disabled or enabled in other environments by using the <code>grails.dbconsole.enabled</code> attribute in <code>application.yml</code> (or <code>application.groovy</code> for Grails 2.x). For example, you could enable the console in production like this:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">environments</span>:
+    <span class="key">production</span>:
+        <span class="key">grails</span>:
+            <span class="key">serverUrl</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.changeme.com</span><span class="delimiter">&quot;</span></span>
+            <span class="key">dbconsole</span>:
+                <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span>
+                <span class="key">urlRoot</span>: <span class="string"><span class="content">'/admin/dbconsole'</span></span>
+    <span class="key">development</span>:
+        <span class="key">grails</span>:
+            <span class="key">serverUrl</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">http://localhost:8080/${appName}</span><span class="delimiter">&quot;</span></span>
+    <span class="key">test</span>:
+        <span class="key">grails</span>:
+            <span class="key">serverUrl</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">http://localhost:8080/${appName}</span><span class="delimiter">&quot;</span></span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>or for <code>application.groovy</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -4340,7 +4377,7 @@ Commands defined this way still have access to the execution context via a varia
 
 
 <div class="paragraph">
-<p>Grails 3.1 uses the <a href="http://gradle.org">Gradle Build System</a> for build related tasks such as compilation, runnings tests and producing binary distrubutions of your project. It is recommended to use Gradle 2.2 or above with Grails 3.1.</p>
+<p>Grails 3.1 uses the <a href="http://gradle.org">Gradle Build System</a> for build related tasks such as compilation, runnings tests and producing binary distributions of your project. It is recommended to use Gradle 2.2 or above with Grails 3.1.</p>
 </div>
 <div class="paragraph">
 <p>The build is defined by the <code>build.gradle</code> file which specifies the version of your project, the dependencies of the project and the repositories where to find those dependencies (amongst other things).</p>
@@ -5262,7 +5299,7 @@ The <code>githubSlug</code> argument should point to the path to your Github rep
 </div>
 </div>
 <div class="paragraph">
-<p>If you need more flexiblity than what the declarative YAML approach provides you can create Groovy script commands. Each Command script is extends from the <a href="http://docs.grails.org/4.0.0/api/org/grails/cli/profile/commands/script/GroovyScriptCommand.html">GroovyScriptCommmand</a> class and hence has all of the methods of that class available to it.</p>
+<p>If you need more flexiblity than what the declarative YAML approach provides you can create Groovy script commands. Each Command script is extends from the <a href="http://docs.grails.org/4.0.0/api/org/grails/cli/profile/commands/script/GroovyScriptCommand.html">GroovyScriptCommand</a> class and hence has all of the methods of that class available to it.</p>
 </div>
 <div class="paragraph">
 <p>The following is an example of the <a href="../ref/Command%20Line/create-script.html">create-script</a> command written in Groovy:</p>
@@ -5577,7 +5614,7 @@ p.delete()</code></pre>
 
 
 <div class="paragraph">
-<p>For more information on using GORM see the <a href="http://gorm.grails.org/6.0.x/hibernate">dedicated documentation</a> for the GORM project.</p>
+<p>For more information on using GORM see the <a href="http://gorm.grails.org/6.1.x/hibernate">dedicated documentation</a> for the GORM project.</p>
 </div>
 
 <a name="7. The Web Layer"><!-- Legacy link --></a>
@@ -9008,13 +9045,21 @@ as an argument to the <code>redirect</code> method in a controller.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="string"><span class="delimiter">&quot;</span><span class="content">/viewBooks</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: <span class="string"><span class="delimiter">'</span><span class="content">/books/list</span><span class="delimiter">'</span></span>)
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="string"><span class="delimiter">&quot;</span><span class="content">/viewBooks</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">uri</span>: <span class="string"><span class="delimiter">'</span><span class="content">/books/list</span><span class="delimiter">'</span></span>])
 <span class="string"><span class="delimiter">&quot;</span><span class="content">/viewAuthors</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">author</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>])
 <span class="string"><span class="delimiter">&quot;</span><span class="content">/viewPublishers</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">publisher</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>, <span class="key">permanent</span>: <span class="predefined-constant">true</span>])</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Request parameters that were part of the original request will be included in the redirect.</p>
+<p>Request parameters that were part of the original request will not be included in the redirect by default. To include
+them it is necessary to add the parameter <code>keepParamsWhenRedirect: true</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="string"><span class="delimiter">&quot;</span><span class="content">/viewBooks</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">uri</span>: <span class="string"><span class="delimiter">'</span><span class="content">/books/list</span><span class="delimiter">'</span></span>, <span class="key">keepParamsWhenRedirect</span>: <span class="predefined-constant">true</span>])
+<span class="string"><span class="delimiter">&quot;</span><span class="content">/viewAuthors</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">author</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>, <span class="key">keepParamsWhenRedirect</span>: <span class="predefined-constant">true</span>])
+<span class="string"><span class="delimiter">&quot;</span><span class="content">/viewPublishers</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">publisher</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>, <span class="key">permanent</span>: <span class="predefined-constant">true</span>, <span class="key">keepParamsWhenRedirect</span>: <span class="predefined-constant">true</span>])</code></pre>
+</div>
 </div>
 
 <a name="7.4.4 Embedded Variables"><!-- Legacy link --></a>
@@ -11719,12 +11764,11 @@ withFormat {
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.annotation.Client</span>
 
+<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://itunes.apple.com/</span><span class="delimiter">&quot;</span></span>)
+<span class="type">interface</span> ItunesClient {
 
-<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://start.grails.org</span><span class="delimiter">&quot;</span></span>)
-<span class="type">interface</span> GrailsAppForgeClient {
-
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/{version}/profiles</span><span class="delimiter">&quot;</span></span>)
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">Map</span>&gt; profiles(<span class="predefined-type">String</span> version)
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/search?limit=25&amp;media=music&amp;entity=album&amp;term={term}</span><span class="delimiter">&quot;</span></span>)
+    <span class="predefined-type">SearchResult</span> search(<span class="predefined-type">String</span> term)
 }</code></pre>
 </div>
 </div>
@@ -11736,10 +11780,12 @@ withFormat {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="annotation">@Autowired</span> GrailsAppForgeClient appForgeClient
+<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="annotation">@Autowired</span>
+    ItunesClient itunesClient
 
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">Map</span>&gt; profiles(<span class="predefined-type">String</span> grailsVersion) {
-        respond appForgeClient.profiles(grailsVersion)
+    <span class="predefined-type">List</span>&lt;Album&gt; searchAlbums(<span class="predefined-type">String</span> searchTerm) {
+        <span class="predefined-type">SearchResult</span> searchResult = itunesClient.search(searchTerm)
+        searchResult.results
     }</code></pre>
 </div>
 </div>
@@ -14387,7 +14433,7 @@ Annotating a service method with <code>Transactional</code> disables the default
     }
 
     <span class="annotation">@Transactional</span>(<span class="string"><span class="delimiter">'</span><span class="content">books</span><span class="delimiter">'</span></span>)
-    <span class="type">void</span> save(<span class="predefined-type">String</span> title) {
+    <span class="predefined-type">Book</span> save(<span class="predefined-type">String</span> title) {
         <span class="predefined-type">Book</span> book = <span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="key">title</span>: title)
         book.save()
         book
@@ -15336,7 +15382,7 @@ Grails 2.x uses <code>phase:type</code> syntax. In Grails 3.0 it was removed, be
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails:grails-test-mixins:3.3.0.RC1</span><span class="delimiter">&quot;</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails:grails-test-mixins:3.3.0</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -15697,7 +15743,7 @@ import org.springframework.beans.factory.annotation.*
 
 
 <div class="paragraph">
-<p>By default the user locale is detected from the incoming <code>Accept-Language</code> header. However, you can provide users the capability to switch locales by simply passing a parameter called <code>lang</code> to Grails as a request parameter:</p>
+<p>By default, the user locale is detected from the incoming <code>Accept-Language</code> header. You can provide users the capability to switch locales by simply passing a parameter called <code>lang</code> to Grails as a request parameter:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -15705,7 +15751,53 @@ import org.springframework.beans.factory.annotation.*
 </div>
 </div>
 <div class="paragraph">
-<p>Grails will automatically switch the user&#8217;s locale and store it in a cookie so subsequent requests will have the new header.</p>
+<p>Grails will automatically switch the user&#8217;s locale and subsequent requests will use the switched locale.</p>
+</div>
+<div class="paragraph">
+<p>By default, Grails uses <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/web/servlet/i18n/SessionLocaleResolver.html">SessionLocaleResolver</a> as the <code>localeResolver</code> bean.</p>
+</div>
+<div class="paragraph">
+<p>You can change the default locale easily:</p>
+</div>
+<div class="listingblock">
+<div class="title">grails-app/conf/spring/resources.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.web.servlet.i18n.SessionLocaleResolver</span>
+
+beans = {
+    localeResolver(SessionLocaleResolver) {
+        defaultLocale= <span class="keyword">new</span> <span class="predefined-type">Locale</span>(<span class="string"><span class="delimiter">'</span><span class="content">es</span><span class="delimiter">'</span></span>)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Other <code>localeResolver</code> are available. For example, you could use save the switched locale in a Cookie:</p>
+</div>
+<div class="listingblock">
+<div class="title">grails-app/conf/spring/resources.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.web.servlet.i18n.CookieLocaleResolver</span>
+
+beans = {
+    localeResolver(CookieLocaleResolver) {
+        defaultLocale= <span class="keyword">new</span> <span class="predefined-type">Locale</span>(<span class="string"><span class="delimiter">'</span><span class="content">es</span><span class="delimiter">'</span></span>)
+    }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Or fix the locale:</p>
+</div>
+<div class="listingblock">
+<div class="title">grails-app/conf/spring/resources.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.web.servlet.i18n.FixedLocaleResolver</span>
+
+beans = {
+    localeResolver(FixedLocaleResolver, <span class="keyword">new</span> <span class="predefined-type">Locale</span>(<span class="string"><span class="delimiter">'</span><span class="content">de</span><span class="delimiter">'</span></span>))
+}</code></pre>
+</div>
 </div>
 
 <a name="13.3 Reading Messages"><!-- Legacy link --></a>
@@ -15761,13 +15853,14 @@ import org.springframework.beans.factory.annotation.*
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.springframework.context.MessageSource</span>
+<span class="keyword">import</span> <span class="include">org.springframework.context.i18n.LocaleContextHolder</span>
 
 <span class="type">class</span> <span class="class">MyappController</span> {
 
     MessageSource messageSource
 
     <span class="keyword">def</span> <span class="function">show</span>() {
-        <span class="keyword">def</span> msg = messageSource.getMessage(<span class="string"><span class="delimiter">'</span><span class="content">my.localized.content</span><span class="delimiter">'</span></span>, [<span class="string"><span class="delimiter">'</span><span class="content">Juan</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">lunes</span><span class="delimiter">'</span></span>] <span class="keyword">as</span> <span class="predefined-type">Object</span><span class="type">[]</span>, <span class="string"><span class="delimiter">'</span><span class="content">Default Message</span><span class="delimiter">'</span></span>, request.locale)
+        <span class="keyword">def</span> msg = messageSource.getMessage(<span class="string"><span class="delimiter">'</span><span class="content">my.localized.content</span><span class="delimiter">'</span></span>, [<span class="string"><span class="delimiter">'</span><span class="content">Juan</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">lunes</span><span class="delimiter">'</span></span>] <span class="keyword">as</span> <span class="predefined-type">Object</span><span class="type">[]</span>, <span class="string"><span class="delimiter">'</span><span class="content">Default Message</span><span class="delimiter">'</span></span>, LocaleContextHolder.locale)
     }</code></pre>
 </div>
 </div>
@@ -16642,10 +16735,10 @@ Repeat last search
 </div>
 </div>
 <div class="paragraph">
-<p>This will create a plugin project for the name you specify. For example running <code>grails create-plugin example</code> would create a new plugin project called <code>example</code>.</p>
+<p>This will create a web-plugin project for the name you specify. For example running <code>grails create-plugin example</code> would create a new web-plugin project called <code>example</code>.</p>
 </div>
 <div class="paragraph">
-<p>In Grails 3.0 you should consider whether the plugin you create requires a web environment or whether the plugin can be used with other profiles. If your plugin does not require a web environment then use the "plugin" profile instead of the "web-plugin" profile:</p>
+<p>In Grails 3.0 you should consider whether the plugin you create requires a web environment or whether the plugin can be used with other profiles. If your plugin does not require a web environment then use the "plugin" profile instead of the default "web-plugin" profile:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -16862,7 +16955,13 @@ You can also declare the dependency within the <code>dependencies</code> block, 
 </table>
 </div>
 <div class="paragraph">
-<p><strong>Step 4: Run the application</strong></p>
+<p><strong>Step 4: Configure the plugin to enable reloading</strong></p>
+</div>
+<div class="paragraph">
+<p>In the plugin directory, add or modify the <code>gradle.properties</code> file. A new property <code>exploded=true</code> needs to be set in order for the plugin to add the exploded directories to the classpath.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 5: Run the application</strong></p>
 </div>
 <div class="paragraph">
 <p>Now run the application using the <code>grails run-app</code> command from the root of the application directory, you can use the <code>verbose</code> flag to see the Gradle output:</p>

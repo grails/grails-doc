@@ -226,12 +226,11 @@ function addJsClass() {
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.annotation.Client</span>
 
+<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://itunes.apple.com/</span><span class="delimiter">&quot;</span></span>)
+<span class="type">interface</span> ItunesClient {
 
-<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://start.grails.org</span><span class="delimiter">&quot;</span></span>)
-<span class="type">interface</span> GrailsAppForgeClient {
-
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/{version}/profiles</span><span class="delimiter">&quot;</span></span>)
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">Map</span>&gt; profiles(<span class="predefined-type">String</span> version)
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/search?limit=25&amp;media=music&amp;entity=album&amp;term={term}</span><span class="delimiter">&quot;</span></span>)
+    <span class="predefined-type">SearchResult</span> search(<span class="predefined-type">String</span> term)
 }</code></pre>
 </div>
 </div>
@@ -243,10 +242,12 @@ function addJsClass() {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="annotation">@Autowired</span> GrailsAppForgeClient appForgeClient
+<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="annotation">@Autowired</span>
+    ItunesClient itunesClient
 
-    <span class="predefined-type">List</span>&lt;<span class="predefined-type">Map</span>&gt; profiles(<span class="predefined-type">String</span> grailsVersion) {
-        respond appForgeClient.profiles(grailsVersion)
+    <span class="predefined-type">List</span>&lt;Album&gt; searchAlbums(<span class="predefined-type">String</span> searchTerm) {
+        <span class="predefined-type">SearchResult</span> searchResult = itunesClient.search(searchTerm)
+        searchResult.results
     }</code></pre>
 </div>
 </div>
