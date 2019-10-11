@@ -573,18 +573,20 @@ NOTE: @BindInitializer only makes sense for associated entities, as per this use
 ==== Custom Data Converters
 
 
-The binder will do a lot of type conversion automatically.  Some applications may want to define their own mechanism for converting values and a simple way to do this is to write a class which implements {apiDocs}grails/databinding/converters/ValueConverter.html[ValueConverter] and register an instance of that class as a bean in the Spring application context.
+The binder will do a lot of type conversion automatically.  Some applications may want to define their own mechanism for converting values and a simple way to do this is to write a class which implements {apiDocs}grails/databinding/converters/ValueConverter.html[ValueConverter] and register an instance of that class as a bean in the Spring application context. If there are more than one converters for same type then the first one will be picked up based on the order. To sort the mutliple converters for same type you can use https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/core/annotation/Order.html[@Order] annotation from Spring with some low value (lower the value, higher is the priority).
 
 [source,groovy]
 ----
 package com.myapp.converters
 
 import grails.databinding.converters.ValueConverter
+import org.springframework.core.annotation.Order
 
 /**
  * A custom converter which will convert String of the
  * form 'city:state' into an Address object.
  */
+@Order( value = -1 ) // The value -1 will make sure this converter is used if there are other converters of type `com.myapp.Address`
 class AddressValueConverter implements ValueConverter {
 
     boolean canConvert(value) {
