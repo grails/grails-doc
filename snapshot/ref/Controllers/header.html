@@ -130,87 +130,47 @@ function addJsClass(el) {
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
                 
                 <div class='contribute-btn'>
-                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/ref/Controllers/chain.adoc"'>
+                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/ref/Controllers/header.adoc"'>
                         <i class='fa fa-pencil-square-o'></i> Improve this doc
                     </button>
                 </div>
                 
 
                 <div class="sect1">
-<h2 id="_chain">chain</h2>
+<h2 id="_header">header</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_purpose">Purpose</h3>
 <div class="paragraph">
-<p>Uses flash.html[flash] storage to implicitly retain the model following an HTTP redirect from one action to another.</p>
+<p>To add a header to the response.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_examples">Examples</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> shawshankRedemption = <span class="keyword">new</span> <span class="predefined-type">Book</span>(<span class="key">title</span>: <span class="string"><span class="delimiter">'</span><span class="content">The Shawshank Redemption</span><span class="delimiter">'</span></span>)
-chain(<span class="key">action</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">details</span><span class="delimiter">&quot;</span></span>, <span class="key">model</span>: [<span class="key">book</span>: shawshankRedemption])</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// Adds a header to the response</span>
+header <span class="string"><span class="delimiter">'</span><span class="content">Cache-Control</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">max-age=84600, public</span><span class="delimiter">'</span></span></code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_description">Description</h3>
 <div class="paragraph">
-<p>Usage:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">chain(controller*, action, id*, model, params*)</code></pre>
+<p>A method to add headers to the response.</p>
 </div>
 </div>
-<div class="paragraph">
-<p>Arguments:</p>
-</div>
+<div class="sect2">
+<h3 id="_parameters">Parameters:</h3>
 <div class="ulist">
 <ul>
 <li>
-<p><code>uri</code> - The full uri to redirect to (example /book/list, book/show/2)</p>
+<p><code>headerName</code> - The header name to add</p>
 </li>
 <li>
-<p><code>controller</code> (optional) - The controller to redirect to; defaults to the current controller if not specified</p>
-</li>
-<li>
-<p><code>namespace</code> (optional) - the namespace of the controller to chain to</p>
-</li>
-<li>
-<p><code>action</code> - The action to redirect to, either a string name or a reference to an action within the current controller</p>
-</li>
-<li>
-<p><code>id</code> (optional) - The id to use in redirection</p>
-</li>
-<li>
-<p><code>model</code> - The model to chain to the next action</p>
-</li>
-<li>
-<p><code>params</code> (optional) - Parameters to pass to the action chained to.</p>
+<p><code>headerValue</code> - The header value to add</p>
 </li>
 </ul>
-</div>
-<div class="paragraph">
-<p>The chain method stores the passed model in flash scope and then performs an HTTP redirect. The model is then restored for the next request. The model that will eventually be passed to the view will be created by starting with the model that was passed to the chain method and then adding to that all of the data that is in the model returned by the next action, which may replace some of the data that was in the model originally passed to the chain method. For example:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> <span class="function">one</span>() {
-    chain <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">two</span><span class="delimiter">'</span></span>, <span class="key">model</span>: [<span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Tony</span><span class="delimiter">'</span></span>, <span class="key">town</span>: <span class="string"><span class="delimiter">'</span><span class="content">Birmingham</span><span class="delimiter">'</span></span>]
-}
-
-<span class="keyword">def</span> <span class="function">two</span>() {
-    [<span class="key">name</span>: <span class="string"><span class="delimiter">'</span><span class="content">Anthony</span><span class="delimiter">'</span></span>, <span class="key">country</span>: <span class="string"><span class="delimiter">'</span><span class="content">England</span><span class="delimiter">'</span></span>]
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If a request is sent to the <code>one</code> action, that action chains to the <code>two</code> action which returns a model.  The model that is passed to the view would contain <code>[name: 'Anthony', town: 'Birmingham', country: 'England']</code></p>
-</div>
-<div class="paragraph">
-<p>The chain method requires either a URI to redirect to <strong>or</strong> a controller/action/id name combination</p>
 </div>
 </div>
 </div>
