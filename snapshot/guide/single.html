@@ -1008,7 +1008,7 @@ On Windows, if you see the error "&gt; A problem occurred starting process 'comm
 <div class="sect3">
 <h4 id="_intellij_idea">IntelliJ IDEA</h4>
 <div class="paragraph">
-<p><a href="http://www.jetbrains.com/idea">IntelliJ IDEA</a> is an excellent IDE for Grails 3.0 development. It comes in 2 editions, the free community edition and the paid-for ultimate edition.</p>
+<p><a href="http://www.jetbrains.com/idea">IntelliJ IDEA</a> is an excellent IDE for Grails 4.0 development. It comes in 2 editions, the free community edition and the paid-for ultimate edition.</p>
 </div>
 <div class="paragraph">
 <p>The community edition can be used for most things, although GSP syntax higlighting is only part of the ultimate edition</p>
@@ -1026,7 +1026,7 @@ You can always open GSP files in the HTML editor if you just want highlighting i
 </table>
 </div>
 <div class="paragraph">
-<p>To get started with Intellij IDEA and Grails 3.0 simply go to <code>File / Open</code> and point IDEA at your <code>build.gradle</code> file to import and configure the project.</p>
+<p>To get started with Intellij IDEA and Grails 4.0 simply go to <code>File / Open</code> and point IDEA at your <code>build.gradle</code> file to import and configure the project.</p>
 </div>
 </div>
 <div class="sect3">
@@ -2609,7 +2609,7 @@ qualified name of the artifact.</p>
 To mask out the values of secure request parameters, specify the parameter names in the <code>grails.exceptionresolver.params.exclude</code> config property:</p>
 </div>
 <div class="listingblock">
-<div class="title">grails-app/conf/application.yaml</div>
+<div class="title">grails-app/conf/application.yml</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">grails</span>:
     <span class="key">exceptionresolver</span>:
@@ -2625,7 +2625,7 @@ config property to false. The default value is true when the application is runn
 environments.</p>
 </div>
 <div class="listingblock">
-<div class="title">grails-app/conf/application.yaml</div>
+<div class="title">grails-app/conf/application.yml</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">grails</span>:
     <span class="key">exceptionresolver</span>:
@@ -11706,11 +11706,12 @@ withFormat {
 <span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
 <span class="keyword">import</span> <span class="include">io.micronaut.http.client.annotation.Client</span>
 
-<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://itunes.apple.com/</span><span class="delimiter">&quot;</span></span>)
-<span class="type">interface</span> ItunesClient {
 
-    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/search?limit=25&amp;media=music&amp;entity=album&amp;term={term}</span><span class="delimiter">&quot;</span></span>)
-    <span class="predefined-type">SearchResult</span> search(<span class="predefined-type">String</span> term)
+<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://start.grails.org</span><span class="delimiter">&quot;</span></span>)
+<span class="type">interface</span> GrailsAppForgeClient {
+
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/{version}/profiles</span><span class="delimiter">&quot;</span></span>)
+    <span class="predefined-type">List</span>&lt;<span class="predefined-type">Map</span>&gt; profiles(<span class="predefined-type">String</span> version)
 }</code></pre>
 </div>
 </div>
@@ -11722,12 +11723,10 @@ withFormat {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="annotation">@Autowired</span>
-    ItunesClient itunesClient
+<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="annotation">@Autowired</span> GrailsAppForgeClient appForgeClient
 
-    <span class="predefined-type">List</span>&lt;Album&gt; searchAlbums(<span class="predefined-type">String</span> searchTerm) {
-        <span class="predefined-type">SearchResult</span> searchResult = itunesClient.search(searchTerm)
-        searchResult.results
+    <span class="predefined-type">List</span>&lt;<span class="predefined-type">Map</span>&gt; profiles(<span class="predefined-type">String</span> grailsVersion) {
+        respond appForgeClient.profiles(grailsVersion)
     }</code></pre>
 </div>
 </div>
