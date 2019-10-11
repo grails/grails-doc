@@ -68,8 +68,10 @@ So if you, as a browser or some other client, want a resource as XML, you can us
 
 [source]
 ----
-http://my.domain.org/books?format=xml
+http://my.domain.org/books.xml
 ----
+
+NOTE: The request parameters `format` is allowed as well `http://my.domain.org/books?format=xml`, but the default Grails URL Mapping `get "/$controller(.$format)?"(action:"index")` will override the `format` parameter with null. So the default mapping should be updated to `get "/$controller"(action:"index")`.
 
 The result of this on the server side is a `format` property on the `response` object with the value `xml` .
 
