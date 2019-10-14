@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>8.3 URL Mappings 4.0.0</title>
+    <title>8.3 URL Mappings 4.0.1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>8.3 URL Mappings</h1>
 
-                    <p><strong>Version:</strong> 4.0.0</p>
+                    <p><strong>Version:</strong> 4.0.1</p>
                 </div>
 
                 
@@ -679,13 +679,21 @@ as an argument to the <code>redirect</code> method in a controller.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="string"><span class="delimiter">&quot;</span><span class="content">/viewBooks</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: <span class="string"><span class="delimiter">'</span><span class="content">/books/list</span><span class="delimiter">'</span></span>)
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="string"><span class="delimiter">&quot;</span><span class="content">/viewBooks</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">uri</span>: <span class="string"><span class="delimiter">'</span><span class="content">/books/list</span><span class="delimiter">'</span></span>])
 <span class="string"><span class="delimiter">&quot;</span><span class="content">/viewAuthors</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">author</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>])
 <span class="string"><span class="delimiter">&quot;</span><span class="content">/viewPublishers</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">publisher</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>, <span class="key">permanent</span>: <span class="predefined-constant">true</span>])</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Request parameters that were part of the original request will be included in the redirect.</p>
+<p>Request parameters that were part of the original request will not be included in the redirect by default. To include
+them it is necessary to add the parameter <code>keepParamsWhenRedirect: true</code>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="string"><span class="delimiter">&quot;</span><span class="content">/viewBooks</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">uri</span>: <span class="string"><span class="delimiter">'</span><span class="content">/books/list</span><span class="delimiter">'</span></span>, <span class="key">keepParamsWhenRedirect</span>: <span class="predefined-constant">true</span>])
+<span class="string"><span class="delimiter">&quot;</span><span class="content">/viewAuthors</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">author</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>, <span class="key">keepParamsWhenRedirect</span>: <span class="predefined-constant">true</span>])
+<span class="string"><span class="delimiter">&quot;</span><span class="content">/viewPublishers</span><span class="delimiter">&quot;</span></span>(<span class="key">redirect</span>: [<span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">publisher</span><span class="delimiter">'</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>, <span class="key">permanent</span>: <span class="predefined-constant">true</span>, <span class="key">keepParamsWhenRedirect</span>: <span class="predefined-constant">true</span>])</code></pre>
+</div>
 </div>
 
 <a name="7.4.4 Embedded Variables"><!-- Legacy link --></a>
@@ -1322,7 +1330,7 @@ println name <span class="comment">// prints &quot;logo&quot; or &quot;other/log
 </div>
 </div>
 <div class="paragraph">
-<p>Arbitrary strategies may be plugged in by providing a class which implements the <a href="http://docs.grails.org/4.0.0/api/grails/web/UrlConverter.html">UrlConverter</a> interface and adding an instance of that class to the Spring application context with the bean name of <code>grails.web.UrlConverter.BEAN_NAME</code>.  If Grails finds a bean in the context with that name, it will be used as the default converter and there is no need to assign a value to the <code>grails.web.url.converter</code> config property.</p>
+<p>Arbitrary strategies may be plugged in by providing a class which implements the <a href="http://docs.grails.org/4.0.1/api/grails/web/UrlConverter.html">UrlConverter</a> interface and adding an instance of that class to the Spring application context with the bean name of <code>grails.web.UrlConverter.BEAN_NAME</code>.  If Grails finds a bean in the context with that name, it will be used as the default converter and there is no need to assign a value to the <code>grails.web.url.converter</code> config property.</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/groovy/com/myapplication/MyUrlConverterImpl.groovy</div>
@@ -1744,6 +1752,9 @@ is being provided by a plugin.</p>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Controllers/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/header.html">header</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Controllers/namespace.html">namespace</a>
