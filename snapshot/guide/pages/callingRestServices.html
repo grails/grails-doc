@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>1.1.6 Other Novelties 3.3.11</title>
+    <title>10.6 Calling REST Services with HttpClient 4.0.1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.2.x</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.3.x</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -122,62 +122,145 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
+                    <div class="toc-item prev-left"><a href="../../guide/traits.html">&lt;&lt; <strong>9</strong><span>Traits</span></a></div>
+                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
 
                 
-                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
+                    <div class="toc-item next-right"><a href="../../guide/async.html"><strong>11</strong><span>Asynchronous Programming</span> >></a></div>
                 
 
 
                 <div class="project">
-                    <h1>1.1.6 Other Novelties</h1>
+                    <h1>10.6 Calling REST Services with HttpClient</h1>
 
-                    <p><strong>Version:</strong> 3.3.11</p>
+                    <p><strong>Version:</strong> 4.0.1</p>
                 </div>
 
                 
 
                 
 
-<h2 id="otherNovelties">1.1.6 Other Novelties</h2>
+<h2 id="callingRestServices">10.6 Calling REST Services with HttpClient</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/introduction/whatsNew/otherNovelties.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/REST/callingRestServices.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
+<div class="paragraph">
+<p>Calling Grails REST services - as well as third-party services - is very straightforward using the <a href="https://docs.micronaut.io/latest/guide/index.html#httpClient">Micronaut HTTP Client</a>. This HTTP client has both a low-level API and a higher level AOP-driven API, making it useful for both simple requests as well as building declarative, type-safe API layers.</p>
+</div>
+<div class="paragraph">
+<p>To use the Micronaut HTTP client you must have the <code>micronaut-http-client</code> dependency on your classpath. Add the following dependency to your <code>build.gradle</code> file.</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">compile <span class="string"><span class="delimiter">'</span><span class="content">io.micronaut:micronaut-http-client</span><span class="delimiter">'</span></span></code></pre>
+</div>
+</div>
 <div class="sect3">
-<h4 id="_cache_plugin_rewritten">Cache Plugin Rewritten</h4>
+<h4 id="_low_level_api">Low-level API</h4>
 <div class="paragraph">
-<p>The <a href="http://plugins.grails.org/plugin/grails/cache">Cache Plugin</a> has been rewritten and no longer use proxies which improves startup time and performance. The plugin is also now <a href="http://gorm.grails.org/latest/hibernate/manual/index.html#multiTenancy">Multi-Tenant</a> aware, ensuring that cached data is not seen by other tenants.</p>
+<p>The <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/HttpClient.html">HttpClient</a> interface forms the basis for the low-level API. This interfaces declares methods to help ease executing HTTP requests and receive responses.</p>
+</div>
+<div class="paragraph">
+<p>The majority of the methods in the <code>HttpClient</code> interface returns Reactive Streams Publisher instances, and a sub-interface called RxHttpClient is included that provides a variation of the HttpClient interface that returns RxJava Flowable types. When using <code>HttpClient</code> in a blocking flow, you may wish to call <code>toBlocking()</code> to return an instance of <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/BlockingHttpClient.html">BlockingHttpClient</a>.</p>
+</div>
+<div class="paragraph">
+<p>There are a few ways by which you can obtain a reference to a <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/HttpClient.html">HttpClient</a>. The most simple way is using the <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/HttpClient.html#create-java.net.URL-">create</a> method</p>
+</div>
+<div class="listingblock">
+<div class="title">Creating an HTTP client</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">    <span class="predefined-type">List</span>&lt;Album&gt; searchWithApi(<span class="predefined-type">String</span> searchTerm) {
+        <span class="predefined-type">String</span> baseUrl = <span class="string"><span class="delimiter">&quot;</span><span class="content">https://itunes.apple.com/</span><span class="delimiter">&quot;</span></span>
+
+        HttpClient client = HttpClient.create(baseUrl.toURL()).toBlocking() <i class="conum" data-value="1"></i><b>(1)</b>
+
+        HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/search?limit=25&amp;media=music&amp;entity=album&amp;term=</span><span class="inline"><span class="inline-delimiter">${</span>searchTerm<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>)
+        HttpResponse&lt;<span class="predefined-type">String</span>&gt; resp = client.exchange(request, <span class="predefined-type">String</span>)
+        client.close() <i class="conum" data-value="2"></i><b>(2)</b>
+
+        <span class="predefined-type">String</span> json = resp.body()
+        ObjectMapper objectMapper = <span class="keyword">new</span> ObjectMapper() <i class="conum" data-value="3"></i><b>(3)</b>
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, <span class="predefined-constant">false</span>)
+        <span class="predefined-type">SearchResult</span> searchResult = objectMapper.readValue(json, <span class="predefined-type">SearchResult</span>)
+        searchResult.results
+    }</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Create a new instance of <code>HttpClient</code> with the <code>create</code> method, and convert to an instance of <code>BlockingHttpClient</code> with <code>toBlocking()</code>,</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>The client should be closed using the <code>close</code> method to prevent thread leaking.</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Jackson&#8217;s <a href="https://fasterxml.github.io/jackson-databind/javadoc/2.9/com/fasterxml/jackson/databind/ObjectMapper.html">ObjectMapper</a> API can be used to map the raw JSON to POGOs, in this case <code>SearchResult</code></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Consult the <a href="https://docs.micronaut.io/latest/guide/index.html#lowLevelHttpClient">Http Client section</a> of the <a href="https://docs.micronaut.io/latest/guide/index.html">Micronaut user guide</a> for more information on using the <code>HttpClient</code> low-level API.</p>
 </div>
 </div>
 <div class="sect3">
-<h4 id="_converters_plugin_now_separate">Converters plugin now Separate</h4>
+<h4 id="_declarative_api">Declarative API</h4>
 <div class="paragraph">
-<p>With <a href="http://views.grails.org">JSON Views</a> now being the recommended way to render JSON. The converters plugin has been split out from core into <a href="https://github.com/grails-plugins/grails-plugin-converters">a separate project</a>.</p>
+<p>A declarative HTTP client can be written by adding the <a href="https://docs.micronaut.io/latest/api/io/micronaut/http/client/annotation/Client.html"><code>@Client</code></a> annotation to any interface or abstract class. Using Micronaut&#8217;s AOP support (see the Micronaut user guide section on <a href="https://docs.micronaut.io/latest/guide/index.html#introductionAdvice">Introduction Advice</a>), the abstract or interface methods will be implemented for you at compilation time as HTTP calls. Declarative clients can return data-bound POGOs (or POJOs) without requiring special handling from the calling code.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> example.grails
+
+<span class="keyword">import</span> <span class="include">io.micronaut.http.annotation.Get</span>
+<span class="keyword">import</span> <span class="include">io.micronaut.http.client.annotation.Client</span>
+
+
+<span class="annotation">@Client</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">https://start.grails.org</span><span class="delimiter">&quot;</span></span>)
+<span class="type">interface</span> GrailsAppForgeClient {
+
+    <span class="annotation">@Get</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">/{version}/profiles</span><span class="delimiter">&quot;</span></span>)
+    <span class="predefined-type">List</span>&lt;<span class="predefined-type">Map</span>&gt; profiles(<span class="predefined-type">String</span> version)
+}</code></pre>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_logger_name_changes">Logger name changes</h4>
 <div class="paragraph">
-<p>Grails logger names for artifacts have been simplifled from <code>grails.app.&lt;type&gt;.&lt;className&gt;</code> to use the the package name.</p>
+<p>Note that HTTP client methods are annotated with the appropriate HTTP method, such as <code>@Get</code> or <code>@Post</code>.</p>
 </div>
 <div class="paragraph">
-<p>For example <code>grails.app.controller.com.example.BookController</code> is now simply <code>com.example.BookController</code>.</p>
+<p>To use a client like the one in the above example, simply inject an instance of the client into any bean using the <code>@Autowired</code> annotation.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">  <span class="annotation">@Autowired</span> GrailsAppForgeClient appForgeClient
+
+    <span class="predefined-type">List</span>&lt;<span class="predefined-type">Map</span>&gt; profiles(<span class="predefined-type">String</span> grailsVersion) {
+        respond appForgeClient.profiles(grailsVersion)
+    }</code></pre>
+</div>
 </div>
 <div class="paragraph">
-<p>For more information see the <a href="http://docs.grails.org/3.3.x/guide/conf.html#loggerName">documentation</a>.</p>
+<p>For more details on writing and using declarative clients, consult the <a href="https://docs.micronaut.io/latest/guide/index.html#clientAnnotation">Http Client section</a> of the <a href="https://docs.micronaut.io/latest/guide/index.html">Micronaut user guide</a>.</p>
 </div>
 </div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/traits.html">&lt;&lt; <strong>9</strong><span>Traits</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/async.html"><strong>11</strong><span>Asynchronous Programming</span> >></a></div>
                 
                 <div style="clear:both"></div>
             </div>
@@ -422,6 +505,9 @@ function addJsClass() {
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Controllers/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/header.html">header</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Controllers/namespace.html">namespace</a>
