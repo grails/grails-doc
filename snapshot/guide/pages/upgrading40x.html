@@ -11,39 +11,32 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>The Grails Framework 4.0.3</title>
+    <title>3.1 Upgrading from Grails 4.0.x 4.0.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
-    <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
     <script type="text/javascript">
-function addJsClass(el) {
+function addJsClass() {
     var classes = document.body.className.split(" ");
     classes.push("js");
     document.body.className = classes.join(" ");
 }
     </script>
-    <style>
-        .contribute-btn {
-            bottom: 0px;
-        }
-    </style>
 </head>
 
 <body class="body" onload="addJsClass();">
-
 <div id="navigation">
     <div class="navTitle">
         
         The Grails Framework
     </div>
-
     <div class="navLinks">
         <ul>
             <li>
                 <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
                     <a href="../../guide/index.html" class="button">Table of contents</a>
 
-                    <div id="nav-summary-childs">
+                    <div id="nav-summary-childs" style="display:none;">
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction</span></a>
                         </div>
@@ -119,131 +112,183 @@ function addJsClass(el) {
             </li>
         </ul>
     </div>
-</div>
 
+
+</div>
 
 <table id="colset" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td id="col1">
-            <div id="main" class="reference corner-all">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
+                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
                 
-                <div class='contribute-btn'>
-                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/ref/Controllers/redirect.adoc"'>
-                        <i class='fa fa-pencil-square-o'></i> Improve this doc
-                    </button>
+                    <div class="toc-item next-right"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3.1 Upgrading from Grails 4.0.x</h1>
+
+                    <p><strong>Version:</strong> 4.0.3</p>
                 </div>
+
                 
 
-                <div class="sect1">
-<h2 id="_redirect">redirect</h2>
-<div class="sectionbody">
+                
+
+<h2 id="upgrading40x">3.1 Upgrading from Grails 4.0.x</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/upgrading/upgrading40x.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
 <div class="sect2">
-<h3 id="_purpose">Purpose</h3>
+<h3 id="_bump_up_grails_version">Bump up Grails Version</h3>
 <div class="paragraph">
-<p>To redirect flow from one action to the next using an HTTP redirect.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_examples">Examples</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">redirect(<span class="key">action</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">show</span><span class="delimiter">&quot;</span></span>)
-
-redirect(<span class="key">controller</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">book</span><span class="delimiter">&quot;</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">list</span><span class="delimiter">&quot;</span></span>)
-
-redirect(<span class="key">controller</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">book</span><span class="delimiter">&quot;</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">list</span><span class="delimiter">&quot;</span></span>, <span class="key">namespace</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">publishing</span><span class="delimiter">&quot;</span></span>)
-
-redirect(<span class="key">controller</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">book</span><span class="delimiter">&quot;</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">list</span><span class="delimiter">&quot;</span></span>, <span class="key">plugin</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">publishingUtils</span><span class="delimiter">&quot;</span></span>)
-
-redirect(<span class="key">action</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">show</span><span class="delimiter">&quot;</span></span>, <span class="key">id</span>: <span class="integer">4</span>, <span class="key">params</span>: [<span class="key">author</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">Stephen King</span><span class="delimiter">&quot;</span></span>])
-
-redirect(<span class="key">controller</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">book</span><span class="delimiter">&quot;</span></span>, <span class="key">action</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">show</span><span class="delimiter">&quot;</span></span>, <span class="key">fragment</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">profile</span><span class="delimiter">&quot;</span></span>)
-
-redirect(<span class="key">uri</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">book/list</span><span class="delimiter">&quot;</span></span>)
-
-redirect(<span class="key">url</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">http://www.blogjava.net/BlueSUN</span><span class="delimiter">&quot;</span></span>)
-
-redirect(<span class="predefined-type">Book</span>.get(<span class="integer">1</span>))</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_description">Description</h3>
-<div class="paragraph">
-<p>Redirects the current action to another action, optionally passing parameters and/or errors.  When issuing a redirect from a namespaced controller, the namespace for the target controller is implied to be that of the controller initiating the redirect.  To issue a redirect from a namespaced controller to a controller that is not in a namespace, the namespace must be explicitly specified with a value of <code>null</code> as shown below.</p>
+<p>You will need to upgrade your Grails version defined in <code>gradle.properties</code> as:</p>
 </div>
 <div class="listingblock">
+<div class="title">gradle.properties</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">SomeController</span> {
-    <span class="directive">static</span> namespace = <span class="string"><span class="delimiter">'</span><span class="content">someNamespace</span><span class="delimiter">'</span></span>
-
-    <span class="keyword">def</span> <span class="function">index</span>() {
-        <span class="comment">// issue a redirect to PersonController which does not define a namespace</span>
-        redirect <span class="key">action</span>: <span class="string"><span class="delimiter">'</span><span class="content">list</span><span class="delimiter">'</span></span>, <span class="key">controller</span>: <span class="string"><span class="delimiter">'</span><span class="content">person</span><span class="delimiter">'</span></span>, <span class="key">namespace</span>: <span class="predefined-constant">null</span>
-    }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+grailsVersion=4.1.0.M1
+...</code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_parameters">Parameters</h3>
+<h3 id="_groovy_3_0_3">Groovy 3.0.3</h3>
 <div class="paragraph">
-<p><code>redirect(Map params)</code></p>
+<p>Grails 4.1 provide support for Groovy 3. We would recommend you to please check the <a href="https://groovy-lang.org/releasenotes/groovy-3.0.html">Release notes for Groovy 3</a> to update your application in case you are using a specific feature which might not work in Groovy 3.</p>
 </div>
+<div class="paragraph">
+<p>Define groovyVersion in <code>gradle.properties</code> to force the application to use Groovy 3.</p>
+</div>
+<div class="paragraph">
+<p>Grails 4.1 app&#8217;s <code>gradle.properties</code></p>
+</div>
+<div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">...
+groovyVersion=3.0.3
+...</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bump_up_gorm_version">Bump up GORM Version</h3>
+<div class="paragraph">
+<p>If you were using <a href="http://gorm.grails.org">GORM</a>, you will need to update the version defined in <code>gradle.properties</code> as:</p>
+</div>
+<div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">...
+gormVersion=7.1.0.M1
+...</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bump_up_asset_pipeline_plugin_version">Bump up Asset Pipeline plugin version</h3>
+<div class="paragraph">
+<p>The previous version of asset-pipeline is not supported with Grails 4.1 as it is compiled with a version of Groovy which is binary incompatible with Groovy 3. So, please update the plugin version to 3.1.0.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_disabled_stringchararrayaccessor_by_default">Disabled StringCharArrayAccessor by default</h3>
+<div class="paragraph">
+<p>The previous version of Grails use the <code>StringCharArrayAccessor</code> which is enabled by default and provides optimized access to <code>java.lang.String</code> internals. In Grails 4.1 it is disabled by default but you can enable it by setting a system property with name <code>stringchararrayaccessor.disabled</code> and value <code>false</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Enabling StringCharArrayAccessor would show IllegalReflectiveAccess warnings as it uses reflection to do the optimizations.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_changes_in_profile_yml_and_feature_yml_files_in_grails_profiles">Changes in profile.yml and feature.yml files in Grails Profiles</h3>
+<div class="paragraph">
+<p>The format of how dependencies are defined in features and profiles has been changed. See the section on <a href="../../guide/profiles.html">Application Profiles</a> for more information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deprecation_of_dot_navigation_of_grails_configuration">Deprecation of dot navigation of Grails configuration</h3>
+<div class="paragraph">
+<p>In order to reduce complexity, improve performance, and increase maintainability, accessing configuration through dot notation (config.a.b.c) has been deprecated. This functionality will be removed in a future release.</p>
+</div>
+<div class="paragraph">
+<p>Also, you would see a warning message if you are accessing configuration through the dot notation.</p>
+</div>
+<div class="paragraph">
+<p>The recommended way to access configuration is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">grailsApplication.config.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">hola</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deprecated_classes">Deprecated Classes</h3>
 <div class="ulist">
 <ul>
 <li>
-<p><code>action</code> (optional) - the name of the action to use in the link, if not specified the default action will be linked</p>
+<p><a href="http://docs.grails.org/4.0.3/api/org/grails/config/NavigableMap.html">org.grails.config.NavigableMap</a></p>
 </li>
 <li>
-<p><code>controller</code> (optional) - the name of the controller to use in the link, if not specified the current controller will be linked</p>
+<p><a href="http://docs.grails.org/4.0.3/api/org/grails/config/NavigableMapConfig.html">org.grails.config.NavigableMapConfig</a></p>
 </li>
 <li>
-<p><code>namespace</code> (optional) - the namespace of the controller to redirect to</p>
-</li>
-<li>
-<p><code>plugin</code> (optional) - the name of the plugin which provides the controller</p>
-</li>
-<li>
-<p><code>id</code> (optional) - the id to use in the link</p>
-</li>
-<li>
-<p><code>fragment</code> (optional) - The link fragment (often called anchor tag) to use</p>
-</li>
-<li>
-<p><code>mapping</code> (optional) - The <a href="#namedMappings">named URL mapping</a> to use to rewrite the link</p>
-</li>
-<li>
-<p><code>params</code> (optional) - a map containing request parameters</p>
-</li>
-<li>
-<p><code>url</code> (optional) - a map containing the action, controller, id etc.</p>
-</li>
-<li>
-<p><code>absolute</code> (optional) - If <code>true</code> (default) will prefix the link target address with the value of the <code>grails.serverURL</code> property from <code>application.yml</code>, or <a href="http://localhost:&lt;port&gt" class="bare">http://localhost:&lt;port&gt</a>; if there is no value in <code>application.yml</code> and not running in the production environment. If <code>false</code> a partial URI is generated for the <code>Location</code> header.</p>
-</li>
-<li>
-<p><code>base</code> (optional) - Sets the prefix to be added to the link target address, typically an absolute server URL. This overrides the behaviour of the <code>absolute</code> property if both are specified.</p>
-</li>
-<li>
-<p><code>permanent</code> (optional) - If <code>true</code> the redirect will be issued with a 301 HTTP status code (permanently moved), otherwise a 302 HTTP status code will be issued</p>
+<p><a href="http://docs.grails.org/4.0.3/api/org/grails/config/NavigableMapPropertySource.html">org.grails.config.NavigableMapPropertySource</a></p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_domain_class">Domain Class</h3>
+<h3 id="_spring_5_2_3">Spring 5.2.3</h3>
 <div class="paragraph">
-<p><code>redirect(Object domainClass)</code></p>
+<p>Grails 4.1 is built on Spring 5.2.3 See the <a href="https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-5.x#upgrading-to-version-52">Upgrading to Spring 5.2</a>  if you are using Spring specific features.</p>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_micronaut_2_0">Micronaut 2.0</h3>
 <div class="paragraph">
-<p>A special case is if a domain class is passed into <code>redirect</code> it will use the <code>LinkGenerator</code> to create the URL. For example <code>redirect(Book.get(1))</code> will generate a redirect to <code>/book/show/1</code>.</p>
+<p>Grails 4.1 is shipped with Micronaut 2.0. Please check the <a href="https://docs.micronaut.io/2.0.0.M3/guide/index.html#upgrading">Upgrading to Micronaut 2.x</a> if you are using a specific feature.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_micronaut_for_spring_2_0_1">Micronaut for Spring 2.0.1</h3>
+<div class="paragraph">
+<p>Grails 4.1 is updated to Micronaut for Spring 2.0.1, please check out <a href="https://github.com/micronaut-projects/micronaut-spring/releases/tag/v2.0.1">release notes</a> for more information.</p>
 </div>
 </div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span> >></a></div>
+                
+                <div style="clear:both"></div>
             </div>
         </td>
         <td id="col2">
@@ -254,10 +299,8 @@ redirect(<span class="predefined-type">Book</span>.get(<span class="integer">1</
                 </div>
                 <div class="menu">
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Command Line</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Command Line</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
                             
@@ -381,13 +424,11 @@ redirect(<span class="predefined-type">Book</span>.get(<span class="integer">1</
                             <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Constraints</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Constraints</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Constraints/Usage.html">Usage</a></div>
                             
                             
@@ -451,13 +492,11 @@ redirect(<span class="predefined-type">Book</span>.get(<span class="integer">1</
                             <div class="menu-item"><a href="../../ref/Constraints/widget.html">widget</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Controllers</h1>
-                        <div class="menu-sub selected">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Controllers</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Controllers/Usage.html">Usage</a></div>
                             
                             
@@ -536,13 +575,11 @@ redirect(<span class="predefined-type">Book</span>.get(<span class="integer">1</
                             <div class="menu-item"><a href="../../ref/Controllers/withFormat.html">withFormat</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Database Mapping</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Database Mapping</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Database%20Mapping/Usage.html">Usage</a></div>
                             
                             
@@ -615,13 +652,11 @@ redirect(<span class="predefined-type">Book</span>.get(<span class="integer">1</
                             <div class="menu-item"><a href="../../ref/Database%20Mapping/version.html">version</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Domain Classes</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Domain Classes</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Domain%20Classes/Usage.html">Usage</a></div>
                             
                             
@@ -808,13 +843,11 @@ redirect(<span class="predefined-type">Book</span>.get(<span class="integer">1</
                             <div class="menu-item"><a href="../../ref/Domain%20Classes/withTransaction.html">withTransaction</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Plug-ins</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Plug-ins</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Plug-ins/Usage.html">Usage</a></div>
                             
                             
@@ -854,13 +887,11 @@ redirect(<span class="predefined-type">Book</span>.get(<span class="integer">1</
                             <div class="menu-item"><a href="../../ref/Plug-ins/servlets.html">servlets</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Services</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Services</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
                             
                             
@@ -870,13 +901,11 @@ redirect(<span class="predefined-type">Book</span>.get(<span class="integer">1</
                             <div class="menu-item"><a href="../../ref/Services/transactional.html">transactional</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Servlet API</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Servlet API</h1><div class="menu-sub">
+                        
                             
                             <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
                             </div>
@@ -890,7 +919,7 @@ redirect(<span class="predefined-type">Book</span>.get(<span class="integer">1</
                             <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
                 </div>
@@ -904,8 +933,7 @@ redirect(<span class="predefined-type">Book</span>.get(<span class="integer">1</
     
 </div>
 
-
-<script type="text/javascript" src="../../js/docs.js"></script>
+<script type="text/javascript" src="../js/docs.js"></script>
 
 </body>
 </html>
