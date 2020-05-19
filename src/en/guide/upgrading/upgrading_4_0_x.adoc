@@ -1,18 +1,6 @@
 ### Bump up Grails Version
 
-You will need to upgrade your Grails version defined in `gradle.properties`.
-
-Grails 4.0 app's `gradle.properties`
-
-[source, properties]
-.gradle.properties
-----
-...
-grailsVersion=4.0.0
-...
-----
-
-Grails 4.1 app's `gradle.properties`
+You will need to upgrade your Grails version defined in `gradle.properties` as:
 
 [source,groovy,subs="attributes"]
 .gradle.properties
@@ -40,19 +28,7 @@ groovyVersion=3.0.3
 
 ### Bump up GORM Version
 
-If you were using http://gorm.grails.org[GORM], you will need to update the version defined in `gradle.properties`.
-
-Grails 4.0.x app's `gradle.properties`
-
-[source, properties]
-.gradle.properties
-----
-...
-gormVersion=7.0.2.RELEASE
-...
-----
-
-Grails 4.1 app's `gradle.properties`
+If you were using http://gorm.grails.org[GORM], you will need to update the version defined in `gradle.properties` as:
 
 [source, properties]
 .gradle.properties
@@ -74,61 +50,15 @@ NOTE: Enabling StringCharArrayAccessor would show IllegalReflectiveAccess warnin
 
 ### Changes in profile.yml and feature.yml files in Grails Profiles
 
-The template of `profile.yml` and `feature.yml` is updated to support exclusion of trasitive dependencies. So if you are using any custom profile for your application then please update the profiles templates.
-
-Grails 4.0 profile:
-
-[source, yaml]
-.profile.yml
-----
-features:
-    defaults:
-        - hibernate
-        - asset-pipeline
-build:
-    plugins:
-        - org.grails.grails-web
-    excludes:
-        - org.grails.grails-core
-dependencies:
-    compile:
-        - "org.mycompany:myplugin:1.0.1"
-----
-
-Grails 4.1 profile:
-
-[source, yaml]
-.profile.yml
-----
-features:
-    defaults:
-        - hibernate
-        - asset-pipeline
-build:
-    plugins:
-        - org.grails.grails-web
-    excludes:
-        - org.grails.grails-core
-dependencies:
-    - scope: compile
-      coords: "org.mycompany:myplugin:1.0.1"
-----
-
-For more information, see the section on link:{guidePath}/profiles.html[Application Profiles].
-
+The format of how dependencies are defined in features and profiles has been changed. See the section on link:{guidePath}/profiles.html[Application Profiles] for more information.
 
 ### Deprecation of dot navigation of Grails configuration
 
-In order to reduces the complexities, accessing a configuration using dot notation is deprecated and will be removed in a future release. We recommend using `config.getProperty(key, targetClass)` instead. For example:
+In order to reduce complexity, improve performance, and increase maintainability, accessing configuration through dot notation (config.a.b.c) has been deprecated. This functionality will be removed in a future release.
 
-Grails 4.0 app's sample code:
+Also, you would see a warning message if you are accessing configuration through the dot notation.
 
-[source, groovy]
-----
-grailsApplication.config.hola
-----
-
-Grails 4.1 app's sample code:
+The recommended way to access configuration is:
 
 [source,groovy]
 ----
