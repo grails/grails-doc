@@ -1,4 +1,4 @@
-import groovy.json.JsonSlurper
+import grails.doc.dropdown.CreateReleasesDropdownTask
 
 buildscript {
     repositories {
@@ -33,9 +33,8 @@ archivesBaseName = "grails-docs"
 
 ext.checkOutDir = "${buildDir.path}/checkout"
 ext.outputDir = "${buildDir.path}/docs"
+ext.githubSlug="grails/grails-doc"
 ext.githubBranch = "master"
-ext.guidePage = "/docs/guide/single.html"
-ext.indexPage = "/docs/index.html"
 
 ext.explicitGrailsHome = System.getProperty("grails.home") ?: (project.hasProperty('grails.home') ? project.getProperty("grails.home") : null)
 ext.grailsHome = explicitGrailsHome ? file(explicitGrailsHome).absolutePath : "$checkOutDir/grails-src"
@@ -186,161 +185,18 @@ task dist(type: Zip, dependsOn: 'docs') {
     from outputDir
 }
 
-task createReleasesDropdown(dependsOn: 'docs') {
-    mustRunAfter 'dist'
-    group = 'documentation'
-    description = 'Fetches the releases of a github project via Github v3 API, it then creates an HTML select to change between versions published in github pages'
-    doLast {
-        String slug = githubSlug as String
-        String repo = slug.split('/')[1]
-        JsonSlurper slurper = new JsonSlurper()
-        String json = new URL("https://api.github.com/repos/${slug}/releases").text
-        def result = slurper.parseText(json)
-        String selectHtml = "<span style='width:100px;display:inline-block;'><select onChange='window.document.location.href=this.options[this.selectedIndex].value;'>"
-        result.collect { SoftwareVersion.build(it.tag_name.replace('v', '')) }.sort().reverse().each { softwareVersion ->
-            String versionName = softwareVersion.versionText
-            String href = "https://${slug.split('/')[0]}.github.io/${repo}/${versionName}/guide/index.html"
-            if (slug == 'grails/grails-core') {
-                href = "https://docs.grails.org/${versionName}/guide/single.html"
-            }
-            selectHtml += "<option value='${href}'>${versionName}</option>"
-        }
-        selectHtml += '</select></span>'
-        File guide = new File(rootProject.buildDir.getAbsolutePath() + guidePage)
-        File index = new File(rootProject.buildDir.getAbsolutePath() + indexPage)
-        String tocHtml = '<div id="table-of-content">'
-        String replacement = "${selectHtml}</li><li>$tocHtml"
-//        guide.text = guide.text.replace(tocHtml, replacement)
-        String versionHtml = "<p><strong>Version:</strong> ${projectVersion}</p>"
-        String versionWithSelectHtml = "<p><strong>Version:</strong> ${selectHtml}</p>"
-        guide.text = guide.text.replace(versionHtml, versionWithSelectHtml)
-        index.text = index.text.replace(versionHtml, versionWithSelectHtml)
-    }
+task createReleasesDropdown(type: CreateReleasesDropdownTask) { task ->
+    slug = githubSlug as String
+    version = projectVersion
+    guide = file("${buildDir.absolutePath}/docs/guide/single.html")
+    index = file("${buildDir.absolutePath}/docs/index.html")
+    mustRunAfter "dist"
     onlyIf {
-        new File(rootProject.buildDir.getAbsolutePath() + guidePage).exists() &&
-        new File(rootProject.buildDir.getAbsolutePath() + indexPage).exists()
+        new File("${buildDir.absolutePath}/docs/guide/single.html").exists() &&
+        new File("${buildDir.absolutePath}/docs/index.html").exists()
     }
 }
 
 artifacts {
     archives dist
-}
-
-
-class Snapshot implements Comparable<Snapshot> {
-
-    private String text
-
-    int getMilestoneVersion() {
-        text.replace("M", "").toInteger()
-    }
-
-    int getReleaseCandidateVersion() {
-        text.replace("RC", "").toInteger()
-    }
-
-    boolean isBuildSnapshot() {
-        text == "BUILD-SNAPSHOT"
-    }
-
-    boolean isReleaseCandidate() {
-        text.startsWith("RC")
-    }
-
-    boolean isMilestone() {
-        text.startsWith("M")
-    }
-
-    Snapshot(String text) {
-        this.text = text
-    }
-
-    @Override
-    int compareTo(Snapshot o) {
-
-        if (this.buildSnapshot && !o.buildSnapshot) {
-            return 1
-        } else if (!this.buildSnapshot && o.buildSnapshot) {
-            return -1
-        } else if (this.buildSnapshot && o.buildSnapshot) {
-            return 0
-        }
-
-        if (this.releaseCandidate && !o.releaseCandidate) {
-            return 1
-        } else if (!this.releaseCandidate && o.releaseCandidate) {
-            return -1
-        } else if (this.releaseCandidate && o.releaseCandidate) {
-            return this.releaseCandidateVersion <=> o.releaseCandidateVersion
-        }
-
-        if (this.milestone && !o.milestone) {
-            return 1
-        } else if (!this.milestone && o.milestone) {
-            return -1
-        } else if (this.milestone && o.milestone) {
-            return this.milestoneVersion <=> o.milestoneVersion
-        }
-
-        return 0
-    }
-}
-
-class SoftwareVersion implements Comparable<SoftwareVersion> {
-
-    int major
-    int minor
-    int patch
-
-    Snapshot snapshot
-
-    String versionText
-
-    static SoftwareVersion build(String version) {
-        String[] parts = version.split("\\.")
-        SoftwareVersion softVersion
-        if (parts.length >= 3) {
-            softVersion = new SoftwareVersion()
-            softVersion.versionText = version
-            if (parts.length > 3) {
-                softVersion.snapshot = new Snapshot(parts[3])
-            }
-            softVersion.major = parts[0].toInteger()
-            softVersion.minor = parts[1].toInteger()
-            softVersion.patch = parts[2].toInteger()
-        }
-        softVersion
-    }
-
-    boolean isSnapshot() {
-        snapshot != null
-    }
-
-    @Override
-    int compareTo(SoftwareVersion o) {
-        int majorCompare = this.major <=> o.major
-        if (majorCompare != 0) {
-            return majorCompare
-        }
-
-        int minorCompare = this.minor <=> o.minor
-        if (minorCompare != 0) {
-            return minorCompare
-        }
-
-        int patchCompare = this.patch <=> o.patch
-        if (patchCompare != 0) {
-            return patchCompare
-        }
-
-        if (this.isSnapshot() && !o.isSnapshot()) {
-            return -1
-        } else if (!this.isSnapshot() && o.isSnapshot()) {
-            return 1
-        } else if (this.isSnapshot() && o.isSnapshot()) {
-            return this.getSnapshot() <=> o.getSnapshot()
-        } else {
-            return 0
-        }
-    }
 }
