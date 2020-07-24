@@ -587,6 +587,42 @@ bootJar.enabled = <span class="predefined-constant">false</span></code></pre>
 </div>
 </div>
 <div class="sect2">
+<h3 id="_groovy_language_update_to_2_5_6">Groovy language update to 2.5.6</h3>
+<div class="paragraph">
+<p>Keep in mind, that with grails 4.0.x there is a minor groovy language upgrade (e.g. 3.3.9. used groovy 2.4.x), which requires a couple of changes, that are immediately obvious when trying to compile your source code. However there are also issues with changed implementations of core linkedlist functions! Check an overview of the breaking changes here: <a href="https://groovy-lang.org/releasenotes/groovy-2.5.html#Groovy2.5releasenotes-Breakingchanges">Breaking changes of Groovy 2.5</a></p>
+</div>
+<div class="sect3">
+<h4 id="_removed_date_helper_functions">Removed date helper functions</h4>
+<div class="paragraph">
+<p>Most common issue is that date util functions have been moved to individual project, e.g new Date().format("ddMMyyyy") no longer works without adding:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-dateutil:3.0.4</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_changed_linked_list_method_implementations">Changed linked list method implementations</h4>
+<div class="paragraph">
+<p>Check whether you are using the groovy version of linkedlist implementations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>[].pop()</code> - will no longer remove the last, but the first element of the list. Replace it with <code>[].removeLast()</code> is recommended.</p>
+</li>
+<li>
+<p><code>[].push(..)</code> - will no longer add to the end, but to the beginning of the list. Replace it with <code>[].add(..)</code> is recommended.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
 <h3 id="_h2_web_console">H2 Web Console</h3>
 <div class="paragraph">
 <p>Spring Boot 2.1 includes native support for the H2 database web console. Since this is already included in Spring Boot the equivalent feature has been removed from Grails. The H2 console is therefore now available at <code>/h2-console</code> instead of the previous URI of <code>/dbconsole</code>. See <a href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-sql-h2-console">Using H2’s Web Console</a> in the Spring Boot documentation for more information.</p>
