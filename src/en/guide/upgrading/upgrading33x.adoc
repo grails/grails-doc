@@ -212,6 +212,29 @@ Due to changes in Gradle 5, https://docs.gradle.org/current/userguide/upgrading_
 If you customized your app's build, other migrations may be necessary. Please check
 https://docs.gradle.org/current/userguide/upgrading_version_4.html[Gradle Upgrading your build] documentation. Especially notice, that default Gradle daemon now starts with 512MB of heap instead of 1GB. Please check https://docs.gradle.org/current/userguide/upgrading_version_4.html#rel5.0:default_memory_settings[Default memory settings changed] documentation.
 
+### Groovy language update to 2.5.6
+
+Keep in mind, that with grails 4.0.x there is a minor groovy language upgrade (e.g. 3.3.9. used groovy 2.4.x), which requires a couple of changes, that are immediately obvious when trying to compile your source code. However there are also issues with changed implementations of core linkedlist functions! Check an overview of the breaking changes here: https://groovy-lang.org/releasenotes/groovy-2.5.html#Groovy2.5releasenotes-Breakingchanges[Breaking changes of Groovy 2.5]
+
+#### Removed date helper functions
+
+Most common issue is that date util functions have been moved to individual project, e.g new Date().format("ddMMyyyy") no longer works without adding:
+
+[source, groovy]
+.build.gradle
+----
+dependencies {
+    compile "org.codehaus.groovy:groovy-dateutil:3.0.4"
+}
+----
+
+#### Changed linked list method implementations
+
+Check whether you are using the groovy version of linkedlist implementations:
+
+* `[].pop()` - will no longer remove the last, but the first element of the list. Replace it with `[].removeLast()` is recommended.
+* `[].push(..)` - will no longer add to the end, but to the beginning of the list. Replace it with `[].add(..)` is recommended.
+
 ### H2 Web Console
 
 Spring Boot 2.1 includes native support for the H2 database web console. Since this is already included in Spring Boot the equivalent feature has been removed from Grails. The H2 console is therefore now available at `/h2-console` instead of the previous URI of `/dbconsole`. See https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-sql-h2-console[Using H2’s Web Console] in the Spring Boot documentation for more information.
