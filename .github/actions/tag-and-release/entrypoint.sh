@@ -21,7 +21,7 @@ git checkout $TARGET_BRANCH
 git pull origin $TARGET_BRANCH
 
 echo "Setting release version in gradle.properties"
-sed -i "s/^grailsVersion.*$/grailsVersion\=${grails_version}/" gradle.properties
+sed -i "s/^grails\.version.*$/grails\.version\=${grails_version}/" gradle.properties
 cat gradle.properties
 
 echo "Pushing release version and recreating v${grails_version} tag"
