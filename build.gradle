@@ -1,4 +1,5 @@
 import groovy.json.JsonSlurper
+import org.apache.tools.ant.taskdefs.condition.Os
 
 buildscript {
     repositories {
@@ -21,8 +22,6 @@ plugins {
 asciidoctorj {
     version = '1.5.4'
 }
-
-import org.apache.tools.ant.taskdefs.condition.Os
 
 apply plugin: "base"
 apply plugin: "org.grails.grails-gdoc-to-asciidoc"
@@ -199,14 +198,18 @@ task createReleasesDropdown(dependsOn: 'docs') {
         String json = new URL("https://api.github.com/repos/${slug}/releases").text
         def result = slurper.parseText(json)
         String selectHtml = "<span style='width:100px;display:inline-block;'><select onChange='window.document.location.href=this.options[this.selectedIndex].value;'>"
-        result.collect { SoftwareVersion.build(it.tag_name.replace('v', '')) }.sort().reverse().each { softwareVersion ->
-            String versionName = softwareVersion.versionText
-            String href = "https://${slug.split('/')[0]}.github.io/${repo}/${versionName}/guide/index.html"
-            if (slug == 'grails/grails-core') {
-                href = "https://docs.grails.org/${versionName}/guide/single.html"
-            }
-            selectHtml += "<option value='${href}'>${versionName}</option>"
-        }
+        result
+                .collect { SoftwareVersion.build(it.tag_name.replace('v', '')) }
+                .sort()
+                .reverse()
+                .each { softwareVersion ->
+                    String versionName = softwareVersion.versionText
+                    String href = "https://${slug.split('/')[0]}.github.io/${repo}/${versionName}/guide/index.html"
+                    if (slug == 'grails/grails-core') {
+                        href = "https://docs.grails.org/${versionName}/guide/single.html"
+                    }
+                    selectHtml += "<option value='${href}' ${(versionName == project.'grails.version') ? 'selected' : ''}>${versionName}</option>"
+                }
         selectHtml += '</select></span>'
         File guide = new File(rootProject.buildDir.getAbsolutePath() + guidePage)
         File index = new File(rootProject.buildDir.getAbsolutePath() + indexPage)
