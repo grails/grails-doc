@@ -11,39 +11,32 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>The Grails Framework 5.0.0.M1</title>
+    <title>3.1 Upgrading from Grails 4.0.x 5.0.0.M1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
-    <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
     <script type="text/javascript">
-function addJsClass(el) {
+function addJsClass() {
     var classes = document.body.className.split(" ");
     classes.push("js");
     document.body.className = classes.join(" ");
 }
     </script>
-    <style>
-        .contribute-btn {
-            bottom: 0px;
-        }
-    </style>
 </head>
 
 <body class="body" onload="addJsClass();">
-
 <div id="navigation">
     <div class="navTitle">
         
         The Grails Framework
     </div>
-
     <div class="navLinks">
         <ul>
             <li>
                 <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
                     <a href="../../guide/index.html" class="button">Table of contents</a>
 
-                    <div id="nav-summary-childs">
+                    <div id="nav-summary-childs" style="display:none;">
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction</span></a>
                         </div>
@@ -119,87 +112,109 @@ function addJsClass(el) {
             </li>
         </ul>
     </div>
-</div>
 
+
+</div>
 
 <table id="colset" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td id="col1">
-            <div id="main" class="reference corner-all">
+            <div id="main" class="corner-all">
+
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
+                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
                 
-                <div class='contribute-btn'>
-                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/ref/Constraints/bindable.adoc"'>
-                        <i class='fa fa-pencil-square-o'></i> Improve this doc
-                    </button>
+                    <div class="toc-item next-right"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span> >></a></div>
+                
+
+
+                <div class="project">
+                    <h1>3.1 Upgrading from Grails 4.0.x</h1>
+
+                    <p><strong>Version:</strong> 5.0.0.M1</p>
                 </div>
+
                 
 
-                <div class="sect1">
-<h2 id="_bindable">bindable</h2>
-<div class="sectionbody">
+                
+
+<h2 id="upgrading40x">3.1 Upgrading from Grails 4.0.x</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/upgrading/upgrading40x.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
 <div class="sect2">
-<h3 id="_purpose">Purpose</h3>
+<h3 id="_bump_up_grails_version">Bump up Grails Version</h3>
 <div class="paragraph">
-<p>Configure the bindability of a property.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_examples">Examples</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">salary <span class="key">bindable</span>: <span class="predefined-constant">false</span>
-firstName <span class="key">size</span>: <span class="integer">5</span>..<span class="integer">15</span>, <span class="key">bindable</span>: <span class="predefined-constant">true</span>
-department <span class="key">bindable</span>: <span class="predefined-constant">true</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_description">Description</h3>
-<div class="paragraph">
-<p>Set to <code>false</code> to indicate that a property is not to be automatically assigned a value during data binding.</p>
+<p>You will need to upgrade your Grails version defined in <code>gradle.properties</code> as:</p>
 </div>
 <div class="listingblock">
+<div class="title">gradle.properties</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">package</span> com.demo
-
-<span class="type">class</span> <span class="class">Employee</span> {
-    <span class="predefined-type">String</span> firstName
-    <span class="predefined-type">String</span> department
-    <span class="predefined-type">BigDecimal</span> salary
-
-    <span class="directive">static</span> constraints = {
-        department <span class="key">bindable</span>: <span class="predefined-constant">false</span>
-        salary <span class="key">bindable</span>: <span class="predefined-constant">false</span>
-    }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+grailsVersion=5.0.0.M1
+...</code></pre>
 </div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_apache_groovy_3_0_7">Apache Groovy 3.0.7</h3>
+<div class="paragraph">
+<p>Grails 5.0.0.M1 provide support for Groovy 3. We would recommend you to please check the <a href="https://groovy-lang.org/releasenotes/groovy-3.0.html">Release notes for Groovy 3</a> to update your application in case you are using a specific feature which might not work in Groovy 3.</p>
+</div>
+<div class="paragraph">
+<p>Define groovyVersion in <code>gradle.properties</code> to force the application to use Groovy 3.</p>
+</div>
+<div class="paragraph">
+<p>Grails 4.1 app&#8217;s <code>gradle.properties</code></p>
 </div>
 <div class="listingblock">
+<div class="title">gradle.properties</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">com.demo.Employee</span>
-
-<span class="keyword">def</span> employee = <span class="keyword">new</span> Employee()
-employee.firstName = <span class="string"><span class="delimiter">'</span><span class="content">Bill</span><span class="delimiter">'</span></span>
-employee.department = <span class="string"><span class="delimiter">'</span><span class="content">Percussion</span><span class="delimiter">'</span></span>
-employee.salary = <span class="float">42.0</span>
-
-<span class="comment">// department and salary will NOT be bound because they are configured as non-bindable in the Employee.constraints closure</span>
-employee.properties = [<span class="key">firstName</span>: <span class="string"><span class="delimiter">'</span><span class="content">William</span><span class="delimiter">'</span></span>,
-                       <span class="key">department</span>: <span class="string"><span class="delimiter">'</span><span class="content">Retired</span><span class="delimiter">'</span></span>,
-                       <span class="key">salary</span>: <span class="float">99.99</span>]
-
-<span class="keyword">assert</span> <span class="string"><span class="delimiter">'</span><span class="content">William</span><span class="delimiter">'</span></span> == employee.firstName
-<span class="keyword">assert</span> <span class="string"><span class="delimiter">'</span><span class="content">Percussion</span><span class="delimiter">'</span></span> == employee.department
-<span class="keyword">assert</span> <span class="float">42.0</span> == employee.salary</code></pre>
+<pre class="CodeRay highlight"><code data-lang="properties">...
+groovyVersion=3.0.7
+...</code></pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_bump_up_gorm_version">Bump up GORM Version</h3>
 <div class="paragraph">
-<p>Statically typed instance properties are bindable by default.  Properties which are not bindable by default are those related to transient fields, dynamically typed properties and static properties.</p>
+<p>If you were using <a href="http://gorm.grails.org">GORM</a>, you will need to update the version defined in <code>gradle.properties</code> as:</p>
 </div>
+<div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">...
+gormVersion=7.1.0.M5
+...</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_gorm_for_monogdb_sync_driver">GORM for MonogDB Sync Driver</h3>
 <div class="paragraph">
-<p>See the <a href="../../guide/theWebLayer.html#dataBinding">data binding</a> section for more details on data binding.</p>
+<p>The GORM for MongoDB is updated to support latest mongodb-driver-sync. If you are using GORM for MongoDB and doing something specific to MongoDB Driver or low level Mongo API then you might want to take a look at <a href="https://mongodb.github.io/mongo-java-driver/4.0/upgrading/">Upgrading to the 4.0 Driver</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bump_up_asset_pipeline_plugin_version">Bump up Asset Pipeline plugin version</h3>
+<div class="paragraph">
+<p>The previous version of asset-pipeline is not supported with Grails 4.1 as it is compiled with a version of Groovy which is binary incompatible with Groovy 3. So, please update the plugin version to 3.1.0.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_disabled_stringchararrayaccessor_by_default">Disabled StringCharArrayAccessor by default</h3>
+<div class="paragraph">
+<p>The previous version of Grails use the <code>StringCharArrayAccessor</code> which is enabled by default and provides optimized access to <code>java.lang.String</code> internals. In Grails 4.1 it is disabled by default but you can enable it by setting a system property with name <code>stringchararrayaccessor.disabled</code> and value <code>false</code>.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -208,17 +223,84 @@ employee.properties = [<span class="key">firstName</span>: <span class="string">
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-The bindable constraint must be assigned a literal boolean value.  Dynamic expressions are not valid values for the bindable constraint.  The value must be the literal <code>true</code> or <code>false</code>.
+Enabling StringCharArrayAccessor would show IllegalReflectiveAccess warnings as it uses reflection to do the optimizations.
 </td>
 </tr>
 </table>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_changes_in_profile_yml_and_feature_yml_files_in_grails_profiles">Changes in profile.yml and feature.yml files in Grails Profiles</h3>
 <div class="paragraph">
-<p>The bindable constraint must be applied in the constraints closure which is defined in the relevant class.  This means that bindable may not be used as a shared constraint.</p>
+<p>The format of how dependencies are defined in features and profiles has been changed. See the section on <a href="profiles.html">Application Profiles</a> for more information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deprecation_of_dot_navigation_of_grails_configuration">Deprecation of dot navigation of Grails configuration</h3>
+<div class="paragraph">
+<p>In order to reduce complexity, improve performance, and increase maintainability, accessing configuration through dot notation (config.a.b.c) has been deprecated. This functionality will be removed in a future release.</p>
+</div>
+<div class="paragraph">
+<p>Also, you would see a warning message if you are accessing configuration through the dot notation.</p>
+</div>
+<div class="paragraph">
+<p>The recommended way to access configuration is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">grailsApplication.config.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">hola</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)</code></pre>
 </div>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_deprecated_classes">Deprecated Classes</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://docs.grails.org/5.0.0.M1/api/org/grails/config/NavigableMap.html">org.grails.config.NavigableMap</a></p>
+</li>
+<li>
+<p><a href="http://docs.grails.org/5.0.0.M1/api/org/grails/config/NavigableMapConfig.html">org.grails.config.NavigableMapConfig</a></p>
+</li>
+<li>
+<p><a href="http://docs.grails.org/5.0.0.M1/api/org/grails/config/NavigableMapPropertySource.html">org.grails.config.NavigableMapPropertySource</a></p>
+</li>
+</ul>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_spring_5_3">Spring 5.3</h3>
+<div class="paragraph">
+<p>Grails 5.0.0.M1 is built on Spring 5.3.2 See the <a href="https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-5.x#upgrading-to-version-53">Upgrading to Spring 5.3</a>  if you are using Spring specific features.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_spring_boot_2_4">Spring Boot 2.4</h3>
+<div class="paragraph">
+<p>Grails 5.0.0.M1 updates to Spring Boot 2.4. Please check <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.4-Release-Notes">Spring Boot 2.4 Release Notes</a> for more information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_micronaut_2_0">Micronaut 2.0</h3>
+<div class="paragraph">
+<p>Grails 5.0.0.M1 is shipped with Micronaut 2.0. Please check the <a href="https://docs.micronaut.io/2.2.1/guide/index.html#upgrading">Upgrading to Micronaut 2.x</a> if you are using a specific feature.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_micronaut_for_spring_3_0_0">Micronaut for Spring 3.0.0</h3>
+<div class="paragraph">
+<p>Grails 5.0.0.M1 is updated to Micronaut for Spring 3.0.0, please check out <a href="https://github.com/micronaut-projects/micronaut-spring/releases/tag/v3.0.0">release notes</a> for more information.</p>
+</div>
+</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item prev-left"><a href="../../guide/gettingStarted.html">&lt;&lt; <strong>2</strong><span>Getting Started</span></a></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span> >></a></div>
+                
+                <div style="clear:both"></div>
             </div>
         </td>
         <td id="col2">
@@ -229,10 +311,8 @@ The bindable constraint must be assigned a literal boolean value.  Dynamic expre
                 </div>
                 <div class="menu">
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Command Line</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Command Line</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
                             
@@ -356,13 +436,11 @@ The bindable constraint must be assigned a literal boolean value.  Dynamic expre
                             <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Constraints</h1>
-                        <div class="menu-sub selected">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Constraints</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Constraints/Usage.html">Usage</a></div>
                             
                             
@@ -426,13 +504,11 @@ The bindable constraint must be assigned a literal boolean value.  Dynamic expre
                             <div class="menu-item"><a href="../../ref/Constraints/widget.html">widget</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Controllers</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Controllers</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Controllers/Usage.html">Usage</a></div>
                             
                             
@@ -511,13 +587,11 @@ The bindable constraint must be assigned a literal boolean value.  Dynamic expre
                             <div class="menu-item"><a href="../../ref/Controllers/withFormat.html">withFormat</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Database Mapping</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Database Mapping</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Database%20Mapping/Usage.html">Usage</a></div>
                             
                             
@@ -590,13 +664,11 @@ The bindable constraint must be assigned a literal boolean value.  Dynamic expre
                             <div class="menu-item"><a href="../../ref/Database%20Mapping/version.html">version</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Domain Classes</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Domain Classes</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Domain%20Classes/Usage.html">Usage</a></div>
                             
                             
@@ -783,13 +855,11 @@ The bindable constraint must be assigned a literal boolean value.  Dynamic expre
                             <div class="menu-item"><a href="../../ref/Domain%20Classes/withTransaction.html">withTransaction</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Plug-ins</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Plug-ins</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Plug-ins/Usage.html">Usage</a></div>
                             
                             
@@ -829,13 +899,11 @@ The bindable constraint must be assigned a literal boolean value.  Dynamic expre
                             <div class="menu-item"><a href="../../ref/Plug-ins/servlets.html">servlets</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Services</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Services</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
                             
                             
@@ -845,13 +913,11 @@ The bindable constraint must be assigned a literal boolean value.  Dynamic expre
                             <div class="menu-item"><a href="../../ref/Services/transactional.html">transactional</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Servlet API</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Servlet API</h1><div class="menu-sub">
+                        
                             
                             <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
                             </div>
@@ -865,7 +931,7 @@ The bindable constraint must be assigned a literal boolean value.  Dynamic expre
                             <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
                 </div>
@@ -879,8 +945,7 @@ The bindable constraint must be assigned a literal boolean value.  Dynamic expre
     
 </div>
 
-
-<script type="text/javascript" src="../../js/docs.js"></script>
+<script type="text/javascript" src="../js/docs.js"></script>
 
 </body>
 </html>
