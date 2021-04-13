@@ -82,9 +82,9 @@ task fetchGrailsSource {
 
         def zipFile = "${checkOutDir}/grails-src.zip"
 
-        def tag = System.getenv('TRAVIS_TAG')
-        if(tag) {
-            ant.get src: "https://github.com/grails/grails-core/archive/${tag}.zip", dest: zipFile, verbose: true
+        def grailsVersion = System.getenv('TARGET_GRAILS_VERSION')
+        if(grailsVersion) {
+            ant.get src: "https://github.com/grails/grails-core/archive/v${grailsVersion}.zip", dest: zipFile, verbose: true
         }
         else {
             ant.get src: "http://github.com/grails/grails-core/zipball/${githubBranch}", dest: zipFile, verbose: true
