@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>3 Upgrading from Grails 3.3.x 4.0.11</title>
+    <title>3 Upgrading from Grails 3.2.x 3.3.12</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.3.x</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.2.x</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -133,752 +133,518 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>3 Upgrading from Grails 3.3.x</h1>
+                    <h1>3 Upgrading from Grails 3.2.x</h1>
 
-                    <p><strong>Version:</strong> 4.0.11</p>
+                    <p><strong>Version:</strong> 3.3.12</p>
                 </div>
 
                 
 
                 
 
-<h1 id="upgrading">3 Upgrading from Grails 3.3.x</h1>
+<h1 id="upgrading">3 Upgrading from Grails 3.2.x</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/4.0.x/src/en/guide/upgrading.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/upgrading.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
 
 
-<div class="sect2">
-<h3 id="_bump_up_grails_version">Bump up Grails Version</h3>
 <div class="paragraph">
-<p>You will need to upgrade your Grails version defined in <code>gradle.properties</code>.</p>
+<p>Grails 3.3 includes several changes to dependencies and Event publishing that may require changes to your application if you are upgrading from Grails 3.2.x.</p>
 </div>
-<div class="paragraph">
-<p>Grails 3 app&#8217;s <code>gradle.properties</code></p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="properties">...
-grailsVersion=3.3.8
-...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Grails 4 app&#8217;s <code>gradle.properties</code></p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">...
-grailsVersion=4.0.0
-...</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_bump_up_gorm_version">Bump up GORM Version</h3>
-<div class="paragraph">
-<p>If you were using <a href="http://gorm.grails.org">GORM</a>, you will need to update the version defined in <code>gradle.properties</code>.</p>
-</div>
-<div class="paragraph">
-<p>Grails 3 app&#8217;s <code>gradle.properties</code></p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="properties">...
-gormVersion=6.1.10.RELEASE
-...</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Grails 4 app&#8217;s <code>gradle.properties</code></p>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="properties">...
-gormVersion=7.0.2
-...</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_move_gorm_dsl_entries_to_runtime_groovy">Move GORM DSL Entries to runtime.groovy</h3>
-<div class="paragraph">
-<p>GORM DSL entries should be move to <code>runtime.groovy</code>. For instance, using following GORM configuration in the <code>application.groovy</code> is not supported and will break the application:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails.gorm.default.mapping = {
-    id <span class="key">generator</span>: <span class="string"><span class="delimiter">'</span><span class="content">identity</span><span class="delimiter">'</span></span>
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_spring_5_and_spring_boot_2_1">Spring 5 and Spring Boot 2.1</h3>
-<div class="paragraph">
-<p>Grails 4.0 is built on Spring 5 and Spring Boot 2.1. See the <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.0-Migration-Guide">migration guide</a> and <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.1-Release-Notes">release notes</a> if you are using Spring specific features.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_hibernate_5_4_and_gorm_7_x">Hibernate 5.4 and GORM 7.x</h3>
-<div class="paragraph">
-<p>Grails 4.x supports a minimum version of Hibernate 5.4 and GORM 7.x. Several changes have been made to GORM to support the newer version of Hibernate and simplify GORM itself.</p>
-</div>
-<div class="paragraph">
-<p>The details of these changes are covered in the <a href="http://gorm.grails.org/7.0.x/hibernate/manual/index.html#upgradeNotes">GORM upgrade documentation</a>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_spring_boot_2_1_actuator">Spring Boot 2.1 Actuator</h3>
-<div class="paragraph">
-<p>Please check the <a href="http://docs.spring.io/spring-boot/docs/2.1.x/reference/html/production-ready-endpoints.html">Spring Boot Actuator</a> documentation since it has changed substantially from Spring Boot 1.5 the version Grails 3.x used.</p>
-</div>
-<div class="paragraph">
-<p>If you had configuration such as:</p>
-</div>
-<div class="listingblock">
-<div class="title">grails-app/conf/application.yml - Grails 3.3.x</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="yml"><span class="key">endpoints</span>:
-    <span class="key">enabled</span>: <span class="string"><span class="content">false</span></span>
-    <span class="key">jmx</span>:
-        <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span>
-        <span class="key">unique-names</span>: <span class="string"><span class="content">true</span></span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>replace it with:</p>
-</div>
-<div class="listingblock">
-<div class="title">grails-app/conf/application.yml - Grails 4.x</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="yml"><span class="key">spring</span>:
-    <span class="key">jmx</span>:
-        <span class="key">unique-names</span>: <span class="string"><span class="content">true</span></span>
-<span class="key">management</span>:
-    <span class="key">endpoints</span>:
-        <span class="key">enabled-by-default</span>: <span class="string"><span class="content">false</span></span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_spring_boot_developer_tools_and_spring_loaded">Spring Boot Developer Tools and Spring Loaded</h3>
-<div class="paragraph">
-<p>Previous versions of Grails used a reloading agent called <a href="https://github.com/spring-projects/spring-loaded">Spring Loaded</a>. Since this library is no longer maintained and does not support Java 11 support for Spring Loaded has been removed.</p>
-</div>
-<div class="paragraph">
-<p>As a replacement, Grails 4 applications include <a href="http://docs.spring.io/spring-boot/docs/2.1.x/reference/html/using-boot-devtools.html">Spring Boot Developer Tools</a> dependencies in the <code>build.gradle</code> build script. If you are migrating a Grails 3.x app, please include the following set of dependencies:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">.
-..
-...
-configurations {
-    developmentOnly
-    runtimeClasspath {
-        extendsFrom developmentOnly
-    }
-}
-
-dependencies {
-        developmentOnly(<span class="string"><span class="delimiter">&quot;</span><span class="content">org.springframework.boot:spring-boot-devtools</span><span class="delimiter">&quot;</span></span>)
-        ...
-        ..
-}
-...
-..
-.</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Also you should configure the necessary excludes for Spring Developer Tools in <code>application.yml</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">spring</span>:
-    <span class="key">devtools</span>:
-        <span class="key">restart</span>:
-            <span class="key">exclude</span>:
-                - <span class="string"><span class="content">grails-app/views/**</span></span>
-                - <span class="string"><span class="content">grails-app/i18n/**</span></span>
-                - <span class="string"><span class="content">grails-app/conf/**</span></span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>The above configuration prevents the server from restarting when views or message bundles are changed.</p>
-</div>
-<div class="admonitionblock note">
+<div class="admonitionblock tip">
 <table>
 <tr>
 <td class="icon">
-<i class="fa icon-note" title="Note"></i>
+<i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-You can use Spring Developer Tools in combination with a browser extension such as the <a href="https://chrome.google.com/webstore/detail/livereload/jnihajbhpnppcggbcgedagnkighmdlei">Chrome LiveReload extension</a> to get automatic browser
-refresh when you change anything in your Grails application.
+For information on upgrading from versions of Grails prior to Grails 3.2.x, see the <a href="http://docs.grails.org/3.2.x/guide/upgrading.html">Grails 3.2.x documentation on upgrading</a>
 </td>
 </tr>
 </table>
 </div>
-</div>
 <div class="sect2">
-<h3 id="_spring_boot_gradle_plugin_changes">Spring Boot Gradle Plugin Changes</h3>
+<h3 id="_gorm_6_1_upgrade">GORM 6.1 Upgrade</h3>
 <div class="paragraph">
-<p>Grails 4 is built on top of Spring Boot 2.1. Grails 3 apps were built on top of Spring Boot 1.x.</p>
+<p>GORM 6.1 <a href="http://gorm.grails.org/latest/hibernate/manual/index.html#upgradeNotes">includes changes</a> that may require you to change your application.</p>
 </div>
+<div class="sect3">
+<h4 id="_gorm_async_now_optional">GORM Async Now Optional</h4>
 <div class="paragraph">
-<p>Your Grails 3 app&#8217;s <code>build.gradle</code> may have such configuration:</p>
+<p>Notably <code>grails-datastore-gorm-async</code> is now optional and if you use the <code>task</code> method of GORM you will need to manually implement the <code>AsyncEntity</code> trait.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_domain_autowiring_disabled">Domain Autowiring Disabled</h4>
+<div class="paragraph">
+<p>Domain class autowiring is disabled by default due to its impact on performance. You can re-enable autowiring for all domains using the <a href="http://gorm.grails.org/latest/hibernate/manual/index.html#_the_default_mapping_constraints">Default Mapping</a> setting:</p>
 </div>
 <div class="listingblock">
-<div class="title">build.gradle</div>
+<div class="title">grails-app/conf/application.groovy</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">bootRun {
-    addResources = <span class="predefined-constant">true</span>
+<pre class="CodeRay highlight"><code data-lang="groovy">grails.gorm.default.mapping = {
+        autowire <span class="predefined-constant">true</span>
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You can turn it on only for one domain class:</p>
+</div>
+<div class="listingblock">
+<div class="title">grails-app/domain/demo/Book.groovy</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">Book</span> {
+    BookService bookService
+
+    <span class="predefined-type">String</span> name
+
+    <span class="directive">static</span> mapping {
+       autowire <span class="predefined-constant">true</span>
+    }
     ...
+    ..
+    .
 }</code></pre>
 </div>
 </div>
+</div>
+<div class="sect3">
+<h4 id="_flush_mode_now_commit_by_default">Flush Mode now COMMIT by Default</h4>
 <div class="paragraph">
-<p>Grails 4 apps are built on top of Spring Boot 2.1. Starting from Spring Boot 2.0, the <code>addResources</code> property no longer exists. Instead, you need to set the sourceResources property to the source set that you want to use. Typically, that’s <code>sourceSets.main</code>. This is described in the <a href="https://docs.spring.io/spring-boot/docs/2.1.x/gradle-plugin/reference/html/#running-your-application-reloading-resources">Spring Boot Gradle plugin’s documentation</a>.</p>
+<p>The default flush mode has been change to <code>COMMIT</code> due to the impact the previous flush mode <code>AUTO</code> has on read performance. You can switch back to <code>AUTO</code> use the <code>hibernate.flush.mode</code> setting in <code>application.yml</code></p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_transactionmanager_chaining_for_multiple_data_sources_disabled_by_default">TransactionManager Chaining for Multiple Data Sources Disabled by Default</h4>
+<div class="paragraph">
+<p>In previous versions of Grails for multiple data sources a best effort transaction chain was used to attempt to manage a transaction across all configured data sources.</p>
 </div>
 <div class="paragraph">
-<p>Your Grails 4 app&#8217;s <code>build.gradle</code> can be configured:</p>
+<p>As of Grails 3.3 this is disabled as it caused confusion since it isn&#8217;t a true XA implementation and also impacts performance as for every transaction you have a transaction for each data source bound regardless if that is the actual requirement.</p>
+</div>
+<div class="paragraph">
+<p>If your application depends on this feature you can re-enable it with the following configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="yaml"><span class="key">grails</span>:
+  <span class="key">transaction</span>:
+    <span class="key">chainedTransactionManager</span>:
+      <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span>
+      <span class="key">blacklistPattern</span>: <span class="string"><span class="content">'.*'</span></span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_tomcat_jdbc">Tomcat JDBC</h4>
+<div class="paragraph">
+<p>GORM 6.1 and above now supports multiple connection pool options, so the <code>tomcat-jdbc</code> dependency is now optional. If you are upgrading you may need to add it (or another pool implementation) to your <code>build.gradle</code>:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">bootRun {
-        sourceResources sourceSets.main
-    ...
+<pre class="CodeRay highlight"><code data-lang="groovy">runtime <span class="string"><span class="delimiter">'</span><span class="content">org.apache.tomcat:tomcat-jdbc</span><span class="delimiter">'</span></span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="__testmixin_testfor_etc_deprecated">@TestMixin, @TestFor etc. Deprecated</h3>
+<div class="paragraph">
+<p>Since Grails 3.3, the <a href="https://testing.grails.org">Grails Testing Support Framework</a> is used for all unit tests. The new testing framework is much simpler and provides a set of traits that improve readability, debugging and code completion. An example hello world test can be seen below:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">spock.lang.Specification</span>
+<span class="keyword">import</span> <span class="include">grails.testing.web.controllers.ControllerUnitTest</span>
+
+<span class="type">class</span> <span class="class">HelloControllerTests</span> <span class="directive">extends</span> Specification <span class="directive">implements</span> ControllerUnitTest&lt;HelloController&gt; {
+
+    <span class="type">void</span> <span class="string"><span class="delimiter">&quot;</span><span class="content">Test message action</span><span class="delimiter">&quot;</span></span>() {
+        <span class="key">when</span>:<span class="string"><span class="delimiter">&quot;</span><span class="content">The message action is invoked</span><span class="delimiter">&quot;</span></span>
+        controller.message()
+
+        <span class="key">then</span>:<span class="string"><span class="delimiter">&quot;</span><span class="content">Hello is returned</span><span class="delimiter">&quot;</span></span>
+        response.text == <span class="string"><span class="delimiter">'</span><span class="content">Hello</span><span class="delimiter">'</span></span>
+    }
 }</code></pre>
 </div>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_building_executable_jars_for_grails_plugins">Building executable jars for Grails Plugins</h3>
 <div class="paragraph">
-<p><a href="https://spring.io/blog/2017/04/05/spring-boot-s-new-gradle-plugin">Spring Boot&#8217;s new Gradle Plugin</a>:</p>
-</div>
-<div class="quoteblock">
-<blockquote>
-<div class="paragraph">
-<p>The bootRepackage task has been replaced with bootJar and bootWar tasks for building executable jars and wars respectively. Both tasks extend their equivalent standard Gradle jar or war task, giving you access to all of the usual configuration options and behaviour.</p>
-</div>
-</blockquote>
+<p>For more information on writing tests with Grails Testing Support see the <a href="https://testing.grails.org">dedicated documentation</a>.</p>
 </div>
 <div class="paragraph">
-<p>If you had configuration such as:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle | Grails 3</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// enable if you wish to package this plugin as a standalone application</span>
-bootRepackage.enabled = <span class="predefined-constant">false</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>replace it with:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle | Grails 4</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="comment">// enable if you wish to package this plugin as a standalone application</span>
-bootJar.enabled = <span class="predefined-constant">false</span></code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_upgrading_to_gradle_5">Upgrading to Gradle 5</h3>
-<div class="paragraph">
-<p>Grails 3 apps by default used <a href="http://gradle.org">Gradle</a> 3.5. Grails 4 apps use Gradle 5.</p>
-</div>
-<div class="paragraph">
-<p>To upgrade to Gradle 5 execute:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">./gradlew wrapper --gradle-version 5.0</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Due to changes in Gradle 5, <a href="https://docs.gradle.org/current/userguide/upgrading_version_4.html#rel5.0:pom_compile_runtime_separation">transitive dependencies are no longer resolved</a> for plugins. If your project makes use of a plugin that has transitive dependencies, you will need to add those explicitly to your <code>build.gradle</code> file.</p>
-</div>
-<div class="paragraph">
-<p>If you customized your app&#8217;s build, other migrations may be necessary. Please check
-<a href="https://docs.gradle.org/current/userguide/upgrading_version_4.html">Gradle Upgrading your build</a> documentation.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_h2_web_console">H2 Web Console</h3>
-<div class="paragraph">
-<p>Spring Boot 2.1 includes native support for the H2 database web console. Since this is already included in Spring Boot the equivalent feature has been removed from Grails. The H2 console is therefore now available at <code>/h2-console</code> instead of the previous URI of <code>/dbconsole</code>. See <a href="http://docs.spring.io/spring-boot/docs/2.1.x/reference/htmlsingle/#boot-features-sql-h2-console">Using H2’s Web Console</a> in the Spring Boot documentation for more information.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_upgrade_hibernate">Upgrade Hibernate</h3>
-<div class="paragraph">
-<p>If you were using GORM for Hibernate implementation in your Grails 3 app, you will need to upgrade to Hibernate 5.4.</p>
-</div>
-<div class="paragraph">
-<p>A Grails 3 <code>build.gradle</code> such as:</p>
+<p>To simplify upgrades you can can still use the previous AST transformation based framework by adding the following dependency to your Grails application:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
-...
-  compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails.plugins:hibernate5</span><span class="delimiter">&quot;</span></span>
-  compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.hibernate:hibernate-core:5.1.5.Final</span><span class="delimiter">&quot;</span></span>
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>will be in Grails 4:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
-...
-  compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails.plugins:hibernate5</span><span class="delimiter">&quot;</span></span>
-  compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.hibernate:hibernate-core:5.4.0.Final</span><span class="delimiter">&quot;</span></span>
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails:grails-test-mixins:3.3.0</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_migrating_to_geb_2_3">Migrating to Geb 2.3</h3>
+<h3 id="_default_logger_name">Default Logger Name</h3>
 <div class="paragraph">
-<p>Geb 1.1.x (a JDK 1.7 compatible version) was the version shipped by default with Grails 3. Grails 4 is no longer compatible with Java 1.7. You should migrate to Geb 2.3.</p>
-</div>
-<div class="paragraph">
-<p>In Grails 3, if your build.gradle looks like:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
- testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails.plugins:geb:1.1.2</span><span class="delimiter">&quot;</span></span>
- testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-htmlunit-driver:2.47.1</span><span class="delimiter">&quot;</span></span>
- testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">net.sourceforge.htmlunit:htmlunit:2.18</span><span class="delimiter">&quot;</span></span>
-}</code></pre>
-</div>
+<p>In previous versions of Grails, if you did not specify a logger in the controller, service, etc, a <code>log</code> variable was injected for you. The naming convention of that logger was <code>grails.app.${artefactType}.package.class</code>. For example:</p>
 </div>
 <div class="paragraph">
-<p>In Grails 4, you should replace it with:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">buildscript {
-    repositories {
-       ...
-    }
-    dependencies {
-        ...
-        classpath <span class="string"><span class="delimiter">&quot;</span><span class="content">gradle.plugin.com.energizedwork.webdriver-binaries:webdriver-binaries-gradle-plugin:</span><span class="inline"><span class="inline-delimiter">$</span>webdriverBinariesVersion</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="1"></i><b>(1)</b>
-    }
-}
-...
-..
-
-repositories {
-  ...
-}
-
-apply <span class="key">plugin</span>:<span class="string"><span class="delimiter">&quot;</span><span class="content">idea</span><span class="delimiter">&quot;</span></span>
-...
-...
-apply <span class="key">plugin</span>:<span class="string"><span class="delimiter">&quot;</span><span class="content">com.energizedwork.webdriver-binaries</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="1"></i><b>(1)</b>
-
-
-dependencies {
-...
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails.plugins:geb</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="4"></i><b>(4)</b>
-    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-chrome-driver:</span><span class="inline"><span class="inline-delimiter">$</span>seleniumVersion</span><span class="delimiter">&quot;</span></span>  <i class="conum" data-value="5"></i><b>(5)</b>
-    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-firefox-driver:</span><span class="inline"><span class="inline-delimiter">$</span>seleniumVersion</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="5"></i><b>(5)</b>
-    testRuntime <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-safari-driver:</span><span class="inline"><span class="inline-delimiter">$</span>seleniumSafariDriverVersion</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="5"></i><b>(5)</b>
-
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-remote-driver:</span><span class="inline"><span class="inline-delimiter">$</span>seleniumVersion</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="5"></i><b>(5)</b>
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-api:</span><span class="inline"><span class="inline-delimiter">$</span>seleniumVersion</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="5"></i><b>(5)</b>
-    testCompile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.seleniumhq.selenium:selenium-support:</span><span class="inline"><span class="inline-delimiter">$</span>seleniumVersion</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="5"></i><b>(5)</b>
-}
-
-webdriverBinaries {
-    chromedriver <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">$</span>chromeDriverVersion</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="2"></i><b>(2)</b>
-    geckodriver <span class="string"><span class="delimiter">&quot;</span><span class="inline"><span class="inline-delimiter">$</span>geckodriverVersion</span><span class="delimiter">&quot;</span></span> <i class="conum" data-value="3"></i><b>(3)</b>
-}
-
-tasks.withType(Test) {
-    systemProperty <span class="string"><span class="delimiter">&quot;</span><span class="content">geb.env</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">geb.env</span><span class="delimiter">'</span></span>)
-    systemProperty <span class="string"><span class="delimiter">&quot;</span><span class="content">geb.build.reportsDir</span><span class="delimiter">&quot;</span></span>, reporting.file(<span class="string"><span class="delimiter">&quot;</span><span class="content">geb/integrationTest</span><span class="delimiter">&quot;</span></span>)
-    systemProperty <span class="string"><span class="delimiter">&quot;</span><span class="content">webdriver.chrome.driver</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">webdriver.chrome.driver</span><span class="delimiter">'</span></span>)
-    systemProperty <span class="string"><span class="delimiter">&quot;</span><span class="content">webdriver.gecko.driver</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">System</span>.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">webdriver.gecko.driver</span><span class="delimiter">'</span></span>)
-}</code></pre>
-</div>
-</div>
-<div class="listingblock">
-<div class="title">gradle.properties</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="properties">gebVersion=2.3
-seleniumVersion=3.12.0
-webdriverBinariesVersion=1.4
-hibernateCoreVersion=5.1.5.Final
-chromeDriverVersion=2.44 <i class="conum" data-value="2"></i><b>(2)</b>
-geckodriverVersion=0.23.0 <i class="conum" data-value="3"></i><b>(3)</b>
-seleniumSafariDriverVersion=3.14.0</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td>Includes <a href="https://plugins.gradle.org/plugin/com.energizedwork.webdriver-binaries">Webdriver binaries Gradle plugin</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td>Set the appropriate <a href="http://chromedriver.chromium.org">Webdriver for Chrome version</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td>Set the appropriate <a href="https://github.com/mozilla/geckodriver/releases">Webdriver for Firefox version</a>.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td>Includes the <a href="https://github.com/grails3-plugins/geb">Grails Geb Plugin dependency</a> which has a transitive dependency to <code>geb-spock</code>. This is the dependency necessary to work with <a href="http://www.gebish.org">Geb</a> and Spock.</td>
-</tr>
-<tr>
-<td><i class="conum" data-value="5"></i><b>5</b></td>
-<td>Selenium and different driver dependencies.</td>
-</tr>
-</table>
+<p><code>grails.app.controllers.foo.bar.MyController</code></p>
 </div>
 <div class="paragraph">
-<p>Create also a <a href="http://www.gebish.org/manual/current/#configuration">Geb Configuration</a> file at <code>src/integration-test/resources/GebConfig.groovy</code>.</p>
+<p>To make the logger names more intuitive as well as to increase consistency between custom code, plugin dependencies, and third party libraries, the <code>grails.app.${artefactType}</code> convention was removed. The same class as above will now be referenced the same way as any standard class. The way the <code>log</code> variable gets injected was also changed to defer to the Slf4j transformation. That means it is no longer necessary to check <code>if (log.isDebugEnabled())</code>.</p>
 </div>
-<div class="listingblock">
-<div class="title">src/integration-test/resources/GebConfig.groovy</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">import</span> <span class="include">org.openqa.selenium.chrome.ChromeDriver</span>
-<span class="keyword">import</span> <span class="include">org.openqa.selenium.chrome.ChromeOptions</span>
-<span class="keyword">import</span> <span class="include">org.openqa.selenium.firefox.FirefoxDriver</span>
-<span class="keyword">import</span> <span class="include">org.openqa.selenium.firefox.FirefoxOptions</span>
-<span class="keyword">import</span> <span class="include">org.openqa.selenium.safari.SafariDriver</span>
-
-environments {
-
-    <span class="comment">// You need to configure in Safari -&gt; Develop -&gt; Allowed Remote Automation</span>
-    safari {
-        driver = { <span class="keyword">new</span> SafariDriver() }
-    }
-
-    <span class="comment">// run via “./gradlew -Dgeb.env=chrome iT”</span>
-    chrome {
-        driver = { <span class="keyword">new</span> ChromeDriver() }
-    }
-
-    <span class="comment">// run via “./gradlew -Dgeb.env=chromeHeadless iT”</span>
-    chromeHeadless {
-        driver = {
-            ChromeOptions o = <span class="keyword">new</span> ChromeOptions()
-            o.addArguments(<span class="string"><span class="delimiter">'</span><span class="content">headless</span><span class="delimiter">'</span></span>)
-            <span class="keyword">new</span> ChromeDriver(o)
-        }
-    }
-
-    <span class="comment">// run via “./gradlew -Dgeb.env=firefoxHeadless iT”</span>
-    firefoxHeadless {
-        driver = {
-            FirefoxOptions o = <span class="keyword">new</span> FirefoxOptions()
-            o.addArguments(<span class="string"><span class="delimiter">'</span><span class="content">-headless</span><span class="delimiter">'</span></span>)
-            <span class="keyword">new</span> FirefoxDriver(o)
-        }
-    }
-
-    <span class="comment">// run via “./gradlew -Dgeb.env=firefox iT”</span>
-    firefox {
-        driver = { <span class="keyword">new</span> FirefoxDriver() }
-    }
-}</code></pre>
-</div>
+<div class="paragraph">
+<p>The downside of this change is that it isn&#8217;t immediately simple to set up the same logging configuration for all controllers, for example. We think this can be solved with a package naming strategy that represents what your requirements are.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_deprecated_classes">Deprecated classes</h3>
+<h3 id="_dependency_alterations">Dependency Alterations</h3>
 <div class="paragraph">
-<p>The following classes, which were deprecated in Grails 3.x, have been removed in Grails 4. Please, check the list below to find a suitable replacement:</p>
+<p>In an effort to trim the size of the produced WAR file by Grails several dependencies are no longer resolved transtively including:</p>
 </div>
-<table class="tableblock frame-all grid-all stretch">
+<div class="ulist">
+<ul>
+<li>
+<p><code>commons-lang</code></p>
+</li>
+<li>
+<p><code>gson</code></p>
+</li>
+<li>
+<p><code>aspectjweaver</code></p>
+</li>
+<li>
+<p><code>aspectjrt</code></p>
+</li>
+<li>
+<p><code>ehcache</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you are upgrading and have referenced any of these dependencies in your application you may need to alter your build to reference them.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_spring_boot_1_5_x">Spring Boot 1.5.x</h3>
+<div class="paragraph">
+<p>Spring Boot 1.5.x removes a number of deprecated classes, notably several of the classes within the <code>org.springframework.boot.context.embedded</code> package.</p>
+</div>
+<div class="paragraph">
+<p>If your application is referencing any of the classes within this package you will need to alter your imports to use <code>org.springframework.boot.web.servlet</code> instead.</p>
+</div>
+<div class="paragraph">
+<p>All classes in the <code>org.springframework.boot.context.web</code> package have been deprecated and relocated per the Spring Boot 1.4 Release Notes.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reactor_2_x_deprecated_and_removed">Reactor 2.x Deprecated and Removed</h3>
+<div class="paragraph">
+<p>Since Reactor 2.x is no longer being maintained and a new <a href="https://async.grails.org/latest/api/grails/events/bus/EventBus.html">EventBus</a> abstraction has been implemented, Reactor 2.x and all its dependencies have been removed.</p>
+</div>
+<div class="paragraph">
+<p>A compatibility layer has been provided to allow classes compiled with the previous version that uses Reactor to run, however all plugins and application code should be re-compiled and direct references to Reactor 2.x should be removed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_externalized_plugins">Externalized Plugins</h3>
+<div class="paragraph">
+<p>Several plugins and libraries have been separated from Grails core into standalone projects. The following table summarizes the previous artefact id, the new artefact id and the location of the new sources:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Externalized Plugins</caption>
 <colgroup>
-<col style="width: 50%;">
-<col style="width: 50%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
 </colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Sources</th>
+<th class="tableblock halign-left valign-top">Previous Artefact ID</th>
+<th class="tableblock halign-left valign-top">New Artefact ID</th>
+</tr>
+</thead>
 <tbody>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Removed Class</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Alternative</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/grails/grails-gsp">GSP</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails:grails-plugin-gsp</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.plugins:gsp</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.UniqueConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.builtin.UniqueConstraint</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/grails-plugins/grails-plugin-converters">Converters</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails:grails-plugin-converters</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.plugins:converters</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.util.BuildScope</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/grails/grails-async">Async</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails:grails-plugin-async</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.plugins:async</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.transaction.GrailsTransactionTemplate</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.gorm.transactions.GrailsTransactionTemplate</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/grails/grails-async">Events</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails:grails-plugin-events</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.plugins:events</code></p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.transaction.transform.RollbackTransform</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.transactions.transform.RollbackTransform</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.transaction.NotTransactional</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.gorm.transactions.NotTransactional</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.transaction.Rollback</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.gorm.transactions.Rollback</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.transaction.Transactional</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.gorm.transactions.Transactional</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.config.FlatConfig</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.core.metaclass.MetaClassEnhancer</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Use traits instead.</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.core.util.ClassPropertyFetcher</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.mapping.reflect.ClassPropertyFetcher</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.transaction.transform.TransactionalTransform</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.transactions.transform.TransactionalTransform</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.core.ComponentCapableDomainClass</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.core.GrailsDomainClassProperty</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Use the <code>org.grails.datastore.mapping.model.MappingContext</code> API instead</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.core.DefaultGrailsDomainClassProperty</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.core.MetaGrailsDomainClassProperty</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.core.support.GrailsDomainConfigurationUtil</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Use the <code>org.grails.datastore.mapping.model.MappingContext</code> and <code>org.grails.datastore.mapping.model.MappingFactory</code> APIs instead</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.plugins.domain.DomainClassPluginSupport</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.plugins.domain.support.GormApiSupport</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.plugins.domain.support.GrailsDomainClassCleaner</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Handled by <code>org.grails.datastore.mapping.model.MappingContext</code> now</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.validation.AbstractConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Use <code>org.grails.datastore.gorm.validation.constraints.AbstractConstraint</code> instead</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.validation.AbstractVetoingConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"> <code>org.grails.datastore.gorm.validation.constraints.AbstractVetoingConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.validation.CascadingValidator</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.gorm.validation.CascadingValidator</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.validation.ConstrainedProperty</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.gorm.validation.ConstrainedProperty</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.validation.Constraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.gorm.validation.Constraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.validation.ConstraintFactory</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.factory.ConstraintFactory</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.validation.VetoingConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.gorm.validation.VetoingConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.validation.ConstraintException</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.BlankConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.BlankConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.ConstrainedPropertyBuilder</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.builder.ConstrainedPropertyBuilder</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.ConstraintDelegate</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.ConstraintsEvaluatorFactoryBean</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.eval.ConstraintsEvaluator</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.CreditCardConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.CreditCardConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.DefaultConstraintEvaluator</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.eval.DefaultConstraintEvaluator</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.DomainClassPropertyComparator</code></p></td>
-<td class="tableblock halign-left valign-top"></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.EmailConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.EmailConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.GrailsDomainClassValidator</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.gorm.validation.PersistentEntityValidator</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.InListConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.InListConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.MatchesConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.MatchesConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.MaxConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.MaxConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.MaxSizeConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.MaxSizeConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.MinConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.MinConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.MinSizeConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.MinSizeConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.NotEqualConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.NotEqualConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.NullableConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.NullableConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.RangeConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.RangeConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.ScaleConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.ScaleConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.SizeConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.SizeConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.UrlConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.UrlConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.ValidatorConstraint</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.datastore.gorm.validation.constraints.ValidatorConstraint</code></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.routines.DomainValidator</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Replaced by newer version of commons-validation</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.routines.InetAddressValidator</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Replaced by newer version of commons-validation</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.routines.RegexValidator</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Replaced by newer version of commons-validation</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.routines.ResultPair</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Replaced by newer version of commons-validation</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails.validation.routines.UrlValidator</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Replaced by newer version of commons-validation</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>grails.web.JSONBuilder</code></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><code>groovy.json.StreamingJsonBuilder</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://github.com/grails-plugins/grails-test-mixin-plugin">Testing Mixin</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails:grails-plugin-testing</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>org.grails:grails-test-mixins</code></p></td>
 </tr>
 </tbody>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_grails_java8">Grails-Java8</h3>
+<h3 id="_new_cache_plugin">New Cache Plugin</h3>
 <div class="paragraph">
-<p>For those who have added a dependency on the <code>grails-java8</code> plugin, all you should need to do is simply remove the dependency. All of the classes in the plugin have been moved out to their respective projects.</p>
+<p>The Cache plugin has been re-written to no longer use Spring proxies but AST transformations instead.</p>
+</div>
+<div class="paragraph">
+<p>This improves startup and runtime performance, however one caveat is controller action response caching is no longer supported.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_profiles_deprecation">Profiles Deprecation</h3>
+<h3 id="_grails_domain_class_api_deprecated">Grails Domain Class API Deprecated</h3>
 <div class="paragraph">
-<p>A few of the profiles supported in Grails 3.x will no longer be maintained going forward and as a result it is no longer possible to create applications when them in the shorthand form. When upgrading existing projects, it will be necessary to supply the version for these profiles.</p>
+<p>The legacy classes that represent domain classes and their properties have been deprecated in favor of the mapping context API.</p>
+</div>
+<div class="paragraph">
+<p>The reason for this is to avoid duplicate parsing of the same class data between GORM and Grails and reduce overall startup time.</p>
+</div>
+<div class="paragraph">
+<p>The internal implementation of the methods in those classes now delegates to the mapping context. Due to that change, information about your domain classes is not available until the application context is available.</p>
+</div>
+<div class="paragraph">
+<p>In previous versions of Grails it was possible to access <a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClass.html">GrailsDomainClass</a> instances and inspect the <a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClassProperty.html">GrailsDomainClassProperty</a> properties inside of the <code>doWithSpring</code> method in a plugin, for example.</p>
+</div>
+<div class="paragraph">
+<p>If you have code that follows that example, an error will be thrown that looks like "The method &#8230;&#8203; cannot be accessed before GORM has initialized". The solution is to move any logic that executes before the context is available to somewhere else that executes after the context is available.</p>
+</div>
+<div class="paragraph">
+<p>All code that uses the <a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClass.html">GrailsDomainClass</a> or <a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClassProperty.html">GrailsDomainClassProperty</a> classes should be re-written to use the mapping context api.</p>
+</div>
+<div class="paragraph">
+<p>To get started, inject the <code>grailsDomainClassMappingContext</code> bean. See the api documentation for more information on the <a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/MappingContext.html">MappingContext</a>, <a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/PersistentEntity.html">PersistentEntity</a> (GrailsDomainClass), and <a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/PersistentProperty.html">PersistentProperty</a> (GrailsDomainClassProperty).</p>
+</div>
+<div class="paragraph">
+<p>The following table summarizes the deprecations:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 2. Deprecated Grails Domain Class API</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Deprecated Class or Interface</th>
+<th class="tableblock halign-left valign-top">Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClass.html">GrailsDomainClass</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/PersistentEntity.html">PersistentEntity</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/core/GrailsDomainClassProperty.html">GrailsDomainClassProperty</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/PersistentProperty.html">PersistentProperty</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>The <code>GrailsDomainClassProperty</code> interface had many more methods to evaluate the type of the property such as <code>isOneToOne</code>, <code>isOneToMany</code> etc. and while <code>PersistentProperty</code> does not provide direct equivalents you can use <code>instanceof</code> as a replacement using one of the subclasses found in the <a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/model/types/package-summary.html">org.grails.datastore.mapping.model.types</a> package.</p>
+</div>
+<div class="paragraph">
+<p>The following table summarizes this:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 3. Deprecated GrailsDomainClassProperty method replacements</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Deprecated Class or Interface</th>
+<th class="tableblock halign-left valign-top">Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isAssociation()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>property instanceof Association</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isOneToOne()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>property instanceof OneToOne</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isManyToOne()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>property instanceof ManyToOne</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isEmbedded()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>property instanceof Embedded</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isManyToMany()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>property instanceof ManyToMany</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>isBasicCollectionType()</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>property instanceof Basic</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_grails_validator_and_constrainedproperty_api_deprecated">Grails Validator and ConstrainedProperty API Deprecated</h3>
+<div class="paragraph">
+<p>Grails' previous validation API (part of the <code>grails.validation</code> package) has been externalized into a separate project not part of the <code>grails-datastore-gorm-validation</code> dependency.</p>
+</div>
+<div class="paragraph">
+<p>This means that some interfaces previously part of Grails core are deprecated and the replacment in the external project should be used, including:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 4. Deprecated Grails Validator Classes</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Deprecated Class or Interface</th>
+<th class="tableblock halign-left valign-top">Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/org/grails/validation/GrailsDomainClassValidator.html">GrailsDomainClassValidator</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/validation/PersistentEntityValidator.html">PersistentEntityValidator</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/validation/CascadingValidator.html">CascadingValidator</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/validation/CascadingValidator.html">CascadingValidator</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/validation/ConstrainedProperty.html">ConstrainedProperty</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/validation/ConstrainedProperty.html">ConstrainedProperty</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/validation/Constraint.html">Constraint</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/validation/Constraint.html">Constraint</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/validation/AbstractConstraint.html">AbstractConstraint</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/org/grails/datastore/gorm/validation/constraints/AbstractConstraint.html">AbstractConstraint</a></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Generally all classes within the <code>org.grails.validation</code> package are now deprecated.</p>
+</div>
+<div class="paragraph">
+<p>To register a custom constraint you should now use the <a href="http://gorm.grails.org/latest/api/org/grails/datastore/gorm/validation/constraints/registry/ConstraintRegistry.html">ConstraintRegistry</a> interface instead.</p>
+</div>
+<div class="paragraph">
+<p>The default <a href="http://gorm.grails.org/latest/api/org/grails/datastore/mapping/validation/ValidatorRegistry.html">ValidatorRegistry</a> implements the <code>ConstraintRegistry</code> interface and can be autowired into any controller or service by declaring the following property:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">ValidatorRegistry gormValidatorRegistry
+...
+gormValidatorRegistry.addConstraint(MyConstraint)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_grails_transactional_ast_transforms_deprecated">Grails' Transactional AST Transforms Deprecated</h3>
+<div class="paragraph">
+<p>The transaction management AST transforms that shipped as part of Grails have been ported to GORM and improved to make it possible to use them outside of Grails.</p>
+</div>
+<div class="paragraph">
+<p>With this in mind Grails' versions of <code>@Transactional</code> and <code>@Rollback</code> found within the <code>grails.transaction</code> package have been deprecated in favour of GORMs versions. You should change your imports to use the GORM version instead of the Grails version.</p>
+</div>
+<div class="paragraph">
+<p>The following table summarizes the deprecated classes and their replacements:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 5. Deprecated Grails Transaction Transforms</caption>
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Deprecated Class or Interface</th>
+<th class="tableblock halign-left valign-top">Replacement</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/transaction/Transactional.html">grails.transaction.Transactional</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/transactions/Transactional.html">grails.gorm.transactions.Transactional</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/transaction/Rollback.html">grails.transaction.Rollback</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/transactions/Rollback.html">grails.gorm.transactions.Rollback</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://docs.grails.org/latest/api/grails/transaction/NotTransactional.html">grails.transaction.NotTransactional</a></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="http://gorm.grails.org/latest/api/grails/gorm/transactions/NotTransactional.html">grails.gorm.transactions.NotTransactional</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_spring_proxies_for_services_no_longer_supported">Spring Proxies for Services No Longer Supported</h3>
+<div class="paragraph">
+<p>Earlier versions of Grails supported the use of Spring proxies for transaction management, but this support was disabled by default in Grails 3.2.x and developers encouraged to use the <code>@Transactional</code> AST transforms instead.</p>
+</div>
+<div class="paragraph">
+<p>In Grails 3.3 the support for Spring proxies has been dropped completely and you must use Grails' AST transforms.</p>
+</div>
+<div class="paragraph">
+<p>If you wish to continue to use Spring proxies for transaction management you will have to configure them manually use the appropriate Spring configuration.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_datasource_plugin_refactor">Datasource Plugin Refactor</h3>
+<div class="paragraph">
+<p>In previous versions of Grails and GORM the multiple data sources support relied on Grails' data sources plugin. The logic for configuring multiple data sources has moved to GORM and as a result of major changes to the dataSources plugin, beans for the lazy and unproxied representation of a dataSource are no longer available.</p>
+</div>
+<div class="paragraph">
+<p>The beans include:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>org.grails.profiles:angularjs</code> &#8594; <code>org.grails.profiles:angularjs:1.1.2</code></p>
+<p><code>dataSourceUnproxied</code></p>
 </li>
 <li>
-<p><code>org.grails.profiles:webpack</code> &#8594; <code>org.grails.profiles:webpack:1.1.6</code></p>
-</li>
-<li>
-<p><code>org.grails.profiles:react-webpack</code> &#8594; <code>org.grails.profiles:react-webpack:1.0.8</code></p>
+<p><code>dataSourceLazy</code></p>
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>If you are referencing these beans you will need to remove these references and unwrap the single <code>dataSource</code> proxy manually.</p>
+</div>
 </div>
 <div class="sect2">
-<h3 id="_scheduled_methods">Scheduled Methods</h3>
+<h3 id="_task_groups">Task Groups</h3>
 <div class="paragraph">
-<p>In Grails 3 no configuration or additional changes were necessary to use the Spring <code>@Scheduled</code> annotation. In Grails 4 you must apply the <code>@EnableScheduling</code> annotation to your application class in order for scheduling to work.</p>
+<p>Several tasks have had their groups changed to better reflect their purpose. If you&#8217;re having trouble finding a task, look through the different groups.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_legacy_json_builder_option_removed">Legacy JSON Builder Option Removed</h3>
+<div class="paragraph">
+<p>In a previous version of Grails, the JSON builder used by default for rendering JSON inline was changed. The previous behavior of using converters to build the JSON was able to be re-enabled by setting <code>grails.json.legacy.builder</code> to true. In Grails 3.3 that setting has been removed and it is no longer possible to use the legacy converter API to render JSON inline via the <code>render</code> method.</p>
 </div>
 </div>
 
@@ -1132,9 +898,6 @@ environments {
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Controllers/hasErrors.html">hasErrors</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Controllers/header.html">header</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Controllers/namespace.html">namespace</a>
