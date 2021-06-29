@@ -1,7 +1,7 @@
 buildscript {
     repositories {
         mavenLocal()
-        maven { url = "http://repo.grails.org/grails/core" }
+        maven { url = "https://repo.grails.org/grails/core" }
     }
 
     dependencies {
@@ -40,17 +40,17 @@ configurations {
 }
 
 gdoc2asciidoc {
-    apiLinks = ['org.hibernate':'http://docs.jboss.org/hibernate/orm/current/javadocs/',
-                'org.springframework.boot':'http://docs.spring.io/spring-boot/docs/current/api',
-                'org.springframework':'http://docs.spring.io/spring/docs/current/javadoc-api/',
-                'javax.servlet':'http://docs.oracle.com/javaee/1.4/api/',
-                'java.':'http://docs.oracle.com/javase/6/docs/api/',
-                'groovy.':'http://docs.groovy-lang.org/docs/latest/html/api/',
-                'org.codehaus.groovy.grails':"http://docs.grails.org/$githubBranch/api",
-                'grails.orm.':'http://gorm.grails.org/latest/api',
-                'grails.gorm.':'http://gorm.grails.org/latest/api',
-                'grails.':"http://docs.grails.org/$githubBranch/api",
-                'org.grails.':"http://docs.grails.org/$githubBranch/api"
+    apiLinks = ['org.hibernate':'https://docs.jboss.org/hibernate/orm/current/javadocs/',
+                'org.springframework.boot':'https://docs.spring.io/spring-boot/docs/current/api',
+                'org.springframework':'https://docs.spring.io/spring/docs/current/javadoc-api/',
+                'javax.servlet':'https://docs.oracle.com/javaee/1.4/api/',
+                'java.':'https://docs.oracle.com/javase/6/docs/api/',
+                'groovy.':'https://docs.groovy-lang.org/docs/latest/html/api/',
+                'org.codehaus.groovy.grails':"https://docs.grails.org/$githubBranch/api",
+                'grails.orm.':'https://gorm.grails.org/latest/api',
+                'grails.gorm.':'https://gorm.grails.org/latest/api',
+                'grails.':"https://docs.grails.org/$githubBranch/api",
+                'org.grails.':"https://docs.grails.org/$githubBranch/api"
     ]
     resourcesDir = file("resources")
     srcDir = file("src/en")
@@ -82,7 +82,7 @@ task fetchGrailsSource {
             ant.get src: "https://github.com/grails/grails-core/archive/${tag}.zip", dest: zipFile, verbose: true
         }
         else {
-            ant.get src: "http://github.com/grails/grails-core/zipball/${githubBranch}", dest: zipFile, verbose: true
+            ant.get src: "https://github.com/grails/grails-core/zipball/${githubBranch}", dest: zipFile, verbose: true
         }
     
         ant.unzip src: zipFile, dest: checkOutDir, {
@@ -159,13 +159,13 @@ task publishGuide(type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', '
     properties = [        
         'javaee': 'https://docs.oracle.com/javaee/7/api/',
         'javase': 'https://docs.oracle.com/javase/7/docs/api/',
-        'groovyapi': 'http://docs.groovy-lang.org/latest/html/gapi/',
+        'groovyapi': 'https://docs.groovy-lang.org/latest/html/gapi/',
         'springapi': 'https://docs.spring.io/spring/docs/current/javadoc-api/',
-        'asyncdocs': 'http://async.grails.org/latest',
-        'asyncApiDocs': 'http://async.grails.org/latest/api/',
-        'gspdocs': 'http://gsp.grails.org/latest',
-        'gspApiDocs': 'http://gsp.grails.org/latest/api/',
-        'gormApiDocs': 'http://gorm.grails.org/latest/api/',
+        'asyncdocs': 'https://async.grails.org/latest',
+        'asyncApiDocs': 'https://async.grails.org/latest/api/',
+        'gspdocs': 'https://gsp.grails.org/latest',
+        'gspApiDocs': 'https://gsp.grails.org/latest/api/',
+        'gormApiDocs': 'https://gorm.grails.org/latest/api/',
     ]
     macros = [ new grails.doc.macros.GspTagSourceMacro(searchDirs) ]
 }
