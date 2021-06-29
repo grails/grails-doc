@@ -1,0 +1,48 @@
+name: Java CI
+on:
+  push:
+    branches:
+      - master
+      - '[3-9]+.[3-9]+.x'
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: ['8']
+    env:
+      GIT_USER_NAME: puneetbehl
+      GIT_USER_EMAIL: behlp@objectcomputing.com
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GH_TOKEN }}
+      - uses: gradle/wrapper-validation-action@v1
+      - name: Set up JDK
+        uses: actions/setup-java@v1
+        with:
+          java-version: ${{ matrix.java }}
+      - name: Publish Documentation
+        run: |
+          ./gradlew --stop
+          (set -x; ./gradlew assemble -x apiDocs --info --stacktrace)
+      - name: Determine docs target repository
+        if: success()
+        uses: haya14busa/action-cond@v1
+        id: docs_target
+        with:
+          cond: ${{ github.repository == 'grails/grails-doc' }}
+          if_true: 'grails/grails-doc'
+          if_false: ${{ github.repository }}
+      - name: Publish to Github Pages
+        if: success()
+        uses: micronaut-projects/github-pages-deploy-action@master
+        env:
+          TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: build/docs
+          DOC_FOLDER: gh-pages
+          COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
+          COMMIT_NAME: ${{ env.GIT_USER_NAME }}

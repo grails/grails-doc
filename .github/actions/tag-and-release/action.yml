@@ -1,0 +1,16 @@
+name: 'Grails Docs Release Action'
+description: 'Update grailsVersion and add release tag'
+inputs:
+  token:
+    description: 'GitHub token to authenticate the requests'
+    required: true
+    default: ${{ github.token }}
+  grails_version:
+    description: 'Grails Release Version'
+    required: true
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.token }}
+    - ${{ inputs.grails_version }}
