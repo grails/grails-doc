@@ -61,7 +61,10 @@ jobs:
       - name: Publish Documentation
         run: |
           ./gradlew --stop
-          (set -x; ./gradlew assemble --info --stacktrace)
+          (set -x; ./gradlew assemble -PgithubBranch=$TARGET_BRANCH --info --stacktrace)
+        env:
+          TARGET_GRAILS_VERSION: ${{ github.event.inputs.grails_version }}
+          TARGET_BRANCH: ${{ steps.extract_branch.outputs.value }}
       - name: Upload Release Asset
         if: success() && github.event_name == 'workflow_dispatch'
         id: upload-release-asset
