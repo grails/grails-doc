@@ -9,10 +9,10 @@ echo "https://$GH_TOKEN:@github.com" > ~/.git-credentials
 export GRADLE_OPTS="-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
 EXIT_STATUS=0
 
-# if [[ $TRAVIS_BRANCH == 'master' ]]; then
-#   echo "Don't publish docs because branch is master"
-#   exit $EXIT_STATUS
-# fi
+ if [[ $TRAVIS_BRANCH == 'master' ]]; then
+   echo "Don't publish docs because branch is master"
+   exit $EXIT_STATUS
+ fi
 
 if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then
 
@@ -29,7 +29,7 @@ if [[ $TRAVIS_PULL_REQUEST == 'false' ]]; then
     zipName="grails-docs-$version"
     export RELEASE_FILE="${zipName}.zip"
 
-    publishLatest=true
+    publishLatest=false
     if $publishLatest ; then
       git rm -rf latest/
       mkdir -p latest

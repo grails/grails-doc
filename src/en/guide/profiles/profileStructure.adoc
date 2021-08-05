@@ -92,15 +92,29 @@ A map of scopes and dependencies to configure. The `excludes` scope can be used 
 [source,yaml]
 ----
 dependencies:
-    excludes:
-        - "org.grails:hibernate:*"
-    build:
-        - "org.grails:grails-gradle-plugin:$grailsVersion" 
-    compile:
-        - "org.springframework.boot:spring-boot-starter-logging"
-        - "org.springframework.boot:spring-boot-autoconfigure"
+    - scope: excludes
+      coords: "org.grails:hibernate:*"
+    - scope: build
+      coords: "org.grails:grails-gradle-plugin:$grailsVersion"
+    - scope: compile
+      coords: "org.springframework.boot:spring-boot-starter-logging"
+    - scope: compile
+      coords: "org.springframework.boot:spring-boot-autoconfigure"
 ----
 
+===== Excluding Transitive Dependencies
+
+To exclude transitive dependencies, define `excludes` key with a List of transitive dependencies Map of the dependency group, module, classifier, and `extension` as:
+
+[source,yaml]
+----
+dependencies:
+    - scope: testCompile
+      coords: org.spockframework:spock-core
+      excludes:
+        - group: org.codehaus.groovy
+          module: groovy-all
+----
 
 ==== 6) features.defaults
 
