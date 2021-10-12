@@ -1,5 +1,30 @@
-This section covers all the new features introduced in Grails 5.0.0.RC1
+This section covers all the new features introduced in Grails 5
 
+=== Overview
+This release includes support for Apache Groovy 3, Micronaut framework 3, Gradle 7, Spring Boot 2.5, Spring framework 5.3, and Spock 2.0.
 
+Apache Groovy 3 is a major highlight of this release. It comes with a brand new Parrot parser and a bunch of new features and capabilities. The Parrot parser supports additional syntax and language features, such as lambda expressions, default methods with interfaces, and a lot more. In addition, several new extension methods are added to existing Java classes. See the https://groovy-lang.org/releasenotes/groovy-3.0.html#releasenotes[release notes for Groovy 3.0] for details.
 
+Grails framework 5 updates to Spring 5.3.10 and Spring Boot 2.5.5. We strongly recommend checking the following Spring technologies release notes for more information.
+
+* https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.5-Release-Notes[Spring Boot 2.5]
+* https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-5.x#upgrading-to-version-53[Upgrading to Spring Framework 5.3]
+
+Grails framework 5 is built with Groovy 3.0.7, which requires JDK 8 as the minimum version of JRE. We have tested most Grails projects up to JDK 14.
+
+=== Important Changes
+
+==== Deprecating ‘dot’-Based Navigation
+The ‘dot’-based navigation to Grails config is deprecated and will be removed in the future.
+
+We request that you update your plugins to use configuration beans `@ConfigurationProperties` or `@Value`, or access configuration settings using `grailsApplication.config.getProperty(‘a.b.c’, String)` instead of `grailsApplication.config.a.b.c`. For more information, read the documentation at [URL].
+
+===== Default Autowire By Type
+In previous versions, the beans inside the Grails DataService were autowire by name, but this is changed to autowire by type in Grails framework 5. Use the Spring `@Qualifier` annotation to autowire by name. For details, see the Spring documentation for Fine-tuning Annotation Based Autowiring with Qualifiers.
+
+==== Grails Gradle Plugin
+The Grails Gradle Plugin is moved out of grails-core and may follow separate versioning, so you should decouple the `grailsVersion` Gradle property from `grailsGradlePluginVersion` in existing applications.
+
+==== Grails Gradle Publish Plugin Removed
+The Grails Gradle Publish plugin used the Bintray API to publish artifacts. However, after the JFrog shutdown of Bintray, this stopped working. We have removed this plugin from the new Grails Plugin applications.
 

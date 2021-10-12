@@ -88,6 +88,46 @@ Adds Quartz job scheduling features
     Closure doWithSpring()......
 ----
 
+==== Plugin Configuration
+
+Instead of directly accessing Grails configuration as `grailsApplication.config.mail.hostName`, use a Spring Boot configuration bean (or a POJO) annotated with {springbootapi}/org/springframework/boot/context/properties/ConfigurationProperties.html[ConfigurationProperties] annotation. Here is an example plugin configuration:
+
+_./src/main/groovy/example/MailPluginConfiguration.groovy_
+[source,groovy]
+```
+package example
+
+import org.springframework.boot.context.properties.ConfigurationProperties
+
+@ConfigurationProperties(prefix = "mail")
+class MailPluginConfiguration {
+
+    String hostName
+    int port
+    String from
+}
+
+```
+
+You can inject the `MailPluginConfiguration` bean into your bean like any other bean.
+
+_./grails-app/services/example/MailService.groovy_
+[source,groovy]
+```
+package example
+
+class MailService {
+
+    MainPluginConfiguration mailPluginConfiguration
+
+    void sendMail() {
+
+    }
+
+}
+```
+
+Please read the {springBootReference}/html/features.html#features.external-config[Spring Boot Externalized Configuration] section for more information.
 
 ==== Installing Local Plugins
 
