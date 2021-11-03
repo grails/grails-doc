@@ -36,7 +36,8 @@ class ExampleSpec extends Specification {
 
 The `Rollback` annotation ensures that each test method runs in a transaction that is rolled back. Generally this is desirable because you do not want your tests depending on order or application state.
 
-In Grails 3.0 tests rely on `grails.transaction.Rollback` annotation to bind the session in integration tests. Though each test method transaction is rolled back, the `setup()` method uses a separate transaction that is not rolled back.
+In Grails 3.0 tests rely on `grails.transaction.Rollback` annotation to bind the session in integration tests. Though each test method transaction is rolled back, the `setup()` method uses a separate transaction that is not rolled back and the `setup()` method will be executed automatically when the tests is executed.
+
 Data will persist to the database and will need to be cleaned up manually if `setup()` sets up data and persists them as shown in the below sample:
 
 [source,groovy]
@@ -72,6 +73,11 @@ import spock.lang.*
 @Integration
 @Rollback
 class BookSpec extends Specification {
+    
+    void setup() {
+        // Do not use this method
+        // new Book(name: 'Grails in Action').save(flush: true)
+    }
 
     void setupData() {
         // Below line would roll back
