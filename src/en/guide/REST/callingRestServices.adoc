@@ -22,7 +22,7 @@ There are a few ways by which you can obtain a reference to a https://docs.micro
     List<Album> searchWithApi(String searchTerm) {
         String baseUrl = "https://itunes.apple.com/"
 
-        HttpClient client = HttpClient.create(baseUrl.toURL()).toBlocking() //<1>
+        BlockingHttpClient client = HttpClient.create(baseUrl.toURL()).toBlocking() //<1>
 
         HttpRequest request = HttpRequest.GET("/search?limit=25&media=music&entity=album&term=${searchTerm}")
         HttpResponse<String> resp = client.exchange(request, String)
