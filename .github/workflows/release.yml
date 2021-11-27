@@ -59,9 +59,9 @@ jobs:
           draft: false
           prerelease: ${{ env.BETA }}
       - name: Publish Documentation
-        run: |
-          ./gradlew --stop
-          (set -x; ./gradlew assemble -PgithubBranch=$TARGET_BRANCH --info --stacktrace)
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: assemble -PgithubBranch=${{ steps.extract_branch.outputs.value }}
         env:
           TARGET_GRAILS_VERSION: ${{ github.event.inputs.grails_version }}
           TARGET_BRANCH: ${{ steps.extract_branch.outputs.value }}
