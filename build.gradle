@@ -164,15 +164,15 @@ task publishGuide(type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', '
     properties = [
         'javaee': 'https://docs.oracle.com/javaee/7/api/',
         'javase': 'https://docs.oracle.com/javase/7/docs/api/',
-        'groovyapi': 'http://docs.groovy-lang.org/latest/html/gapi/',
+        'groovyapi': 'https://docs.groovy-lang.org/latest/html/gapi/',
         'springapi': 'https://docs.spring.io/spring/docs/current/javadoc-api/',
-        'asyncdocs': 'http://async.grails.org/latest',
-        'asyncApiDocs': 'http://async.grails.org/latest/api/',
-        'gspdocs': 'http://gsp.grails.org/latest',
-        'gspApiDocs': 'http://gsp.grails.org/latest/api/',
-        'gormApiDocs': 'http://gorm.grails.org/latest/api/',
-        'springbootapi' :'http://docs.spring.io/spring-boot/docs/2.1.x/api',
-        'springBootReference' :'http://docs.spring.io/spring-boot/docs/2.1.x/reference'
+        'asyncdocs': 'https://async.grails.org/latest',
+        'asyncApiDocs': 'https://async.grails.org/latest/api/',
+        'gspdocs': 'https://gsp.grails.org/latest',
+        'gspApiDocs': 'https://gsp.grails.org/latest/api/',
+        'gormApiDocs': 'https://gorm.grails.org/latest/api/',
+        'springbootapi' :'https://docs.spring.io/spring-boot/docs/2.1.x/api',
+        'springBootReference' :'https://docs.spring.io/spring-boot/docs/2.1.x/reference'
     ]
     macros = [ new grails.doc.macros.GspTagSourceMacro(searchDirs) ]
 }
@@ -245,7 +245,7 @@ class Snapshot implements Comparable<Snapshot> {
     }
 
     boolean isBuildSnapshot() {
-        text == "BUILD-SNAPSHOT"
+        text.endsWith("-SNAPSHOT")
     }
 
     boolean isReleaseCandidate() {
@@ -307,11 +307,16 @@ class SoftwareVersion implements Comparable<SoftwareVersion> {
         if (parts.length >= 3) {
             softVersion = new SoftwareVersion()
             softVersion.versionText = version
-            if (parts.length > 3) {
-                softVersion.snapshot = new Snapshot(parts[3])
-            }
             softVersion.major = parts[0].toInteger()
             softVersion.minor = parts[1].toInteger()
+            if (parts.length > 3) {
+                softVersion.snapshot = new Snapshot(parts[3])
+            } else if (parts[2].contains('-')) {
+                String[] subparts = parts[2].split("-")
+                softVersion.patch = subparts.first() as int
+                softVersion.snapshot = new Snapshot(subparts[1..-1].join("-"))
+                return softVersion
+            }
             softVersion.patch = parts[2].toInteger()
         }
         softVersion
