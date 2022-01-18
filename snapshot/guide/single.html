@@ -1505,7 +1505,7 @@ To decrease the amount of time it takes to run Grails scripts, use the interacti
 <div class="title">gradle.properties</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
-grailsVersion=5.0.0.RC1
+grailsVersion=5.1.1
 ...</code></pre>
 </div>
 </div>
@@ -1513,13 +1513,13 @@ grailsVersion=5.0.0.RC1
 <div class="sect2">
 <h3 id="_apache_groovy_3_0_7">Apache Groovy 3.0.7</h3>
 <div class="paragraph">
-<p>Grails 5.0.0.RC1 provide support for Groovy 3. We would recommend you to please check the <a href="https://groovy-lang.org/releasenotes/groovy-3.0.html">Release notes for Groovy 3</a> to update your application in case you are using a specific feature which might not work in Groovy 3.</p>
+<p>Grails 5.1.1 provide support for Groovy 3. We would recommend you to please check the <a href="https://groovy-lang.org/releasenotes/groovy-3.0.html">Release notes for Groovy 3</a> to update your application in case you are using a specific feature which might not work in Groovy 3.</p>
 </div>
 <div class="paragraph">
 <p>Define groovyVersion in <code>gradle.properties</code> to force the application to use Groovy 3.</p>
 </div>
 <div class="paragraph">
-<p>Grails 5.0 app&#8217;s <code>gradle.properties</code></p>
+<p>Grails 5.1 app&#8217;s <code>gradle.properties</code></p>
 </div>
 <div class="listingblock">
 <div class="title">gradle.properties</div>
@@ -1539,7 +1539,7 @@ groovyVersion=3.0.7
 <div class="title">gradle.properties</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="properties">...
-gormVersion=7.1.0.M5
+gormVersion=7.2.0
 ...</code></pre>
 </div>
 </div>
@@ -1553,7 +1553,7 @@ gormVersion=7.1.0.M5
 <div class="sect2">
 <h3 id="_bump_up_asset_pipeline_plugin_version">Bump up Asset Pipeline plugin version</h3>
 <div class="paragraph">
-<p>The previous version of asset-pipeline is not supported with Grails 5.0 as it is compiled with a version of Groovy which is binary incompatible with Groovy 3. So, please update the plugin version to 3.1.0.</p>
+<p>The previous version of asset-pipeline is not supported with Grails 5.0 as it is compiled with a version of Groovy which is binary incompatible with Groovy 3. So, please update the plugin version to 3.2.4.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1622,19 +1622,19 @@ Enabling StringCharArrayAccessor would show IllegalReflectiveAccess warnings as 
 <div class="sect2">
 <h3 id="_spring_boot_2_4">Spring Boot 2.4</h3>
 <div class="paragraph">
-<p>Grails 5.0.0.RC1 updates to Spring Boot 2.4. Please check <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.4-Release-Notes">Spring Boot 2.4 Release Notes</a> for more information.</p>
+<p>Grails 5.1.1 updates to Spring Boot 2.6. Please check <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.6-Release-Notes">Spring Boot 2.6 Release Notes</a> for more information.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_micronaut_2_0">Micronaut 2.0</h3>
+<h3 id="_micronaut_3_2_0">Micronaut 3.2.0</h3>
 <div class="paragraph">
-<p>Grails 5.0.0.RC1 is shipped with Micronaut 2.0. Please check the <a href="https://docs.micronaut.io/2.2.1/guide/index.html#upgrading">Upgrading to Micronaut 2.x</a> if you are using a specific feature.</p>
+<p>Grails 5.1.1 is shipped with Micronaut 3.2.0. Please check the <a href="https://docs.micronaut.io/3.2.0/guide/index.html#upgrading">Upgrading to Micronaut 3.x</a> if you are using a specific feature.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_micronaut_for_spring_3_0_0">Micronaut for Spring 3.0.0</h3>
+<h3 id="_micronaut_for_spring_4_0_1">Micronaut for Spring 4.0.1</h3>
 <div class="paragraph">
-<p>Grails 5.0.0.RC1 is updated to Micronaut for Spring 3.0.0, please check out <a href="https://github.com/micronaut-projects/micronaut-spring/releases/tag/v3.0.0">release notes</a> for more information.</p>
+<p>Grails 5.1.1 is updated to Micronaut for Spring 4.0.1, please check out <a href="https://github.com/micronaut-projects/micronaut-spring/releases/tag/v4.0.1">release notes</a> for more information.</p>
 </div>
 </div>
 
@@ -19882,11 +19882,11 @@ Note: TAR/ZIP distribution assembly has been removed from Grails 3.1.
 <p>This will produce a WAR file that can be deployed to a container, in the <code>build/libs</code> directory.</p>
 </div>
 <div class="paragraph">
-<p>Note that by default Grails will include an embeddable version of Tomcat inside the WAR file so that it is runnable (see the previous section), this can cause problems if you deploy to a different version of Tomcat. If you don&#8217;t intend to use the embedded container then you should change the scope of the Tomcat dependencies to <code>provided</code> prior to deploying to your production container in <code>build.gradle</code>:</p>
+<p>Note that by default Grails will include an embeddable version of Tomcat inside the WAR file so that it is runnable (see the previous section), this can cause problems if you deploy to a different version of Tomcat. If you don&#8217;t intend to use the embedded container then you should either remove the Tomcat dependencies or change the scope to <code>testImplementation</code> prior to deploying to your production container in <code>build.gradle</code>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">provided <span class="string"><span class="delimiter">&quot;</span><span class="content">org.springframework.boot:spring-boot-starter-tomcat</span><span class="delimiter">&quot;</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">testImplementation <span class="string"><span class="delimiter">&quot;</span><span class="content">org.springframework.boot:spring-boot-starter-tomcat</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
 </div>
 </div>
