@@ -90,3 +90,30 @@ Grails 5.1.1 is shipped with Micronaut 3.2.0. Please check the https://docs.micr
 ### Micronaut for Spring 4.0.1
 
 Grails 5.1.1 is updated to Micronaut for Spring 4.0.1, please check out https://github.com/micronaut-projects/micronaut-spring/releases/tag/v4.0.1[release notes] for more information.
+
+### Gradle 7.x
+
+#### Compile dependency configuration as well as others have been removed from Gradle 7.x. In previous version they were deprecated.
+
+Replace configurations:
+[source, properties]
+.build.gradle
+----
+...
+ compile -> implementation
+ testCompile -> testImplementation
+ runtime -> runtimeOnly
+...
+----
+
+NOTE: More information in Gradle upgrade docs https://docs.gradle.org/current/userguide/upgrading_version_6.html#sec:configuration_removal[Gradle upgrade docs]
+
+#### Plugins in multi-project setup
+
+If you have grails plugins as part of multi-project builds you should also replace the `compile` with `implementation` configuration.
+
+Additionally if your main application relied on the dependencies declared by the plugin you need to apply further changes.
+
+To make the dependencies available again you have to declare them with `api` configuration. You also have to apply the `java-library` gradle plugin in your plugin project.
+
+NOTE: More information https://docs.gradle.org/current/userguide/java_library_plugin.html[gradle java-library-plugin]
