@@ -315,6 +315,61 @@ Enabling StringCharArrayAccessor would show IllegalReflectiveAccess warnings as 
 <p>Grails 5.1.1 is updated to Micronaut for Spring 4.0.1, please check out <a href="https://github.com/micronaut-projects/micronaut-spring/releases/tag/v4.0.1">release notes</a> for more information.</p>
 </div>
 </div>
+<div class="sect2">
+<h3 id="_gradle_7_x">Gradle 7.x</h3>
+<div class="sect3">
+<h4 id="_compile_dependency_configuration_as_well_as_others_have_been_removed_from_gradle_7_x_in_previous_version_they_were_deprecated">Compile dependency configuration as well as others have been removed from Gradle 7.x. In previous version they were deprecated.</h4>
+<div class="paragraph">
+<p>Replace configurations:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">...
+ compile -&gt; implementation
+ testCompile -&gt; testImplementation
+ runtime -&gt; runtimeOnly
+...</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+More information in Gradle upgrade docs <a href="https://docs.gradle.org/current/userguide/upgrading_version_6.html#sec:configuration_removal">Gradle upgrade docs</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_plugins_in_multi_project_setup">Plugins in multi-project setup</h4>
+<div class="paragraph">
+<p>If you have grails plugins as part of multi-project builds you should also replace the <code>compile</code> with <code>implementation</code> configuration.</p>
+</div>
+<div class="paragraph">
+<p>Additionally if your main application relied on the dependencies declared by the plugin you need to apply further changes.</p>
+</div>
+<div class="paragraph">
+<p>To make the dependencies available again you have to declare them with <code>api</code> configuration. You also have to apply the <code>java-library</code> gradle plugin in your plugin project.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+More information <a href="https://docs.gradle.org/current/userguide/java_library_plugin.html">gradle java-library-plugin</a>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
 
 
 <h2 id="upgrading33x">3.2 Upgrading from Grails 3.3.x to Grails 4</h2>
