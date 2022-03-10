@@ -131,12 +131,34 @@ Please read the {springBootReference}/html/features.html#features.external-confi
 
 ==== Installing Local Plugins
 
-
-To make your plugin available for use in a Grails application run the `install` command:
+In order to install the Grails plugin to your local Maven, you could use Gradle https://docs.gradle.org/current/userguide/publishing_maven.html[Maven Publish] plugin. You may also need to configure the publishing extension as:
 
 [source,groovy]
 ----
-grails install
+publishing {
+    publications {
+        maven(MavenPublication) {
+            versionMapping {
+                usage('java-api') {
+                    fromResolutionOf('runtimeClasspath')
+                }
+                usage('java-runtime') {
+                    fromResolutionResult()
+                }
+            }
+            from components.java
+        }
+    }
+}
+----
+
+NOTE: Please refer to the Gradle Maven Publish plugin documentation for up-to-date information.
+
+To make your plugin available for use in a Grails application run the `./gradlew publishToMavenLocal` command:
+
+[source,bash]
+----
+./gradlew publishToMavenLocal
 ----
 
 This will install the plugin into your local Maven cache. Then to use the plugin within an application declare a dependency on the plugin in your `build.gradle` file and include `mavenLocal()` in your repositories hash:
