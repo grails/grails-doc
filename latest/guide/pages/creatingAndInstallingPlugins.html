@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>18.1 Creating and Installing Plugins 5.1.2</title>
+    <title>18.1 Creating and Installing Plugins 5.1.3</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>18.1 Creating and Installing Plugins</h1>
 
-                    <p><strong>Version:</strong> 5.1.2</p>
+                    <p><strong>Version:</strong> 5.1.3</p>
                 </div>
 
                 
@@ -333,11 +333,45 @@ class MailService {
 <div class="sect3">
 <h4 id="_installing_local_plugins">Installing Local Plugins</h4>
 <div class="paragraph">
-<p>To make your plugin available for use in a Grails application run the <code>install</code> command:</p>
+<p>In order to install the Grails plugin to your local Maven, you could use Gradle <a href="https://docs.gradle.org/current/userguide/publishing_maven.html">Maven Publish</a> plugin. You may also need to configure the publishing extension as:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails install</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">publishing {
+    publications {
+        maven(MavenPublication) {
+            versionMapping {
+                usage(<span class="string"><span class="delimiter">'</span><span class="content">java-api</span><span class="delimiter">'</span></span>) {
+                    fromResolutionOf(<span class="string"><span class="delimiter">'</span><span class="content">runtimeClasspath</span><span class="delimiter">'</span></span>)
+                }
+                usage(<span class="string"><span class="delimiter">'</span><span class="content">java-runtime</span><span class="delimiter">'</span></span>) {
+                    fromResolutionResult()
+                }
+            }
+            from components.java
+        }
+    }
+}</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Please refer to the Gradle Maven Publish plugin documentation for up-to-date information.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To make your plugin available for use in a Grails application run the <code>./gradlew publishToMavenLocal</code> command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="bash">./gradlew publishToMavenLocal</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -351,7 +385,7 @@ repositories {
     mavenLocal()
 }
 ...
-compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails.plugins:quartz:0.1</span><span class="delimiter">&quot;</span></span></code></pre>
+implementation <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails.plugins:quartz:0.1</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -418,7 +452,7 @@ In Grails 2.x plugins were packaged as ZIP files, however in Grails 3.x plugins 
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">grails {
     plugins {
-        compile project(<span class="string"><span class="delimiter">'</span><span class="content">:myplugin</span><span class="delimiter">'</span></span>)
+        implementation project(<span class="string"><span class="delimiter">'</span><span class="content">:myplugin</span><span class="delimiter">'</span></span>)
     }
 }</code></pre>
 </div>
@@ -561,7 +595,7 @@ Grails application running at <span class="key">http</span>:<span class="comment
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">compile project(<span class="string"><span class="delimiter">'</span><span class="content">:myplugin</span><span class="delimiter">'</span></span>)</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">implementation project(<span class="string"><span class="delimiter">'</span><span class="content">:myplugin</span><span class="delimiter">'</span></span>)</code></pre>
 </div>
 </div>
 <div class="paragraph">
