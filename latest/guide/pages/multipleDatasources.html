@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>4.4.5 Multiple Datasources 3.3.15</title>
+    <title>4.4.5 Multiple Datasources 5.2.1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.2.x</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from the previous versions</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -122,7 +122,7 @@ function addJsClass() {
             <div id="main" class="corner-all">
 
                 
-                    <div class="toc-item prev-left"><a href="../../guide/upgrading.html">&lt;&lt; <strong>3</strong><span>Upgrading from Grails 3.2.x</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/upgrading.html">&lt;&lt; <strong>3</strong><span>Upgrading from the previous versions</span></a></div>
                 
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>4.4.5 Multiple Datasources</h1>
 
-                    <p><strong>Version:</strong> 3.3.15</p>
+                    <p><strong>Version:</strong> 5.2.1</p>
                 </div>
 
                 
@@ -145,7 +145,7 @@ function addJsClass() {
 <h2 id="multipleDatasources">4.4.5 Multiple Datasources</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/conf/dataSource/multipleDatasources.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/5.2.x/src/en/guide/conf/dataSource/multipleDatasources.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -232,48 +232,6 @@ function addJsClass() {
                 <span class="key">password</span>: <span class="string"><span class="content">secret</span></span>
                 <span class="key">url</span>: <span class="string"><span class="content">jdbc:oracle:thin:@localhost:1521:lookup</span></span>
                 <span class="key">dbCreate</span>: <span class="string"><span class="content">update</span></span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or for <code>application.groovy</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">environments {
-    development {
-        dataSource {
-            dbCreate = <span class="string"><span class="delimiter">'</span><span class="content">create-drop</span><span class="delimiter">'</span></span>
-            url = <span class="string"><span class="delimiter">'</span><span class="content">jdbc:h2:mem:devDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE</span><span class="delimiter">'</span></span>
-        }
-    }
-    test {
-        dataSource {
-            dbCreate = <span class="string"><span class="delimiter">'</span><span class="content">create-drop</span><span class="delimiter">'</span></span>
-            url = <span class="string"><span class="delimiter">'</span><span class="content">jdbc:h2:mem:testDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE</span><span class="delimiter">'</span></span>
-        }
-    }
-    production {
-        dataSource {
-            dbCreate = <span class="string"><span class="delimiter">'</span><span class="content">update</span><span class="delimiter">'</span></span>
-            url = <span class="string"><span class="delimiter">'</span><span class="content">jdbc:h2:prodDb;MVCC=TRUE;LOCK_TIMEOUT=10000;DB_CLOSE_ON_EXIT=FALSE</span><span class="delimiter">'</span></span>
-            properties {
-                jmxEnabled = <span class="predefined-constant">true</span>
-                initialSize = <span class="integer">5</span>
-                ...
-            }
-        }
-        dataSources {
-            lookup {
-                dialect = <span class="string"><span class="delimiter">'</span><span class="content">org.hibernate.dialect.Oracle10gDialect</span><span class="delimiter">'</span></span>
-                driverClassName = <span class="string"><span class="delimiter">'</span><span class="content">oracle.jdbc.driver.OracleDriver</span><span class="delimiter">'</span></span>
-                username = <span class="string"><span class="delimiter">'</span><span class="content">lookup</span><span class="delimiter">'</span></span>
-                password = <span class="string"><span class="delimiter">'</span><span class="content">secret</span><span class="delimiter">'</span></span>
-                url = <span class="string"><span class="delimiter">'</span><span class="content">jdbc:oracle:thin:@localhost:1521:lookup</span><span class="delimiter">'</span></span>
-                dbCreate = <span class="string"><span class="delimiter">'</span><span class="content">update</span><span class="delimiter">'</span></span>
-            }
-        }
-    }
-}</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -491,7 +449,7 @@ zipCode.auditing.save()</code></pre>
 <p>The BE1PC implementation was added in Grails 2.3.6. . Before this change additional datasources didn&#8217;t take part in transactions initiated in Grails. The transactions in additional datasources were basically in auto commit mode. In some cases this might be the wanted behavior. One reason might be performance: on the start of each new transaction, the BE1PC transaction manager creates a new transaction to each datasource. It&#8217;s possible to leave an additional datasource out of the BE1PC transaction manager by setting <code>transactional = false</code> in the respective configuration block of the additional dataSource. Datasources with <code>readOnly = true</code> will also be left out of the chained transaction manager (since 2.3.7).</p>
 </div>
 <div class="paragraph">
-<p>By default, the BE1PC implementation will add all beans implementing the Spring <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api//org/springframework/transaction/PlatformTransactionManager.html">PlatformTransactionManager</a></code> interface to the chained BE1PC transaction manager. For example, a possible <code><a href="https://docs.spring.io/spring/docs/current/javadoc-api//org/springframework/jms/connection/JmsTransactionManager.html">JMSTransactionManager</a></code> bean in the Grails application context would be added to the Grails BE1PC transaction manager&#8217;s chain of transaction managers.</p>
+<p>By default, the BE1PC implementation will add all beans implementing the Spring <code><a href="https://docs.spring.io/spring/docs/5.3.8/javadoc-api//org/springframework/transaction/PlatformTransactionManager.html">PlatformTransactionManager</a></code> interface to the chained BE1PC transaction manager. For example, a possible <code><a href="https://docs.spring.io/spring/docs/5.3.8/javadoc-api//org/springframework/jms/connection/JmsTransactionManager.html">JMSTransactionManager</a></code> bean in the Grails application context would be added to the Grails BE1PC transaction manager&#8217;s chain of transaction managers.</p>
 </div>
 <div class="paragraph">
 <p>You can exclude transaction manager beans from the BE1PC implementation with this configuration option:</p>
@@ -515,14 +473,14 @@ zipCode.auditing.save()</code></pre>
 <p>When the Best Efforts 1PC pattern isn&#8217;t suitable for handling transactions across multiple transactional resources (not only datasources), there are several options available for adding XA/2PC support to Grails applications.</p>
 </div>
 <div class="paragraph">
-<p>The <a href="{springdocs}/transaction.html#transaction-application-server-integration">Spring transactions documentation</a> contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name <code>transactionManager</code> manually in <code>resources.groovy</code> or <code>resources.xml</code> file.</p>
+<p>The <a href="https://docs.spring.io/spring/docs/5.3.8//transaction.html#transaction-application-server-integration">Spring transactions documentation</a> contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name <code>transactionManager</code> manually in <code>resources.groovy</code> or <code>resources.xml</code> file.</p>
 </div>
 </div>
 
 
                 <div style="clear:both;margin-top:15px;"></div>
                 
-                    <div class="toc-item prev-left"><a href="../../guide/upgrading.html">&lt;&lt; <strong>3</strong><span>Upgrading from Grails 3.2.x</span></a></div>
+                    <div class="toc-item prev-left"><a href="../../guide/upgrading.html">&lt;&lt; <strong>3</strong><span>Upgrading from the previous versions</span></a></div>
                 
                     <div class="toc-item next-right"><a href="../../guide/commandLine.html"><strong>5</strong><span>The Command Line</span> >></a></div>
                 
@@ -769,6 +727,9 @@ zipCode.auditing.save()</code></pre>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Controllers/hasErrors.html">hasErrors</a>
+                            </div>
+                            
+                            <div class="menu-item"><a href="../../ref/Controllers/header.html">header</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Controllers/namespace.html">namespace</a>
