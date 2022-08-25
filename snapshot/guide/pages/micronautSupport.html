@@ -11,39 +11,32 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>The Grails Framework 4.1.2</title>
+    <title>1.1.2 Micronaut Parent Context 4.1.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
-    <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
     <script type="text/javascript">
-function addJsClass(el) {
+function addJsClass() {
     var classes = document.body.className.split(" ");
     classes.push("js");
     document.body.className = classes.join(" ");
 }
     </script>
-    <style>
-        .contribute-btn {
-            bottom: 0px;
-        }
-    </style>
 </head>
 
 <body class="body" onload="addJsClass();">
-
 <div id="navigation">
     <div class="navTitle">
         
         The Grails Framework
     </div>
-
     <div class="navLinks">
         <ul>
             <li>
                 <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
                     <a href="../../guide/index.html" class="button">Table of contents</a>
 
-                    <div id="nav-summary-childs">
+                    <div id="nav-summary-childs" style="display:none;">
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction</span></a>
                         </div>
@@ -119,96 +112,56 @@ function addJsClass(el) {
             </li>
         </ul>
     </div>
-</div>
 
+
+</div>
 
 <table id="colset" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td id="col1">
-            <div id="main" class="reference corner-all">
+            <div id="main" class="corner-all">
+
+                
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
+
                 
-                <div class='contribute-btn'>
-                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/4.0.x/src/en/ref/Domain Classes/withCriteria.adoc"'>
-                        <i class='fa fa-pencil-square-o'></i> Improve this doc
-                    </button>
-                </div>
+                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
                 
 
-                <div class="sect1">
-<h2 id="_withcriteria">withCriteria</h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="_purpose">Purpose</h3>
+
+                <div class="project">
+                    <h1>1.1.2 Micronaut Parent Context</h1>
+
+                    <p><strong>Version:</strong> 4.1.2</p>
+                </div>
+
+                
+
+                
+
+<h2 id="micronautSupport">1.1.2 Micronaut Parent Context</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/4.0.x/src/en/guide/introduction/whatsNew/micronautSupport.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
 <div class="paragraph">
-<p>Allows inline execution of Criteria queries. See the <a href="createCriteria.html">createCriteria</a> method for reference.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_return_value">Return value</h3>
-<div class="paragraph">
-<p>If no matching records are found, an empty List is returned.</p>
-</div>
-<div class="paragraph">
-<p>If a projection is specified:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>returns a single value if it only contains one field</p>
-</li>
-<li>
-<p>a List in case there are multiple fields in the projection</p>
-</li>
-</ul>
+<p><a href="https://micronaut.io">Micronaut</a> is now the parent application context of Grails thus allowing using many Micronaut features including the Micronaut <a href="https://docs.micronaut.io/latest/guide/index.html#httpClient">HTTP Client</a> and <a href="https://micronaut-projects.github.io/micronaut-kafka/latest/guide/">Kafka Client</a>.</p>
 </div>
 <div class="paragraph">
-<p>Otherwise, it will return a List of matched instances of the class calling withCriteria.</p>
+<p>Micronaut has also been used to improve startup and reduce overall memory consumption of Grails applications (along with associated improvements in Spring Boot 2.1).</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_examples">Examples</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> results = <span class="predefined-type">Book</span>.withCriteria {
-    <span class="keyword">def</span> now = <span class="keyword">new</span> <span class="predefined-type">Date</span>()
-    between(<span class="string"><span class="delimiter">'</span><span class="content">releaseDate</span><span class="delimiter">'</span></span>, now-<span class="integer">7</span>, now)
-    like(<span class="string"><span class="delimiter">'</span><span class="content">title</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">%Groovy%</span><span class="delimiter">'</span></span>)
-}</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_description">Description</h3>
-<div class="paragraph">
-<p>The <code>withCriteria</code> method allows the inline definition of <a href="http://gorm.grails.org/6.0.x/hibernate/manual/index.html#criteria">Criteria</a>. Arguments to the [<a href="http://grails.github.io/grails-data-mapping/latest/api/grails/orm/HibernateCriteriaBuilder.html" class="bare">http://grails.github.io/grails-data-mapping/latest/api/grails/orm/HibernateCriteriaBuilder.html</a>] can be passed as the first parameter:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> book = <span class="predefined-type">Book</span>.withCriteria(<span class="key">uniqueResult</span>: <span class="predefined-constant">true</span>) {
-    <span class="keyword">def</span> now = <span class="keyword">new</span> <span class="predefined-type">Date</span>()
-    between(<span class="string"><span class="delimiter">'</span><span class="content">releaseDate</span><span class="delimiter">'</span></span>, now-<span class="integer">7</span>, now)
-    like(<span class="string"><span class="delimiter">'</span><span class="content">title</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">%Groovy%</span><span class="delimiter">'</span></span>)
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Parameters:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>arguments</code> (optional) - A map of named arguments to be set on the Criteria instance</p>
-</li>
-<li>
-<p><code>closure</code> - A closure that defines the criteria</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
+
+
+                <div style="clear:both;margin-top:15px;"></div>
+                
+                    <div class="toc-item next-right"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span> >></a></div>
+                
+                <div style="clear:both"></div>
             </div>
         </td>
         <td id="col2">
@@ -219,10 +172,8 @@ function addJsClass(el) {
                 </div>
                 <div class="menu">
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Command Line</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Command Line</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
                             
@@ -346,13 +297,11 @@ function addJsClass(el) {
                             <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Constraints</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Constraints</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Constraints/Usage.html">Usage</a></div>
                             
                             
@@ -416,13 +365,11 @@ function addJsClass(el) {
                             <div class="menu-item"><a href="../../ref/Constraints/widget.html">widget</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Controllers</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Controllers</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Controllers/Usage.html">Usage</a></div>
                             
                             
@@ -501,13 +448,11 @@ function addJsClass(el) {
                             <div class="menu-item"><a href="../../ref/Controllers/withFormat.html">withFormat</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Database Mapping</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Database Mapping</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Database%20Mapping/Usage.html">Usage</a></div>
                             
                             
@@ -580,13 +525,11 @@ function addJsClass(el) {
                             <div class="menu-item"><a href="../../ref/Database%20Mapping/version.html">version</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Domain Classes</h1>
-                        <div class="menu-sub selected">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Domain Classes</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Domain%20Classes/Usage.html">Usage</a></div>
                             
                             
@@ -773,13 +716,11 @@ function addJsClass(el) {
                             <div class="menu-item"><a href="../../ref/Domain%20Classes/withTransaction.html">withTransaction</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Plug-ins</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Plug-ins</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Plug-ins/Usage.html">Usage</a></div>
                             
                             
@@ -819,13 +760,11 @@ function addJsClass(el) {
                             <div class="menu-item"><a href="../../ref/Plug-ins/servlets.html">servlets</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Services</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Services</h1><div class="menu-sub">
+                        
                             <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
                             
                             
@@ -835,13 +774,11 @@ function addJsClass(el) {
                             <div class="menu-item"><a href="../../ref/Services/transactional.html">transactional</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
-                    <div class="menu-block">
-                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Servlet API</h1>
-                        <div class="menu-sub">
-                            
+                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Servlet API</h1><div class="menu-sub">
+                        
                             
                             <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
                             </div>
@@ -855,7 +792,7 @@ function addJsClass(el) {
                             <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
                             </div>
                             
-                        </div>
+                            </div>
                     </div>
                     
                 </div>
@@ -869,8 +806,7 @@ function addJsClass(el) {
     
 </div>
 
-
-<script type="text/javascript" src="../../js/docs.js"></script>
+<script type="text/javascript" src="../js/docs.js"></script>
 
 </body>
 </html>
