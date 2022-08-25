@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>18.1 Creating and Installing Plugins 5.2.2</title>
+    <title>18.1 Creating and Installing Plugins 3.3.16</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from the previous versions</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.2.x</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>18.1 Creating and Installing Plugins</h1>
 
-                    <p><strong>Version:</strong> 5.2.2</p>
+                    <p><strong>Version:</strong> 3.3.16</p>
                 </div>
 
                 
@@ -145,7 +145,7 @@ function addJsClass() {
 <h2 id="creatingAndInstallingPlugins">18.1 Creating and Installing Plugins</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/plugins/creatingAndInstallingPlugins.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/plugins/creatingAndInstallingPlugins.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -283,109 +283,21 @@ Plugin projects don&#8217;t provide an index.gsp by default since most plugins d
 </div>
 </div>
 <div class="sect3">
-<h4 id="_plugin_configuration">Plugin Configuration</h4>
-<div class="paragraph">
-<p>Instead of directly accessing Grails configuration as <code>grailsApplication.config.mail.hostName</code>, use a Spring Boot configuration bean (or a POJO) annotated with <a href="https://docs.spring.io/spring-boot/docs/2.5.2/api/org/springframework/boot/context/properties/ConfigurationProperties.html">ConfigurationProperties</a> annotation. Here is an example plugin configuration:</p>
-</div>
-<div class="paragraph">
-<p><em>./src/main/groovy/example/MailPluginConfiguration.groovy</em></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code>package example
-
-import org.springframework.boot.context.properties.ConfigurationProperties
-
-@ConfigurationProperties(prefix = &quot;mail&quot;)
-class MailPluginConfiguration {
-
-    String hostName
-    int port
-    String from
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can inject the <code>MailPluginConfiguration</code> bean into your bean like any other bean.</p>
-</div>
-<div class="paragraph">
-<p><em>./grails-app/services/example/MailService.groovy</em></p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code>package example
-
-class MailService {
-
-    MainPluginConfiguration mailPluginConfiguration
-
-    void sendMail() {
-
-    }
-
-}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Please read the <a href="https://docs.spring.io/spring-boot/docs/2.5.2/reference/html/features.html#features.external-config">Spring Boot Externalized Configuration</a> section for more information.</p>
-</div>
-</div>
-<div class="sect3">
 <h4 id="_installing_local_plugins">Installing Local Plugins</h4>
 <div class="paragraph">
-<p>In order to install the Grails plugin to your local Maven, you could use Gradle <a href="https://docs.gradle.org/current/userguide/publishing_maven.html">Maven Publish</a> plugin. You may also need to configure the publishing extension as:</p>
+<p>To make your plugin available for use in a Grails application run the <code>install</code> command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">publishing {
-    publications {
-        maven(MavenPublication) {
-            versionMapping {
-                usage(<span class="string"><span class="delimiter">'</span><span class="content">java-api</span><span class="delimiter">'</span></span>) {
-                    fromResolutionOf(<span class="string"><span class="delimiter">'</span><span class="content">runtimeClasspath</span><span class="delimiter">'</span></span>)
-                }
-                usage(<span class="string"><span class="delimiter">'</span><span class="content">java-runtime</span><span class="delimiter">'</span></span>) {
-                    fromResolutionResult()
-                }
-            }
-            from components.java
-        }
-    }
-}</code></pre>
-</div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Please refer to the Gradle Maven Publish plugin documentation for up-to-date information.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>To make your plugin available for use in a Grails application run the <code>./gradlew publishToMavenLocal</code> command:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">./gradlew publishToMavenLocal</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">grails install</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This will install the plugin into your local Maven cache. Then to use the plugin within an application declare a dependency on the plugin in your <code>build.gradle</code> file and include <code>mavenLocal()</code> in your repositories hash:</p>
+<p>This will install the plugin into your local Maven cache. Then to use the plugin within an application declare a dependency on the plugin in your <code>build.gradle</code> file:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">...
-repositories {
-    ...
-    mavenLocal()
-}
-...
-implementation <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails.plugins:quartz:0.1</span><span class="delimiter">&quot;</span></span></code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.grails.plugins:quartz:0.1</span><span class="delimiter">&quot;</span></span></code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -452,7 +364,7 @@ In Grails 2.x plugins were packaged as ZIP files, however in Grails 3.x plugins 
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">grails {
     plugins {
-        implementation project(<span class="string"><span class="delimiter">'</span><span class="content">:myplugin</span><span class="delimiter">'</span></span>)
+        compile project(<span class="string"><span class="delimiter">'</span><span class="content">:myplugin</span><span class="delimiter">'</span></span>)
     }
 }</code></pre>
 </div>
@@ -595,7 +507,7 @@ Grails application running at <span class="key">http</span>:<span class="comment
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">implementation project(<span class="string"><span class="delimiter">'</span><span class="content">:myplugin</span><span class="delimiter">'</span></span>)</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">compile project(<span class="string"><span class="delimiter">'</span><span class="content">:myplugin</span><span class="delimiter">'</span></span>)</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -853,9 +765,6 @@ Grails application running at <span class="key">http</span>:<span class="comment
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Controllers/hasErrors.html">hasErrors</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Controllers/header.html">header</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Controllers/namespace.html">namespace</a>

@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>8.6 Content Negotiation 5.2.2</title>
+    <title>8.6 Content Negotiation 3.3.16</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from the previous versions</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.2.x</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>8.6 Content Negotiation</h1>
 
-                    <p><strong>Version:</strong> 5.2.2</p>
+                    <p><strong>Version:</strong> 3.3.16</p>
                 </div>
 
                 
@@ -145,7 +145,7 @@ function addJsClass() {
 <h2 id="contentNegotiation">8.6 Content Negotiation</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/theWebLayer/contentNegotiation.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/3.3.x/src/en/guide/theWebLayer/contentNegotiation.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -224,20 +224,8 @@ The first one is the default format.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code>http://my.domain.org/books.xml</code></pre>
+<pre class="CodeRay highlight"><code>http://my.domain.org/books?format=xml</code></pre>
 </div>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The request parameters <code>format</code> is allowed as well <code><a href="http://my.domain.org/books?format=xml" class="bare">http://my.domain.org/books?format=xml</a></code>, but the default Grails URL Mapping <code>get "/$controller(.$format)?"(action:"index")</code> will override the <code>format</code> parameter with null. So the default mapping should be updated to <code>get "/$controller"(action:"index")</code>.
-</td>
-</tr>
-</table>
 </div>
 <div class="paragraph">
 <p>The result of this on the server side is a <code>format</code> property on the <code>response</code> object with the value <code>xml</code> .</p>
@@ -706,9 +694,6 @@ If the accept header is used but contains no registered content types, Grails wi
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Controllers/hasErrors.html">hasErrors</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Controllers/header.html">header</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Controllers/namespace.html">namespace</a>
