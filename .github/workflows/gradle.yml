@@ -35,13 +35,18 @@ jobs:
           cond: ${{ github.repository == 'grails/grails-doc' }}
           if_true: 'grails/grails-doc'
           if_false: ${{ github.repository }}
+      - name: Extract branch name
+        if: success()
+        id: extract_branch
+        run: echo ::set-output name=value::${GITHUB_REF:11}
       - name: Publish to Github Pages
         if: success()
-        uses: micronaut-projects/github-pages-deploy-action@master
+        uses: micronaut-projects/github-pages-deploy-action@grails
         env:
           TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           BRANCH: gh-pages
+          OLDER_VERSION: ${{ startsWith(steps.extract_branch.outputs.value, '3.3') || startsWith(steps.extract_branch.outputs.value, '4.1') }}
           FOLDER: build/docs
           DOC_FOLDER: gh-pages
           COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
