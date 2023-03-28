@@ -60,12 +60,15 @@ jobs:
           draft: false
           prerelease: ${{ env.BETA }}
       - name: Publish Documentation
-        run: |
-          ./gradlew --stop
-          (set -x; ./gradlew assemble -PgithubBranch=$TARGET_BRANCH --info --stacktrace)
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: assemble -PgithubBranch=$TARGET_BRANCH -PeditGrailsVersion=true --info --stacktrace
         env:
           TARGET_GRAILS_VERSION: ${{ github.event.inputs.grails_version }}
           TARGET_BRANCH: ${{ steps.extract_branch.outputs.value }}
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+          GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER: ${{ secrets.GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER }}
+          GRADLE_ENTERPRISE_BUILD_CACHE_NODE_KEY: ${{ secrets.GRADLE_ENTERPRISE_BUILD_CACHE_NODE_KEY }}
       - name: Upload Release Asset
         if: success() && github.event_name == 'workflow_dispatch'
         id: upload-release-asset

@@ -24,9 +24,13 @@ jobs:
         with:
           java-version: ${{ matrix.java }}
       - name: Publish Documentation
-        run: |
-          ./gradlew --stop
-          (set -x; ./gradlew assemble -x apiDocs --info --stacktrace)
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: assemble -x apiDocs --info --stacktrace
+        env:
+          GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
+          GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER: ${{ secrets.GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER }}
+          GRADLE_ENTERPRISE_BUILD_CACHE_NODE_KEY: ${{ secrets.GRADLE_ENTERPRISE_BUILD_CACHE_NODE_KEY }}
       - name: Determine docs target repository
         if: success()
         uses: haya14busa/action-cond@v1

@@ -1,31 +1,12 @@
-buildscript {
-    repositories {
-        mavenLocal()
-        maven { url = "https://repo.grails.org/grails/core" }
-    }
-
-    dependencies {
-        classpath "org.grails:grails-docs:${project.ext.properties.grailsDocsVersion ?: project.'grails.version'}"
-        classpath 'org.codehaus.groovy:groovy-all:2.4.0'
-        classpath "org.grails:gdoc-to-asciidoc:1.0.1"
-    }
-}
-
 plugins {
+    id 'base'
     id 'org.asciidoctor.convert' version '1.5.3'
-}
-
-asciidoctorj {
-    version = '1.5.4'
+    id 'org.grails.grails-gdoc-to-asciidoc'
 }
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
-apply plugin: "base"
-apply plugin: "org.grails.grails-gdoc-to-asciidoc"
-
 version = project.getProperty("grails.version")
-
 archivesBaseName = "grails-docs"
 
 ext.checkOutDir = "${buildDir.path}/checkout"
@@ -41,6 +22,10 @@ ext.projectVersion = project.version
 
 configurations {
     publish
+}
+
+asciidoctorj {
+    version = '1.5.4'
 }
 
 gdoc2asciidoc {
@@ -104,7 +89,19 @@ fetchGrailsSource.onlyIf {
     return !explicitGrailsHome
 }
 
-task apiDocs(type: Exec, dependsOn: 'fetchGrailsSource') {
+task editProjectArtificat (type:Exec) {
+    onlyIf { project.hasProperty("editGrailsVersion") }
+    mustRunAfter 'fetchGrailsSource'
+    executable "bash"
+    if (explicitGrailsHome) {
+        args  "-i", 'sed -i "s/^projectVersion.*$/projectVersion=6.0.0-M2/" ' + explicitGrailsHome + '/gradle.properties'
+    } else {
+        args  "-i", 'sed -i "s/^projectVersion.*$/projectVersion=6.0.0-M2/" ' +  checkOutDir + "/gradle.properties"
+    }
+}
+
+task apiDocs(type: Exec) {
+    dependsOn 'fetchGrailsSource', 'editProjectArtificat'
     String command = "./gradlew"
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         command = "gradlew.bat"
@@ -198,6 +195,14 @@ task createReleasesDropdown(type: grails.doc.dropdown.CreateReleasesDropdownTask
     onlyIf {
         new File("${buildDir.absolutePath}/docs/guide/single.html").exists() &&
         new File("${buildDir.absolutePath}/docs/index.html").exists()
+    }
+}
+
+tasks.withType(org.gradle.api.tasks.javadoc.Groovydoc) {
+    configure {
+        access = GroovydocAccess.PRIVATE
+        processScripts = false
+        includeMainForScripts = false
     }
 }
 

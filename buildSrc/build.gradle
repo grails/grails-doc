@@ -1,9 +1,26 @@
-apply plugin: "groovy"
+plugins {
+    id 'groovy'
+}
 
 repositories {
+    mavenLocal()
     maven { url = "https://repo.grails.org/grails/core" }
 }
 
+sourceCompatibility = 1.11
+targetCompatibility = 1.11
+
+configurations {
+    all {
+        resolutionStrategy {
+            force 'org.cohehaus.groovy:groovy-datetime:3.0.13'
+        }
+    }
+}
+
 dependencies {
-    compile "org.grails:grails-gdoc-engine:1.0.1"
+    implementation "org.grails:grails-docs:${grailsDocsVersion}"
+    implementation "org.codehaus.groovy:groovy:$groovyVersion"
+    implementation "org.grails:grails-gdoc-engine:1.0.1"
+    implementation "org.grails:gdoc-to-asciidoc:1.0.1"
 }
