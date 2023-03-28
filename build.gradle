@@ -91,7 +91,7 @@ fetchGrailsSource.onlyIf {
 
 task editProjectArtificat (type:Exec) {
     onlyIf { project.hasProperty("editGrailsVersion") }
-    mustRunAfter 'fetchGrailsSource'
+    dependsOn 'fetchGrailsSource'
     executable "bash"
     if (explicitGrailsHome) {
         args  "-i", 'sed -i "s/^projectVersion.*$/projectVersion=6.0.0-M2/" ' + explicitGrailsHome + '/gradle.properties'
