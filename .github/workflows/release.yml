@@ -62,7 +62,7 @@ jobs:
       - name: Publish Documentation
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: assemble -PgithubBranch=$TARGET_BRANCH --info --stacktrace
+          arguments: assemble -PgithubBranch=${{ steps.extract_branch.outputs.value }} --info --stacktrace
         env:
           TARGET_GRAILS_VERSION: ${{ github.event.inputs.grails_version }}
           TARGET_BRANCH: ${{ steps.extract_branch.outputs.value }}
