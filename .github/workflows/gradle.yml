@@ -2,7 +2,6 @@ name: Java CI
 on:
   push:
     branches:
-      - master
       - '[4-9]+.[0-9]+.x'
     workflow_dispatch:
 jobs:
@@ -52,7 +51,7 @@ jobs:
           TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           BRANCH: gh-pages
-          OLDER_VERSION: ${{ startsWith(steps.extract_branch.outputs.value, '3.3') || startsWith(steps.extract_branch.outputs.value, '4.1') }}
+          SKIP_SNAPSHOT: ${{ startsWith(steps.extract_branch.outputs.value, '3.3') || startsWith(steps.extract_branch.outputs.value, '4.1') || startsWith(steps.extract_branch.outputs.value, '6.0') }}
           FOLDER: build/docs
           DOC_FOLDER: gh-pages
           COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
