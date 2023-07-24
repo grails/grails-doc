@@ -43,7 +43,7 @@ jobs:
       - name: Extract branch name
         if: success()
         id: extract_branch
-        run: echo "value::${GITHUB_REF:11}" >> $GITHUB_OUTPUT
+        run: echo "value=${GITHUB_REF:11}" >> $GITHUB_OUTPUT
       - name: Publish to Github Pages
         if: success()
         uses: micronaut-projects/github-pages-deploy-action@grails
@@ -51,7 +51,7 @@ jobs:
           TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           BRANCH: gh-pages
-          SKIP_SNAPSHOT: ${{ startsWith(steps.extract_branch.outputs.value, '3.3') || startsWith(steps.extract_branch.outputs.value, '4.1') || startsWith(steps.extract_branch.outputs.value, '6.0') }}
+          SKIP_SNAPSHOT: ${{ startsWith(steps.extract_branch.outputs.value, '3.3') || startsWith(steps.extract_branch.outputs.value, '4.1') || startsWith(steps.extract_branch.outputs.value, '5.3') }}
           FOLDER: build/docs
           DOC_FOLDER: gh-pages
           COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
