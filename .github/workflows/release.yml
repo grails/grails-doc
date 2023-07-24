@@ -12,8 +12,8 @@ jobs:
       matrix:
         java: ['11']
     env:
-      BETA: ${{ contains(github.event.inputs.grails_version, 'M') || contains(github.event.inputs.grails_version, 'RC') }}
-      SKIP_SNAPSHOT: ${{ startsWith(github.event.inputs.grails_version, '3.3') || startsWith(github.event.inputs.grails_version, '4.1') }} || contains(github.event.inputs.grails_version, 'M') || contains(github.event.inputs.grails_version, 'RC')
+      BETA: ${{ contains(github.event.inputs.grails_version, 'M') }}
+      SKIP_SNAPSHOT: ${{ startsWith(github.event.inputs.grails_version, '3.3') || startsWith(github.event.inputs.grails_version, '4.1') || startsWith(github.event.inputs.grails_version, '5.3') || contains(github.event.inputs.grails_version, 'M') || contains(github.event.inputs.grails_version, 'RC') }}
       GIT_USER_NAME: puneetbehl
       GIT_USER_EMAIL: behlp@objectcomputing.com
     steps:
@@ -23,13 +23,14 @@ jobs:
           token: ${{ secrets.GH_TOKEN }}
       - uses: gradle/wrapper-validation-action@v1
       - name: Set up JDK
-        uses: actions/setup-java@v1
+        uses: actions/setup-java@v3
         with:
-          java-version: ${{ matrix.java }}
+          distribution: 'adopt'
+          java-version: '11'
       - name: Extract branch name
         if: success() && github.event_name == 'workflow_dispatch'
         id: extract_branch
-        run: echo ::set-output name=value::${GITHUB_REF:11}
+        run: echo "value=${GITHUB_REF:11}" >> $GITHUB_OUTPUT
       - name: Asset Path
         if: success() && github.event_name == 'workflow_dispatch'
         id: asset_path
@@ -97,7 +98,6 @@ jobs:
           BRANCH: gh-pages
           FOLDER: build/docs
           VERSION: ${{ github.event.inputs.grails_version }}
-          BETA: ${{ contains(github.event.inputs.grails_version, 'M') || contains(github.event.inputs.grails_version, 'RC') }}
           DOC_FOLDER: gh-pages
           COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
           COMMIT_NAME: ${{ env.GIT_USER_NAME }}
