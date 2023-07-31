@@ -1,70 +1,346 @@
-### Bump up Grails Version
+### Upgrade Instructions for Grails and Related Dependencies
 
-You will need to upgrade your Grails version defined in `gradle.properties` as:
+To ensure compatibility with Grails 6, you must update the following versions in your project:
 
-[source,groovy,subs="attributes"]
+#### 1. Java 11 as Baseline:
+
+Starting from Grails 6, Java 11 serves as the baseline requirement for the framework. When upgrading to Grails 6, ensure that your project is configured to use Java 11. This compatibility with Java 11 allows you to take advantage of the latest features, security enhancements, and performance improvements provided by Java 11.
+
+Please make sure to update your project's Java version to 11 before proceeding with the Grails 6 upgrade. Doing so will ensure a seamless transition to the latest version of Grails and enable you to enjoy all the benefits that Java 11 has to offer.
+
+#### 2. The New Grails CLI:
+
+Grails 6 comes with a completely revamped and highly efficient Command Line Interface (CLI) that enables you to generate applications and plugins at a remarkable speed. For instance, you can now use the new CLI to create a new Grails 6 application with the following command:
+
+```bash
+grails create-app my-app
+```
+
+The new CLI also allows you to generate plugins easily. For example, to create a new plugin named "my-plugin," you can use the following command:
+
+```bash
+grails create-plugin my-plugin
+```
+
+One notable improvement in Grails 6 is that it no longer supports certain commands that performed redundant tasks, such as the outdated `grails run-app` command. Instead, it recommends using the Gradle `bootRun` task for running your application, which offers better performance and functionality.
+
+For example, to run your Grails 6 application, you can use the following command:
+
+```bash
+./gradlew bootRun
+```
+
+As a result of these improvements, the new CLI provides a more streamlined and efficient way to work with Grails applications and plugins.
+
+Additionally, in order to fully embrace the improvements in Grails 6, it is advised to remove the old Grails wrapper files `./grailsw` and `./grails` from your project root folder. This ensures that you solely rely on the enhanced capabilities of the new CLI.
+
+Overall, Grails 6 offers a significantly improved development experience with its new CLI, optimized commands, and advanced features for generating applications and plugins.
+
+#### 3. Setting Grails Version and Grails Gradle Plugin:
+
+To upgrade to Grails 6, it's important to configure the appropriate versions in the `gradle.properties` file as shown below:
+
 .gradle.properties
-----
-...
+```properties
 grailsVersion=6.0.0
-...
-----
+grailsGradlePluginVersion=6.0.0
 
-### Bump up GORM Version
+```
 
-If you were using http://gorm.grails.org[GORM], you will need to update the version defined in `gradle.properties` as:
+By specifying the above versions, you'll gain access to the latest features, improvements, and bug fixes introduced in Grails 6. Upgrading to this version empowers your application with enhanced performance and improved security. Additionally, it allows you to leverage the latest advancements in the Grails framework for a more efficient and secure development experience.
 
-[source, properties]
+#### 4. GORM Version:
+
+If your project utilizes GORM, ensure to update the version in the `gradle.properties` file as demonstrated below:
+
 .gradle.properties
-----
-...
+```properties
 gormVersion=8.0.0
-...
-----
+```
 
-### Bump up gradle version
+By upgrading to GORM 8.0.0, you will benefit from essential updates and optimizations. This upgrade guarantees seamless interactions with your database and enhances your data management experience. Staying current with GORM allows you to take advantage of the latest database features and improvements, thereby optimizing the performance and functionality of your application.
 
-Grails 6 uses Gradle 7.6.2
+#### 5. Gradle Version:
 
-[source, properties]
-.gradle-wrapper.properties
-----
-...
-distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.2-bin.zip
-...
-----
+Grails 6 uses Gradle 7.6.2 which offers performance improvements, bug fixes, and new features over previous versions. Upgrading to the latest Gradle version helps accelerate your build processes and ensures compatibility with other dependencies.
 
-Also you can run this command
+##### 5.1. Upgrade to Gradle 7.6.2
 
-[source, properties]
-----
+Run the following command to update the Gradle wrapper to the desired version (e.g., Gradle 7.6.2):
+
+```bash
 ./gradlew wrapper --gradle-version 7.6.2
-----
+```
 
-### GORM for MonogDB Sync Driver
+This command will download the specified Gradle version and update the Gradle wrapper settings in your project.
 
-The GORM for MongoDB is updated to support latest mongodb-driver-sync. If you are using GORM for MongoDB and doing something specific to MongoDB Driver or low level Mongo API then you might want to take a look at https://mongodb.github.io/mongo-java-driver/4.0/upgrading/[Upgrading to the 4.0 Driver]
+##### 5.2. Check Gradle Version:
 
-### Bump up Asset Pipeline plugin version
+After the command finishes, you can verify that the Gradle version has been updated by checking the `gradle-wrapper.properties` file located in the `gradle/wrapper` directory. The `distributionUrl` in the file should now point to the Gradle 7.6.2 distribution:
 
-The previous version of asset-pipeline is not supported with Grails 5.0 as it is compiled with a version of Groovy which is binary incompatible with Groovy 3. So, please update the plugin version to 3.4.7.
+```
+distributionUrl=https\://services.gradle.org/distributions/gradle-7.6.2-bin.zip
+```
 
-### Spring 5.3
 
-Grails 6 is built on Spring 5.3.26 See the https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-5.x#upgrading-to-version-53[Upgrading to Spring 5.3]  if you are using Spring specific features.
+##### 5.3. Build the Project:
 
-### Spring Boot 2.7
+After updating the Gradle wrapper, you can now build your Grails project using the updated Gradle version:
 
-Grails 6 updates to Spring Boot 2.7. Please check https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.7-Release-Notes[Spring Boot 2.7 Release Notes] for more information.
+```bash
+./gradlew build
+```
 
-### Micronaut 3.9.3
+This will initiate the build process with the new Gradle version.
 
-Grails 6 is shipped with Micronaut 3.9.3. Please check the https://docs.micronaut.io/3.9.3/guide/index.html#upgrading[Upgrading to Micronaut 3.x] if you are using a specific feature.
+#### 6. Embracing Modern Plugin Management with Grails 6
 
-### Micronaut for Spring 4.5.1
+In Gradle, there are two main ways to add plugins to your project: the `plugins` block and the `apply plugin` statement.
 
-Grails 6 is updated to Micronaut for Spring 4.5.1, please check out https://github.com/micronaut-projects/micronaut-spring/releases/tag/v4.5.1[release notes] for more information.
+Grails 6 introduces a significant change in how plugins are managed by adopting the Gradle `plugins` block instead of the traditional `apply plugin` statements. This shift streamlines the project's build configuration and brings it more in line with modern Gradle conventions. New Grails projects will now utilize the `plugins` block to manage plugin dependencies and configurations.
 
-### Gradle 7.x
+**Using the `plugins` Block in Grails 6:**
 
-The Grails 6 is updated to Gradle 7.6.2, we recommend checking the https://docs.gradle.org/7.6.2/release-notes.html[Official Gradle Release Notes] for more information.
+With the new approach, adding plugins to a Grails 6 project is more explicit and organized. In your `build.gradle` file, you can declare plugins within the `plugins` block, specifying the plugin's ID and version.
+
+Here's an example of adding the `views-json` plugin using the `plugins` block:
+
+.build.gradle
+```groovy
+plugins {
+    id 'org.grails.plugins.views-json' version '3.0.0'
+}
+```
+
+
+**Managing Multiple Plugins:**
+
+The `plugins` block allows you to add multiple plugins, each on its own line. This enhances clarity and makes it easier to manage plugin dependencies.
+
+.build.gradle
+```groovy
+plugins {
+    id 'org.grails.plugins.views-json' version '3.0.0'
+    // Add other plugins as needed
+}
+```
+
+**Moving Older Applications to the New Approach:**
+
+If you are migrating an older Grails application to Grails 6, you can update the plugin declarations from `apply plugin` to the `plugins` block. For example, if your previous application used the `views-json` plugin, you can modify the build.gradle as follows:
+
+**Before (Using `apply plugin`):**
+
+.build.gradle
+```groovy
+apply plugin: 'org.grails.plugins.views-json'
+```
+
+
+**After (Using `plugins` Block in Grails 6):**
+
+.build.gradle
+```groovy
+plugins {
+    id 'org.grails.plugins.views-json' version '3.0.0'
+}
+```
+
+
+By migrating to the `plugins` block, your Grails 6 project will adhere to modern Gradle conventions, making it easier to manage plugin dependencies and configurations. This new approach maintains consistency and enhances the overall structure of the project, ensuring a smoother and more efficient development process.
+
+##### 6.2. Use the pluginManagement Block
+
+Moving from `apply plugin` in the `build.gradle` file to the `pluginManagement` block in the `settings.gradle` file is a significant change introduced in Grails 6. This change is part of Grails' effort to adopt the Gradle `pluginManagement` approach for better plugin version control and consistency across projects.
+
+In the previous versions of Grails (before Grails 6), developers used to apply plugins directly in the `build.gradle` file using the `apply plugin` syntax. For example:
+
+.build.gradle
+```groovy
+buildscript {
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+        maven { url "https://repo.grails.org/grails/core" }
+    }
+    dependencies {
+        classpath "org.grails:grails-gradle-plugin:$grailsGradlePluginVersion"
+        classpath "org.grails.plugins:hibernate5:7.3.0"
+        classpath "org.grails.plugins:views-gradle:2.3.2"
+    }
+}
+
+version "0.1"
+group "hellorestapi"
+
+apply plugin:"eclipse"
+apply plugin:"idea"
+apply plugin:"war"
+apply plugin:"org.grails.grails-web"
+apply plugin:"org.grails.plugins.views-json"
+```
+
+
+However, with Grails 6, the recommended practice is to move plugin declarations to the `pluginManagement` block in the `settings.gradle` file. The `pluginManagement` block acts as a central place to manage plugin versions for all projects within a multi-project build.
+
+**Configuring Plugins in the pluginManagement Block:**
+
+Here's how you can declare the `views-json` plugin in the `pluginManagement` block:
+
+    1. Open the `settings.gradle` file in your Grails 6 project.
+
+    2. Add the `pluginManagement` block with the `views-json` plugin declaration:
+
+.settings.gradle
+```groovy
+pluginManagement {
+    repositories {
+        // Add the Grails plugin repository to resolve the views-json plugin
+        maven { url "https://repo.grails.org/grails/core" }
+        // Other repositories can be added here if needed
+    }
+
+    // Declare the views-json plugin and its version
+    plugins {
+        id 'org.grails.plugins.views-json' version '3.0.0'
+        // Other plugins can be declared here
+    }
+}
+```
+
+
+By including the `views-json` plugin in the `pluginManagement` block, Grails 6 will ensure that all projects within the multi-project build use the specified version of the `views-json` plugin. This promotes consistency in JSON rendering across different projects and simplifies maintenance and version control.
+
+**Moving Older Applications to the New Approach:**
+
+If you are migrating an older Grails application to Grails 6, you can update the plugin declarations from `apply plugin` to the `plugins` block in the `build.gradle` file, as shown in the previous section.
+
+By adopting the `pluginManagement` block and declaring the `views-json` plugin in the `settings.gradle` file, you ensure consistent usage of the plugin across all projects in the Grails 6 ecosystem. This approach simplifies plugin version control and improves the overall development experience when working with JSON responses in your Grails applications.
+
+
+##### 6.3 Grails Adoption of "buildSrc" Folder for Buildscript Dependencies
+
+In previous versions of Grails (before Grails 6), managing buildscript dependencies, such as the `views-gradle` plugin, was typically done directly in the main `build.gradle` file. This enables Gradle compilation of JSON views for production environment. Developers would define the repositories and dependencies needed for the buildscript within the `buildscript` block:
+
+.build.gradle
+```groovy
+
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        // Example: views-gradle plugin
+        classpath "org.grails.plugins:views-gradle:3.0.0"
+    }
+}
+
+// Apply the views-json plugin
+apply plugin: 'views-json'
+
+// Other configurations and dependencies
+```
+
+This approach meant that the buildscript dependencies were mixed with the rest of the project's configurations, making the `build.gradle` file longer and potentially harder to maintain. As a result, the buildscript section might become cluttered with various plugin dependencies and other build logic.
+
+With the introduction of Grails 6, there is a significant improvement in managing buildscript dependencies through the use of the `buildSrc` folder. This dedicated folder provides a more organized approach to handle buildscript dependencies, custom Gradle plugins, and extensions specific to the project.
+
+**Benefits of Grails 6 Adoption of "buildSrc" Folder**
+
+    1. **Modular Build Configuration:** The `buildSrc` folder acts as a separate mini-project within your Grails application, allowing you to encapsulate build logic, plugins, and dependencies. This separation of concerns improves the organization and modularity of the build configuration.
+
+    2. **Streamlined Buildscript Management:** By moving buildscript dependencies to `buildSrc`, you can keep the main `build.gradle` file clean and focused on the application's specific requirements. This reduces clutter and promotes a more concise and clear build script.
+
+    3. **Better Collaboration:** The `buildSrc` approach simplifies collaboration within development teams. Build logic can be centralized and shared across projects, enabling a consistent and efficient development workflow.
+
+**Update from Grails 5**
+
+The new Grails 6 application uses `buildSrc/build.gradle`. The buildSrc directory can host a build script if additional configuration is needed (e.g. to apply plugins or to declare dependencies). The `buildSrc` folder in a Grails project follows a specific tree layout, which includes the `build.gradle` file. Here's how the tree layout looks like:
+
+```bash
+buildSrc/
+├── build.gradle
+└── src/
+    └── main/
+        └── groovy/
+```
+
+**Let's walk through how to manage the `views-gradle` plugin using the `buildSrc` folder in Grails 6:**
+
+**Step 1: Create buildSrc Folder:**
+
+In the root directory of your Grails 6 project, create a new folder named `buildSrc`.
+
+**Step 2: Add buildSrc Script:**
+
+Inside the `buildSrc` folder, create a build.gradle file and specify the `views-gradle` plugin dependency:
+
+.buildSrc/build.gradle
+```groovy
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.grails.plugins:views-gradle:3.0.0"
+}
+```
+
+**Step 3: Remove apply plugin Statement:**
+
+In the main `build.gradle` file, remove the `buildscript` block and the `apply plugin` statement related to `views-gradle`, as it is now managed in the `buildSrc` folder:
+
+.build.gradle
+```groovy
+buildscript {
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.grails.plugins:views-gradle:3.0.0"
+    }
+}
+
+// No need to apply views-json plugin here
+// Remove the apply plugin statement for views-json if it was previously present
+apply plugin: 'views-json'
+
+// ... Other configurations and dependencies
+```
+
+By using the `buildSrc` folder, developers can separate buildscript dependencies and custom plugin configurations from the main `build.gradle` file. This leads to a cleaner and more concise build script, which is easier to maintain and understand. Additionally, the `buildSrc` approach encourages modularity, as build logic and custom plugins can be centralized and shared across projects, fostering better collaboration and consistency within development teams.
+
+#### 7. GORM for MongoDB Sync Driver:
+
+The GORM for MongoDB is updated to support the latest mongodb-driver-sync. If you are using GORM for MongoDB and making use of specific MongoDB Driver or low-level Mongo API features, consider checking the [Upgrading to the 4.0 Driver guide](https://mongodb.github.io/mongo-java-driver/4.0/upgrading/).
+
+This update ensures seamless integration with MongoDB, access to new features, and improved performance while interacting with your MongoDB database.
+
+#### 8. Asset Pipeline Plugin:
+
+In Grails 6, there is an update to the Asset Pipeline Plugin, which is now version 4.3.0. The Asset Pipeline Plugin is a crucial component in Grails applications, responsible for managing frontend assets like stylesheets, JavaScript files, and images. The update to version 4.3.0 brings several improvements and new features to enhance the management and processing of frontend assets in your Grails projects.
+
+The asset-pipeline plugin 4.3.0 offers new features for managing and processing your frontend assets, ensuring they are efficiently bundled and served to your users.
+
+#### 9. Spring 5.3:
+
+Grails 6 is built on Spring 5.3.27. If your project uses Spring-specific features, refer to the [Upgrading to Spring 5.3 guide](https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-5.x#upgrading-to-version-53).
+
+Spring 5.3 introduces enhancements and fixes to the Spring framework, providing you with the latest improvements in dependency injection, web frameworks, and other Spring-related functionalities.
+
+#### 10. Spring Boot 2.7:
+
+Grails 6 updates to Spring Boot 2.7. For more information, consult the [Spring Boot 2.7 Release Notes](https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.7-Release-Notes).
+
+Spring Boot 2.7 comes with new features, performance enhancements, and compatibility improvements, making it a solid foundation for your Grails application.
+
+#### 11. Micronaut 3.9.3:
+
+Grails 6 is shipped with Micronaut 3.9.3. If you are using specific Micronaut features, refer to the [Upgrading to Micronaut 3.x guide](https://docs.micronaut.io/3.9.3/guide/index.html#upgrading).
+
+Micronaut 3.9.3 brings new capabilities, improvements, and bug fixes, empowering your application with a powerful and lightweight microservices framework.
+
+#### 12. Micronaut for Spring 4.5.1:
+
+Grails 6 is updated to use Micronaut for Spring 4.5.1. For more information, check out the [release notes](https://github.com/micronaut-projects/micronaut-spring/releases/tag/v4.5.1).
+
+Micronaut for Spring 4.5.1 provides seamless integration between Micronaut and Spring, allowing you to leverage the strengths of both frameworks in your Grails project.
