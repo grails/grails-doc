@@ -1,4 +1,4 @@
-== run-app
+== bootRun
 
 === Purpose
 
@@ -10,9 +10,10 @@ WARNING: This target is _not_ intended to be used for application deployment. Th
 
 [source,groovy]
 ----
-grails run-app
-grails run-app -https // with HTTPS
-grails test run-app
+./gradlew bootRun
+./gradlew bootRun --debug-jvm
+./gradlew bootRun -Dgrails.env=test
+./gradlew bootRun --args=--server.port=8081
 ----
 
 === Description
@@ -21,21 +22,18 @@ Usage:
 
 [source,groovy]
 ----
-grails <<env>>* run-app
+./gradlew bootRun <<gradle-args>> --args=<<*args>>
 ----
 
-Arguments:
+Gradle Arguments: <<gradle-args>>
 
-* `debug-jvm` - Run the application using a debug JVM (port 5005) in order to attach a remote debugger.
-* `port` - The port to use
-* `host` - The host to bind to
-* `https` - Start an HTTPS server (on port 8443 by default) alongside the main server. Just to be clear, the application will be accessible via HTTPS _and_ HTTP. A self-signed key will be generated. Intended for development use only.
+* `--debug-jvm` - Run the application using a debug JVM (port 5005) in order to attach a remote debugger.
+* `-Dgrails.env=*env` - The grails environment to use (dev/test/prod)
 
-Supported system properties:
+Additional Arguments <<*args>>:
 
-* `grails.server.port.http`/`server.port` - Specifies the HTTP port to run the server on (defaults to 8080)
-* `grails.server.port.https` - Specifies the HTTPS port to run the server on (defaults to 8443)
-* `grails.server.host`/`server.host` - Specifies the host name to run the server on (defaults to localhost)
+* `server.port` - The port to use
+For more args, see {springBootReference}/html/application-properties.html#appendix.application-properties.server[Server Properties].
 
 
 This command starts Grails in an embedded servlet container that can serve HTTP requests. The default container is http://tomcat.apache.org[Tomcat] but alternative containers are supported by altering the Spring boot starter in `build.gradle`.
@@ -46,4 +44,5 @@ This command starts Grails in an embedded servlet container that can serve HTTP 
 runtime "org.springframework.boot:spring-boot-starter-jetty"
 ----
 
-For more information see the Spring Boot documentation on {springBootReference}/html/howto-embedded-web-servers.html[Embedded Containers].
+
+For more information see the Spring Boot documentation on {springBootReference}/html/howto.html#howto.webserver[Embedded Containers].
