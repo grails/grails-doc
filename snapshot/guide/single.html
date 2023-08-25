@@ -946,7 +946,7 @@ $ grails</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">grails&gt; run-app</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">./gradlew bootRun</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -970,7 +970,8 @@ $ grails</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">grails&gt; run-app -Dgrails.server.servlet.context-path=/helloworld</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">./gradlew bootRun
+./gradlew bootRun --args=--server.servlet.context-path=/helloworld</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -1166,11 +1167,11 @@ You can always open GSP files in the HTML editor if you just want highlighting i
 
 
 <div class="paragraph">
-<p>Grails applications can be run with the built in Tomcat server using the <a href="../ref/Command%20Line/run-app.html">run-app</a> command which will load a server on port 8080 by default:</p>
+<p>Grails applications can be run with the built in Tomcat server using the <a href="../ref/Command%20Line/run-app.html">bootRun</a> command which will load a server on port 8080 by default:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">grails run-app</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">./gradlew bootRun</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1178,22 +1179,7 @@ You can always open GSP files in the HTML editor if you just want highlighting i
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">grails run-app -port=8090</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Note that it is better to start up the application in interactive mode since a container restart is much quicker:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ grails
-grails&gt; run-app
-| Grails application running at http://localhost:8080 in environment: development
-grails&gt; stop-app
-| Shutting down application...
-| Application shutdown.
-grails&gt; run-app
-| Grails application running at http://localhost:8080 in environment: development</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">./gradlew bootRun --args=--server.port=8081</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1204,11 +1190,11 @@ grails&gt; run-app
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">grails run-app --debug-jvm</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">./gradlew bootRun --debug-jvm</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>More information on the <a href="../ref/Command%20Line/run-app.html">run-app</a> command can be found in the reference guide.</p>
+<p>More information on the <a href="../ref/Command%20Line/run-app.html">bootRun</a> command can be found in the reference guide.</p>
 </div>
 
 <a name="2.9 Testing an Application"><!-- Legacy link --></a>
@@ -3140,7 +3126,7 @@ In Groovy code you must use single quotes around the string for the value of the
 <p>Similarly system arguments can be accessed.</p>
 </div>
 <div class="paragraph">
-<p>You will need to have this in <code>build.gradle</code> to modify the <code>bootRun</code> target if <code>grails run-app</code> is used to start the application</p>
+<p>You will need to have this in <code>build.gradle</code> to modify the <code>bootRun</code> target if <code>./gradlew bootRun</code> is used to start the application</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -3552,14 +3538,14 @@ The default profile repository is resolved over HTTPS so <code>https.proxyPort</
 <p>There are several ways to execute the <code>Application</code> class, if you are using an IDE then you can simply right click on the class and run it directly from your IDE which will start your Grails application.</p>
 </div>
 <div class="paragraph">
-<p>This is also useful for debugging since you can debug directly from the IDE without having to connect a remote debugger when using the <code>run-app --debug-jvm</code> command from the command line.</p>
+<p>This is also useful for debugging since you can debug directly from the IDE without having to connect a remote debugger when using the <code>./gradlew bootRun --debug-jvm</code> command from the command line.</p>
 </div>
 <div class="paragraph">
 <p>You can also package your application into a runnable WAR file, for example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ grails package
+<pre class="CodeRay highlight"><code data-lang="bash">$ ./gradlew bootWar
 $ java -jar build/libs/myapp-0.1.war</code></pre>
 </div>
 </div>
@@ -3748,7 +3734,7 @@ environments {
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">grails -Dgrails.env=UAT run-app</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">./gradlew bootRun -Dgrails.env=UAT</code></pre>
 </div>
 </div>
 </div>
@@ -20285,7 +20271,7 @@ By default, the size of text areas in scaffolded views is defined in the CSS, so
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails prod run-app</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">.<span class="regexp"><span class="delimiter">/</span><span class="content">gradlew bootRun -Dgrails.env=prod</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -20508,7 +20494,7 @@ Configuration of both an HTTP and HTTPS connector via application properties is 
 <div class="ulist">
 <ul>
 <li>
-<p>A JDK (7 or above)</p>
+<p>A JDK (11 or above)</p>
 </li>
 <li>
 <p>A git client</p>
@@ -20654,16 +20640,11 @@ Configuration of both an HTTP and HTTPS connector via application properties is 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails run-app --debug-jvm</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">.<span class="regexp"><span class="delimiter">/</span><span class="content">gradlew bootRun --debug-jvm</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>By default Grails forks a JVM to run the application in. The <code>-debug-jvm</code> argument causes the debugger to be associated with the forked JVM.  In order to instead attach the debugger to the build system which is going to fork the JVM use the <code>-debug</code> option:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails -debug run-app</code></pre>
-</div>
+<p>By default Grails forks a JVM to run the application in. The <code>-debug-jvm</code> argument causes the debugger to be associated with the forked JVM.</p>
 </div>
 </div>
 
