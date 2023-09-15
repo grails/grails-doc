@@ -3,7 +3,10 @@ on:
   push:
     branches:
       - '[4-9]+.[0-9]+.x'
-    workflow_dispatch:
+  pull_request:
+    branches:
+      - '[4-9]+.[0-9]+.x'
+  workflow_dispatch:
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -18,20 +21,34 @@ jobs:
         uses: actions/checkout@v2
         with:
           token: ${{ secrets.GH_TOKEN }}
+      - name: Set current date as env variable
+        run: echo "NOW=$(date +'%Y-%m-%dT%H%M%S')" >> $GITHUB_ENV
       - uses: gradle/wrapper-validation-action@v1
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: 'adopt'
           java-version: ${{ matrix.java }}
-      - name: Publish Documentation
+      - name: Extract branch name
+        if: success()
+        id: extract_branch
+        run: echo "value=${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}" >> $GITHUB_OUTPUT
+      - name: Build Documentation
         uses: gradle/gradle-build-action@v2
         with:
-          arguments: assemble -x apiDocs --info --stacktrace
+          arguments: build -PgithubBranch=${{ steps.extract_branch.outputs.value }}
         env:
+          TARGET_GRAILS_VERSION: ${{ github.event.inputs.grails_version }}
+          TARGET_BRANCH: ${{ steps.extract_branch.outputs.value }}
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
           GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER: ${{ secrets.GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER }}
           GRADLE_ENTERPRISE_BUILD_CACHE_NODE_KEY: ${{ secrets.GRADLE_ENTERPRISE_BUILD_CACHE_NODE_KEY }}
+      - name: Upload Docs Artifacts
+        if: success()
+        uses: actions/upload-artifact@v3
+        with:
+          name: grails-docs-${{ env.NOW }}.zip
+          path: ./build/distributions/grails-docs-*.*.zip
       - name: Determine docs target repository
         if: success()
         uses: haya14busa/action-cond@v1
@@ -40,12 +57,8 @@ jobs:
           cond: ${{ github.repository == 'grails/grails-doc' }}
           if_true: 'grails/grails-doc'
           if_false: ${{ github.repository }}
-      - name: Extract branch name
-        if: success()
-        id: extract_branch
-        run: echo "value=${GITHUB_REF:11}" >> $GITHUB_OUTPUT
       - name: Publish to Github Pages
-        if: success()
+        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/6.0.x'
         uses: micronaut-projects/github-pages-deploy-action@grails
         env:
           TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
