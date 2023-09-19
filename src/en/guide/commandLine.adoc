@@ -1,5 +1,7 @@
 The Grails New Command-Line Interface (CLI) has undergone significant changes compared to its previous versions, primarily focusing on code generation. One notable alteration is the removal of APIs for invoking Gradle for tasks related to building using Gradle Tooling APIs. This shift in responsibility aligns with the framework's evolution and its integration with the Gradle build system.
 
+=== Accessing the Grails CLI
+
 The Grails CLI (Command Line Interface) can be swiftly and effortlessly accessed by simply typing the following command into your terminal or command prompt:
 
 [source,shell]
@@ -8,6 +10,84 @@ grails
 ----
 
 This command allows developers to quickly initiate the Grails CLI and begin working with the framework, making it an easy entry point for those looking to start their Grails projects.
+
+The New Grails CLI! is the preferred method for initiating new Grails projects. This command-line interface offers various options for creating projects, enabling you to select your preferred build tools, test frameworks, GORM implementation, and more. Additionally, the CLI provides commands for generating essential components like controllers and domain classes.
+
+=== The Grails Forge Website
+
+You can also begin your Grails application without the need to install the Grails CLI by visiting https://start.grails.org/[the Grails Forge website]. This web-based platform allows you to initiate Grails projects conveniently, bypassing the installation of the CLI.
+
+=== Understanding the New Grails Command-line Interface (CLI)
+
+Once the Grails CLI has been successfully installed, you can activate it using the "grails" command. For example:
+
+[source,shell]
+----
+grails create-app myapp
+----
+
+A Grails framework CLI project is recognizable by the presence of the "grails-cli.yml" file, which is automatically generated at the project's root if it was created using the CLI. This file contains information about the project's profile, default package, and other variables.
+
+Here is an example of a "grails-cli.yml" configuration for a default Grails web application:
+
+[source,yaml]
+----
+applicationType: web
+defaultPackage: com.example
+testFramework: spock
+sourceLanguage: groovy
+buildTool: gradle
+gormImpl: gorm-hibernate5
+servletImpl: spring-boot-starter-tomcat
+features:
+  - app-name
+  - asset-pipeline-grails
+  - base
+  - geb
+  - gorm-hibernate5
+  - gradle
+  - grails-application
+  - grails-console
+  - grails-dependencies
+  - grails-gorm-testing-support
+  - grails-gradle-plugin
+  - grails-gsp
+  - grails-url-mappings
+  - grails-web
+  - grails-web-testing-support
+  - h2
+  - logback
+  - micronaut-inject-groovy
+  - readme
+  - scaffolding
+  - spock
+  - spring-boot-autoconfigure
+  - spring-boot-starter
+  - spring-boot-starter-tomcat
+  - yaml
+----
+
+This "grails-cli.yml" configuration sets the default values for various aspects of the Grails web application, including the application type, default package, test framework, source language, build tool, GORM implementation, servlet implementation, and a list of enabled features.
+
+=== Grails Default Package Configuration
+
+The project's default package is determined based on the project's name. For instance, running the following command:
+
+[source, shell]
+----
+grails create-app myapp
+----
+
+Will set the default package to `myapp`.
+
+If you wish to specify your own default package when creating the application, you can do so by prefixing the application name with the package like this:
+
+[source, shell]
+----
+grails create-app com.example.myapp
+----
+
+In this case, "com.example" becomes the default package for your project.
 
 === Gradle Build Tool
 
@@ -34,7 +114,7 @@ grails {
 }
 ----
 
-=== Using Gradle Commands
+=== Utilizing Gradle Build Tool
 
 To interact with your Grails project and perform various tasks related to building and running it, you should employ Gradle commands. Here are a few examples:
 
