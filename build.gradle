@@ -88,9 +88,9 @@ task editProjectArtificat (type:Exec) {
     dependsOn 'fetchGrailsSource'
     executable "bash"
     if (explicitGrailsHome) {
-        args  "-i", 'sed -i "s/^projectVersion.*$/projectVersion=6.0.0-M2/" ' + explicitGrailsHome + '/gradle.properties'
+        args  "-i", 'sed -i "s/^projectVersion.*$/projectVersion=6.0.0/" ' + explicitGrailsHome + '/gradle.properties'
     } else {
-        args  "-i", 'sed -i "s/^projectVersion.*$/projectVersion=6.0.0-M2/" ' +  checkOutDir + "/grails-src/gradle.properties"
+        args  "-i", 'sed -i "s/^projectVersion.*$/projectVersion=6.0.0/" ' +  checkOutDir + "/grails-src/gradle.properties"
     }
 }
 
@@ -119,8 +119,6 @@ asciidoctor {
                'linkcss'       : 'true',
                'docinfo1'      : '',
                'toc'           : 'left',
-                // stylesdir: "${projectDir}/resources/css",
-                // stylesheet: 'style.css',
                'version'       : project.version,
                'sourcedir'     : "$checkOutDir/grails-src"
 }
@@ -166,6 +164,7 @@ task publishGuide(type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', '
         'springBootReference' :"https://docs.spring.io/spring-boot/docs/${springBootVersion}/reference",
         'springBootVersion': project.springBootVersion,
         'springVersion': project.springVersion,
+        'gradleVersion': project.gradleVersion
     ]
     macros = [ new grails.doc.macros.GspTagSourceMacro(searchDirs) ]
 }
