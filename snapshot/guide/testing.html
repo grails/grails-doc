@@ -163,141 +163,99 @@ function addJsClass() {
 
 
 <div class="paragraph">
-<p>Automated testing is a key part of Grails. Hence, Grails provides many ways to making testing easier from low level unit testing to high level functional tests. This section details the different capabilities that Grails offers for testing.</p>
+<p>Automated testing is a critical aspect of Grails development. Grails provides a rich set of testing capabilities, ranging from low-level unit testing to high-level functional tests. This comprehensive guide explores these diverse testing features in detail.</p>
 </div>
 <div class="paragraph">
-<p>The first thing to be aware of is that all of the <code>create-*</code> and <code>generate-\*</code> commands create <code>unit</code> or <code>integration</code> tests automatically. For example if you run the <a href="../ref/Command%20Line/create-controller.html">create-controller</a> command as follows:</p>
+<p><strong>Automatic Test Generation</strong></p>
+</div>
+<div class="paragraph">
+<p>When you use the <code>create-<strong></code> and <code>generate-</strong></code> commands, Grails automatically generates <code>unit</code> or <code>integration</code> tests. For example, running the <code>create-controller</code> command as shown below:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails create-controller com.acme.app.simple</code></pre>
+<pre class="CodeRay highlight"><code data-lang="shell">grails create-controller com.example.simple</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Grails will create a controller at <code>grails-app/controllers/com/acme/app/SimpleController.groovy</code>, and also a unit test at <code>src/test/groovy/com/acme/app/SimpleControllerSpec.groovy</code>. What Grails won&#8217;t do however is populate the logic inside the test! That is left up to you.</p>
+<p>Grails generates a controller at grails-app/controllers/com/example/SimpleController.groovy and a corresponding unit test at src/test/groovy/com/example/SimpleControllerSpec.groovy. It&#8217;s important to note that Grails only creates the test structure; you need to implement the test logic.</p>
 </div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-The default class name suffix is <code>Tests</code> but as of Grails 1.2.2, the suffix of <code>Test</code> is also supported.
-</td>
-</tr>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_running_tests">Running Tests</h4>
 <div class="paragraph">
-<p>Tests are run with the <a href="../ref/Command%20Line/test-app.html">test-app</a> command:</p>
+<p><strong>Running Tests</strong></p>
+</div>
+<div class="paragraph">
+<p>To execute tests, you can use the Gradle check task:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails test-app</code></pre>
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew check</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The command will produce output such as:</p>
+<p>This command will execute all the Unit tests in src/main/groovy/com/example/ directory.</p>
+</div>
+<div class="sect2">
+<h3 id="_targeting_tests">Targeting Tests</h3>
+<div class="paragraph">
+<p>To selectively target tests for execution, you have several options:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>To run all tests for a controller named SimpleController, use this command:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew check --tests SimpleController</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>To test all classes ending in Controller, you can employ wildcards:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew check --tests *Controller</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>To specify package names:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew check --tests some.org.*Controller</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>To run all tests in a package:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew check --tests some.org.*</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>To run all tests in a package, including subpackages:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew check --tests some.org.**.*</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p>To target specific test methods:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew check --tests SimpleController.testLogin</code></pre>
+</div>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You can combine multiple patterns as needed:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">-------------------------------------------------------
-Running Unit Tests...
-Running test FooTests...FAILURE
-Unit Tests Completed <span class="keyword">in</span> <span class="integer">464</span>ms ...
--------------------------------------------------------
-
-Tests <span class="key">failed</span>: <span class="integer">0</span> errors, <span class="integer">1</span> failures</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>whilst showing the reason for each test failure.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-You can force a clean before running tests by passing <code>-clean</code> to the <code>test-app</code> command.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>Grails writes HTML test reports to the <code>build/reports/tests</code> directory and JUnit XML test reports to the <code>build/test-results</code> directory. The HTML reports are generally the best ones to look at.</p>
-</div>
-<div class="paragraph">
-<p>Using Grails' <a href="commandLine.html#interactiveMode">interactive mode</a> confers some distinct advantages when executing tests. First, the tests will execute significantly faster on the second and subsequent runs. Second, a shortcut is available to open the HTML reports in your browser:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">open test-report</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can also run your unit tests from within most IDEs.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_targeting_tests">Targeting Tests</h4>
-<div class="paragraph">
-<p>You can selectively target the test(s) to be run in different ways. To run all tests for a controller named <code>SimpleController</code> you would run:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails test-app SimpleController</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This will run any tests for the class named <code>SimpleController</code>. Wildcards can be used&#8230;&#8203;</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails test-app *Controller</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This will test all classes ending in <code>Controller</code>. Package names can optionally be specified&#8230;&#8203;</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails test-app some.org.*Controller</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or to run all tests in a package&#8230;&#8203;</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails test-app some.org.*</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>or to run all tests in a package including subpackages&#8230;&#8203;</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails test-app some.org.**.*</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You can also target particular test methods&#8230;&#8203;</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails test-app SimpleController.testLogin</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This will run the <code>testLogin</code> test in the <code>SimpleController</code> tests. You can specify as many patterns in combination as you like&#8230;&#8203;</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails test-app some.org.* SimpleController.testLogin BookController</code></pre>
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew check --tests some.org.* SimpleController.testLogin BookController</code></pre>
 </div>
 </div>
 <div class="admonitionblock note">
@@ -307,96 +265,57 @@ You can force a clean before running tests by passing <code>-clean</code> to the
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-In Grails 2.x, adding <code>-rerun</code> as an argument would only run those tests which failed in the previous test-app run. This argument is no longer supported.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-In Grails 3.x, you might need to specify the package name before the class name, as well as append "Spec" to the end. For example, if you want to run the test for the ProductController, you should use <code>grails test-app *.ProductControllerSpec</code>. Note that the star can be used if you don&#8217;t want to type the whole package hierarchy.
+You might need to specify the package name before the class name and append "Spec" to it. For instance, to run the test for the ProductController, use ./gradlew test *.ProductControllerSpec. You can also use the star wildcard if you want to avoid typing the entire package hierarchy.
 </td>
 </tr>
 </table>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_debugging">Debugging</h4>
+<div class="sect2">
+<h3 id="_debugging">Debugging</h3>
 <div class="paragraph">
-<p>In order to debug your tests via a remote debugger, you can add <code>--debug-jvm</code> after <code>grails</code> in any commands, like so:</p>
+<p>To debug your tests using a remote debugger, you can add <code>--debug-jvm</code> after <code>./gradlew</code> in any commands, like so:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails --debug-jvm test-app</code></pre>
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew check --debug-jvm</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This will open the default Java remote debugging port, 5005, for you to attach a remote debugger from your editor / IDE of choice.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-This differs from Grails 2.3 and previous, where the <code>grails-debug</code> command existed.
-</td>
-</tr>
-</table>
+<p>This will open the default Java remote debugging port, 5005, allowing you to attach a remote debugger from your code editor or integrated development environment.</p>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_targeting_test_phases">Targeting Test Phases</h4>
+<div class="sect2">
+<h3 id="_targeting_test_phases_running_unit_integration_separately">Targeting Test Phases / Running Unit &amp; Integration Separately</h3>
 <div class="paragraph">
-<p>In addition to targeting certain tests, you can also target test <em>phases.</em> By default Grails has two testing phases <code>unit</code> and <code>integration.</code></p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-Grails 2.x uses <code>phase:type</code> syntax. In Grails 3.0 it was removed, because it made no sense in Gradle context.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>To execute <code>unit</code> tests you can run:</p>
+<p>To execute "unit" tests, use this command:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails test-app -unit</code></pre>
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew test</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>To run <code>integration</code> tests you would run&#8230;&#8203;</p>
+<p>For "integration" tests, you would run:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails test-app -integration</code></pre>
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew integrationTest</code></pre>
 </div>
 </div>
 </div>
-<div class="sect3">
-<h4 id="_targeting_tests_when_using_phases">Targeting Tests When Using Phases</h4>
+<div class="sect2">
+<h3 id="_targeting_tests_when_using_phases">Targeting Tests When Using Phases</h3>
 <div class="paragraph">
-<p>Test and phase targeting can be applied at the same time:</p>
+<p>You can combine test and phase targeting:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails test-app some.org.**.* -unit</code></pre>
+<pre class="CodeRay highlight"><code data-lang="shell">./gradlew test some.org.**.* -unit</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This would run all tests in the <code>unit</code> phase that are in the package <code>some.org</code> or a subpackage.</p>
+<p>This command will run all tests in the unit phase within the some.org package or its subpackages. For more detailed information, it&#8217;s recommended to consult the Gradle documentation on <a href="https://docs.gradle.org/current/userguide/java_testing.html">Testing in Java &amp; JVM projects</a>.</p>
 </div>
 </div>
 
@@ -740,6 +659,9 @@ import org.springframework.beans.factory.annotation.*
                             <div class="menu-item"><a href="../ref/Command%20Line/Usage.html">Usage</a></div>
                             
                             
+                            <div class="menu-item"><a href="../ref/Command%20Line/bootRun.html">bootRun</a>
+                            </div>
+                            
                             <div class="menu-item"><a href="../ref/Command%20Line/create-app.html">create-app</a>
                             </div>
                             
@@ -752,19 +674,16 @@ import org.springframework.beans.factory.annotation.*
                             <div class="menu-item"><a href="../ref/Command%20Line/create-plugin.html">create-plugin</a>
                             </div>
                             
+                            <div class="menu-item"><a href="../ref/Command%20Line/create-restapi.html">create-restapi</a>
+                            </div>
+                            
                             <div class="menu-item"><a href="../ref/Command%20Line/create-service.html">create-service</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/create-taglib.html">create-taglib</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../ref/Command%20Line/create-unit-test.html">create-unit-test</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/dependency-report.html">dependency-report</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/docs.html">docs</a>
+                            <div class="menu-item"><a href="../ref/Command%20Line/create-web-plugin.html">create-web-plugin</a>
                             </div>
                             
                             <div class="menu-item"><a href="../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -785,43 +704,7 @@ import org.springframework.beans.factory.annotation.*
                             <div class="menu-item"><a href="../ref/Command%20Line/list-features.html">list-features</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../ref/Command%20Line/list-profiles.html">list-profiles</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/package-plugin.html">package-plugin</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/package.html">package</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/plugin-info.html">plugin-info</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/profile-info.html">profile-info</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/run-app.html">run-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/run-command.html">run-command</a>
-                            </div>
-                            
                             <div class="menu-item"><a href="../ref/Command%20Line/schema-export.html">schema-export</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/shell.html">shell</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/stats.html">stats</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/stop-app.html">stop-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/test-app.html">test-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../ref/Command%20Line/war.html">war</a>
                             </div>
                             
                             </div>

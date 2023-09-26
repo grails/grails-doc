@@ -134,28 +134,84 @@ function addJsClass(el) {
                 
 
                 <div class="sect1">
-<h2 id="_create_app">create-app</h2>
+<h2 id="_create_app"><code>create-app</code></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_purpose">Purpose</h3>
+<h3 id="_description">Description</h3>
 <div class="paragraph">
-<p>The starting point for Grails. This command creates a Grails application using the name specifed by the user. A subdirectory within the directory the command was executed from is then created based on the specified application name.</p>
+<p>The <code>create-app</code> command serves as the initial step in Grails application development. When invoked, this command generates a Grails application with a user-specified name. Subsequently, it creates a subdirectory based on the provided application name within the directory where the command is executed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_usage">Usage</h3>
+<div class="paragraph">
+<p>To create a Grails default web application, use the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">grails craete-app [OPTIONS] name</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>NAME</code>: The desired name for the Grails application.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Options include specifying features, configuring the GORM implementation, selecting a servlet implementation, choosing a test framework, setting the JDK version, and more. You can tailor your Grails plugin to your specific requirements using these options.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options">Options</h3>
+<div class="paragraph">
+<p>Here are the available options for the create-app command:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>NAME</code>: The desired name for the application.</p>
+</li>
+<li>
+<p><code>-f, --features=FEATURE[,FEATURE&#8230;&#8203;]</code>: Specifies the features to include. Available options include h2, scaffolding, gorm-hibernate5, spring-boot-starter-jetty, springloaded, spring-boot-starter-tomcat, micronaut-http-client, cache-ehcache, hibernate-validator, postgres, mysql, cache, database-migration, grails-gsp, hamcrest, gorm-mongodb, assertj, mockito, spring-boot-starter-undertow, micronaut-inject-groovy, github-workflow-java-ci, jrebel, testcontainers, sqlserver, grails-console, views-markup, asset-pipeline-grails, views-json, gorm-neo4j, asciidoctor, embedded-mongodb, grails-web-console, logbackGroovy, mongo-sync, shade, geb, properties.</p>
+</li>
+<li>
+<p><code>-g, --gorm=GORM Implementation</code>: Specifies the GORM Implementation to configure, with options like hibernate, mongodb, neo4j.</p>
+</li>
+<li>
+<p><code>-i, --inplace</code>: Creates a service within the current directory.</p>
+</li>
+<li>
+<p><code>--jdk=&lt;javaVersion&gt;</code>: Specifies the JDK version for the project.</p>
+</li>
+<li>
+<p><code>-s, --servlet=Servlet Implementation</code>: Specifies the Servlet Implementation, with choices including none, tomcat, jetty, undertow.</p>
+</li>
+<li>
+<p><code>-t, --test=TEST</code>: Specifies the test framework, with options such as junit, spock.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_examples">Examples</h3>
 <div class="paragraph">
-<p>Create an application in a directory that matches the application name:</p>
+<p>Here are examples for the <code>create-app</code> command:</p>
 </div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create an application within a directory named "bookstore":</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="bash">$ grails create-app bookstore
 $ cd bookstore</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Create an application in the current directory:</p>
-</div>
+</li>
+<li>
+<p>Create an application directly in the current directory:</p>
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="bash">$ mkdir bookstore
@@ -163,44 +219,16 @@ $ cd bookstore
 $ grails create-app --inplace</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Create an application customizing the profile and features (since Grails 3.1):</p>
-</div>
+</li>
+<li>
+<p>Customize the application by adding specific features (available since Grails 3.1):</p>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="bash">$ grails create-app bookstore --profile web --features mongodb,asset-pipeline
-$ grails create-app bookstore --profile rest-api --features hibernate5</code></pre>
+<pre class="CodeRay highlight"><code data-lang="bash">$ grails create-app bookstore --features github-workflow-java-ci,asciidoctor</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>Arguments:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>profile</code> - The profile to use to create the application</p>
 </li>
-<li>
-<p><code>features</code> - The features to use when creating the application</p>
-</li>
-<li>
-<p><code>inplace</code> - Whether to create the application within the current directory</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_description">Description</h3>
-<div class="paragraph">
-<p>The <code>create-app</code> command is responsible for creating an application. By default the command will create an application using the "web" profile. For other available profiles use the <a href="list-profiles.html">list-profiles</a> and <a href="profile-info.html">profile-info</a> commands to find out what profiles are available. For more information on profiles see the <a href="../../guide/profiles.html">Profiles</a> section of the user guide.</p>
-</div>
-<div class="paragraph">
-<p>Usage:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails create-app &lt;&lt;name&gt;&gt; [--profile] &lt;&lt;profile name&gt;&gt; [--features] &lt;&lt;FEATURE NAMES&gt;&gt;</code></pre>
-</div>
+</ol>
 </div>
 </div>
 </div>
@@ -222,6 +250,9 @@ $ grails create-app bookstore --profile rest-api --features hibernate5</code></p
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
                             
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bootRun.html">bootRun</a>
+                            </div>
+                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-app.html">create-app</a>
                             </div>
                             
@@ -234,19 +265,16 @@ $ grails create-app bookstore --profile rest-api --features hibernate5</code></p
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-plugin.html">create-plugin</a>
                             </div>
                             
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-restapi.html">create-restapi</a>
+                            </div>
+                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-service.html">create-service</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-taglib.html">create-taglib</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/create-unit-test.html">create-unit-test</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/docs.html">docs</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-web-plugin.html">create-web-plugin</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -267,43 +295,7 @@ $ grails create-app bookstore --profile rest-api --features hibernate5</code></p
                             <div class="menu-item"><a href="../../ref/Command%20Line/list-features.html">list-features</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/list-profiles.html">list-profiles</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/package-plugin.html">package-plugin</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/package.html">package</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/plugin-info.html">plugin-info</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/profile-info.html">profile-info</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-command.html">run-command</a>
-                            </div>
-                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/shell.html">shell</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/stop-app.html">stop-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
                             </div>
                             
                         </div>

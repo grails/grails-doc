@@ -134,37 +134,124 @@ function addJsClass(el) {
                 
 
                 <div class="sect1">
-<h2 id="_create_plugin">create-plugin</h2>
+<h2 id="_create_plugin"><code>create-plugin</code></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_purpose">Purpose</h3>
+<h3 id="_description">Description</h3>
 <div class="paragraph">
-<p>The <code>create-plugin</code> command creates a Grails plugin project.</p>
+<p>The <code>create-plugin</code> command is used to create a Grails plugin project. A Grails plugin project is similar to an application project but includes a plugin descriptor and can be packaged as a plugin to be installed into other Grails applications.</p>
+</div>
+<div class="paragraph">
+<p>Plugins are not only valuable for plugin developers but also serve as a means to modularize large Grails applications. They allow you to encapsulate functionality and easily reuse it across different projects. To learn more about developing plugins for Grails, refer to the section on <a href="../../guide/plugins.html">Plugin Development</a> in the Grails user guide.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_usage">Usage</h3>
+<div class="paragraph">
+<p>To create a Grails plugin, use the following command:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">grails create-plugin [OPTIONS] NAME</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>NAME</code>: The desired name for the Grails plugin.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Options include specifying features, configuring the GORM implementation, selecting a servlet implementation, choosing a test framework, setting the JDK version, and more. You can tailor your Grails plugin to your specific requirements using these options.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_options">Options</h3>
+<div class="paragraph">
+<p>Here are the available options for the create-plugin command:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>-f, --features=FEATURE[,FEATURE&#8230;&#8203;]: Specifies the features to include in the plugin. Available options include h2, gorm-hibernate5, spring-boot-starter-jetty, springloaded, micronaut-http-client, cache-ehcache, hibernate-validator, postgres, mysql, cache, database-migration, grails-gsp, hamcrest, gorm-mongodb, assertj, mockito, spring-boot-starter-undertow, micronaut-inject-groovy, github-workflow-java-ci, jrebel, testcontainers, sqlserver, grails-console, views-markup, views-json, gorm-neo4j, asciidoctor, embedded-mongodb, grails-web-console, logbackGroovy, mongo-sync, shade, properties.</p>
+</li>
+<li>
+<p>-g, --gorm=GORM Implementation: Specifies the GORM Implementation to configure for the plugin. Possible values are hibernate, mongodb, neo4j.</p>
+</li>
+<li>
+<p>-h, --help: Displays the help message and exits.</p>
+</li>
+<li>
+<p>-i, --inplace: Creates a service within the current directory.</p>
+</li>
+<li>
+<p>--jdk=&lt;javaVersion&gt;: Specifies the JDK version the project should target.</p>
+</li>
+<li>
+<p>-s, --servlet=Servlet Implementation: Specifies the Servlet Implementation to configure for the plugin. Possible values are none, tomcat, jetty, undertow.</p>
+</li>
+<li>
+<p>-t, --test=TEST: Specifies the test framework to use for the plugin. Possible values are junit, spock.</p>
+</li>
+</ul>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_examples">Examples</h3>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails create-plugin simple</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_description">Description</h3>
 <div class="paragraph">
-<p>Creates a Grails plugin project. A Grails plugin project is just like an application project except it contains a plugin descriptor and can be packaged as a plugin and installed into other applications.</p>
-</div>
-<div class="paragraph">
-<p>Plugins are not just useful for plugin developers, but also as a way to modularize large Grails applications. Refer to the section on <a href="../../guide/plugins.html">Plugin Development</a> in the user guide for more information on developing plugins for Grails.</p>
-</div>
-<div class="paragraph">
-<p>Usage:</p>
+<p>To create a Grails plugin named "example-plugin" with specific features:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">grails create-plugin &lt;&lt;name&gt;&gt;</code></pre>
+<pre class="CodeRay highlight"><code data-lang="shell">grails create-plugin example-plugin --features h2,gorm-hibernate5,asciidoctor</code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>This command will generate a Grails plugin project named "example-plugin" with the specified features, making it ready for development and integration into other Grails applications.</p>
+</div>
+<div class="paragraph">
+<p>Here are additional examples for the <code>create-plugin</code> command:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Create a minimal Grails plugin:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">grails create-plugin minimal-plugin</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command will create a Grails plugin project named "minimal-plugin" with the default settings, suitable for starting a new plugin project from scratch.</p>
+</div>
+</li>
+<li>
+<p>Create a plugin with MongoDB support:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">grails create-plugin mongodb-plugin --gorm=mongodb</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command will generate a Grails plugin project named "mongodb-plugin" configured to use MongoDB as the GORM implementation.</p>
+</div>
+</li>
+<li>
+<p>Create a plugin with embedded H2 database and view support:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="shell">grails create-plugin h2-views-plugin --features h2,views-markup</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This command will create a Grails plugin project named "h2-views-plugin" with the H2 database and views markup feature enabled, making it useful for projects that require an embedded database and view rendering capabilities.</p>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>These additional examples showcase different use cases for the <code>create-plugin</code> command, such as creating minimal plugins, customizing GORM implementations, and enabling specific features to meet project requirements.</p>
 </div>
 </div>
 </div>
@@ -186,6 +273,9 @@ function addJsClass(el) {
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
                             
+                            <div class="menu-item"><a href="../../ref/Command%20Line/bootRun.html">bootRun</a>
+                            </div>
+                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-app.html">create-app</a>
                             </div>
                             
@@ -198,19 +288,16 @@ function addJsClass(el) {
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-plugin.html">create-plugin</a>
                             </div>
                             
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-restapi.html">create-restapi</a>
+                            </div>
+                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-service.html">create-service</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/create-taglib.html">create-taglib</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/create-unit-test.html">create-unit-test</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/dependency-report.html">dependency-report</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/docs.html">docs</a>
+                            <div class="menu-item"><a href="../../ref/Command%20Line/create-web-plugin.html">create-web-plugin</a>
                             </div>
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/generate-all.html">generate-all</a>
@@ -231,43 +318,7 @@ function addJsClass(el) {
                             <div class="menu-item"><a href="../../ref/Command%20Line/list-features.html">list-features</a>
                             </div>
                             
-                            <div class="menu-item"><a href="../../ref/Command%20Line/list-profiles.html">list-profiles</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/package-plugin.html">package-plugin</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/package.html">package</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/plugin-info.html">plugin-info</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/profile-info.html">profile-info</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-app.html">run-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/run-command.html">run-command</a>
-                            </div>
-                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/shell.html">shell</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/stats.html">stats</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/stop-app.html">stop-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/test-app.html">test-app</a>
-                            </div>
-                            
-                            <div class="menu-item"><a href="../../ref/Command%20Line/war.html">war</a>
                             </div>
                             
                         </div>
