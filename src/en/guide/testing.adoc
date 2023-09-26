@@ -1,158 +1,118 @@
-Automated testing is a key part of Grails. Hence, Grails provides many ways to making testing easier from low level unit testing to high level functional tests. This section details the different capabilities that Grails offers for testing.
 
-The first thing to be aware of is that all of the `create-\*` and `generate-\*` commands create `unit` or `integration` tests automatically. For example if you run the link:../ref/Command%20Line/create-controller.html[create-controller] command as follows:
+Automated testing is a critical aspect of Grails development. Grails provides a rich set of testing capabilities, ranging from low-level unit testing to high-level functional tests. This comprehensive guide explores these diverse testing features in detail.
 
-[source,groovy]
+**Automatic Test Generation**
+
+When you use the `create-*` and `generate-*` commands, Grails automatically generates `unit` or `integration` tests. For example, running the `create-controller` command as shown below:
+
+[source,shell]
 ----
-grails create-controller com.acme.app.simple
-----
-
-Grails will create a controller at `grails-app/controllers/com/acme/app/SimpleController.groovy`, and also a unit test at `src/test/groovy/com/acme/app/SimpleControllerSpec.groovy`. What Grails won't do however is populate the logic inside the test! That is left up to you.
-
-NOTE: The default class name suffix is `Tests` but as of Grails 1.2.2, the suffix of `Test` is also supported.
-
-
-==== Running Tests
-
-
-Tests are run with the link:../ref/Command%20Line/test-app.html[test-app] command:
-
-[source,groovy]
-----
-grails test-app
+grails create-controller com.example.simple
 ----
 
-The command will produce output such as:
+Grails generates a controller at grails-app/controllers/com/example/SimpleController.groovy and a corresponding unit test at src/test/groovy/com/example/SimpleControllerSpec.groovy. It's important to note that Grails only creates the test structure; you need to implement the test logic.
 
-[source,groovy]
+**Running Tests**
+
+To execute tests, you can use the Gradle check task:
+
+[source,shell]
 ----
--------------------------------------------------------
-Running Unit Tests...
-Running test FooTests...FAILURE
-Unit Tests Completed in 464ms ...
--------------------------------------------------------
-
-Tests failed: 0 errors, 1 failures
+./gradlew check
 ----
 
-whilst showing the reason for each test failure.
+This command will execute all the Unit tests in src/main/groovy/com/example/ directory.
 
-NOTE: You can force a clean before running tests by passing `-clean` to the `test-app` command.
 
-Grails writes HTML test reports to the `build/reports/tests` directory and JUnit XML test reports to the `build/test-results` directory. The HTML reports are generally the best ones to look at.
+=== Targeting Tests
 
-Using Grails' link:commandLine.html#interactiveMode[interactive mode] confers some distinct advantages when executing tests. First, the tests will execute significantly faster on the second and subsequent runs. Second, a shortcut is available to open the HTML reports in your browser:
+To selectively target tests for execution, you have several options:
 
-[source,groovy]
+1. To run all tests for a controller named SimpleController, use this command:
++
+[source,shell]
 ----
-open test-report
-----
-
-You can also run your unit tests from within most IDEs.
-
-
-==== Targeting Tests
-
-
-You can selectively target the test(s) to be run in different ways. To run all tests for a controller named `SimpleController` you would run:
-
-[source,groovy]
-----
-grails test-app SimpleController
+./gradlew check --tests SimpleController
 ----
 
-This will run any tests for the class named `SimpleController`. Wildcards can be used...
-
-[source,groovy]
+2. To test all classes ending in Controller, you can employ wildcards:
++
+[source,shell]
 ----
-grails test-app *Controller
-----
-
-This will test all classes ending in `Controller`. Package names can optionally be specified...
-
-[source,groovy]
-----
-grails test-app some.org.*Controller
+./gradlew check --tests *Controller
 ----
 
-or to run all tests in a package...
-
-[source,groovy]
+3. To specify package names:
++
+[source,shell]
 ----
-grails test-app some.org.*
-----
-
-or to run all tests in a package including subpackages...
-
-[source,groovy]
-----
-grails test-app some.org.**.*
+./gradlew check --tests some.org.*Controller
 ----
 
-You can also target particular test methods...
-
-[source,groovy]
+4. To run all tests in a package:
++
+[source,shell]
 ----
-grails test-app SimpleController.testLogin
-----
-
-This will run the `testLogin` test in the `SimpleController` tests. You can specify as many patterns in combination as you like...
-
-[source,groovy]
-----
-grails test-app some.org.* SimpleController.testLogin BookController
+./gradlew check --tests some.org.*
 ----
 
-NOTE: In Grails 2.x, adding `-rerun` as an argument would only run those tests which failed in the previous test-app run. This argument is no longer supported.
-
-NOTE: In Grails 3.x, you might need to specify the package name before the class name, as well as append "Spec" to the end. For example, if you want to run the test for the ProductController, you should use `grails test-app *.ProductControllerSpec`. Note that the star can be used if you don't want to type the whole package hierarchy.
-
-
-==== Debugging
-
-
-In order to debug your tests via a remote debugger, you can add `--debug-jvm` after `grails` in any commands, like so:
-
-[source,groovy]
+5. To run all tests in a package, including subpackages:
++
+[source,shell]
 ----
-grails --debug-jvm test-app
+./gradlew check --tests some.org.**.*
 ----
 
-This will open the default Java remote debugging port, 5005, for you to attach a remote debugger from your editor / IDE of choice.
-
-NOTE: This differs from Grails 2.3 and previous, where the `grails-debug` command existed.
-
-
-==== Targeting Test Phases
-
-
-In addition to targeting certain tests, you can also target test _phases._ By default Grails has two testing phases `unit` and `integration.`
-
-NOTE: Grails 2.x uses `phase:type` syntax. In Grails 3.0 it was removed, because it made no sense in Gradle context.
-
-To execute `unit` tests you can run:
-
-[source,groovy]
+6. To target specific test methods:
++
+[source,shell]
 ----
-grails test-app -unit
+./gradlew check --tests SimpleController.testLogin
 ----
 
-To run `integration` tests you would run...
+You can combine multiple patterns as needed:
 
-[source,groovy]
+[source,shell]
 ----
-grails test-app -integration
-----
-
-
-==== Targeting Tests When Using Phases
-
-
-Test and phase targeting can be applied at the same time:
-
-[source,groovy]
-----
-grails test-app some.org.**.* -unit
+./gradlew check --tests some.org.* SimpleController.testLogin BookController
 ----
 
-This would run all tests in the `unit` phase that are in the package `some.org` or a subpackage.
+NOTE: You might need to specify the package name before the class name and append "Spec" to it. For instance, to run the test for the ProductController, use ./gradlew test *.ProductControllerSpec. You can also use the star wildcard if you want to avoid typing the entire package hierarchy.
+
+=== Debugging
+
+To debug your tests using a remote debugger, you can add `--debug-jvm` after `./gradlew` in any commands, like so:
+
+[source,shell]
+----
+./gradlew check --debug-jvm
+----
+
+This will open the default Java remote debugging port, 5005, allowing you to attach a remote debugger from your code editor or integrated development environment.
+
+=== Targeting Test Phases / Running Unit & Integration Separately
+
+To execute "unit" tests, use this command:
+
+[source,shell]
+----
+./gradlew test
+----
+
+For "integration" tests, you would run:
+
+[source,shell]
+----
+./gradlew integrationTest
+----
+
+=== Targeting Tests When Using Phases
+
+You can combine test and phase targeting:
+
+[source,shell]
+----
+./gradlew test some.org.**.* -unit
+----
+
+This command will run all tests in the unit phase within the some.org package or its subpackages. For more detailed information, it's recommended to consult the Gradle documentation on https://docs.gradle.org/current/userguide/java_testing.html[Testing in Java & JVM projects].
