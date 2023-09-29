@@ -5,6 +5,6 @@ This is the project for generating the [Grails user & reference guide][Grails Do
 
 For contributing to grails docs look at [Building/Contributing to Grails Documentation][Contributing].
 
-[Grails Documentation]: http://grails.org/doc/latest
-[Grails]: http://grails.org
+[Grails Documentation]: https://grails.org/doc/latest
+[Grails]: https://grails.org
 [Contributing]: https://grails.github.io/grails-doc/latest/guide/contributing.html#patchesDoc
