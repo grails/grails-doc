@@ -262,7 +262,7 @@ beans = {
 <span class="keyword">import</span> <span class="include">my.company.MyBeanImpl</span>
 
 beans = {
-    <span class="keyword">if</span> (application.config.my.company.mockService) {
+    <span class="keyword">if</span> (application.config.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">my.company.mockService</span><span class="delimiter">'</span></span>)) {
         myBean(MockImpl) {
             someProperty = <span class="integer">42</span>
             otherProperty = <span class="string"><span class="delimiter">&quot;</span><span class="content">blue</span><span class="delimiter">&quot;</span></span>
@@ -1047,8 +1047,8 @@ database.dbname=<span class="string"><span class="delimiter">&quot;</span><span 
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">dataSource(org.springframework.jdbc.datasource.DriverManagerDataSource) {
-    driverClassName = grailsApplication.config.database.driver
-    url = <span class="string"><span class="delimiter">&quot;</span><span class="content">jdbc</span><span class="content">\:</span><span class="inline"><span class="inline-delimiter">${</span>grailsApplication.config.database.dbname<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
+    driverClassName = grailsApplication.config.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">database.driver</span><span class="delimiter">'</span></span>, <span class="predefined-type">String</span>)
+    url = <span class="string"><span class="delimiter">&quot;</span><span class="content">jdbc</span><span class="content">\:</span><span class="inline"><span class="inline-delimiter">${</span>grailsApplication.config.getProperty(<span class="string"><span class="delimiter">'</span><span class="content">database.dbname</span><span class="delimiter">'</span></span>, <span class="predefined-type">String</span>)<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>
 }</code></pre>
 </div>
 </div>
