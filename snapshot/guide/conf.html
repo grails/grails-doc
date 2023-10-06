@@ -556,7 +556,7 @@ As Grails is a SpringBoot configuration options are available as well, for docum
 
 
 <div class="paragraph">
-<p>Since Grails 3.0, logging is handled by the <a href="http://logback.qos.ch">Logback logging framework</a> and can be configured with the <code>grails-app/conf/logback.groovy</code> file.</p>
+<p>Since Grails 3.0, logging is handled by the <a href="http://logback.qos.ch">Logback logging framework</a> and can be configured with the <code>grails-app/conf/logback.xml</code> file.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -565,7 +565,7 @@ As Grails is a SpringBoot configuration options are available as well, for docum
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-If you prefer XML you can replace the <code>logback.groovy</code> file with a <code>logback.xml</code> file instead.
+Since Grails 5.1.2 support for groovy configuration (<code>grails-app/conf/logback.groovy</code>) has been removed (by logback 1.2.9). It is possible to add back groovy configuration by adding the <a href="https://github.com/virtualdogbert/logback-groovy-config">logback-groovy-config</a> library to your project.
 </td>
 </tr>
 </table>
@@ -1505,7 +1505,31 @@ environments {
 <p>The <a href="http://h2database.com/html/quickstart.html#h2_console">H2 database console</a> is a convenient feature of H2 that provides a web-based interface to any database that you have a JDBC driver for, and it&#8217;s very useful to view the database you&#8217;re developing against. It&#8217;s especially useful when running against an in-memory database.</p>
 </div>
 <div class="paragraph">
-<p>You can access the console by navigating to <a href="http://localhost:8080/h2-console" class="bare">http://localhost:8080/h2-console</a> in a browser. See the <a href="https://docs.spring.io/spring-boot/docs/2.7.12/reference/html/boot-features-sql.html#boot-features-sql-h2-console">Spring Boot H2 Console Documentation</a> for more information on the options available.</p>
+<p>You can access the console by navigating to <a href="http://localhost:8080/h2-console" class="bare">http://localhost:8080/h2-console</a> in a browser. See the <a href="https://docs.spring.io/spring-boot/docs/2.7.12/reference/htmlsingle/#data.sql.h2-web-console">Spring Boot H2 Console Documentation</a> for more information on the options available.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+The H2 console is disabled by default (unless you are using Spring Boot&#8217;s developer tools) and must be enabled by configuring the <code>spring.h2.console.enabled</code> property with a value of <code>true</code>.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The H2 console is only intended for use during development so care should be taken to ensure that <code>spring.h2.console.enabled</code> is not set to <code>true</code> in production.
+</td>
+</tr>
+</table>
 </div>
 
 <a name="3.3.6 Multiple Datasources"><!-- Legacy link --></a>
