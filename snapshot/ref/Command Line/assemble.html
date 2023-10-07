@@ -11,32 +11,39 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>11.2 Validating Constraints 6.0.0-SNAPSHOT</title>
+    <title>The Grails Framework 6.0.0-SNAPSHOT</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-    <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
-    <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
+    <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
+    <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
     <script type="text/javascript">
-function addJsClass() {
+function addJsClass(el) {
     var classes = document.body.className.split(" ");
     classes.push("js");
     document.body.className = classes.join(" ");
 }
     </script>
+    <style>
+        .contribute-btn {
+            bottom: 0px;
+        }
+    </style>
 </head>
 
 <body class="body" onload="addJsClass();">
+
 <div id="navigation">
     <div class="navTitle">
         
         The Grails Framework
     </div>
+
     <div class="navLinks">
         <ul>
             <li>
                 <div id="nav-summary" onmouseover="toggleNavSummary(false)" onmouseout="toggleNavSummary(true)">
                     <a href="../../guide/index.html" class="button">Table of contents</a>
 
-                    <div id="nav-summary-childs" style="display:none;">
+                    <div id="nav-summary-childs">
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/introduction.html"><strong>1</strong><span>Introduction</span></a>
                         </div>
@@ -109,115 +116,91 @@ function addJsClass() {
             </li>
         </ul>
     </div>
-
-
 </div>
+
 
 <table id="colset" border="0" cellpadding="0" cellspacing="0">
     <tr>
         <td id="col1">
-            <div id="main" class="corner-all">
-
-                
-                    <div class="toc-item prev-left"><a href="../../guide/async.html">&lt;&lt; <strong>10</strong><span>Asynchronous Programming</span></a></div>
-                
+            <div id="main" class="reference corner-all">
 
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
-
                 
-                    <div class="toc-item next-right"><a href="../../guide/services.html"><strong>12</strong><span>The Service Layer</span> >></a></div>
-                
-
-
-                <div class="project">
-                    <h1>11.2 Validating Constraints</h1>
-
-                    <p><strong>Version:</strong> 6.0.0-SNAPSHOT</p>
+                <div class='contribute-btn'>
+                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/6.0.x/src/en/ref/Command Line/assemble.adoc"'>
+                        <i class='fa fa-pencil-square-o'></i> Improve this doc
+                    </button>
                 </div>
-
                 
 
-                
-<a name="10.2 Validating Constraints"><!-- Legacy link --></a>
-<h2 id="validatingConstraints">11.2 Validating Constraints</h2>
-
-<div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/6.0.x/src/en/guide/validation/validatingConstraints.adoc"'>
-        <i class='fa fa-pencil-square-o'></i> Improve this doc
-    </button>
-</div>
-
-
-<div class="sect3">
-<h4 id="_validation_basics">Validation Basics</h4>
+                <div class="sect1">
+<h2 id="_assemble">assemble</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_purpose">Purpose</h3>
 <div class="paragraph">
-<p>Call the <a href="../ref/Domain%20Classes/validate.html">validate</a> method to validate a domain class instance:</p>
+<p>The <code>assemble</code> command creates a Web Application Archive (WAR) file which can be deployed on any Java EE compliant application server.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_examples">Examples</h3>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">.<span class="regexp"><span class="delimiter">/</span><span class="content">gradlew assemble</span></span><span class="error">
+</span>.<span class="regexp"><span class="delimiter">/</span><span class="content">gradlew test assemble</span></span><span class="error">
+</span>.<span class="regexp"><span class="delimiter">/</span><span class="content">gradlew -Dgrails.env=staging assemble</span></span></code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_description">Description</h3>
+<div class="paragraph">
+<p>Usage:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> user = <span class="keyword">new</span> User(params)
-
-<span class="keyword">if</span> (user.validate()) {
-    <span class="comment">// do something with user</span>
-}
-<span class="keyword">else</span> {
-    user.errors.allErrors.each {
-        println <span class="local-variable">it</span>
-    }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">.<span class="regexp"><span class="delimiter">/</span><span class="content">gradlew &lt;&lt;environment&gt;&gt;* assemble &lt;&lt;arguments&gt;&gt;*</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>errors</code> property on domain classes is an instance of the Spring <a href="https://docs.spring.io/spring/docs/5.3.27/javadoc-api/org/springframework/validation/Errors.html">Errors</a> interface. The <code>Errors</code> interface provides methods to navigate the validation errors and also retrieve the original values.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_validation_phases">Validation Phases</h4>
-<div class="paragraph">
-<p>Within Grails there are two phases of validation, the first one being <a href="theWebLayer.html#dataBinding">data binding</a> which occurs when you bind request parameters onto an instance such as:</p>
+<p>By default the <code>assemble</code> command creates a web application archive (WAR) file using the application name and version number. The <code>assemble</code> command is different from most commands since it runs in the production environment by default instead of development, but like any script the environment can be specified using the standard convention:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">def</span> user = <span class="keyword">new</span> User(params)</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">.<span class="regexp"><span class="delimiter">/</span><span class="content">gradlew test assemble</span></span><span class="error">
+</span>.<span class="regexp"><span class="delimiter">/</span><span class="content">gradlew dev assemble</span></span><span class="error">
+</span>.<span class="regexp"><span class="delimiter">/</span><span class="content">gradlew prod assemble</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>At this point you may already have errors in the <code>errors</code> property due to type conversion (such as converting Strings to Dates). You can check these and obtain the original input value using the <code>Errors</code> API:</p>
+<p>Additionally, it is highlighted that upon execution, two files will be generated in the build/libs directory. One file with a 'plain' suffix is designed for be deployed on any Java EE compliant application server, while the other file is a WAR file that houses an embedded server, which can be run with the command java -jar &lt;filename&gt;.war.</p>
+</div>
+<div class="paragraph">
+<p>You can also specify a custom environment:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">if</span> (user.hasErrors()) {
-    <span class="keyword">if</span> (user.errors.hasFieldErrors(<span class="string"><span class="delimiter">&quot;</span><span class="content">login</span><span class="delimiter">&quot;</span></span>)) {
-        println user.errors.getFieldError(<span class="string"><span class="delimiter">&quot;</span><span class="content">login</span><span class="delimiter">&quot;</span></span>).rejectedValue
-    }
-}</code></pre>
+<pre class="CodeRay highlight"><code data-lang="groovy">.<span class="regexp"><span class="delimiter">/</span><span class="content">gradlew -Dgrails.env=UAT assemble</span></span></code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The second phase of validation happens when you call <a href="../ref/Domain%20Classes/validate.html">validate</a> or <a href="../ref/Domain%20Classes/save.html">save</a>. This is when Grails will validate the bound values against the <a href="../ref/Domain%20Classes/constraints.html">constraints</a> you defined. For example, by default the <a href="../ref/Domain%20Classes/save.html">save</a> method calls <code>validate</code> before executing, allowing you to write code like:</p>
+<p>Once the WAR has been created you can deploy it to your container using its standard WAR deployment process.</p>
 </div>
-<div class="listingblock">
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="keyword">if</span> (user.save()) {
-    <span class="keyword">return</span> user
-}
-<span class="keyword">else</span> {
-    user.errors.allErrors.each {
-        println <span class="local-variable">it</span>
-    }
-}</code></pre>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Grails 2.x <code>war</code> command allowed you to supply the argument <code>nojars</code> - which packaged the WAR with no jar files. In Grails 3.x, this argument is no longer available. Instead, you may use Gradle capabilities to generate a WAR without jar files. One option would be to set your dependencies as <code>providedCompile</code> and <code>providedRuntime</code>. Those two configurations have the same scope as the respective compile and runtime configurations, except that they are not added to the WAR archive. Check <a href="https://docs.gradle.org/current/userguide/war_plugin.html">Gradle WAR Plugin</a> documentation for more information.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
-
-
-                <div style="clear:both;margin-top:15px;"></div>
-                
-                    <div class="toc-item prev-left"><a href="../../guide/async.html">&lt;&lt; <strong>10</strong><span>Asynchronous Programming</span></a></div>
-                
-                    <div class="toc-item next-right"><a href="../../guide/services.html"><strong>12</strong><span>The Service Layer</span> >></a></div>
-                
-                <div style="clear:both"></div>
+</div>
             </div>
         </td>
         <td id="col2">
@@ -228,8 +211,10 @@ function addJsClass() {
                 </div>
                 <div class="menu">
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Command Line</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Command Line</h1>
+                        <div class="menu-sub selected">
+                            
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
                             
@@ -284,11 +269,13 @@ function addJsClass() {
                             <div class="menu-item"><a href="../../ref/Command%20Line/schema-export.html">schema-export</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Constraints</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Constraints</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Constraints/Usage.html">Usage</a></div>
                             
                             
@@ -352,11 +339,13 @@ function addJsClass() {
                             <div class="menu-item"><a href="../../ref/Constraints/widget.html">widget</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Controllers</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Controllers</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Controllers/Usage.html">Usage</a></div>
                             
                             
@@ -435,11 +424,13 @@ function addJsClass() {
                             <div class="menu-item"><a href="../../ref/Controllers/withFormat.html">withFormat</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Database Mapping</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Database Mapping</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Database%20Mapping/Usage.html">Usage</a></div>
                             
                             
@@ -512,11 +503,13 @@ function addJsClass() {
                             <div class="menu-item"><a href="../../ref/Database%20Mapping/version.html">version</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Domain Classes</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Domain Classes</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Domain%20Classes/Usage.html">Usage</a></div>
                             
                             
@@ -703,11 +696,13 @@ function addJsClass() {
                             <div class="menu-item"><a href="../../ref/Domain%20Classes/withTransaction.html">withTransaction</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Plug-ins</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Plug-ins</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Plug-ins/Usage.html">Usage</a></div>
                             
                             
@@ -747,22 +742,26 @@ function addJsClass() {
                             <div class="menu-item"><a href="../../ref/Plug-ins/servlets.html">servlets</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Services</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Services</h1>
+                        <div class="menu-sub">
+                            
                             <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
                             
                             
                             <div class="menu-item"><a href="../../ref/Services/scope.html">scope</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
-                    <div class="menu-block"><h1 class="menu-title" onclick="toggleRef(this.parentNode.childNodes[1])">Servlet API</h1><div class="menu-sub">
-                        
+                    <div class="menu-block">
+                        <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Servlet API</h1>
+                        <div class="menu-sub">
+                            
                             
                             <div class="menu-item"><a href="../../ref/Servlet%20API/request.html">request</a>
                             </div>
@@ -776,7 +775,7 @@ function addJsClass() {
                             <div class="menu-item"><a href="../../ref/Servlet%20API/session.html">session</a>
                             </div>
                             
-                            </div>
+                        </div>
                     </div>
                     
                 </div>
@@ -790,7 +789,8 @@ function addJsClass() {
     
 </div>
 
-<script type="text/javascript" src="../js/docs.js"></script>
+
+<script type="text/javascript" src="../../js/docs.js"></script>
 
 </body>
 </html>
