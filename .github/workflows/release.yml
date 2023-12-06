@@ -8,9 +8,6 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: ['8']
     env:
       GIT_USER_NAME: puneetbehl
       GIT_USER_EMAIL: behlp@unityfoundation.io
@@ -23,11 +20,11 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.java }}
+          java-version: 8
       - name: Extract branch name
         if: success() && github.event_name == 'workflow_dispatch'
         id: extract_branch
-        run: echo ::set-output name=value::${GITHUB_REF:11}
+        run: echo "value=${GITHUB_REF:11}" >> $GITHUB_OUTPUT
       - name: Asset Path
         if: success() && github.event_name == 'workflow_dispatch'
         id: asset_path
