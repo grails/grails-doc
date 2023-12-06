@@ -12,10 +12,8 @@ jobs:
       matrix:
         java: ['8']
     env:
-      BETA: ${{ contains(github.event.inputs.grails_version, 'M') || contains(github.event.inputs.grails_version, 'RC') }}
-      OLDER_VERSION: ${{ startsWith(github.event.inputs.grails_version, '3.3') || startsWith(github.event.inputs.grails_version, '4.1') }}
       GIT_USER_NAME: puneetbehl
-      GIT_USER_EMAIL: behlp@objectcomputing.com
+      GIT_USER_EMAIL: behlp@unityfoundation.io
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -87,7 +85,7 @@ jobs:
           if_false: ${{ github.repository }}
       - name: Publish to Github Pages
         if: success()
-        uses: micronaut-projects/github-pages-deploy-action@grails
+        uses: grails/github-pages-deploy-action@v2
         env:
           TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
