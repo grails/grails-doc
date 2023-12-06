@@ -29,6 +29,5 @@ echo "Pushing release version and recreating v${grails_version} tag"
 git add gradle.properties
 git commit -m "Release v${grails_version} docs"
 git push origin $TARGET_BRANCH
-git push origin :refs/tags/v${grails_version}
 git tag -fa v${grails_version} -m "Release v${grails_version} docs"
-git push origin $TARGET_BRANCH --tags
+git push -f origin v${grails_version}
