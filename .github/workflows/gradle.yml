@@ -7,12 +7,9 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: ['8']
     env:
       GIT_USER_NAME: puneetbehl
-      GIT_USER_EMAIL: behlp@objectcomputing.com
+      GIT_USER_EMAIL: behlp@unityfoundation.io
     steps:
       - name: Checkout repository
         uses: actions/checkout@v2
@@ -22,7 +19,7 @@ jobs:
       - name: Set up JDK
         uses: actions/setup-java@v1
         with:
-          java-version: ${{ matrix.java }}
+          java-version: 8
       - name: Publish Documentation
         run: |
           ./gradlew --stop
@@ -37,11 +34,13 @@ jobs:
           if_false: ${{ github.repository }}
       - name: Publish to Github Pages
         if: success()
-        uses: micronaut-projects/github-pages-deploy-action@master
+        uses: grails/github-pages-deploy-action@v2
         env:
           TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           BRANCH: gh-pages
+          SKIP_SNAPSHOT: true
+          SKIP_LATEST: true
           FOLDER: build/docs
           DOC_FOLDER: gh-pages
           COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
