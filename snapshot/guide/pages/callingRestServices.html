@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>10.6 Calling REST Services with HttpClient 4.0.13</title>
+    <title>10.6 Calling REST Services with HttpClient 5.0.1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.3.x</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from the previous versions</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>10.6 Calling REST Services with HttpClient</h1>
 
-                    <p><strong>Version:</strong> 4.0.13</p>
+                    <p><strong>Version:</strong> 5.0.1</p>
                 </div>
 
                 
@@ -145,7 +145,7 @@ function addJsClass() {
 <h2 id="callingRestServices">10.6 Calling REST Services with HttpClient</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/4.0.x/src/en/guide/REST/callingRestServices.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/REST/callingRestServices.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -180,7 +180,7 @@ function addJsClass() {
 <pre class="CodeRay highlight"><code data-lang="groovy">    <span class="predefined-type">List</span>&lt;Album&gt; searchWithApi(<span class="predefined-type">String</span> searchTerm) {
         <span class="predefined-type">String</span> baseUrl = <span class="string"><span class="delimiter">&quot;</span><span class="content">https://itunes.apple.com/</span><span class="delimiter">&quot;</span></span>
 
-        HttpClient client = HttpClient.create(baseUrl.toURL()).toBlocking() <i class="conum" data-value="1"></i><b>(1)</b>
+        BlockingHttpClient client = HttpClient.create(baseUrl.toURL()).toBlocking() <i class="conum" data-value="1"></i><b>(1)</b>
 
         HttpRequest request = HttpRequest.GET(<span class="string"><span class="delimiter">&quot;</span><span class="content">/search?limit=25&amp;media=music&amp;entity=album&amp;term=</span><span class="inline"><span class="inline-delimiter">${</span>searchTerm<span class="inline-delimiter">}</span></span><span class="delimiter">&quot;</span></span>)
         HttpResponse&lt;<span class="predefined-type">String</span>&gt; resp = client.exchange(request, <span class="predefined-type">String</span>)

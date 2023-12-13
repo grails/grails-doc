@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>8.4 CORS 4.0.13</title>
+    <title>8.4 CORS 5.0.1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.3.x</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from the previous versions</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>8.4 CORS</h1>
 
-                    <p><strong>Version:</strong> 4.0.13</p>
+                    <p><strong>Version:</strong> 5.0.1</p>
                 </div>
 
                 
@@ -145,7 +145,7 @@ function addJsClass() {
 <h2 id="cors">8.4 CORS</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/4.0.x/src/en/guide/theWebLayer/cors.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/theWebLayer/cors.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -196,12 +196,12 @@ function addJsClass() {
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">allowCredentials</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 </tr>
 </tbody>
 </table>
 <div class="paragraph">
-<p>Some of these settings come directly from Spring Boot and can change in future versions. See <a href="https://docs.spring.io/spring/docs/current/javadoc-api//org/springframework/web/cors/CorsConfiguration.html#applyPermitDefaultValues">Spring CORS Configuration Documentation</a></p>
+<p>Some of these settings come directly from Spring Boot and can change in future versions. See <a href="https://docs.spring.io/spring/docs/5.3.8/javadoc-api//org/springframework/web/cors/CorsConfiguration.html#applyPermitDefaultValues">Spring CORS Configuration Documentation</a></p>
 </div>
 <div class="paragraph">
 <p>All of those settings can be easily overridden.</p>
@@ -231,11 +231,14 @@ function addJsClass() {
         <span class="key">allowedHeaders</span>:
             - <span class="string"><span class="content">Content-Type</span></span>
         <span class="key">mappings</span>:
-            <span class="error">/api/**</span>:
+            <span class="key"><span class="delimiter">'</span><span class="content">[/api/**]</span><span class="delimiter">'</span></span>:
                 <span class="key">allowedOrigins</span>:
                     - <span class="string"><span class="content">http://localhost:5000</span></span>
                 <span class="comment"># Other configurations not specified default to the global config</span></code></pre>
 </div>
+</div>
+<div class="paragraph">
+<p>Note that the mapping key must be made with bracket notation (see <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-Configuration-Binding#map-based-binding" class="bare">https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-Configuration-Binding#map-based-binding</a>), which is a breaking change between Spring Boot 1.5 (Grails 3) and Spring Boot 2 (Grails 4).</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -280,7 +283,7 @@ Specifying at least one mapping will disable the creation of the global mapping 
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">allowCredentials</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">true</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">false</p></td>
 </tr>
 </tbody>
 </table>
@@ -294,7 +297,7 @@ Specifying at least one mapping will disable the creation of the global mapping 
     <span class="key">cors</span>:
         <span class="key">enabled</span>: <span class="string"><span class="content">true</span></span>
         <span class="key">mappings</span>:
-            <span class="error">/api/**</span>: <span class="error">inherit</span></code></pre>
+            <span class="key"><span class="delimiter">'</span><span class="content">[/api/**]</span><span class="delimiter">'</span></span>: <span class="string"><span class="content">inherit</span></span></code></pre>
 </div>
 </div>
 

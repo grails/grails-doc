@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>15 Testing 4.0.13</title>
+    <title>15 Testing 5.0.1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.3.x</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/upgrading.html"><strong>3</strong><span>Upgrading from the previous versions</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -135,7 +135,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>15 Testing</h1>
 
-                    <p><strong>Version:</strong> 4.0.13</p>
+                    <p><strong>Version:</strong> 5.0.1</p>
                 </div>
 
                 
@@ -159,7 +159,7 @@ function addJsClass() {
 <h1 id="testing">15 Testing</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/4.0.x/src/en/guide/testing.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/testing.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -231,7 +231,7 @@ You can force a clean before running tests by passing <code>-clean</code> to the
 </table>
 </div>
 <div class="paragraph">
-<p>Grails writes HTML test reports to the <code>build/reports/tests</code> directory and the original XML files to the <code>build/test-results</code> directory. The HTML reports are generally the best ones to look at.</p>
+<p>Grails writes HTML test reports to the <code>build/reports/tests</code> directory and JUnit XML test reports to the <code>build/test-results</code> directory. The HTML reports are generally the best ones to look at.</p>
 </div>
 <div class="paragraph">
 <p>Using Grails' <a href="commandLine.html#interactiveMode">interactive mode</a> confers some distinct advantages when executing tests. First, the tests will execute significantly faster on the second and subsequent runs. Second, a shortcut is available to open the HTML reports in your browser:</p>
@@ -407,7 +407,7 @@ Grails 2.x uses <code>phase:type</code> syntax. In Grails 3.0 it was removed, be
 <h2 id="unitTesting">15.1 Unit Testing</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/4.0.x/src/en/guide/testing/unitTesting.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/testing/unitTesting.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -456,7 +456,7 @@ Grails 2.x uses <code>phase:type</code> syntax. In Grails 3.0 it was removed, be
 <h2 id="integrationTesting">15.2 Integration Testing</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/4.0.x/src/en/guide/testing/integrationTesting.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/testing/integrationTesting.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -479,7 +479,7 @@ Grails 2.x uses <code>phase:type</code> syntax. In Grails 3.0 it was removed, be
 <div class="sect3">
 <h4 id="_transactions">Transactions</h4>
 <div class="paragraph">
-<p>Integration test methods run inside their own database transaction by default, which is rolled back at the end of each test method. This means that data saved during a test is not persisted to the database (which is shared across all tests). The default generated integration test template includes the <a href="http://docs.grails.org/4.0.13/api/grails/transaction/Rollback.html">Rollback</a> annotation:</p>
+<p>Integration test methods run inside their own database transaction by default, which is rolled back at the end of each test method. This means that data saved during a test is not persisted to the database (which is shared across all tests). The default generated integration test template includes the <a href="http://docs.grails.org/5.0.1/api/grails/transaction/Rollback.html">Rollback</a> annotation:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -530,7 +530,7 @@ Data will persist to the database and will need to be cleaned up manually if <co
 </div>
 </div>
 <div class="paragraph">
-<p>To automatically roll back setup logic, any persistence operations need to be called from the test method itself so that they are run within the test method&#8217;s rolled back transaction. Similar to usage of the <code>setupData()</code> method shown below:</p>
+<p>To preload the database and automatically roll back setup logic, any persistence operations need to be called from the test method itself so that they can run within the test method&#8217;s rolled back transaction. Similar to usage of the <code>setupData()</code> method shown below which creates a record in database and after running other test will be rolled back:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -561,7 +561,7 @@ Data will persist to the database and will need to be cleaned up manually if <co
 <div class="sect3">
 <h4 id="_using_springs_rollback_annotation">Using Spring&#8217;s Rollback annotation</h4>
 <div class="paragraph">
-<p>Another transactional approach could be to use Spring&#8217;s <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/test/annotation/Rollback.html">@Rollback</a> instead.</p>
+<p>Another transactional approach could be to use Spring&#8217;s <a href="https://docs.spring.io/spring/docs/5.3.8/javadoc-api/org/springframework/test/annotation/Rollback.html">@Rollback</a> instead.</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -601,13 +601,13 @@ This has the downside that you cannot implement it differently for different cas
 <div class="sect3">
 <h4 id="_dirtiescontext">DirtiesContext</h4>
 <div class="paragraph">
-<p>If you do have a series of tests that will share state you can remove the <code>Rollback</code> and the last test in the suite should feature the <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/test/annotation/DirtiesContext.html">DirtiesContext</a> annotation which will shutdown the environment and restart it fresh (note that this will have an impact on test run times).</p>
+<p>If you do have a series of tests that will share state you can remove the <code>Rollback</code> and the last test in the suite should feature the <a href="https://docs.spring.io/spring/docs/5.3.8/javadoc-api/org/springframework/test/annotation/DirtiesContext.html">DirtiesContext</a> annotation which will shutdown the environment and restart it fresh (note that this will have an impact on test run times).</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_autowiring">Autowiring</h4>
 <div class="paragraph">
-<p>To obtain a reference to a bean you can use the <a href="https://docs.spring.io/spring/docs/current/javadoc-api/org/springframework/beans/factory/annotation/Autowired.html">Autowired</a> annotation. For example:</p>
+<p>To obtain a reference to a bean you can use the <a href="https://docs.spring.io/spring/docs/5.3.8/javadoc-api/org/springframework/beans/factory/annotation/Autowired.html">Autowired</a> annotation. For example:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -641,7 +641,7 @@ import org.springframework.beans.factory.annotation.*
 <h2 id="functionalTesting">15.3 Functional Testing</h2>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/4.0.x/src/en/guide/testing/functionalTesting.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/testing/functionalTesting.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -659,7 +659,7 @@ import org.springframework.beans.factory.annotation.*
 </div>
 </div>
 <div class="paragraph">
-<p>The above command will create a new Spock spec called <code>MyFunctionalSpec.groovy</code> in the <code>src/integration-test/groovy</code> directory. The test is annotated with the <a href="http://docs.grails.org/4.0.13/api/grails/test/mixin/integration/Integration.html">Integration</a> annotation to indicate it is an integration test and extends the <code>GebSpec</code> super class:</p>
+<p>The above command will create a new Spock spec called <code>MyFunctionalSpec.groovy</code> in the <code>src/integration-test/groovy</code> directory. The test is annotated with the <a href="http://docs.grails.org/5.0.1/api/grails/test/mixin/integration/Integration.html">Integration</a> annotation to indicate it is an integration test and extends the <code>GebSpec</code> super class:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -692,7 +692,7 @@ import org.springframework.beans.factory.annotation.*
 <p>In addition the application is loaded in the JVM as the test, this means that the test has full access to the application state and can interact directly with data services such as GORM to setup and cleanup test data.</p>
 </div>
 <div class="paragraph">
-<p>The <code>Integration</code> annotation supports an optional <code>applicationClass</code> attribute which may be used to specify the application class to use for the functional test.  The class must extend <a href="http://docs.grails.org/4.0.13/api/grails/boot/config/GrailsAutoConfiguration.html">GrailsAutoConfiguration</a>.</p>
+<p>The <code>Integration</code> annotation supports an optional <code>applicationClass</code> attribute which may be used to specify the application class to use for the functional test.  The class must extend <a href="http://docs.grails.org/5.0.1/api/grails/boot/config/GrailsAutoConfiguration.html">GrailsAutoConfiguration</a>.</p>
 </div>
 <div class="listingblock">
 <div class="content">

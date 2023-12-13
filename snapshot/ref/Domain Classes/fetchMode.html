@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>The Grails Framework 4.0.13</title>
+    <title>The Grails Framework 5.0.1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -51,7 +51,7 @@ function addJsClass(el) {
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.3.x</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../../guide/upgrading.html"><strong>3</strong><span>Upgrading from the previous versions</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -130,7 +130,7 @@ function addJsClass(el) {
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
                 
                 <div class='contribute-btn'>
-                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/4.0.x/src/en/ref/Domain Classes/fetchMode.adoc"'>
+                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/ref/Domain Classes/fetchMode.adoc"'>
                         <i class='fa fa-pencil-square-o'></i> Improve this doc
                     </button>
                 </div>
@@ -142,7 +142,7 @@ function addJsClass(el) {
 <div class="sect2">
 <h3 id="_purpose">Purpose</h3>
 <div class="paragraph">
-<p>Allows the configuration of an associations fetch strategy ('eager' or 'lazy')</p>
+<p>Allows the configuration of an associations fetch strategy. Default to lazy: true, other options are lazy: false or fetch: 'join'</p>
 </div>
 </div>
 <div class="sect2">
@@ -155,12 +155,14 @@ function addJsClass(el) {
 
     <span class="directive">static</span> hasMany = [<span class="key">books</span>: <span class="predefined-type">Book</span>]
 
-    <span class="directive">static</span> fetchMode = [<span class="key">books</span>: <span class="string"><span class="delimiter">'</span><span class="content">eager</span><span class="delimiter">'</span></span>]
+    <span class="directive">static</span> mapping = {
+        books <span class="key">lazy</span>: <span class="predefined-constant">false</span>
+    }
 }</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>In this example the <code>fetchMode</code> static property specifies that the <code>book</code> association should be fetching eagerly</p>
+<p>In this example the <code>book</code> association should be fetching eagerly</p>
 </div>
 </div>
 <div class="sect2">
@@ -170,6 +172,9 @@ function addJsClass(el) {
 </div>
 <div class="paragraph">
 <p>In the case of eager fetching and a one-to-many association, the instance as well as the association will be initialized when they are loaded (eagerly). However, caution should be observed when using eager fetching, since being too eager can result in your entire database being loaded into memory!</p>
+</div>
+<div class="paragraph">
+<p>For more information see the section on <a href="http://gorm.grails.org/6.0.x/hibernate/manual/#fetchingDSL">Eager and Lazy Fetching</a> in the user guide.</p>
 </div>
 </div>
 </div>

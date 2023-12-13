@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>3 Upgrading from Grails 3.3.x 4.0.13</title>
+    <title>3 Upgrading from the previous versions 5.0.1</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -44,7 +44,7 @@ function addJsClass() {
                         <div class="toc-item" style="margin-left:0"><a href="../guide/gettingStarted.html"><strong>2</strong><span>Getting Started</span></a>
                         </div>
                         
-                        <div class="toc-item" style="margin-left:0"><a href="../guide/upgrading.html"><strong>3</strong><span>Upgrading from Grails 3.3.x</span></a>
+                        <div class="toc-item" style="margin-left:0"><a href="../guide/upgrading.html"><strong>3</strong><span>Upgrading from the previous versions</span></a>
                         </div>
                         
                         <div class="toc-item" style="margin-left:0"><a href="../guide/conf.html"><strong>4</strong><span>Configuration</span></a>
@@ -133,19 +133,200 @@ function addJsClass() {
 
 
                 <div class="project">
-                    <h1>3 Upgrading from Grails 3.3.x</h1>
+                    <h1>3 Upgrading from the previous versions</h1>
 
-                    <p><strong>Version:</strong> 4.0.13</p>
+                    <p><strong>Version:</strong> 5.0.1</p>
                 </div>
 
                 
+                <div id="table-of-content">
+                    <h2>Table of Contents</h2>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#upgrading40x"><strong>3.1</strong><span>Upgrading from Grails 4.0.x</span></a>
+                    </div>
+                    
+                    <div class="toc-item" style="margin-left:0px"><a href="#upgrading33x"><strong>3.2</strong><span>Upgrading from Grails 3.3.x</span></a>
+                    </div>
+                    
+                </div>
+                
 
                 
 
-<h1 id="upgrading">3 Upgrading from Grails 3.3.x</h1>
+<h1 id="upgrading">3 Upgrading from the previous versions</h1>
 
 <div class='contribute-btn'>
-    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/4.0.x/src/en/guide/upgrading.adoc"'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/upgrading.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+
+
+
+<h2 id="upgrading40x">3.1 Upgrading from Grails 4.0.x</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/upgrading/upgrading40x.adoc"'>
+        <i class='fa fa-pencil-square-o'></i> Improve this doc
+    </button>
+</div>
+
+
+<div class="sect2">
+<h3 id="_bump_up_grails_version">Bump up Grails Version</h3>
+<div class="paragraph">
+<p>You will need to upgrade your Grails version defined in <code>gradle.properties</code> as:</p>
+</div>
+<div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">...
+grailsVersion=5.0.0.RC1
+...</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_apache_groovy_3_0_7">Apache Groovy 3.0.7</h3>
+<div class="paragraph">
+<p>Grails 5.0.0.RC1 provide support for Groovy 3. We would recommend you to please check the <a href="https://groovy-lang.org/releasenotes/groovy-3.0.html">Release notes for Groovy 3</a> to update your application in case you are using a specific feature which might not work in Groovy 3.</p>
+</div>
+<div class="paragraph">
+<p>Define groovyVersion in <code>gradle.properties</code> to force the application to use Groovy 3.</p>
+</div>
+<div class="paragraph">
+<p>Grails 5.0 app&#8217;s <code>gradle.properties</code></p>
+</div>
+<div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">...
+groovyVersion=3.0.7
+...</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bump_up_gorm_version">Bump up GORM Version</h3>
+<div class="paragraph">
+<p>If you were using <a href="http://gorm.grails.org">GORM</a>, you will need to update the version defined in <code>gradle.properties</code> as:</p>
+</div>
+<div class="listingblock">
+<div class="title">gradle.properties</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="properties">...
+gormVersion=7.1.0.M5
+...</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_gorm_for_monogdb_sync_driver">GORM for MonogDB Sync Driver</h3>
+<div class="paragraph">
+<p>The GORM for MongoDB is updated to support latest mongodb-driver-sync. If you are using GORM for MongoDB and doing something specific to MongoDB Driver or low level Mongo API then you might want to take a look at <a href="https://mongodb.github.io/mongo-java-driver/4.0/upgrading/">Upgrading to the 4.0 Driver</a></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_bump_up_asset_pipeline_plugin_version">Bump up Asset Pipeline plugin version</h3>
+<div class="paragraph">
+<p>The previous version of asset-pipeline is not supported with Grails 5.0 as it is compiled with a version of Groovy which is binary incompatible with Groovy 3. So, please update the plugin version to 3.1.0.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_disabled_stringchararrayaccessor_by_default">Disabled StringCharArrayAccessor by default</h3>
+<div class="paragraph">
+<p>The previous version of Grails use the <code>StringCharArrayAccessor</code> which is enabled by default and provides optimized access to <code>java.lang.String</code> internals. In Grails 5.0 it is disabled by default but you can enable it by setting a system property with name <code>stringchararrayaccessor.disabled</code> and value <code>false</code>.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Enabling StringCharArrayAccessor would show IllegalReflectiveAccess warnings as it uses reflection to do the optimizations.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_changes_in_profile_yml_and_feature_yml_files_in_grails_profiles">Changes in profile.yml and feature.yml files in Grails Profiles</h3>
+<div class="paragraph">
+<p>The format of how dependencies are defined in features and profiles has been changed. See the section on <a href="profiles.html">Application Profiles</a> for more information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deprecation_of_dot_navigation_of_grails_configuration">Deprecation of dot navigation of Grails configuration</h3>
+<div class="paragraph">
+<p>In order to reduce complexity, improve performance, and increase maintainability, accessing configuration through dot notation (config.a.b.c) has been deprecated. This functionality will be removed in a future release.</p>
+</div>
+<div class="paragraph">
+<p>Also, you would see a warning message if you are accessing configuration through the dot notation.</p>
+</div>
+<div class="paragraph">
+<p>The recommended way to access configuration is:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">grailsApplication.config.getProperty(<span class="string"><span class="delimiter">&quot;</span><span class="content">hola</span><span class="delimiter">&quot;</span></span>, <span class="predefined-type">String</span>.class)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deprecated_classes">Deprecated Classes</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://docs.grails.org/5.0.1/api/org/grails/config/NavigableMap.html">org.grails.config.NavigableMap</a></p>
+</li>
+<li>
+<p><a href="http://docs.grails.org/5.0.1/api/org/grails/config/NavigableMapConfig.html">org.grails.config.NavigableMapConfig</a></p>
+</li>
+<li>
+<p><a href="http://docs.grails.org/5.0.1/api/org/grails/config/NavigableMapPropertySource.html">org.grails.config.NavigableMapPropertySource</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_spring_5_3">Spring 5.3</h3>
+<div class="paragraph">
+<p>Grails 5.0.0.RC1 is built on Spring 5.3.2 See the <a href="https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-5.x#upgrading-to-version-53">Upgrading to Spring 5.3</a>  if you are using Spring specific features.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_spring_boot_2_4">Spring Boot 2.4</h3>
+<div class="paragraph">
+<p>Grails 5.0.0.RC1 updates to Spring Boot 2.4. Please check <a href="https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.4-Release-Notes">Spring Boot 2.4 Release Notes</a> for more information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_micronaut_2_0">Micronaut 2.0</h3>
+<div class="paragraph">
+<p>Grails 5.0.0.RC1 is shipped with Micronaut 2.0. Please check the <a href="https://docs.micronaut.io/2.2.1/guide/index.html#upgrading">Upgrading to Micronaut 2.x</a> if you are using a specific feature.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_micronaut_for_spring_3_0_0">Micronaut for Spring 3.0.0</h3>
+<div class="paragraph">
+<p>Grails 5.0.0.RC1 is updated to Micronaut for Spring 3.0.0, please check out <a href="https://github.com/micronaut-projects/micronaut-spring/releases/tag/v3.0.0">release notes</a> for more information.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_convert_logback_groovy_to_logback_xml">Convert logback.groovy to logback.xml</h3>
+<div class="paragraph">
+<p>Support for logback.groovy was removed in logback 2.9.0 to mitigate <a href="https://cve.report/CVE-2021-42550">CVE-2021-42550</a>. See the <a href="https://jira.qos.ch/browse/LOGBACK-1591">upstream issue</a> for more information.</p>
+</div>
+</div>
+
+
+<h2 id="upgrading33x">3.2 Upgrading from Grails 3.3.x</h2>
+
+<div class='contribute-btn'>
+    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/master/src/en/guide/upgrading/upgrading33x.adoc"'>
         <i class='fa fa-pencil-square-o'></i> Improve this doc
     </button>
 </div>
@@ -174,7 +355,7 @@ grailsVersion=3.3.8
 <div class="title">gradle.properties</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="groovy">...
-grailsVersion=4.0.0
+grailsVersion=4.0.4
 ...</code></pre>
 </div>
 </div>
@@ -202,7 +383,7 @@ gormVersion=6.1.10.RELEASE
 <div class="title">gradle.properties</div>
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="properties">...
-gormVersion=7.0.2
+gormVersion=7.0.4
 ...</code></pre>
 </div>
 </div>
@@ -238,7 +419,7 @@ gormVersion=7.0.2
 <div class="sect2">
 <h3 id="_spring_boot_2_1_actuator">Spring Boot 2.1 Actuator</h3>
 <div class="paragraph">
-<p>Please check the <a href="https://docs.spring.io/spring-boot/docs/2.1.x/reference/html/production-ready-endpoints.html">Spring Boot Actuator</a> documentation since it has changed substantially from Spring Boot 1.5 the version Grails 3.x used.</p>
+<p>Please check the <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html">Spring Boot Actuator</a> documentation since it has changed substantially from Spring Boot 1.5 the version Grails 3.x used.</p>
 </div>
 <div class="paragraph">
 <p>If you had configuration such as:</p>
@@ -274,7 +455,7 @@ gormVersion=7.0.2
 <p>Previous versions of Grails used a reloading agent called <a href="https://github.com/spring-projects/spring-loaded">Spring Loaded</a>. Since this library is no longer maintained and does not support Java 11 support for Spring Loaded has been removed.</p>
 </div>
 <div class="paragraph">
-<p>As a replacement, Grails 4 applications include <a href="https://docs.spring.io/spring-boot/docs/2.1.x/reference/html/using-boot-devtools.html">Spring Boot Developer Tools</a> dependencies in the <code>build.gradle</code> build script. If you are migrating a Grails 3.x app, please include the following set of dependencies:</p>
+<p>As a replacement, Grails 4 applications include <a href="https://docs.spring.io/spring-boot/docs/current/reference/html/using-boot-devtools.html">Spring Boot Developer Tools</a> dependencies in the <code>build.gradle</code> build script. If you are migrating a Grails 3.x app, please include the following set of dependencies:</p>
 </div>
 <div class="listingblock">
 <div class="title">build.gradle</div>
@@ -348,7 +529,7 @@ refresh when you change anything in your Grails application.
 </div>
 </div>
 <div class="paragraph">
-<p>Grails 4 apps are built on top of Spring Boot 2.1. Starting from Spring Boot 2.0, the <code>addResources</code> property no longer exists. Instead, you need to set the sourceResources property to the source set that you want to use. Typically, that’s <code>sourceSets.main</code>. This is described in the <a href="https://docs.spring.io/spring-boot/docs/2.1.x/gradle-plugin/reference/html/#running-your-application-reloading-resources">Spring Boot Gradle plugin’s documentation</a>.</p>
+<p>Grails 4 apps are built on top of Spring Boot 2.1. Starting from Spring Boot 2.0, the <code>addResources</code> property no longer exists. Instead, you need to set the sourceResources property to the source set that you want to use. Typically that’s <code>sourceSets.main</code>. This is described in the <a href="https://docs.spring.io/spring-boot/docs/2.0.0.M3//gradle-plugin/reference/html/#running-your-application-reloading-resources">Spring Boot Gradle plugin’s documentation</a>.</p>
 </div>
 <div class="paragraph">
 <p>Your Grails 4 app&#8217;s <code>build.gradle</code> can be configured:</p>
@@ -402,25 +583,7 @@ bootJar.enabled = <span class="predefined-constant">false</span></code></pre>
 <p>Grails 3 apps by default used <a href="http://gradle.org">Gradle</a> 3.5. Grails 4 apps use Gradle 5.</p>
 </div>
 <div class="paragraph">
-<p>To upgrade to Gradle 5, first do it in <code>gradle.properties</code></p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle | Grails 3</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">gradleWrapperVersion=<span class="float">3.5</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>replace it with:</p>
-</div>
-<div class="listingblock">
-<div class="title">build.gradle | Grails 4</div>
-<div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy">gradleWrapperVersion=<span class="float">5.0</span></code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Then execute:</p>
+<p>To upgrade to Gradle 5 execute:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -432,13 +595,49 @@ bootJar.enabled = <span class="predefined-constant">false</span></code></pre>
 </div>
 <div class="paragraph">
 <p>If you customized your app&#8217;s build, other migrations may be necessary. Please check
-<a href="https://docs.gradle.org/current/userguide/upgrading_version_4.html">Gradle Upgrading your build</a> documentation.</p>
+<a href="https://docs.gradle.org/current/userguide/upgrading_version_4.html">Gradle Upgrading your build</a> documentation. Especially notice, that default Gradle daemon now starts with 512MB of heap instead of 1GB. Please check <a href="https://docs.gradle.org/current/userguide/upgrading_version_4.html#rel5.0:default_memory_settings">Default memory settings changed</a> documentation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_groovy_language_update_to_2_5_6">Groovy language update to 2.5.6</h3>
+<div class="paragraph">
+<p>Keep in mind, that with grails 4.0.x there is a minor groovy language upgrade (e.g. 3.3.9. used groovy 2.4.x), which requires a couple of changes, that are immediately obvious when trying to compile your source code. However there are also issues with changed implementations of core linkedlist functions! Check an overview of the breaking changes here: <a href="https://groovy-lang.org/releasenotes/groovy-2.5.html#Groovy2.5releasenotes-Breakingchanges">Breaking changes of Groovy 2.5</a></p>
+</div>
+<div class="sect3">
+<h4 id="_removed_date_helper_functions">Removed date helper functions</h4>
+<div class="paragraph">
+<p>Most common issue is that date util functions have been moved to individual project, e.g new Date().format("ddMMyyyy") no longer works without adding:</p>
+</div>
+<div class="listingblock">
+<div class="title">build.gradle</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">dependencies {
+    compile <span class="string"><span class="delimiter">&quot;</span><span class="content">org.codehaus.groovy:groovy-dateutil:3.0.4</span><span class="delimiter">&quot;</span></span>
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_changed_linked_list_method_implementations">Changed linked list method implementations</h4>
+<div class="paragraph">
+<p>Check whether you are using the groovy version of linkedlist implementations:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>[].pop()</code> - will no longer remove the last, but the first element of the list. Replace it with <code>[].removeLast()</code> is recommended.</p>
+</li>
+<li>
+<p><code>[].push(..)</code> - will no longer add to the end, but to the beginning of the list. Replace it with <code>[].add(..)</code> is recommended.</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_h2_web_console">H2 Web Console</h3>
 <div class="paragraph">
-<p>Spring Boot 2.1 includes native support for the H2 database web console. Since this is already included in Spring Boot the equivalent feature has been removed from Grails. The H2 console is therefore now available at <code>/h2-console</code> instead of the previous URI of <code>/dbconsole</code>. See <a href="https://docs.spring.io/spring-boot/docs/2.1.x/reference/htmlsingle/#boot-features-sql-h2-console">Using H2’s Web Console</a> in the Spring Boot documentation for more information.</p>
+<p>Spring Boot 2.1 includes native support for the H2 database web console. Since this is already included in Spring Boot the equivalent feature has been removed from Grails. The H2 console is therefore now available at <code>/h2-console</code> instead of the previous URI of <code>/dbconsole</code>. See <a href="https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#boot-features-sql-h2-console">Using H2’s Web Console</a> in the Spring Boot documentation for more information.</p>
 </div>
 </div>
 <div class="sect2">
