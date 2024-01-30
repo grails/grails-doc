@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>The Grails Framework 6.1.1</title>
+    <title>The Grails Framework 6.1.2</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -158,21 +158,33 @@ function addJsClass(el) {
 <div class="sect2">
 <h3 id="_description">Description</h3>
 <div class="paragraph">
-<p>Unless specified by the <code>grails.controllers.defaultScope</code> property in <code>application.yml</code>, controllers by default are "singleton" scoped which means that only one instance of the controller exists.
-This behaviour can be set for an individual controller by specifying a <code>scope</code> attribute with one of the following values:</p>
+<p>Unless specified by the <code>grails.controllers.defaultScope</code> property in <code>application.yml</code>, controllers are by default "prototype"-scoped which means that a new controller will be created for each request.
+The scope can be set for an individual controller by specifying a static <code>scope</code> attribute with one of the following values:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>singleton</code> (default) - Only one instance of the controller ever exists (recommended for actions as methods)</p>
-</li>
-<li>
-<p><code>prototype</code> - A new controller will be created for each request (recommended for actions as Closure properties)</p>
+<p><code>prototype</code> (default) - A new controller will be created for each request (recommended for actions as Closure properties)</p>
 </li>
 <li>
 <p><code>session</code> - One controller is created for the scope of a user session</p>
 </li>
+<li>
+<p><code>singleton</code> - Only one instance of the controller ever exists (recommended for actions as methods)</p>
+</li>
 </ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Newly created applications have the <code>grails.controllers.defaultScope</code> config property set to a value of "singleton" in <code>application.yml</code>.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
 <p>See <a href="../../guide/theWebLayer.html#controllersAndScopes">Controllers and Scopes</a> in the user guide for more information.</p>
