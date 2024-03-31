@@ -4,46 +4,34 @@ Open your command prompt or terminal.
 
 Navigate to the directory where you want to create your Grails project:
 
-[source,shell]
-----
+[source,console]
 $ cd your_project_directory
-----
 
 Create a new Grails project with the following command:
 
-[source,shell]
-----
-$ grails create-app myapp --servlet=tomcat
-----
-
-Using the `--servlet` option with the value "tomcat" specifies that the Grails application should be configured to use an embedded Tomcat servlet container as its runtime environment, allowing you to run the application as a standalone executable during development and testing.
+[source,console]
+$ grails create-app myapp
 
 === Step 2: Access the Project Directory
 
 Change into the "myapp" directory, which you just created:
 
-[source,shell]
-----
+[source,console]
 $ cd myapp
-----
 
 === Step 3: Start Grails Interactive Console
 
 Start the Grails interactive console by running the "grails" command:
 
-[source,shell]
-----
+[source,console]
 $ grails
-----
 
 === Step 4: Create a Controller
 
 In the Grails interactive console, you can use auto-completion to create a controller. Type the following command to create a controller named "greeting":
 
-[source,shell]
-----
+[source,console]
 grails> create-controller greeting
-----
 
 This command will generate a new controller named "GreetingController.groovy" within the grails-app/controllers/myapp directory. You might wonder why there is an additional "myapp" directory. This structure aligns with conventions commonly used in Java development, where classes are organized into packages. Grails automatically includes the application name as part of the package structure. If you do not specify a package, Grails defaults to using the application name.
 
@@ -73,10 +61,8 @@ The action is simply a method. In this particular case, it calls a special metho
 
 Grails framework now relies on Gradle tasks for running the application. To start the application, use the following Gradle `bootRun` command:
 
-[source,shell]
-----
+[source,console]
 $ ./gradlew bootRun
-----
 
 Your application will be hosted on port 8080 by default. You can access it in your web browser at:
 
@@ -152,19 +138,15 @@ http://localhost:8080/myapp/
 
 Alternatively, you can set the context path from the command line when using Gradle to run a Grails application. Here's how you can do it:
 
-[source,shell]
-----
-./gradlew bootRun -Dgrails.server.servlet.context-path=/your-context-path
-----
+[source,console]
+$ ./gradlew bootRun -Dgrails.server.servlet.context-path=/your-context-path
 
 Replace `/your-context-path` with the desired context path for your Grails application. This command sets the context path directly via the `-Dgrails.server.servlet.context-path` system property.
 
 For example, if you want your application to be available at "http://localhost:8080/myapp," you can use the following command:
 
-[source,shell]
-----
-./gradlew bootRun -Dgrails.server.servlet.context-path=/myapp
-----
+[source,console]
+$ ./gradlew bootRun -Dgrails.server.servlet.context-path=/myapp
 
 This allows you to configure the context path without modifying the application's configuration files, making it a flexible and convenient option when running your Grails application with Gradle.
 
@@ -172,16 +154,19 @@ This allows you to configure the context path without modifying the application'
 
 If port 8080 is already in use, you can start the server on a different port using the `grails.server.port` system-property:
 
-[source,shell]
-----
-$ ./gradlew bootRun --Dgrails.server.port=9090
-----
+[source,console]
+$ ./gradlew bootRun -Dgrails.server.port=9090
 
 Replace "9090" with your preferred port.
 
 === Note for Windows Users
 
 If you encounter an error related to the Java process or filename length, you can use the `--stacktrace` flag or add `grails { pathingJar = true }` to your "build.gradle" file.
+
+It may also be necessary to enclose the system properties in quotes on Windows:
+----
+./gradlew bootRun "-Dgrails.server.port=9090"
+----
 
 === Conclusion
 
