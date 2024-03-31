@@ -8,25 +8,16 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        java: ['11']
     env:
       BETA: ${{ contains(github.event.inputs.grails_version, 'M') }}
       SKIP_SNAPSHOT: ${{ startsWith(github.event.inputs.grails_version, '3.3') || startsWith(github.event.inputs.grails_version, '4.1') || startsWith(github.event.inputs.grails_version, '5.3') || contains(github.event.inputs.grails_version, 'M') || contains(github.event.inputs.grails_version, 'RC') }}
       GIT_USER_NAME: puneetbehl
       GIT_USER_EMAIL: behlp@unityfoundation.io
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.GH_TOKEN }}
-      - uses: gradle/wrapper-validation-action@v1
-      - name: Set up JDK
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'adopt'
-          java-version: '11'
+      - uses: actions/checkout@v4
+      - uses: gradle/wrapper-validation-action@v2
+      - uses: actions/setup-java@v4
+        with: { java-version: 11, distribution: temurin }
       - name: Extract branch name
         if: success() && github.event_name == 'workflow_dispatch'
         id: extract_branch
@@ -35,20 +26,20 @@ jobs:
         if: success() && github.event_name == 'workflow_dispatch'
         id: asset_path
         uses: haya14busa/action-cond@v1
+        env:
+          PATH_PREFIX: "./build/distributions/grails-docs"
         with:
           cond: ${{ env.BETA == '' || env.BETA == 'false' }}
           if_true: ${{ env.PATH_PREFIX }}-${{ github.event.inputs.grails_version }}.zip
           if_false: ${{ env.PATH_PREFIX }}-${{ github.event.inputs.grails_version }}.zip
-        env:
-          PATH_PREFIX: "./build/distributions/grails-docs"
       - name: Tag and Release Docs
         uses: ./.github/actions/tag-and-release
         if: success() && github.event_name == 'workflow_dispatch'
+        env:
+          TARGET_BRANCH: ${{ steps.extract_branch.outputs.value }}
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           grails_version: ${{ github.event.inputs.grails_version }}
-        env:
-          TARGET_BRANCH: ${{ steps.extract_branch.outputs.value }}
       - name: Create Release
         if: success() && github.event_name == 'workflow_dispatch'
         id: create_release
@@ -61,15 +52,17 @@ jobs:
           draft: false
           prerelease: ${{ env.BETA }}
       - name: Publish Documentation
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: assemble -PgithubBranch=${{ steps.extract_branch.outputs.value }} --info --stacktrace
+        uses: gradle/actions/setup-gradle@v3
         env:
           TARGET_GRAILS_VERSION: ${{ github.event.inputs.grails_version }}
           TARGET_BRANCH: ${{ steps.extract_branch.outputs.value }}
           GRADLE_ENTERPRISE_ACCESS_KEY: ${{ secrets.GRADLE_ENTERPRISE_ACCESS_KEY }}
-          GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER: ${{ secrets.GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER }}
-          GRADLE_ENTERPRISE_BUILD_CACHE_NODE_KEY: ${{ secrets.GRADLE_ENTERPRISE_BUILD_CACHE_NODE_KEY }}
+        with:
+          arguments: |
+            assemble
+            -PgithubBranch=${{ steps.extract_branch.outputs.value }}
+            --info
+            --stacktrace
       - name: Upload Release Asset
         if: success() && github.event_name == 'workflow_dispatch'
         id: upload-release-asset
@@ -93,11 +86,10 @@ jobs:
         if: success()
         uses: micronaut-projects/github-pages-deploy-action@grails
         env:
-          TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
           BRANCH: gh-pages
-          FOLDER: build/docs
-          VERSION: ${{ github.event.inputs.grails_version }}
-          DOC_FOLDER: gh-pages
           COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
           COMMIT_NAME: ${{ env.GIT_USER_NAME }}
+          FOLDER: build/docs
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
+          VERSION: ${{ github.event.inputs.grails_version }}
