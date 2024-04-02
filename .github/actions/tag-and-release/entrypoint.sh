@@ -1,6 +1,6 @@
 #!/bin/bash
 # $1 == GH_TOKEN
-# $2 == GORM Version
+# $2 == Grails Version
 
 grails_version="$2"
 echo -n "Updating Grails version to: $grails_version"
