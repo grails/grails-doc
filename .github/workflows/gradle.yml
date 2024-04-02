@@ -48,7 +48,7 @@ jobs:
           if_true: 'grails/grails-doc'
           if_false: ${{ github.repository }}
       - name: Publish Snapshot Documentation to Github Pages
-        if: success() && github.event_name == 'push' && github.ref == 'refs/heads/6.0.x'
+        if: success() && github.event_name == 'push'
         uses: micronaut-projects/github-pages-deploy-action@grails
         env:
           BRANCH: gh-pages
@@ -57,4 +57,8 @@ jobs:
           FOLDER: build/docs
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
-          SKIP_SNAPSHOT: ${{ startsWith(steps.extract_branch.outputs.value, '3.3') || startsWith(steps.extract_branch.outputs.value, '4.1') || startsWith(steps.extract_branch.outputs.value, '5.3') }}
+          SKIP_SNAPSHOT: ${{
+              startsWith(steps.extract_branch.outputs.value, '3.3') ||
+              startsWith(steps.extract_branch.outputs.value, '4.1') ||
+              startsWith(steps.extract_branch.outputs.value, '5.3')
+            }}
