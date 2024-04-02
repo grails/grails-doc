@@ -1,41 +1,27 @@
 Grails applications offer multiple deployment options.
 
-For traditional container deployments, such as Tomcat or Jetty, you can generate a Web Application Archive (WAR) file using the Gradle `war` task as follows::
+For traditional container deployments, such as Tomcat or Jetty, you can generate a Web Application Archive (WAR) file using the Gradle `war` task as follows:
 
-[source,bash]
-----
-./gradlew war
-----
+[source,console]
+$ ./gradlew war
 
-This task generates a WAR file within the `build/libs` directory, ready for deployment according to your container's guidelines.
-
-It's worth noting that Grails includes an embedded version of Tomcat within the WAR file by default. This could pose compatibility issues if you intend to deploy to a different Tomcat version. To exclude the embedded container, you can adjust the Tomcat dependencies in your `build.gradle` file:
-
-[source,groovy]
-----
-implementation "org.springframework.boot:spring-boot-starter-tomcat"
-----
-
-**Recommended**: For Grails 6 applications, it is advisable to use Tomcat 9 for compatibility and performance enhancements. Ensure that you refer to the http://tomcat.apache.org/whichversion.html[Tomcat version table] for compatibility details.
+This task generates a WAR file with a `-plain` suffix within the `build/libs` directory, ready for deployment according to your container's guidelines.
 
 By default, the `war` task runs in the `production` environment. You can specify a different environment, such as `development`, by overriding it in the Gradle command:
 
-[source,bash]
-----
-./gradlew -Pgrails.env=dev war
-----
+[source,console]
+$ ./gradlew -Dgrails.env=dev war
 
-If you prefer not to use a separate Servlet container, you can run the Grails WAR file as a regular Java application:
+If you prefer not to use a separate Servlet container, you can create and run the Grails WAR file as a regular Java application:
 
-[source,bash]
+[source,console]
 ----
-./gradlew war
-java -Dgrails.env=prod -jar build/libs/mywar-0.1.war
+$ ./gradlew bootWar
+$ java -jar build/libs/mywar-0.1.war
 ----
 
 When deploying Grails, ensure that your container's JVM runs with the `-server` option and sufficient memory allocation. Here are recommended VM flags:
 
-[source,bash]
 ----
 -server -Xmx1024M
 ----
