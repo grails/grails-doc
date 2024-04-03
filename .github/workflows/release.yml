@@ -10,7 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     env:
       BETA: ${{ contains(github.event.inputs.grails_version, 'M') }}
-      SKIP_SNAPSHOT: ${{ startsWith(github.event.inputs.grails_version, '3.3') || startsWith(github.event.inputs.grails_version, '4.1') || startsWith(github.event.inputs.grails_version, '5.3') || contains(github.event.inputs.grails_version, 'M') || contains(github.event.inputs.grails_version, 'RC') }}
+      SKIP_SNAPSHOT: ${{
+          startsWith(github.event.inputs.grails_version, '3.3') ||
+          startsWith(github.event.inputs.grails_version, '4.1') ||
+          startsWith(github.event.inputs.grails_version, '5.3') ||
+          contains(github.event.inputs.grails_version, 'M') ||
+          contains(github.event.inputs.grails_version, 'RC')
+        }}
       GIT_USER_NAME: puneetbehl
       GIT_USER_EMAIL: behlp@unityfoundation.io
     steps:
