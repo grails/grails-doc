@@ -6,18 +6,18 @@ plugins {
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
-version = project.getProperty("grails.version")
+version = project.findProperty("grails.version")
 archivesBaseName = "grails-docs"
 
-ext.checkOutDir = "${buildDir.path}/checkout"
-ext.outputDir = "${buildDir.path}/docs"
-ext.githubSlug="grails/grails-doc"
-ext.githubBranch = project.hasProperty("githubBranch") ? project.getProperty("githubBranch") : "master"
+ext.checkOutDir = project.layout.buildDirectory.dir('checkout').get().asFile.absolutePath
+ext.outputDir = layout.buildDirectory.file("docs").get().asFile.absolutePath
+ext.githubSlug = "grails/grails-doc"
+ext.githubBranch = project.findProperty("githubBranch") ?: "6.2.x"
 ext.guidePage = "/docs/guide/single.html"
 ext.indexPage = "/docs/index.html"
 
-ext.explicitGrailsHome = System.getProperty("grails.home") ?: (project.hasProperty('grails.home') ? project.getProperty("grails.home") : null)
-ext.grailsHome = explicitGrailsHome ? file(explicitGrailsHome).absolutePath : "$checkOutDir/grails-src"
+ext.explicitGrailsHome = System.getProperty("grails.home") ?: project.findProperty('grails.home')
+ext.grailsHome = explicitGrailsHome ? file(explicitGrailsHome).absolutePath : "${checkOutDir}/grails-src"
 ext.projectVersion = project.version
 
 configurations {
@@ -25,17 +25,17 @@ configurations {
 }
 
 gdoc2asciidoc {
-    apiLinks = ['org.hibernate':'https://docs.jboss.org/hibernate/orm/current/javadocs/',
-                'org.springframework.boot':'https://docs.spring.io/spring-boot/docs/2.5.2/api',
-                'org.springframework':'https://docs.spring.io/spring/docs/5.3.8/javadoc-api/',
-                'javax.servlet':'https://docs.oracle.com/javaee/1.4/api/',
-                'java.':'https://docs.oracle.com/javase/6/docs/api/',
-                'groovy.':'https://docs.groovy-lang.org/docs/latest/html/api/',
-                'org.codehaus.groovy.grails':"https://docs.grails.org/$githubBranch/api",
-                'grails.orm.':'https://gorm.grails.org/latest/api',
-                'grails.gorm.':'https://gorm.grails.org/latest/api',
-                'grails.':"https://docs.grails.org/$githubBranch/api",
-                'org.grails.':"https://docs.grails.org/$githubBranch/api"
+    apiLinks = ['org.hibernate'             : 'https://docs.jboss.org/hibernate/orm/current/javadocs/',
+                'org.springframework.boot'  : 'https://docs.spring.io/spring-boot/docs/2.5.2/api',
+                'org.springframework'       : 'https://docs.spring.io/spring/docs/5.3.8/javadoc-api/',
+                'javax.servlet'             : 'https://docs.oracle.com/javaee/1.4/api/',
+                'java.'                     : 'https://docs.oracle.com/javase/6/docs/api/',
+                'groovy.'                   : 'https://docs.groovy-lang.org/docs/latest/html/api/',
+                'org.codehaus.groovy.grails': "https://docs.grails.org/$githubBranch/api",
+                'grails.orm.'               : 'https://gorm.grails.org/latest/api',
+                'grails.gorm.'              : 'https://gorm.grails.org/latest/api',
+                'grails.'                   : "https://docs.grails.org/$githubBranch/api",
+                'org.grails.'               : "https://docs.grails.org/$githubBranch/api"
     ]
     resourcesDir = file("resources")
     srcDir = file("src/en")
@@ -46,61 +46,24 @@ task buildscriptDependencies(type: DependencyReportTask) {
 }
 
 // use jsoup in PdfBuilder for cleaning input html
-System.setProperty('grails.docs.clean.html','true')
+System.setProperty('grails.docs.clean.html', 'true')
 // creates single.html.before.xml and single.html.after.xml files for debugging pdf input when enabled
 //System.setProperty('grails.docs.debug.pdf','true')
 
-task fetchGrailsSource {
-    onlyIf {
-        println "GRAILS HOME=$explicitGrailsHome"
-        return !explicitGrailsHome
-    }
-    doLast {
-        ant.mkdir dir: checkOutDir
-
-        println "Downloading Grails source code. If you already have a copy " +
-                "of the Grails source code checked out you can avoid this download " +
-                "by setting the grails.home system property to point to your local " +
-                "copy of the source. See README.md for more information."
-
-
-        def zipFile = "${checkOutDir}/grails-src.zip"
-
-        def grailsVersion = System.getenv('TARGET_GRAILS_VERSION')
-        if (grailsVersion) {
-            ant.get src: "https://github.com/grails/grails-core/archive/refs/tags/v${grailsVersion}.zip", dest: zipFile, verbose: true
-        } else {
-            ant.get src: "https://github.com/grails/grails-core/zipball/${githubBranch}", dest: zipFile, verbose: true
-        }
-
-        ant.unzip src: zipFile, dest: checkOutDir, {
-             mapper type: "regexp", from: "(grails-core-\\S*?/)(.*)", to: "grails-src/\\2"
-        }
-
-        ant.chmod(file:"${checkOutDir}/grails-src/gradlew", perm:700)
-
-        println "Grails source code has been downloaded to ${relativePath(grailsHome)}"
-    }
+tasks.register('fetchGrailsSource', grails.doc.FetchGrailsSourceTask) {
+    onlyIf { !explicitGrailsHome }
 }
 
-task editProjectArtificat (type:Exec) {
+task editProjectArtificat(type: Exec) {
     onlyIf { project.hasProperty("editGrailsVersion") }
     dependsOn 'fetchGrailsSource'
-    executable "bash"
-    if (explicitGrailsHome) {
-        args  "-i", 'sed -i "s/^projectVersion.*$/projectVersion=6.0.0/" ' + explicitGrailsHome + '/gradle.properties'
-    } else {
-        args  "-i", 'sed -i "s/^projectVersion.*$/projectVersion=6.0.0/" ' +  checkOutDir + "/grails-src/gradle.properties"
-    }
+    executable Os.isFamily(Os.FAMILY_WINDOWS) ? "cmd" : "bash"
+    args Os.isFamily(Os.FAMILY_WINDOWS) ? "/c" : "-c", "sed -i 's/^projectVersion.*\$/projectVersion=$version/' ${explicitGrailsHome ?: "${checkOutDir}/grails-src"}/gradle.properties"
 }
 
 task apiDocs(type: Exec) {
     dependsOn 'fetchGrailsSource'
-    String command = "./gradlew"
-    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
-        command = "gradlew.bat"
-    }
-
+    String command = Os.isFamily(Os.FAMILY_WINDOWS) ? "gradlew.bat" : "./gradlew"
     commandLine = [command, "groovydoc", '--info', '--stacktrace']
     workingDir = grailsHome
     environment "GRADLE_OPTS", "-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
@@ -113,14 +76,14 @@ asciidoctor {
 
     options template_dirs: ["${projectDir}/src/docs/templates"]
 
-    attributes 'experimental'  : 'true',
-               'compat-mode'   : 'true',
-               'icons'         : 'font',
-               'linkcss'       : 'true',
-               'docinfo1'      : '',
-               'toc'           : 'left',
-               'version'       : project.version,
-               'sourcedir'     : "$checkOutDir/grails-src"
+    attributes 'experimental': 'true',
+            'compat-mode': 'true',
+            'icons': 'font',
+            'linkcss': 'true',
+            'docinfo1': '',
+            'toc': 'left',
+            'version': project.version,
+            'sourcedir': "$checkOutDir/grails-src"
 }
 
 
@@ -134,43 +97,6 @@ task copyApiDocs(type: Copy) {
 }
 
 task migrate(type: grails.doc.gradle.MigrateLegacyDocs)
-
-task publishGuide(type: grails.doc.gradle.PublishGuide, dependsOn: ['apiDocs', 'copyApiDocs']) {
-    def searchDirs = project.file(project.grailsHome).listFiles().findAll {
-        new File(it, "src/main/groovy/org/grails").exists()
-    }.collect {
-        new File(it, "src/main/groovy/org/grails")
-    }
-
-    // No language setting because we want the English guide to be
-    // generated with a 'en' in the path, but the source is in 'en'
-    // so that it's easy to track with git.
-    sourceRepo = "https://github.com/grails/grails-doc/edit/$githubBranch/src/en"
-    sourceDir = new File(projectDir, "src/en")
-    propertiesFiles = [ new File(projectDir, "gradle.properties") ]
-    asciidoc = true
-    properties = [
-        'javaee': "https://docs.oracle.com/javaee/7/api/",
-        'javase': "https://docs.oracle.com/en/java/javase/11/docs/api/",
-        'groovyapi': "https://docs.groovy-lang.org/${groovyVersion}/html/gapi/",
-        'springapi': "https://docs.spring.io/spring/docs/${springVersion}/javadoc-api/",
-        'springdocs': "https://docs.spring.io/spring/docs/${springVersion}/",
-        'asyncdocs': "https://async.grails.org/latest",
-        'asyncApiDocs': "https://async.grails.org/latest/api/",
-        'gspdocs': "https://gsp.grails.org/${gspVersion}",
-        'gspApiDocs': "https://gsp.grails.org/${gspVersion}/api/",
-        'gormApiDocs': "https://gorm.grails.org/${gormVersion}/api/",
-        'springbootapi' :"https://docs.spring.io/spring-boot/docs/${springBootVersion}/api",
-        'springBootReference' :"https://docs.spring.io/spring-boot/docs/${springBootVersion}/reference",
-        'hibernateReference': 'https://docs.jboss.org/hibernate/orm/5.6/userguide/html_single/Hibernate_User_Guide.html',
-        'springBootVersion': project.springBootVersion,
-        'springVersion': project.springVersion,
-        'gradleVersion': project.gradleVersion
-    ]
-    macros = [ new grails.doc.macros.GspTagSourceMacro(searchDirs) ]
-}
-
-task publishPdf(type: grails.doc.gradle.PublishPdf, dependsOn: ['publishGuide'])
 
 task docs(dependsOn: ['publishPdf']) {
     finalizedBy 'createReleasesDropdown'
@@ -188,7 +114,7 @@ task createReleasesDropdown(type: grails.doc.dropdown.CreateReleasesDropdownTask
     mustRunAfter "dist"
     onlyIf {
         new File("${buildDir.absolutePath}/docs/guide/single.html").exists() &&
-        new File("${buildDir.absolutePath}/docs/index.html").exists()
+                new File("${buildDir.absolutePath}/docs/index.html").exists()
     }
 }
 
@@ -199,6 +125,65 @@ tasks.withType(org.gradle.api.tasks.javadoc.Groovydoc) {
         includeMainForScripts = false
     }
 }
+
+tasks.register('downloadPom', grails.doc.DownloadPomTask) {
+    version = projectVersion
+}
+
+tasks.register('extractPomVersions', grails.doc.ExtractPomVersionsTask) {
+    dependsOn 'downloadPom'
+    pomFile = downloadPom.outputs.files.singleFile
+}
+
+tasks.register('publishGuide', grails.doc.gradle.PublishGuide) {
+    dependsOn(['apiDocs', 'copyApiDocs', 'extractPomVersions'])
+
+    doFirst {
+        def searchDirs = project.file(project.grailsHome).listFiles().findAll {
+            new File(it, "src/main/groovy/org/grails").exists()
+        }.collect {
+            new File(it, "src/main/groovy/org/grails")
+        }
+
+        // No language setting because we want the English guide to be
+        // generated with a 'en' in the path, but the source is in 'en'
+        // so that it's easy to track with git.
+        sourceRepo = "https://github.com/grails/grails-doc/edit/$githubBranch/src/en"
+        sourceDir = new File(projectDir, "src/en")
+        propertiesFiles = [new File(projectDir, "gradle.properties")]
+        asciidoc = true
+        properties = [
+                'javaee'             : "https://docs.oracle.com/javaee/7/api/",
+                'javase'             : "https://docs.oracle.com/en/java/javase/11/docs/api/",
+                'groovyapi'          : "https://docs.groovy-lang.org/${groovyVersion}/html/gapi/",
+                'springapi'          : "https://docs.spring.io/spring/docs/${springVersion}/javadoc-api/",
+                'springdocs'         : "https://docs.spring.io/spring/docs/${springVersion}/",
+                'asyncdocs'          : "https://async.grails.org/latest",
+                'asyncApiDocs'       : "https://async.grails.org/latest/api/",
+                'gspdocs'            : "https://gsp.grails.org/${gspVersion}",
+                'gspApiDocs'         : "https://gsp.grails.org/${gspVersion}/api/",
+                'gormApiDocs'        : "https://gorm.grails.org/${gormVersion}/api/",
+                'hibernateReference' : 'https://docs.jboss.org/hibernate/orm/5.6/userguide/html_single/Hibernate_User_Guide.html',
+                'springbootapi'      : "https://docs.spring.io/spring-boot/docs/${springBootVersion}/api",
+                'springBootReference': "https://docs.spring.io/spring-boot/docs/${springBootVersion}/reference",
+                'springBootVersion'  : project.springBootVersion,
+                'springVersion'      : project.springVersion,
+                'gradleVersion'      : project.gradleVersion
+        ]
+        // Parse the string content into Properties object
+        def props = new Properties()
+        props.load(new StringReader(file(tasks.extractPomVersions.outputs.files.singleFile).text))
+        properties += props
+        macros = [new grails.doc.macros.GspTagSourceMacro(searchDirs)]
+    }
+}
+
+tasks.register('publishPdf', grails.doc.gradle.PublishPdf) {
+    dependsOn 'publishGuide'
+    outputDirectory = project.layout.buildDirectory.dir("doc").get().asFile
+}
+
+tasks.createReleasesDropdown.mustRunAfter('dist')
 
 artifacts {
     archives dist
