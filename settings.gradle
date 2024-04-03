@@ -8,17 +8,23 @@ gradleEnterprise {
     buildScan {
         publishAlwaysIf(System.getenv('CI') == 'true')
         publishIfAuthenticated()
-        uploadInBackground = System.getenv('CI') == null
+        uploadInBackground = System.getenv("CI") == null
         capture {
             taskInputFiles = true
         }
     }
+
 }
+
 buildCache {
     local { enabled = System.getenv('CI') != 'true' }
-    remote(gradleEnterprise.buildCache) {
-        def isAuthenticated = System.getenv('GRADLE_ENTERPRISE_ACCESS_KEY')
+    remote(HttpBuildCache) {
+        def isAuthenticated = System.getenv('GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER') && System.getenv('GRADLE_ENTERPRISE_BUILD_CACHE_NODE_KEY')
         push = System.getenv('CI') == 'true' && isAuthenticated
         enabled = true
-    }
-}
+        url = 'https://ge.grails.org/cache/'
+        credentials {
+            username = System.getenv('GRADLE_ENTERPRISE_BUILD_CACHE_NODE_USER')
+            password = System.getenv('GRADLE_ENTERPRISE_BUILD_CACHE_NODE_KEY')
+        }
+    }}
