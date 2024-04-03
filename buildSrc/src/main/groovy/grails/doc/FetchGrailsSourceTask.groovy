@@ -17,6 +17,7 @@ package grails.doc
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.Input
+import org.gradle.api.tasks.Optional
 import org.gradle.api.tasks.OutputDirectory
 import org.gradle.api.tasks.TaskAction
 
@@ -28,6 +29,7 @@ import org.gradle.api.tasks.TaskAction
  */
 abstract class FetchGrailsSourceTask extends DefaultTask {
 
+    @Optional
     @Input
     String explicitGrailsHome = project.findProperty('grails.home') ?: null
 
