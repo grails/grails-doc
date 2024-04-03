@@ -33,11 +33,12 @@ abstract class FetchGrailsSourceTask extends DefaultTask {
     @Input
     String explicitGrailsHome = project.findProperty('grails.home') ?: null
 
+    @Optional
     @Input
     String grailsVersion = System.getenv('TARGET_GRAILS_VERSION')
 
     @OutputDirectory
-    def checkOutDir = project.findProperty('checkOutDir') ?: project.layout.buildDirectory.dir("checkout/grails-source")
+    def checkOutDir = project.findProperty('checkOutDir') ?: project.layout.buildDirectory.dir("checkout")
 
     @TaskAction
     void fetchGrailsSource() {

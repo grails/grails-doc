@@ -9,15 +9,15 @@ import org.apache.tools.ant.taskdefs.condition.Os
 version = project.findProperty("grails.version")
 archivesBaseName = "grails-docs"
 
-ext.checkOutDir = project.layout.buildDirectory.dir('checkout/grails-src').get().asFile.absolutePath
+ext.checkOutDir = project.layout.buildDirectory.dir('checkout').get().asFile.absolutePath
 ext.outputDir = layout.buildDirectory.file("docs").get().asFile.absolutePath
-ext.githubSlug="grails/grails-doc"
+ext.githubSlug = "grails/grails-doc"
 ext.githubBranch = project.findProperty("githubBranch") ?: "6.2.x"
 ext.guidePage = "/docs/guide/single.html"
 ext.indexPage = "/docs/index.html"
 
 ext.explicitGrailsHome = System.getProperty("grails.home") ?: project.findProperty('grails.home')
-ext.grailsHome = explicitGrailsHome ? file(explicitGrailsHome).absolutePath : checkOutDir
+ext.grailsHome = explicitGrailsHome ? file(explicitGrailsHome).absolutePath : "${checkOutDir}/grails-src"
 ext.projectVersion = project.version
 
 configurations {
@@ -25,17 +25,17 @@ configurations {
 }
 
 gdoc2asciidoc {
-    apiLinks = ['org.hibernate':'https://docs.jboss.org/hibernate/orm/current/javadocs/',
-                'org.springframework.boot':'https://docs.spring.io/spring-boot/docs/2.5.2/api',
-                'org.springframework':'https://docs.spring.io/spring/docs/5.3.8/javadoc-api/',
-                'javax.servlet':'https://docs.oracle.com/javaee/1.4/api/',
-                'java.':'https://docs.oracle.com/javase/6/docs/api/',
-                'groovy.':'https://docs.groovy-lang.org/docs/latest/html/api/',
-                'org.codehaus.groovy.grails':"https://docs.grails.org/$githubBranch/api",
-                'grails.orm.':'https://gorm.grails.org/latest/api',
-                'grails.gorm.':'https://gorm.grails.org/latest/api',
-                'grails.':"https://docs.grails.org/$githubBranch/api",
-                'org.grails.':"https://docs.grails.org/$githubBranch/api"
+    apiLinks = ['org.hibernate'             : 'https://docs.jboss.org/hibernate/orm/current/javadocs/',
+                'org.springframework.boot'  : 'https://docs.spring.io/spring-boot/docs/2.5.2/api',
+                'org.springframework'       : 'https://docs.spring.io/spring/docs/5.3.8/javadoc-api/',
+                'javax.servlet'             : 'https://docs.oracle.com/javaee/1.4/api/',
+                'java.'                     : 'https://docs.oracle.com/javase/6/docs/api/',
+                'groovy.'                   : 'https://docs.groovy-lang.org/docs/latest/html/api/',
+                'org.codehaus.groovy.grails': "https://docs.grails.org/$githubBranch/api",
+                'grails.orm.'               : 'https://gorm.grails.org/latest/api',
+                'grails.gorm.'              : 'https://gorm.grails.org/latest/api',
+                'grails.'                   : "https://docs.grails.org/$githubBranch/api",
+                'org.grails.'               : "https://docs.grails.org/$githubBranch/api"
     ]
     resourcesDir = file("resources")
     srcDir = file("src/en")
@@ -46,7 +46,7 @@ task buildscriptDependencies(type: DependencyReportTask) {
 }
 
 // use jsoup in PdfBuilder for cleaning input html
-System.setProperty('grails.docs.clean.html','true')
+System.setProperty('grails.docs.clean.html', 'true')
 // creates single.html.before.xml and single.html.after.xml files for debugging pdf input when enabled
 //System.setProperty('grails.docs.debug.pdf','true')
 
@@ -54,11 +54,11 @@ tasks.register('fetchGrailsSource', grails.doc.FetchGrailsSourceTask) {
     onlyIf { !explicitGrailsHome }
 }
 
-task editProjectArtificat (type:Exec) {
+task editProjectArtificat(type: Exec) {
     onlyIf { project.hasProperty("editGrailsVersion") }
     dependsOn 'fetchGrailsSource'
     executable Os.isFamily(Os.FAMILY_WINDOWS) ? "cmd" : "bash"
-    args Os.isFamily(Os.FAMILY_WINDOWS) ? "/c" : "-c", "sed -i 's/^projectVersion.*\$/projectVersion=$version/' ${explicitGrailsHome ?: checkOutDir}/gradle.properties"
+    args Os.isFamily(Os.FAMILY_WINDOWS) ? "/c" : "-c", "sed -i 's/^projectVersion.*\$/projectVersion=$version/' ${explicitGrailsHome ?: "${checkOutDir}/grails-src"}/gradle.properties"
 }
 
 task apiDocs(type: Exec) {
@@ -76,14 +76,14 @@ asciidoctor {
 
     options template_dirs: ["${projectDir}/src/docs/templates"]
 
-    attributes 'experimental'  : 'true',
-               'compat-mode'   : 'true',
-               'icons'         : 'font',
-               'linkcss'       : 'true',
-               'docinfo1'      : '',
-               'toc'           : 'left',
-               'version'       : project.version,
-               'sourcedir'     : "$checkOutDir"
+    attributes 'experimental': 'true',
+            'compat-mode': 'true',
+            'icons': 'font',
+            'linkcss': 'true',
+            'docinfo1': '',
+            'toc': 'left',
+            'version': project.version,
+            'sourcedir': "$checkOutDir/grails-src"
 }
 
 
@@ -153,22 +153,22 @@ tasks.register('publishGuide', grails.doc.gradle.PublishGuide) {
         propertiesFiles = [new File(projectDir, "gradle.properties")]
         asciidoc = true
         properties = [
-                'javaee': "https://docs.oracle.com/javaee/7/api/",
-                'javase': "https://docs.oracle.com/en/java/javase/11/docs/api/",
-                'groovyapi': "https://docs.groovy-lang.org/${groovyVersion}/html/gapi/",
-                'springapi': "https://docs.spring.io/spring/docs/${springVersion}/javadoc-api/",
-                'springdocs': "https://docs.spring.io/spring/docs/${springVersion}/",
-                'asyncdocs': "https://async.grails.org/latest",
-                'asyncApiDocs': "https://async.grails.org/latest/api/",
-                'gspdocs': "https://gsp.grails.org/${gspVersion}",
-                'gspApiDocs': "https://gsp.grails.org/${gspVersion}/api/",
-                'gormApiDocs': "https://gorm.grails.org/${gormVersion}/api/",
-                'hibernateReference': 'https://docs.jboss.org/hibernate/orm/5.6/userguide/html_single/Hibernate_User_Guide.html',
-                'springbootapi': "https://docs.spring.io/spring-boot/docs/${springBootVersion}/api",
+                'javaee'             : "https://docs.oracle.com/javaee/7/api/",
+                'javase'             : "https://docs.oracle.com/en/java/javase/11/docs/api/",
+                'groovyapi'          : "https://docs.groovy-lang.org/${groovyVersion}/html/gapi/",
+                'springapi'          : "https://docs.spring.io/spring/docs/${springVersion}/javadoc-api/",
+                'springdocs'         : "https://docs.spring.io/spring/docs/${springVersion}/",
+                'asyncdocs'          : "https://async.grails.org/latest",
+                'asyncApiDocs'       : "https://async.grails.org/latest/api/",
+                'gspdocs'            : "https://gsp.grails.org/${gspVersion}",
+                'gspApiDocs'         : "https://gsp.grails.org/${gspVersion}/api/",
+                'gormApiDocs'        : "https://gorm.grails.org/${gormVersion}/api/",
+                'hibernateReference' : 'https://docs.jboss.org/hibernate/orm/5.6/userguide/html_single/Hibernate_User_Guide.html',
+                'springbootapi'      : "https://docs.spring.io/spring-boot/docs/${springBootVersion}/api",
                 'springBootReference': "https://docs.spring.io/spring-boot/docs/${springBootVersion}/reference",
-                'springBootVersion': project.springBootVersion,
-                'springVersion': project.springVersion,
-                'gradleVersion': project.gradleVersion
+                'springBootVersion'  : project.springBootVersion,
+                'springVersion'      : project.springVersion,
+                'gradleVersion'      : project.gradleVersion
         ]
         // Parse the string content into Properties object
         def props = new Properties()
