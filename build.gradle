@@ -50,25 +50,6 @@ System.setProperty('grails.docs.clean.html', 'true')
 // creates single.html.before.xml and single.html.after.xml files for debugging pdf input when enabled
 //System.setProperty('grails.docs.debug.pdf','true')
 
-tasks.register('fetchGrailsSource', grails.doc.FetchGrailsSourceTask) {
-    onlyIf { !explicitGrailsHome }
-}
-
-task editProjectArtificat(type: Exec) {
-    onlyIf { project.hasProperty("editGrailsVersion") }
-    dependsOn 'fetchGrailsSource'
-    executable Os.isFamily(Os.FAMILY_WINDOWS) ? "cmd" : "bash"
-    args Os.isFamily(Os.FAMILY_WINDOWS) ? "/c" : "-c", "sed -i 's/^projectVersion.*\$/projectVersion=$version/' ${explicitGrailsHome ?: "${checkOutDir}/grails-src"}/gradle.properties"
-}
-
-task apiDocs(type: Exec) {
-    dependsOn 'fetchGrailsSource'
-    String command = Os.isFamily(Os.FAMILY_WINDOWS) ? "gradlew.bat" : "./gradlew"
-    commandLine = [command, "groovydoc", '--info', '--stacktrace']
-    workingDir = grailsHome
-    environment "GRADLE_OPTS", "-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
-}
-
 asciidoctor {
     resources {
         from('resources')
@@ -87,26 +68,30 @@ asciidoctor {
 }
 
 
-asciidoctor.dependsOn(apiDocs)
+asciidoctor.dependsOn("apiDocs")
 
-apiDocs.onlyIf { !System.getProperty("disable.groovydocs") }
-
-task copyApiDocs(type: Copy) {
-    from "${project.grailsHome}/doc/api"
-    into "${outputDir}/api"
+tasks.withType(org.gradle.api.tasks.javadoc.Groovydoc) {
+    configure {
+        access = GroovydocAccess.PRIVATE
+        processScripts = false
+        includeMainForScripts = false
+    }
 }
 
 task migrate(type: grails.doc.gradle.MigrateLegacyDocs)
 
-task docs(dependsOn: ['publishPdf']) {
-    finalizedBy 'createReleasesDropdown'
+tasks.register("docs") {
+    dependsOn "publishPdf"
+    finalizedBy "createReleasesDropdown"
 }
 
-task dist(type: Zip, dependsOn: 'docs') {
+tasks.register("dist", Zip) {
+    dependsOn "docs"
     from outputDir
 }
 
-task createReleasesDropdown(type: grails.doc.dropdown.CreateReleasesDropdownTask) {
+tasks.register("createReleasesDropdown", grails.doc.dropdown.CreateReleasesDropdownTask) {
+    mustRunAfter "dist"
     slug = githubSlug as String
     version = projectVersion
     guide = file("${buildDir.absolutePath}/docs/guide/single.html")
@@ -118,12 +103,31 @@ task createReleasesDropdown(type: grails.doc.dropdown.CreateReleasesDropdownTask
     }
 }
 
-tasks.withType(org.gradle.api.tasks.javadoc.Groovydoc) {
-    configure {
-        access = GroovydocAccess.PRIVATE
-        processScripts = false
-        includeMainForScripts = false
-    }
+tasks.register('fetchGrailsSource', grails.doc.FetchGrailsSourceTask) {
+    onlyIf { !explicitGrailsHome }
+}
+
+tasks.register("editProjectArtificat", Exec) {
+    onlyIf { project.hasProperty("editGrailsVersion") }
+    dependsOn 'fetchGrailsSource'
+    executable Os.isFamily(Os.FAMILY_WINDOWS) ? "cmd" : "bash"
+    args Os.isFamily(Os.FAMILY_WINDOWS) ? "/c" : "-c", "sed -i 's/^projectVersion.*\$/projectVersion=$version/' ${explicitGrailsHome ?: "${checkOutDir}/grails-src"}/gradle.properties"
+}
+
+tasks.register("apiDocs", Exec) {
+    onlyIf { !System.getProperty("disable.groovydocs") }
+    dependsOn 'fetchGrailsSource'
+    finalizedBy "copyApiDocs"
+    String command = Os.isFamily(Os.FAMILY_WINDOWS) ? "gradlew.bat" : "./gradlew"
+    commandLine = [command, "groovydoc", '--info', '--stacktrace']
+    workingDir = grailsHome
+    environment "GRADLE_OPTS", "-Xmx2048m -Xms256m -XX:MaxPermSize=512m -XX:+CMSClassUnloadingEnabled -XX:+HeapDumpOnOutOfMemoryError"
+}
+
+tasks.register('copyApiDocs', Copy) {
+    dependsOn 'apiDocs'
+    from "${project.grailsHome}/doc/api"
+    into "${outputDir}/api"
 }
 
 tasks.register('downloadPom', grails.doc.DownloadPomTask) {
@@ -137,6 +141,7 @@ tasks.register('extractPomVersions', grails.doc.ExtractPomVersionsTask) {
 
 tasks.register('publishGuide', grails.doc.gradle.PublishGuide) {
     dependsOn(['apiDocs', 'copyApiDocs', 'extractPomVersions'])
+    targetDir = project.layout.buildDirectory.dir("docs").get().asFile
 
     doFirst {
         def searchDirs = project.file(project.grailsHome).listFiles().findAll {
@@ -180,10 +185,8 @@ tasks.register('publishGuide', grails.doc.gradle.PublishGuide) {
 
 tasks.register('publishPdf', grails.doc.gradle.PublishPdf) {
     dependsOn 'publishGuide'
-    outputDirectory = project.layout.buildDirectory.dir("doc").get().asFile
+    outputDirectory = project.layout.buildDirectory.dir("docs").get().asFile
 }
-
-tasks.createReleasesDropdown.mustRunAfter('dist')
 
 artifacts {
     archives dist
