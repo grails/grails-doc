@@ -11,7 +11,7 @@
 
         gtag('config', 'UA-82213539-2');
     </script>
-    <title>4.4 The DataSource 6.2.0-SNAPSHOT</title>
+    <title>4.4 The DataSource 6.2.1-SNAPSHOT</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <link rel="stylesheet" href="../css/main.css" type="text/css" media="screen, print" title="Style" charset="utf-8"/>
     <link rel="stylesheet" href="../css/pdf.css" type="text/css" media="print" title="PDF" charset="utf-8"/>
@@ -132,7 +132,7 @@ function addJsClass() {
                 <div class="project">
                     <h1>4.4 The DataSource</h1>
 
-                    <p><strong>Version:</strong> 6.2.0-SNAPSHOT</p>
+                    <p><strong>Version:</strong> 6.2.1-SNAPSHOT</p>
                 </div>
 
                 
@@ -855,7 +855,7 @@ zipCode.auditing.save()</code></pre>
 <p>The BE1PC implementation was added in Grails 2.3.6. . Before this change additional datasources didn&#8217;t take part in transactions initiated in Grails. The transactions in additional datasources were basically in auto commit mode. In some cases this might be the wanted behavior. One reason might be performance: on the start of each new transaction, the BE1PC transaction manager creates a new transaction to each datasource. It&#8217;s possible to leave an additional datasource out of the BE1PC transaction manager by setting <code>transactional = false</code> in the respective configuration block of the additional dataSource. Datasources with <code>readOnly = true</code> will also be left out of the chained transaction manager (since 2.3.7).</p>
 </div>
 <div class="paragraph">
-<p>By default, the BE1PC implementation will add all beans implementing the Spring <code><a href="https://docs.spring.io/spring/docs/5.3.30/javadoc-api//org/springframework/transaction/PlatformTransactionManager.html">PlatformTransactionManager</a></code> interface to the chained BE1PC transaction manager. For example, a possible <code><a href="https://docs.spring.io/spring/docs/5.3.30/javadoc-api//org/springframework/jms/connection/JmsTransactionManager.html">JMSTransactionManager</a></code> bean in the Grails application context would be added to the Grails BE1PC transaction manager&#8217;s chain of transaction managers.</p>
+<p>By default, the BE1PC implementation will add all beans implementing the Spring <code><a href="https://docs.spring.io/spring/docs/5.3.33/javadoc-api//org/springframework/transaction/PlatformTransactionManager.html">PlatformTransactionManager</a></code> interface to the chained BE1PC transaction manager. For example, a possible <code><a href="https://docs.spring.io/spring/docs/5.3.33/javadoc-api//org/springframework/jms/connection/JmsTransactionManager.html">JMSTransactionManager</a></code> bean in the Grails application context would be added to the Grails BE1PC transaction manager&#8217;s chain of transaction managers.</p>
 </div>
 <div class="paragraph">
 <p>You can exclude transaction manager beans from the BE1PC implementation with this configuration option:</p>
@@ -879,7 +879,7 @@ zipCode.auditing.save()</code></pre>
 <p>When the Best Efforts 1PC pattern isn&#8217;t suitable for handling transactions across multiple transactional resources (not only datasources), there are several options available for adding XA/2PC support to Grails applications.</p>
 </div>
 <div class="paragraph">
-<p>The <a href="https://docs.spring.io/spring/docs/5.3.30//transaction.html#transaction-application-server-integration">Spring transactions documentation</a> contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name <code>transactionManager</code> manually in <code>resources.groovy</code> or <code>resources.xml</code> file.</p>
+<p>The <a href="https://docs.spring.io/spring/docs/5.3.33//transaction.html#transaction-application-server-integration">Spring transactions documentation</a> contains information about integrating the JTA/XA transaction manager of different application servers. In this case, you can configure a bean with the name <code>transactionManager</code> manually in <code>resources.groovy</code> or <code>resources.xml</code> file.</p>
 </div>
 </div>
 
