@@ -41,24 +41,16 @@ jobs:
         with:
           name: grails-docs-${{ env.NOW }}.zip
           path: ./build/distributions/*.zip
-      - name: Determine docs target repository
-        if: success()
-        uses: haya14busa/action-cond@v1
-        id: docs_target
-        with:
-          cond: ${{ github.repository == 'grails/grails-doc' }}
-          if_true: 'grails/grails-doc'
-          if_false: ${{ github.repository }}
       - name: Publish Snapshot Documentation to Github Pages
         if: success() && github.event_name == 'push'
-        uses: micronaut-projects/github-pages-deploy-action@grails
+        uses: grails/github-pages-deploy-action@v2
         env:
           BRANCH: gh-pages
           COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
           COMMIT_NAME: ${{ env.GIT_USER_NAME }}
           FOLDER: build/docs
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
+          TARGET_REPOSITORY: ${{ github.repository }}
           SKIP_SNAPSHOT: ${{
               startsWith(steps.extract_branch.outputs.value, '3.3') ||
               startsWith(steps.extract_branch.outputs.value, '4.1') ||

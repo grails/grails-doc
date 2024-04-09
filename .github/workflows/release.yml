@@ -82,22 +82,14 @@ jobs:
           asset_path: ${{ steps.asset_path.outputs.value }}
           asset_name: grails-docs.zip
           asset_content_type: application/zip
-      - name: Determine docs target repository
-        if: success()
-        uses: haya14busa/action-cond@v1
-        id: docs_target
-        with:
-          cond: ${{ github.repository == 'grails/grails-doc' }}
-          if_true: 'grails/grails-doc'
-          if_false: ${{ github.repository }}
       - name: Publish to Github Pages
         if: success()
-        uses: micronaut-projects/github-pages-deploy-action@grails
+        uses: grails/github-pages-deploy-action@v2
         env:
           BRANCH: gh-pages
           COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
           COMMIT_NAME: ${{ env.GIT_USER_NAME }}
           FOLDER: build/docs
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
-          TARGET_REPOSITORY: ${{ steps.docs_target.outputs.value }}
+          TARGET_REPOSITORY: ${{ github.repository }}
           VERSION: ${{ github.event.inputs.grails_version }}
