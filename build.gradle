@@ -12,7 +12,7 @@ archivesBaseName = "grails-docs"
 ext.checkOutDir = project.layout.buildDirectory.dir('checkout').get().asFile.absolutePath
 ext.outputDir = layout.buildDirectory.file("docs").get().asFile.absolutePath
 ext.githubSlug = "grails/grails-doc"
-ext.githubBranch = project.findProperty("githubBranch") ?: "6.2.x"
+ext.githubBranch = project.findProperty("githubBranch") ?: "7.0.x"
 ext.guidePage = "/docs/guide/single.html"
 ext.indexPage = "/docs/index.html"
 
@@ -149,7 +149,7 @@ tasks.register('publishGuide', grails.doc.gradle.PublishGuide) {
         asciidoc = true
         properties = [
                 'javaee'             : "https://docs.oracle.com/javaee/7/api/",
-                'javase'             : "https://docs.oracle.com/en/java/javase/11/docs/api/",
+                'javase'             : "https://docs.oracle.com/en/java/javase/17/docs/api/",
                 'groovyapi'          : "https://docs.groovy-lang.org/${groovyVersion}/html/gapi/",
                 'springapi'          : "https://docs.spring.io/spring/docs/${springVersion}/javadoc-api/",
                 'springdocs'         : "https://docs.spring.io/spring/docs/${springVersion}/",
@@ -182,7 +182,7 @@ tasks.register("docs", Copy) {
     dependsOn "apiDocs", "publishGuide", "createReleaseDropdown", "publishPdf"
 
     def manualDocsDir = publishGuide.targetDir
-    def apiDocsDir = file(grailsHome + '/doc')
+    def apiDocsDir = file(grailsHome + '/build/docs') // This is the output directory of the groovydoc task in the grails project.
     def modifiedPagesDir = createReleaseDropdown.outputDir
     def mergedDocsDir = project.layout.buildDirectory.dir('docs')
 
