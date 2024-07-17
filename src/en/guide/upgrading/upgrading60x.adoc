@@ -1,0 +1,99 @@
+:todoGormVersion: X.X.X
+:todoGradleVersion: X.X.X
+:todoGrailsVersion: X.X.X
+:todoGrailsGradlePluginVersion: X.X.X
+:todoSpringVersion: X.X.X
+:todoSpringBootVersion: X.X.X
+
+
+### Upgrade Instructions for Grails and Related Dependencies
+
+To ensure compatibility with Grails 7, you must update the following versions in your project:
+
+#### 1. Java 17 as baseline:
+
+Starting from Grails 7, Java 17 serves as the baseline requirement for the framework. When upgrading to Grails 7, ensure that your project is configured to use Java 17. This compatibility with Java 17 allows you to take advantage of the latest features, security enhancements, and performance improvements provided by Java 17.
+
+Please make sure to update your project's Java version to 17 before proceeding with the Grails 7 upgrade. Doing so will ensure a seamless transition to the latest version of Grails and enable you to enjoy all the benefits that Java 17 has to offer.
+
+#### 2. Setting Grails Version and Grails Gradle Plugin:
+
+To upgrade to Grails 7, it's important to configure the appropriate versions in the `gradle.properties` file as shown below:
+
+.gradle.properties
+[,,subs="attributes"]
+----
+grailsVersion={todoGrailsVersion}
+grailsGradlePluginVersion={todoGrailsGradlePluginVersion}
+----
+
+By specifying the above versions, you'll gain access to the latest features, improvements, and bug fixes introduced in Grails 7. Upgrading to this version empowers your application with enhanced performance and improved security. Additionally, it allows you to leverage the latest advancements in the Grails framework for a more efficient and secure development experience.
+
+#### 4. GORM Version
+
+If your project utilizes GORM, ensure to update the version in the `gradle.properties` file as demonstrated below:
+
+.gradle.properties
+[,,subs="attributes"]
+----
+gormVersion={todoGormVersion}
+----
+
+By upgrading to GORM {todoGormVersion}, you will benefit from essential updates and optimizations. This upgrade guarantees seamless interactions with your database and enhances your data management experience. Staying current with GORM allows you to take advantage of the latest database features and improvements, thereby optimizing the performance and functionality of your application.
+
+#### 5. Gradle Version:
+
+Grails 7 uses Gradle {todoGradleVersion} which offers performance improvements, bug fixes, and new features over previous versions. Upgrading to the latest Gradle version helps accelerate your build processes and ensures compatibility with other dependencies.
+
+##### 5.1. Upgrade to Gradle {todoGradleVersion}
+
+Run the following command to update the Gradle wrapper to the desired version (e.g., Gradle {todoGradleVersion}):
+
+[,console,subs="attributes"]
+----
+./gradlew wrapper --gradle-version {todoGradleVersion}
+----
+
+This command will download the specified Gradle version and update the Gradle wrapper settings in your project.
+
+##### 5.2. Check Gradle Version:
+
+After the command finishes, you can verify that the Gradle version has been updated by checking the `gradle-wrapper.properties` file located in the `gradle/wrapper` directory. The `distributionUrl` in the file should now point to the Gradle {todoGradleVersion} distribution:
+
+[,,subs="attributes"]
+----
+distributionUrl=https\://services.gradle.org/distributions/gradle-{todoGradleVersion}-bin.zip
+----
+
+
+##### 5.3. Build the Project:
+
+After updating the Gradle wrapper, you can now build your Grails project using the updated Gradle version:
+
+```console
+./gradlew build
+```
+
+This will initiate the build process with the new Gradle version.
+
+#### 6. Spring {todoSpringVersion}:
+
+Grails 7 is built on Spring {todoSpringVersion}. If your project uses Spring-specific features, refer to the https://github.com/spring-projects/spring-framework/wiki/Upgrading-to-Spring-Framework-6.x[Upgrading to Spring 6 guide].
+
+Spring {todoSpringVersion} introduces enhancements and fixes to the Spring framework, providing you with the latest improvements in dependency injection, web frameworks, and other Spring-related functionalities.
+
+#### 7. Spring Boot {todoSpringBootVersion}:
+
+Grails 7 updates to Spring Boot {todoSpringBootVersion}. For more information, consult the https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-3.3-Release-Notes[Spring Boot 3 Release Notes]
+
+Spring Boot {todoSpringBootVersion} comes with new features, performance enhancements, and compatibility improvements, making it a solid foundation for your Grails application.
+
+#### 8. Breaking changes
+
+Grails 7 introduces several breaking changes that may require updates to your application.
+
+##### 8.1. Inheritance in GORM
+With the update to Groovy 4, there is an issue with extending domain classes. A workaround is to *_not_* annotate parent classes with `@Entity` or put them in the `grails-app/domain` folder. Use `src/main/groovy` instead.
+
+#### 8.2. Removed classes
+- `org.grails.spring.beans.factory.OptimizedAutowireCapableBeanFactory` was deprecated and is now removed.
