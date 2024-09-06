@@ -2,6 +2,12 @@ plugins {
     id 'base'
     id 'org.asciidoctor.jvm.convert' version '4.0.0-alpha.1'
     id 'org.grails.grails-gdoc-to-asciidoc'
+    id 'groovy'
+}
+
+repositories {
+    mavenLocal()
+    maven { url = "https://repo.grails.org/grails/core" }
 }
 
 import org.apache.tools.ant.taskdefs.condition.Os
@@ -22,6 +28,14 @@ ext.projectVersion = project.version
 
 configurations {
     publish
+    configureEach {
+        resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+            if ((details.requested.group == 'org.codehaus.groovy' || details.requested.group == 'org.apache.groovy') && details.requested.name != 'groovy-bom') {
+                details.useTarget(group: 'org.apache.groovy', name: details.requested.name, version: "$groovyVersion")
+                details.because "The dependency coordinates are changed in Apache Groovy 4, plus ensure version"
+            }
+        }
+    }
 }
 
 gdoc2asciidoc {
@@ -130,7 +144,7 @@ tasks.register('extractPomVersions', grails.doc.ExtractPomVersionsTask) {
 }
 
 tasks.register('publishGuide', grails.doc.gradle.PublishGuide) {
-    dependsOn(['apiDocs', 'extractPomVersions'])
+    dependsOn(['apiDocs', 'extractPomVersions', 'jar'])
     targetDir = project.layout.buildDirectory.dir("manual").get().asFile
 
     doFirst {
@@ -202,4 +216,10 @@ tasks.register("docs", Copy) {
 
 artifacts {
     archives dist
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(17)
+    }
 }
