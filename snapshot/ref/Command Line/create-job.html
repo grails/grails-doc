@@ -127,64 +127,51 @@ function addJsClass(el) {
                 <span id='toggle-col1' class="toggle">(<a href="#" onclick="localToggle(); return false;">Quick Reference</a>)</span>
                 
                 <div class='contribute-btn'>
-                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/6.2.x/src/en/ref/Services/scope.adoc"'>
+                    <button type='button' class='btn btn-default' onclick='window.location.href="https://github.com/grails/grails-doc/edit/6.2.x/src/en/ref/Command Line/create-job.adoc"'>
                         <i class='fa fa-pencil-square-o'></i> Improve this doc
                     </button>
                 </div>
                 
 
                 <div class="sect1">
-<h2 id="_scope">scope</h2>
+<h2 id="_create_job">create-job</h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="_purpose">Purpose</h3>
 <div class="paragraph">
-<p>Changes the scope of a service</p>
+<p>The <code>create-job</code> command creates a new scheduled job for the given base name.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_examples">Examples</h3>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="groovy"><span class="type">class</span> <span class="class">BookService</span> {
-    <span class="directive">static</span> scope = <span class="string"><span class="delimiter">&quot;</span><span class="content">session</span><span class="delimiter">&quot;</span></span>
-    ...
-}</code></pre>
+<pre>grails create-job Scheduled
+grails create-job com.example.Scheduled</pre>
 </div>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_description">Description</h3>
 <div class="paragraph">
-<p>By default services are "singleton" scoped which means that clients of a service only ever use a single instance (a singleton) of the service. This behaviour can be changed by specifying a <code>scope</code> attribute with on the following values:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>prototype</code> - A new service is created every time it is injected into another class</p>
-</li>
-<li>
-<p><code>request</code> - A new service will be created per request</p>
-</li>
-<li>
-<p><code>flash</code> - A new service will be created for the current and next request only</p>
-</li>
-<li>
-<p><code>flow</code> - In web flows the service will exist for the scope of the flow</p>
-</li>
-<li>
-<p><code>conversation</code> - In web flows the service will exist for the scope of the conversation. ie a root flow and its sub flows</p>
-</li>
-<li>
-<p><code>session</code> - A service is created for the scope of a user session</p>
-</li>
-<li>
-<p><code>singleton</code> (default) - Only one instance of the service ever exists</p>
-</li>
-</ul>
+<p>Creates a new Quartz scheduled job with an empty 'execute' method. The argument is required.</p>
 </div>
 <div class="paragraph">
-<p>See <a href="#scopedServices">Scoped Services</a> in the user guide for more information.</p>
+<p>The name of the job can include a Java package, such as <code>com.example</code> in the last example above, but if one is not provided a default is used. So the first example will create the file <code>grails-app/jobs/&lt;appname&gt;/ScheduledJob.groovy</code> whereas the second one will create <code>grails-app/jobs/com/example/ScheduledJob.groovy</code>. Note that the first letter of the job name is always upper-cased when determining the class name.</p>
+</div>
+<div class="paragraph">
+<p>If you want the command to default to a different package for jobs, provide a value for <code>grails.project.groupId</code> in the <a href="../../guide/conf.html#config">runtime configuration</a>.</p>
+</div>
+<div class="paragraph">
+<p>Note that this command is just for convenience and you can also create jobs in your favourite text editor or IDE if you choose.</p>
+</div>
+<div class="paragraph">
+<p>Usage:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">grails create-job &lt;&lt;name&gt;&gt;</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -201,7 +188,7 @@ function addJsClass(el) {
                     
                     <div class="menu-block">
                         <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Command Line</h1>
-                        <div class="menu-sub">
+                        <div class="menu-sub selected">
                             
                             <div class="menu-item"><a href="../../ref/Command%20Line/Usage.html">Usage</a></div>
                             
@@ -751,7 +738,7 @@ function addJsClass(el) {
                     
                     <div class="menu-block">
                         <h1 class="menu-title" onclick="toggleRef(nextElement(this))">Services</h1>
-                        <div class="menu-sub selected">
+                        <div class="menu-sub">
                             
                             <div class="menu-item"><a href="../../ref/Services/Usage.html">Usage</a></div>
                             
