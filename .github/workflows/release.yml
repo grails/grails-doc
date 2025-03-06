@@ -24,8 +24,24 @@ jobs:
       GIT_USER_NAME: grails-build
       GIT_USER_EMAIL: grails-build@users.noreply.github.com
     steps:
-      - name: "📥 Checkout the repository"
+      - name: "🔀 Get Target Branch name"
+        run: |
+          TARGET_BRANCH="${GITHUB_REF:11}"
+          echo "TARGET_BRANCH=${TARGET_BRANCH}" >> $GITHUB_ENV
+          echo "Target Branch: $TARGET_BRANCH"
+      - name: "📥 Checkout the Target Branch"
         uses: actions/checkout@v4
+        with:
+          ref: ${{ env.TARGET_BRANCH }}
+      - name: "✔️ Commit the assigned Release Version to gradle.properties"
+        run: |
+          sed -i "s/^projectVersion.*$/projectVersion=${{ github.event.inputs.grails_version }}/" gradle.properties
+          cat gradle.properties
+          git config --global user.email "${{ env.GIT_USER_EMAIL }}"
+          git config --global user.name "${{ env.GIT_USER_NAME }}"
+          git add gradle.properties
+          git commit -m "[skip ci] Release v${{ github.event.inputs.grails_version }} docs"
+          git push origin ${{ env.TARGET_BRANCH }}
       - name: "☕️ Setup JDK"
         uses: actions/setup-java@v4
         with:
@@ -35,44 +51,31 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           develocity-access-key: ${{ secrets.DEVELOCITY_ACCESS_KEY }}
-      - name: "🔀 Extract branch name"
-        if: success() && github.event_name == 'workflow_dispatch'
-        id: extract_branch
-        run: echo "value=${GITHUB_REF:11}" >> $GITHUB_OUTPUT
-      - name: "🏷️ Create and Push Release Tag"
-        uses: ./.github/actions/tag-and-release
-        if: success() && github.event_name == 'workflow_dispatch'
-        with:
-          target_branch: ${{ steps.extract_branch.outputs.value }}
-          grails_version: ${{ github.event.inputs.grails_version }}
-      - name: "🎉 Create GitHub Release"
-        if: success() && github.event_name == 'workflow_dispatch'
-        id: create_release
-        uses: ncipollo/release-action@cdcc88a9acf3ca41c16c37bb7d21b9ad48560d87 # v1.15.0 (Use commit sha as this is a 3rd party action)
-        with:
-          tag: v${{ github.event.inputs.grails_version }}
-          name: ${{ github.event.inputs.grails_version }}
-          prerelease: ${{ env.BETA }}
-      - name: "🔨 Generate Documentation"
+      - name: "🔨 Build the Documentation"
         env:
           TARGET_GRAILS_VERSION: ${{ github.event.inputs.grails_version }}
         run: >
           ./gradlew assemble
-          -PgithubBranch=${{ steps.extract_branch.outputs.value }}
+          -PgithubBranch=${{ env.TARGET_BRANCH }}
           --info --stacktrace
-      - name: "📤 Upload Asset to the Github Release page"
-        # if: success() && github.event_name == 'workflow_dispatch' skip for now as this is not working and manually upload zip
-        if: false
-        id: upload_artifact
-        uses: Roang-zero1/github-upload-release-artifacts-action@c15e0b65ce2ae1c8d52bfbc75d017d21e1da77d7 # v3.0.0 (Use commit sha as this is a 3rd party action)
-        with:
-          args: ./build/distributions/grails-docs-${{ github.event.inputs.grails_version }}.zip
-          created_tag: v${{ github.event.inputs.grails_version }}
+      - name: "🚩 Conditionally create a pre-release flag"
+        run: |
+          PRE_RELEASE_FLAG=""
+          if [ "${{ env.BETA }}" = "true" ]; then
+              PRE_RELEASE_FLAG="--pre-release"
+          fi
+          echo "PRE_RELEASE_FLAG=${PRE_RELEASE_FLAG}" >> $GITHUB_ENV
+      - name: "🎉 Create the GitHub Release"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: "📤 Publish to Github Pages"
-        if: success()
-        uses: grails/github-pages-deploy-action@f1bddf4d126e4375529c0f397b028eb5ac9a13e6 # 2024-12-22
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: >
+          gh release create v${{ github.event.inputs.grails_version }}
+          build/distributions/grails-docs-${{ github.event.inputs.grails_version }}.zip
+          --title ${{ github.event.inputs.grails_version }}
+          --target ${{ env.TARGET_BRANCH }}
+          $PRE_RELEASE_FLAG
+      - name: "📤 Publish Documentation to Github Pages"
+        uses: grails/github-pages-deploy-action@v3
         env:
           BRANCH: gh-pages
           COMMIT_EMAIL: ${{ env.GIT_USER_EMAIL }}
@@ -80,3 +83,7 @@ jobs:
           FOLDER: build/docs
           GH_TOKEN: ${{ secrets.GH_TOKEN }}
           VERSION: ${{ github.event.inputs.grails_version }}
+      - name: "⚙️ Run post-release"
+        env:
+          RELEASE_VERSION: ${{ github.event.inputs.grails_version }}
+        uses: grails/github-actions/post-release@v3

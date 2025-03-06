@@ -12,7 +12,7 @@ compileJava.options.release = 17
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
-version = project.findProperty("grails.version")
+version = projectVersion
 archivesBaseName = "grails-docs"
 
 ext.grailsCheckOutDir = project.layout.buildDirectory.dir('grails-core/checkout').get().asFile.absolutePath
@@ -27,10 +27,9 @@ ext.explicitGrailsHome = System.getProperty("grails.home") ?: project.findProper
 ext.grailsHome = explicitGrailsHome ? file(explicitGrailsHome).absolutePath : "${grailsCheckOutDir}/grails-src"
 ext.explicitGrailsFunctionalTestsHome = System.getProperty("grails.functional.test.home") ?: project.findProperty('grails.functional.test.home')
 ext.grailsTestsHome = explicitGrailsFunctionalTestsHome ? file(explicitGrailsFunctionalTestsHome).absolutePath : "${grailsTestsCheckOutDir}/grails-functional-tests-src"
-ext.projectVersion = project.version
 
 dependencies {
-    implementation platform("org.grails:grails-bom:${project['grails.version']}")
+    implementation platform("org.grails:grails-bom:$projectVersion")
     implementation "org.grails:grails-docs"
     implementation "org.apache.groovy:groovy"
 
@@ -195,8 +194,8 @@ tasks.register('publishGuide', grails.doc.gradle.PublishGuide) {
                 'springBootVersion'  : springBootVersion,
                 'springVersion'      : springVersion,
                 'gradleVersion'      : gradle.gradleVersion,
-                'GrailsVersion'      : project['grails.version'],
-                'version'            : project['grails.version'],
+                'GrailsVersion'      : projectVersion,
+                'version'            : projectVersion,
                 'gormVersion'        : gormVersion,
                 'spockVersion'       : getVersion("spock-core"),
                 'testingSupportVersion'       : getVersion("grails-testing-support"),
