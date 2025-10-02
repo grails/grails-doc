@@ -3145,6 +3145,23 @@ This is now done automatically by the <code>org.apache.grails.gradle.grails-plug
 </div>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_12_23_test_javaexec_jvm_args_no_longer_set_by_default">12.23 Test &amp; JavaExec JVM Args no longer set by default</h5>
+<div class="paragraph">
+<p>Previously tasks of type <code>Test</code> &amp; <code>JavaExec</code> had several JVM args set by default to facilitate faster startup times in larger projects.
+These settings are removed by default in Grails 7. To restore the old behavior, configure the <code>Test</code> &amp; <code>JavaExec</code> tasks as follows:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="groovy">tasks.withType(Test).configureEach {
+   jvmArgs(<span class="string"><span class="delimiter">'</span><span class="content">-XX:+TieredCompilation</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">-XX:TieredStopAtLevel=1</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">-XX:CICompilerCount=3</span><span class="delimiter">'</span></span>)
+}
+tasks.withType(JavaExec).configureEach {
+   jvmArgs(<span class="string"><span class="delimiter">'</span><span class="content">-XX:+TieredCompilation</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">-XX:TieredStopAtLevel=1</span><span class="delimiter">'</span></span>, <span class="string"><span class="delimiter">'</span><span class="content">-XX:CICompilerCount=3</span><span class="delimiter">'</span></span>)
+}</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 
