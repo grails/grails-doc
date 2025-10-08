@@ -3168,6 +3168,20 @@ tasks.withType(JavaExec).configureEach {
 </div>
 </div>
 </div>
+<div class="sect4">
+<h5 id="_12_24_mongodb">12.24 MongoDB</h5>
+<div class="paragraph">
+<p><code>Instant</code> persistence switched from epoch milliseconds (BSON int64) to BSON DateTime (same BSON type as <code>java.util.Date</code>); <code>LocalDateTime</code> continues to be converted to BSON DateTime using the configured zone. If you currently using domain objects with property type <code>Instant</code>, you will need to convert them prior to upgrading. For more info, see <a href="https://github.com/apache/grails-core/pull/15111">#15111</a>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="javascript">db.Example.updateMany(
+  { <span class="key">created</span>: { <span class="predefined">$type</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">long</span><span class="delimiter">&quot;</span></span> } },
+  [ { <span class="predefined">$set</span>: { <span class="key">created</span>: { <span class="predefined">$toDate</span>: <span class="string"><span class="delimiter">&quot;</span><span class="content">$created</span><span class="delimiter">&quot;</span></span> } } } ]
+);</code></pre>
+</div>
+</div>
+</div>
 </div>
 </div>
 
